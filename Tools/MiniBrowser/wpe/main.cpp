@@ -48,6 +48,7 @@ static const char* cookiesFile;
 static const char* cookiesPolicy;
 static const char* proxy;
 const char* bgColor;
+static gboolean enableITP;
 static gboolean printVersion;
 static GHashTable* openViews;
 
@@ -63,6 +64,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", nullptr },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { "bg-color", 0, 0, G_OPTION_ARG_STRING, &bgColor, "Window background color. Default: white", "COLOR" },
+    { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", nullptr },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
@@ -220,7 +222,10 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    auto* webContext = (privateMode || automationMode) ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
+    auto* manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(nullptr);
+    webkit_website_data_manager_set_itp_enabled(manager, enableITP);
+    auto* webContext = webkit_web_context_new_with_website_data_manager(manager);
+    g_object_unref(manager);
 
     if (cookiesPolicy) {
         auto* cookieManager = webkit_web_context_get_cookie_manager(webContext);

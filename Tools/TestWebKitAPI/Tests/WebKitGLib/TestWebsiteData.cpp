@@ -33,7 +33,12 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    if (g_str_equal(path, "/empty")) {
+    if (g_str_equal(path, "/")) {
+        const char* html = "<html><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, html, strlen(html));
+        soup_message_body_complete(message->response_body);
+        soup_message_set_status(message, SOUP_STATUS_OK);
+    } else if (g_str_equal(path, "/empty")) {
         static const char* emptyHTML = "<html><body></body></html>";
         soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
         soup_message_headers_replace(message->response_headers, "Strict-Transport-Security", "max-age=3600");
@@ -168,10 +173,13 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(hstsCacheDirectory.get(), ==, webkit_website_data_manager_get_hsts_cache_directory(test->m_manager));
     g_assert_true(g_file_test(hstsCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 
+    GUniquePtr<char> itpDirectory(g_build_filename(Test::dataDirectory(), "itp", nullptr));
+    g_assert_cmpstr(itpDirectory.get(), ==, webkit_website_data_manager_get_itp_directory(test->m_manager));
+
     // Clear all persistent caches, since the data dir is common to all test cases. Note: not cleaning the HSTS cache here as its data
     // is needed for the HSTS tests, where data cleaning will be tested.
     static const WebKitWebsiteDataTypes persistentCaches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DISK_CACHE | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
-        | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+        | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT | WEBKIT_WEBSITE_DATA_ITP);
     test->clear(persistentCaches, 0);
     g_assert_null(test->fetch(persistentCaches));
 
@@ -198,6 +206,8 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     applicationCacheDirectory.reset(g_build_filename(Test::dataDirectory(), "applications", nullptr));
     g_assert_cmpstr(webkit_website_data_manager_get_offline_application_cache_directory(baseDataManager.get()), ==, applicationCacheDirectory.get());
 
+    g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(baseDataManager.get()), ==, itpDirectory.get());
+
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 
     // Any specific configuration provided takes precedence over base dirs.
@@ -209,6 +219,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_offline_application_cache_directory(baseDataManager.get()), ==, applicationCacheDirectory.get());
     // The result should be the same as previous manager.
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(baseDataManager.get()), ==, localStorageDirectory.get());
+    g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(baseDataManager.get()), ==, itpDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 }
 
@@ -231,11 +242,15 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert_null(webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_indexeddb_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_hsts_cache_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_itp_directory(manager.get()));
 
     // Configuration is ignored when is-ephemeral is used.
     manager = adoptGRef(WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "base-data-directory", Test::dataDirectory(), "is-ephemeral", TRUE, nullptr)));
     g_assert_true(webkit_website_data_manager_is_ephemeral(manager.get()));
     g_assert_null(webkit_website_data_manager_get_base_data_directory(manager.get()));
+
+    webkit_website_data_manager_set_itp_enabled(manager.get(), TRUE);
+    g_assert(webkit_website_data_manager_get_itp_enabled(manager.get()));
 
     // Non persistent data can be queried in an ephemeral manager.
     GRefPtr<WebKitWebContext> webContext = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
@@ -247,6 +262,9 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/empty").data());
     g_main_loop_run(test->m_mainLoop);
+
+    GUniquePtr<char> itpDirectory(g_build_filename(Test::dataDirectory(), "itp", nullptr));
+    g_assert(!g_file_test(itpDirectory.get(), G_FILE_TEST_IS_DIR));
 
     webkit_website_data_manager_fetch(manager.get(), WEBKIT_WEBSITE_DATA_MEMORY_CACHE, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
         auto* test = static_cast<WebViewTest*>(userData);
@@ -262,6 +280,8 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
         test->quitMainLoop();
     }, test);
     g_main_loop_run(test->m_mainLoop);
+
+    webkit_website_data_manager_set_itp_enabled(manager.get(), FALSE);
 }
 
 static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
@@ -616,6 +636,43 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     webkit_settings_set_enable_media_stream(settings, enabled);
 }
 
+static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
+{
+    const char* itpDirectory = webkit_website_data_manager_get_itp_directory(test->m_manager);
+    GUniquePtr<char> itpLogFile(g_build_filename(itpDirectory, "full_browsing_session_resourceLog.plist", nullptr));
+
+    // Delete any previous data.
+    g_unlink(itpLogFile.get());
+    g_rmdir(itpDirectory);
+
+    g_assert_false(webkit_website_data_manager_get_itp_enabled(test->m_manager));
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    webkit_website_data_manager_set_itp_enabled(test->m_manager, TRUE);
+    g_assert_true(webkit_website_data_manager_get_itp_enabled(test->m_manager));
+    g_assert_false(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
+    g_assert_false(g_file_test(itpLogFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    test->waitUntilFileChanged(itpLogFile.get(), G_FILE_MONITOR_EVENT_CREATED);
+
+    g_assert_true(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
+    g_assert_true(g_file_test(itpLogFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    // Clear all.
+    static const WebKitWebsiteDataTypes cacheAndITP = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_ITP | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    test->clear(cacheAndITP, 0);
+    test->waitUntilFileChanged(itpLogFile.get(), G_FILE_MONITOR_EVENT_DELETED);
+
+    webkit_website_data_manager_set_itp_enabled(test->m_manager, FALSE);
+    g_assert_false(webkit_website_data_manager_get_itp_enabled(test->m_manager));
+
+    g_rmdir(itpDirectory);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -636,6 +693,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "hsts", testWebsiteDataHsts);
 #endif
     WebsiteDataTest::add("WebKitWebsiteData", "deviceidhashsalt", testWebsiteDataDeviceIdHashSalt);
+    WebsiteDataTest::add("WebKitWebsiteData", "itp", testWebsiteDataITP);
 }
 
 void afterAll()

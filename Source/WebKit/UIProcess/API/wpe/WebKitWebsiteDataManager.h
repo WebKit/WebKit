@@ -93,8 +93,18 @@ webkit_website_data_manager_get_websql_directory                      (WebKitWeb
 WEBKIT_API const gchar *
 webkit_website_data_manager_get_hsts_cache_directory                  (WebKitWebsiteDataManager *manager);
 
+WEBKIT_API const gchar *
+webkit_website_data_manager_get_itp_directory                         (WebKitWebsiteDataManager *manager);
+
 WEBKIT_API WebKitCookieManager *
 webkit_website_data_manager_get_cookie_manager                        (WebKitWebsiteDataManager *manager);
+
+WEBKIT_API void
+webkit_website_data_manager_set_itp_enabled                           (WebKitWebsiteDataManager *manager,
+                                                                       gboolean                  enabled);
+
+WEBKIT_API gboolean
+webkit_website_data_manager_get_itp_enabled                           (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API void
 webkit_website_data_manager_fetch                                     (WebKitWebsiteDataManager *manager,

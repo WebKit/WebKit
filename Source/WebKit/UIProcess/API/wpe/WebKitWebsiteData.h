@@ -46,6 +46,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
  * @WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT: Hash salt used to generate the device ids used by webpages. Since 2.24
  * @WEBKIT_WEBSITE_DATA_HSTS_CACHE: HSTS cache. Since 2.26
+ * @WEBKIT_WEBSITE_DATA_ITP: Intelligent Tracking Prevention data. Since 2.30.
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
@@ -64,7 +65,8 @@ typedef enum {
     WEBKIT_WEBSITE_DATA_COOKIES                   = 1 << 8,
     WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT       = 1 << 9,
     WEBKIT_WEBSITE_DATA_HSTS_CACHE                = 1 << 10,
-    WEBKIT_WEBSITE_DATA_ALL                       = (1 << 11) - 1
+    WEBKIT_WEBSITE_DATA_ITP                       = 1 << 11,
+    WEBKIT_WEBSITE_DATA_ALL                       = (1 << 12) - 1
 } WebKitWebsiteDataTypes;
 
 WEBKIT_API GType

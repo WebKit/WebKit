@@ -1,3 +1,32 @@
+2020-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to configure and enable resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=177943
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes):
+        (toWebKitWebsiteDataTypes):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerGetProperty):
+        (webkitWebsiteDataManagerSetProperty):
+        (webkitWebsiteDataManagerConstructed):
+        (webkit_website_data_manager_class_init):
+        (webkitWebsiteDataManagerGetDataStore):
+        (webkit_website_data_manager_get_itp_directory):
+        (webkit_website_data_manager_set_itp_enabled):
+        (webkit_website_data_manager_get_itp_enabled):
+        (toWebsiteDataTypes):
+        * UIProcess/API/gtk/WebKitWebsiteData.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitWebsiteData.h:
+        * UIProcess/API/wpe/WebKitWebsiteDataManager.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/glib/WebsiteDataStoreGLib.cpp:
+        (WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+
 2020-06-16  Darryl Pogue  <darryl@dpogue.ca>
 
         IndexedDB: Support IDBFactory databases method

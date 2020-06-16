@@ -86,6 +86,7 @@ enum {
     PROP_INDEXEDDB_DIRECTORY,
     PROP_WEBSQL_DIRECTORY,
     PROP_HSTS_CACHE_DIRECTORY,
+    PROP_ITP_DIRECTORY,
     PROP_IS_EPHEMERAL
 };
 
@@ -104,6 +105,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> indexedDBDirectory;
     GUniquePtr<char> webSQLDirectory;
     GUniquePtr<char> hstsCacheDirectory;
+    GUniquePtr<char> itpDirectory;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     Vector<WebProcessPool*> processPools;
@@ -142,6 +144,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
     case PROP_HSTS_CACHE_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_hsts_cache_directory(manager));
         break;
+    case PROP_ITP_DIRECTORY:
+        g_value_set_string(value, webkit_website_data_manager_get_itp_directory(manager));
+        break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
         break;
@@ -179,6 +184,9 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_HSTS_CACHE_DIRECTORY:
         manager->priv->hstsCacheDirectory.reset(g_value_dup_string(value));
         break;
+    case PROP_ITP_DIRECTORY:
+        manager->priv->itpDirectory.reset(g_value_dup_string(value));
+        break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = WebKit::WebsiteDataStore::createNonPersistent();
@@ -200,6 +208,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
             priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", "indexeddb", nullptr));
         if (!priv->webSQLDirectory)
             priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", nullptr));
+        if (!priv->itpDirectory)
+            priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "itp", nullptr));
     }
 
     if (priv->baseCacheDirectory) {
@@ -361,6 +371,23 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
+     * WebKitWebsiteDataManager:itp-directory:
+     *
+     * The directory where Intelligent Tracking Prevention (ITP) data will be stored.
+     *
+     * Since: 2.30
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_ITP_DIRECTORY,
+        g_param_spec_string(
+            "itp-directory",
+            _("ITP Direcory"),
+            _("The directory where Intelligent Tracking Prevention data will be stored"),
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
      * WebKitWebsiteDataManager:is-ephemeral:
      *
      * Whether the #WebKitWebsiteDataManager is ephemeral. An ephemeral #WebKitWebsiteDataManager
@@ -398,6 +425,8 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get()));
         configuration->setHSTSStorageDirectory(!priv->hstsCacheDirectory ?
             WebKit::WebsiteDataStore::defaultHSTSDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
+        configuration->setResourceLoadStatisticsDirectory(!priv->itpDirectory ?
+            WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.get()));
         configuration->setMediaKeysStorageDirectory(WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory());
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
     }
@@ -660,6 +689,29 @@ const gchar* webkit_website_data_manager_get_hsts_cache_directory(WebKitWebsiteD
 }
 
 /**
+ * webkit_website_data_manager_get_itp_directory:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get the #WebKitWebsiteDataManager:itp-directory property.
+ *
+ * Returns: (allow-none): the directory where Intelligent Tracking Prevention data is stored or %NULL if @manager is ephemeral.
+ *
+ * Since: 2.30
+ */
+const gchar* webkit_website_data_manager_get_itp_directory(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
+    if (!priv->itpDirectory)
+        priv->itpDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory().utf8().data()));
+    return priv->itpDirectory.get();
+}
+
+/**
  * webkit_website_data_manager_get_cookie_manager:
  * @manager: a #WebKitWebsiteDataManager
  *
@@ -677,6 +729,42 @@ WebKitCookieManager* webkit_website_data_manager_get_cookie_manager(WebKitWebsit
         manager->priv->cookieManager = adoptGRef(webkitCookieManagerCreate(manager));
 
     return manager->priv->cookieManager.get();
+}
+
+/**
+ * webkit_website_data_manager_set_itp_enabled:
+ * @manager: a #WebKitWebsiteDataManager
+ * @enabled: value to set
+ *
+ * Enable or disable Intelligent Tracking Prevention (ITP). When ITP is enabled resource load statistics
+ * are collected and used to decide whether to allow or block third-party cookies and prevent user tracking.
+ * Note that when ITP is enabled the resources for which cookies are allowed will follow the accept policy
+ * set with webkit_cookie_manager_set_accept_policy().
+ *
+ * Since: 2.30
+ */
+void webkit_website_data_manager_set_itp_enabled(WebKitWebsiteDataManager* manager, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+
+    webkitWebsiteDataManagerGetDataStore(manager).setResourceLoadStatisticsEnabled(enabled);
+}
+
+/**
+ * webkit_website_data_manager_get_itp_enabled:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get whether Intelligent Tracking Prevention (ITP) is enabled or not.
+ *
+ * Returns: %TRUE if ITP is enabled, or %FALSE otherwise.
+ *
+ * Since: 2.30
+ */
+gboolean webkit_website_data_manager_get_itp_enabled(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
+
+    return webkitWebsiteDataManagerGetDataStore(manager).resourceLoadStatisticsEnabled();
 }
 
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
@@ -706,6 +794,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::Cookies);
     if (types & WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT)
         returnValue.add(WebsiteDataType::DeviceIdHashSalt);
+    if (types & WEBKIT_WEBSITE_DATA_ITP)
+        returnValue.add(WebsiteDataType::ResourceLoadStatistics);
     return returnValue;
 }
 

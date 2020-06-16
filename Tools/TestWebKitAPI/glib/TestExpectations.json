@@ -57,9 +57,6 @@
             "/webkit/WebKitWebsiteData/storage": {
                 "expected": {"wpe": {"status": ["PASS", "FAIL"]}}
             },
-            "/webkit/WebKitWebsiteData/resource-load-statistics": {
-                "expected": {"wpe": {"status": ["PASS", "FAIL"]}}
-            },
             "/webkit/WebKitWebsiteData/configuration": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/205441"}}
             }

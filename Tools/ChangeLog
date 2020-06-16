@@ -1,3 +1,31 @@
+2020-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to configure and enable resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=177943
+
+        Reviewed by Michael Catanzaro.
+
+        Add --enable-itp command line version to MiniBrowser and unit tests to check the new API.
+
+        * MiniBrowser/gtk/main.c:
+        (gotWebsiteDataCallback):
+        (activate):
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback):
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataEphemeral):
+        (testWebsiteDataITP):
+        (beforeAll):
+        * TestWebKitAPI/glib/TestExpectations.json:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (directoryChangedCallback):
+        (WebViewTest::waitUntilFileChanged):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2020-06-16  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r263029): [Flatpak SDK] Broke initial SDK installation

@@ -53,6 +53,7 @@ static const char *cookiesFile;
 static const char *cookiesPolicy;
 static const char *proxy;
 static gboolean darkMode;
+static gboolean enableITP;
 static gboolean printVersion;
 
 typedef enum {
@@ -120,6 +121,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
+    { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", NULL },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
@@ -422,6 +424,7 @@ static void gotWebsiteDataCallback(WebKitWebsiteDataManager *manager, GAsyncResu
     aboutDataFillTable(result, dataRequest, dataList, "Plugins Data", WEBKIT_WEBSITE_DATA_PLUGIN_DATA, NULL, pageID);
     aboutDataFillTable(result, dataRequest, dataList, "Offline Web Applications Cache", WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE, webkit_website_data_manager_get_offline_application_cache_directory(manager), pageID);
     aboutDataFillTable(result, dataRequest, dataList, "HSTS Cache", WEBKIT_WEBSITE_DATA_HSTS_CACHE, webkit_website_data_manager_get_hsts_cache_directory(manager), pageID);
+    aboutDataFillTable(result, dataRequest, dataList, "ITP data", WEBKIT_WEBSITE_DATA_ITP, webkit_website_data_manager_get_itp_directory(manager), pageID);
 
     result = g_string_append(result, "</body></html>");
     gsize streamLength = result->len;
@@ -531,6 +534,7 @@ static void startup(GApplication *application)
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
     WebKitWebsiteDataManager *manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(NULL);
+    webkit_website_data_manager_set_itp_enabled(manager, enableITP);
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, "process-swap-on-cross-site-navigation-enabled", TRUE,
 #if !GTK_CHECK_VERSION(3, 98, 0)
         "use-system-appearance-for-scrollbars", FALSE,
