@@ -19,18 +19,18 @@ layer at (0,0) size 800x600
                       text run at (45,6) width 128: "Search the Web with"
                 RenderText {#text} at (172,3) size 5x20
                   text run at (172,4) width 5: " "
-                RenderMenuList {SELECT} at (178,4) size 81x19 [bgcolor=#FFFFFF]
+                RenderMenuList {SELECT} at (178,4) size 80x19 [bgcolor=#FFFFFF]
                   RenderBlock (anonymous) at (4,2) size 55x15
                     RenderText at (0,0) size 55x15
                       text run at (0,0) width 55: "Netscape"
                 RenderTextControl {INPUT} at (262,3) size 220x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderText {#text} at (483,3) size 5x20
-                  text run at (483,4) width 5: " "
-                RenderButton {INPUT} at (489,3) size 58x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+                RenderText {#text} at (484,3) size 5x20
+                  text run at (484,4) width 5: " "
+                RenderButton {INPUT} at (490,3) size 57x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
                   RenderBlock (anonymous) at (8,3) size 41x15
                     RenderText at (0,0) size 41x15
                       text run at (0,0) width 41: "Search"
-                RenderBR {BR} at (548,17) size 1x2
+                RenderBR {BR} at (549,17) size 1x2
                 RenderInline {SMALL} at (0,0) size 561x15
                   RenderInline {A} at (0,0) size 99x15 [color=#0000EE]
                     RenderText {#text} at (17,25) size 99x17
@@ -136,5 +136,5 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 1x1
                     RenderTableRow {TR} at (0,0) size 1x1
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
-layer at (275,79) size 215x15
-  RenderBlock {DIV} at (2,3) size 215x15
+layer at (274,79) size 216x15
+  RenderBlock {DIV} at (2,3) size 216x15

@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         text run at (0,0) width 783: "This test checks if correct min width is applied to \"input type=text\". To match IE and Firefox, the input field below should"
         text run at (0,18) width 624: "show \"1987\", with the 7 slightly truncated. See https://bugs.webkit.org/show_bug.cgi?id=15312 ."
       RenderBR {BR} at (623,32) size 1x0
-      RenderTextControl {INPUT} at (2,38) size 13x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (2,38) size 14x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (13,49) size 7x13 scrollWidth 40
-  RenderBlock {DIV} at (3,3) size 7x13
+layer at (13,49) size 8x13 scrollWidth 40
+  RenderBlock {DIV} at (3,3) size 8x13
     RenderText {#text} at (0,0) size 40x13
       text run at (0,0) width 40: "198765"

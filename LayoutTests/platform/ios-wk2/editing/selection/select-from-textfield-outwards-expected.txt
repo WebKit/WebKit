@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           text run at (0,20) width 771: "nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien. Phasellus vehicula, sem"
           text run at (0,40) width 569: "at posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate pede."
       RenderBlock (anonymous) at (0,150) size 784x91
-        RenderTextControl {INPUT} at (20,20) size 289x51 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (20,20) size 291x51 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,257) size 784x80
         RenderText {#text} at (0,0) size 772x79
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           text run at (0,20) width 728: "Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros"
           text run at (0,40) width 767: "pharetra rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a,"
           text run at (0,60) width 39: "tellus."
-layer at (39,189) size 267x29
-  RenderBlock {DIV} at (11,11) size 267x29
+layer at (39,189) size 269x29
+  RenderBlock {DIV} at (11,11) size 269x29
     RenderText {#text} at (0,0) size 199x29
       text run at (0,0) width 199: "Lorem ipsum dolor"

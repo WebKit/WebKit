@@ -7,24 +7,24 @@ layer at (0,0) size 800x546
         RenderText {#text} at (0,0) size 414x18
           text run at (0,0) width 325: "The top table was resized while the field\x{2019}s contents "
           text run at (325,0) width 89: "were selected."
-      RenderTable {TABLE} at (0,34) size 197x244
-        RenderTableSection {TBODY} at (0,0) size 197x244
-          RenderTableRow {TR} at (0,2) size 197x240
-            RenderTableCell {TD} at (2,89) size 193x66 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (22,22) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTable {TABLE} at (0,34) size 198x244
+        RenderTableSection {TBODY} at (0,0) size 198x244
+          RenderTableRow {TR} at (0,2) size 198x240
+            RenderTableCell {TD} at (2,89) size 194x66 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (22,22) size 150x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,278) size 197x244
-        RenderTableSection {TBODY} at (0,0) size 197x244
-          RenderTableRow {TR} at (0,2) size 197x240
-            RenderTableCell {TD} at (2,89) size 193x66 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (22,22) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTable {TABLE} at (0,278) size 198x244
+        RenderTableSection {TBODY} at (0,0) size 198x244
+          RenderTableRow {TR} at (0,2) size 198x240
+            RenderTableCell {TD} at (2,89) size 194x66 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (22,22) size 150x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderText {#text} at (0,0) size 0x0
-layer at (34,165) size 145x15
-  RenderBlock {DIV} at (2,3) size 145x15
+layer at (34,165) size 146x15
+  RenderBlock {DIV} at (2,3) size 146x15
     RenderText {#text} at (0,0) size 39x15
       text run at (0,0) width 39: "foo bar"
-layer at (34,409) size 145x15
-  RenderBlock {DIV} at (2,3) size 145x15
+layer at (34,409) size 146x15
+  RenderBlock {DIV} at (2,3) size 146x15
     RenderText {#text} at (0,0) size 39x15
       text run at (0,0) width 39: "foo bar"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 3 {TABLE} of body

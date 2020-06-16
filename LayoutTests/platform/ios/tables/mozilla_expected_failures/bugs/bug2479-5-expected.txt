@@ -140,13 +140,13 @@ layer at (8,8) size 784x1539
                     RenderText at (0,0) size 197x14
                       text run at (0,0) width 197: "Document renders exactly as described."
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {LABEL} at (0,0) size 211x19
+                RenderInline {LABEL} at (0,0) size 213x19
                   RenderText {#text} at (0,45) size 72x19
                     text run at (0,45) width 72: "Comment: "
-                  RenderTextControl {INPUT} at (73,46) size 136x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-                RenderText {#text} at (210,45) size 5x19
-                  text run at (210,45) width 5: " "
-                RenderButton {INPUT} at (216,46) size 60x20 [color=#000000] [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+                  RenderTextControl {INPUT} at (73,46) size 138x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderText {#text} at (212,45) size 5x19
+                  text run at (212,45) width 5: " "
+                RenderButton {INPUT} at (218,46) size 60x20 [color=#000000] [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (12,3) size 35x14
                     RenderText at (0,0) size 35x14
                       text run at (0,0) width 35: "Submit"
@@ -174,5 +174,5 @@ layer at (8,8) size 784x1539
             RenderBlock {P} at (21,1407) size 431x22 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 172x19
                 text run at (1,1) width 172: "Last updated in June 1999."
-layer at (405,1325) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (405,1325) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15

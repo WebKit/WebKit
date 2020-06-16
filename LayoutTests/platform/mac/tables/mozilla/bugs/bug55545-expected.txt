@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 365x35
-        RenderTableSection {TBODY} at (0,0) size 365x35
-          RenderTableRow {TR} at (0,2) size 365x31
-            RenderTableCell {TD} at (2,2) size 361x31 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 359x29
-                RenderTableSection {TBODY} at (0,0) size 359x29
-                  RenderTableRow {TR} at (0,2) size 359x25
+      RenderTable {TABLE} at (0,0) size 366x35
+        RenderTableSection {TBODY} at (0,0) size 366x35
+          RenderTableRow {TR} at (0,2) size 366x31
+            RenderTableCell {TD} at (2,2) size 362x31 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 360x29
+                RenderTableSection {TBODY} at (0,0) size 360x29
+                  RenderTableRow {TR} at (0,2) size 360x25
                     RenderTableCell {TH} at (2,4) size 61x21 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 59x19
                         text run at (1,2) width 59: "User ID:"
-                    RenderTableCell {TD} at (64,2) size 293x25 [r=0 c=1 rs=1 cs=1]
-                      RenderTextControl {INPUT} at (3,3) size 286x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTableCell {TD} at (64,2) size 294x25 [r=0 c=1 rs=1 cs=1]
+                      RenderTextControl {INPUT} at (3,3) size 287x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                       RenderText {#text} at (0,0) size 0x0
-layer at (82,19) size 280x13
-  RenderBlock {DIV} at (3,3) size 280x13
+layer at (82,19) size 281x13
+  RenderBlock {DIV} at (3,3) size 281x13

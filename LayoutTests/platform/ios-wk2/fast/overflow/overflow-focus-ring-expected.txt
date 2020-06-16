@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 515x19
           text run at (0,0) width 515: "The focus ring of the following div should not extend beyond the size of the div."
-layer at (8,28) size 500x400 scrollWidth 501 scrollHeight 720
+layer at (8,28) size 500x400 scrollWidth 502 scrollHeight 720
   RenderBlock {DIV} at (0,20) size 500x400
     RenderText {#text} at (0,0) size 500x719
       text run at (0,0) width 500: "............................................................................................................................."

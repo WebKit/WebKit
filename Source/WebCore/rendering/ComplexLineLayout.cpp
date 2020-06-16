@@ -2092,6 +2092,8 @@ void ComplexLineLayout::addOverflowFromInlineChildren()
 
     LayoutUnit endPadding = m_flow.hasOverflowClip() ? m_flow.paddingEnd() : 0_lu;
     // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
+    if (!endPadding)
+        endPadding = m_flow.endPaddingWidthForCaret();
     if (m_flow.hasOverflowClip() && !endPadding && m_flow.element() && m_flow.element()->isRootEditableElement() && style().isLeftToRightDirection())
         endPadding = 1;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {

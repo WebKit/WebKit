@@ -5,22 +5,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {CENTER} at (0,0) size 784x59
         RenderBlock {FORM} at (0,0) size 784x25
-          RenderTable {TABLE} at (37,0) size 710x25
-            RenderTableSection {TBODY} at (0,0) size 710x25
-              RenderTableRow {TR} at (0,0) size 710x25
+          RenderTable {TABLE} at (36,0) size 712x25
+            RenderTableSection {TBODY} at (0,0) size 711x25
+              RenderTableRow {TR} at (0,0) size 711x25
                 RenderTableCell {TD} at (0,3) size 150x19 [r=0 c=0 rs=2 cs=1]
                   RenderText {#text} at (0,0) size 4x19
                     text run at (0,1) width 4: " "
-                RenderTableCell {TD} at (150,0) size 293x25 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (2,2) size 289x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTableCell {TD} at (150,0) size 294x25 [r=0 c=1 rs=1 cs=1]
+                  RenderTextControl {INPUT} at (2,2) size 290x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (443,0) size 107x25 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (444,0) size 107x25 [r=0 c=2 rs=1 cs=1]
                   RenderButton {INPUT} at (2,2) size 103x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
                     RenderBlock (anonymous) at (8,3) size 87x15
                       RenderText at (0,0) size 87x15
                         text run at (0,0) width 87: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (550,3) size 160x19 [r=0 c=3 rs=2 cs=1]
+                RenderTableCell {TD} at (551,3) size 160x19 [r=0 c=3 rs=2 cs=1]
                   RenderInline {LABEL} at (0,0) size 119x13
                     RenderText {#text} at (0,0) size 0x0
                     RenderBlock {INPUT} at (14,3) size 13x13
@@ -29,6 +29,6 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,41) size 784x18
           RenderBR {BR} at (392,0) size 0x18
-layer at (199,13) size 285x15
-  RenderBlock {DIV} at (2,3) size 285x15
+layer at (199,13) size 286x15
+  RenderBlock {DIV} at (2,3) size 286x15
 caret: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

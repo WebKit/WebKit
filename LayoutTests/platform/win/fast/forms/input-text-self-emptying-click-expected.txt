@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x25
-        RenderTextControl {INPUT} at (2,2) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 150x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,41) size 784x36
         RenderText {#text} at (0,0) size 776x36
           text run at (0,0) width 776: "Tests clicking on an input element that has a value that self-destructs. If the test succeeds, there should be a blinking caret in"
           text run at (0,18) width 82: "the text field."
-layer at (12,13) size 145x15
-  RenderBlock {DIV} at (2,3) size 145x15
+layer at (12,13) size 146x15
+  RenderBlock {DIV} at (2,3) size 146x15
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body

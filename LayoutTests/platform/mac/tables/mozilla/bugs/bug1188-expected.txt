@@ -23,10 +23,10 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (0,0) size 81x18
                     RenderText at (8,2) size 50x13
                       text run at (8,2) width 50: "Netscape"
-                RenderTextControl {INPUT} at (266,3) size 217x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderText {#text} at (484,2) size 5x20
-                  text run at (484,3) width 5: " "
-                RenderButton {INPUT} at (490,4) size 54x18 [color=#000000D8] [bgcolor=#C0C0C0]
+                RenderTextControl {INPUT} at (266,3) size 218x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderText {#text} at (485,2) size 5x20
+                  text run at (485,3) width 5: " "
+                RenderButton {INPUT} at (491,4) size 53x18 [color=#000000D8] [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 37x13
                     RenderText at (0,0) size 37x13
                       text run at (0,0) width 37: "Search"
@@ -136,5 +136,5 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 1x1
                     RenderTableRow {TR} at (0,0) size 1x1
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
-layer at (280,80) size 210x13
-  RenderBlock {DIV} at (3,3) size 210x13
+layer at (279,80) size 211x13
+  RenderBlock {DIV} at (3,3) size 211x13

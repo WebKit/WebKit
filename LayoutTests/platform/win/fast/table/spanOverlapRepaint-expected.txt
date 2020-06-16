@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 177x51
-        RenderTableSection {TBODY} at (0,0) size 177x51
-          RenderTableRow {TR} at (0,2) size 177x2
+      RenderTable {TABLE} at (0,0) size 178x51
+        RenderTableSection {TBODY} at (0,0) size 178x51
+          RenderTableRow {TR} at (0,2) size 178x2
             RenderTableCell {TD} at (2,2) size 6x2 [r=0 c=0 rs=1 cs=1]
-          RenderTableRow {TR} at (0,6) size 177x0
+          RenderTableRow {TR} at (0,6) size 178x0
             RenderTableCell {TD} at (2,6) size 6x2 [r=1 c=0 rs=2 cs=1]
-          RenderTableRow {TR} at (0,8) size 177x0
-            RenderTableCell {TD} at (10,27) size 165x3 [r=2 c=1 rs=2 cs=1]
-          RenderTableRow {TR} at (0,10) size 177x39
-            RenderTableCell {TD} at (2,10) size 173x39 [r=3 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 171x37 [border: (2px outset #808080)]
-                RenderTableSection {TBODY} at (2,2) size 167x33
-                  RenderTableRow {TR} at (0,2) size 167x29
+          RenderTableRow {TR} at (0,8) size 178x0
+            RenderTableCell {TD} at (10,27) size 166x3 [r=2 c=1 rs=2 cs=1]
+          RenderTableRow {TR} at (0,10) size 178x39
+            RenderTableCell {TD} at (2,10) size 174x39 [r=3 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 172x37 [border: (2px outset #808080)]
+                RenderTableSection {TBODY} at (2,2) size 168x33
+                  RenderTableRow {TR} at (0,2) size 168x29
                     RenderTableCell {TD} at (2,14) size 4x5 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (8,2) size 157x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderTextControl {INPUT} at (4,4) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTableCell {TD} at (8,2) size 158x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderTextControl {INPUT} at (4,4) size 150x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                       RenderText {#text} at (0,0) size 0x0
-layer at (27,30) size 145x15
-  RenderBlock {DIV} at (2,3) size 145x15
+layer at (27,30) size 146x15
+  RenderBlock {DIV} at (2,3) size 146x15
     RenderText {#text} at (0,0) size 27x15
       text run at (0,0) width 27: "hello"

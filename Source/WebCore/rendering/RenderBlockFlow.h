@@ -402,6 +402,8 @@ public:
     void updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight);
 
     void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
+    
+    LayoutUnit endPaddingWidthForCaret() const;
 
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
@@ -653,6 +655,13 @@ inline LayoutIntegration::LineLayout* RenderBlockFlow::layoutFormattingContextLi
     return hasLayoutFormattingContextLineLayout() ? WTF::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 #endif
+
+inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
+{
+    if (element() && element()->isRootEditableElement() && hasOverflowClip() && style().isLeftToRightDirection() && !paddingEnd())
+        return caretWidth;
+    return { };
+}
 
 } // namespace WebCore
 

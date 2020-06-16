@@ -8,12 +8,12 @@ layer at (0,0) size 800x91
           RenderBlock {FORM} at (0,0) size 744x25
             RenderBlock {P} at (0,0) size 744x25
               RenderListMarker at (-17,3) size 7x18: bullet
-              RenderTextControl {INPUT} at (2,2) size 289x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (2,2) size 290x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,41) size 744x18
             RenderText {#text} at (0,0) size 332x18
               text run at (0,0) width 332: "There should be an input field above this line of text."
-layer at (52,21) size 285x15
-  RenderBlock {DIV} at (2,3) size 285x15
+layer at (52,21) size 286x15
+  RenderBlock {DIV} at (2,3) size 286x15
     RenderText {#text} at (0,0) size 58x15
       text run at (0,0) width 58: "blah blubb"

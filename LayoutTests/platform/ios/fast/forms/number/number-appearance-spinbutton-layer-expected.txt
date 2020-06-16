@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x66
   RenderBlock {HTML} at (0,0) size 800x66
     RenderBody {BODY} at (8,8) size 784x50
-      RenderBR {BR} at (139,1) size 1x19
-      RenderTextControl {INPUT} at (2,27) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderBR {BR} at (141,1) size 1x19
+      RenderTextControl {INPUT} at (2,27) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (0,0) size 0x0
-layer at (17,38) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,38) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderText {#text} at (0,0) size 13x14
       text run at (0,0) width 13: "10"
-layer at (10,10) size 135x21
-  RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-layer at (17,13) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (10,10) size 137x21
+  RenderTextControl {INPUT} at (2,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+layer at (17,13) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderText {#text} at (0,0) size 13x14
       text run at (0,0) width 13: "10"

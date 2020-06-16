@@ -34,12 +34,12 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (231,37) size 1x0
                 RenderText {#text} at (0,44) size 377x37
                   text run at (0,44) width 377: "Here are some form elements"
-                RenderTextControl {INPUT} at (378,59) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderBR {BR} at (526,73) size 1x0
+                RenderTextControl {INPUT} at (378,59) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderBR {BR} at (527,73) size 1x0
                 RenderText {#text} at (0,81) size 335x37
                   text run at (0,81) width 335: "that we can use for testing"
-                RenderTextControl {INPUT} at (337,96) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderBR {BR} at (484,110) size 1x0
+                RenderTextControl {INPUT} at (337,96) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderBR {BR} at (485,110) size 1x0
                 RenderBlock {INPUT} at (2,137) size 12x12
                 RenderText {#text} at (16,118) size 74x37
                   text run at (16,118) width 74: " Male"
@@ -97,12 +97,12 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 532x37
                   RenderText {#text} at (0,0) size 532x37
                     text run at (0,0) width 532: "This is an anchor point named \"anchor1\"."
-        layer at (390,363) size 140x13 scrollWidth 145
-          RenderBlock {DIV} at (3,3) size 140x13
+        layer at (390,363) size 141x13 scrollWidth 145
+          RenderBlock {DIV} at (3,3) size 141x13
             RenderText {#text} at (0,0) size 145x13
               text run at (0,0) width 145: "Initial text before user input"
-        layer at (348,400) size 140x13
-          RenderBlock {DIV} at (3,3) size 140x13
+        layer at (348,400) size 141x13
+          RenderBlock {DIV} at (3,3) size 141x13
         layer at (10,591) size 231x136 clip at (11,592) size 229x134
           RenderTextControl {TEXTAREA} at (2,290) size 231x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 225x26

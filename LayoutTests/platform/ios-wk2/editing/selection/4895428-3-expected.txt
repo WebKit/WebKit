@@ -17,11 +17,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 22x19
             text run at (0,0) width 22: "foo"
         RenderBlock (anonymous) at (0,20) size 784x25
-          RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderTextControl {INPUT} at (2,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderBlock {DIV} at (0,45) size 784x20
           RenderText {#text} at (0,0) size 23x19
             text run at (0,0) width 23: "baz"
-layer at (17,109) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,109) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 2 {DIV} of child 2 {DIV} of body

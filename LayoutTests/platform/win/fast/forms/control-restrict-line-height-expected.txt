@@ -20,13 +20,13 @@ layer at (0,0) size 800x600
       RenderText {#text} at (309,49) size 4x18
         text run at (309,49) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderTextControl {INPUT} at (2,79) size 161x32 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderFlexibleBox {DIV} at (3,3) size 155x26
+      RenderTextControl {INPUT} at (2,79) size 162x32 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,3) size 156x26
           RenderBlock {DIV} at (0,7) size 1x12
-          RenderBlock {DIV} at (1,0) size 142x26
-          RenderBlock {DIV} at (143,8) size 9x10
+          RenderBlock {DIV} at (1,0) size 143x26
+          RenderBlock {DIV} at (144,8) size 9x10
       RenderText {#text} at (0,0) size 0x0
-layer at (14,90) size 142x26 scrollWidth 290
-  RenderBlock {DIV} at (0,0) size 142x26
+layer at (14,90) size 143x26 scrollWidth 290
+  RenderBlock {DIV} at (0,0) size 143x26
     RenderText {#text} at (0,5) size 289x15
       text run at (0,5) width 289: "This text should be centered vertically in the button"

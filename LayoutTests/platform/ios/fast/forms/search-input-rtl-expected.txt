@@ -23,18 +23,18 @@ layer at (0,0) size 800x66
       RenderBlock {DIV} at (0,25) size 784x25
         RenderText {#text} at (0,1) size 165x19
           text run at (0,1) width 165: "left to right search fields: "
-        RenderTextControl {INPUT} at (166,2) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 123x15
+        RenderTextControl {INPUT} at (166,2) size 139x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 125x15
             RenderBlock {DIV} at (0,7) size 0x0
-            RenderBlock {DIV} at (0,0) size 123x14
-            RenderBlock {DIV} at (122,7) size 0x0
-        RenderText {#text} at (304,1) size 5x19
-          text run at (304,1) width 5: " "
-        RenderTextControl {INPUT} at (310,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 123x15
+            RenderBlock {DIV} at (0,0) size 125x14
+            RenderBlock {DIV} at (124,7) size 0x0
+        RenderText {#text} at (306,1) size 5x19
+          text run at (306,1) width 5: " "
+        RenderTextControl {INPUT} at (312,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 125x15
             RenderBlock {DIV} at (0,7) size 0x0
-            RenderBlock {DIV} at (0,0) size 123x14
-            RenderBlock {DIV} at (122,7) size 0x0
+            RenderBlock {DIV} at (0,0) size 125x14
+            RenderBlock {DIV} at (124,7) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (496,13) size 122x14
   RenderBlock {DIV} at (0,0) size 123x14
@@ -44,11 +44,11 @@ layer at (353,13) size 122x14
   RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (91,0) size 32x14
       text run at (91,0) width 32: "foobar"
-layer at (181,38) size 122x14
-  RenderBlock {DIV} at (0,0) size 123x14
+layer at (181,38) size 124x14
+  RenderBlock {DIV} at (0,0) size 125x14
     RenderText {#text} at (0,0) size 32x14
       text run at (0,0) width 32: "foobar"
-layer at (325,38) size 122x14
-  RenderBlock {DIV} at (0,0) size 123x14
+layer at (327,38) size 124x14
+  RenderBlock {DIV} at (0,0) size 125x14
     RenderText {#text} at (0,0) size 32x14
       text run at (0,0) width 32: "foobar"

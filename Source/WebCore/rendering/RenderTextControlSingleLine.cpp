@@ -306,7 +306,7 @@ float RenderTextControlSingleLine::getAverageCharWidth()
 
 LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charWidth) const
 {
-    int factor;
+    int factor = 0;
     bool includesDecoration = inputElement().sizeShouldIncludeDecoration(factor);
     if (factor <= 0)
         factor = 20;
@@ -333,6 +333,9 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
 
     if (includesDecoration)
         result += inputElement().decorationWidth();
+    
+    if (auto* innerRenderer = innerTextElement()->renderer())
+        result += innerRenderer->endPaddingWidthForCaret();
 
     return result;
 }

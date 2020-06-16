@@ -3,8 +3,6 @@ This test that fieldset.elements attribute returns an HTMLCollection and not an 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
- 
-                                        
 
 PASS elementsList instanceof HTMLCollection is true
 PASS elementsList instanceof HTMLFormControlsCollection is false

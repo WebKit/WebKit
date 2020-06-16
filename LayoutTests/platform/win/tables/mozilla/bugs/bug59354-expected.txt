@@ -33,28 +33,28 @@ layer at (0,0) size 800x600
                       RenderBlock (anonymous) at (5,5) size 444x18
                         RenderBR {BR} at (222,0) size 0x18
                       RenderTable {TABLE} at (78,23) size 298x83
-                        RenderTableSection {TBODY} at (0,0) size 297x83
-                          RenderTableRow {TR} at (0,2) size 297x79
-                            RenderTableCell {TD} at (2,2) size 293x79 [r=0 c=0 rs=1 cs=1]
-                              RenderBlock {FORM} at (1,1) size 291x61
-                                RenderTable {TABLE} at (0,0) size 291x61 [border: (1px outset #808080)]
-                                  RenderTableSection {TBODY} at (1,1) size 289x59
-                                    RenderTableRow {TR} at (0,0) size 289x59
-                                      RenderTableCell {TD} at (0,0) size 289x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                                        RenderBlock (anonymous) at (1,1) size 287x18
-                                          RenderText {#text} at (90,0) size 107x18
-                                            text run at (90,0) width 107: "User Preferences"
-                                        RenderTable {TABLE} at (1,19) size 287x39 [border: (1px outset #808080)]
-                                          RenderTableSection {TBODY} at (1,1) size 285x37
-                                            RenderTableRow {TR} at (0,1) size 285x35
+                        RenderTableSection {TBODY} at (0,0) size 298x83
+                          RenderTableRow {TR} at (0,2) size 298x79
+                            RenderTableCell {TD} at (2,2) size 294x79 [r=0 c=0 rs=1 cs=1]
+                              RenderBlock {FORM} at (1,1) size 292x61
+                                RenderTable {TABLE} at (0,0) size 292x61 [border: (1px outset #808080)]
+                                  RenderTableSection {TBODY} at (1,1) size 290x59
+                                    RenderTableRow {TR} at (0,0) size 290x59
+                                      RenderTableCell {TD} at (0,0) size 290x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                                        RenderBlock (anonymous) at (1,1) size 288x18
+                                          RenderText {#text} at (90,0) size 108x18
+                                            text run at (90,0) width 108: "User Preferences"
+                                        RenderTable {TABLE} at (1,19) size 288x39 [border: (1px outset #808080)]
+                                          RenderTableSection {TBODY} at (1,1) size 286x37
+                                            RenderTableRow {TR} at (0,1) size 286x35
                                               RenderTableCell {TH} at (1,4) size 119x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                                                 RenderInline {NOBR} at (0,0) size 109x18
                                                   RenderText {#text} at (5,5) size 109x19
                                                     text run at (5,6) width 109: "Email Address :"
-                                              RenderTableCell {TD} at (121,1) size 163x35 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                                                RenderTextControl {INPUT} at (7,7) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                                              RenderTableCell {TD} at (121,1) size 164x35 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                                                RenderTextControl {INPUT} at (7,7) size 150x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                                                 RenderText {#text} at (0,0) size 0x0
-layer at (227,99) size 145x15 scrollWidth 210
-  RenderBlock {DIV} at (2,3) size 145x15
+layer at (226,99) size 146x15 scrollWidth 210
+  RenderBlock {DIV} at (2,3) size 146x15
     RenderText {#text} at (0,0) size 209x15
       text run at (0,0) width 209: "simon.king@pipinghotnetworks.com"

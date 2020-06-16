@@ -592,7 +592,7 @@ TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
 
     EXPECT_EQ(11, selectionClipRect.origin.x);
     EXPECT_EQ(11, selectionClipRect.origin.y);
-    EXPECT_EQ(134, selectionClipRect.size.width);
+    EXPECT_EQ(136, selectionClipRect.size.width);
     EXPECT_EQ(20, selectionClipRect.size.height);
 }
 

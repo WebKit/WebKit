@@ -25,14 +25,14 @@ layer at (0,0) size 800x328
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,156) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,1) size 140x17
-            RenderBlock {DIV} at (0,1) size 127x14
+        RenderTextControl {INPUT} at (2,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,1) size 141x17
+            RenderBlock {DIV} at (0,1) size 128x14
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,195) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,1) size 140x17
-            RenderBlock {DIV} at (0,1) size 127x14
+        RenderTextControl {INPUT} at (2,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,1) size 141x17
+            RenderBlock {DIV} at (0,1) size 128x14
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,234) size 784x23
@@ -62,12 +62,12 @@ layer at (26,138) size 127x13
   RenderBlock {DIV} at (0,0) size 127x13
     RenderText {#text} at (100,0) size 27x13
       text run at (100,0) width 27: "1234"
-layer at (13,177) size 127x13
-  RenderBlock {DIV} at (0,0) size 127x13
+layer at (13,177) size 128x13
+  RenderBlock {DIV} at (0,0) size 128x13
     RenderText {#text} at (0,0) size 7x13
       text run at (0,0) width 7: "5"
-layer at (13,216) size 127x13
-  RenderBlock {DIV} at (0,0) size 127x13
+layer at (13,216) size 128x13
+  RenderBlock {DIV} at (0,0) size 128x13
     RenderText {#text} at (0,0) size 8x13
       text run at (0,0) width 8: "6"
 layer at (26,255) size 127x13
@@ -86,10 +86,10 @@ layer at (13,97) size 13x17
   RenderBlock (relative positioned) {DIV} at (0,0) size 13x17
 layer at (13,136) size 13x17
   RenderBlock (relative positioned) {DIV} at (0,0) size 13x17
-layer at (140,175) size 13x17
-  RenderBlock (relative positioned) {DIV} at (126,0) size 14x17
-layer at (140,214) size 13x17
-  RenderBlock (relative positioned) {DIV} at (126,0) size 14x17
+layer at (141,175) size 13x17
+  RenderBlock (relative positioned) {DIV} at (127,0) size 14x17
+layer at (141,214) size 13x17
+  RenderBlock (relative positioned) {DIV} at (127,0) size 14x17
 layer at (13,253) size 13x17
   RenderBlock (relative positioned) {DIV} at (0,0) size 13x17
 layer at (13,292) size 13x17

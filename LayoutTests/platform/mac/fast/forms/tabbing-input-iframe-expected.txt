@@ -6,23 +6,23 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 454x18
         text run at (0,0) width 454: "This tests that you can tab out of a text field if an iframe comes after it."
       RenderBR {BR} at (453,14) size 1x0
-      RenderTextControl {INPUT} at (2,156) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (149,156) size 5x18
-        text run at (149,156) width 5: " "
-      RenderIFrame {IFRAME} at (153,18) size 303x152 [border: (1px solid #000000)]
+      RenderTextControl {INPUT} at (2,156) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (150,156) size 5x18
+        text run at (150,156) width 5: " "
+      RenderIFrame {IFRAME} at (154,18) size 303x152 [border: (1px solid #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-      RenderText {#text} at (455,156) size 5x18
-        text run at (455,156) width 5: " "
-      RenderTextControl {INPUT} at (461,156) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (456,156) size 5x18
+        text run at (456,156) width 5: " "
+      RenderTextControl {INPUT} at (462,156) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (13,167) size 140x13
-  RenderBlock {DIV} at (3,3) size 140x13
-layer at (473,167) size 140x13
-  RenderBlock {DIV} at (3,3) size 140x13
+layer at (13,167) size 141x13
+  RenderBlock {DIV} at (3,3) size 141x13
+layer at (474,167) size 141x13
+  RenderBlock {DIV} at (3,3) size 141x13
     RenderText {#text} at (0,0) size 121x13
       text run at (0,0) width 121: "This should have focus"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

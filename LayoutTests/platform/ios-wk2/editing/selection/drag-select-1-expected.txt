@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
             text run at (0,1) width 66: "Start here."
         RenderText {#text} at (65,1) size 5x19
           text run at (65,1) width 5: " "
-        RenderTextControl {INPUT} at (71,2) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (71,2) size 139x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderBlock {UL} at (0,77) size 784x0
-layer at (86,49) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (86,49) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
 caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body

@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         text run at (0,0) width 770: "This tests that leading and trailing spaces in a text field don't get lost. There should be 3 spaces before and 3 spaces after"
         text run at (0,20) width 129: "the text in the field. "
       RenderBR {BR} at (128,35) size 1x0
-      RenderTextControl {INPUT} at (2,42) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderTextControl {INPUT} at (2,42) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (0,0) size 0x0
-layer at (17,53) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,53) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderText {#text} at (0,0) size 53x14
       text run at (0,0) width 53: "   foo bar   "

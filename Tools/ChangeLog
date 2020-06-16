@@ -1,3 +1,18 @@
+2020-06-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Text form controls can scroll by 1px when value is the same length as size. No scrolling should happen.
+        https://bugs.webkit.org/show_bug.cgi?id=212856
+        <rdar://problem/63541707>
+
+        Reviewed by Zalan Bujtas.
+
+        Rebased to reflect new sizes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         Follow-up fix: Make API tests tolerant of our relatively new use of WebPageProxy::preconnectTo

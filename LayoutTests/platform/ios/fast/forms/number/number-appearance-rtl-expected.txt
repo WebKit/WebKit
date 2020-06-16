@@ -17,10 +17,10 @@ layer at (0,0) size 800x344
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,164) size 784x25
-        RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (2,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,205) size 784x25
-        RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (2,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,246) size 784x25
@@ -46,12 +46,12 @@ layer at (17,144) size 122x14
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (97,0) size 26x14
       text run at (97,0) width 26: "1234"
-layer at (17,185) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,185) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderText {#text} at (0,0) size 7x14
       text run at (0,0) width 7: "5"
-layer at (17,226) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,226) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderText {#text} at (0,0) size 7x14
       text run at (0,0) width 7: "6"
 layer at (17,267) size 122x14

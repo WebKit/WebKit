@@ -8,10 +8,10 @@ layer at (0,0) size 800x600
         text run at (0,18) width 681: "This tests that preventDefault called onmousedown will prevent a caret from being placed in the text field."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (12,52) size 146x19
-  RenderTextControl {INPUT} at (12,52) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-layer at (15,55) size 140x13
-  RenderBlock {DIV} at (3,3) size 140x13
+layer at (12,52) size 147x19
+  RenderTextControl {INPUT} at (12,52) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (15,55) size 141x13
+  RenderBlock {DIV} at (3,3) size 141x13
     RenderText {#text} at (0,0) size 127x13
       text run at (0,0) width 127: "No caret should be here"
 layer at (10,70) size 328x36

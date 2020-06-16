@@ -72,13 +72,13 @@ layer at (0,0) size 800x698
                 text run at (0,0) width 127: "The test renders correctly."
           RenderText {#text} at (494,1) size 5x19
             text run at (494,1) width 5: " "
-          RenderInline {LABEL} at (0,0) size 212x19
+          RenderInline {LABEL} at (0,0) size 214x19
             RenderText {#text} at (498,1) size 73x19
               text run at (498,1) width 73: "Comment: "
-            RenderTextControl {INPUT} at (572,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderText {#text} at (709,1) size 5x19
-            text run at (709,1) width 5: " "
-          RenderButton {INPUT} at (715,2) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+            RenderTextControl {INPUT} at (572,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (711,1) size 5x19
+            text run at (711,1) width 5: " "
+          RenderButton {INPUT} at (717,2) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
             RenderBlock (anonymous) at (12,3) size 35x14
               RenderText at (0,0) size 35x14
                 text run at (0,0) width 35: "Submit"
@@ -116,5 +116,5 @@ layer at (0,0) size 800x698
       RenderBlock {P} at (0,640) size 784x21
         RenderText {#text} at (0,0) size 185x19
           text run at (0,0) width 185: "Last updated in March 1999."
-layer at (587,500) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (587,500) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15

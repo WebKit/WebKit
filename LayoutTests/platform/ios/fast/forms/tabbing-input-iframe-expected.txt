@@ -6,23 +6,23 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 455x19
         text run at (0,0) width 455: "This tests that you can tab out of a text field if an iframe comes after it."
       RenderBR {BR} at (454,15) size 1x0
-      RenderTextControl {INPUT} at (2,158) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderText {#text} at (139,157) size 5x19
-        text run at (139,157) width 5: " "
-      RenderIFrame {IFRAME} at (143,20) size 303x152 [border: (1px solid #000000)]
+      RenderTextControl {INPUT} at (2,158) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderText {#text} at (141,157) size 5x19
+        text run at (141,157) width 5: " "
+      RenderIFrame {IFRAME} at (145,20) size 303x152 [border: (1px solid #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-      RenderText {#text} at (445,157) size 5x19
-        text run at (445,157) width 5: " "
-      RenderTextControl {INPUT} at (451,158) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderText {#text} at (447,157) size 5x19
+        text run at (447,157) width 5: " "
+      RenderTextControl {INPUT} at (453,158) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (0,0) size 0x0
-layer at (17,169) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
-layer at (466,169) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,169) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
+layer at (468,169) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderText {#text} at (0,0) size 113x14
       text run at (0,0) width 113: "This should have focus"
-caret: position 22 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

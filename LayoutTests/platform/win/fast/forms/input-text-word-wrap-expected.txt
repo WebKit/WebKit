@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (185,0) size 299x18
           text run at (185,0) width 299: " property is ignored for single-line text controls."
       RenderBlock (anonymous) at (0,34) size 784x39
-        RenderTextControl {INPUT} at (2,0) size 149x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,0) size 150x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (12,54) size 145x15 scrollWidth 274
-  RenderBlock {DIV} at (2,12) size 145x15
+layer at (12,54) size 146x15 scrollWidth 274
+  RenderBlock {DIV} at (2,12) size 146x15
     RenderText {#text} at (0,0) size 273x15
       text run at (0,0) width 273: "This sentence should not wrap into the next line."

@@ -56,5 +56,9 @@ shouldBeFalse('inputcommonElement instanceof RadioNodeList');
 shouldBeTrue('inputcommonElement instanceof HTMLInputElement');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
+<script>
+var ele = document.getElementById("divId");
+ele.parentNode.removeChild(ele);
+</script>
 </body>
 </html>

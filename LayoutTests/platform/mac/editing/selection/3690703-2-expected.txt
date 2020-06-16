@@ -77,12 +77,12 @@ layer at (0,0) size 800x600
           RenderTable {TABLE} at (2,25) size 780x45
             RenderTableSection {TBODY} at (0,0) size 780x45
               RenderTableRow {TR} at (0,0) size 780x45
-                RenderTableCell {TD} at (0,13) size 193x19 [r=0 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (0,13) size 192x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x19
                     text run at (0,1) width 4: " "
-                RenderTableCell {TD} at (192,0) size 395x45 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (2,2) size 391x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderBR {BR} at (394,16) size 1x0
+                RenderTableCell {TD} at (191,0) size 397x45 [r=0 c=1 rs=1 cs=1]
+                  RenderTextControl {INPUT} at (2,2) size 392x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBR {BR} at (395,16) size 1x0
                   RenderButton {INPUT} at (95,25) size 94x18 [color=#000000D8] [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (8,2) size 77x13
                       RenderText at (0,0) size 77x13
@@ -91,7 +91,7 @@ layer at (0,0) size 800x600
                     RenderBlock (anonymous) at (8,2) size 91x13
                       RenderText at (0,0) size 91x13
                         text run at (0,0) width 91: "I'm Feeling Lucky"
-                RenderTableCell {TD} at (586,0) size 195x39 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (587,0) size 194x39 [r=0 c=2 rs=1 cs=1]
                   RenderInline {FONT} at (0,0) size 76x39
                     RenderText {#text} at (0,0) size 5x13
                       text run at (0,0) width 5: "  "
@@ -146,7 +146,7 @@ layer at (0,0) size 800x600
           RenderInline {FONT} at (0,0) size 60x13
             RenderText {#text} at (362,0) size 60x13
               text run at (362,0) width 60: "\x{A9}2005 Google"
-layer at (207,88) size 385x13
-  RenderBlock {DIV} at (3,3) size 385x13
+layer at (207,88) size 386x13 backgroundClip at (207,88) size 385x13 clip at (207,88) size 385x13
+  RenderBlock {DIV} at (3,3) size 386x13
 selection start: position 0 of child 3 {INPUT} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body
 selection end:   position 1 of child 2 {BR} of child 0 {FONT} of child 2 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body

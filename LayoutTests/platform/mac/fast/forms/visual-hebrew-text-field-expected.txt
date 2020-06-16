@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,1) size 286x18
           text run at (0,1) width 286 LTR override: "Text in the field should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,105) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (13,118) size 140x13
-  RenderBlock {DIV} at (3,3) size 140x13
+layer at (13,118) size 141x13
+  RenderBlock {DIV} at (3,3) size 141x13
     RenderText {#text} at (0,0) size 30x13
       text run at (0,0) width 30 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"

@@ -189,13 +189,13 @@ layer at (0,0) size 785x2589
               RenderText at (8,2) size 432x13
                 text run at (8,2) width 432: "The tests all render identically, and this browser may or may not grok CSS2 tables."
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {LABEL} at (0,0) size 222x18
+          RenderInline {LABEL} at (0,0) size 223x18
             RenderText {#text} at (0,24) size 72x18
               text run at (0,24) width 72: "Comment: "
-            RenderTextControl {INPUT} at (73,24) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (221,24) size 5x18
-            text run at (221,24) width 5: " "
-          RenderButton {INPUT} at (227,25) size 54x18 [color=#000000D8] [bgcolor=#C0C0C0]
+            RenderTextControl {INPUT} at (73,24) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (222,24) size 5x18
+            text run at (222,24) width 5: " "
+          RenderButton {INPUT} at (228,25) size 54x18 [color=#000000D8] [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 37x13
               RenderText at (0,0) size 37x13
                 text run at (0,0) width 37: "Submit"
@@ -239,5 +239,5 @@ layer at (0,0) size 785x2589
       RenderBlock {P} at (0,2533) size 769x19
         RenderText {#text} at (0,0) size 185x18
           text run at (0,0) width 185: "Last updated in March 1999."
-layer at (85,2367) size 140x13 backgroundClip at (85,2367) size 139x13 clip at (85,2367) size 139x13
-  RenderBlock {DIV} at (3,3) size 140x13
+layer at (85,2367) size 141x13 backgroundClip at (85,2367) size 140x13 clip at (85,2367) size 140x13
+  RenderBlock {DIV} at (3,3) size 141x13

@@ -8,12 +8,12 @@ layer at (0,0) size 800x600
           text run at (0,0) width 757: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn around a"
           text run at (0,18) width 78: "search field."
       RenderBlock (anonymous) at (0,52) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 173x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,0) size 167x19
+        RenderTextControl {INPUT} at (2,2) size 174x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,0) size 168x19
             RenderBlock {DIV} at (0,0) size 8x19
-            RenderBlock {DIV} at (8,3) size 140x13
-            RenderBlock {DIV} at (147,0) size 20x19
+            RenderBlock {DIV} at (8,3) size 141x13
+            RenderBlock {DIV} at (148,0) size 20x19
         RenderText {#text} at (0,0) size 0x0
-layer at (21,65) size 140x13
-  RenderBlock {DIV} at (0,0) size 140x13
+layer at (21,65) size 141x13
+  RenderBlock {DIV} at (0,0) size 141x13
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

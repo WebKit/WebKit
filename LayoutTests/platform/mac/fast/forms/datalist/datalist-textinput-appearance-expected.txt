@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x39
   RenderBlock {HTML} at (0,0) size 800x39
     RenderBody {BODY} at (8,8) size 784x23
-      RenderTextControl {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderFlexibleBox {DIV} at (3,3) size 140x13
-          RenderBlock {DIV} at (0,0) size 128x13
+      RenderTextControl {INPUT} at (2,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,3) size 141x13
+          RenderBlock {DIV} at (0,0) size 129x13
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (13,13) size 128x13
-  RenderBlock {DIV} at (0,0) size 128x13
+layer at (13,13) size 129x13
+  RenderBlock {DIV} at (0,0) size 129x13

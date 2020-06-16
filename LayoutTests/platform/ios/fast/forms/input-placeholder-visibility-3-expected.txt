@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 390x19
           text run at (0,0) width 390: "Focus field with a placeholder, then type, then delete all text."
       RenderBlock {DIV} at (0,36) size 784x25
-        RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (2,2) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (17,49) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15 [color=#A9A9A9]
+layer at (17,49) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 59x14
       text run at (0,0) width 59: "Placeholder"
-layer at (17,49) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,49) size 124x14
+  RenderBlock {DIV} at (6,3) size 125x15
     RenderBR {BR} at (0,0) size 0x14
 caret: position 0 of child 0 {BR} of child 1 {DIV} of {#document-fragment} of child 1 {INPUT} of child 3 {DIV} of body
