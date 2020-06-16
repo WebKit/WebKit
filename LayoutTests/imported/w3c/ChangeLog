@@ -1,3 +1,19 @@
+2020-06-16  Darryl Pogue  <darryl@dpogue.ca>
+
+        IndexedDB: Support IDBFactory databases method
+        https://bugs.webkit.org/show_bug.cgi?id=211043
+
+        Reviewed by Youenn Fablet.
+
+        Adjust test expectations for `IDBFactory.prototype.databases()`.
+
+        * web-platform-tests/IndexedDB/get-databases.any-expected.txt:
+        * web-platform-tests/IndexedDB/get-databases.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin-expected.txt:
+        * web-platform-tests/IndexedDB/idbfactory-origin-isolation-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+
 2020-06-15  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Update WPT tests for FileAPI

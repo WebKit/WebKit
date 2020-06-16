@@ -1,3 +1,19 @@
+2020-06-16  Darryl Pogue  <darryl@dpogue.ca>
+
+        IndexedDB: Support IDBFactory databases method
+        https://bugs.webkit.org/show_bug.cgi?id=211043
+
+        Reviewed by Youenn Fablet.
+
+        Plumbing for returning a list of IDB databases and versions.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::getAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::didGetAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::getAllDatabaseNames): Deleted.
+        (InProcessIDBServer::didGetAllDatabaseNames): Deleted.
+        * Storage/InProcessIDBServer.h:
+
 2020-06-12  Keith Rollin  <krollin@apple.com>
 
         Add dependencies for Migrate Headers and Generate Export Files build phases

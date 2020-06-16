@@ -1,4 +1,4 @@
 
-FAIL IDBFactory.databases() in non-sandboxed iframe should not reject assert_equals: IDBFactory.databases() should not reject expected "no exception" but got "indexedDB.databases undefined"
-FAIL IDBFactory.databases() in sandboxed iframe should reject assert_equals: Promise should be rejected with SecurityError expected "SecurityError" but got "indexedDB.databases undefined"
+PASS IDBFactory.databases() in non-sandboxed iframe should not reject 
+PASS IDBFactory.databases() in sandboxed iframe should reject 
 

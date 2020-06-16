@@ -39,6 +39,8 @@ class IDBError;
 class IDBResourceIdentifier;
 class IDBResultData;
 
+struct IDBDatabaseNameAndVersion;
+
 namespace IDBServer {
 
 class UniqueIDBDatabaseConnection;
@@ -74,7 +76,7 @@ public:
 
     void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
 
-    void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
+    void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, Vector<IDBDatabaseNameAndVersion>&&);
 
     void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
     void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
