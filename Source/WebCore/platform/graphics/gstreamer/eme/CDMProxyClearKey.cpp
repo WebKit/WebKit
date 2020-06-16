@@ -64,9 +64,28 @@ static bool readUInt16(const uint8_t* buffer, size_t bufferSize, size_t& offset,
 
 } // namespace {}
 
+CDMProxyFactoryClearKey& CDMProxyFactoryClearKey::singleton()
+{
+    static NeverDestroyed<CDMProxyFactoryClearKey> s_factory;
+    return s_factory;
+}
+
+RefPtr<CDMProxy> CDMProxyFactoryClearKey::createCDMProxy(const String& keySystem)
+{
+    ASSERT_UNUSED(keySystem, supportsKeySystem(keySystem));
+    return adoptRef(new CDMProxyClearKey());
+}
+
+bool CDMProxyFactoryClearKey::supportsKeySystem(const String& keySystem)
+{
+    // `org.w3.clearkey` is the only supported key system.
+    return equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey");
+}
+
 CDMProxyClearKey::~CDMProxyClearKey()
 {
-    gcry_cipher_close(m_gcryHandle);
+    if (m_gCryptHandle)
+        gcry_cipher_close(*m_gCryptHandle);
 }
 
 bool CDMProxyClearKey::cencSetCounterVector(const cencDecryptContext& input)
@@ -83,7 +102,7 @@ bool CDMProxyClearKey::cencSetCounterVector(const cencDecryptContext& input)
     } else
         memcpy(ctr, input.iv, ClearKey::IVSizeInBytes);
 
-    if (gcry_error_t cipherError = gcry_cipher_setctr(m_gcryHandle, ctr, ClearKey::IVSizeInBytes)) {
+    if (gcry_error_t cipherError = gcry_cipher_setctr(gCryptHandle(), ctr, ClearKey::IVSizeInBytes)) {
 #if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_setctr): %s", gpg_strerror(cipherError));
 #else
@@ -107,7 +126,7 @@ bool CDMProxyClearKey::cencSetDecryptionKey(const cencDecryptContext& in)
     if (!keyData)
         return false;
 
-    if (gcry_error_t cipherError = gcry_cipher_setkey(m_gcryHandle, keyData->data(), keyData->size())) {
+    if (gcry_error_t cipherError = gcry_cipher_setkey(gCryptHandle(), keyData->data(), keyData->size())) {
 #if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_setkey): %s", gpg_strerror(cipherError));
 #else
@@ -126,7 +145,7 @@ bool CDMProxyClearKey::cencDecryptFullSample(cencDecryptContext& in)
 
     LOG(EME, "EME - CDMProxyClearKey - full-sample decryption: %zu encrypted bytes", in.encryptedBufferSizeInBytes);
 
-    if (gcry_error_t cipherError = gcry_cipher_decrypt(m_gcryHandle, in.encryptedBuffer, in.encryptedBufferSizeInBytes, 0, 0)) {
+    if (gcry_error_t cipherError = gcry_cipher_decrypt(gCryptHandle(), in.encryptedBuffer, in.encryptedBufferSizeInBytes, 0, 0)) {
 #if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_decrypt): %s", gpg_strerror(cipherError));
 #else
@@ -170,7 +189,7 @@ bool CDMProxyClearKey::cencDecryptSubsampled(cencDecryptContext& input)
         if (subsampleNumEncryptedBytes) {
             LOG(EME, "EME - subsample index %u - %u bytes encrypted (%lu bytes left to decrypt)", subsampleIndex, subsampleNumEncryptedBytes, input.encryptedBufferSizeInBytes - encryptedBufferByteOffset);
 
-            if (gcry_error_t cipherError = gcry_cipher_decrypt(m_gcryHandle, input.encryptedBuffer + encryptedBufferByteOffset, subsampleNumEncryptedBytes, 0, 0)) {
+            if (gcry_error_t cipherError = gcry_cipher_decrypt(gCryptHandle(), input.encryptedBuffer + encryptedBufferByteOffset, subsampleNumEncryptedBytes, 0, 0)) {
 #if !LOG_DISABLED
                 LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_decrypt): %s", gpg_strerror(cipherError));
 #else
@@ -194,16 +213,21 @@ bool CDMProxyClearKey::cencDecrypt(CDMProxyClearKey::cencDecryptContext& input)
     return input.isSubsampled() ? cencDecryptSubsampled(input) : cencDecryptFullSample(input);
 }
 
-void CDMProxyClearKey::initializeGcrypt()
+gcry_cipher_hd_t& CDMProxyClearKey::gCryptHandle()
 {
-    if (gcry_error_t error = gcry_cipher_open(&m_gcryHandle, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CTR, GCRY_CIPHER_SECURE)) {
+    if (!m_gCryptHandle) {
+        m_gCryptHandle.emplace();
+        if (gcry_error_t error = gcry_cipher_open(&m_gCryptHandle.value(), GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CTR, GCRY_CIPHER_SECURE)) {
 #if !LOG_DISABLED
-        LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_open): %s", gpg_strerror(error));
+            LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_open): %s", gpg_strerror(error));
 #else
-        UNUSED_VARIABLE(error);
+            UNUSED_VARIABLE(error);
 #endif
-        RELEASE_ASSERT(false && "Should not get this far with a functional GCrypt!");
+            RELEASE_ASSERT(false && "Should not get this far with a functional GCrypt!");
+        }
     }
+
+    return *m_gCryptHandle;
 }
 
 } // namespace WebCore

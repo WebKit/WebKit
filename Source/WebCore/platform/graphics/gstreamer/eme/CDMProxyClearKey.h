@@ -36,18 +36,31 @@
 #include "SharedBuffer.h"
 #include <gcrypt.h>
 #include <wtf/Condition.h>
+#include <wtf/Optional.h>
 #include <wtf/VectorHash.h>
 
 namespace WebCore {
+
+class CDMProxyFactoryClearKey final : public CDMProxyFactory {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static CDMProxyFactoryClearKey& singleton();
+
+    ~CDMProxyFactoryClearKey() = default;
+
+private:
+    friend class NeverDestroyed<CDMProxyFactoryClearKey>;
+
+    CDMProxyFactoryClearKey() = default;
+    RefPtr<CDMProxy> createCDMProxy(const String&) final;
+    bool supportsKeySystem(const String&) final;
+};
 
 // This is the thread-safe API that decode threads should use to make use of a
 // platform CDM module.
 class CDMProxyClearKey final : public CDMProxy, public CanMakeWeakPtr<CDMProxyClearKey, WeakPtrFactoryInitialization::Eager> {
 public:
-    CDMProxyClearKey()
-    {
-        initializeGcrypt();
-    }
+    CDMProxyClearKey() = default;
     virtual ~CDMProxyClearKey();
 
     // FIXME: There's a lack of consistency between SharedBuffers,
@@ -88,7 +101,7 @@ public:
     bool cencDecrypt(cencDecryptContext&);
 
 private:
-    void initializeGcrypt();
+    gcry_cipher_hd_t& gCryptHandle();
 
     // FIXME: For now we only support AES in CTR mode, in the future
     // we will surely have to support more protection schemes. Can we
@@ -99,7 +112,7 @@ private:
     bool cencDecryptSubsampled(cencDecryptContext&);
 
     // FIXME: It would be nice to use something in WebCore for crypto...
-    gcry_cipher_hd_t m_gcryHandle;
+    Optional<gcry_cipher_hd_t> m_gCryptHandle { WTF::nullopt };
 };
 
 } // namespace WebCore

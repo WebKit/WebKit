@@ -93,6 +93,7 @@ public:
 
 class CDMInstanceClearKey final : public CDMInstanceProxy, public CanMakeWeakPtr<CDMInstanceClearKey> {
 public:
+    CDMInstanceClearKey();
     virtual ~CDMInstanceClearKey();
 
     // CDMInstance

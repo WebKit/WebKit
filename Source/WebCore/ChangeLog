@@ -1,3 +1,52 @@
+2020-06-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME] Create CDMProxyFactory
+        https://bugs.webkit.org/show_bug.cgi?id=212695
+
+        Reviewed by Youenn Fablet.
+
+        Currently in the GStreamer port we have the CDMProxy cabled in the
+        player private and set to the instance. Setting this too late can
+        create key sync issues that are worked around. This does not seem
+        to be needed because it can be created in the constructor from a
+        CDMProxyFactory if we just use the key system that we already
+        have.
+
+        This patch declares a CDMProxyFactory that is used in the
+        CDMInstanceProxy to instantiate the proper CDMProxy in its
+        constructor.
+
+        CDMProxyFactoryClearKey is created and added to the GStreamer
+        platform CDMProxyFactories.
+
+        Initializing too fast creates flakyness in several ClearKey tests
+        because of asking for protected memory so we need to initialize it
+        in a lazy way.
+
+        No new tests, just a rework.
+
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::CDMProxyFactory::registerFactory):
+        (WebCore::CDMProxyFactory::unregisterFactory):
+        (WebCore::CDMProxyFactory::createCDMProxyForKeySystem):
+        (WebCore::CDMProxyFactory::platformRegisterFactories):
+        * platform/encryptedmedia/CDMProxy.h:
+        (WebCore::CDMProxyFactory::~CDMProxyFactory):
+        (WebCore::CDMInstanceProxy::CDMInstanceProxy):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::CDMInstanceClearKey):
+        (WebCore::CDMInstanceClearKey::keySystem const):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceAttached):
+        * platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp:
+        (WebCore::CDMProxyFactory::platformRegisterFactories):
+        * platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp:
+        (WebCore::CDMProxyFactoryClearKey::singleton):
+        (WebCore::CDMProxyFactoryClearKey::createCDMProxy):
+        (WebCore::CDMProxyFactoryClearKey::supportsKeySystem):
+        * platform/graphics/gstreamer/eme/CDMProxyClearKey.h:
+
 2020-06-16  youenn fablet  <youenn@apple.com>
 
         Make sure MediaRecorder.requestData returns data with the new writer backend

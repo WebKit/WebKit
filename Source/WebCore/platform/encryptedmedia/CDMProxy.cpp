@@ -38,6 +38,47 @@
 
 namespace WebCore {
 
+Vector<CDMProxyFactory*>& CDMProxyFactory::registeredFactories()
+{
+    static auto factories = makeNeverDestroyed(platformRegisterFactories());
+    return factories;
+}
+
+void CDMProxyFactory::registerFactory(CDMProxyFactory& factory)
+{
+    ASSERT(!registeredFactories().contains(&factory));
+    registeredFactories().append(&factory);
+}
+
+void CDMProxyFactory::unregisterFactory(CDMProxyFactory& factory)
+{
+    ASSERT(registeredFactories().contains(&factory));
+    registeredFactories().removeAll(&factory);
+}
+
+RefPtr<CDMProxy> CDMProxyFactory::createCDMProxyForKeySystem(const String& keySystem)
+{
+    RefPtr<CDMProxy> cdmProxy;
+    for (auto* factory : CDMProxyFactory::registeredFactories()) {
+        if (factory->supportsKeySystem(keySystem)) {
+            cdmProxy = factory->createCDMProxy(keySystem);
+            break;
+        }
+    }
+#if USE(GSTREAMER)
+    ASSERT(cdmProxy);
+#endif
+    return cdmProxy;
+}
+
+#if !USE(GSTREAMER)
+Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
+{
+    Vector<CDMProxyFactory*> factories;
+    return factories;
+}
+#endif
+
 namespace {
 
 static String vectorToHexString(const Vector<uint8_t>& vec)

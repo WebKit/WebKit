@@ -31,13 +31,21 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMClearKey.h"
+#include "CDMProxyClearKey.h"
 
 namespace WebCore {
 
 void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
 {
     factories.append(&CDMFactoryClearKey::singleton());
+}
+
+Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
+{
+    Vector<CDMProxyFactory*> factories;
+    factories.reserveInitialCapacity(1);
+    factories.uncheckedAppend(&CDMProxyFactoryClearKey::singleton());
+    return factories;
 }
 
 } // namespace WebCore
