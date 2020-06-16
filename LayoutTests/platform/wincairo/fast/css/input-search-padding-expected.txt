@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTextControl {INPUT} at (2,2) size 483x81 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderFlexibleBox {DIV} at (3,3) size 477x46
+      RenderTextControl {INPUT} at (2,2) size 484x81 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,3) size 478x46
           RenderBlock {DIV} at (0,17) size 1x12
-          RenderBlock {DIV} at (1,0) size 452x46
-          RenderBlock {DIV} at (453,12) size 21x22
-      RenderBR {BR} at (487,42) size 0x0
-      RenderTextControl {INPUT} at (2,87) size 459x81 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (463,127) size 0x0
-      RenderTextControl {INPUT} at (2,170) size 256x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderFlexibleBox {DIV} at (6,0) size 244x25
+          RenderBlock {DIV} at (1,0) size 453x46
+          RenderBlock {DIV} at (454,12) size 21x22
+      RenderBR {BR} at (488,42) size 0x0
+      RenderTextControl {INPUT} at (2,87) size 460x81 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (464,127) size 0x0
+      RenderTextControl {INPUT} at (2,170) size 257x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (6,0) size 245x25
           RenderBlock {DIV} at (0,7) size 1x11
-          RenderBlock {DIV} at (1,0) size 226x25
-          RenderBlock {DIV} at (227,5) size 14x15
-layer at (14,13) size 452x46
-  RenderBlock {DIV} at (0,0) size 452x46
+          RenderBlock {DIV} at (1,0) size 227x25
+          RenderBlock {DIV} at (228,5) size 14x15
+layer at (14,13) size 453x46
+  RenderBlock {DIV} at (0,0) size 453x46
     RenderText {#text} at (0,0) size 364x46
       text run at (0,0) width 364: "value jgq not clipped"
-layer at (12,98) size 455x46
-  RenderBlock {DIV} at (2,3) size 455x46
+layer at (12,98) size 456x46
+  RenderBlock {DIV} at (2,3) size 456x46
     RenderText {#text} at (0,0) size 364x46
       text run at (0,0) width 364: "value jgq not clipped"
-layer at (17,178) size 226x25
-  RenderBlock {DIV} at (0,0) size 226x25
+layer at (17,178) size 227x25
+  RenderBlock {DIV} at (0,0) size 227x25
     RenderText {#text} at (0,0) size 115x25
       text run at (0,0) width 115: "Sample Input"

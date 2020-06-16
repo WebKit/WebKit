@@ -1,3 +1,26 @@
+2020-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening after r263073
+
+        * platform/wincairo/editing/inserting/before-after-input-element-expected.txt:
+        * platform/wincairo/editing/selection/3690703-2-expected.txt:
+        * platform/wincairo/editing/selection/3690703-expected.txt:
+        * platform/wincairo/editing/selection/3690719-expected.txt:
+        * platform/wincairo/editing/selection/4895428-3-expected.txt:
+        * platform/wincairo/editing/selection/4975120-expected.txt:
+        * platform/wincairo/editing/selection/drag-select-1-expected.txt:
+        * platform/wincairo/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/wincairo/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/wincairo/fast/css/input-search-padding-expected.txt:
+        * platform/wincairo/fast/css/line-height-expected.txt:
+        * platform/wincairo/fast/css/text-overflow-input-expected.txt:
+        * platform/wincairo/fast/events/context-no-deselect-expected.txt:
+        * platform/wincairo/fast/html/details-no-summary4-expected.txt:
+        * platform/wincairo/fast/html/details-open-javascript-expected.txt:
+        * platform/wincairo/fast/html/details-open2-expected.txt:
+        * platform/wincairo/fast/html/details-open4-expected.txt:
+        * platform/wincairo/fast/text/textIteratorNilRenderer-expected.txt:
+
 2020-06-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update baselines after r263073.
