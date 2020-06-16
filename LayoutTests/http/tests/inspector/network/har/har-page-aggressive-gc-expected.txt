@@ -14,7 +14,7 @@ HAR Page Test.
       {
         "startedDateTime": "<filtered>",
         "id": "page_0",
-        "title": "http://127.0.0.1:8000/inspector/network/har/har-page.html",
+        "title": "http://127.0.0.1:8000/inspector/network/har/har-page-aggressive-gc.html",
         "pageTimings": {
           "onContentLoad": "<filtered>",
           "onLoad": "<filtered>"
@@ -28,7 +28,7 @@ HAR Page Test.
         "time": "<filtered>",
         "request": {
           "method": "GET",
-          "url": "http://127.0.0.1:8000/inspector/network/har/har-page.html",
+          "url": "http://127.0.0.1:8000/inspector/network/har/har-page-aggressive-gc.html",
           "httpVersion": "<filtered>",
           "cookies": [],
           "headers": "<filtered>",

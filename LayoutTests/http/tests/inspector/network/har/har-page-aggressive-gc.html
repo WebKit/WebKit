@@ -83,16 +83,26 @@ function test()
         name: "HAR.Basic.Page",
         description: "Should be able to generate a HAR with all of this test page's resources.",
         async test() {
-            InspectorTest.reloadPage({ignoreCache: true});
-            await InspectorTest.awaitEvent("LoadComplete");
-            InspectorTest.evaluateInPage("setup()");
-            await InspectorTest.awaitEvent("SetupComplete");
+            await NetworkAgent.setResourceCachingDisabled(true);
+
+            await Promise.all([
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.reloadPage({ignoreCache: true}),
+            ]);
+
+            await Promise.all([
+                InspectorTest.awaitEvent("SetupComplete"),
+                InspectorTest.evaluateInPage(`setup()`),
+            ]);
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
             let har = await WI.HARBuilder.buildArchive(resources);
             InspectorTest.json(har, HARJSONFilter);
-            InspectorTest.evaluateInPage("cleanup()");
-            await InspectorTest.awaitEvent("CleanComplete");
+
+            await Promise.all([
+                InspectorTest.awaitEvent("CleanComplete"),
+                InspectorTest.evaluateInPage(`cleanup()`),
+            ]);
         }
     });
 

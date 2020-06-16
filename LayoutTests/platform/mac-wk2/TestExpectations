@@ -959,9 +959,6 @@ webkit.org/b/207864 webgpu/whlsl/do-while-loop-continue.html [ Pass ImageOnlyFai
 
 webkit.org/b/207938 http/wpt/crypto/derive-hmac-key-crash.any.html [ Pass Crash ]
 
-webkit.org/b/207954 http/tests/inspector/network/har/har-page.html [ Pass Failure ]
-webkit.org/b/207954 http/tests/inspector/network/har/har-page-aggressive-gc.html [ Pass Failure ]
-
 webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html [ Slow ]
 
 webkit.org/b/208005 webgpu/whlsl/zero-initialize-values.html [ Pass ImageOnlyFailure ]

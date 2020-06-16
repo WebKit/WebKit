@@ -1,3 +1,19 @@
+2020-06-16  Devin Rousso  <drousso@apple.com>
+
+        [ Mac wk2 ] http/tests/inspector/network/har/har-page.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207954
+        <rdar://problem/59599895>
+
+        Reviewed by Maciej Stachowiak.
+
+        * http/tests/inspector/network/har/har-page.html:
+        * http/tests/inspector/network/har/har-page-aggressive-gc.html:
+        * http/tests/inspector/network/har/har-page-aggressive-gc-expected.txt:
+        Explicitly disable resource caching as the test reloads the page and expects resource load
+        metrics to be populated/valid.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Update baselines after r263073.
