@@ -1,3 +1,20 @@
+2020-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        Provide alternatively-named WKBrowsingContextGroup SPI
+        https://bugs.webkit.org/show_bug.cgi?id=213229
+
+        Reviewed by Tim Horton.
+
+        This is unfortunately still used. In order to try to convince the user to make the smallest change possible, make newly named SPI that behaves identically.
+        Doubly-deprecate the old SPI and implement it in terms of the new during the transition period.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup addUserStyleSheet:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:mainFrameOnly:]):
+        (-[WKBrowsingContextGroup addUserStyleSheet:baseURL:includeMatchPatternStrings:excludeMatchPatternStrings:mainFrameOnly:]):
+        (-[WKBrowsingContextGroup addUserScript:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:injectionTime:mainFrameOnly:]):
+        (-[WKBrowsingContextGroup addUserScript:baseURL:includeMatchPatternStrings:excludeMatchPatternStrings:injectionTime:mainFrameOnly:]):
+
 2020-06-16  Youenn Fablet  <youenn@apple.com>
 
         Loads triggered by an opaque stylesheet should not be visible to service workers

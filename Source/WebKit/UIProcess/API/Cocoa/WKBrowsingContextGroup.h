@@ -35,10 +35,13 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKUserContentController and WKPreferences"
 
 /* User Content */
 
-- (void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly;
+- (void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly WK_API_DEPRECATED_WITH_REPLACEMENT("addUserStyleSheet:baseURL:includeMatchPatternStrings:excludeMatchPatternStrings:mainFrameOnly:", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL includeMatchPatternStrings:(NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray<NSString *> *)excludeMatchPatternStrings mainFrameOnly:(BOOL)mainFrameOnly;
+
 - (void)removeAllUserStyleSheets;
 
-- (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(_WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly;
+- (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(_WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly WK_API_DEPRECATED_WITH_REPLACEMENT("addUserScript:baseURL:includeMatchPatternStrings:excludeMatchPatternStrings:injectionTime:mainFrameOnly:", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL includeMatchPatternStrings:(NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray<NSString *> *)excludeMatchPatternStrings injectionTime:(_WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly;
 - (void)removeAllUserScripts;
 
 
