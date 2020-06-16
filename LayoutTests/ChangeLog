@@ -1,3 +1,51 @@
+2020-06-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update baselines after r263073.
+
+        * platform/wpe/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/wpe/fast/css/line-height-expected.txt:
+        * platform/wpe/fast/css/text-overflow-input-expected.txt:
+        * platform/wpe/fast/events/context-no-deselect-expected.txt:
+        * platform/wpe/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/wpe/fast/html/details-no-summary4-expected.txt:
+        * platform/wpe/fast/html/details-open-javascript-expected.txt:
+        * platform/wpe/fast/html/details-open2-expected.txt:
+        * platform/wpe/fast/html/details-open4-expected.txt:
+        * platform/wpe/fast/lists/dynamic-marker-crash-expected.txt:
+        * platform/wpe/fast/replaced/replaced-breaking-expected.txt:
+        * platform/wpe/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/wpe/fast/table/colspanMinWidth-expected.txt:
+        * platform/wpe/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/wpe/fast/table/text-field-baseline-expected.txt:
+        * platform/wpe/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/wpe/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/wpe/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/wpe/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/wpe/svg/hixie/mixed/003-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug12384-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug55545-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug99948-expected.txt:
+        * platform/wpe/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/wpe/tables/mozilla/other/move_row-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+        * platform/wpe/transforms/3d/general/perspective-non-layer-expected.txt:
+
 2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Garden flaky failures after r263069.
