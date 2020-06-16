@@ -9,6 +9,7 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 - freedesktop-sdk.bst:components/sqlite.bst
 - freedesktop-sdk.bst:components/expat.bst
+- freedesktop-sdk.bst:components/perl.bst
 - test-infra/apr.bst
 - test-infra/apr-util.bst
 
@@ -30,14 +31,21 @@ config:
     %{make}
 
   - |
-    cd subversion/bindings/swig/perl/native && perl Makefile.PL PREFIX="%{prefix}" DESTDIR="%{install-root}"
+    make swig-pl-lib
 
   install-commands:
   - |
     %{make-install}
 
   - |
-    make -C subversion/bindings/swig/perl/native install
+    make install-swig-pl-lib PREFIX="%{prefix}" DESTDIR="%{install-root}"
+    cd subversion/bindings/swig/perl/native && perl Makefile.PL PREFIX="%{prefix}" DESTDIR="%{install-root}" && make install
 
   - |
     find "%{install-root}" -type f -name perllocal.pod -delete
+
+public:
+  bst:
+    integration-commands:
+    - |
+      perl -w -e "use SVN::Base qw(Core);"

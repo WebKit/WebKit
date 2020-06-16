@@ -1,5 +1,16 @@
 2020-06-16  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Subversion perl bindings unusable
+        https://bugs.webkit.org/show_bug.cgi?id=213241
+
+        Reviewed by Sergio Villar Senin.
+
+        * buildstream/elements/sdk/subversion.bst: The svn swig perl library wasn't correctly
+        installed, leading to undefined symbols when importing it from the bindings. A new
+        integration command now tests this.
+
+2020-06-16  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Update to Qt 5.15
         https://bugs.webkit.org/show_bug.cgi?id=213192
 
