@@ -1,12 +1,11 @@
 kind: qmake
-description: json2bst conversion of qt5/qtdeclarative
 
 depends:
 - qt5/qtbase.bst
 
 sources:
 - kind: tar
-  url: http://download.qt.io/archive/qt/5.14/5.14.1/submodules/qtdeclarative-everywhere-src-5.14.1.tar.xz
-  ref: 762fe495d2f97fd70f06dc7d3929506ea3b5e3151ad813e0629209b7bc504c8a
+  url: qt:5.15/5.15.0/submodules/qtdeclarative-everywhere-src-5.15.0.tar.xz
+  ref: 9c3c93fb7d340b2f7d738d12408c047318c78973cb45bfc5ff6b3a57e1fef699
 - kind: patch
   path: patches/qtdeclarative-use-python3.patch

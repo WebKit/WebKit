@@ -1,3 +1,22 @@
+2020-06-16  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to Qt 5.15
+        https://bugs.webkit.org/show_bug.cgi?id=213192
+
+        Reviewed by Sergio Villar Senin.
+
+        The new patch comes from the upstream KDE SDK: https://github.com/KDE/flatpak-kde-runtime/tree/qt5.15lts/patch
+        
+        * buildstream/elements/qt5/qtbase.bst:
+        * buildstream/elements/qt5/qtdeclarative.bst:
+        * buildstream/elements/qt5/qtquickcontrols.bst:
+        * buildstream/elements/qt5/qtquickcontrols2.bst:
+        * buildstream/elements/qt5/qtwayland.bst:
+        * buildstream/elements/qt5/qtx11extras.bst:
+        * buildstream/patches/qtbase-make-sure-to-correctly-construct-base-platform-theme.patch: Added.
+        * buildstream/patches/qtwayland-use-gnome-platform-theme-on-gnome-based-desktops.patch: Removed.
+        * buildstream/project.conf:
+
 2020-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to configure and enable resource load statistics

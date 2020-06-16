@@ -52,10 +52,6 @@ config:
   - |
     make -j1 INSTALL_ROOT=%{install-root} install
 
-    #  - |
-    #    rm -f "%{install-root}%{libdir}"/*.a
-    #    rm -f "%{install-root}%{libdir}/lib"/*.la
-
 public:
   bst:
     split-rules:
@@ -65,11 +61,13 @@ public:
 
 sources:
 - kind: tar
-  url: http://download.qt.io/archive/qt/5.14/5.14.1/submodules/qtbase-everywhere-src-5.14.1.tar.xz
-  ref: d9d423a6e7bcf1055c0372fc029f14a6fe67dd62c67b83095cde68b60b762cf7
+  url: qt:5.15/5.15.0/submodules/qtbase-everywhere-src-5.15.0.tar.xz
+  ref: 9e7af10aece15fa9500369efde69cb220eee8ec3a6818afe01ce1e7d484824c5
 - kind: patch
   path: patches/qtbase-avoid-hardcoding-kernel-version.patch
 - kind: patch
   path: patches/qtbase-use-wayland-on-gnome.patch
 - kind: patch
   path: patches/qtbase-revert-correct-handling-for-xdg-runtime-dir.patch
+- kind: patch
+  path: patches/qtbase-make-sure-to-correctly-construct-base-platform-theme.patch

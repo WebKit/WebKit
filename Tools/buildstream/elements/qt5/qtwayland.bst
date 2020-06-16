@@ -6,7 +6,5 @@ depends:
 
 sources:
 - kind: tar
-  url: http://ftp1.nluug.nl/languages/qt/archive/qt/5.14/5.14.1/submodules/qtwayland-everywhere-src-5.14.1.tar.xz
-  ref: 2a03b9f554e88c5824ef237c814b3dd45844c022e97be0e091f4a502ca4c9520
-- kind: patch
-  path: patches/qtwayland-use-gnome-platform-theme-on-gnome-based-desktops.patch
+  url: qt:5.15/5.15.0/submodules/qtwayland-everywhere-src-5.15.0.tar.xz
+  ref: 084133e10bfbd32a28125639660c59975f23457bba6a79b30a25802cec76a9fb
