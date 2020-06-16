@@ -1,3 +1,23 @@
+2020-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update fast/text/international/system-language/navigator-language tests
+        <rdar://problem/64047392>
+
+        Unreviewed.
+
+        Update to new behavior of +[NSLocale minimizedLanguagesFromLanguages:].
+
+        * fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-en-US.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-ES.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-MX.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html:
+
 2020-06-16  Eric Carlson  <eric.carlson@apple.com>
 
         Don't claim to support fullscreen mode unless fullScreenEnabled setting is enabled

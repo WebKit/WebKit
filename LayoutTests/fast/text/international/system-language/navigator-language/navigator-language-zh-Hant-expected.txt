@@ -1,4 +1,4 @@
-PASS navigator.language is "zh-tw"
+PASS navigator.language is "zh-hant"
 PASS successfullyParsed is true
 
 TEST COMPLETE
