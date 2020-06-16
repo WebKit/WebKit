@@ -63,4 +63,9 @@
     attribute unrestricted double coneInnerAngle;
     attribute unrestricted double coneOuterAngle;
     attribute unrestricted double coneOuterGain;
+    
+    // Position of audio source in 3D Cartesian system
+    readonly attribute AudioParam positionX;
+    readonly attribute AudioParam positionY;
+    readonly attribute AudioParam positionZ;
 };

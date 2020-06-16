@@ -1,11 +1,11 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Stereo panner.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Mono panner.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Stereo panner.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Mono panner.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Stereo panner.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Mono panner.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Stereo panner.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "Mono panner.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "Stereo panner.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "Mono panner.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "Stereo panner.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "Mono panner.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
 FAIL Executing "Stereo listener.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
 FAIL Executing "Mono listener.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
 FAIL Executing "Stereo listener.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"

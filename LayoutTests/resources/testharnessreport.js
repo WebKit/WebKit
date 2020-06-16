@@ -28,6 +28,8 @@ if (self.testRunner) {
             Object.defineProperty(self, "AudioContext", Object.getOwnPropertyDescriptor(self, "webkitAudioContext"));
         if (window.webkitOfflineAudioContext && !window.OfflineAudioContext)
             Object.defineProperty(self, "OfflineAudioContext", Object.getOwnPropertyDescriptor(self, "webkitOfflineAudioContext"));
+        if (window.webkitAudioPannerNode && !window.PannerNode)
+            Object.defineProperty(self, "PannerNode", Object.getOwnPropertyDescriptor(self, "webkitAudioPannerNode"));
     }
 
     if (testRunner.setStatisticsShouldDowngradeReferrer) 

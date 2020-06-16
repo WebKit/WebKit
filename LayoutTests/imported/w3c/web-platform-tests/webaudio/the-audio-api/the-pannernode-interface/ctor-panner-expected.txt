@@ -2,23 +2,25 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: Right hand side of instanceof is not an object"
+FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
 FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
-FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PannerNode"
+FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.panningModel')"
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new PannerNode() threw TypeError: "undefined is not a constructor (evaluating 'new window[name]()')". 
-PASS   new PannerNode(1) threw TypeError: "undefined is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new PannerNode(context, 42) threw TypeError: "undefined is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new PannerNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
+PASS   new PannerNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
+PASS   new PannerNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new PannerNode(context) incorrectly threw TypeError: "undefined is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+FAIL X node0 = new PannerNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+FAIL X node0 instanceof PannerNode is not equal to true. Got false. assert_true: expected true got false
 PASS > [test AudioNodeOptions]  
-FAIL X node1 = new PannerNode(c, {"channelCount":1}) incorrectly threw ReferenceError: "Can't find variable: PannerNode". assert_true: expected true got false
+FAIL X node1 = new PannerNode(c, {"channelCount":1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, options)')". assert_true: expected true got false
 PASS > [constructor with options]  
-FAIL X node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.4142135623730951,"positionY":2.8284271247461903,"positionZ":4.242640687119286,"orientationX":-1.4142135623730951,"orientationY":-2.8284271247461903,"orientationZ":-4.242640687119286,"distanceModel":"linear","refDistance":3.141592653589793,"maxDistance":6.283185307179586,"rolloffFactor":9.42477796076938,"coneInnerAngle":12.566370614359172,"coneOuterAngle":15.707963267948966,"coneOuterGain":0.3141592653589793}) incorrectly threw ReferenceError: "Can't find variable: PannerNode". assert_true: expected true got false
+FAIL X node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.4142135623730951,"positionY":2.8284271247461903,"positionZ":4.242640687119286,"orientationX":-1.4142135623730951,"orientationY":-2.8284271247461903,"orientationZ":-4.242640687119286,"distanceModel":"linear","refDistance":3.141592653589793,"maxDistance":6.283185307179586,"rolloffFactor":9.42477796076938,"coneInnerAngle":12.566370614359172,"coneOuterAngle":15.707963267948966,"coneOuterGain":0.3141592653589793}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, options)')". assert_true: expected true got false
+FAIL X node instanceof PannerNode is not equal to true. Got false. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
 

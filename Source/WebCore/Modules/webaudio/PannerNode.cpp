@@ -52,6 +52,9 @@ PannerNode::PannerNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_panningModel(PanningModelType::HRTF)
     , m_lastGain(-1.0)
+    , m_positionX(AudioParam::create(context, "positionX"_s, 0, -FLT_MAX, FLT_MAX))
+    , m_positionY(AudioParam::create(context, "positionY"_s, 0, -FLT_MAX, FLT_MAX))
+    , m_positionZ(AudioParam::create(context, "positionZ"_s, 0, -FLT_MAX, FLT_MAX))
     , m_connectionCount(0)
 {
     setNodeType(NodeTypePanner);
@@ -70,7 +73,6 @@ PannerNode::PannerNode(AudioContext& context, float sampleRate)
     m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
 
-    m_position = FloatPoint3D(0, 0, 0);
     m_orientation = FloatPoint3D(1, 0, 0);
     m_velocity = FloatPoint3D(0, 0, 0);
 
@@ -189,6 +191,18 @@ void PannerNode::setPanningModel(PanningModelType model)
     }
 }
 
+FloatPoint3D PannerNode::position() const
+{
+    return FloatPoint3D(m_positionX->value(), m_positionY->value(), m_positionZ->value());
+}
+
+void PannerNode::setPosition(float x, float y, float z)
+{
+    m_positionX->setValue(x);
+    m_positionY->setValue(y);
+    m_positionZ->setValue(z);
+}
+
 DistanceModelType PannerNode::distanceModel() const
 {
     return const_cast<PannerNode*>(this)->m_distanceEffect.model();
@@ -207,7 +221,7 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
 
     // Calculate the source-listener vector
     FloatPoint3D listenerPosition = listener()->position();
-    FloatPoint3D sourceListener = m_position - listenerPosition;
+    FloatPoint3D sourceListener = position() - listenerPosition;
 
     if (sourceListener.isZero()) {
         // degenerate case if source and listener are at the same point
@@ -283,7 +297,7 @@ float PannerNode::dopplerRate()
         if (sourceHasVelocity || listenerHasVelocity) {
             // Calculate the source to listener vector
             FloatPoint3D listenerPosition = listener()->position();
-            FloatPoint3D sourceToListener = m_position - listenerPosition;
+            FloatPoint3D sourceToListener = position() - listenerPosition;
 
             double sourceListenerMagnitude = sourceToListener.length();
 
@@ -314,14 +328,15 @@ float PannerNode::dopplerRate()
 float PannerNode::distanceConeGain()
 {
     FloatPoint3D listenerPosition = listener()->position();
+    FloatPoint3D sourcePosition = position();
 
-    double listenerDistance = m_position.distanceTo(listenerPosition);
+    double listenerDistance = sourcePosition.distanceTo(listenerPosition);
     double distanceGain = m_distanceEffect.gain(listenerDistance);
     
     m_distanceGain->setValue(static_cast<float>(distanceGain));
 
     // FIXME: could optimize by caching coneGain
-    double coneGain = m_coneEffect.gain(m_position, m_orientation, listenerPosition);
+    double coneGain = m_coneEffect.gain(sourcePosition, m_orientation, listenerPosition);
     
     m_coneGain->setValue(static_cast<float>(coneGain));
 

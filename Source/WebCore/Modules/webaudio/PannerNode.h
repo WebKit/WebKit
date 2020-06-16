@@ -73,11 +73,14 @@ public:
     void setPanningModel(PanningModelType);
 
     // Position
-    FloatPoint3D position() const { return m_position; }
-    void setPosition(float x, float y, float z) { m_position = FloatPoint3D(x, y, z); }
+    FloatPoint3D position() const;
+    void setPosition(float x, float y, float z);
+    AudioParam& positionX() { return m_positionX.get(); }
+    AudioParam& positionY() { return m_positionY.get(); }
+    AudioParam& positionZ() { return m_positionZ.get(); }
 
     // Orientation
-    FloatPoint3D orientation() const { return m_position; }
+    FloatPoint3D orientation() const { return m_orientation; }
     void setOrientation(float x, float y, float z) { m_orientation = FloatPoint3D(x, y, z); }
 
     // Velocity
@@ -130,7 +133,6 @@ private:
     std::unique_ptr<Panner> m_panner;
     PanningModelType m_panningModel;
 
-    FloatPoint3D m_position;
     FloatPoint3D m_orientation;
     FloatPoint3D m_velocity;
 
@@ -140,6 +142,10 @@ private:
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
     float m_lastGain;
+    
+    Ref<AudioParam> m_positionX;
+    Ref<AudioParam> m_positionY;
+    Ref<AudioParam> m_positionZ;
 
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;

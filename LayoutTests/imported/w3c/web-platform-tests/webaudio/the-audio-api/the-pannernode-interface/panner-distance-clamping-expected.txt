@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "ref-distance-error" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PannerNode"
-FAIL Executing "max-distance-error" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PannerNode"
+FAIL Executing "ref-distance-error" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
+FAIL Executing "max-distance-error" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
 FAIL Executing "min-distance" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {
           type: 'sawtooth',
           frequency: 20 * 440,
@@ -12,13 +12,13 @@ FAIL Executing "max-distance" promise_test: Unhandled rejection with value: obje
         })')"
 PASS Audit report 
 PASS > [ref-distance-error]  
-FAIL X new PannerNode(c, {refDistance: -1}) threw "ReferenceError" instead of EcmaScript error RangeError. assert_true: expected true got false
-FAIL X new PannerNode(c, {refDistance: 0}) incorrectly threw ReferenceError: "Can't find variable: PannerNode". assert_true: expected true got false
-FAIL X new PannerNode(c, {refDistance: 5e-324}) incorrectly threw ReferenceError: "Can't find variable: PannerNode". assert_true: expected true got false
+FAIL X new PannerNode(c, {refDistance: -1}) threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
+FAIL X new PannerNode(c, {refDistance: 0}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, nodeOptions)')". assert_true: expected true got false
+FAIL X new PannerNode(c, {refDistance: 5e-324}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, nodeOptions)')". assert_true: expected true got false
 PASS > [max-distance-error]  
-FAIL X new PannerNode(c, {maxDistance: -1}) threw "ReferenceError" instead of EcmaScript error RangeError. assert_true: expected true got false
-FAIL X new PannerNode(c, {maxDistance: 0}) threw "ReferenceError" instead of EcmaScript error RangeError. assert_true: expected true got false
-FAIL X new PannerNode(c, {maxDistance: 5e-324}) incorrectly threw ReferenceError: "Can't find variable: PannerNode". assert_true: expected true got false
+FAIL X new PannerNode(c, {maxDistance: -1}) threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
+FAIL X new PannerNode(c, {maxDistance: 0}) threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
+FAIL X new PannerNode(c, {maxDistance: 5e-324}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, nodeOptions)')". assert_true: expected true got false
 PASS > [min-distance]  
 PASS > [max-distance]  
 FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 4 tasks were failed. assert_true: expected true got false
