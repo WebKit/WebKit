@@ -1,3 +1,25 @@
+2020-06-16  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r262994): Web Inspector is killed when context-clicking anywhere
+        <https://webkit.org/b/213224>
+        <rdar://problem/64383320>
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.h:
+        - Include <WebCore/ContextMenuItem.h> since the definition of
+          the custom WTF::isValidEnum<WebCore::ContextMenuAction>
+          function is needed.
+        * Scripts/webkit/messages.py:
+        (generate_message_names_header):
+        - Change the third typename in the template for
+          WTF::isValidEnum<IPC::MessageName>() to avoid partial template
+          specialization errors from other implementations like
+          WTF::isValidEnum<WebCore::ContextMenuAction>().
+        - Also replace hard-coded "IPC::MessageName" names with template
+          values.
+
 2020-06-16  Chris Dumez  <cdumez@apple.com>
 
         Stop calling userPreferredLanguages() in the UIProcess

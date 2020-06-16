@@ -1,3 +1,36 @@
+2020-06-16  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r262994): Web Inspector is killed when context-clicking anywhere
+        <https://webkit.org/b/213224>
+        <rdar://problem/64383320>
+
+        Reviewed by Darin Adler.
+
+        Test: TestWebKitAPI.WebCore.ContextMenuAction_IsValidEnum
+
+        The issue is that using WTF::isValidEnum() with
+        WTF::EnumTraits<WebCore::ContextMenuAction> didn't explicitly
+        list all 1000 custom tags, or any application tags (besides the
+        base), so the unlisted tags were marked as invalid during enum
+        validation.
+
+        The fix is to define a custom validation function for
+        WebCore::ContextMenuAction enum values.
+
+        * platform/ContextMenuItem.h:
+        (WTF::isValidEnum):
+
+        * platform/ContextMenuItem.cpp:
+        (WebCore::isValidContextMenuAction): Add.
+        - Validates CustomTag and ApplicationTag ranges.
+        * platform/ContextMenuItem.h:
+        (WebCore::isValidContextMenuAction): Add declaration.
+        (WTF::EnumTraits<WebCore::ContextMenuAction>): Delete.
+        (WTF::HasCustomIsValidEnum<WebCore::ContextMenuAction>): Add.
+        (WTF::isValidEnum): Add.
+        - Call WebCore::isValidContextMenuAction() to validate all enum
+          values.
+
 2020-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Visual Studio] CSSPropertyNames.h is generated twice in WebCore.vcxproj and WebCore_CopyPrivateHeaders.vcxproj

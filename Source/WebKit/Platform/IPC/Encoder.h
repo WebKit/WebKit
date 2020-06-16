@@ -29,6 +29,7 @@
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "StringReference.h"
+#include <WebCore/ContextMenuItem.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 

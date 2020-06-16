@@ -1,3 +1,18 @@
+2020-06-16  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r262994): Web Inspector is killed when context-clicking anywhere
+        <https://webkit.org/b/213224>
+        <rdar://problem/64383320>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add ContextMenuAction.cpp to build systems.
+        * TestWebKitAPI/Tests/WebCore/ContextMenuAction.cpp: Add.
+        (TestWebKitAPI::TEST):
+        - Add TestWebKitAPI.WebCore.ContextMenuAction_IsValidEnum.
+
 2020-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Mouse dragging tests are failing because WebKitTestRunner dispatches WM_MOUSELEAVE to the hidden WebView
