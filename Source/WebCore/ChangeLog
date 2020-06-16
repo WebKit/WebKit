@@ -1,3 +1,28 @@
+2020-06-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Collecting screen properties in the UI process introduced a Safari launch time regression.
+        https://bugs.webkit.org/show_bug.cgi?id=213217
+        <rdar://problem/64374461>
+
+        Reviewed by Brent Fulgham.
+
+        Calling collectScreenProperties() in WebProcessPool::platformInitializeWebProcess() introduced a Safari launch time regression on iOS.
+        It turns out that calling screenIsMonochrome on iOS is expensive, but this call can still be done in the WebContent process, since there
+        are no sandbox restrictions making that call fail in the WebContent process. Call this function in the WebContent process instead of in
+        the UI process.
+
+        No new tests, since this change should not introduce a change in behavior. It goes back to calling the screenIsMonochrome function in the
+        WebContent process.
+
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenIsMonochrome):
+        (WebCore::collectScreenProperties):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+
 2020-06-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME] Create CDMProxyFactory

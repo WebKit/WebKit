@@ -44,9 +44,9 @@ struct ScreenData {
     int screenDepthPerComponent { 0 };
     bool screenSupportsExtendedColor { false };
     bool screenHasInvertedColors { false };
-    bool screenIsMonochrome { false };
     bool screenSupportsHighDynamicRange { false };
 #if PLATFORM(MAC)
+    bool screenIsMonochrome { false };
     uint32_t displayMask { 0 };
     IORegistryGPUID gpuID { 0 };
 #endif
@@ -92,10 +92,10 @@ Optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
 template<class Encoder>
 void ScreenData::encode(Encoder& encoder) const
 {
-    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenIsMonochrome << screenSupportsHighDynamicRange;
+    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenSupportsHighDynamicRange;
 
 #if PLATFORM(MAC)
-    encoder << displayMask << gpuID;
+    encoder << screenIsMonochrome << displayMask << gpuID;
 #endif
 
     if (colorSpace) {
@@ -154,17 +154,17 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
     if (!screenHasInvertedColors)
         return WTF::nullopt;
 
-    Optional<bool> screenIsMonochrome;
-    decoder >> screenIsMonochrome;
-    if (!screenIsMonochrome)
-        return WTF::nullopt;
-
     Optional<bool> screenSupportsHighDynamicRange;
     decoder >> screenSupportsHighDynamicRange;
     if (!screenSupportsHighDynamicRange)
         return WTF::nullopt;
 
 #if PLATFORM(MAC)
+    Optional<bool> screenIsMonochrome;
+    decoder >> screenIsMonochrome;
+    if (!screenIsMonochrome)
+        return WTF::nullopt;
+
     Optional<uint32_t> displayMask;
     decoder >> displayMask;
     if (!displayMask)
@@ -215,9 +215,9 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
         WTFMove(*screenDepthPerComponent),
         WTFMove(*screenSupportsExtendedColor),
         WTFMove(*screenHasInvertedColors),
-        WTFMove(*screenIsMonochrome),
         WTFMove(*screenSupportsHighDynamicRange),
 #if PLATFORM(MAC)
+        WTFMove(*screenIsMonochrome),
         WTFMove(*displayMask),
         WTFMove(*gpuID)
 #endif

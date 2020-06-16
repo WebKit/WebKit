@@ -60,9 +60,6 @@ int screenDepthPerComponent(Widget*)
 
 bool screenIsMonochrome(Widget*)
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
-        return data->screenIsMonochrome;
-    
     return PAL::softLinkUIKitUIAccessibilityIsGrayscaleEnabled();
 }
 
@@ -203,9 +200,8 @@ ScreenProperties collectScreenProperties()
         int screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
         bool screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
         bool screenHasInvertedColors = WebCore::screenHasInvertedColors();
-        bool screenIsMonochrome = WebCore::screenIsMonochrome(nullptr);
 
-        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome });
+        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors });
         
         if (screen == [PAL::getUIScreenClass() mainScreen])
             screenProperties.primaryDisplayID = displayID;
