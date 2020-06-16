@@ -2611,7 +2611,7 @@ ALWAYS_INLINE static bool canDoFastPutDirectIndex(VM& vm, JSObject* object)
         || jsDynamicCast<JSFinalObject*>(vm, object);
 }
 
-// Defined in ES5.1 8.12.9
+// https://tc39.es/ecma262/#sec-ordinarydefineownproperty
 bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned index, const PropertyDescriptor& descriptor, bool throwException)
 {
     VM& vm = globalObject->vm();
@@ -2622,11 +2622,21 @@ bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned i
     ensureWritable(vm);
 
     if (!inSparseIndexingMode()) {
+        const PropertyDescriptor emptyAttributesDescriptor(jsUndefined(), static_cast<unsigned>(PropertyAttribute::None));
+        ASSERT(emptyAttributesDescriptor.attributes() == static_cast<unsigned>(PropertyAttribute::None));
+
+#if ASSERT_ENABLED
+        if (canGetIndexQuickly(index) && canDoFastPutDirectIndex(vm, this)) {
+            PropertyDescriptor currentDescriptor;
+            ASSERT(getOwnPropertyDescriptor(globalObject, Identifier::from(vm, index), currentDescriptor));
+            scope.assertNoException();
+            ASSERT(currentDescriptor.attributes() == emptyAttributesDescriptor.attributes());
+        }
+#endif
         // Fast case: we're putting a regular property to a regular array
-        // FIXME: this will pessimistically assume that if attributes are missing then they'll default to false
-        // however if the property currently exists missing attributes will override from their current 'true'
-        // state (i.e. defineOwnProperty could be used to set a value without needing to entering 'SparseMode').
-        if (!descriptor.attributes() && descriptor.value() && canDoFastPutDirectIndex(vm, this)) {
+        if (descriptor.value()
+            && (!descriptor.attributes() || (canGetIndexQuickly(index) && !descriptor.attributesOverridingCurrent(emptyAttributesDescriptor)))
+            && canDoFastPutDirectIndex(vm, this)) {
             ASSERT(!descriptor.isAccessorDescriptor());
             RELEASE_AND_RETURN(scope, putDirectIndex(globalObject, index, descriptor.value(), 0, throwException ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow));
         }

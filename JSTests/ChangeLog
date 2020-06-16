@@ -1,3 +1,14 @@
+2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Expand JSObject::defineOwnIndexedProperty() fast path for existing properties
+        https://bugs.webkit.org/show_bug.cgi?id=213133
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/array-redefine-index-and-reverse.js: Added.
+        * microbenchmarks/array-redefine-index.js: Added.
+        * stress/define-own-indexed-property-fast-path.js: Added.
+
 2020-06-15  Caio Lima  <ticaiolima@gmail.com>
 
         [ARMv7][MIPS][JSC] Skip check-is-constant-non-cell-should-not-array-profile-during-osr-exit.js

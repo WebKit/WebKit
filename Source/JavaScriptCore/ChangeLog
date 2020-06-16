@@ -1,3 +1,24 @@
+2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Expand JSObject::defineOwnIndexedProperty() fast path for existing properties
+        https://bugs.webkit.org/show_bug.cgi?id=213133
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch expands fast path of JSObject::defineOwnIndexedProperty() to cover existing properties
+        if given data descriptor has no falsy attributes, preventing the object from entering SparseMode.
+        The optimization is possible due to this invariant: indexed properties of non-SparseMode objects
+        have attributes of PropertyAttribute::None (except for typed arrays; added assert covers it).
+
+        PropertyDescriptor::attributesOverridingCurrent() with PropertyAttribute::None descriptor
+        is used to support partial descriptors like {value: 1, writable: true}.
+
+        This change advances Object.defineProperty microbenchmark by 35%; array read/write benchmark
+        following property redefinition is progressed by a factor of 16 due to avoiding SparseMode.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnIndexedProperty):
+
 2020-06-15  Robin Morisset  <rmorisset@apple.com>
 
         testB3::testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead() has a validation failure in debug mode
