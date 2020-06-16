@@ -1468,16 +1468,16 @@ void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
 
     {
         // Make every reg 42 (just needs to be a value other than 10).
-        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
         Value* const42 = root->appendNew<Const32Value>(proc, Origin(), 42);
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
         for (Reg reg : allRegs)
             patchpoint->append(const42, ValueRep::reg(reg));
         patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
     }
 
     {
-        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
         Value* const10 = root->appendNew<Const32Value>(proc, Origin(), 10);
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
         for (Reg reg : allRegs)
             patchpoint->append(const10, ValueRep::lateReg(reg));
         patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) {

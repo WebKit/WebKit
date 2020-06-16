@@ -35,19 +35,8 @@ bool shouldRun(const char* filter, const char* testName)
     // FIXME: These tests fail <https://bugs.webkit.org/show_bug.cgi?id=199330>.
     if (!filter && isARM64()) {
         for (auto& failingTest : {
-            "testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead",
             "testNegFloatWithUselessDoubleConversion",
             "testPinRegisters",
-        }) {
-            if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound) {
-                dataLogLn("*** Warning: Skipping known-bad test: ", testName);
-                return false;
-            }
-        }
-    }
-    if (!filter && isX86()) {
-        for (auto& failingTest : {
-            "testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead",
         }) {
             if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound) {
                 dataLogLn("*** Warning: Skipping known-bad test: ", testName);

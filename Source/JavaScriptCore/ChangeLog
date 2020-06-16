@@ -1,3 +1,19 @@
+2020-06-15  Robin Morisset  <rmorisset@apple.com>
+
+        testB3::testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead() has a validation failure in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=196103
+        <rdar://problem/57808549>
+
+        Reviewed by Keith Miller.
+
+        The problem was trivial: patchpoints were referring to constants that were defined after them.
+        Just exchanging the order of the definition was enough to make this test pass.
+
+        * b3/testb3_1.cpp:
+        (shouldRun):
+        * b3/testb3_7.cpp:
+        (testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead):
+
 2020-06-15  Mark Lam  <mark.lam@apple.com>
 
         Do not install the VMTraps signal handler if Options::useJIT=false.
