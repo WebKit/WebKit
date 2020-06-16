@@ -1261,8 +1261,6 @@ webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Fa
 
 webkit.org/b/169324 media/track/media-element-enqueue-event-crash.html [ Pass Failure ]
 
-webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
-
 webkit.org/b/169637 imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html [ Pass Failure ]
 
 # <rdar://problem/19759913>
