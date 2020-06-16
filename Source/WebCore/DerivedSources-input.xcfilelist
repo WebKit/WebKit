@@ -423,6 +423,7 @@ $(PROJECT_DIR)/Modules/webvr/VRFrameData.idl
 $(PROJECT_DIR)/Modules/webvr/VRLayerInit.idl
 $(PROJECT_DIR)/Modules/webvr/VRPose.idl
 $(PROJECT_DIR)/Modules/webvr/VRStageParameters.idl
+$(PROJECT_DIR)/Modules/webxr/XRInteractionMode.idl
 $(PROJECT_DIR)/Resources/plugIns.js
 $(PROJECT_DIR)/Scripts/GenerateSettings.rb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb

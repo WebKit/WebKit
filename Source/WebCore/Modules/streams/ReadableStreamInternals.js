@@ -137,7 +137,7 @@ function readableStreamTee(stream, shouldClone)
         reason2: @undefined,
     };
 
-    teeState.cancelPromiseCapability = @newPromiseCapability(@InternalPromise);
+    teeState.cancelPromiseCapability = @newPromiseCapability(@Promise);
 
     const pullFunction = @readableStreamTeePullFunction(teeState, reader, shouldClone);
 
