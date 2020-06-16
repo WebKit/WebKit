@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#if OS(UNIX)
 
 #include <signal.h>
 #include <tuple>
@@ -154,4 +154,4 @@ using WTF::SignalHandler;
 using WTF::addSignalHandler;
 using WTF::activateSignalHandlersFor;
 
-#endif // USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#endif // OS(UNIX)

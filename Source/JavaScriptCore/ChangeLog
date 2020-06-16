@@ -1,3 +1,17 @@
+2020-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        WTF signal machinery is guarded by #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT) but does not use pthreads or machine context
+        https://bugs.webkit.org/show_bug.cgi?id=213223
+
+        Reviewed by Mark Lam.
+
+        Use #if OS(UNIX) here too. This should fix stress/ensure-crash.js when
+        HAVE(MACHINE_CONTEXT) is false.
+
+        * jsc.cpp:
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+
 2020-06-15  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: introduce request interception

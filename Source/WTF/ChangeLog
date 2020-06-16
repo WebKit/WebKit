@@ -1,3 +1,16 @@
+2020-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        WTF signal machinery is guarded by #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT) but does not use pthreads or machine context
+        https://bugs.webkit.org/show_bug.cgi?id=213223
+
+        Reviewed by Mark Lam.
+
+        Use #if OS(UNIX) instead.
+
+        * wtf/WTFConfig.h:
+        * wtf/threads/Signals.cpp:
+        * wtf/threads/Signals.h:
+
 2020-06-15  Keith Miller  <keith_miller@apple.com>
 
         REGRESSION (r263045): TestWTF.Signals.SignalsWorkOnExit crashing

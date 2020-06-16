@@ -2888,7 +2888,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -m         Execute as a module\n");
-#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#if OS(UNIX)
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only, lldb will not work with this option) \n");
 #endif
     fprintf(stderr, "  -p <file>  Outputs profiling data to a file\n");
@@ -2980,7 +2980,7 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
         if (!strcmp(arg, "-s")) {
-#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#if OS(UNIX)
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
                 dataLogLn("Signal handler hit. Exiting with status 0");
                 _exit(0);

@@ -67,7 +67,7 @@ struct Config {
 
     bool isPermanentlyFrozen;
 
-#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#if OS(UNIX)
     SignalHandlers signalHandlers;
 #endif
     PtrTagLookup* ptrTagLookupHead;

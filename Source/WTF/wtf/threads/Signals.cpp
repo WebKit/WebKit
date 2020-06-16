@@ -26,7 +26,7 @@
 #include "config.h"
 #include <wtf/threads/Signals.h>
 
-#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#if OS(UNIX)
 
 #if HAVE(MACH_EXCEPTIONS)
 extern "C" {
@@ -417,4 +417,4 @@ void SignalHandlers::initialize()
 
 } // namespace WTF
 
-#endif // USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+#endif // OS(UNIX)
