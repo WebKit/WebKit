@@ -1,3 +1,24 @@
+2020-06-16  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix build with !HAVE(MACHINE_CONTEXT)
+        https://bugs.webkit.org/show_bug.cgi?id=213223
+        <rdar://problem/64390209>
+
+        Reviewed by Yusuke Suzuki.
+
+        In r263074, I messed up and broke the build with !HAVE(MACHINE_CONTEXT). Even though the
+        sole purpose of that commit was to fix !HAVE(MACHINE_CONTEXT), I must have somehow messed up
+        when testing my change.
+
+        Anyway, we can just create an empty PlatformRegisters object when HAVE(MACHINE_CONTEXT) is
+        false. At first, I was worried that passing an empty PlatformRegisters could be open to
+        misuse, but it's actually hard to misuse it because the only sensible thing you can do with
+        it is pass it to MachineContext, and you can't use MachineContext outside
+        HAVE(MACHINE_CONTEXT), so we should be good.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::jscSignalHandler):
+
 2020-06-16  Chris Dumez  <cdumez@apple.com>
 
         Stop calling userPreferredLanguages() in the UIProcess

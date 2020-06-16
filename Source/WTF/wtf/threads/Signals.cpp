@@ -47,6 +47,7 @@ extern "C" {
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PlatformRegisters.h>
 #include <wtf/ThreadGroup.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFConfig.h>
@@ -362,7 +363,11 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
     if (signal == Signal::AccessFault)
         sigInfo.faultingAddress = info->si_addr;
 
+#if HAVE(MACHINE_CONTEXT)
     PlatformRegisters& registers = registersFromUContext(reinterpret_cast<ucontext_t*>(ucontext));
+#else
+    PlatformRegisters registers { };
+#endif
 
     bool didHandle = false;
     bool restoreDefaultHandler = false;
