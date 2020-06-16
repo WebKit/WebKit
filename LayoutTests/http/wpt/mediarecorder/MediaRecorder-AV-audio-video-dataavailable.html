@@ -91,13 +91,13 @@
             player.onseeked = t.step_func(() => {
                 resContext.drawImage(player, 0, 0);
                 if (!mode) {
-                    _assertPixelApprox(resFrame, 25, 25, 255, 0, 0, 255, "25, 25", "255, 0, 0, 255", 20);
-                    _assertPixelApprox(resFrame, 50, 50, 255, 0, 0, 255, "50, 50", "255, 0, 0, 255", 20);
+                    _assertPixelApprox(resFrame, 25, 25, 255, 0, 0, 255, "25, 25", "255, 0, 0, 255", 50);
+                    _assertPixelApprox(resFrame, 50, 50, 255, 0, 0, 255, "50, 50", "255, 0, 0, 255", 50);
                     mode = 1;
                     player.currentTime = player.duration - 0.05;
                 } else {
-                    _assertPixelApprox(resFrame, 20, 20, 0, 255, 0, 255, "20, 20", "0, 255, 0, 255", 20);
-                    _assertPixelApprox(resFrame, 199, 199, 0, 255, 0, 255, "199, 199", "0, 255, 0, 255", 20);
+                    _assertPixelApprox(resFrame, 20, 20, 0, 255, 0, 255, "20, 20", "0, 255, 0, 255", 50);
+                    _assertPixelApprox(resFrame, 199, 199, 0, 255, 0, 255, "199, 199", "0, 255, 0, 255", 50);
                     t.done();
                 }
             });

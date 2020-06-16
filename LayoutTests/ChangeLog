@@ -1,3 +1,13 @@
+2020-06-16  Youenn Fablet  <youenn@apple.com>
+
+        Increase pixel check tolerance for http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html
+        https://bugs.webkit.org/show_bug.cgi?id=213237
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html:
+        Increase pixel tolerance as we encode/decode video which might create some artefacts.
+
 2020-06-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <address> element should no longer map to ARIA `contentinfo` role
