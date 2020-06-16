@@ -1,3 +1,16 @@
+2020-06-16  youenn fablet  <youenn@apple.com>
+
+        Make sure MediaRecorder.requestData returns data with the new writer backend
+        https://bugs.webkit.org/show_bug.cgi?id=206929
+
+        Reviewed by Darin Adler.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-requestData.html
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::fetchData):
+        Flush data whenever calling fetchData.
+
 2020-06-16  Darryl Pogue  <darryl@dpogue.ca>
 
         IndexedDB: Support IDBFactory databases method

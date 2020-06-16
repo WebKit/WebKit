@@ -479,8 +479,30 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedB
         return;
     }
 
-    auto buffer = WTFMove(m_data);
-    completionHandler(WTFMove(buffer));
+    if (m_hasStartedWriting) {
+        flushCompressedSampleBuffers([this, weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)]() mutable {
+            if (!weakThis) {
+                completionHandler(nullptr);
+                return;
+            }
+
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            [m_writer flush];
+            ALLOW_DEPRECATED_DECLARATIONS_END
+
+            callOnMainThread([this, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
+                if (!weakThis) {
+                    completionHandler(nullptr);
+                    return;
+                }
+
+                completionHandler(std::exchange(m_data, nullptr));
+            });
+        });
+        return;
+    }
+
+    completionHandler(std::exchange(m_data, nullptr));
 }
 
 void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
