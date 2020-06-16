@@ -2935,7 +2935,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
 
     if (node && node->hasTagName(addressTag))
-        return AccessibilityRole::LandmarkContentInfo;
+        return AccessibilityRole::Group;
 
     if (node && node->hasTagName(blockquoteTag))
         return AccessibilityRole::Blockquote;

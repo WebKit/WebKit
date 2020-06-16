@@ -1,6 +1,5 @@
 header
 aside
-address
 main
 nav
 article
@@ -10,13 +9,11 @@ This tests that HTML5 elements which have implicit landmark and related semantic
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS test.childrenCount is 7
+PASS test.childrenCount is 6
 PASS el.role is "AXRole: AXGroup"
 PASS el.subrole is "AXSubrole: AXLandmarkBanner"
 PASS el.role is "AXRole: AXGroup"
 PASS el.subrole is "AXSubrole: AXLandmarkComplementary"
-PASS el.role is "AXRole: AXGroup"
-PASS el.subrole is "AXSubrole: AXLandmarkContentInfo"
 PASS el.role is "AXRole: AXGroup"
 PASS el.subrole is "AXSubrole: AXLandmarkMain"
 PASS el.role is "AXRole: AXGroup"

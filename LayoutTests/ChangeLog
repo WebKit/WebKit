@@ -1,3 +1,17 @@
+2020-06-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <address> element should no longer map to ARIA `contentinfo` role
+        https://bugs.webkit.org/show_bug.cgi?id=212617
+        <rdar://problem/63848604>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/landmark-not-ignored-expected.txt:
+        * accessibility/mac/landmark-not-ignored.html:
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/win/accessibility/roles-exposed-expected.txt:
+
 2020-06-16  Jason Lawrence  <lawrence.j@apple.com>
 
         [iOS wk2] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html is flaky timing out.

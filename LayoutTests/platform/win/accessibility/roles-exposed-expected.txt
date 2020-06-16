@@ -26,8 +26,8 @@ abbr[title]
       
 address
       AXRole: AXGroup
-      AXSubrole: AXLandmarkContentInfo
-      AXRoleDescription: content information
+      AXSubrole: 
+      AXRoleDescription: group
       
 article
       AXRole: AXGroup

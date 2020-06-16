@@ -8,7 +8,6 @@
 <div id="test" tabindex="-1">
 <header><div>header</div></header>
 <aside><div>aside</div></aside>
-<address><div>address</div></address>
 <main><div>main</div></main>
 <nav><div>nav</div></nav>
 <article><div>article</div></article>
@@ -24,12 +23,11 @@
 
     if (window.accessibilityController) {
         var test = accessibilityController.accessibleElementById("test");
-        shouldBe("test.childrenCount", "7");
+        shouldBe("test.childrenCount", "6");
 
         var subroles = [
             "AXLandmarkBanner",
             "AXLandmarkComplementary",
-            "AXLandmarkContentInfo",
             "AXLandmarkMain",
             "AXLandmarkNavigation",
             "AXDocumentArticle",
