@@ -122,7 +122,7 @@ def plt5Breakdown(jsonObject):
 def displayStr(value):
     return "{:.6f}".format(float(value))
 
-def computeMultipleHypothesesSignficance(a, b):
+def computeMultipleHypothesesSignificance(a, b):
     # This is using the Benjamini-Hochberg procedure based on False Discovery Rate
     # for computing signifcance in multiple hypothesis testing 
     # Read more here:
@@ -151,18 +151,18 @@ def computeMultipleHypothesesSignficance(a, b):
     sortedPValues.sort()
     assert sortedPValues[0] <= sortedPValues[-1]
 
-    isSignifcant = False
+    isSignificant = False
     result = {}
     rank = float(len(sortedPValues))
     for pValue in reversed(sortedPValues):
         assert rank >= 1.0
         threshold = (rank * .05) / float(len(sortedPValues))
         if pValue <= threshold:
-            isSignifcant = True
+            isSignificant = True
         
         assert len(reversePValueMap[pValue]) > 0
         for test in reversePValueMap[pValue]:
-            result[test] = isSignifcant
+            result[test] = isSignificant
 
         rank = rank - 1.0
 
@@ -178,7 +178,7 @@ def dumpBreakdowns(a, b):
     pValueHeader = "pValue (significance using False Discovery Rate)"
     pLength = len(pValueHeader)
 
-    isSignifcant = computeMultipleHypothesesSignficance(a, b)
+    isSignificant = computeMultipleHypothesesSignificance(a, b)
 
     for key in a.keys():
         if key == unitMarker:
@@ -190,7 +190,7 @@ def dumpBreakdowns(a, b):
 
         (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
         significantStr = ""
-        if isSignifcant[key]:
+        if isSignificant[key]:
             significantStr = " (significant)"
         pLength = max(pLength, len(displayStr(pValue)) + len(significantStr))
 
@@ -212,7 +212,7 @@ def dumpBreakdowns(a, b):
         (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
 
         significantStr = ""
-        if isSignifcant[key]:
+        if isSignificant[key]:
             significantStr = " (significant)"
 
         strings.append("| {key:{nameLength}}|{aScore:{aLength}} |{bScore:{bLength}} |{compare:{ratioLength}}| {pValue:<{pLength}}|".format(key=key, aScore=displayStr(aScore), bScore=displayStr(bScore), nameLength=nameLength - 1, aLength=aLength, bLength=bLength, ratioLength=ratioLength, compare=displayStr(bScore / aScore), pValue = displayStr(pValue) + significantStr, pLength=pLength - 1))
@@ -236,7 +236,7 @@ def writeCSV(a, b, fileName):
     result = ""
     result += "test_name, {}, {}, b_divided_by_a, pValue, is_significant_using_False_Discovery_Rate\n".format("a_in_" + a[unitMarker], "b_in_" + b[unitMarker])
 
-    isSignifcant = computeMultipleHypothesesSignficance(a, b)
+    isSignificant = computeMultipleHypothesesSignificance(a, b)
 
     for key in a.keys():
         if key == unitMarker:
@@ -247,7 +247,7 @@ def writeCSV(a, b, fileName):
 
         (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
         significantStr = "No"
-        if isSignifcant[key]:
+        if isSignificant[key]:
             significantStr = "Yes"
         result += "{},{},{},{},{},{}\n".format(key, displayStr(aScore), displayStr(bScore), displayStr(bScore / aScore), displayStr(pValue), significantStr)
 
