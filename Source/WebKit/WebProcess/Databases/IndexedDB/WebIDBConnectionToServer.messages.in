@@ -47,7 +47,7 @@ messages -> WebIDBConnectionToServer {
     DidCloseFromServer(uint64_t databaseConnectionIdentifier, WebCore::IDBError error) final;
     NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 
-    DidGetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion> databases)
+    DidGetAllDatabaseNames(uint64_t callbackID, Vector<String> databaseNames)
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

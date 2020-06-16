@@ -1,3 +1,15 @@
+2020-06-16  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r263079.
+
+        Broke Internal builds.
+
+        Reverted changeset:
+
+        "IndexedDB: Support IDBFactory databases method"
+        https://bugs.webkit.org/show_bug.cgi?id=211043
+        https://trac.webkit.org/changeset/263079
+
 2020-06-16  Antti Koivisto  <antti@apple.com>
 
         O(n^2) behavior in media query resolution

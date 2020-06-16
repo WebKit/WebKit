@@ -30,7 +30,6 @@
 #include "IDBBackingStore.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
-#include "IDBDatabaseNameAndVersion.h"
 #include "IDBResourceIdentifier.h"
 #include "SQLiteIDBTransaction.h"
 #include "SQLiteStatementAutoResetScope.h"
@@ -102,7 +101,7 @@ public:
 
     String databaseDirectory() const { return m_databaseDirectory; };
     static String fullDatabasePathForDirectory(const String&);
-    static Optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
+    static String databaseNameFromFile(const String&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 

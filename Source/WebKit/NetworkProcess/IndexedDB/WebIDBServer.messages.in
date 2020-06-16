@@ -50,7 +50,7 @@ messages -> WebIDBServer {
     DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
     OpenDBRequestCancelled(WebCore::IDBRequestData requestData)
 
-    GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
+    GetAllDatabaseNames(struct WebCore::SecurityOriginData topOrigin, struct WebCore::SecurityOriginData openingOrigin, uint64_t callbackID) WantsConnection
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

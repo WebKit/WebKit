@@ -507,34 +507,33 @@ void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
         m_uniqueIDBDatabaseMap.remove(uniqueIDBDatabase->identifier());
 }
 
-void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
+void IDBServer::getAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
     auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
-    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v0");
+    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, databaseDirectoryPath, "v0");
     Vector<String> files = FileSystem::listDirectory(oldDirectory, "*"_s);
-    Vector<IDBDatabaseNameAndVersion> databases;
+    Vector<String> databases;
     for (auto& file : files) {
-        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(file));
-        if (databaseTuple)
-            databases.append(WTFMove(*databaseTuple));
+        String encodedName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(file);
+        databases.append(SQLiteIDBBackingStore::databaseNameFromEncodedFilename(encodedName));
     }
 
-    String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v1");
+    String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, databaseDirectoryPath, "v1");
     files = FileSystem::listDirectory(directory, "*"_s);
     for (auto& file : files) {
-        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(file));
-        if (databaseTuple)
-            databases.append(WTFMove(*databaseTuple));
+        auto databaseName = SQLiteIDBBackingStore::databaseNameFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(file));
+        if (!databaseName.isEmpty())
+            databases.append(databaseName);
     }
 
     auto connection = m_connectionMap.get(serverConnectionIdentifier);
     if (!connection)
         return;
 
-    connection->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+    connection->didGetAllDatabaseNames(callbackID, databases);
 }
 
 void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)

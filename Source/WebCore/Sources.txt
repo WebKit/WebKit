@@ -88,7 +88,6 @@ Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
 Modules/indexeddb/IDBDatabase.cpp
 Modules/indexeddb/IDBDatabaseIdentifier.cpp
-Modules/indexeddb/IDBDatabaseNameAndVersionRequest.cpp
 Modules/indexeddb/IDBFactory.cpp
 Modules/indexeddb/IDBGetAllResult.cpp
 Modules/indexeddb/IDBGetResult.cpp

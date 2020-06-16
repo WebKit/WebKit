@@ -30,8 +30,6 @@
 
 #include "IDBCursorInfo.h"
 #include "IDBDatabase.h"
-#include "IDBDatabaseNameAndVersion.h"
-#include "IDBDatabaseNameAndVersionRequest.h"
 #include "IDBGetRecordData.h"
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
@@ -471,15 +469,6 @@ void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
         auto result = IDBResultData::error(requestIdentifier, error);
         request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestCompleted, result);
     }
-
-    Vector<IDBResourceIdentifier> infoCallbackIdentifiers;
-    {
-        Locker<Lock> lock(m_databaseInfoMapLock);
-        infoCallbackIdentifiers = copyToVector(m_databaseInfoCallbacks.keys());
-    }
-
-    for (auto& requestIdentifier : infoCallbackIdentifiers)
-        didGetAllDatabaseNamesAndVersions(requestIdentifier, { });
 }
 
 void IDBConnectionProxy::scheduleMainThreadTasks()
@@ -507,36 +496,12 @@ void IDBConnectionProxy::handleMainThreadTasks()
         task->performTask();
 }
 
-void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& context, Function<void(Optional<Vector<IDBDatabaseNameAndVersion>>&&)>&& callback)
+void IDBConnectionProxy::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, Function<void (const Vector<String>&)>&& callback)
 {
-    ClientOrigin origin { context.securityOrigin()->data(), context.topOrigin().data() };
+    // This method is only meant to be called by the web inspector on the main thread.
+    RELEASE_ASSERT(isMainThread());
 
-    IDBDatabaseNameAndVersionRequest* request;
-    {
-        Locker<Lock> locker(m_databaseInfoMapLock);
-        auto newRequest = IDBDatabaseNameAndVersionRequest::create(context, *this, WTFMove(callback));
-        ASSERT(!m_databaseInfoCallbacks.contains(newRequest->resourceIdentifier()));
-        request = newRequest.ptr();
-        m_databaseInfoCallbacks.add(newRequest->resourceIdentifier(), WTFMove(newRequest));
-    }
-
-    callConnectionOnMainThread(&IDBConnectionToServer::getAllDatabaseNamesAndVersions, request->resourceIdentifier(), origin);
-}
-
-void IDBConnectionProxy::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
-{
-    RefPtr<IDBDatabaseNameAndVersionRequest> request;
-    {
-        Locker<Lock> locker(m_databaseInfoMapLock);
-        auto takenRequest = m_databaseInfoCallbacks.take(requestIdentifier);
-
-        if (!takenRequest)
-            return;
-
-        request = WTFMove(*takenRequest);
-    }
-
-    request->performCallbackOnOriginThread(*request, &IDBDatabaseNameAndVersionRequest::complete, WTFMove(databases));
+    m_connectionToServer.getAllDatabaseNames(mainFrameOrigin, openingOrigin, WTFMove(callback));
 }
 
 void IDBConnectionProxy::registerDatabaseConnection(IDBDatabase& database)
@@ -630,10 +595,6 @@ void IDBConnectionProxy::forgetActivityForCurrentThread()
     {
         Locker<Lock> lock(m_transactionOperationLock);
         removeItemsMatchingCurrentThread(m_activeOperations);
-    }
-    {
-        Locker<Lock> lock(m_databaseInfoMapLock);
-        removeItemsMatchingCurrentThread(m_databaseInfoCallbacks);
     }
 }
 

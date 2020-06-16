@@ -1,7 +1,7 @@
 
-PASS Ensure that databases() returns a promise. 
-PASS Enumerate one database. 
-PASS Enumerate multiple databases. 
-PASS Make sure an empty list is returned for the case of no databases. 
-FAIL Ensure that databases() doesn't pick up changes that haven't commited. assert_equals: The result of databases() should be only those databases which have been created at the time of calling, regardless of versionchange transactions currently running. expected 1 but got 2
+FAIL Ensure that databases() returns a promise. promise_test: Unhandled rejection with value: object "TypeError: indexedDB.databases is not a function. (In 'indexedDB.databases()', 'indexedDB.databases' is undefined)"
+FAIL Enumerate one database. promise_test: Unhandled rejection with value: object "TypeError: indexedDB.databases is not a function. (In 'indexedDB.databases()', 'indexedDB.databases' is undefined)"
+FAIL Enumerate multiple databases. promise_test: Unhandled rejection with value: object "TypeError: indexedDB.databases is not a function. (In 'indexedDB.databases()', 'indexedDB.databases' is undefined)"
+FAIL Make sure an empty list is returned for the case of no databases. promise_test: Unhandled rejection with value: object "TypeError: indexedDB.databases is not a function. (In 'indexedDB.databases()', 'indexedDB.databases' is undefined)"
+FAIL Ensure that databases() doesn't pick up changes that haven't commited. promise_test: Unhandled rejection with value: object "TypeError: indexedDB.databases is not a function. (In 'indexedDB.databases()', 'indexedDB.databases' is undefined)"
 

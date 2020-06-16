@@ -28,7 +28,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToServer.h"
-#include "IDBDatabaseNameAndVersionRequest.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
 #include <wtf/CrossThreadQueue.h>
@@ -116,8 +115,7 @@ public:
     void ref();
     void deref();
 
-    void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(Optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
-    void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, Optional<Vector<IDBDatabaseNameAndVersion>>&&);
+    void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, WTF::Function<void (const Vector<String>&)>&&);
 
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
@@ -170,9 +168,6 @@ private:
 
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
     Lock m_transactionOperationLock;
-
-    HashMap<IDBResourceIdentifier, Ref<IDBDatabaseNameAndVersionRequest>> m_databaseInfoCallbacks;
-    Lock m_databaseInfoMapLock;
 
     CrossThreadQueue<CrossThreadTask> m_mainThreadQueue;
     Lock m_mainThreadTaskLock;

@@ -596,7 +596,9 @@ void InspectorIndexedDBAgent::requestDatabaseNames(const String& securityOrigin,
     if (!getDocumentAndIDBFactoryFromFrameOrSendFailure(frame, document, idbFactory, callback))
         return;
 
-    idbFactory->getAllDatabaseNames(*document, [callback = WTFMove(callback)](auto& databaseNames) {
+    auto& openingOrigin = document->securityOrigin();
+    auto& topOrigin = document->topOrigin();
+    idbFactory->getAllDatabaseNames(topOrigin, openingOrigin, [callback = WTFMove(callback)](auto& databaseNames) {
         if (!callback->isActive())
             return;
 

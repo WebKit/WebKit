@@ -28,7 +28,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -55,21 +54,12 @@ public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
     ~IDBFactory();
 
-    struct DatabaseInfo {
-        String name;
-        uint64_t version;
-    };
-
     ExceptionOr<Ref<IDBOpenDBRequest>> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version);
     ExceptionOr<Ref<IDBOpenDBRequest>> deleteDatabase(ScriptExecutionContext&, const String& name);
 
     ExceptionOr<short> cmp(JSC::JSGlobalObject&, JSC::JSValue first, JSC::JSValue second);
 
-    using IDBDatabasesResponsePromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<IDBFactory::DatabaseInfo>>>;
-
-    void databases(ScriptExecutionContext&, IDBDatabasesResponsePromise&&);
-
-    WEBCORE_EXPORT void getAllDatabaseNames(ScriptExecutionContext&, Function<void(const Vector<String>&)>&&);
+    WEBCORE_EXPORT void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, WTF::Function<void (const Vector<String>&)>&&);
 
 private:
     explicit IDBFactory(IDBClient::IDBConnectionProxy&);

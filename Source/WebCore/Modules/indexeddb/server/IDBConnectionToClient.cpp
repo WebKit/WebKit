@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBDatabaseNameAndVersion.h"
 #include "UniqueIDBDatabaseConnection.h"
 
 namespace WebCore {
@@ -182,10 +181,10 @@ void IDBConnectionToClient::notifyOpenDBRequestBlocked(const IDBResourceIdentifi
         m_delegate->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
 }
 
-void IDBConnectionToClient::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Vector<IDBDatabaseNameAndVersion>&& databases)
+void IDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
 {
     if (m_delegate)
-        m_delegate->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+        m_delegate->didGetAllDatabaseNames(callbackID, databaseNames);
 }
 
 void IDBConnectionToClient::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)

@@ -193,9 +193,9 @@ void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBReso
     send(Messages::WebIDBConnectionToServer::NotifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion));
 }
 
-void WebIDBConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const Vector<WebCore::IDBDatabaseNameAndVersion>& databases)
+void WebIDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
 {
-    send(Messages::WebIDBConnectionToServer::DidGetAllDatabaseNamesAndVersions(requestIdentifier, databases));
+    send(Messages::WebIDBConnectionToServer::DidGetAllDatabaseNames(callbackID, databaseNames));
 }
 
 } // namespace WebKit

@@ -52,7 +52,7 @@ PASS IDBFactory interface: existence and properties of interface prototype objec
 PASS IDBFactory interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBFactory interface: operation open(DOMString, optional unsigned long long) 
 PASS IDBFactory interface: operation deleteDatabase(DOMString) 
-PASS IDBFactory interface: operation databases() 
+FAIL IDBFactory interface: operation databases() assert_own_property: interface prototype object missing non-static operation expected property "databases" missing
 PASS IDBFactory interface: operation cmp(any, any) 
 PASS IDBFactory must be primary interface of [object IDBFactory] 
 PASS Stringification of [object IDBFactory] 
@@ -60,7 +60,7 @@ PASS IDBFactory interface: [object IDBFactory] must inherit property "open(DOMSt
 PASS IDBFactory interface: calling open(DOMString, optional unsigned long long) on [object IDBFactory] with too few arguments must throw TypeError 
 PASS IDBFactory interface: [object IDBFactory] must inherit property "deleteDatabase(DOMString)" with the proper type 
 PASS IDBFactory interface: calling deleteDatabase(DOMString) on [object IDBFactory] with too few arguments must throw TypeError 
-PASS IDBFactory interface: [object IDBFactory] must inherit property "databases()" with the proper type 
+FAIL IDBFactory interface: [object IDBFactory] must inherit property "databases()" with the proper type assert_inherits: property "databases" not found in prototype chain
 PASS IDBFactory interface: [object IDBFactory] must inherit property "cmp(any, any)" with the proper type 
 PASS IDBFactory interface: calling cmp(any, any) on [object IDBFactory] with too few arguments must throw TypeError 
 PASS IDBDatabase interface: existence and properties of interface object 

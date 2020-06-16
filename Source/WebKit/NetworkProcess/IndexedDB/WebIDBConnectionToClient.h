@@ -82,7 +82,7 @@ private:
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
 
-    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const Vector<WebCore::IDBDatabaseNameAndVersion>&) final;
+    void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames) final;
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 

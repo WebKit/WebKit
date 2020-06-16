@@ -89,8 +89,7 @@ public:
     WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBRequestData&);
 
-    WEBCORE_EXPORT void getAllDatabaseNamesAndVersions(IDBConnectionIdentifier, const IDBResourceIdentifier&, const ClientOrigin&);
-
+    WEBCORE_EXPORT void getAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
 
     void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
     void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);

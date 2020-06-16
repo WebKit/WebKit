@@ -152,7 +152,7 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         void abortOpenAndUpgradeNeeded(uint64_t, const IDBResourceIdentifier&) final { }
         void didFireVersionChangeEvent(uint64_t, const IDBResourceIdentifier&, const IndexedDB::ConnectionClosedOnBehalfOfServer) final { }
         void openDBRequestCancelled(const IDBRequestData&) final { }
-        void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) final { }
+        void getAllDatabaseNames(const SecurityOriginData&, const SecurityOriginData&, uint64_t) final { }
         ~EmptyIDBConnectionToServerDeletegate() { }
     };
 

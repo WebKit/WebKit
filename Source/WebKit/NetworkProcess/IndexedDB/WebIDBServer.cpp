@@ -315,7 +315,7 @@ void WebIDBServer::openDBRequestCancelled(const WebCore::IDBRequestData& request
     m_server->openDBRequestCancelled(requestData);
 }
 
-void WebIDBServer::getAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::ClientOrigin& origin)
+void WebIDBServer::getAllDatabaseNames(IPC::Connection& connection, const WebCore::SecurityOriginData& mainFrameOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -323,7 +323,7 @@ void WebIDBServer::getAllDatabaseNamesAndVersions(IPC::Connection& connection, c
     ASSERT(webIDBConnection);
 
     LockHolder locker(m_server->lock());
-    m_server->getAllDatabaseNamesAndVersions(webIDBConnection->identifier(), requestIdentifier, origin);
+    m_server->getAllDatabaseNames(webIDBConnection->identifier(), mainFrameOrigin, openingOrigin, callbackID);
 }
 
 void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessIdentifier processIdentifier)

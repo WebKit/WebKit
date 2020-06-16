@@ -80,7 +80,7 @@ private:
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
     void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
 
-    void getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&) final;
+    void getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID) final;
 
     // Messages received from Network Process
     void didDeleteDatabase(const WebCore::IDBResultData&);
@@ -105,7 +105,7 @@ private:
     void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
     void didCloseFromServer(uint64_t databaseConnectionIdentifier, const WebCore::IDBError&);
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
-    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, Vector<WebCore::IDBDatabaseNameAndVersion>&&);
+    void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
 
     Ref<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
 };
