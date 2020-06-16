@@ -1,3 +1,12 @@
+2020-06-16  Truitt Savell  <tsavell@apple.com>
+
+        Rebase tables/mozilla_expected_failures/bugs/bug2479-5.html after the changes in https://trac.webkit.org/changeset/263073/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=212856
+
+        Unreviewed test gardening.
+
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+
 2020-06-16  youenn fablet  <youenn@apple.com>
 
         Make sure MediaRecorder.requestData returns data with the new writer backend
