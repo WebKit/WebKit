@@ -1,3 +1,37 @@
+2020-06-16  Saam Barati  <sbarati@apple.com>
+
+        Multiple hypothesis testing should use False Discovery Rate instead of Bonferroni
+        https://bugs.webkit.org/show_bug.cgi?id=213219
+
+        Reviewed by Mark Lam.
+
+        My previous patch here used Bonferroni to do multiple hypotheses correction.
+        Bonferroni does a good job at reducing false positive rate (type I error,
+        saying something is significant when it's not, e.g, rejecting the null
+        hypothesis when we shouldn't), but at the expense of also having a high
+        false negative rate (type II error, saying something is not significant when
+        it is, e.g, not rejecting the null hypothesis when we should).
+        
+        After doing a bit more reading, it seems like using a technique called False
+        Discovery Rate (FDR) is better. It still does a good job at controlling type
+        I error rate, but without sacrificing a high type II error rate. FDR is based
+        on a technique for "estimating the proportion of wrongly rejected null hypotheses" [2].
+        
+        This patch uses Benjamini and Hochberg estimation of FDR, which relies
+        on hypotheses being independent. We know subtests in a benchmark aren't
+        fully independent variables, but it's a good enough approximation.
+        
+        You can read more about FDR:
+        1. https://www.stat.berkeley.edu/~mgoldman/Section0402.pdf
+        2. https://besjournals.onlinelibrary.wiley.com/doi/10.1111/j.2041-210X.2010.00061.x
+        3. https://en.wikipedia.org/wiki/False_discovery_rate
+
+        * Scripts/compare-results:
+        (displayStr):
+        (computeMultipleHypothesesSignficance):
+        (dumpBreakdowns):
+        (writeCSV):
+
 2020-06-16  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r262994): Web Inspector is killed when context-clicking anywhere
