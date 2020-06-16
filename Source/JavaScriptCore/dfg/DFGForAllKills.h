@@ -79,15 +79,17 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
             ASSERT(before.bytecodeIndex().checkpoint() != after.bytecodeIndex().checkpoint());
             ASSERT_WITH_MESSAGE(before.bytecodeIndex().offset() == after.bytecodeIndex().offset() || nodeAfter->op() == ExitOK || nodeAfter->op() == InvalidationPoint, "When the DFG does code motion it should change the forExit origin to match the surrounding bytecodes.");
 
-            auto liveBefore = tmpLivenessForCheckpoint(*codeBlock, before.bytecodeIndex());
-            auto liveAfter = tmpLivenessForCheckpoint(*codeBlock, after.bytecodeIndex());
-            liveAfter.invert();
-            liveBefore.filter(liveAfter);
+            auto checkpointLiveBefore = livenessForCheckpoint(*codeBlock, before.bytecodeIndex());
+            auto checkpointLiveAfter = livenessForCheckpoint(*codeBlock, after.bytecodeIndex());
 
-            liveBefore.forEachSetBit([&] (size_t tmp) {
-                functor(remapOperand(beforeInlineCallFrame, Operand::tmp(tmp)));
-            });
-            // No locals can die at a checkpoint.
+            FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
+            const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex(), LivenessCalculationPoint::BeforeUse);
+
+            for (Operand operand : checkpointLiveBefore) {
+                if (checkpointLiveAfter.contains(operand) || (!operand.isTmp() && liveAfter[operand.virtualRegister().offset()]))
+                    continue;
+                functor(remapOperand(beforeInlineCallFrame, operand));
+            }
             return;
         }
 

@@ -1152,8 +1152,8 @@ bool Graph::isLiveInBytecode(Operand operand, CodeOrigin codeOrigin)
             if (!codeBlock->numTmps() || operandIndex < tmpOffset)
                 continue;
 
-            auto bitMap = tmpLivenessForCheckpoint(*codeBlock, codeOriginPtr->bytecodeIndex());
-            return bitMap.get(operandIndex - tmpOffset);
+            auto live = livenessForCheckpoint(*codeBlock, codeOriginPtr->bytecodeIndex());
+            return live.contains(operand);
         }
 
         VirtualRegister reg = operand.virtualRegister() - codeOriginPtr->stackOffset();

@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "FullBytecodeLiveness.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/Scope.h>
 
 namespace JSC {
 
@@ -175,10 +176,14 @@ constexpr bool enumValuesEqualAsIntegral(EnumType1 v1, EnumType2 v2)
         return static_cast<IntType2>(v1) == static_cast<IntType2>(v2);
 }
 
-Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock, BytecodeIndex bytecodeIndex)
+Vector<Operand, maxNumCheckpointTmps> livenessForCheckpoint(const CodeBlock& codeBlock, BytecodeIndex bytecodeIndex)
 {
-    Bitmap<maxNumCheckpointTmps> result;
+    Vector<Operand, maxNumCheckpointTmps> result;
     uint8_t checkpoint = bytecodeIndex.checkpoint();
+
+    auto scopeExit = makeScopeExit([&] {
+        ASSERT(result.size() <= maxNumCheckpointTmps);
+    });
 
     if (!checkpoint)
         return result;
@@ -190,14 +195,16 @@ Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock
         static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpTailCallVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpTailCallVarargs::argCountIncludingThis));
         static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpConstructVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpConstructVarargs::argCountIncludingThis));
         if (checkpoint == OpCallVarargs::makeCall)
-            result.set(OpCallVarargs::argCountIncludingThis);
+            result.append(Operand::tmp(OpCallVarargs::argCountIncludingThis));
         return result;
     }
     case op_iterator_open: {
+        if (checkpoint == OpIteratorOpen::getNext)
+            result.append(codeBlock.instructions().at(bytecodeIndex)->as<OpIteratorOpen>().m_iterator);
         return result;
     }
     case op_iterator_next: {
-        result.set(OpIteratorNext::nextResult);
+        result.append(Operand::tmp(OpIteratorNext::nextResult));
         return result;
     }
     default:

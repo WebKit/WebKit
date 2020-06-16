@@ -35,7 +35,7 @@ class BytecodeLivenessAnalysis;
 class CodeBlock;
 
 // Note: Full bytecode liveness does not track any information about the liveness of temps.
-// If you want tmp liveness for a checkpoint ask tmpLivenessForCheckpoint.
+// If you want tmp liveness for a checkpoint ask livenessForCheckpoint.
 class FullBytecodeLiveness {
     WTF_MAKE_FAST_ALLOCATED;
 public:

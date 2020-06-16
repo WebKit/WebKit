@@ -1,3 +1,28 @@
+2020-06-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+        op_iterator_open getNext checkpoint needs to declare it uses m_iterator
+        https://bugs.webkit.org/show_bug.cgi?id=213106
+        <rdar://problem/63416838>
+
+         Reviewed by Keith Miller.
+
+        Currently, we have no way of specifying that a checkpoint uses an operand defined at an earlier
+        point in the same bytecode, which is the case for op_iterator_open: we assume that it will have
+        already allocated the iterator and stored it in m_iterator by the time we get to the getNext
+        checkpoint. In order to support that, we change tmpLivenessForCheckpoint to livenessForCheckpoint
+        and allow it to also declare the use of the operands defined within the bytecode.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::livenessForCheckpoint):
+        (JSC::tmpLivenessForCheckpoint): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/FullBytecodeLiveness.h:
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+
 2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Expand JSObject::defineOwnIndexedProperty() fast path for existing properties

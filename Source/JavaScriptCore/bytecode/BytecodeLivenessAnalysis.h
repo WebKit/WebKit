@@ -97,7 +97,7 @@ private:
     BytecodeGraph m_graph;
 };
 
-Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock&, BytecodeIndex);
+Vector<Operand, maxNumCheckpointTmps> livenessForCheckpoint(const CodeBlock&, BytecodeIndex);
 
 inline bool operandIsAlwaysLive(int operand);
 inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int operand);

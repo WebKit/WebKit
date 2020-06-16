@@ -904,10 +904,9 @@ public:
 
             if (codeOriginPtr->bytecodeIndex().checkpoint()) {
                 ASSERT(codeBlock->numTmps());
-                auto liveTmps = tmpLivenessForCheckpoint(*codeBlock, codeOriginPtr->bytecodeIndex());
-                liveTmps.forEachSetBit([&] (size_t tmp) {
-                    functor(remapOperand(inlineCallFrame, Operand::tmp(tmp)));
-                });
+                auto live = livenessForCheckpoint(*codeBlock, codeOriginPtr->bytecodeIndex());
+                for (Operand operand : live)
+                    functor(remapOperand(inlineCallFrame, operand));
             }
             
             if (!inlineCallFrame)

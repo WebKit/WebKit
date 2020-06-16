@@ -1,3 +1,17 @@
+2020-06-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Bytecode liveness should be aware of checkpoints
+        https://bugs.webkit.org/show_bug.cgi?id=213106
+        <rdar://problem/63416838>
+
+        Reviewed by Keith Miller.
+
+        * stress/iterator-open-checkpoint-liveness.js: Added.
+        (f):
+        (next):
+        (iterator):
+        (catch):
+
 2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Expand JSObject::defineOwnIndexedProperty() fast path for existing properties
