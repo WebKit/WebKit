@@ -1,3 +1,14 @@
+2020-06-16  Youenn Fablet  <youenn@apple.com>
+
+        Loads triggered by an opaque stylesheet should not be visible to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=213246
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        In case the load is triggered from an opaque response, set service worker mode to none.
+
 2020-06-16  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Disable video autoplay

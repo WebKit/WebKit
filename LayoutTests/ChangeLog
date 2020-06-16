@@ -1,5 +1,21 @@
 2020-06-16  Youenn Fablet  <youenn@apple.com>
 
+        Loads triggered by an opaque stylesheet should not be visible to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=213246
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/service-workers/no-cors-css-with-subresources.https-expected.txt: Added.
+        * http/wpt/service-workers/no-cors-css-with-subresources.https.html: Added.
+        * http/wpt/service-workers/no-cors-css-worker.js: Added.
+        (async doTest):
+        (async doFetch):
+        * http/wpt/service-workers/resources/loading-subresources.css: Added.
+        * http/wpt/service-workers/resources/subresource.css: Added.
+        (div#resource_link_css):
+
+2020-06-16  Youenn Fablet  <youenn@apple.com>
+
         Increase pixel check tolerance for http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html
         https://bugs.webkit.org/show_bug.cgi?id=213237
 

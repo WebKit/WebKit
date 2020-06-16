@@ -1,3 +1,15 @@
+2020-06-16  Youenn Fablet  <youenn@apple.com>
+
+        Loads triggered by an opaque stylesheet should not be visible to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=213246
+
+        Reviewed by Alex Christensen.
+
+        Test: http/wpt/service-workers/no-cors-css-with-subresources.https.html
+
+        * loader/ResourceLoaderOptions.h:
+        Move it to boolean
+
 2020-06-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <address> element should no longer map to ARIA `contentinfo` role
