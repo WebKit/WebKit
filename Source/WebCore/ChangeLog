@@ -1,3 +1,64 @@
+2020-06-15  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: introduce request interception
+        https://bugs.webkit.org/show_bug.cgi?id=207446
+
+        Reviewed by Devin Rousso.
+
+        This change introduces network request interception to the Network 
+        protocol domain. It adds Network.interceptWithRequest notification that
+        can be continued, modified or fulfilled. NetworkStage enum can now have
+        'request' and 'response' values.
+
+        Tests: http/tests/inspector/network/intercept-aborted-request.html
+               http/tests/inspector/network/intercept-request-continue.html
+               http/tests/inspector/network/intercept-request-fragment.html
+               http/tests/inspector/network/intercept-request-main-resource-with-response.html
+               http/tests/inspector/network/intercept-request-main-resource.html
+               http/tests/inspector/network/intercept-request-properties.html
+               http/tests/inspector/network/intercept-request-subresource-with-error.html
+               http/tests/inspector/network/intercept-request-subresource-with-response.html
+               http/tests/inspector/network/intercept-request-subresource.html
+               http/tests/inspector/network/intercept-request-with-response.html
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInterceptImpl):
+        (WebCore::InspectorInstrumentation::shouldInterceptRequestImpl):
+        (WebCore::InspectorInstrumentation::interceptRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willIntercept):
+        (WebCore::InspectorInstrumentation::shouldInterceptRequest):
+        (WebCore::InspectorInstrumentation::interceptRequest):
+        * inspector/InspectorInstrumentationWebKit.cpp:
+        (WebCore::InspectorInstrumentationWebKit::shouldInterceptRequestInternal):
+        (WebCore::InspectorInstrumentationWebKit::interceptRequestInternal):
+        * inspector/InspectorInstrumentationWebKit.h:
+        (WebCore::InspectorInstrumentationWebKit::shouldInterceptRequest):
+        (WebCore::InspectorInstrumentationWebKit::interceptRequest):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::disable):
+        (WebCore::InspectorNetworkAgent::shouldIntercept):
+        (WebCore::InspectorNetworkAgent::continuePendingRequests):
+        (WebCore::InspectorNetworkAgent::setInterceptionEnabled):
+        (WebCore::InspectorNetworkAgent::addInterception):
+        (WebCore::InspectorNetworkAgent::removeInterception):
+        (WebCore::InspectorNetworkAgent::willIntercept):
+        (WebCore::InspectorNetworkAgent::shouldInterceptRequest):
+        (WebCore::InspectorNetworkAgent::shouldInterceptResponse):
+        (WebCore::InspectorNetworkAgent::interceptRequest):
+        (WebCore::InspectorNetworkAgent::interceptContinue):
+        (WebCore::InspectorNetworkAgent::interceptWithRequest):
+        (WebCore::InspectorNetworkAgent::interceptRequestWithResponse):
+        (WebCore::InspectorNetworkAgent::interceptRequestWithError):
+        * inspector/agents/InspectorNetworkAgent.h:
+        (WebCore::InspectorNetworkAgent::PendingInterceptRequest::PendingInterceptRequest):
+        (WebCore::InspectorNetworkAgent::PendingInterceptRequest::continueWithOriginalRequest):
+        (WebCore::InspectorNetworkAgent::PendingInterceptRequest::continueWithRequest):
+        (WebCore::InspectorNetworkAgent::Intercept::operator== const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::preload):
+
 2020-06-15  Keith Miller  <keith_miller@apple.com>
 
         JIT thunks should work on arm64_32

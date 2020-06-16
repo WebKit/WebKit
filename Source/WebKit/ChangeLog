@@ -1,3 +1,18 @@
+2020-06-15  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: introduce request interception
+        https://bugs.webkit.org/show_bug.cgi?id=207446
+
+        Reviewed by Devin Rousso.
+
+        This change introduces network request interception to the Network 
+        protocol domain. It adds Network.interceptWithRequest notification that
+        can be continued, modified or fulfilled. NetworkStage enum can now have
+        'request' and 'response' values.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2020-06-15  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Update sandboxes to reduce logging for media-related operations

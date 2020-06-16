@@ -155,7 +155,13 @@
             "id": "NetworkStage",
             "type": "string",
             "description": "Different stages of a network request.",
-            "enum": ["response"]
+            "enum": ["request", "response"]
+        },
+        {
+            "id": "ResourceErrorType",
+            "type": "string",
+            "description": "Different stages of a network request.",
+            "enum": ["General", "AccessControl", "Cancellation", "Timeout"]
         }
     ],
     "commands": [
@@ -244,10 +250,10 @@
             "description": "Add an interception.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "url", "type": "string" },
+                { "name": "url", "type": "string", "description": "URL pattern to intercept, intercept everything if not specified or empty" },
+                { "name": "stage", "$ref": "NetworkStage", "description": "Stage to intercept." },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If false, ignores letter casing of `url` parameter." },
-                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats `url` parameter as a regular expression." },
-                { "name": "stage", "$ref": "NetworkStage", "optional": true, "description": "If not present this applies to all network stages." }
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats `url` parameter as a regular expression." }
             ]
         },
         {
@@ -256,17 +262,29 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "url", "type": "string" },
+                { "name": "stage", "$ref": "NetworkStage", "description": "Stage to intercept." },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If false, ignores letter casing of `url` parameter." },
-                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats `url` parameter as a regular expression." },
-                { "name": "stage", "$ref": "NetworkStage", "optional": true, "description": "If not present this applies to all network stages." }
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats `url` parameter as a regular expression." }
             ]
         },
         {
             "name": "interceptContinue",
-            "description": "Continue an interception with no modifications.",
+            "description": "Continue request or response without modifications.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." }
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." },
+                { "name": "stage", "$ref": "NetworkStage", "description": "Stage to continue." }
+            ]
+        },
+        {
+            "name": "interceptWithRequest",
+            "description": "Replace intercepted request with the provided one.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." },
+                { "name": "url", "type": "string", "optional": true,"description": "HTTP request url." },
+                { "name": "method", "type": "string", "optional": true,"description": "HTTP request method." },
+                { "name": "headers", "$ref": "Headers", "optional": true, "description": "HTTP response headers. Pass through original values if unmodified." },
+                { "name": "postData", "type": "string", "optional": true, "description": "HTTP POST request data, base64-encoded." }
             ]
         },
         {
@@ -281,6 +299,27 @@
                 { "name": "status", "type": "integer", "optional": true, "description": "HTTP response status code. Pass through original values if unmodified." },
                 { "name": "statusText", "type": "string", "optional": true, "description": "HTTP response status text. Pass through original values if unmodified." },
                 { "name": "headers", "$ref": "Headers", "optional": true, "description": "HTTP response headers. Pass through original values if unmodified." }
+            ]
+        },
+        {
+            "name": "interceptRequestWithResponse",
+            "description": "Provide response for an intercepted request. Request completely bypasses the network in this case and is immediately fulfilled with the provided data.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to modify." },
+                { "name": "content", "type": "string" },
+                { "name": "base64Encoded", "type": "boolean", "description": "True, if content was sent as base64." },
+                { "name": "mimeType", "type": "string", "description": "MIME Type for the data." },
+                { "name": "status", "type": "integer", "description": "HTTP response status code." },
+                { "name": "statusText", "type": "string", "description": "HTTP response status text." },
+                { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
+            ]
+        },
+        {
+            "name": "interceptRequestWithError",
+            "description": "Fail request with given error type.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request to fail." },
+                { "name": "errorType", "$ref": "ResourceErrorType", "description": "Deliver error reason for the request failure." }
             ]
         }
     ],
@@ -358,8 +397,16 @@
             ]
         },
         {
+            "name": "requestIntercepted",
+            "description": "Fired when HTTP request has been intercepted. The frontend must respond with <code>Network.interceptContinue</code>, <code>Network.interceptWithRequest</code>` or <code>Network.interceptWithResponse</code>` to resolve this request.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },
+                { "name": "request", "$ref": "Request", "description": "Original request content that would proceed if this is continued." }
+            ]
+        },
+        {
             "name": "responseIntercepted",
-            "description": "Fired when HTTP response has been intercepted. The frontend must response with <code>Network.interceptContinue</code> or <code>Network.interceptWithRespons</code>` to continue this response.",
+            "description": "Fired when HTTP response has been intercepted. The frontend must response with <code>Network.interceptContinue</code> or <code>Network.interceptWithResponse</code>` to continue this response.",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },

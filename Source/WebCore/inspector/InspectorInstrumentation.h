@@ -45,6 +45,7 @@
 #include "HitTestResult.h"
 #include "InspectorInstrumentationPublic.h"
 #include "Page.h"
+#include "ResourceLoader.h"
 #include "StorageArea.h"
 #include "WebAnimation.h"
 #include "WorkerInspectorProxy.h"
@@ -234,8 +235,10 @@ public:
 #endif
     static void willDestroyCachedResource(CachedResource&);
 
-    static bool willInterceptRequest(const Frame*, const ResourceRequest&);
+    static bool willIntercept(const Frame*, const ResourceRequest&);
+    static bool shouldInterceptRequest(const Frame&, const ResourceRequest&);
     static bool shouldInterceptResponse(const Frame&, const ResourceResponse&);
+    static void interceptRequest(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
     static void interceptResponse(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -442,8 +445,10 @@ private:
 #endif
     static void willDestroyCachedResourceImpl(CachedResource&);
 
-    static bool willInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
+    static bool willInterceptImpl(InstrumentingAgents&, const ResourceRequest&);
+    static bool shouldInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
     static bool shouldInterceptResponseImpl(InstrumentingAgents&, const ResourceResponse&);
+    static void interceptRequestImpl(InstrumentingAgents&, ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
     static void interceptResponseImpl(InstrumentingAgents&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -1257,11 +1262,19 @@ inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& 
     willDestroyCachedResourceImpl(cachedResource);
 }
 
-inline bool InspectorInstrumentation::willInterceptRequest(const Frame* frame, const ResourceRequest& request)
+inline bool InspectorInstrumentation::willIntercept(const Frame* frame, const ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
     if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willInterceptRequestImpl(*instrumentingAgents, request);
+        return willInterceptImpl(*instrumentingAgents, request);
+    return false;
+}
+
+inline bool InspectorInstrumentation::shouldInterceptRequest(const Frame& frame, const ResourceRequest& request)
+{
+    ASSERT(InspectorInstrumentationPublic::hasFrontends());
+    if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return shouldInterceptRequestImpl(*instrumentingAgents, request);
     return false;
 }
 
@@ -1271,6 +1284,13 @@ inline bool InspectorInstrumentation::shouldInterceptResponse(const Frame& frame
     if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
         return shouldInterceptResponseImpl(*instrumentingAgents, response);
     return false;
+}
+
+inline void InspectorInstrumentation::interceptRequest(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+{
+    ASSERT(InspectorInstrumentation::shouldInterceptRequest(*loader.frame(), loader.request()));
+    if (auto* instrumentingAgents = instrumentingAgentsForFrame(loader.frame()))
+        interceptRequestImpl(*instrumentingAgents, loader, WTFMove(handler));
 }
 
 inline void InspectorInstrumentation::interceptResponse(const Frame& frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)

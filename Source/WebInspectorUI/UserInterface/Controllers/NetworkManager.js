@@ -159,9 +159,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     if (!localResourceOverride.disabled) {
                         target.NetworkAgent.addInterception.invoke({
                             url: localResourceOverride.url,
+                            stage: InspectorBackend.Enum.Network.NetworkStage.Response,
                             caseSensitive: localResourceOverride.isCaseSensitive,
                             isRegex: localResourceOverride.isRegex,
-                            networkStage: InspectorBackend.Enum.Network.NetworkStage.Response,
                         });
                     }
                 }
@@ -364,7 +364,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 url: localResourceOverride.url,
                 caseSensitive: localResourceOverride.isCaseSensitive,
                 isRegex: localResourceOverride.isRegex,
-                networkStage: InspectorBackend.Enum.Network.NetworkStage.Response,
+                stage: InspectorBackend.Enum.Network.NetworkStage.Response,
             };
 
             // COMPATIBILITY (iOS 13.0): Network.addInterception did not exist.
@@ -397,7 +397,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 url: localResourceOverride.url,
                 caseSensitive: localResourceOverride.isCaseSensitive,
                 isRegex: localResourceOverride.isRegex,
-                networkStage: InspectorBackend.Enum.Network.NetworkStage.Response,
+                stage: InspectorBackend.Enum.Network.NetworkStage.Response,
             };
 
             // COMPATIBILITY (iOS 13.0): Network.removeInterception did not exist.
@@ -908,12 +908,21 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
+    requestIntercepted(target, requestId, request)
+    {
+        // FIXME: add request interception support to the frontend.
+        this.dispatchEventToListeners(WI.NetworkManager.Event.RequestIntercepted, {target, requestId, request});
+    }
+
     responseIntercepted(target, requestId, response)
     {
         let url = WI.urlWithoutFragment(response.url);
         let localResourceOverride = this.localResourceOverrideForURL(url);
         if (!localResourceOverride || localResourceOverride.disabled) {
-            target.NetworkAgent.interceptContinue(requestId);
+            target.NetworkAgent.interceptContinue.invoke({
+                requestId,
+                stage: InspectorBackend.Enum.Network.NetworkStage.Response,
+            });
             return;
         }
 
@@ -1376,7 +1385,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             url: localResourceOverride.url,
             caseSensitive: localResourceOverride.isCaseSensitive,
             isRegex: localResourceOverride.isRegex,
-            networkStage: InspectorBackend.Enum.Network.NetworkStage.Response,
+            stage: InspectorBackend.Enum.Network.NetworkStage.Response,
         };
 
         // COMPATIBILITY (iOS 13.0): Network.addInterception / Network.removeInterception did not exist.
@@ -1432,4 +1441,5 @@ WI.NetworkManager.Event = {
     BootstrapScriptDestroyed: "network-manager-bootstrap-script-destroyed",
     LocalResourceOverrideAdded: "network-manager-local-resource-override-added",
     LocalResourceOverrideRemoved: "network-manager-local-resource-override-removed",
+    RequestIntercepted: "network-manager-request-intercepted"
 };

@@ -573,6 +573,18 @@ http/tests/inspector/network/local-resource-override-script-tag.html [ Failure ]
 http/tests/inspector/network/resource-response-inspector-override.html [ Failure ]
 inspector/network/local-resource-override-continue-response.html [ Skip ]
 
+# Request interception is not available in WebKit1
+http/tests/inspector/network/intercept-aborted-request.html [ Skip ]
+http/tests/inspector/network/intercept-request-continue.html [ Skip ]
+http/tests/inspector/network/intercept-request-fragment.html [ Skip ]
+http/tests/inspector/network/intercept-request-main-resource.html [ Skip ]
+http/tests/inspector/network/intercept-request-main-resource-with-response.html [ Skip ]
+http/tests/inspector/network/intercept-request-properties.html [ Skip ]
+http/tests/inspector/network/intercept-request-subresource.html [ Skip ]
+http/tests/inspector/network/intercept-request-subresource-with-error.html [ Skip ]
+http/tests/inspector/network/intercept-request-subresource-with-response.html [ Skip ]
+http/tests/inspector/network/intercept-request-with-response.html [ Skip ]
+
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]

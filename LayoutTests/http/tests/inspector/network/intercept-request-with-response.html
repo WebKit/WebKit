@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+
+async function triggerOverrideLoad(urlSuffix) {
+    let url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+    if (urlSuffix)
+        url += urlSuffix;
+
+    try {
+        let response = await fetch(url);
+        return {
+            url: response.url,
+            text: await response.text(),
+            status: response.status,
+            statusText: response.statusText,
+            headers: Array.from(response.headers),
+        };
+    } catch (e) {
+        return { error: e.message };
+    }
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithResponse");
+    
+    NetworkAgent.addInterception.invoke({
+        url: ".*override\.txt.*",
+        isRegex: true,
+        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+    });
+
+    function logResponse(response) {
+        response.headers = new Map(response.headers);
+        InspectorTest.log(`  URL: ${response.url}`);
+        InspectorTest.log(`  MIME Type: ${response.headers.get("content-type")}`);
+        InspectorTest.log(`  Status: ${response.status} ${response.statusText}`);
+        InspectorTest.log(`  Response Headers:`);
+        let keys = Array.from(response.headers.keys());
+        keys.sort();
+        for (let name of keys) {
+            let value = response.headers.get(name);
+            if (!name.startsWith("x-") && !name.startsWith("content-"))
+                continue;
+            InspectorTest.log(`    ${name}: ${value}`);
+        }
+        InspectorTest.log(`  Content: ${response.text}`);
+    }
+
+    function addTestCase({name, description, expression, responseData}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                InspectorTest.log("Triggering load...");
+                let [requestInterceptedEvent, fetchResponse] = await Promise.all([
+                    WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                    RuntimeAgent.evaluate(expression),
+                ]);
+
+                await NetworkAgent.interceptRequestWithResponse.invoke({
+                    requestId: requestInterceptedEvent.data.requestId,
+                    ...responseData,
+                });
+
+                let response = await RuntimeAgent.awaitPromise(fetchResponse.result.objectId, true);
+                InspectorTest.log("Response details:");
+                logResponse(response.result.value);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.interceptRequestWithResponse.Text",
+        description: "Intercept request with text content.",
+        expression: `triggerOverrideLoad()`,
+        responseData: {
+            content: `PASS - OVERRIDDEN TEXT`,
+            base64Encoded: false,
+            mimeType: "text/plain",
+            status: 987,
+            statusText: "Override Status Text",
+            headers: {
+                "X-Override-Header-1": "Override-Header-Value-1",
+                "X-Override-Header-2": "Override-Header-Value-2",
+            },
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithResponse.JavaScript",
+        description: "Intercept request with javascript content.",
+        expression: `triggerOverrideLoad()`,
+        responseData: {
+            content: `/* PASS */ (function() { /* OVERRIDDEN */ })();`,
+            base64Encoded: false,
+            mimeType: "application/javascript",
+            status: 200,
+            statusText: "Super OK",
+            headers: {
+                "X-Custom-Header": "Header value",
+            },
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithResponse.Image",
+        description: "Intercept request with image content.",
+        expression: `triggerOverrideLoad()`,
+        responseData: {
+            content: btoa("<data>"),
+            base64Encoded: true,
+            mimeType: "image/png",
+            status: 200,
+            statusText: "OK",
+            headers: {},
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithResponse.URL.QueryString",
+        description: "Test overrides with different query strings.",
+        expression: `triggerOverrideLoad("?s=2")`,
+        responseData: {
+            base64Encoded: false,
+            content: "PASS",
+            mimeType: "text/plain",
+            status: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithResponse.URL.Fragment",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("#frag")`,
+        responseData: {
+            content: "PASS",
+            base64Encoded: false,
+            mimeType: "text/plain",
+            status: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithResponse.404",
+        description: "Test for a 404 override.",
+        expression: `triggerOverrideLoad()`,
+        responseData: {
+            content: "PASS",
+            base64Encoded: false,
+            mimeType: "text/plain",
+            status: 404,
+            statusText: "Not Found",
+            headers: {"X-Expected": "PASS"},
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception with response.</p>
+<script src="resources/override.js"></script>
+</body>
+</html>

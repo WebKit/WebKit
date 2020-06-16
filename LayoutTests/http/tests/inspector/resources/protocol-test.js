@@ -87,12 +87,14 @@ TestPage.runTest = window.runTest = function()
     if (typeof testFunction !== "function") {
         alert("Failed to send test() because it is not a function.");
         testRunner.notifyDone();
+        return;
     }
 
     let url = testRunner.inspectorTestStubURL;
     if (!url) {
         alert("Failed to obtain inspector test stub URL.");
         testRunner.notifyDone();
+        return;
     }
 
     function runInitializationMethodsInFrontend(initializers)

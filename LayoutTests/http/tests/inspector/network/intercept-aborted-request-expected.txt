@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Fetch is aborted
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Fetch is aborted
+Test request interception of the aborted request.
+
+
+== Running test suite: Network.interceptRequestWithResponse
+-- Running test case: Network.interceptRequestWithResponse.Aborted
+Triggering load...
+PASS: Should produce an exception.
+Error: Unable to fulfill request, it has already been processed
+
+-- Running test case: Network.interceptRequestWithError.Aborted
+Triggering load...
+PASS: Should produce an exception.
+Error: Unable to abort request, it has already been processed
+

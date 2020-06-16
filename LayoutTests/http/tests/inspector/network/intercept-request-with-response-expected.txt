@@ -1,0 +1,71 @@
+ALERT: DEFAULT override.js TEXT
+Test request interception with response.
+
+
+== Running test suite: Network.interceptRequestWithResponse
+-- Running test case: Network.interceptRequestWithResponse.Text
+Triggering load...
+Response details:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: text/plain
+  Status: 987 Override Status Text
+  Response Headers:
+    content-type: text/plain
+    x-override-header-1: Override-Header-Value-1
+    x-override-header-2: Override-Header-Value-2
+  Content: PASS - OVERRIDDEN TEXT
+
+-- Running test case: Network.interceptRequestWithResponse.JavaScript
+Triggering load...
+Response details:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: application/javascript
+  Status: 200 Super OK
+  Response Headers:
+    content-type: application/javascript
+    x-custom-header: Header value
+  Content: /* PASS */ (function() { /* OVERRIDDEN */ })();
+
+-- Running test case: Network.interceptRequestWithResponse.Image
+Triggering load...
+Response details:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: image/png
+  Status: 200 OK
+  Response Headers:
+    content-type: image/png
+  Content: <data>
+
+-- Running test case: Network.interceptRequestWithResponse.URL.QueryString
+Triggering load...
+Response details:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?s=2
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Headers:
+    content-type: text/plain
+    x-expected: PASS
+  Content: PASS
+
+-- Running test case: Network.interceptRequestWithResponse.URL.Fragment
+Triggering load...
+Response details:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Headers:
+    content-type: text/plain
+    x-expected: PASS
+  Content: PASS
+
+-- Running test case: Network.interceptRequestWithResponse.404
+Triggering load...
+Response details:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: text/plain
+  Status: 404 Not Found
+  Response Headers:
+    content-type: text/plain
+    x-expected: PASS
+  Content: PASS
+

@@ -30,9 +30,19 @@
 
 namespace WebCore {
 
+bool InspectorInstrumentationWebKit::shouldInterceptRequestInternal(const Frame& frame, const ResourceRequest& request)
+{
+    return InspectorInstrumentation::shouldInterceptRequest(frame, request);
+}
+
 bool InspectorInstrumentationWebKit::shouldInterceptResponseInternal(const Frame& frame, const ResourceResponse& response)
 {
     return InspectorInstrumentation::shouldInterceptResponse(frame, response);
+}
+
+void InspectorInstrumentationWebKit::interceptRequestInternal(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+{
+    InspectorInstrumentation::interceptRequest(loader, WTFMove(handler));
 }
 
 void InspectorInstrumentationWebKit::interceptResponseInternal(const Frame& frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)

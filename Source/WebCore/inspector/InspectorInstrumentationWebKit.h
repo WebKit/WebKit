@@ -36,13 +36,26 @@ class SharedBuffer;
 
 class WEBCORE_EXPORT InspectorInstrumentationWebKit {
 public:
+    static bool shouldInterceptRequest(const Frame*, const ResourceRequest&);
     static bool shouldInterceptResponse(const Frame*, const ResourceResponse&);
+    static void interceptRequest(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
     static void interceptResponse(const Frame*, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
 private:
+    static bool shouldInterceptRequestInternal(const Frame&, const ResourceRequest&);
     static bool shouldInterceptResponseInternal(const Frame&, const ResourceResponse&);
+    static void interceptRequestInternal(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
     static void interceptResponseInternal(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 };
+
+inline bool InspectorInstrumentationWebKit::shouldInterceptRequest(const Frame* frame, const ResourceRequest& request)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (!frame)
+        return false;
+
+    return shouldInterceptRequestInternal(*frame, request);
+}
 
 inline bool InspectorInstrumentationWebKit::shouldInterceptResponse(const Frame* frame, const ResourceResponse& response)
 {
@@ -51,6 +64,12 @@ inline bool InspectorInstrumentationWebKit::shouldInterceptResponse(const Frame*
         return false;
 
     return shouldInterceptResponseInternal(*frame, response);
+}
+
+inline void InspectorInstrumentationWebKit::interceptRequest(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+{
+    ASSERT(InspectorInstrumentationWebKit::shouldInterceptRequest(loader.frame(), loader.request()));
+    interceptRequestInternal(loader, WTFMove(handler));
 }
 
 inline void InspectorInstrumentationWebKit::interceptResponse(const Frame* frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)

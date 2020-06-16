@@ -1,3 +1,43 @@
+2020-06-15  Pavel Feldman <pavel.feldman@gmail.com>
+
+        Web Inspector: introduce request interception
+        https://bugs.webkit.org/show_bug.cgi?id=207446
+
+        Reviewed by Devin Rousso.
+
+        This change introduces network request interception to the Network
+        protocol domain. It adds Network.interceptWithRequest notification that
+        can be continued, modified or fulfilled. NetworkStage enum can now have
+        'request' and 'response' values.
+
+        * http/tests/inspector/network/intercept-aborted-request-expected.txt: Added.
+        * http/tests/inspector/network/intercept-aborted-request.html: Added.
+        * http/tests/inspector/network/intercept-request-continue-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-continue.html: Added.
+        * http/tests/inspector/network/intercept-request-fragment-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-fragment.html: Added.
+        * http/tests/inspector/network/intercept-request-main-resource-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-main-resource-with-response-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-main-resource-with-response.html: Added.
+        * http/tests/inspector/network/intercept-request-main-resource.html: Added.
+        * http/tests/inspector/network/intercept-request-properties-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-properties.html: Added.
+        * http/tests/inspector/network/intercept-request-subresource-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-subresource-with-error-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-subresource-with-error.html: Added.
+        * http/tests/inspector/network/intercept-request-subresource-with-response-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-subresource-with-response.html: Added.
+        * http/tests/inspector/network/intercept-request-subresource.html: Added.
+        * http/tests/inspector/network/intercept-request-with-response-expected.txt: Added.
+        * http/tests/inspector/network/intercept-request-with-response.html: Added.
+        * http/tests/inspector/network/resources/intercept-echo.php: Added.
+        * http/tests/inspector/network/resources/intercept-request-overriden-page.html: Added.
+        * http/tests/inspector/network/resources/intercept-request-overriden-script.js: Added.
+        * http/tests/inspector/resources/protocol-test.js:
+        * inspector/network/local-resource-override-continue-response.html:
+        * inspector/network/resources/data-intercepted.json: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2020-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION: [ iOS wk2 Debug ] fast/forms/call-text-did-change-in-text-field-when-typing.html is flaky failing.

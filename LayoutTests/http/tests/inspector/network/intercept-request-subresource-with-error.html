@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+
+function loadSubresource()
+{
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "resources/stylesheet.css";
+    document.head.appendChild(link);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithError");
+
+    NetworkAgent.addInterception.invoke({
+        url: "http://127.0.0.1:8000/inspector/network/resources/stylesheet.css",
+        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+    });
+
+    function addTestCase({name, description, expression, errorType}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                InspectorTest.log("Triggering load...");
+                let [requestInterceptedEvent, fetchResponse] = await Promise.all([
+                    WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                    RuntimeAgent.evaluate("loadSubresource()"),
+                ]);
+
+                let [loadingDidFailEvent] = await Promise.all([
+                    WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                    await NetworkAgent.interceptRequestWithError.invoke({
+                        requestId: requestInterceptedEvent.data.requestId,
+                        errorType,
+                    })
+                ]);
+                InspectorTest.log("FAILURE TEXT: " + loadingDidFailEvent.target.failureReasonText);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.interceptRequest.Subresource with general error",
+        description: "Subresource uses request interception with general error",
+        errorType: InspectorBackend.Enum.Network.ResourceErrorType.General,
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.Subresource with access error",
+        description: "Subresource uses request interception with access error",
+        errorType: InspectorBackend.Enum.Network.ResourceErrorType.AccessControl,
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.Subresource with canceled error",
+        description: "Subresource uses request interception with canceled error",
+        errorType: InspectorBackend.Enum.Network.ResourceErrorType.Cancellation,
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.Subresource with timeout error",
+        description: "Subresource uses request interception with timeout error",
+        errorType: InspectorBackend.Enum.Network.ResourceErrorType.Timeout,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception with error for the subresource load.</p>
+</body>
+</html>

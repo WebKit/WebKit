@@ -1,0 +1,83 @@
+Test request interception altering request properties.
+
+
+== Running test suite: Network.interceptWithRequest
+-- Running test case: Network.interceptRequest.Method
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: POST
+  Request Headers:
+    Content-Length: 0
+
+-- Running test case: Network.interceptRequest.MethodDelete
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: DELETE
+  Request Headers:
+    Content-Length: 0
+
+-- Running test case: Network.interceptRequest.MethodNonStandard
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: NONSTANDARD
+  Request Headers:
+    Content-Length: 0
+
+-- Running test case: Network.interceptRequest.MethodEmpty
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: GET
+  Request Headers:
+
+-- Running test case: Network.interceptRequest.URL
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php?newURL=value
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php?newURL=value
+  Method: GET
+  Request Headers:
+  Get:
+    newURL: value
+
+-- Running test case: Network.interceptRequest.URLFragment
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: GET
+  Request Headers:
+
+-- Running test case: Network.interceptRequest.URLEmpty
+Triggering load...
+Request details:
+  The URL can’t be shown
+
+-- Running test case: Network.interceptRequest.Headers
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: GET
+  Request Headers:
+    X-Value: overridden
+
+-- Running test case: Network.interceptRequest.PostData
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: POST
+  Request Headers:
+    Content-Length: 16
+    Content-Type: application/x-www-form-urlencoded
+  Post:
+    value: overridden
+

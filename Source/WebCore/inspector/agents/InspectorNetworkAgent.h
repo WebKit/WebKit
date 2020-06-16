@@ -88,10 +88,13 @@ public:
     void getSerializedCertificate(ErrorString&, const String& requestId, String* serializedCertificate) final;
     void resolveWebSocket(ErrorString&, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) final;
     void setInterceptionEnabled(ErrorString&, bool enabled) final;
-    void addInterception(ErrorString&, const String& url, const bool* caseSensitive, const bool* isRegex, const String* networkStageString) final;
-    void removeInterception(ErrorString&, const String& url, const bool* caseSensitive, const bool* isRegex, const String* networkStageString) final;
-    void interceptContinue(ErrorString&, const String& requestId) final;
+    void addInterception(ErrorString&, const String& url, const String& networkStageString, const bool* caseSensitive, const bool* isRegex) final;
+    void removeInterception(ErrorString&, const String& url, const String& networkStageString, const bool* caseSensitive, const bool* isRegex) final;
+    void interceptContinue(ErrorString&, const String& requestId, const String& networkStageString) final;
+    void interceptWithRequest(ErrorString&, const String& requestId, const String* url, const String* method, const JSON::Object* headers, const String* postData) final;
     void interceptWithResponse(ErrorString&, const String& requestId, const String& content, bool base64Encoded, const String* mimeType, const int* status, const String* statusText, const JSON::Object* headers) final;
+    void interceptRequestWithResponse(ErrorString&, const String& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, const JSON::Object& headers) final;
+    void interceptRequestWithError(ErrorString&, const String& requestId, const String& errorType) final;
 
     // InspectorInstrumentation
     void willRecalculateStyle();
@@ -118,9 +121,11 @@ public:
     void mainFrameNavigated(DocumentLoader&);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void didScheduleStyleRecalculation(Document&);
-    bool willInterceptRequest(const ResourceRequest&);
+    bool willIntercept(const ResourceRequest&);
+    bool shouldInterceptRequest(const ResourceRequest&);
     bool shouldInterceptResponse(const ResourceResponse&);
     void interceptResponse(const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    void interceptRequest(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
     void searchInRequest(ErrorString&, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
@@ -140,7 +145,9 @@ private:
 
     void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType);
 
-    bool shouldIntercept(URL);
+    using NetworkStage = Inspector::Protocol::Network::NetworkStage;
+    bool shouldIntercept(URL, NetworkStage);
+    void continuePendingRequests();
     void continuePendingResponses();
 
     WebSocket* webSocketForRequestId(const String& requestId);
@@ -152,6 +159,31 @@ private:
     Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource*);
 
     double timestamp();
+
+    class PendingInterceptRequest {
+        WTF_MAKE_NONCOPYABLE(PendingInterceptRequest);
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        PendingInterceptRequest(RefPtr<ResourceLoader> loader, CompletionHandler<void(const ResourceRequest&)>&& completionHandler)
+            : m_loader(loader)
+            , m_completionHandler(WTFMove(completionHandler))
+        { }
+
+        void continueWithOriginalRequest()
+        {
+            if (!m_loader->reachedTerminalState())
+                m_completionHandler(m_loader->request());
+        }
+
+        void continueWithRequest(const ResourceRequest& request)
+        {
+            m_completionHandler(request);
+        }
+
+        PendingInterceptRequest() = default;
+        RefPtr<ResourceLoader> m_loader;
+        CompletionHandler<void(const ResourceRequest&)> m_completionHandler;
+    };
 
     class PendingInterceptResponse {
         WTF_MAKE_NONCOPYABLE(PendingInterceptResponse);
@@ -204,15 +236,18 @@ private:
         String url;
         bool caseSensitive { true };
         bool isRegex { false };
+        NetworkStage networkStage { NetworkStage::Response };
 
         inline bool operator==(const Intercept& other) const
         {
             return url == other.url
                 && caseSensitive == other.caseSensitive
-                && isRegex == other.isRegex;
+                && isRegex == other.isRegex
+                && networkStage == other.networkStage;
         }
     };
     Vector<Intercept> m_intercepts;
+    HashMap<String, std::unique_ptr<PendingInterceptRequest>> m_pendingInterceptRequests;
     HashMap<String, std::unique_ptr<PendingInterceptResponse>> m_pendingInterceptResponses;
 
     // FIXME: InspectorNetworkAgent should not be aware of style recalculation.

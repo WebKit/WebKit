@@ -811,10 +811,17 @@ void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cac
     }
 }
 
-bool InspectorInstrumentation::willInterceptRequestImpl(InstrumentingAgents& instrumentingAgents, const ResourceRequest& request)
+bool InspectorInstrumentation::willInterceptImpl(InstrumentingAgents& instrumentingAgents, const ResourceRequest& request)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
-        return networkAgent->willInterceptRequest(request);
+        return networkAgent->willIntercept(request);
+    return false;
+}
+
+bool InspectorInstrumentation::shouldInterceptRequestImpl(InstrumentingAgents& instrumentingAgents, const ResourceRequest& request)
+{
+    if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
+        return networkAgent->shouldInterceptRequest(request);
     return false;
 }
 
@@ -823,6 +830,12 @@ bool InspectorInstrumentation::shouldInterceptResponseImpl(InstrumentingAgents& 
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         return networkAgent->shouldInterceptResponse(response);
     return false;
+}
+
+void InspectorInstrumentation::interceptRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+{
+    if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
+        networkAgent->interceptRequest(loader, WTFMove(handler));
 }
 
 void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)

@@ -1,0 +1,20 @@
+Test request interception that continues request.
+
+
+== Running test suite: Network.interceptContinue
+-- Running test case: Network.interceptRequest.Continue
+Triggering load...
+Response content:
+function myScriptJS() {}
+
+
+-- Running test case: Network.interceptRequest.ContinueWrongStage
+Triggering load...
+PASS: Should produce an exception.
+Error: Missing pending intercept response for given requestId
+
+-- Running test case: Network.interceptRequest.ContinueWrongId
+Triggering load...
+PASS: Should produce an exception.
+Error: Missing pending intercept request for given requestId
+

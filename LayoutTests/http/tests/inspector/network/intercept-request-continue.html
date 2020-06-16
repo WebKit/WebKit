@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+async function fetchData(url)
+{
+    let response = await fetch(url);
+    return await response.text();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptContinue");
+    
+    NetworkAgent.addInterception.invoke({
+        url: "http://127.0.0.1:8000/inspector/network/resources/script.js",
+        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+    });
+
+    suite.addTestCase({
+        name: "Network.interceptRequest.Continue",
+        description: "Tests request interception that continues",
+        async test() {
+            let interceptContinue = (event) => {
+                let { target, requestId, request } = event.data;
+                NetworkAgent.interceptContinue.invoke({
+                    requestId,
+                    stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+                });
+            };
+
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.RequestIntercepted, interceptContinue);
+            InspectorTest.log("Triggering load...");
+            let response = await RuntimeAgent.evaluate("fetchData('resources/script.js')");
+            response = await RuntimeAgent.awaitPromise(response.result.objectId, true);
+            InspectorTest.log("Response content:");
+            InspectorTest.log(response.result.value);
+            WI.networkManager.removeEventListener(WI.NetworkManager.Event.RequestIntercepted, interceptContinue);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.interceptRequest.ContinueWrongStage",
+        description: "Tests request interception that continues with the wrong stage",
+        async test() {
+            InspectorTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                InspectorTest.evaluateInPage(`fetchData('resources/script.js')`),
+            ]);
+
+            await InspectorTest.expectException(async () => {
+                await NetworkAgent.interceptContinue.invoke({
+                    requestId: requestInterceptedEvent.data.requestId,
+                    stage: InspectorBackend.Enum.Network.NetworkStage.Response,
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.interceptRequest.ContinueWrongId",
+        description: "Tests request interception that continues with the wrong stage",
+        async test() {
+            InspectorTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                InspectorTest.evaluateInPage(`fetchData('resources/script.js')`),
+            ]);
+
+            await InspectorTest.expectException(async () => {
+                await NetworkAgent.interceptContinue.invoke({
+                    requestId: "wrongId",
+                    stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception that continues request.</p>
+</body>
+</html>

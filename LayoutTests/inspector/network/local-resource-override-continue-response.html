@@ -46,7 +46,7 @@ function test()
             // Let the load continue.
             await Promise.all([
                 InspectorProtocol.awaitEvent({event: "Network.responseReceived"}),
-                InspectorProtocol.awaitCommand({method: "Network.interceptContinue", params: {requestId: messageObject.params.requestId}}),
+                InspectorProtocol.awaitCommand({method: "Network.interceptContinue", params: {requestId: messageObject.params.requestId, stage: "response"}}),
             ]);
             ProtocolTest.pass("Response received.");
 

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithResponse");
+
+    suite.addTestCase({
+        name: "Network.interceptRequest.MainResource with response",
+        description: "Main resource uses request interception on next page load and fulfills request",
+        async test() {
+            await NetworkAgent.addInterception.invoke({
+                url: "http://127.0.0.1:8000/inspector/network/intercept-request-main-resource-with-response.html",
+                stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+            });
+
+            WI.networkManager.singleFireEventListener(WI.NetworkManager.Event.RequestIntercepted, (event) => {
+                let {target, requestId, request} = event.data;
+                NetworkAgent.interceptRequestWithResponse.invoke({
+                    requestId,
+                    mimeType: "text/html",
+                    content: `<!DOCTYPE html><html><head><script src="../resources/inspector-test.js"></`+`script></head><body><p>Overridden page content</p><script>alert("REPLACED HTML CONTENT"); TestPage.completeTest();</`+`script></body></html>`,
+                    base64Encoded: false,
+                    status: 200,
+                    statusText: "OK",
+                    headers: {},
+                });
+            });
+            await InspectorTest.reloadPage({ignoreCache: false, revalidateAllResources: true});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception intercepting the main resource load with response.</p>
+<script>alert("ORIGINAL HTML CONTENT");</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+async function fetchData(url)
+{
+    try {
+        let response = await fetch(url);
+        // Eval to accept trailing coma JSON.
+        let data = eval("(" + (await response.text() || "{}") + ")");
+        data.responseURL = response.url;
+        return data;
+    } catch (e) {
+        return { error: e.message };
+    }
+}
+
+async function postData(url)
+{
+    let response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "value=original",
+    });
+    // Eval to accept trailing coma JSON.
+    let data = eval("(" + (await response.text() || "{}") + ")");
+    data.responseURL = response.url;
+    return data;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptWithRequest");
+
+    NetworkAgent.addInterception.invoke({
+        url: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php",
+        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+    });
+
+    function logRequest(result) {
+        let request = result.value;
+        if (request.error) {
+            InspectorTest.log(`  ${request.error}`);
+            return;
+        }
+
+        InspectorTest.log(`  URI: ${request.uri}`);
+        InspectorTest.log(`  Response URL: ${request.responseURL}`);
+        InspectorTest.log(`  Method: ${request.method}`);
+        let headerKeys = Object.keys(request.headers);
+        if (headerKeys.length) {
+            headerKeys.sort();
+            InspectorTest.log(`  Request Headers:`);
+            for (let name of headerKeys) {
+                if (!name.startsWith("X-") && !name.startsWith("Content-"))
+                    continue;
+                let value = request.headers[name];
+                InspectorTest.log(`    ${name}: ${value}`);
+            }
+        }
+        let getKeys = Object.keys(request.get);
+        if (getKeys.length) {
+            InspectorTest.log("  Get:");
+            getKeys.sort();
+            for (let name of getKeys) {
+                let value = request.get[name];
+                InspectorTest.log(`    ${name}: ${value}`);
+            }
+        }
+        let postKeys = Object.keys(request.post);
+        if (postKeys.length) {
+            InspectorTest.log("  Post:");
+            postKeys.sort();
+            for (let name of postKeys) {
+                let value = request.post[name];
+                InspectorTest.log(`    ${name}: ${value}`);
+            }
+        }
+    }
+
+    function addTestCase({name, description, expression, overrides}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                InspectorTest.log("Triggering load...");
+                let [requestInterceptedEvent, fetchResponse] = await Promise.all([
+                    WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                    RuntimeAgent.evaluate(expression),
+                ]);
+
+                await NetworkAgent.interceptWithRequest.invoke({
+                    requestId: requestInterceptedEvent.data.requestId,
+                    ...overrides,
+                });
+
+                let response = await RuntimeAgent.awaitPromise(fetchResponse.result.objectId, true);
+                InspectorTest.log("Request details:");
+                logRequest(response.result);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.interceptRequest.Method",
+        description: "Tests request method interception",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { method: "POST" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.MethodDelete",
+        description: "Tests request method interception with DELETE",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { method: "DELETE" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.MethodNonStandard",
+        description: "Tests request method interception with NONSTANDARD",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { method: "NONSTANDARD" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.MethodEmpty",
+        description: "Tests request method interception with empty string",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { method: "" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.URL",
+        description: "Tests request method interception with different URL",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { url: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php?newURL=value" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.URLFragment",
+        description: "Tests request method interception with URL with fragment",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { url: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php#fragment" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.URLEmpty",
+        description: "Tests request method interception with empty URL",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { url: "" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.Headers",
+        description: "Tests request headers interception",
+        expression: "fetchData('resources/intercept-echo.php')",
+        overrides: { headers: { "X-Value": "overridden" } },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.PostData",
+        description: "Tests request post data interception",
+        expression: "postData('resources/intercept-echo.php')",
+        overrides: {
+            method: "POST",
+            postData: btoa("value=overridden"),
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception altering request properties.</p>
+</body>
+</html>

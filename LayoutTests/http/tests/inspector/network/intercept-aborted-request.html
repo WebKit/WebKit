@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+
+async function fetchAndAbort() {
+    let url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+    let controller = new AbortController();
+    let { signal } = controller;
+    fetch(url, { signal });
+    controller.abort();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithResponse");
+
+    NetworkAgent.addInterception.invoke({
+        url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+    });
+
+    suite.addTestCase({
+        name: "Network.interceptRequestWithResponse.Aborted",
+        description: "Tests request interception that fulfills aborted request",
+        async test() {
+            InspectorTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                InspectorTest.evaluateInPage(`fetchAndAbort()`),
+            ]);
+
+            await InspectorTest.expectException(async () => {
+                await NetworkAgent.interceptRequestWithResponse.invoke({
+                    requestId: requestInterceptedEvent.data.requestId,
+                    stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+                    content: "FAIL",
+                    base64Encoded: false,
+                    mimeType: "text/plain",
+                    status: 200,
+                    statusText: "OK",
+                    headers: {},
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.interceptRequestWithError.Aborted",
+        description: "Tests request interception that rejects aborted request",
+        async test() {
+            InspectorTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                InspectorTest.evaluateInPage(`fetchAndAbort()`),
+            ]);
+
+            await InspectorTest.expectException(async () => {
+                await NetworkAgent.interceptRequestWithError.invoke({
+                    requestId: requestInterceptedEvent.data.requestId,
+                    errorType: InspectorBackend.Enum.Network.ResourceErrorType.General,
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception of the aborted request.</p>
+</body>
+</html>

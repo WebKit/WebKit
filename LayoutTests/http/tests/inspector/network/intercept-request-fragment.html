@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+
+function loadSubresource(url)
+{
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
+    document.head.appendChild(link);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptWithRequest");
+
+    NetworkAgent.addInterception.invoke({
+        url: "http://127.0.0.1:8000/inspector/network/resources/stylesheet.css",
+        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
+    });
+
+    function addBaselineTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                InspectorTest.log("Triggering load...");
+                let [requestEvent, responseEvent, fetchResponse] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                    RuntimeAgent.evaluate(expression),
+                ]);
+                InspectorTest.log("Request URL: " + requestEvent.data.resource.url);
+                InspectorTest.log("Response URL: " + responseEvent.target.url);
+            }
+        });
+    }
+    function addTestCase({name, description, expression, url}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                InspectorTest.log("Triggering load...");
+                let [requestEvent, requestInterceptedEvent, fetchResponse] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
+                    RuntimeAgent.evaluate(expression),
+                ]);
+                InspectorTest.log("Request URL: " + requestEvent.data.resource.url);
+
+                let [responseEvent, interceptResponse] = await Promise.all([
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                    NetworkAgent.interceptWithRequest.invoke({
+                        requestId: requestInterceptedEvent.data.requestId,
+                        url,
+                    }),
+                ]);
+                InspectorTest.log("Response URL: " + responseEvent.target.url);
+            }
+        });
+    }
+
+
+    addBaselineTestCase({
+        name: "Network.interceptRequest.URLWithoutFragmentBaseline",
+        description: "Tests response url without fragment - baseline",
+        expression: "loadSubresource('resources/stylesheet-with-sourcemap.css?one')",
+    });
+
+    addBaselineTestCase({
+        name: "Network.interceptRequest.URLWithFragmentBaseline",
+        description: "Tests response url with fragment - baseline",
+        expression: "loadSubresource('resources/stylesheet-with-sourcemap.css?two#fragment')",
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.URLAddFragment",
+        description: "Tests request method interception with URL with fragment",
+        expression: "loadSubresource('resources/stylesheet.css')",
+        url: "http://127.0.0.1:8000/inspector/network/resources/stylesheet.css#fragment",
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.URLRemoveFragment",
+        description: "Tests request method interception that removes fragment",
+        expression: "loadSubresource('resources/stylesheet.css#fragment')",
+        url: "http://127.0.0.1:8000/inspector/network/resources/stylesheet.css",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception in combination with fragments.</p>
+</body>
+</html>
