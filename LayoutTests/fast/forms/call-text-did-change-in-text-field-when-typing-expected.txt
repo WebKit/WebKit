@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 1. Changing text field value with user typing gesture:
 Text did change in text field.
+PASS keyPressed became true
 The value of the text field is: "a"
 
 2. Changing text field value with non-typing user gesture:

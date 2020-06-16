@@ -1,3 +1,21 @@
+2020-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: [ iOS wk2 Debug ] fast/forms/call-text-did-change-in-text-field-when-typing.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=213218
+
+        Reviewed by Tim Horton.
+
+        `UIHelper.typeCharacter` is guaranteed to wait until the application in the UI process has dequeued the
+        synthesized key events, but is not necessarily guaranteed to wait until the web process is done handling the
+        key events. As a result, it's possible for this test to check the value of the text field in step (1) before the
+        event has been received, which causes the test to fail with a diff.
+
+        To fix this, wait for the key event to be handled (like we do for the synthetic click event below).
+
+        * fast/forms/call-text-did-change-in-text-field-when-typing-expected.txt:
+        * fast/forms/call-text-did-change-in-text-field-when-typing.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-06-15  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ iOS wk2 Debug ] fast/forms/call-text-did-change-in-text-field-when-typing.html is flaky failing.

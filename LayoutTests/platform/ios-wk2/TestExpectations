@@ -1753,5 +1753,3 @@ webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetch
 webkit.org/b/212532 http/wpt/service-workers/service-worker-different-process.https.html [ Slow Pass Failure ]
 
 webkit.org/b/212696 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html [ Pass Failure ]
-
-webkit.org/b/213218 [ Debug ] fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass Failure ]

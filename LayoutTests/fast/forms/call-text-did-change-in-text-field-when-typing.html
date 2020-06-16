@@ -28,6 +28,7 @@
         + " injected bundle method. This test requires WebKitTestRunner.");
 
     buttonClicked = false;
+    keyPressed = false;
 
     if (window.testRunner) {
         jsTestIsAsync = true;
@@ -37,6 +38,7 @@
     field.addEventListener("keypress", event => {
         field.value += event.key;
         event.preventDefault();
+        keyPressed = true;
     });
 
     button.addEventListener("click", event => {
@@ -53,11 +55,12 @@
 
         debug("1. Changing text field value with user typing gesture:");
         await UIHelper.typeCharacter("a");
+        await new Promise(resolve => shouldBecomeEqual("keyPressed", "true", resolve));
         debug(`The value of the text field is: "${field.value}"`);
         debug("");
 
         debug("2. Changing text field value with non-typing user gesture:");
-        UIHelper.activateAt(100, 150);
+        await UIHelper.activateAt(100, 150);
         await new Promise(resolve => shouldBecomeEqual("buttonClicked", "true", resolve));
         debug(`The value of the text field is: "${field.value}"`);
         debug("");
