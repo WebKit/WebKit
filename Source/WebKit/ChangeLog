@@ -1,3 +1,50 @@
+2020-06-16  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Disable video autoplay
+        https://bugs.webkit.org/show_bug.cgi?id=184845
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake: Add new source files to the build.
+        * PlatformWPE.cmake: Ditto.
+        * SourcesGTK.txt: Ditto.
+        * SourcesWPE.txt: Ditto.
+        * UIProcess/API/glib/WebKitPolicyDecision.cpp:
+        (webkit_policy_decision_use_with_policies): : Add an API to
+        respond to navigation decisions with policies.
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextCreatePageForWebView): Plumb in the default
+        website policies that are associated with the web view.
+        * UIProcess/API/glib/WebKitWebContextPrivate.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_class_init):
+        (webkit_web_view_get_website_policies):
+        * UIProcess/API/glib/WebKitWebsitePolicies.cpp: Added.
+        (_WebKitWebsitePoliciesPrivate::_WebKitWebsitePoliciesPrivate):
+        (webkitWebsitePoliciesGetWebsitePolicies):
+        (webkitWebsitePoliciesGetPoliciesData):
+        (webkitWebsitePoliciesGetProperty):
+        (webkitWebsitePoliciesSetAutoplayPolicy):
+        (webkitWebsitePoliciesSetProperty):
+        (webkit_website_policies_class_init):
+        (webkit_website_policies_new):
+        (webkit_website_policies_new_with_policies):
+        (webkit_website_policies_get_autoplay_policy):
+        * UIProcess/API/glib/WebKitWebsitePoliciesPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPolicyDecision.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkit_web_view_new_with_related_view):
+        * UIProcess/API/gtk/WebKitWebsitePolicies.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitPolicyDecision.h:
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/WebKitWebsitePolicies.h: Added.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2020-06-16  Chris Dumez  <cdumez@apple.com>
 
         Stop calling userPreferredLanguages() in the UIProcess

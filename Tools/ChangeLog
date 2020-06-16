@@ -1,3 +1,28 @@
+2020-06-16  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Disable video autoplay
+        https://bugs.webkit.org/show_bug.cgi?id=184845
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update the various callsites for constructing a view to take into
+        account the default policies. I chose the default as autoplay
+        allow without sound, which is in keeping with WebCore's choice.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewDecidePolicy):
+        (newTabCallback):
+        (openPrivateWindow):
+        (browser_window_get_or_create_web_view_for_automation):
+        (browser_window_create_web_view_in_new_tab_for_automation):
+        * MiniBrowser/gtk/main.c:
+        (createBrowserTab):
+        (main):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp: Add
+        autoplay policy tests, and use modern class initializers.
+        (testAutoplayPolicy):
+        (beforeAll):
+
 2020-06-16  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Subversion perl bindings unusable

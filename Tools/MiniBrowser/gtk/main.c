@@ -40,6 +40,7 @@
 
 static const gchar **uriArguments = NULL;
 static const gchar **ignoreHosts = NULL;
+static WebKitAutoplayPolicy autoplayPolicy = WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND;
 static GdkRGBA *backgroundColor;
 static gboolean editorMode;
 static const char *sessionFile;
@@ -77,13 +78,14 @@ static gchar *argumentToURL(const char *filename)
     return fileURL;
 }
 
-static WebKitWebView *createBrowserTab(BrowserWindow *window, WebKitSettings *webkitSettings, WebKitUserContentManager *userContentManager)
+static WebKitWebView *createBrowserTab(BrowserWindow *window, WebKitSettings *webkitSettings, WebKitUserContentManager *userContentManager, WebKitWebsitePolicies *defaultWebsitePolicies)
 {
     WebKitWebView *webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", browser_window_get_web_context(window),
         "settings", webkitSettings,
         "user-content-manager", userContentManager,
         "is-controlled-by-automation", automationMode,
+        "website-policies", defaultWebsitePolicies,
         NULL));
 
     if (editorMode)
@@ -91,6 +93,27 @@ static WebKitWebView *createBrowserTab(BrowserWindow *window, WebKitSettings *we
 
     browser_window_append_view(window, webView);
     return webView;
+}
+
+static gboolean parseAutoplayPolicy(const char *optionName, const char *value, gpointer data, GError **error)
+{
+    if (!g_strcmp0(value, "allow")) {
+        autoplayPolicy = WEBKIT_AUTOPLAY_ALLOW;
+        return TRUE;
+    }
+
+    if (!g_strcmp0(value, "allow-without-sound")) {
+        autoplayPolicy = WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND;
+        return TRUE;
+    }
+
+    if (!g_strcmp0(value, "deny")) {
+        autoplayPolicy = WEBKIT_AUTOPLAY_DENY;
+        return TRUE;
+    }
+
+    g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Failed to parse '%s' as an autoplay policy, valid options are allow, allow-without-sound, and deny", value);
+    return FALSE;
 }
 
 static gboolean parseBackgroundColor(const char *optionName, const char *value, gpointer data, GError **error)
@@ -107,6 +130,7 @@ static gboolean parseBackgroundColor(const char *optionName, const char *value, 
 
 static const GOptionEntry commandLineOptions[] =
 {
+    { "autoplay-policy", 0, 0, G_OPTION_ARG_CALLBACK, parseAutoplayPolicy, "Autoplay policy. Valid options are: allow, allow-without-sound, and deny", NULL },
     { "bg-color", 0, 0, G_OPTION_ARG_CALLBACK, parseBackgroundColor, "Background color", NULL },
     { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
     { "dark-mode", 'd', 0, G_OPTION_ARG_NONE, &darkMode, "Run in dark mode", NULL },
@@ -572,6 +596,10 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
     g_signal_connect(userContentManager, "script-message-received::aboutData", G_CALLBACK(aboutDataScriptMessageReceivedCallback), webContext);
 
+    WebKitWebsitePolicies *defaultWebsitePolicies = webkit_website_policies_new_with_policies(
+        "autoplay", autoplayPolicy,
+        NULL);
+
     if (contentFilter) {
         GFile *contentFilterFile = g_file_new_for_commandline_arg(contentFilter);
 
@@ -617,7 +645,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         int i;
 
         for (i = 0; uriArguments[i]; i++) {
-            WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager);
+            WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager, defaultWebsitePolicies);
             if (!i)
                 firstTab = GTK_WIDGET(webView);
             gchar *url = argumentToURL(uriArguments[i]);
@@ -625,7 +653,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
             g_free(url);
         }
     } else {
-        WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager);
+        WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager, defaultWebsitePolicies);
         firstTab = GTK_WIDGET(webView);
 
         if (!editorMode) {
@@ -638,6 +666,8 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
 
     g_clear_object(&webkitSettings);
     g_object_unref(webContext);
+    g_object_unref(userContentManager);
+    g_object_unref(defaultWebsitePolicies);
 
     gtk_widget_grab_focus(firstTab);
     gtk_widget_show(GTK_WIDGET(mainWindow));

@@ -64,6 +64,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebViewSessionStatePrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
+#include "WebKitWebsitePoliciesPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageMessages.h"
 #include <JavaScriptCore/APICast.h>
@@ -201,7 +202,8 @@ enum {
     PROP_AUTOMATION_PRESENTATION_TYPE,
     PROP_EDITABLE,
     PROP_PAGE_ID,
-    PROP_IS_MUTED
+    PROP_IS_MUTED,
+    PROP_WEBSITE_POLICIES
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -303,6 +305,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
 
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
+    GRefPtr<WebKitWebsitePolicies> websitePolicies;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -756,7 +759,10 @@ static void webkitWebViewConstructed(GObject* object)
         webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), webkitWebContextGetProcessPool(priv->context.get()));
     }
 
-    webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView);
+    if (!priv->websitePolicies)
+        priv->websitePolicies = adoptGRef(webkit_website_policies_new());
+
+    webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView, priv->websitePolicies.get());
 
     priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
@@ -839,6 +845,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_IS_MUTED:
         webkit_web_view_set_is_muted(webView, g_value_get_boolean(value));
         break;
+    case PROP_WEBSITE_POLICIES:
+        webView->priv->websitePolicies = static_cast<WebKitWebsitePolicies*>(g_value_get_object(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -903,6 +912,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_IS_MUTED:
         g_value_set_boolean(value, webkit_web_view_get_is_muted(webView));
+        break;
+    case PROP_WEBSITE_POLICIES:
+        g_value_set_object(value, webkit_web_view_get_website_policies(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1290,6 +1302,23 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("Whether the view audio is muted"),
             FALSE,
             WEBKIT_PARAM_READWRITE));
+
+    /**
+     * WebKitWebView:website-policies:
+     *
+     * The #WebKitWebsitePolicies for the view.
+     *
+     * Since: 2.30
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_WEBSITE_POLICIES,
+        g_param_spec_object(
+            "website-policies",
+            _("Default Website Policies"),
+            _("The default policy object for sites loaded in this view"),
+            WEBKIT_TYPE_WEBSITE_POLICIES,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
      * WebKitWebView::load-changed:
@@ -4633,4 +4662,26 @@ WebKitInputMethodContext* webkit_web_view_get_input_method_context(WebKitWebView
     return webView->priv->view->inputMethodContext();
 #endif
 
+}
+
+/**
+ * webkit_web_view_get_website_policies:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the default website policies set on construction in the
+ * @web_view. These can be overridden on a per-origin basis via the
+ * #WebKitWebView::decide-policy signal handler.
+ *
+ * See also webkit_policy_decision_use_with_policies().
+ *
+ * Returns: (transfer none): the default #WebKitWebsitePolicies
+ *     associated with the view.
+ *
+ * Since: 2.30
+ */
+WebKitWebsitePolicies* webkit_web_view_get_website_policies(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    return webView->priv->websitePolicies.get();
 }

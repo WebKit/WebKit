@@ -20,8 +20,11 @@
 #include "config.h"
 #include "WebKitPolicyDecision.h"
 
+#include "APIWebsitePolicies.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
+#include "WebKitWebsitePolicies.h"
+#include "WebKitWebsitePoliciesPrivate.h"
 #include "WebsitePoliciesData.h"
 #include <wtf/glib/WTFGType.h>
 
@@ -82,6 +85,34 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
 
     auto listener = std::exchange(decision->priv->listener, nullptr);
     listener->use();
+}
+
+/**
+ * webkit_policy_decision_use_with_policies:
+ * @decision: a #WebKitPolicyDecision
+ * @policies: a #WebKitWebsitePolicies
+ *
+ * Accept the navigation action which triggered this decision, and
+ * continue with @policies affecting all subsequent loads of resources
+ * in the origin associated with the accepted navigation action.
+ *
+ * For example, a navigation decision to a video sharing website may
+ * be accepted under the priviso no movies are allowed to autoplay. The
+ * autoplay policy in this case would be set in the @policies.
+ *
+ * Since: 2.30
+ */
+void webkit_policy_decision_use_with_policies(WebKitPolicyDecision* decision, WebKitWebsitePolicies* policies)
+{
+    g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
+    g_return_if_fail(WEBKIT_IS_WEBSITE_POLICIES(policies));
+
+    if (!decision->priv->listener)
+        return;
+
+    auto listener = std::exchange(decision->priv->listener, nullptr);
+
+    listener->use(webkitWebsitePoliciesGetWebsitePolicies(policies));
 }
 
 /**

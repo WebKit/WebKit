@@ -28,6 +28,7 @@
 #include "DownloadProxy.h"
 #include "WebKitUserContentManager.h"
 #include "WebKitWebContext.h"
+#include "WebKitWebsitePolicies.h"
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 
@@ -36,7 +37,7 @@ WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
 void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
-void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitUserContentManager*, WebKitWebView*);
+void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitUserContentManager*, WebKitWebView*, WebKitWebsitePolicies*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext*);

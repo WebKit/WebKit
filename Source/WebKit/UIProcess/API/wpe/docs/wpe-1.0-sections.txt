@@ -172,6 +172,7 @@ WebKitSaveMode
 WebKitInsecureContentEvent
 WebKitWebProcessTerminationReason
 WebKitFrameDisplayedCallback
+WebKitAutoplayPolicy
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT
@@ -260,6 +261,7 @@ webkit_web_view_send_message_to_page
 webkit_web_view_send_message_to_page_finish
 webkit_web_view_set_input_method_context
 webkit_web_view_get_input_method_context
+webkit_web_view_get_website_policies
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -871,6 +873,7 @@ WebKitPolicyDecision
 webkit_policy_decision_download
 webkit_policy_decision_ignore
 webkit_policy_decision_use
+webkit_policy_decision_use_with_policies
 
 <SUBSECTION Standard>
 WebKitPolicyDecisionClass
@@ -1567,4 +1570,25 @@ WEBKIT_TYPE_INPUT_METHOD_UNDERLINE
 <SECTION>
 <FILE>WebKitURIUtilities</FILE>
 webkit_uri_for_display
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebsitePolicies</FILE>
+WebKitWebsitePolicies
+webkit_website_policies_new
+webkit_website_policies_new_with_policies
+webkit_website_policies_get_autoplay_policy
+
+<SUBSECTION Standard>
+WebKitWebsitePoliciesClass
+WEBKIT_IS_WEBSITE_POLICIES
+WEBKIT_IS_WEBSITE_POLICIES_CLASS
+WEBKIT_TYPE_WEBSITE_POLICIES
+WEBKIT_WEBSITE_POLICIES
+WEBKIT_WEBSITE_POLICIES_CLASS
+WEBKIT_WEBSITE_POLICIES_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebsitePoliciesPrivate
+webkit_website_policies_get_type
 </SECTION>

@@ -337,8 +337,8 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
  * You can also use this method to implement other process models based on %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
  * like for example, sharing the same web process for all the views in the same security domain.
  *
- * The newly created #WebKitWebView will also have the same #WebKitUserContentManager
- * and #WebKitSettings as @web_view.
+ * The newly created #WebKitWebView will also have the same #WebKitUserContentManager,
+ * #WebKitSettings, and #WebKitWebsitePolicies as @web_view.
  *
  * Returns: (transfer full): The newly created #WebKitWebView widget
  *
@@ -352,6 +352,7 @@ GtkWidget* webkit_web_view_new_with_related_view(WebKitWebView* webView)
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "settings", webkit_web_view_get_settings(webView),
         "related-view", webView,
+        "website-policies", webkit_web_view_get_website_policies(webView),
         nullptr));
 }
 

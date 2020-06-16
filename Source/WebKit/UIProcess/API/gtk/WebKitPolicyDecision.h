@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitWebsitePolicies.h>
 
 G_BEGIN_DECLS
 
@@ -61,6 +62,10 @@ webkit_policy_decision_get_type (void);
 
 WEBKIT_API void
 webkit_policy_decision_use      (WebKitPolicyDecision *decision);
+
+WEBKIT_API void
+webkit_policy_decision_use_with_policies  (WebKitPolicyDecision *decision,
+                                           WebKitWebsitePolicies *policies);
 
 WEBKIT_API void
 webkit_policy_decision_ignore   (WebKitPolicyDecision *decision);

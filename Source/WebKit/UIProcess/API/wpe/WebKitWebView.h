@@ -53,6 +53,7 @@
 #include <wpe/WebKitUserMessage.h>
 #include <wpe/WebKitWebContext.h>
 #include <wpe/WebKitWebResource.h>
+#include <wpe/WebKitWebsitePolicies.h>
 #include <wpe/WebKitWebViewBackend.h>
 #include <wpe/WebKitWebViewSessionState.h>
 #include <wpe/WebKitWindowProperties.h>
@@ -560,6 +561,9 @@ webkit_web_view_set_input_method_context             (WebKitWebView             
 
 WEBKIT_API WebKitInputMethodContext *
 webkit_web_view_get_input_method_context             (WebKitWebView               *web_view);
+
+WEBKIT_API WebKitWebsitePolicies *
+webkit_web_view_get_website_policies                 (WebKitWebView             *web_view);
 
 G_END_DECLS
 

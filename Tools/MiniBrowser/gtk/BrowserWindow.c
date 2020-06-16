@@ -448,6 +448,7 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
+        "website-policies", webkit_web_view_get_website_policies(webView),
         NULL));
     browser_window_append_view(window, newWebView);
     webkit_web_view_load_request(newWebView, webkit_navigation_action_get_request(navigationAction));
@@ -633,6 +634,7 @@ static void newTabCallback(GSimpleAction *action, GVariant *parameter, gpointer 
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
+        "website-policies", webkit_web_view_get_website_policies(webView),
         NULL)));
     gtk_widget_grab_focus(window->uriEntry);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), -1);
@@ -653,6 +655,7 @@ static void openPrivateWindow(GSimpleAction *action, GVariant *parameter, gpoint
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-ephemeral", TRUE,
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
+        "website-policies", webkit_web_view_get_website_policies(webView),
         NULL));
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
     gtk_window_set_application(GTK_WINDOW(newWindow), gtk_window_get_application(GTK_WINDOW(window)));
@@ -1453,6 +1456,7 @@ WebKitWebView *browser_window_get_or_create_web_view_for_automation(BrowserWindo
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", TRUE,
+        "website-policies", webkit_web_view_get_website_policies(webView),
         NULL));
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
     gtk_window_set_application(GTK_WINDOW(newWindow), gtk_window_get_application(GTK_WINDOW(window)));
@@ -1474,6 +1478,7 @@ WebKitWebView *browser_window_create_web_view_in_new_tab_for_automation(BrowserW
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", TRUE,
         "automation-presentation-type", WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB,
+        "website-policies", webkit_web_view_get_website_policies(webView),
         NULL));
     browser_window_append_view(window, newWebView);
     webkit_web_view_load_uri(newWebView, "about:blank");
