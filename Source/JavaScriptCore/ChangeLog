@@ -1,3 +1,23 @@
+2020-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][Visual Studio] CombinedDomains.json is generated twice in JavaScriptCore.vcxproj and InspectorBackendCommands.vcxproj
+        https://bugs.webkit.org/show_bug.cgi?id=213225
+
+        Reviewed by Don Olmstead.
+
+        Since r262203 (Bug 210014) added a new target
+        InspectorBackendCommands, CombinedDomains.json is generated twice
+        in JavaScriptCore.vcxproj and InspectorBackendCommands.vcxproj.
+        This caused unnecessary incremental builds.
+
+        The fundamental issue of this issue was fixed in CMake side.
+        <https://gitlab.kitware.com/cmake/cmake/issues/16767>
+        However, JavaScriptCore target needs to have a direct or indirect
+        dependency of InspectorBackendCommands target for CMake Visual
+        Studio generator to eliminate duplicated custom commands.
+
+        * CMakeLists.txt: Added add_dependencies(JavaScriptCore InspectorBackendCommands).
+
 2020-06-16  Mark Lam  <mark.lam@apple.com>
 
         Add SIGABRT handler for non OS(DARWIN) builds to the jsc shell with the -s option.

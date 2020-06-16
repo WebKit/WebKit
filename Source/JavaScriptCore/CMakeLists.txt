@@ -1412,6 +1412,12 @@ endif ()
 add_custom_target(stageSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore stageSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
 
+# JavaScriptCore target needs to have a direct or indirect dependency
+# of InspectorBackendCommands for CMake Visual Studio generator to
+# eliminate duplicated custom commands. Otherwise,
+# CombinedDomains.json will be generated in both projects.
+add_dependencies(JavaScriptCore InspectorBackendCommands)
+
 if (USE_VERSION_STAMPER)
     add_custom_command(
         TARGET JavaScriptCore
