@@ -1,3 +1,13 @@
+2020-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Add SIGABRT handler for non OS(DARWIN) builds to the jsc shell with the -s option.
+        https://bugs.webkit.org/show_bug.cgi?id=213200
+
+        Reviewed by Michael Catanzaro.
+
+        * stress/ensure-crash.js:
+        - unskip this test since expected crashes should now be handled on non-darwin builds.
+
 2020-06-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Bytecode liveness should be aware of checkpoints

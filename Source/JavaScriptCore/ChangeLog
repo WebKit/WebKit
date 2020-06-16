@@ -1,3 +1,16 @@
+2020-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Add SIGABRT handler for non OS(DARWIN) builds to the jsc shell with the -s option.
+        https://bugs.webkit.org/show_bug.cgi?id=213200
+
+        Reviewed by Michael Catanzaro.
+
+        This is needed because non OS(DARWIN) builds uses abort as their "CRASH"ing
+        mechanism.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+
 2020-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         WTF signal machinery is guarded by #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT) but does not use pthreads or machine context

@@ -48,6 +48,9 @@ enum class Signal {
 
     // These signals will only chain if we don't have a handler that can process them. If there is nothing
     // to chain to we restore the default handler and crash.
+#if !OS(DARWIN)
+    Abort,
+#endif
     FloatingPoint,
     Breakpoint, // Be VERY careful with this, installing a handler for this will break lldb/gdb.
     IllegalInstruction,
@@ -64,6 +67,9 @@ inline std::tuple<int, Optional<int>> toSystemSignal(Signal signal)
     case Signal::Usr: return std::make_tuple(SIGILL, WTF::nullopt);
     case Signal::FloatingPoint: return std::make_tuple(SIGFPE, WTF::nullopt);
     case Signal::Breakpoint: return std::make_tuple(SIGTRAP, WTF::nullopt);
+#if !OS(DARWIN)
+    case Signal::Abort: return std::make_tuple(SIGABRT, WTF::nullopt);
+#endif
     default: break;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -78,6 +84,9 @@ inline Signal fromSystemSignal(int signal)
     case SIGTRAP: return Signal::Breakpoint;
     case SIGILL: return Signal::IllegalInstruction;
     case SIGUSR2: return Signal::Usr;
+#if !OS(DARWIN)
+    case SIGABRT: return Signal::Abort;
+#endif
     default: return Signal::Unknown;
     }
 }

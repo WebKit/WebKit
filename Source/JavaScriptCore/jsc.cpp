@@ -2997,6 +2997,11 @@ void CommandLine::parseArguments(int argc, char** argv)
             activateSignalHandlersFor(Signal::AccessFault);
             activateSignalHandlersFor(Signal::FloatingPoint);
             activateSignalHandlersFor(Signal::Breakpoint);
+
+#if !OS(DARWIN)
+            addSignalHandler(Signal::Abort, SignalHandler(exit));
+            activateSignalHandlersFor(Signal::Abort);
+#endif
 #endif
             continue;
         }
