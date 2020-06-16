@@ -1,3 +1,0 @@
-
-PASS The headers of FetchEvent shouldn't contain freshness headers. 
-

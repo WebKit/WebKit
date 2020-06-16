@@ -1,3 +1,12 @@
+2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Garden flaky failures after r263069.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https-expected.txt: Removed.
+
 2020-06-15  Megan Gardner  <megan_gardner@apple.com>
 
         Text form controls can scroll by 1px when value is the same length as size. No scrolling should happen.

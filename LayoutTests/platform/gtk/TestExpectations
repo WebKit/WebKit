@@ -1574,8 +1574,6 @@ webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]
 webkit.org/b/126432 http/tests/misc/acid2-pixel.html [ Failure Pass ]
 webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
 
-webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
-
 webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Timeout Pass Crash ]
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
@@ -1732,8 +1730,6 @@ webkit.org/b/143988 css3/masking/mask-svg-no-fragmentId.html [ ImageOnlyFailure 
 webkit.org/b/143991 fast/table/multiple-captions-crash3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143995 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
-Bug(GTK) http/tests/xmlhttprequest/logout.html [ Failure Pass ]
-
 webkit.org/b/144579 transforms/2d/preserve3d-not-fixed-container.html [ ImageOnlyFailure Pass ]
 webkit.org/b/144582 fast/inline/layout-after-inserting-nested-br.html [ ImageOnlyFailure Pass ]
 
@@ -1820,8 +1816,6 @@ webkit.org/b/160137 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure 
 
 webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
 
-webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure Crash ]
-
 webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/116277 webkit.org/b/198830 media/video-buffered.html [ Pass Failure Crash ]
@@ -1836,8 +1830,6 @@ webkit.org/b/171844 compositing/visibility/visibility-simple-video-layer.html [ 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
 
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Pass Failure ]
 
 webkit.org/b/174353 media/video-restricted-invisible-autoplay-not-allowed.html [ Crash Pass ]
 
@@ -1917,11 +1909,6 @@ webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Pass Tim
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass Crash ]
 
 webkit.org/b/206065 imported/w3c/web-platform-tests/xhr/anonymous-mode-unsupported.htm [ Failure Pass ]
-
-# Warning: this test is expected to fail in the global expectations file, but
-# we expect it to Pass because we support RTL scrollbars. When fixed, it should
-# not be removed, but moved to the expected passes section of this file.
-webkit.org/b/186665 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/186666 media/W3C/video/events/event_progress_manual.html [ Failure Pass Crash ]
 
@@ -2719,8 +2706,6 @@ webkit.org/b/210390 streams/clone-array-buffer.html [ Pass Crash ]
 webkit.org/b/210390 svg/W3C-I18N/g-dirLTR-ubNone.svg [ Pass Crash ]
 webkit.org/b/210390 svg/animated-svgImage-scroll.html [ Pass Crash ]
 webkit.org/b/210390 svg/animations/accumulate-values-width-animation.html [ Pass Crash ]
-
-webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Pass Crash ]
 
 webkit.org/b/210535 storage/domstorage/events/basic-setattribute.html [ Failure Pass ]
 
@@ -4012,8 +3997,6 @@ webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
 webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Pass Failure Crash ]
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
-
-webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/188217 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]

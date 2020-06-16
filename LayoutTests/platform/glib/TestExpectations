@@ -18,12 +18,14 @@
 # * CSS
 # * GStreamer
 # * Perf
+# * Scrolling
 # * SVG
 # * WebAnimations
 # * WebGL
 # * WebRTC
 # * WebSocket
 # * WPT
+# * XHR
 # * PASSING tests
 #   * Usually to override tests skipped/failing by Mac ports.
 # * UNSUPPORTED tests
@@ -36,7 +38,6 @@
 #
 # * Keep them alphabetically sorted - except for the PASSING/NEEDS TRIAGING sections.
 # * Only PASSING/UNSUPPORTED should have expectations without bug entries.
-
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Accessibility-related bugs
@@ -63,6 +64,7 @@ webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ Imag
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Crash ImageOnlyFailure Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # GStreamer-related bugs
@@ -71,6 +73,8 @@ webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ Imag
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
 
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
+
+webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
 
 webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
 
@@ -98,10 +102,27 @@ webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 # Perf-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Perf-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Scrolling-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Failure Pass ]
+
+# Warning: this test is expected to fail in the global expectations file, but
+# we expect it to Pass because we support RTL scrollbars. When fixed, it should
+# not be removed, but moved to the expected passes section of this file.
+webkit.org/b/186665 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Scrolling-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -121,6 +142,7 @@ webkit.org/b/213113 svg/filters/feGaussianBlur-clipped.svg [ ImageOnlyFailure ]
 # WebAnimations-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure Pass ]
 webkit.org/b/211948 webanimations/accelerated-animation-playback-rate.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/212020 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
@@ -212,6 +234,17 @@ webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# XHR-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/212146 http/tests/xmlhttprequest/logout.html [ Failure Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of XHR-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
