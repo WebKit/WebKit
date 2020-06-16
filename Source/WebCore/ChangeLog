@@ -1,3 +1,30 @@
+2020-06-16  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: replace completion handler with a function in interception.
+        https://bugs.webkit.org/show_bug.cgi?id=213252
+
+        Reviewed by Devin Rousso.
+
+        Don't use a `CompletionHandler` as it asserts that it's been called when it's destroyed.
+        Both `Network.interceptRequestWithResponse` and `Network.interceptRequestWithError` essentially
+        "skip" the network pipeline, so the `CompletionHandler` is not invoked for those commands.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::interceptRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::interceptRequest):
+        * inspector/InspectorInstrumentationWebKit.cpp:
+        (WebCore::InspectorInstrumentationWebKit::interceptRequestInternal):
+        * inspector/InspectorInstrumentationWebKit.h:
+        (WebCore::InspectorInstrumentationWebKit::interceptRequest):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::interceptRequest):
+        (WebCore::InspectorNetworkAgent::interceptRequestWithResponse):
+        (WebCore::InspectorNetworkAgent::interceptRequestWithError):
+        * inspector/agents/InspectorNetworkAgent.h:
+        (WebCore::InspectorNetworkAgent::PendingInterceptRequest::PendingInterceptRequest):
+        (WebCore::InspectorNetworkAgent::PendingInterceptRequest::continueAsHandled):
+
 2020-06-16  Clark Wang  <clark_wang@apple.com>
 
         Added missing position attributes to PannerNode
