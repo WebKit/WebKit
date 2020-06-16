@@ -1,3 +1,25 @@
+2020-06-16  Antti Koivisto  <antti@apple.com>
+
+        O(n^2) behavior in media query resolution
+        https://bugs.webkit.org/show_bug.cgi?id=213243
+
+        Reviewed by Anders Carlsson.
+
+        We were traversing all rules in a RuleSet inside a loop over all media queries that change value.
+        This becomes problematic when you have thousands of media queries.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules):
+
+        Instead collect the rule positions that need flipping into a map and then traverse only once
+        to do the actual flipping.
+
+        Longer term we should maintain a data stucture that can map directly from a position to RuleDatas.
+        This will require some data structure rethink so this patch takes a simpler approach.
+
+        (WebCore::Style::RuleSet::MediaQueryCollector::pop):
+        * style/RuleSet.h:
+
 2020-06-16  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Collecting screen properties in the UI process introduced a Safari launch time regression.

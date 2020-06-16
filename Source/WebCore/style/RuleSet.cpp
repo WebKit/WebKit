@@ -422,6 +422,8 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluteDynamicMediaQueryRules(const
 {
     CollectedMediaQueryChanges collectedChanges;
 
+    HashMap<size_t, bool, DefaultHash<size_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<size_t>> affectedRulePositionsAndResults;
+
     for (size_t i = startIndex; i < m_dynamicMediaQueryRules.size(); ++i) {
         auto& dynamicRules = m_dynamicMediaQueryRules[i];
         bool result = true;
@@ -440,16 +442,23 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluteDynamicMediaQueryRules(const
                 continue;
             }
 
-            traverseRuleDatas([&](RuleData& ruleData) {
-                if (!dynamicRules.affectedRulePositions.contains(ruleData.position()))
-                    return;
-                ruleData.setEnabled(result);
-            });
+            for (auto position : dynamicRules.affectedRulePositions)
+                affectedRulePositionsAndResults.add(position, result);
 
             collectedChanges.changedQueryIndexes.append(i);
             collectedChanges.ruleFeatures.append(&dynamicRules.ruleFeatures);
         }
     }
+
+    if (affectedRulePositionsAndResults.isEmpty())
+        return collectedChanges;
+
+    traverseRuleDatas([&](RuleData& ruleData) {
+        auto it = affectedRulePositionsAndResults.find(ruleData.position());
+        if (it == affectedRulePositionsAndResults.end())
+            return;
+        ruleData.setEnabled(it->value);
+    });
 
     return collectedChanges;
 }
@@ -523,9 +532,7 @@ void RuleSet::MediaQueryCollector::pop(const MediaQuerySet* set)
             rules.mediaQuerySets.append(context.set.get());
 
         if (collectDynamic) {
-            auto& toAdd = dynamicContextStack.last().affectedRulePositions;
-            rules.affectedRulePositions.add(toAdd.begin(), toAdd.end());
-
+            rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);
             rules.ruleFeatures = WTFMove(dynamicContextStack.last().ruleFeatures);
             rules.ruleFeatures.shrinkToFit();
         } else
