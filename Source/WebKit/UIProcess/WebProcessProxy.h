@@ -477,6 +477,7 @@ private:
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
     
     void updateRegistrationWithDataStore();
+    Vector<String> platformOverrideLanguages() const;
 
     void maybeShutDown();
 

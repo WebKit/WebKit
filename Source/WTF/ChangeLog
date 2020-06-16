@@ -1,3 +1,15 @@
+2020-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Stop calling userPreferredLanguages() in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=213214
+        <rdar://problem/64317593>
+
+        Reviewed by Per Arne Vollan.
+
+        Export WTF::languageDidChange() so we can call it from WebKit2.
+
+        * wtf/Language.h:
+
 2020-06-16  Mark Lam  <mark.lam@apple.com>
 
         Add SIGABRT handler for non OS(DARWIN) builds to the jsc shell with the -s option.

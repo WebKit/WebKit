@@ -107,7 +107,7 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
     Vector<String> fontWhitelist;
-    Vector<String> languages;
+    Vector<String> overrideLanguages;
 #if USE(GSTREAMER)
     Vector<String> gstreamerOptions;
 #endif

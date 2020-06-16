@@ -49,7 +49,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetShouldUseFontSmoothing(bool useFontSmoothing)
     SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
     ClearResourceLoadStatistics();
-    UserPreferredLanguagesChanged(Vector<String> languages)
+    UserPreferredLanguagesChanged()
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
     # Plug-ins.

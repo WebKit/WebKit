@@ -247,4 +247,20 @@ void WebProcessProxy::unblockPreferenceServiceIfNeeded()
 }
 #endif
 
+Vector<String> WebProcessProxy::platformOverrideLanguages() const
+{
+    NeverDestroyed<Vector<String>> overrideLanguages = []() {
+        NSArray *languages = [[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"];
+        if (!languages)
+            return Vector<WTF::String> { };
+
+        Vector<String> overrideLanguages;
+        overrideLanguages.reserveInitialCapacity([languages count]);
+        for (NSString *language in languages)
+            overrideLanguages.uncheckedAppend(language);
+        return overrideLanguages;
+    }();
+    return overrideLanguages.get();
+}
+
 }

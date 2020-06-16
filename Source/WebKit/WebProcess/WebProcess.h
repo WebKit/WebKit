@@ -377,7 +377,7 @@ private:
     void clearResourceLoadStatistics();
     void flushResourceLoadStatistics();
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
-    void userPreferredLanguagesChanged(const Vector<String>&) const;
+    void userPreferredLanguagesChanged() const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
     bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash);

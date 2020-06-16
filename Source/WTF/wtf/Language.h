@@ -42,7 +42,7 @@ WTF_EXPORT_PRIVATE void overrideUserPreferredLanguages(const Vector<String>&);
 WTF_EXPORT_PRIVATE size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
 WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
 // Called from platform specific code when the user's preferred language(s) change.
-void languageDidChange();
+WTF_EXPORT_PRIVATE void languageDidChange();
 
 // The observer function will be called when system language changes.
 typedef void (*LanguageChangeObserverFunction)(void* context);

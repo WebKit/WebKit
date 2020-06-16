@@ -1,3 +1,28 @@
+2020-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Stop calling userPreferredLanguages() in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=213214
+        <rdar://problem/64317593>
+
+        Reviewed by Per Arne Vollan.
+
+        Stop calling userPreferredLanguages() in the UIProcess since this can be slow and may keep
+        the main thread busy. Nowadays, the WebProcess is able to call it by itself anyway. The
+        sandbox is allowing it.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::languageChanged):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::userPreferredLanguagesChanged const):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-06-16  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r263079.

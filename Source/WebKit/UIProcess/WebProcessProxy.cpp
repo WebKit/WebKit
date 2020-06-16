@@ -317,7 +317,9 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
         launchOptions.extraInitializationData.add("inspector-process"_s, "1"_s);
 
     auto overrideLanguages = m_processPool->configuration().overrideLanguages();
-    if (overrideLanguages.size()) {
+    if (overrideLanguages.isEmpty())
+        overrideLanguages = platformOverrideLanguages();
+    if (!overrideLanguages.isEmpty()) {
         StringBuilder languageString;
         for (size_t i = 0; i < overrideLanguages.size(); ++i) {
             if (i)
@@ -647,6 +649,11 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url)
 bool WebProcessProxy::fullKeyboardAccessEnabled()
 {
     return false;
+}
+
+Vector<String> WebProcessProxy::platformOverrideLanguages() const
+{
+    return { };
 }
 #endif
 

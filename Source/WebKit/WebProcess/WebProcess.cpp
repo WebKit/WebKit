@@ -391,8 +391,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setCacheModel(parameters.cacheModel);
 
-    if (!parameters.languages.isEmpty())
-        overrideUserPreferredLanguages(parameters.languages);
+    if (!parameters.overrideLanguages.isEmpty())
+        overrideUserPreferredLanguages(parameters.overrideLanguages);
 
     m_textCheckerState = parameters.textCheckerState;
 
@@ -645,9 +645,9 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
     WebCore::FontCascade::setShouldUseSmoothing(useFontSmoothing);
 }
 
-void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
+void WebProcess::userPreferredLanguagesChanged() const
 {
-    overrideUserPreferredLanguages(languages);
+    WTF::languageDidChange();
 }
 
 void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
