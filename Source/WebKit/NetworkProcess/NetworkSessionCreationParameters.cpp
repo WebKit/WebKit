@@ -77,7 +77,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << testSpeedMultiplier;
     encoder << suppressesConnectionTerminationOnSystemChange;
     encoder << allowsServerPreconnect;
-    encoder << isInAppBrowserPrivacyEnabled;
     encoder << requiresSecureHTTPSProxyConnection;
     encoder << preventsSystemHTTPProxyAuthentication;
     encoder << resourceLoadStatisticsParameters;
@@ -236,11 +235,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     decoder >> allowsServerPreconnect;
     if (!allowsServerPreconnect)
         return WTF::nullopt;
-    
-    Optional<bool> isInAppBrowserPrivacyEnabled;
-    decoder >> isInAppBrowserPrivacyEnabled;
-    if (!isInAppBrowserPrivacyEnabled)
-        return WTF::nullopt;
 
     Optional<bool> requiresSecureHTTPSProxyConnection;
     decoder >> requiresSecureHTTPSProxyConnection;
@@ -295,7 +289,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*testSpeedMultiplier)
         , WTFMove(*suppressesConnectionTerminationOnSystemChange)
         , WTFMove(*allowsServerPreconnect)
-        , WTFMove(*isInAppBrowserPrivacyEnabled)
         , WTFMove(*requiresSecureHTTPSProxyConnection)
         , WTFMove(*preventsSystemHTTPProxyAuthentication)
         , WTFMove(*resourceLoadStatisticsParameters)

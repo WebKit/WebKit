@@ -1162,7 +1162,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
     , m_fastServerTrustEvaluationEnabled(parameters.fastServerTrustEvaluationEnabled)
     , m_dataConnectionServiceType(parameters.dataConnectionServiceType)
-    , m_isInAppBrowserPrivacyEnabled(parameters.isInAppBrowserPrivacyEnabled)
     , m_preventsSystemHTTPProxyAuthentication(parameters.preventsSystemHTTPProxyAuthentication)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));

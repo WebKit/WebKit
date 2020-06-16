@@ -373,6 +373,7 @@ private:
     WeakHashSet<WebProcessProxy> m_processes;
 
     bool m_isItpStateExplicitlySet { false };
+    bool m_isInAppBrowserPrivacyTestModeEnabled { false };
 
 #if HAVE(SEC_KEY_PROXY)
     Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;

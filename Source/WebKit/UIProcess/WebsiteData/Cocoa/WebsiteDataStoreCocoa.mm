@@ -117,6 +117,8 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
         else
             firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     }
+    m_isInAppBrowserPrivacyTestModeEnabled = [defaults boolForKey:[NSString stringWithFormat:@"WebKitDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
+
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
     if (manualPrevalentResource) {
         URL url { URL(), manualPrevalentResource };
@@ -162,7 +164,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
-    bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"WebKitDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
     
     parameters.networkSessionParameters.proxyConfiguration = configuration().proxyConfiguration();
     parameters.networkSessionParameters.sourceApplicationBundleIdentifier = configuration().sourceApplicationBundleIdentifier();
@@ -176,7 +177,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
     parameters.networkSessionParameters.http3Enabled = WTFMove(http3Enabled);
 #endif
-    parameters.networkSessionParameters.isInAppBrowserPrivacyEnabled = isInAppBrowserPrivacyEnabled;
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost = shouldIncludeLocalhostInResourceLoadStatistics;
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.enableDebugMode = enableResourceLoadStatisticsDebugMode;
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled = sameSiteStrictEnforcementEnabled;
@@ -405,14 +405,14 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
     
     static const auto maxAppBoundDomainCount = 10;
     
-    appBoundDomainQueue().dispatch([isInAppBrowserPrivacyEnabled = parameters().networkSessionParameters.isInAppBrowserPrivacyEnabled, forceReinitialization] () mutable {
+    appBoundDomainQueue().dispatch([forceReinitialization] () mutable {
         if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         
         NSArray<NSString *> *domains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
         keyExists = domains ? true : false;
         
-        RunLoop::main().dispatch([isInAppBrowserPrivacyEnabled, forceReinitialization, domains = retainPtr(domains)] {
+        RunLoop::main().dispatch([forceReinitialization, domains = retainPtr(domains)] {
             if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
@@ -432,9 +432,6 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 if (appBoundDomains().size() >= maxAppBoundDomainCount)
                     break;
             }
-            if (isInAppBrowserPrivacyEnabled) {
-                WEBSITE_DATA_STORE_ADDITIONS
-            }
             hasInitializedAppBoundDomains = true;
             if (isAppBoundITPRelaxationEnabled)
                 forwardAppBoundDomainsToITPIfInitialized([] { });
@@ -445,15 +442,21 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
 void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
 {
     if (hasInitializedAppBoundDomains) {
+        if (m_isInAppBrowserPrivacyTestModeEnabled) {
+            WEBSITE_DATA_STORE_ADDITIONS;
+        }
         completionHandler(appBoundDomains());
         return;
     }
 
     // Hopping to the background thread then back to the main thread
     // ensures that initializeAppBoundDomains() has finished.
-    appBoundDomainQueue().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
+    appBoundDomainQueue().dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
+            if (m_isInAppBrowserPrivacyTestModeEnabled) {
+                WEBSITE_DATA_STORE_ADDITIONS;
+            }
             completionHandler(appBoundDomains());
         });
     });

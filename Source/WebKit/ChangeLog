@@ -1,3 +1,41 @@
+2020-06-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Check for inAppBrowserPrivacyEnabled flag in WebsiteDataStore::initializeAppBoundDomains is expensive and calls a non-static function WebsiteDataStore::parameters().
+        https://bugs.webkit.org/show_bug.cgi?id=213261
+        <rdar://problem/64317084>
+
+        Reviewed by Brent Fulgham.
+
+        There are two bugs here. First, WebsiteDataStore::parameters()
+        does a lot of work aside from returning the parameters, making this an
+        expensive call just to check the value of one flag. Second,
+        appBoundDomains() is a static hashset, and initializing the hashset
+        should not rely on non-static functions.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        Remove flag, it is no longer used here.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        Save the flag value in a member variable so we can use that later
+        when checking app-bound domains. Rename to something more descriptive.
+
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        Remove the check for the non-static runtime flag.
+
+        (WebKit::WebsiteDataStore::ensureAppBoundDomains const):
+        Enable test mode quirks. We must do it in two places in case the
+        initialization hasn't happened by the time we call
+        ensureAppBoundDomains.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-06-16  Mark Lam  <mark.lam@apple.com>
 
         Make Options::useJIT() be the canonical source of truth on whether we should use the JIT.
