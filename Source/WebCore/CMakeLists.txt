@@ -2000,6 +2000,13 @@ WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders
     FLATTENED
 )
 list(APPEND WebCore_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
+# WebCore_CopyPrivateHeaders needs to have a direct or indirect
+# dependency of WebCore target for CMake Visual Studio generator to
+# eliminate duplicated custom commands. Otherwise, CSSPropertyNames.h
+# will be generated in both projects.
+if (NOT INTERNAL_BUILD)
+    add_dependencies(WebCore_CopyPrivateHeaders WebCore)
+endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
 WEBKIT_FRAMEWORK_TARGET(WebCore)
