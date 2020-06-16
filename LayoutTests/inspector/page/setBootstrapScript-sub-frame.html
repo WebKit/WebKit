@@ -22,22 +22,13 @@ function test()
             WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent(`window.valueFromBootstrapScript = 42;`);
 
             InspectorTest.log("Adding subframe...");
-            let [frameWasAddedEvent] = await Promise.all([
+            let [valueFromBootstrapScriptEvent] = await Promise.all([
+                InspectorTest.awaitEvent("TestPage-subframe-valueFromBootstrapScript"),
                 WI.networkManager.awaitEvent(WI.NetworkManager.Event.FrameWasAdded),
                 InspectorTest.evaluateInPage(`addSubframe()`),
             ]);
 
-            let {frame} = frameWasAddedEvent.data;
-
-            if (!frame.pageExecutionContext)
-                await frame.awaitEvent(WI.Frame.Event.PageExecutionContextChanged);
-
-            let {result} = await RuntimeAgent.evaluate.invoke({
-                expression: `window.valueFromBootstrapScript`,
-                contextId: frame.pageExecutionContext.id,
-                returnByValue: true,
-            });
-            InspectorTest.expectEqual(result.value, 42, "'valueFromBootstrapScript' should be '42'.");
+            InspectorTest.expectEqual(valueFromBootstrapScriptEvent.data, 42, "'valueFromBootstrapScript' should be '42'.");
         },
     });
 

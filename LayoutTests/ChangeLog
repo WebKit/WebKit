@@ -1,3 +1,16 @@
+2020-06-16  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: [ Mac ] inspector/page/setBootstrapScript-sub-frame.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=213087
+        <rdar://problem/64262900>
+
+        Reviewed by Maciej Stachowiak.
+
+        * inspector/page/setBootstrapScript-sub-frame.html:
+        * inspector/page/resources/bootstrap-iframe.html:
+
+        * platform/mac/TestExpectations:
+
 2020-06-16  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html is a flaky failure
