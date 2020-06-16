@@ -1,3 +1,16 @@
+2020-06-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: objects in Scope Chain panel flicker when resizing details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=213234
+        <rdar://problem/64391213>
+
+        Reviewed by David Kilzer.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel.prototype.layout):
+        Don't regenerate the DOM in `layout` unless the reason is `WI.View.LayoutReason.Dirty`, such
+        as if the current call frame changes or a watch expression is added/updated/removed.
+
 2020-06-15  Pavel Feldman <pavel.feldman@gmail.com>
 
         Web Inspector: introduce request interception

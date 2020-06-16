@@ -124,6 +124,11 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
 
     layout()
     {
+        super.layout();
+
+        if (this.layoutReason !== WI.View.LayoutReason.Dirty)
+            return;
+
         let callFrame = this._callFrame;
 
         Promise.all([this._generateWatchExpressionsSection(), this._generateCallFramesSection()]).then(function(sections) {
