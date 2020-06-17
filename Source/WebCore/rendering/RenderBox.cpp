@@ -4580,10 +4580,19 @@ bool RenderBox::avoidsFloats() const
 
 void RenderBox::addVisualEffectOverflow()
 {
-    if (!style().boxShadow() && !style().hasBorderImageOutsets() && !outlineStyleForRepaint().hasOutlineInVisualOverflow())
+    bool hasBoxShadow = style().boxShadow();
+    bool hasBorderImageOutsets = style().hasBorderImageOutsets();
+    bool hasOutline = outlineStyleForRepaint().hasOutlineInVisualOverflow();
+    if (!hasBoxShadow && !hasBorderImageOutsets && !hasOutline)
         return;
 
-    addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
+    // If all we have is a box-shadow and the border box has either 0-width or 0-height,
+    // the box-shadow should not extend the visual overflow.
+    auto borderBox = borderBoxRect();
+    if (!hasBorderImageOutsets && !hasOutline && borderBox.isEmpty())
+        return;
+
+    addVisualOverflow(applyVisualEffectOverflow(borderBox));
 
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)

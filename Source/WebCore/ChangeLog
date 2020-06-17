@@ -1,3 +1,21 @@
+2020-06-16  Antoine Quint  <graouts@webkit.org>
+
+        quikr.com: unable to select item from dropdown
+        https://bugs.webkit.org/show_bug.cgi?id=213260
+        <rdar://problem/58106011>
+
+        Reviewed by Zalan Bujtas.
+
+        Only account for box-shadow when computing the background rect if the clipping element itself has non-zero used width and height.
+
+        Tests: fast/box-shadow/hit-test-box-shadow-and-margin-on-zero-height-clipping-container.html
+               fast/box-shadow/hit-test-box-shadow-and-margin-on-zero-width-clipping-container.html
+               fast/box-shadow/hit-test-box-shadow-on-zero-height-clipping-container.html
+               fast/box-shadow/hit-test-box-shadow-on-zero-width-clipping-container.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addVisualEffectOverflow):
+
 2020-06-17  David Kilzer  <ddkilzer@apple.com>
 
         Replace OptionSetTraits/OptionSetValues with EnumTraits/EnumValues

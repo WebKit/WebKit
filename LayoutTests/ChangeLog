@@ -1,3 +1,23 @@
+2020-06-16  Antoine Quint  <graouts@webkit.org>
+
+        quikr.com: unable to select item from dropdown
+        https://bugs.webkit.org/show_bug.cgi?id=213260
+        <rdar://problem/58106011>
+
+        Reviewed by Zalan Bujtas.
+
+        Add two new tests that check that we correctly do not consider content within a clipping container that
+        has 0-width or 0-height and box-shadow, with or without empty margins.
+
+        * fast/box-shadow/hit-test-box-shadow-and-margin-on-zero-height-clipping-container-expected.txt: Added.
+        * fast/box-shadow/hit-test-box-shadow-and-margin-on-zero-height-clipping-container.html: Added.
+        * fast/box-shadow/hit-test-box-shadow-and-margin-on-zero-width-clipping-container-expected.txt: Added.
+        * fast/box-shadow/hit-test-box-shadow-and-margin-on-zero-width-clipping-container.html: Added.
+        * fast/box-shadow/hit-test-box-shadow-on-zero-height-clipping-container-expected.txt: Added.
+        * fast/box-shadow/hit-test-box-shadow-on-zero-height-clipping-container.html: Added.
+        * fast/box-shadow/hit-test-box-shadow-on-zero-width-clipping-container-expected.txt: Added.
+        * fast/box-shadow/hit-test-box-shadow-on-zero-width-clipping-container.html: Added.
+
 2020-06-17  Kate Cheney  <katherine_cheney@apple.com>
 
         http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure
