@@ -1,5 +1,11 @@
 2020-06-17  Andy Estes  <aestes@apple.com>
 
+        Another unreviewed build fix after r263150
+
+        * pal/spi/cocoa/PassKitSPI.h:
+
+2020-06-17  Andy Estes  <aestes@apple.com>
+
         Unreviewed build fix after r263150
 
         * pal/spi/cocoa/PassKitSPI.h:
