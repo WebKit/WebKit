@@ -9,6 +9,8 @@
 
 #include "libANGLE/renderer/gl/cgl/ContextCGL.h"
 
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
@@ -39,3 +41,5 @@ void ContextCGL::onDestroy(const gl::Context *context)
 }
 
 }  // namespace rx
+
+#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
