@@ -1,3 +1,18 @@
+2020-06-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Freeze JSBigInt when setting it as a constant in AI
+        https://bugs.webkit.org/show_bug.cgi?id=213310
+        <rdar://problem/64450410>
+
+        Reviewed by Mark Lam.
+
+        JSCells should be explicitly frozen via DFG::Graph::freeze or DFG::Graph::freezeStrong. And heap JSBigInt is JSCell.
+        We should freeze it before setting it as a parameter of setConstant in AI. We use DFG::Graph::freeze since we know
+        that this is coming from somewhere in DFG graph: this ToNumeric node itself is not newly producing this JSBigInt.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2020-06-17  Keith Miller  <keith_miller@apple.com>
 
         $vm.haveABadTime/isHavingABadTime should work with non-globalObject parameters

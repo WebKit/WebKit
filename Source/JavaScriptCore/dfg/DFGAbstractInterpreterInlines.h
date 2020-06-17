@@ -2703,7 +2703,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue childConst = forNode(node->child1()).value();
         if (childConst && (childConst.isNumber() || childConst.isBigInt())) {
             didFoldClobberWorld();
-            setConstant(node, childConst);
+            if (childConst.isCell())
+                setConstant(node, *m_graph.freeze(childConst.asCell()));
+            else
+                setConstant(node, childConst);
             break;
         }
 
