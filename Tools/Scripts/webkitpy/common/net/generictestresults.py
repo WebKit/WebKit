@@ -61,7 +61,3 @@ class GenericTestResults(AbstractTestResults):
 
 class BindingsTestResults(GenericTestResults):
     pass
-
-
-class WebkitpyTestResults(GenericTestResults):
-    pass

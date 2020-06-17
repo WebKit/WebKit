@@ -64,14 +64,9 @@ class CheckPatchRelevance(AbstractStep):
         "Tools/Scripts/webkitdirs.pm",
     ]
 
-    webkitpy_paths = [
-        "Tools/Scripts/webkitpy/",
-    ]
-
     group_to_paths_mapping = {
         'bindings': bindings_paths,
         'jsc': jsc_paths,
-        'webkitpy': webkitpy_paths,
     }
 
     def _changes_are_relevant(self, changed_files):

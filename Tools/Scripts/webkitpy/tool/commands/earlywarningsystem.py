@@ -41,7 +41,6 @@ from webkitpy.common.unicode_compatibility import encode_for
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
 from webkitpy.tool.bot.bindingstestresultsreader import BindingsTestResultsReader
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
-from webkitpy.tool.bot.webkitpytestresultsreader import WebkitpyTestResultsReader
 from webkitpy.tool.bot.jsctestresultsreader import JSCTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid, PatchIsNotApplicable
 from webkitpy.tool.bot.queueengine import QueueEngine
@@ -65,8 +64,6 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             self._test_results_reader = JSCTestResultsReader(self._tool, self._port.jsc_results_directory())
         elif self.group() == "bindings":
             self._test_results_reader = BindingsTestResultsReader(self._tool, self._port.jsc_results_directory())
-        elif self.group() == "webkitpy":
-            self._test_results_reader = WebkitpyTestResultsReader(self._tool, self._port.python_unittest_results_directory())
         else:
             self._test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
 

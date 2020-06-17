@@ -79,13 +79,6 @@
         "runTests": true,
         "shouldBuild": false
     },
-    "webkitpy EWS": {
-        "port": "mac",
-        "name": "webkitpy-ews",
-        "group": "webkitpy",
-        "runTests": true,
-        "shouldBuild": false
-    },
     "WinCairo EWS": {
         "port": "wincairo",
         "name": "wincairo-ews",

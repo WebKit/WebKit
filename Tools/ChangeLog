@@ -1,3 +1,27 @@
+2020-06-17  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete code for old ews webkitpy queue
+        https://bugs.webkit.org/show_bug.cgi?id=213299
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/config/ews.json:
+        * Scripts/webkitpy/common/net/generictestresults.py:
+        (WebkitpyTestResults): Deleted.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        * Scripts/webkitpy/tool/bot/webkitpytestresultsreader.py: Removed.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (TestWebkitpyEWS): Deleted.
+        (AbstractEarlyWarningSystemTest.test_failing_webkitpy_tests_message): Deleted.
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests._run_webkitpy_tests): Deleted.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (test_runtests_webkitpy): Deleted.
+        (test_patch_not_relevant_bindings): Deleted.
+        (test_runtests_api_debug): Deleted.
+
 2020-06-17  Keith Miller  <keith_miller@apple.com>
 
         WebKitTestRunner should not crash on alert with invalid utf16 strings
