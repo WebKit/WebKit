@@ -1,3 +1,16 @@
+2020-06-16  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: [iOS wk2] media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html is failing consistently
+        https://bugs.webkit.org/show_bug.cgi?id=213267
+
+        Reviewed by Eric Carlson.
+
+        Enable the mock video presentation mode for layout tests and use shouldBecomeEqual() to check
+        the value of media.webkitDisplayingFullscreen.
+
+        * media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen-expected.txt:
+        * media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html:
+
 2020-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update fast/text/international/system-language/navigator-language tests

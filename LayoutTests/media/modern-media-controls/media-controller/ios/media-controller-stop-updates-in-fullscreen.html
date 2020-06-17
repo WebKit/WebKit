@@ -14,20 +14,29 @@ const button = document.body.appendChild(document.createElement("button"));
 button.textContent = "Enter Fullscreen";
 button.style = "position: absolute; left: 0; top: 0";
 
-media.addEventListener("webkitpresentationmodechanged", () => {
-    if (media.webkitDisplayingFullscreen) {
-        debug("");
-        debug("Entered fullscreen");
+if (window.internals)
+    internals.setMockVideoPresentationModeEnabled(true);
+let enteringFullscreen;
 
-        shouldBeFalse("media.paused");
-        shouldBecomeEqual("window.internals.shadowRoot(media).querySelector('.media-controls').childElementCount", "0", () => {
-            media.pause();
-            media.webkitExitFullscreen();
+media.addEventListener("webkitpresentationmodechanged", () => {
+    if (enteringFullscreen) {
+        shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
+            debug("");
+            debug("Entered fullscreen");
+
+            shouldBeFalse("media.paused");
+            shouldBecomeEqual("window.internals.shadowRoot(media).querySelector('.media-controls').childElementCount", "0", () => {
+                media.pause();
+                enteringFullscreen = false;
+                media.webkitExitFullscreen();
+            });
         });
     } else {
-        debug("");
-        debug("Exited fullscreen");
-        endTest();
+        shouldBecomeEqual("media.webkitDisplayingFullscreen", "false", () => {
+            debug("");
+            debug("Exited fullscreen");
+            endTest();
+        });
     }
 });
 
@@ -43,6 +52,7 @@ function enterFullscreen() {
     debug("Entering fullscreen.");
     button.addEventListener("click", () => {
         try {
+            enteringFullscreen = true;
             media.webkitEnterFullscreen();
         } catch(e) {
             debug("Toggling fullscreen failed.");
