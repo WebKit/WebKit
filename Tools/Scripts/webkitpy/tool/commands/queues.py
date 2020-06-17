@@ -46,7 +46,6 @@ from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
-from webkitpy.tool.bot.stylequeuetask import StyleQueueTask, StyleQueueTaskDelegate
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.multicommandtool import Command, TryAgain
 
@@ -243,37 +242,3 @@ class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
         _log.error(script_error.output)
-
-
-class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
-    name = "style-queue"
-
-    def __init__(self):
-        AbstractReviewQueue.__init__(self)
-
-    def review_patch(self, patch):
-        task = StyleQueueTask(self, patch)
-        try:
-            style_check_succeeded = task.run()
-            return style_check_succeeded
-        except UnableToApplyPatch as e:
-            return False
-        except PatchIsNotValid as error:
-            return False
-        except ScriptError as e:
-            output = re.sub(r'Failed to run .+ exit_code: 1', '', e.output)
-            message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (patch.id(), self.name, output)
-            self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
-            return False
-        return True
-
-    # StyleQueueTaskDelegate methods
-
-    def run_command(self, command):
-        self.run_webkit_patch(command)
-
-    def expected_failures(self):
-        return None
-
-    def refetch_patch(self, patch):
-        return self._tool.bugs.fetch_attachment(patch.id())

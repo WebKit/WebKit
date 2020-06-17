@@ -49,10 +49,6 @@ class TestQueue(AbstractPatchQueue):
     name = "test-queue"
 
 
-class TestReviewQueue(AbstractReviewQueue):
-    name = "test-review-queue"
-
-
 class AbstractQueueTest(CommandsTest):
     def test_log_directory(self):
         self.assertEqual(TestQueue()._log_directory(), os.path.join("..", "test-queue-logs"))
@@ -112,52 +108,3 @@ Port: mac-highsierra  Platform: MockPlatform 1.0
 -- End comment --
 """
         OutputCapture().assert_outputs(self, queue._upload_results_archive_for_patch, [patch, Mock()], expected_logs=expected_logs)
-
-
-class NeedsUpdateSequence(StepSequence):
-    def _run(self, tool, options, state):
-        raise CheckoutNeedsUpdate([], 1, "", None)
-
-
-class StyleQueueTest(QueuesTest):
-    def test_style_queue_with_style_exception(self):
-        expected_logs = {
-            "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """Running: webkit-patch clean
-Running: webkit-patch update
-Running: webkit-patch apply-attachment --no-update --non-interactive 10000
-Running: webkit-patch apply-watchlist-local 50000
-Running: webkit-patch check-style-local --non-interactive --quiet
-""",
-            "handle_unexpected_error": "Mock error message\n",
-            "handle_script_error": "MOCK output\n",
-        }
-        tool = MockTool(executive_throws_when_run=set(['check-style']))
-        self.assert_queue_outputs(StyleQueue(), expected_logs=expected_logs, tool=tool)
-
-    def test_style_queue_with_watch_list_exception(self):
-        expected_logs = {
-            "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """Running: webkit-patch clean
-Running: webkit-patch update
-Running: webkit-patch apply-attachment --no-update --non-interactive 10000
-Running: webkit-patch apply-watchlist-local 50000
-Exception for ['echo', 'apply-watchlist-local', 50000]
-
-MOCK command output
-Running: webkit-patch check-style-local --non-interactive --quiet
-""",
-            "handle_unexpected_error": "Mock error message\n",
-            "handle_script_error": "MOCK output\n",
-        }
-        tool = MockTool(executive_throws_when_run=set(['apply-watchlist-local']))
-        self.assert_queue_outputs(StyleQueue(), expected_logs=expected_logs, tool=tool)
-
-    def test_non_valid_patch(self):
-        tool = MockTool()
-        patch = tool.bugs.fetch_attachment(10007)  # _patch8, resolved bug, without review flag, not marked obsolete (maybe already landed)
-        expected_logs = {
-            "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": "",
-        }
-        self.assert_queue_outputs(StyleQueue(), tool=tool, work_item=patch, expected_logs=expected_logs)
