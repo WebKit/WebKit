@@ -1,3 +1,17 @@
+2020-06-17  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] CSS "cursor" property shoud be respected in media controls shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=213295
+        <rdar://problem/61911638>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a test that checks that setting the "cursor" property on a <video> element also applies to the
+        media controls in the element's shadow root.
+
+        * media/modern-media-controls/css/cursor-expected.txt: Added.
+        * media/modern-media-controls/css/cursor.html: Added.
+
 2020-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Enable layout tests on more platforms

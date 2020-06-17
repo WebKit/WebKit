@@ -1,0 +1,14 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video controls style="cursor: wait"></video>
+<script type="text/javascript">
+
+description("Testing that settings 'cursor: none' on the &lt;video> element is respected in the media controls shadow root.");
+
+const media = document.querySelector("video");
+shouldBeEqualToString("getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).cursor", "wait");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

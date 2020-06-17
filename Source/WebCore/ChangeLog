@@ -1,3 +1,24 @@
+2020-06-17  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] CSS "cursor" property shoud be respected in media controls shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=213295
+        <rdar://problem/61911638>
+
+        Reviewed by Timothy Hatcher.
+
+        Allow the "cursor" property to be inherited in the media controls shadow root, but still overriden
+        for interactive objects in the media controls as well as placard text.
+
+        Test: media/modern-media-controls/css/cursor.html
+
+        * Modules/modern-media-controls/controls/controls-bar.css:
+        (.controls-bar):
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls-container):
+        (.media-controls):
+        * Modules/modern-media-controls/controls/placard.css:
+        (.placard .title,):
+
 2020-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Enable layout tests on more platforms

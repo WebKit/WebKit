@@ -60,6 +60,7 @@
     text-align: center;
     text-overflow: ellipsis;
     overflow: hidden;
+    cursor: default;
 }
 
 .placard .title {

@@ -53,6 +53,7 @@
 .media-controls-container {
     all: initial;
     display: block;
+    cursor: inherit;
     visibility: inherit;
     pointer-events: inherit;
     -webkit-cursor-visibility: inherit;
@@ -85,7 +86,6 @@
     -webkit-user-select: none;
     white-space: nowrap;
     text-align: initial;
-    cursor: default;
     transform-origin: 0 0;
 }
 
