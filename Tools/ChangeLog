@@ -1,3 +1,12 @@
+2020-06-17  Paulo Matos  <pmatos@igalia.com>
+
+        Add new Igalia EWS workers for ARM/MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=212803
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-06-16  Mark Lam  <mark.lam@apple.com>
 
         TestWebKitAPI.WebCore.WildcardStringMatching needs to initialize Options before accessing them.

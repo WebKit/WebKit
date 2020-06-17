@@ -10,7 +10,15 @@
       "platform": "jsc-only"
     },
     {
+      "name": "igalia-jsc32-armv7-ews-02",
+      "platform": "jsc-only"
+    },
+    {
       "name": "igalia-jsc32-mipsel-ews",
+      "platform": "jsc-only"
+    },
+    {
+      "name": "igalia-jsc32-mipsel-ews-02",
       "platform": "jsc-only"
     },
     {
@@ -467,7 +475,7 @@
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["mipsel"],
-      "workernames": ["igalia-jsc32-mipsel-ews"],
+      "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-02"],
       "remotes": "../../EWS-test-devices.json"
     },
     {
@@ -478,7 +486,7 @@
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["armv7"],
-      "workernames": ["igalia-jsc32-armv7-ews"],
+      "workernames": ["igalia-jsc32-armv7-ews", "igalia-jsc32-armv7-ews-02"],
       "remotes": "../../EWS-test-devices.json"
     },
     {
