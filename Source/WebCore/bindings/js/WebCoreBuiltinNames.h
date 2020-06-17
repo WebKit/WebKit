@@ -272,6 +272,7 @@ namespace WebCore {
     macro(byobRequest) \
     macro(caches) \
     macro(cancel) \
+    macro(cancelAlgorithm) \
     macro(cancelAnimationFrame) \
     macro(cancelIdleCallback) \
     macro(cloneArrayBuffer) \
@@ -335,6 +336,7 @@ namespace WebCore {
     macro(privateGetStats) \
     macro(pull) \
     macro(pullAgain) \
+    macro(pullAlgorithm) \
     macro(pulling) \
     macro(queue) \
     macro(queuedAddIceCandidate) \
@@ -358,6 +360,7 @@ namespace WebCore {
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(showModalDialog) \
+    macro(start) \
     macro(startConsumingStream) \
     macro(started) \
     macro(startedPromise) \

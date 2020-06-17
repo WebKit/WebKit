@@ -63,8 +63,26 @@ function privateInitializeReadableStreamDefaultController(stream, underlyingSour
     @putByIdDirectPrivate(this, "pulling", false);
     @putByIdDirectPrivate(this, "strategy", @validateAndNormalizeQueuingStrategy(size, highWaterMark));
 
-    const controller = this;
-    @promiseInvokeOrNoopNoCatch(underlyingSource, "start", [this]).@then(() => {
+    return this;
+}
+
+// https://streams.spec.whatwg.org/#set-up-readable-stream-default-controller, starting from step 6.
+// The other part is implemented in privateInitializeReadableStreamDefaultController.
+function setupReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark, startMethod, pullMethod, cancelMethod)
+{
+    "use strict";
+    const controller = new @ReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark, @isReadableStream);
+    const startAlgorithm = () => @promiseInvokeOrNoopMethodNoCatch(underlyingSource, startMethod, [controller]);
+    const pullAlgorithm = () => @promiseInvokeOrNoopMethod(underlyingSource, pullMethod, [controller]);
+    const cancelAlgorithm = (reason) => @promiseInvokeOrNoopMethod(underlyingSource, cancelMethod, [reason]);
+
+    @putByIdDirectPrivate(controller, "pullAlgorithm", pullAlgorithm);
+    @putByIdDirectPrivate(controller, "cancelAlgorithm", cancelAlgorithm);
+    @putByIdDirectPrivate(controller, "pull", @readableStreamDefaultControllerPull);
+    @putByIdDirectPrivate(controller, "cancel", @readableStreamDefaultControllerCancel);
+    @putByIdDirectPrivate(stream, "readableStreamController", controller);
+
+    startAlgorithm().@then(() => {
         @putByIdDirectPrivate(controller, "started", true);
         @assert(!@getByIdDirectPrivate(controller, "pulling"));
         @assert(!@getByIdDirectPrivate(controller, "pullAgain"));
@@ -72,12 +90,6 @@ function privateInitializeReadableStreamDefaultController(stream, underlyingSour
     }, (error) => {
         @readableStreamDefaultControllerError(controller, error);
     });
-
-    @putByIdDirectPrivate(this, "cancel", @readableStreamDefaultControllerCancel);
-
-    @putByIdDirectPrivate(this, "pull", @readableStreamDefaultControllerPull);
-
-    return this;
 }
 
 function readableStreamDefaultControllerError(controller, error)
@@ -141,14 +153,16 @@ function readableStreamTee(stream, shouldClone)
 
     const pullFunction = @readableStreamTeePullFunction(teeState, reader, shouldClone);
 
-    const branch1 = new @ReadableStream({
-        "pull": pullFunction,
-        "cancel": @readableStreamTeeBranch1CancelFunction(teeState, stream)
-    });
-    const branch2 = new @ReadableStream({
-        "pull": pullFunction,
-        "cancel": @readableStreamTeeBranch2CancelFunction(teeState, stream)
-    });
+    const branch1Source = { };
+    @putByIdDirectPrivate(branch1Source, "pull", pullFunction);
+    @putByIdDirectPrivate(branch1Source, "cancel", @readableStreamTeeBranch1CancelFunction(teeState, stream));
+
+    const branch2Source = { };
+    @putByIdDirectPrivate(branch2Source, "pull", pullFunction);
+    @putByIdDirectPrivate(branch2Source, "cancel", @readableStreamTeeBranch2CancelFunction(teeState, stream));
+
+    const branch1 = new @ReadableStream(branch1Source);
+    const branch2 = new @ReadableStream(branch2Source);
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(@undefined, function(e) {
         if (teeState.closedOrErrored)
@@ -322,7 +336,7 @@ function readableStreamDefaultControllerCallPullIfNeeded(controller)
     @assert(!@getByIdDirectPrivate(controller, "pullAgain"));
     @putByIdDirectPrivate(controller, "pulling", true);
 
-    @promiseInvokeOrNoop(@getByIdDirectPrivate(controller, "underlyingSource"), "pull", [controller]).@then(function() {
+    @getByIdDirectPrivate(controller, "pullAlgorithm").@call(@undefined).@then(function() {
         @putByIdDirectPrivate(controller, "pulling", false);
         if (@getByIdDirectPrivate(controller, "pullAgain")) {
             @putByIdDirectPrivate(controller, "pullAgain", false);
@@ -385,7 +399,7 @@ function readableStreamDefaultControllerCancel(controller, reason)
     "use strict";
 
     @putByIdDirectPrivate(controller, "queue", @newQueue());
-    return @promiseInvokeOrNoop(@getByIdDirectPrivate(controller, "underlyingSource"), "cancel", [reason]);
+    return @getByIdDirectPrivate(controller, "cancelAlgorithm").@call(@undefined, reason);
 }
 
 function readableStreamDefaultControllerPull(controller)

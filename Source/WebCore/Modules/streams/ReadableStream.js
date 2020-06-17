@@ -48,6 +48,13 @@ function initializeReadableStream(underlyingSource, strategy)
     // Initialized with null value to enable distinction with undefined case.
     @putByIdDirectPrivate(this, "readableStreamController", null);
 
+    // FIXME: We should introduce https://streams.spec.whatwg.org/#create-readable-stream.
+    // For now, we emulate this with underlyingSource with private properties.
+    if (@getByIdDirectPrivate(underlyingSource, "pull") !== @undefined) {
+        @setupReadableStreamDefaultController(this, underlyingSource, @undefined, 1, @getByIdDirectPrivate(underlyingSource, "start"), @getByIdDirectPrivate(underlyingSource, "pull"), @getByIdDirectPrivate(underlyingSource, "cancel"));
+        return this;
+    }
+
     const type = underlyingSource.type;
     const typeString = @toString(type);
 
@@ -65,7 +72,8 @@ function initializeReadableStream(underlyingSource, strategy)
     } else if (type === @undefined) {
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 1;
-        @putByIdDirectPrivate(this, "readableStreamController", new @ReadableStreamDefaultController(this, underlyingSource, strategy.size, strategy.highWaterMark, @isReadableStream));
+
+        @setupReadableStreamDefaultController(this, underlyingSource, strategy.size, strategy.highWaterMark, underlyingSource.start, underlyingSource.pull, underlyingSource.cancel);
     } else
         @throwRangeError("Invalid type for underlying source");
 

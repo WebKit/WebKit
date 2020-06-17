@@ -2,19 +2,11 @@
 PASS Service worker test setup 
 PASS Underlying source start: throwing getter 
 PASS Underlying source start: throwing method 
-FAIL Underlying source: throwing pull getter (initial pull) assert_throws: constructor should throw function "() => new ReadableStream({
-    get pull() {
-      throw theError;
-    }
-  })" did not throw
+PASS Underlying source: throwing pull getter (initial pull) 
 PASS Underlying source: throwing pull method (initial pull) 
-FAIL Underlying source pull: throwing getter (second pull does not result in a second get) promise_test: Unhandled rejection with value: object "Error: a unique string"
+PASS Underlying source pull: throwing getter (second pull does not result in a second get) 
 PASS Underlying source pull: throwing method (second pull) 
-FAIL Underlying source cancel: throwing getter assert_throws: constructor should throw function "() => new ReadableStream({
-    get cancel() {
-      throw theError;
-    }
-  })" did not throw
+PASS Underlying source cancel: throwing getter 
 PASS Underlying source cancel: throwing method 
 PASS Underlying source: calling enqueue on an empty canceled stream should throw 
 PASS Underlying source: calling enqueue on a non-empty canceled stream should throw 
