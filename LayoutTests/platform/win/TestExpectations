@@ -3370,6 +3370,7 @@ fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html [ ImageOnl
 fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html [ ImageOnlyFailure ]
 fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html [ ImageOnlyFailure ]
 fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
+fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html [ ImageOnlyFailure ]
 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
 fast/table/hidpi-collapsed-border-with-odd-pixel-width.html [ ImageOnlyFailure ]
