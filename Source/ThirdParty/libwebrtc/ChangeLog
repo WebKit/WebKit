@@ -1,3 +1,14 @@
+2020-06-17  Youenn Fablet  <youenn@apple.com>
+
+        Improve SCTP cookie generation
+        https://bugs.webkit.org/show_bug.cgi?id=213284
+        <rdar://problem/64438133>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/media/sctp/sctp_transport.cc:
+        * Source/webrtc/media/sctp/sctp_transport.h:
+
 2020-06-12  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Check enum values in IPC::Decoder::decodeEnum() an IPC::Encoder::encodeEnum()
