@@ -43,10 +43,10 @@ WK_EXPORT WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroup);
 
 WK_EXPORT WKUserContentControllerRef WKPageGroupGetUserContentController(WKPageGroupRef pageGroup);
 
-WK_EXPORT void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames);
+WK_EXPORT void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames);
 WK_EXPORT void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup);
     
-WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime);
+WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime);
 WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup);
 
 #ifdef __cplusplus

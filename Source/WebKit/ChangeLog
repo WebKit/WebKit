@@ -1,3 +1,16 @@
+2020-06-17  Beth Dakin  <bdakin@apple.com>
+
+        Remove references to blacklist/whitelist in the old C API
+        https://bugs.webkit.org/show_bug.cgi?id=213322
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupAddUserScript):
+        * UIProcess/API/C/WKPageGroup.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
 2020-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Null check plugin.m_data before using it in PDFPlugin::ByteRangeRequest::completeUnconditionally

@@ -70,8 +70,8 @@ WK_EXPORT void WKBundleSetAsynchronousSpellCheckingEnabled(WKBundleRef bundleRef
 WK_EXPORT WKArrayRef WKBundleGetLiveDocumentURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool excludeDocumentsInPageGroupPages);
 
 // UserContent API
-WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageAddUserScript);
-WK_EXPORT void WKBundleAddUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, WKUserContentInjectedFrames injectedFrames) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageAddUserStyleSheet);
+WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef allowlist, WKArrayRef blocklist, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageAddUserScript);
+WK_EXPORT void WKBundleAddUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef allowlist, WKArrayRef blocklist, WKUserContentInjectedFrames injectedFrames) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageAddUserStyleSheet);
 WK_EXPORT void WKBundleRemoveUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKURLRef url) WK_C_API_DEPRECATED;
 WK_EXPORT void WKBundleRemoveUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKURLRef url) WK_C_API_DEPRECATED;
 WK_EXPORT void WKBundleRemoveUserScripts(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld) WK_C_API_DEPRECATED;

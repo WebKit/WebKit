@@ -66,7 +66,7 @@ WKUserContentControllerRef WKPageGroupGetUserContentController(WKPageGroupRef pa
     return toAPI(&toImpl(pageGroupRef)->userContentController());
 }
 
-void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURLRef, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames)
+void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURLRef, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames injectedFrames)
 {
     auto source = toWTFString(sourceRef);
 
@@ -74,10 +74,10 @@ void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourc
         return;
 
     auto baseURLString = toWTFString(baseURLRef);
-    auto whitelist = toImpl(whitelistedURLPatterns);
-    auto blacklist = toImpl(blacklistedURLPatterns);
+    auto allowlist = toImpl(allowedURLPatterns);
+    auto blocklist = toImpl(blockedURLPatterns);
 
-    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? aboutBlankURL() :  URL(URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::ContentWorld::pageContentWorld());
+    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? aboutBlankURL() :  URL(URL(), baseURLString)), allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::ContentWorld::pageContentWorld());
 
     toImpl(pageGroupRef)->userContentController().addUserStyleSheet(userStyleSheet.get());
 }
@@ -87,7 +87,7 @@ void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup)
     toImpl(pageGroup)->userContentController().removeAllUserStyleSheets();
 }
 
-void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURLRef, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames, _WKUserScriptInjectionTime injectionTime)
+void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURLRef, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames injectedFrames, _WKUserScriptInjectionTime injectionTime)
 {
     auto source = toWTFString(sourceRef);
 
@@ -95,11 +95,11 @@ void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef
         return;
 
     auto baseURLString = toWTFString(baseURLRef);
-    auto whitelist = toImpl(whitelistedURLPatterns);
-    auto blacklist = toImpl(blacklistedURLPatterns);
+    auto allowlist = toImpl(allowedURLPatterns);
+    auto blocklist = toImpl(blockedURLPatterns);
     
     auto url = baseURLString.isEmpty() ? aboutBlankURL() :  URL(URL(), baseURLString);
-    Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { WTFMove(source), WTFMove(url), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames), WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld());
+    Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { WTFMove(source), WTFMove(url), allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames), WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld());
     toImpl(pageGroupRef)->userContentController().addUserScript(userScript.get(), InjectUserScriptImmediately::No);
 }
 
