@@ -21,6 +21,7 @@ info: |
 
 features: [Atomics.waitAsync, Float32Array, Float64Array, Int8Array, TypedArray, Uint16Array, Uint8Array, Uint8ClampedArray, arrow-function, SharedArrayBuffer, Atomics]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
 const poisoned = {
   valueOf() {
     throw new Test262Error('should not evaluate this code');

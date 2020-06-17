@@ -24,6 +24,7 @@ info: |
 
 features: [Atomics.waitAsync, arrow-function, Atomics]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
 const poisoned = {
   valueOf() {
     throw new Test262Error('should not evaluate this code');

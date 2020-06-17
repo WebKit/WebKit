@@ -25,11 +25,8 @@ const tests = [
 
 const segmenter = new Intl.Segmenter("en", { "granularity": "word" });
 for (const [args, expected] of tests) {
-  const iterator = segmenter.segment(...args);
-  const result = iterator.next().value;
-  assert.sameValue(result.segment, expected, `Expected segment "${expected}", found "${result.segment}" for arguments ${args}`);
-  assert(["word", "none"].includes(result.breakType), `Expected valid breakType, found "${result.breakType}" for arguments ${args}`);
-  assert.sameValue(result.index, expected.length, `Expected index ${expected.length}, found ${result.index} for arguments ${args}`);
+  const segments = segmenter.segment(...args);
+  assert.sameValue(segments.string, expected, `Expected segment "${expected}", found "${segments.segment}" for arguments ${args}`);
 }
 
 const symbol = Symbol();

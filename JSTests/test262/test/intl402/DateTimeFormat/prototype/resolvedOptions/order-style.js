@@ -9,7 +9,6 @@ features: [Intl.DateTimeFormat-datetimestyle]
 ---*/
 
 const options = new Intl.DateTimeFormat([], {
-  "timeStyle": "full",
   "hourCycle": "h24",
   "weekday": "short",
   "era": "short",
@@ -29,7 +28,6 @@ const expected = [
   "timeZone",
   "hourCycle",
   "hour12",
-  "timeStyle",
 ];
 
 let actual = Object.getOwnPropertyNames(options);

@@ -17,9 +17,20 @@ includes: [isConstructor.js]
 flags: [async]
 ---*/
 
-Promise.reject(new Test262Error())
+class MyError extends Error {}
+
+var myError = new MyError();
+Promise.reject(myError)
   .finally(function() {})
-  .then($DONE, () => $DONE());
+  .then(function(value) {
+    $DONE('Expected promise to be rejected, got fulfilled with ' + value);
+  }, function(reason) {
+    if (reason === myError) {
+      $DONE();
+    } else {
+      $DONE(reason);
+    }
+  });
 
 var calls = 0;
 var expected = [
@@ -33,7 +44,7 @@ Promise.prototype.then = function(resolve, reject) {
   assert.sameValue(resolve.length, expected[calls].length);
   assert.sameValue(resolve.name, expected[calls].name);
   if (calls === 0) {
-    assert.throws(Test262Error, resolve);
+    assert.throws(MyError, resolve);
   }
 
   calls += 1;

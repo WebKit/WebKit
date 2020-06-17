@@ -1006,6 +1006,9 @@ test/built-ins/Promise/executor-function-nonconstructor.js:
 test/built-ins/Promise/prototype/finally/invokes-then-with-function.js:
   default: 'Test262Error: fulfillment handler is not constructor'
   strict mode: 'Test262Error: fulfillment handler is not constructor'
+test/built-ins/Promise/prototype/finally/rejected-observable-then-calls-argument.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
 test/built-ins/Promise/prototype/finally/resolved-observable-then-calls-argument.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
@@ -1491,15 +1494,24 @@ test/built-ins/TypedArray/prototype/filter/speciesctor-get-species-custom-ctor-l
 test/built-ins/TypedArray/prototype/indexOf/length-zero-returns-minus-one.js:
   default: 'Test262Error:  (Testing with Float64Array.)'
   strict mode: 'Test262Error:  (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/indexOf/no-arg.js:
+  default: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
+  strict mode: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/lastIndexOf/length-zero-returns-minus-one.js:
   default: 'Test262Error:  (Testing with Float64Array.)'
   strict mode: 'Test262Error:  (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/lastIndexOf/no-arg.js:
+  default: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
+  strict mode: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-returns-throws.js:
   default: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/map/speciesctor-get-species-custom-ctor-length-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/set/array-arg-primitive-toobject.js:
+  default: 'TypeError: First argument should be an object (Testing with Float64Array.)'
+  strict mode: 'TypeError: First argument should be an object (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-other-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
@@ -2099,6 +2111,12 @@ test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
 test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
+test/language/expressions/async-generator/yield-thenable-create-resolving-functions-reject.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
+test/language/expressions/async-generator/yield-thenable-create-resolving-functions-resolve.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
 test/language/expressions/await/async-await-interleaved.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
