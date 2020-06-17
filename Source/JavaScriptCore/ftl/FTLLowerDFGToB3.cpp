@@ -14020,6 +14020,7 @@ private:
 
         State* state = &m_ftlState;
         Node* node = m_node;
+        NodeType op = m_node->op();
         JSValue child1Constant = m_state.forNode(m_node->child1()).value();
 
         auto nodeIndex = m_nodeIndexInGraph;
@@ -14044,13 +14045,13 @@ private:
                 SnippetParams domJITParams(*state, params, node, nullptr, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
                 CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
                 CCallHelpers::JumpList notJSCastFailureCases;
-                if (node->op() == CheckNotJSCast) {
+                if (op == CheckNotJSCast) {
                     notJSCastFailureCases.append(jit.jump());
                     failureCases.link(&jit);
                 }
 
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    if (node->op() == CheckJSCast)
+                    if (op == CheckJSCast)
                         linkBuffer.link(failureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
                     else
                         linkBuffer.link(notJSCastFailureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
