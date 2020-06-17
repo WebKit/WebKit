@@ -239,6 +239,18 @@ bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attribute
     return equalLettersIgnoringASCIICase(attributeValue, "lazy");
 }
 
+void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+    if (name == referrerpolicyAttr && RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled()) {
+        auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+        auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+        if (oldReferrerPolicy != newReferrerPolicy)
+            m_imageLoader->updateFromElementIgnoringPreviousError(ImageLoader::RelevantMutation::Yes);
+    }
+
+    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+}
+
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == altAttr) {

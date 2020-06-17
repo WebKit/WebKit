@@ -1,3 +1,29 @@
+2020-06-17  Rob Buis  <rbuis@igalia.com>
+
+        Image `referrerpolicy` mutations should be considered "relevant mutations"
+        https://bugs.webkit.org/show_bug.cgi?id=209970
+
+        Reviewed by Youenn Fablet.
+
+        Make referrerpolicy state changes a relevant mutation [1]. In order to indicate
+        that we are dealing with a relevant mutation add an enum to updateFromElement, in
+        order to run "update the image data" algorithm [2] in case it is a relevant mutation.
+
+        Tests: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-referrerpolicy-change.sub.html
+
+        [1] https://html.spec.whatwg.org/#reacting-to-dom-mutations:attr-img-referrerpolicy
+        [2] https://html.spec.whatwg.org/#when-to-obtain-images
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::attributeChanged):
+        * html/HTMLImageElement.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::updateFromElementIgnoringPreviousError):
+        (WebCore::ImageLoader::loadDeferredImage):
+        * loader/ImageLoader.h:
+
 2020-06-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix internal macOS build after r263157.

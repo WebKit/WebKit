@@ -1,0 +1,4 @@
+
+
+PASS Test that when a deferred image is loaded, it uses the latest referrerpolicy 
+

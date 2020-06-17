@@ -45,13 +45,15 @@ class ImageLoader : public CachedImageClient {
 public:
     virtual ~ImageLoader();
 
+    enum class RelevantMutation : bool { Yes, No };
+
     // This function should be called when the element is attached to a document; starts
     // loading if a load hasn't already been started.
-    void updateFromElement();
+    void updateFromElement(RelevantMutation = RelevantMutation::No);
 
     // This function should be called whenever the 'src' attribute is set, even if its value
     // doesn't change; starts new load unconditionally (matches Firefox and Opera behavior).
-    void updateFromElementIgnoringPreviousError();
+    void updateFromElementIgnoringPreviousError(RelevantMutation = RelevantMutation::No);
 
     void elementDidMoveToNewDocument(Document&);
 

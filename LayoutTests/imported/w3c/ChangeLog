@@ -1,3 +1,24 @@
+2020-06-17  Rob Buis  <rbuis@igalia.com>
+
+        Image `referrerpolicy` mutations should be considered "relevant mutations"
+        https://bugs.webkit.org/show_bug.cgi?id=209970
+
+        Reviewed by Youenn Fablet.
+
+        Import latest version of relevant-mutations.html.
+        Because original-referrer-policy-applied.sub.html is older and assumes referrerpolicy is not a relevant
+        mutation, remove it and replace it by imported image-loading-lazy-referrerpolicy-change.sub.html.
+
+        * web-platform-tests/html/semantics/embedded-content/resources/common.js: Added.
+        (ElementLoadPromise):
+        (ElementLoadPromise.prototype.element):
+        (is_image_fully_loaded):
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-referrerpolicy-change.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-referrerpolicy-change.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-referrer-policy-applied.sub.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations.html:
+
 2020-06-17  Darryl Pogue  <darryl@dpogue.ca>
 
         IndexedDB: Support IDBFactory databases method
