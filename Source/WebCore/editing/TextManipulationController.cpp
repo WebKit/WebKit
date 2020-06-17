@@ -622,7 +622,7 @@ Vector<Ref<Node>> TextManipulationController::getPath(Node* ancestor, Node* node
 
 void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDownPath, const Vector<Ref<Node>>& currentTopDownPath, Node* currentNode, HashSet<Ref<Node>>& insertedNodes, Vector<NodeInsertion>& insertions, IsNodeManipulated isNodeManipulated)
 {
-    size_t i =0;
+    size_t i = 0;
     while (i < lastTopDownPath.size() && i < currentTopDownPath.size() && lastTopDownPath[i].first.ptr() == currentTopDownPath[i].ptr())
         ++i;
 
@@ -792,14 +792,32 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     for (auto& node : nodesToRemove)
         node->remove();
 
+    HashSet<Ref<Node>> parentNodesWithOnlyManipulatedChildren;
     for (auto& insertion : insertions) {
+        RefPtr<Node> parent;
         if (!insertion.parentIfDifferentFromCommonAncestor) {
-            insertionPoint.containerNode()->insertBefore(insertion.child, insertionPoint.computeNodeAfterPosition());
+            parent = insertionPoint.containerNode();
+            parent->insertBefore(insertion.child, insertionPoint.computeNodeAfterPosition());
             insertionPoint = positionInParentAfterNode(insertion.child.ptr());
-        } else
-            insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
-        if (is<Element>(insertion.child.get()) && insertion.isChildManipulated == IsNodeManipulated::Yes)
+        } else {
+            parent = insertion.parentIfDifferentFromCommonAncestor;
+            parent->appendChild(insertion.child);
+        }
+
+        if (insertion.isChildManipulated == IsNodeManipulated::No) {
+            parentNodesWithOnlyManipulatedChildren.remove(*parent);
+            continue;
+        }
+
+        if (is<Element>(insertion.child.get()))
             m_manipulatedElements.add(downcast<Element>(insertion.child.get()));
+        else if (parent->firstChild() == parent->lastChild())
+            parentNodesWithOnlyManipulatedChildren.add(*parent);
+    }
+
+    for (auto& node : parentNodesWithOnlyManipulatedChildren) {
+        if (is<Element>(node.get()))
+            m_manipulatedElements.add(downcast<Element>(node.get()));
     }
 
     return WTF::nullopt;

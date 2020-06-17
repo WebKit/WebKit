@@ -1,3 +1,35 @@
+2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should not re-extract elements whose children have been manipulated
+        https://bugs.webkit.org/show_bug.cgi?id=213276
+        <rdar://problem/64193446>
+
+        Reviewed by Tim Horton.
+
+        After an element has undergone text manipulation, we have a mechanism for not extracting that element again,
+        if the element is later hidden and shown, or relocated in the DOM. This works by adding the inserted text
+        manipulation node to a weak element map (`m_manipulatedElements`) if the inserted node is an element. However,
+        this mechanism is bypassed in the case where text nodes are inserted, since these child nodes are not elements.
+        This means that if the element containing this manipulated text is hidden and later shown, we'll attempt to re-
+        extract its contents, which is problematic for text manipulation clients.
+
+        To mitigate this, when inserting content during text manipulation, if a new parent of the inserted content
+        contains _only_ manipulated child nodes, then avoid trying to manipulate it in the future by adding it to
+        `m_manipulatedElements`.
+
+        Test: TextManipulation.CompleteTextManipulationAvoidExtractingManipulatedTextAfterManipulation
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::updateInsertions):
+
+        Drive-by style fix: add a space after the assignment operator.
+
+        (WebCore::TextManipulationController::replace):
+
+        If the parent node that we're inserting a text manipulation node underneath has only 1 child (i.e. the node that
+        we've just inserted), then flag it as having only manipulated children. This parent may be un-flagged later when
+        applying `NodeInsertion`s, if the `NodeInsertion`'s child has not been manipulated.
+
 2020-06-16  Andy Estes  <aestes@apple.com>
 
         FileListCreator should only be used for resolving directories

@@ -2582,6 +2582,51 @@ TEST(TextManipulation, CompleteTextManipulationForNewlyDisplayedParagraph)
     EXPECT_WK_STREQ("<b>WebKit!</b><span>Hello World<i>Bye</i></span>", [webView stringByEvaluatingJavaScript:@"document.querySelector('div').innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAfterManipulation)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<p>foo</p>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    auto item = items[0];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(item.tokens.count, 1UL);
+    EXPECT_WK_STREQ("foo", item.tokens[0].content);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        createItem(item.identifier, {{ item.tokens[0].identifier, @"bar" }}).get()
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("<p>bar</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+
+    __block bool itemCallbackFired = false;
+    [delegate setItemCallback:^(_WKTextManipulationItem *) {
+        itemCallbackFired = true;
+    }];
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = 'none'"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = ''"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE(itemCallbackFired);
+}
+
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
 {
     auto token = adoptNS([[_WKTextManipulationToken alloc] init]);

@@ -1,3 +1,17 @@
+2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should not re-extract elements whose children have been manipulated
+        https://bugs.webkit.org/show_bug.cgi?id=213276
+        <rdar://problem/64193446>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test where we start and complete text manipulation, and then hide and show the manipulated
+        element. This test verifies that the new item callbacks are *not* called after element is shown again.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-16  Saam Barati  <sbarati@apple.com>
 
         Fix two typos "signifcant" and "signficance". Should be "significant" and "significance"
