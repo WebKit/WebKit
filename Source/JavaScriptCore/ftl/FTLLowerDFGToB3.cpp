@@ -1592,6 +1592,7 @@ private:
             compileNumberToStringWithValidRadixConstant();
             break;
         case CheckJSCast:
+        case CheckNotJSCast:
             compileCheckJSCast();
             break;
         case CallDOM:
@@ -13952,13 +13953,19 @@ private:
 
     void compileCheckJSCast()
     {
+        DFG_ASSERT(m_graph, m_node, m_node->op() == CheckJSCast || m_node->op() == CheckNotJSCast);
         LValue cell = lowCell(m_node->child1());
 
         const ClassInfo* classInfo = m_node->classInfo();
 
         if (classInfo->inheritsJSTypeRange) {
             LValue hasType = isCellWithType(cell, classInfo->inheritsJSTypeRange.value(), speculationFromClassInfoInheritance(classInfo));
-            speculate(BadType, jsValueValue(cell), m_node->child1().node(), m_out.bitNot(hasType));
+            LValue condition = nullptr;
+            if (m_node->op() == CheckJSCast)
+                condition = m_out.bitNot(hasType);
+            else
+                condition = hasType;
+            speculate(BadType, jsValueValue(cell), m_node->child1().node(), condition);
             return;
         }
 
@@ -13974,13 +13981,23 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(loop, parentClass);
             LValue other = m_out.phi(pointerType(), otherAtStart);
-            m_out.branch(m_out.equal(other, m_out.constIntPtr(classInfo)), unsure(continuation), unsure(parentClass));
+            LValue foundCondition = m_out.equal(other, m_out.constIntPtr(classInfo));
+            if (m_node->op() == CheckNotJSCast) {
+                speculate(BadType, jsValueValue(cell), m_node->child1().node(), foundCondition);
+                m_out.jump(parentClass);
+            } else
+                m_out.branch(foundCondition, unsure(continuation), unsure(parentClass));
 
             m_out.appendTo(parentClass, continuation);
             LValue parent = m_out.loadPtr(other, m_heaps.ClassInfo_parentClass);
-            speculate(BadType, jsValueValue(cell), m_node->child1().node(), m_out.isNull(parent));
+            LValue parentIsNull = m_out.isNull(parent);
             m_out.addIncomingToPhi(other, m_out.anchor(parent));
-            m_out.jump(loop);
+            if (m_node->op() == CheckNotJSCast)
+                m_out.branch(parentIsNull, unsure(continuation), unsure(loop));
+            else {
+                speculate(BadType, jsValueValue(cell), m_node->child1().node(), parentIsNull);
+                m_out.jump(loop);
+            }
 
             m_out.appendTo(continuation, lastNext);
             return;
@@ -14026,9 +14043,17 @@ private:
 
                 SnippetParams domJITParams(*state, params, node, nullptr, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
                 CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
+                CCallHelpers::JumpList notJSCastFailureCases;
+                if (node->op() == CheckNotJSCast) {
+                    notJSCastFailureCases.append(jit.jump());
+                    failureCases.link(&jit);
+                }
 
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(failureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
+                    if (node->op() == CheckJSCast)
+                        linkBuffer.link(failureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
+                    else
+                        linkBuffer.link(notJSCastFailureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
                 });
             });
         patchpoint->effects = Effects::forCheck();

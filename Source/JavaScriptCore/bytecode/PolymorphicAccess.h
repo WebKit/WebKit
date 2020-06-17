@@ -144,7 +144,7 @@ public:
     AccessGenerationResult addCase(
         const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, std::unique_ptr<AccessCase>);
     
-    AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, VM&, JSGlobalObject*, CodeBlock*, StructureStubInfo&);
+    AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, VM&, JSGlobalObject*, CodeBlock*, ECMAMode, StructureStubInfo&);
     
     bool isEmpty() const { return m_list.isEmpty(); }
     unsigned size() const { return m_list.size(); }
@@ -190,9 +190,10 @@ private:
 };
 
 struct AccessGenerationState {
-    AccessGenerationState(VM& vm, JSGlobalObject* globalObject)
+    AccessGenerationState(VM& vm, JSGlobalObject* globalObject, ECMAMode ecmaMode)
         : m_vm(vm) 
         , m_globalObject(globalObject)
+        , m_ecmaMode(ecmaMode)
         , m_calculatedRegistersForCallAndExceptionHandling(false)
         , m_needsToRestoreRegistersIfException(false)
         , m_calculatedCallSiteIndex(false)
@@ -218,6 +219,7 @@ struct AccessGenerationState {
     JSValueRegs valueRegs;
     GPRReg scratchGPR { InvalidGPRReg };
     FPRReg scratchFPR { InvalidFPRReg };
+    ECMAMode m_ecmaMode { ECMAMode::sloppy() };
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
     Vector<WriteBarrier<JSCell>> weakReferences;
     Bag<CallLinkInfo> m_callLinkInfos;

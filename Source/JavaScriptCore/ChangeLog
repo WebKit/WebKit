@@ -1,3 +1,104 @@
+2020-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Check NullSetterFunction under strict-mode context since structure / PropertyCondition are unaware of this
+        https://bugs.webkit.org/show_bug.cgi?id=213266
+
+        Reviewed by Mark Lam.
+
+        Our PropertyCondition is tracking the shape of Structure. This is enough for IC except for one case: throwing an error when invoking null setters in strict code.
+
+            "use strict";
+            var object = { get value() { return 42; } }
+            object.value = 42;
+
+        In the above case, we need to throw an error. Let's consider the following scenario.
+
+            1. Object has valid setter.
+            2. IC is buffering OPC which includes (1)'s object in [[Prototype]] hit.
+            3. IC commits buffered AccessCase with OPC. And PropertyCondition says Object + setter-offset => Presence.
+            4. Object deletes its setter.
+            5. Just after (4), DFG concurrently reads buffered committed OPCs.
+            6. DFG see that PropertyCondition is valid even after (4) since accessor property does exist.
+            7. Set up DFG sequence `GetSetter, Call`.
+            8. DFG calls null-setter under strict code, which is not assumed to be called.
+
+        In this patch, we insert NullSetterFunction check before setter invocation under strict mode. In IC, if we see NullSetterFunction,
+        we replace the calling target with special function which throws an error. In DFG / FTL, we emit `CheckNotJSCast` DFG node which
+        ensures that this setter is not null setter.
+
+        In IC code, we already have null-setter checking code before. So this change does not have any impact in terms of performance.
+        In DFG / FTL code, we only insert this check when we do not inline this setter. This is because inlining emits `CheckCell` anyway so
+        we can know that this is not NullSetterFunction. And this means that DFG Call opcode exists after CheckNotJSCast. Since Call opcode
+        loads the fields of call target anyway, this also does not affect on performance.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::AccessGenerationState):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasClassInfo const):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckJSCast):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::isNotSubClassOf const):
+        * dfg/DFGStructureAbstractValue.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckJSCast):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCacheArrayGetByVal):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheDeleteBy):
+        (JSC::tryCacheInByID):
+        (JSC::tryCacheInstanceOf):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/JSCast.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::nullSetterStrictFunction const):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::callThrowError):
+        (JSC::NullSetterFunction::NullSetterFunction):
+        * runtime/NullSetterFunction.h:
+
 2020-06-16  Mark Lam  <mark.lam@apple.com>
 
         Make Options::useJIT() be the canonical source of truth on whether we should use the JIT.

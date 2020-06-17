@@ -115,6 +115,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetExecutable:
     case GetButterfly:
     case CheckJSCast:
+    case CheckNotJSCast:
     case CheckArray:
     case CheckArrayOrEmpty:
     case CheckNeutered:

@@ -1367,6 +1367,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     VM& vm = state.m_vm;
     CodeBlock* codeBlock = jit.codeBlock();
     JSGlobalObject* globalObject = state.m_globalObject;
+    ECMAMode ecmaMode = state.m_ecmaMode;
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
@@ -1602,18 +1603,24 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 numberOfParameters++;
 
             // Get the accessor; if there ain't one then the result is jsUndefined().
+            // Note that GetterSetter always has cells for both. If it is not set (like, getter exits, but setter is not set), Null{Getter,Setter}Function is stored.
+            Optional<CCallHelpers::Jump> returnUndefined;
             if (m_type == Setter) {
                 jit.loadPtr(
                     CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfSetter()),
                     loadedValueGPR);
+                if (ecmaMode.isStrict()) {
+                    CCallHelpers::Jump shouldNotThrowError = jit.branchIfNotType(loadedValueGPR, NullSetterFunctionType);
+                    // We replace setter with this AccessCase's JSGlobalObject::nullSetterStrictFunction, which will throw an error with the right JSGlobalObject.
+                    jit.move(CCallHelpers::TrustedImmPtr(globalObject->nullSetterStrictFunction()), loadedValueGPR);
+                    shouldNotThrowError.link(&jit);
+                }
             } else {
                 jit.loadPtr(
                     CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfGetter()),
                     loadedValueGPR);
+                returnUndefined = jit.branchIfType(loadedValueGPR, NullSetterFunctionType);
             }
-
-            CCallHelpers::Jump returnUndefined = jit.branchTestPtr(
-                CCallHelpers::Zero, loadedValueGPR);
 
             unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
             ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
@@ -1670,10 +1677,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.setupResults(valueRegs);
             done.append(jit.jump());
 
-            returnUndefined.link(&jit);
-            if (m_type == Getter)
+            if (returnUndefined) {
+                ASSERT(m_type == Getter);
+                returnUndefined.value().link(&jit);
                 jit.moveTrustedValue(jsUndefined(), valueRegs);
-
+            }
             done.link(&jit);
 
             jit.addPtr(CCallHelpers::TrustedImm32((codeBlock->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation),

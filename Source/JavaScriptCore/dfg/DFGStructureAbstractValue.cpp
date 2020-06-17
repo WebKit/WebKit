@@ -342,9 +342,22 @@ bool StructureAbstractValue::isSubClassOf(const ClassInfo* classInfo) const
     if (isInfinite())
         return false;
 
-    // Note taht this function returns true if the structure set is empty.
+    // Note that this function returns true if the structure set is empty.
     for (const RegisteredStructure structure : m_set) {
         if (!structure->classInfo()->isSubClassOf(classInfo))
+            return false;
+    }
+    return true;
+}
+
+bool StructureAbstractValue::isNotSubClassOf(const ClassInfo* classInfo) const
+{
+    if (isInfinite())
+        return false;
+
+    // Note that this function returns true if the structure set is empty.
+    for (const RegisteredStructure structure : m_set) {
+        if (structure->classInfo()->isSubClassOf(classInfo))
             return false;
     }
     return true;

@@ -1196,6 +1196,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case CheckJSCast:
+    case CheckNotJSCast:
         def(PureValue(node, node->classInfo()));
         return;
 

@@ -2542,7 +2542,8 @@ private:
             break;
         }
 
-        case CheckJSCast: {
+        case CheckJSCast:
+        case CheckNotJSCast: {
             fixupCheckJSCast(node);
             break;
         }

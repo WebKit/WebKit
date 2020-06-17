@@ -2948,7 +2948,7 @@ public:
 
     bool hasClassInfo() const
     {
-        return op() == CheckJSCast;
+        return op() == CheckJSCast || op() == CheckNotJSCast;
     }
 
     const ClassInfo* classInfo()

@@ -4187,6 +4187,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CheckJSCast:
+    case CheckNotJSCast:
         compileCheckJSCast(node);
         break;
 

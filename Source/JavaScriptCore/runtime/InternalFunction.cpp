@@ -49,7 +49,7 @@ void InternalFunction::finishCreation(VM& vm, const String& name, NameAdditionMo
     ASSERT(jsDynamicCast<InternalFunction*>(vm, this));
     ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
     ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
-    ASSERT(type() == InternalFunctionType);
+    ASSERT(type() == InternalFunctionType || type() == NullSetterFunctionType);
     JSString* nameString = jsString(vm, name);
     m_originalName.set(vm, this, nameString);
     if (nameAdditionMode == NameAdditionMode::WithStructureTransition)

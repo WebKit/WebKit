@@ -1,3 +1,18 @@
+2020-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Check NullSetterFunction under strict-mode context since structure / PropertyCondition are unaware of this
+        https://bugs.webkit.org/show_bug.cgi?id=213266
+
+        Reviewed by Mark Lam.
+
+        * stress/null-setter-frame.js: Added.
+        (shouldBe):
+        (realm.runString.test):
+        (object.get value):
+        (i.catch):
+        * stress/setter-throw-in-strict.js: Added.
+        (foo):
+
 2020-06-16  Mark Lam  <mark.lam@apple.com>
 
         Add SIGABRT handler for non OS(DARWIN) builds to the jsc shell with the -s option.

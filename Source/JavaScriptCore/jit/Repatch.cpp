@@ -396,7 +396,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
         LOG_IC((ICEvent::GetByAddAccessCase, baseValue.classInfoOrNull(vm), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(vm), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
@@ -495,7 +495,7 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             }
         }
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(vm), Identifier()));
@@ -730,7 +730,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
 
         LOG_IC((ICEvent::PutByIdAddAccessCase, oldStructure->classInfo(), ident, slot.base() == baseValue));
         
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::PutByIdReplaceWithJump, oldStructure->classInfo(), ident, slot.base() == baseValue));
@@ -805,7 +805,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
         } else
             newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteMiss, propertyName, invalidOffset, oldStructure, { }, nullptr);
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaMode, propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
             RELEASE_ASSERT(result.code());
@@ -923,7 +923,7 @@ static InlineCacheAction tryCacheInByID(
         std::unique_ptr<AccessCase> newCase = AccessCase::create(
             vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, propertyName, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::InReplaceWithJump, structure->classInfo(), ident, slot.slotBase() == base));
@@ -991,7 +991,7 @@ static InlineCacheAction tryCacheInstanceOf(
         
         LOG_IC((ICEvent::InstanceOfAddAccessCase, structure->classInfo(), Identifier()));
         
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, nullptr, WTFMove(newCase));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, WTFMove(newCase));
         
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::InstanceOfReplaceWithJump, structure->classInfo(), Identifier()));

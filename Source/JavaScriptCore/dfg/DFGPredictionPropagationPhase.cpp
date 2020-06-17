@@ -1061,6 +1061,7 @@ private:
         }
 
         case CheckJSCast:
+        case CheckNotJSCast:
             break;
 
         case SkipScope:

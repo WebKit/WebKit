@@ -228,6 +228,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CheckStructureOrEmpty:
     case GetExecutable:
     case CheckJSCast:
+    case CheckNotJSCast:
     case CheckArray:
     case CheckArrayOrEmpty:
     case GetScope:

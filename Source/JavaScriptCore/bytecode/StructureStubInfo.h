@@ -83,7 +83,7 @@ public:
     void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
     void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
 
-    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, JSGlobalObject*, CodeBlock*, CacheableIdentifier, std::unique_ptr<AccessCase>);
+    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, JSGlobalObject*, CodeBlock*, ECMAMode, CacheableIdentifier, std::unique_ptr<AccessCase>);
 
     void reset(CodeBlock*);
 

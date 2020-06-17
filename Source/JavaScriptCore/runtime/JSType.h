@@ -61,6 +61,7 @@ enum JSType : uint8_t {
     JSCalleeType,
     JSFunctionType,
     InternalFunctionType,
+    NullSetterFunctionType,
     NumberObjectType,
     ErrorInstanceType,
     PureForwardingProxyType,

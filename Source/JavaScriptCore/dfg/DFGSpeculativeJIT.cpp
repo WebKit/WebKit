@@ -10001,12 +10001,17 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
 
 void SpeculativeJIT::compileCheckJSCast(Node* node)
 {
+    DFG_ASSERT(m_jit.graph(), node, node->op() == CheckJSCast || node->op() == CheckNotJSCast);
     const ClassInfo* classInfo = node->classInfo();
     if (classInfo->inheritsJSTypeRange) {
         SpeculateCellOperand base(this, node->child1());
         GPRReg baseGPR = base.gpr();
 
-        auto checkFailed = m_jit.branchIfNotType(baseGPR, classInfo->inheritsJSTypeRange.value());
+        CCallHelpers::Jump checkFailed;
+        if (node->op() == CheckJSCast)
+            checkFailed = m_jit.branchIfNotType(baseGPR, classInfo->inheritsJSTypeRange.value());
+        else
+            checkFailed = m_jit.branchIfType(baseGPR, classInfo->inheritsJSTypeRange.value());
         speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), checkFailed);
         noResult(node);
         return;
@@ -10026,11 +10031,17 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
         m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
 
         CCallHelpers::Label loop = m_jit.label();
-        auto done = m_jit.branchPtr(CCallHelpers::Equal, otherGPR, specifiedGPR);
+        auto found = m_jit.branchPtr(CCallHelpers::Equal, otherGPR, specifiedGPR);
         m_jit.loadPtr(CCallHelpers::Address(otherGPR, ClassInfo::offsetOfParentClass()), otherGPR);
         m_jit.branchTestPtr(CCallHelpers::NonZero, otherGPR).linkTo(loop, &m_jit);
-        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), m_jit.jump());
-        done.link(&m_jit);
+        if (node->op() == CheckJSCast) {
+            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), m_jit.jump());
+            found.link(&m_jit);
+        } else {
+            auto notFound = m_jit.jump();
+            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), found);
+            notFound.link(&m_jit);
+        }
         noResult(node);
         return;
     }
@@ -10051,7 +10062,12 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
 
     SnippetParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     CCallHelpers::JumpList failureCases = snippet->generator()->run(m_jit, params);
-    speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), failureCases);
+    if (node->op() == CheckJSCast)
+        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), failureCases);
+    else {
+        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), m_jit.jump());
+        failureCases.link(&m_jit);
+    }
     noResult(node);
 }
 

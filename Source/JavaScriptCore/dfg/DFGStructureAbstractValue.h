@@ -247,6 +247,7 @@ public:
     bool overlaps(const StructureAbstractValue& other) const;
 
     bool isSubClassOf(const ClassInfo*) const;
+    bool isNotSubClassOf(const ClassInfo*) const;
     
     void validateReferences(const TrackedReferences&) const;
     

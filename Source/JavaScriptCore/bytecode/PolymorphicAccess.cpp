@@ -387,15 +387,14 @@ void PolymorphicAccess::commit(
     }
 }
 
-AccessGenerationResult PolymorphicAccess::regenerate(
-    const GCSafeConcurrentJSLocker& locker, VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLocker& locker, VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, ECMAMode ecmaMode, StructureStubInfo& stubInfo)
 {
     SuperSamplerScope superSamplerScope(false);
     
     if (PolymorphicAccessInternal::verbose)
         dataLog("Regenerate with m_list: ", listDump(m_list), "\n");
 
-    AccessGenerationState state(vm, globalObject);
+    AccessGenerationState state(vm, globalObject, ecmaMode);
 
     state.access = this;
     state.stubInfo = &stubInfo;
