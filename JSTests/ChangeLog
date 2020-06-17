@@ -1,3 +1,13 @@
+2020-06-17  Keith Miller  <keith_miller@apple.com>
+
+        $vm.haveABadTime/isHavingABadTime should work with non-globalObject parameters
+        https://bugs.webkit.org/show_bug.cgi?id=213304
+
+        Reviewed by Mark Lam.
+
+        * stress/dollarVM-have-a-bad-time-no-params.js: Added.
+        * stress/dollarVM-have-a-bad-time-works-for-non-global-object-params.js: Added.
+
 2020-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Check NullSetterFunction under strict-mode context since structure / PropertyCondition are unaware of this

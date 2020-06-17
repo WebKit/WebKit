@@ -2187,15 +2187,14 @@ static EncodedJSValue JSC_HOST_CALL functionHaveABadTime(JSGlobalObject* globalO
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
-    JSLockHolder lock(vm);
-    JSValue objValue = callFrame->argument(0);
-    if (!objValue.isObject())
-        return JSValue::encode(jsBoolean(false));
-
-    JSObject* obj = asObject(objValue.asCell());
-    JSGlobalObject* target = jsDynamicCast<JSGlobalObject*>(vm, obj);
-    if (!target)
-        JSValue::encode(jsBoolean(false));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSGlobalObject* target = globalObject;
+    if (!callFrame->argument(0).isUndefined()) {
+        JSObject* obj = callFrame->argument(0).getObject();
+        if (!obj)
+            return throwVMTypeError(globalObject, scope, "haveABadTime expects first argument to be an object if provided");
+        target = obj->globalObject();
+    }
 
     target->haveABadTime(vm);
     return JSValue::encode(jsBoolean(true));
@@ -2207,19 +2206,14 @@ static EncodedJSValue JSC_HOST_CALL functionIsHavingABadTime(JSGlobalObject* glo
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
-    JSLockHolder lock(vm);
-    JSValue objValue = callFrame->argument(0);
-    if (!objValue.isObject())
-        return JSValue::encode(jsUndefined());
-
-    JSObject* obj = asObject(objValue.asCell());
-    JSGlobalObject* target = jsDynamicCast<JSGlobalObject*>(vm, obj);
-    if (target)
-        JSValue::encode(jsBoolean(target->isHavingABadTime()));
-
-    target= obj->globalObject();
-    if (!target)
-        return JSValue::encode(jsUndefined());
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSGlobalObject* target = globalObject;
+    if (!callFrame->argument(0).isUndefined()) {
+        JSObject* obj = callFrame->argument(0).getObject();
+        if (!obj)
+            return throwVMTypeError(globalObject, scope, "isHavingABadTime expects first argument to be an object if provided");
+        target = obj->globalObject();
+    }
 
     return JSValue::encode(jsBoolean(target->isHavingABadTime()));
 }

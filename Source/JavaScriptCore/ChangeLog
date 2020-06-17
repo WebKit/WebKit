@@ -1,3 +1,23 @@
+2020-06-17  Keith Miller  <keith_miller@apple.com>
+
+        $vm.haveABadTime/isHavingABadTime should work with non-globalObject parameters
+        https://bugs.webkit.org/show_bug.cgi?id=213304
+
+        Reviewed by Mark Lam.
+
+        Previously, $vm.haveABadTime would crash if passed a
+        non-globalObject object as the first parameter because it was
+        missing a `return` in front the error handling case. This patch
+        resolves that issue but also extends the semantics of
+        haveABadTime/isHavingABadTime to either use the global object of
+        the first parameter even if it's not a JSGlobalObject. If no
+        argument is passed, haveABadTime/isHavingABadTime instead use the
+        global object of the callee.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionHaveABadTime):
+        (JSC::functionIsHavingABadTime):
+
 2020-06-17  Mark Lam  <mark.lam@apple.com>
 
         Gardening: move some unused data inside ENABLE(JIT) to unbreak the CLoop build.
