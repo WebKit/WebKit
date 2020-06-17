@@ -1,3 +1,22 @@
+2020-06-17  Michael Saboff  <msaboff@apple.com>
+
+        [Wasm] Reduce the amount of memory used by the Air register coloring allocator
+        https://bugs.webkit.org/show_bug.cgi?id=212106
+
+        Reviewed by Yusuke Suzuki.
+
+        Changed InterferenceEdge to be a templated class so we can instantiate an unsigned
+        short version to cut memory in half for code that has less than 2^16 temps.
+        Through instrumentation, my testing showed that almost all compilations use the
+        16bit implementation.  Although this change is for all B3/Air compilations at O2,
+        Wasm compilations are usally larger and therefore get the greatest benefit.
+
+        This allowed increasing the default value for the option webAssemblyBBQFallbackSize,
+        with a small increase in memory usage.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * runtime/OptionsList.h:
+
 2020-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Check NullSetterFunction under strict-mode context since structure / PropertyCondition are unaware of this
