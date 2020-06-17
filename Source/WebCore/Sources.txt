@@ -1134,10 +1134,10 @@ html/DOMURL.cpp
 html/DateInputType.cpp
 html/DateTimeInputType.cpp
 html/DateTimeLocalInputType.cpp
+html/DirectoryFileListCreator.cpp
 html/EmailInputType.cpp
 html/EnterKeyHint.cpp
 html/FTPDirectoryDocument.cpp
-html/FileListCreator.cpp
 html/FeaturePolicy.cpp
 html/FileInputType.cpp
 html/FormAssociatedElement.cpp

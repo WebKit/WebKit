@@ -2431,7 +2431,7 @@
 		8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F570AD1C53268E007FD6CB /* JSXMLDocument.h */; };
 		835D2D781F5F1FBD00141DED /* HTMLInputElementEntriesAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
-		835D54C51F4DE53800E60671 /* FileListCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D54C21F4DE53400E60671 /* FileListCreator.h */; };
+		835D54C51F4DE53800E60671 /* DirectoryFileListCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D54C21F4DE53400E60671 /* DirectoryFileListCreator.h */; };
 		8362E8C120CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 8362E8BF20CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		836589DE1F54A76900DC31F4 /* JSFileSystemDirectoryReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 836589D91F54A76200DC31F4 /* JSFileSystemDirectoryReader.h */; };
 		836589E01F54A76E00DC31F4 /* JSFileSystemEntriesCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 836589D81F54A76200DC31F4 /* JSFileSystemEntriesCallback.h */; };
@@ -10358,8 +10358,8 @@
 		835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLInputElementEntriesAPI.h; sourceTree = "<group>"; };
 		835D2D761F5F1FB800141DED /* HTMLInputElementEntriesAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLInputElementEntriesAPI.cpp; sourceTree = "<group>"; };
 		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
-		835D54C11F4DE53400E60671 /* FileListCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileListCreator.cpp; sourceTree = "<group>"; };
-		835D54C21F4DE53400E60671 /* FileListCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileListCreator.h; sourceTree = "<group>"; };
+		835D54C11F4DE53400E60671 /* DirectoryFileListCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectoryFileListCreator.cpp; sourceTree = "<group>"; };
+		835D54C21F4DE53400E60671 /* DirectoryFileListCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryFileListCreator.h; sourceTree = "<group>"; };
 		835F8B261D2D90BA00E408EC /* Slotable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Slotable.idl; sourceTree = "<group>"; };
 		8362E8BF20CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShouldTreatAsContinuingLoad.h; sourceTree = "<group>"; };
 		836589D81F54A76200DC31F4 /* JSFileSystemEntriesCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemEntriesCallback.h; sourceTree = "<group>"; };
@@ -22257,6 +22257,8 @@
 				F55B3D841251F12D003EF269 /* DateTimeInputType.h */,
 				F55B3D851251F12D003EF269 /* DateTimeLocalInputType.cpp */,
 				F55B3D861251F12D003EF269 /* DateTimeLocalInputType.h */,
+				835D54C11F4DE53400E60671 /* DirectoryFileListCreator.cpp */,
+				835D54C21F4DE53400E60671 /* DirectoryFileListCreator.h */,
 				2ED609BA1145B07100C8684E /* DOMFormData.cpp */,
 				2ED609BB1145B07100C8684E /* DOMFormData.h */,
 				2E0888C3114883A900AF4265 /* DOMFormData.idl */,
@@ -22274,8 +22276,6 @@
 				41A0829922932EF4008426E0 /* FeaturePolicy.h */,
 				F55B3D891251F12D003EF269 /* FileInputType.cpp */,
 				F55B3D8A1251F12D003EF269 /* FileInputType.h */,
-				835D54C11F4DE53400E60671 /* FileListCreator.cpp */,
-				835D54C21F4DE53400E60671 /* FileListCreator.h */,
 				4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */,
 				4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */,
 				F50664F5157F52DC00AC226F /* FormController.cpp */,
@@ -29992,6 +29992,7 @@
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
 				7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
+				7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */,
 				0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */,
 				BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */,
 				43EDD67F1B485DBF00640E75 /* CombinedFiltersAlphabet.h in Headers */,
@@ -30356,6 +30357,7 @@
 				937FF3D51A1012D6008EBA31 /* DictionaryLookup.h in Headers */,
 				2D5646B01B8F8493003C4994 /* DictionaryPopupInfo.h in Headers */,
 				FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */,
+				835D54C51F4DE53800E60671 /* DirectoryFileListCreator.h in Headers */,
 				F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */,
 				7EDAAFC919A2CCDC0034DFD1 /* DiskCacheMonitorCocoa.h in Headers */,
 				1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */,
@@ -30588,7 +30590,6 @@
 				1A88A90517553CD7000C74F9 /* FileIconLoader.h in Headers */,
 				F55B3DBE1251F12D003EF269 /* FileInputType.h in Headers */,
 				976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */,
-				835D54C51F4DE53800E60671 /* FileListCreator.h in Headers */,
 				7A09CEF11F02069B00E93BDB /* FileMonitor.h in Headers */,
 				976D6C89122B8A3D001FD1F7 /* FileReader.h in Headers */,
 				2E75841E12779ADA0062628B /* FileReaderLoader.h in Headers */,
@@ -33110,7 +33111,6 @@
 				FE36FD1816C7826500F887C1 /* SQLTransactionState.h in Headers */,
 				FE36FD1716C7826500F887C1 /* SQLTransactionStateMachine.h in Headers */,
 				1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */,
-				7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */,
 				93F1996308245E59001E9ABC /* SSLKeyGenerator.h in Headers */,
 				26B999911803B3C900D01121 /* StackAllocator.h in Headers */,
 				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,

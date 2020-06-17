@@ -1,3 +1,50 @@
+2020-06-16  Andy Estes  <aestes@apple.com>
+
+        FileListCreator should only be used for resolving directories
+        https://bugs.webkit.org/show_bug.cgi?id=213259
+        <rdar://problem/64375709>
+
+        Reviewed by David Kilzer.
+
+        Depending on whether directories should be resolved, FileListCreator::create would either
+        synchronously execute its completion handler then return nullptr or asynchronously dispatch
+        its completion handler then return a non-null RefPtr. Interfaces with sometimes-synchronous
+        callbacks can be hard to use correctly; e.g., r262962 fixes a problem where
+        FileInputType::m_fileListCreator was being modified in an unexpected order.
+
+        This patch makes the interface between FileInputType and FileListCreator less error-prone
+        and more explicit by renaming FileListCreator to DirectoryFileListCreator, making its job
+        solely to create directory FileLists on a background queue, and giving it an explicit start
+        member function. For non-directories, FileInputType::filesChosen now bypasses
+        DirectoryFileListCreator and directly converts from Vector<FileChooserFileInfo> to FileList.
+
+        Covered by existing tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * html/DirectoryFileListCreator.cpp: Renamed from html/FileListCreator.cpp.
+        (WebCore::createFileList): Removed the template and ShouldResolveDirectories parameter.
+        (WebCore::DirectoryFileListCreator::DirectoryFileListCreator): Moved the work queue
+        dispatching to DirectoryFileListCreator::start.
+        (WebCore::DirectoryFileListCreator::start): Added; moved the work queue dispatching here
+        from the ctor.
+
+        * html/DirectoryFileListCreator.h: Renamed from html/FileListCreator.h.
+        (WebCore::DirectoryFileListCreator::create): Stopped performing non-directory creation and
+        changed the return value back to Ref<>.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::filesChosen): Moved most of the work done in the FileListCreator
+        completion handler to didCreateFileList. When !FileInputType::allowsDirectories, used
+        Vector::map to convert paths to a Vector<Ref<File>>, used that to create a FileList, then
+        called didCreateFileList. Otherwise, created and started a DirectoryFileListCreator that
+        calls didCreateFileList in its completion handler.
+        (WebCore::FileInputType::didCreateFileList): Added; sets the new file list and icon and
+        clears m_directoryFileListCreator.
+
+        * html/FileInputType.h:
+
 2020-06-16  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r262643): DumpRenderTree at com.apple.WebCore: WebCore::Document::prepareCanvasesForDisplayIfNeeded
