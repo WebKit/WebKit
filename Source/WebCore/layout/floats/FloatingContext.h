@@ -48,8 +48,8 @@ public:
 
     FloatingState& floatingState() const { return m_floatingState; }
 
-    Point positionForFloat(const Box&, const HorizontalConstraints&) const;
-    Optional<Point> positionForFormattingContextRoot(const Box&) const;
+    LayoutPoint positionForFloat(const Box&, const HorizontalConstraints&) const;
+    LayoutPoint positionForNonFloatingFloatAvoider(const Box&) const;
 
     struct ClearancePosition {
         Optional<Position> position;
@@ -71,7 +71,6 @@ private:
     const FormattingContext& formattingContext() const { return m_formattingContext; }
     const ContainerBox& root() const { return *m_root; }
 
-    void findPositionForFloatBox(FloatAvoider&) const;
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
     struct AbsoluteCoordinateValuesForFloatAvoider;

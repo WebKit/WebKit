@@ -39,12 +39,11 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
 
 // Floating boxes intersect their margin box with the other floats in the context,
 // while other float avoiders (e.g. non-floating formatting context roots) intersect their border box.
-FloatAvoider::FloatAvoider(const Box& layoutBox, LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, LayoutPoint containingBlockAbsoluteTopLeft, HorizontalEdges containingBlockAbsoluteContentBox)
+FloatAvoider::FloatAvoider(const Box& layoutBox, LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_absoluteTopLeft(absoluteTopLeft)
     , m_borderBoxWidth(borderBoxWidth)
     , m_margin(margin)
-    , m_containingBlockAbsoluteTopLeft(containingBlockAbsoluteTopLeft)
     , m_containingBlockAbsoluteContentBox(containingBlockAbsoluteContentBox)
 {
     ASSERT(m_layoutBox->establishesBlockFormattingContext());
@@ -94,15 +93,6 @@ bool FloatAvoider::overflowsContainingBlock() const
 
     auto right = left + marginBoxWidth();
     return m_containingBlockAbsoluteContentBox.right < right;
-}
-
-LayoutPoint FloatAvoider::topLeftInContainingBlock() const
-{
-    // From formatting root coordinate system back to containing block's.
-    if (m_containingBlockAbsoluteTopLeft.isZero())
-        return m_absoluteTopLeft;
-
-    return { m_absoluteTopLeft.x() - m_containingBlockAbsoluteTopLeft.x(), m_absoluteTopLeft.y() - m_containingBlockAbsoluteTopLeft.y() };
 }
 
 }

@@ -41,7 +41,7 @@ namespace Layout {
 class FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatAvoider);
 public:
-    FloatAvoider(const Box&, LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, LayoutPoint containingBlockAbsoluteTopLeft, HorizontalEdges containingBlockAbsoluteContentBox);
+    FloatAvoider(const Box&, LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox);
     virtual ~FloatAvoider() = default;
 
     void setHorizontalPosition(LayoutUnit);
@@ -53,8 +53,6 @@ public:
     LayoutUnit top() const;
     LayoutUnit left() const;
     LayoutUnit right() const;
-
-    LayoutPoint topLeftInContainingBlock() const;
 
     bool isLeftAligned() const { return isFloatingBox() ? layoutBox().isLeftFloatingPositioned() : layoutBox().style().isLeftToRightDirection(); }
 
@@ -78,7 +76,6 @@ private:
     // Note that float avoider should work with no height value.
     LayoutUnit m_borderBoxWidth;
     Edges m_margin;
-    LayoutPoint m_containingBlockAbsoluteTopLeft;
     HorizontalEdges m_containingBlockAbsoluteContentBox;
 };
 

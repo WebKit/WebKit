@@ -1,5 +1,28 @@
 2020-06-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC]Floats] Cleanup FloatAvoider interface
+        https://bugs.webkit.org/show_bug.cgi?id=213195
+
+        Reviewed by Antti Koivisto.
+
+        Remove redundant functions/parameters.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        (WebCore::Layout::FloatAvoider::topLeftInContainingBlock const): Deleted.
+        * layout/floats/FloatAvoider.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::findAvailablePosition):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForNonFloatingFloatAvoider const):
+        (WebCore::Layout::FloatingContext::positionForFormattingContextRoot const): Deleted.
+        (WebCore::Layout::FloatingContext::findPositionForFloatBox const): Deleted.
+        * layout/floats/FloatingContext.h:
+
+2020-06-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floats] Remove FloatBox class
         https://bugs.webkit.org/show_bug.cgi?id=213184
 
