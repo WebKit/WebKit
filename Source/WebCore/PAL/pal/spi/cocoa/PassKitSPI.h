@@ -44,7 +44,6 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentPass.h>
 #import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKit/PKPaymentMethod.h>
-#import <PassKit/PKPaymentRequestStatus.h>
 #import <PassKit/PKPaymentSetupConfiguration_WebKit.h>
 #import <PassKit/PKPaymentSetupController.h>
 #import <PassKit/PKPaymentSetupRequest.h>
@@ -57,6 +56,7 @@ WTF_EXTERN_C_END
 
 #if !HAVE(PASSKIT_INSTALLMENTS)
 #import <PassKit/PKPaymentRequest_Private.h>
+#import <PassKitCore/PKPaymentRequestStatus_Private.h>
 #endif
 
 #else
