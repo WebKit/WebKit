@@ -1,3 +1,17 @@
+2020-06-16  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r262643): DumpRenderTree at com.apple.WebCore: WebCore::Document::prepareCanvasesForDisplayIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=213221
+        rdar://64260400
+
+        Reviewed by Simon Fraser.
+
+        Test that triggers a rendering on a canvas, then rips it out of
+        the document before drawing.
+
+        * webgl/preparation-removed-from-document-expected.txt: Added.
+        * webgl/preparation-removed-from-document.html: Added.
+
 2020-06-16  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION: [iOS wk2] media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html is failing consistently

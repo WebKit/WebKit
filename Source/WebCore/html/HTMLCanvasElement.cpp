@@ -146,8 +146,8 @@ HTMLCanvasElement::~HTMLCanvasElement()
     // FIXME: This has to be called here because CSSCanvasValue::CanvasObserverProxy::canvasDestroyed()
     // downcasts the CanvasBase object to HTMLCanvasElement. That invokes virtual methods, which should be
     // avoided in destructors, but works as long as it's done before HTMLCanvasElement destructs completely.
-    // This will also cause the document to remove itself as an observer.
     notifyObserversCanvasDestroyed();
+    document().clearCanvasPreparation(this);
 
     m_context = nullptr; // Ensure this goes away before the ImageBuffer.
     setImageBuffer(nullptr);
@@ -1001,6 +1001,7 @@ void HTMLCanvasElement::eventListenersDidChange()
 
 void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    oldDocument.clearCanvasPreparation(this);
     removeObserver(oldDocument);
     addObserver(newDocument);
 
@@ -1009,8 +1010,10 @@ void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& ne
 
 void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (removalType.disconnectedFromDocument)
+    if (removalType.disconnectedFromDocument) {
+        oldParentOfRemovedTree.document().clearCanvasPreparation(this);
         removeObserver(oldParentOfRemovedTree.document());
+    }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
