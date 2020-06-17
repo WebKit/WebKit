@@ -30,7 +30,6 @@
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.net.generictestresults import BindingsTestResults
 from webkitpy.common.net.jsctestresults import JSCTestResults
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -55,12 +54,6 @@ class TestJSCEWS(AbstractEarlyWarningSystem):
     port_name = "mac"  # Needs to be a port which port/factory understands.
     _build_style = None
     _group = "jsc"
-
-
-class TestBindingsEWS(AbstractEarlyWarningSystem):
-    port_name = "mac"
-    _build_style = None
-    _group = "bindings"
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):
@@ -88,11 +81,6 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         message = "New failing tests:\nes6.yaml/es6/typed_arrays_Int8Array.js.default\nes6.yaml/es6/typed_arrays_Uint8Array.js.default\napiTests"
         self._test_message(ews, results, message)
 
-    def test_failing_bindings_tests_message(self):
-        ews = TestBindingsEWS()
-        results = lambda a: BindingsTestResults(["(JS) TestMapLike.idl", "(JS) TestNode.idl"])
-        message = "New failing tests:\n(JS) TestMapLike.idl\n(JS) TestNode.idl"
-        self._test_message(ews, results, message)
 
 class MockEarlyWarningSystemTaskForInconclusiveJSCResults(EarlyWarningSystemTask):
     def _test_patch(self):
@@ -169,7 +157,6 @@ Running: webkit-patch check-patch-relevance --quiet --group=%(group)s --port=%(p
     def test_ews_name(self):
         # These are the names EWS's infrastructure expects, check that they work
         expected_names = {
-            'bindings-ews',
             'gtk-wk2-ews',
             'ios-ews',
             'ios-sim-ews',

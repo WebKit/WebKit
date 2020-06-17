@@ -38,11 +38,6 @@ class CheckPatchRelevance(AbstractStep):
             Options.quiet,
         ]
 
-    bindings_paths = [
-        "Source/WebCore",
-        "Tools",
-    ]
-
     jsc_paths = [
         "JSTests/",
         "Source/JavaScriptCore/",
@@ -65,7 +60,6 @@ class CheckPatchRelevance(AbstractStep):
     ]
 
     group_to_paths_mapping = {
-        'bindings': bindings_paths,
         'jsc': jsc_paths,
     }
 

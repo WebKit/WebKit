@@ -55,6 +55,3 @@ class MockPort(object):
 
     def run_webkit_tests_command(self, build_style=None):
         return ['mock-run-webkit-tests']
-
-    def run_bindings_tests_command(self):
-        return ['mock-run-bindings-tests']

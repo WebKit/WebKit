@@ -23,7 +23,6 @@
 import logging
 import unittest
 
-from webkitpy.common.net.generictestresults import BindingsTestResults
 from webkitpy.common.net.jsctestresults import JSCTestResults
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.patchanalysistask import *
@@ -217,81 +216,3 @@ class JSCEarlyWarningSystemTest(unittest.TestCase):
         return_value = task._test_patch()
         self.assertTrue(return_value)
         self.assertEqual(task.test_run_count(), 3)
-
-
-class MockBindingsEarlyWarningSystem(AbstractEarlyWarningSystem):
-    def __init__(self, first_test_results, clean_test_results):
-        AbstractEarlyWarningSystem.__init__(self)
-        self._group = 'bindings'
-        self._results_in_order = [clean_test_results, first_test_results]
-
-    def test_results(self):
-        return self._results_in_order.pop()
-
-
-class BindingsEarlyWarningSystemTest(unittest.TestCase):
-    def _results_indicate_all_passed(self, results):
-        if results == None:
-            return False
-        return results.all_passed()
-
-    def _create_task(self, first_test_results, clean_test_results):
-        queue = MockBindingsEarlyWarningSystem(first_test_results, clean_test_results)
-        tool = MockTool(log_executive=True)
-        patch = tool.bugs.fetch_attachment(10000)
-        patches_passed_all_tests = [self._results_indicate_all_passed(first_test_results)]
-        return MockPatchAnalysisTask(queue, patch, patches_passed_all_tests)
-
-    def test_success_case(self):
-        first_test_results = BindingsTestResults([])
-        clean_test_results = BindingsTestResults([])
-        task = self._create_task(first_test_results, clean_test_results)
-
-        return_value = task._test_patch()
-        self.assertEqual(task.test_run_count(), 1)
-        self.assertTrue(return_value)
-
-    def test_test_failure(self):
-        first_test_results = BindingsTestResults(['TestMapLike.idl'])
-        clean_test_results = BindingsTestResults([])
-        task = self._create_task(first_test_results, clean_test_results)
-
-        with self.assertRaises(ScriptError):
-            return_value = task._test_patch()
-        self.assertEqual(task.test_run_count(), 2)
-
-    def test_fix(self):
-        first_test_results = BindingsTestResults([])
-        clean_test_results = BindingsTestResults(['TestMapLike.idl'])
-        task = self._create_task(first_test_results, clean_test_results)
-
-        return_value = task._test_patch()
-        self.assertEqual(task.test_run_count(), 1)
-        self.assertTrue(return_value)
-
-    def test_ineffective_patch(self):
-        first_test_results = BindingsTestResults(['TestMapLike.idl'])
-        clean_test_results = BindingsTestResults(['TestMapLike.idl'])
-        task = self._create_task(first_test_results, clean_test_results)
-
-        return_value = task._test_patch()
-        self.assertEqual(task.test_run_count(), 2)
-        self.assertTrue(return_value)
-
-    def test_partially_effective_patch(self):
-        first_test_results = BindingsTestResults(['TestMapLike.idl'])
-        clean_test_results = BindingsTestResults(['TestMapLike.idl', 'TestNode.idl'])
-        task = self._create_task(first_test_results, clean_test_results)
-
-        return_value = task._test_patch()
-        self.assertEqual(task.test_run_count(), 2)
-        self.assertTrue(return_value)
-
-    def test_different_test_failures_in_patch_and_tree(self):
-        first_test_results = BindingsTestResults(['TestNode.idl'])
-        clean_test_results = BindingsTestResults(['TestMapLike.idl'])
-        task = self._create_task(first_test_results, clean_test_results)
-
-        with self.assertRaises(ScriptError):
-            return_value = task._test_patch()
-        self.assertEqual(task.test_run_count(), 2)

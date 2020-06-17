@@ -231,30 +231,6 @@ class PatchAnalysisTask(object):
         # also present without the patch, so we don't need to defer.
         return False
 
-    def _retry_bindings_tests(self):
-        first_results = self._delegate.test_results()
-        first_script_error = self._script_error
-        first_failure_status_id = self.failure_status_id
-        if first_results is None:
-            return False
-
-        # Some errors are not correctly reported by the run-bindings-tests script
-        # https://bugs.webkit.org/show_bug.cgi?id=169449
-        # In affected cases, add a message requesting to look at test output instead.
-        if not first_results._failures:
-            first_results._failures = ["Please see test output for results"]
-
-        self._build_and_test_without_patch()
-        clean_tree_results = self._delegate.test_results()
-        if clean_tree_results is None:
-            return False
-
-        if first_results.is_subset(clean_tree_results):
-            return True
-
-        self.failure_status_id = first_failure_status_id
-        return self.report_failure(None, first_results, first_script_error)
-
     # FIXME: Abstract out common parts of the retry logic.
     def _retry_jsc_tests(self):
         first_results = self._delegate.test_results()
@@ -358,8 +334,6 @@ class PatchAnalysisTask(object):
 
         if hasattr(self._delegate, 'group') and self._delegate.group() == "jsc":
             return self._retry_jsc_tests()
-        elif hasattr(self._delegate, 'group') and self._delegate.group() == "bindings":
-            return self._retry_bindings_tests()
         else:
             return self._retry_layout_tests()
 

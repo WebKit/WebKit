@@ -1,5 +1,47 @@
 2020-06-17  Aakash Jain  <aakash_jain@apple.com>
 
+        Delete code for old ews bindings queue
+        https://bugs.webkit.org/show_bug.cgi?id=213315
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/ews.json:
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_bindings_tests_command): Deleted.
+        (WinPort.run_bindings_tests_command): Deleted.
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_bindings_tests_command): Deleted.
+        * Scripts/webkitpy/common/net/generictestresults.py: Removed.
+        * Scripts/webkitpy/common/net/generictestresults_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot/bindingstestresultsreader.py: Removed.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._retry_bindings_tests): Deleted.
+        * Scripts/webkitpy/tool/bot/retrylogic_unittest.py:
+        (MockBindingsEarlyWarningSystem): Deleted.
+        (MockBindingsEarlyWarningSystem.__init__): Deleted.
+        (MockBindingsEarlyWarningSystem.test_results): Deleted.
+        (BindingsEarlyWarningSystemTest): Deleted.
+        (BindingsEarlyWarningSystemTest._results_indicate_all_passed): Deleted.
+        (BindingsEarlyWarningSystemTest._create_task): Deleted.
+        (BindingsEarlyWarningSystemTest.test_success_case): Deleted.
+        (BindingsEarlyWarningSystemTest.test_test_failure): Deleted.
+        (BindingsEarlyWarningSystemTest.test_fix): Deleted.
+        (BindingsEarlyWarningSystemTest.test_ineffective_patch): Deleted.
+        (BindingsEarlyWarningSystemTest.test_partially_effective_patch): Deleted.
+        (BindingsEarlyWarningSystemTest.test_different_test_failures_in_patch_and_tree): Deleted.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (TestBindingsEWS): Deleted.
+        (AbstractEarlyWarningSystemTest.test_failing_bindings_tests_message): Deleted.
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests._run_bindings_tests): Deleted.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (test_patch_relevant_bindings): Deleted.
+        (test_runtests_api): Deleted.
+
+2020-06-17  Aakash Jain  <aakash_jain@apple.com>
+
         Delete code for old ews style queue
         https://bugs.webkit.org/show_bug.cgi?id=213297
 
