@@ -97,6 +97,15 @@ enum class DragHandlingMethod : uint8_t { None, EditPlainText, EditRichText, Upl
 
 namespace WTF {
 
+template<> struct EnumTraits<WebCore::DragDestinationAction> {
+    using values = EnumValues<
+        WebCore::DragDestinationAction,
+        WebCore::DragDestinationAction::DHTML,
+        WebCore::DragDestinationAction::Edit,
+        WebCore::DragDestinationAction::Load
+    >;
+};
+
 template<> struct EnumTraits<WebCore::DragHandlingMethod> {
     using values = EnumValues<
         WebCore::DragHandlingMethod,
@@ -124,43 +133,6 @@ template<> struct EnumTraits<WebCore::DragOperation> {
 
 template<> struct EnumTraits<WebCore::DragSourceAction> {
     using values = EnumValues<
-        WebCore::DragSourceAction,
-        WebCore::DragSourceAction::DHTML,
-        WebCore::DragSourceAction::Image,
-        WebCore::DragSourceAction::Link,
-        WebCore::DragSourceAction::Selection
-#if ENABLE(ATTACHMENT_ELEMENT)
-        , WebCore::DragSourceAction::Attachment
-#endif
-#if ENABLE(INPUT_TYPE_COLOR)
-        , WebCore::DragSourceAction::Color
-#endif
-    >;
-};
-
-template<> struct OptionSetTraits<WebCore::DragDestinationAction> {
-    using values = OptionSetValues<
-        WebCore::DragDestinationAction,
-        WebCore::DragDestinationAction::DHTML,
-        WebCore::DragDestinationAction::Edit,
-        WebCore::DragDestinationAction::Load
-    >;
-};
-
-template<> struct OptionSetTraits<WebCore::DragOperation> {
-    using values = OptionSetValues<
-        WebCore::DragOperation,
-        WebCore::DragOperation::Copy,
-        WebCore::DragOperation::Link,
-        WebCore::DragOperation::Generic,
-        WebCore::DragOperation::Private,
-        WebCore::DragOperation::Move,
-        WebCore::DragOperation::Delete
-    >;
-};
-
-template<> struct OptionSetTraits<WebCore::DragSourceAction> {
-    using values = OptionSetValues<
         WebCore::DragSourceAction,
         WebCore::DragSourceAction::DHTML,
         WebCore::DragSourceAction::Image,

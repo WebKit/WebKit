@@ -29,6 +29,7 @@
 #include <iterator>
 #include <type_traits>
 #include <wtf/Assertions.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Optional.h>
 
@@ -46,28 +47,23 @@ constexpr bool is_type_complete_v<T, std::void_t<decltype(sizeof(T))>> = true;
 template<typename E> class OptionSet;
 
 
-// OptionSetTraits are like EnumTraits, but for validating OptionSet values.
-template<typename> struct OptionSetTraits;
-
-template<typename E, E...> struct OptionSetValues;
-
 template<typename T, typename E> struct OptionSetValueChecker;
 
 template<typename T, typename E, E e, E... es>
-struct OptionSetValueChecker<T, OptionSetValues<E, e, es...>> {
+struct OptionSetValueChecker<T, EnumValues<E, e, es...>> {
     static constexpr T allValidBits()
     {
-        return static_cast<T>(e) | OptionSetValueChecker<T, OptionSetValues<E, es...>>::allValidBits();
+        return static_cast<T>(e) | OptionSetValueChecker<T, EnumValues<E, es...>>::allValidBits();
     }
 
     static constexpr bool isValidOptionSetEnum(T t)
     {
-        return (static_cast<T>(e) == t) ? true : OptionSetValueChecker<T, OptionSetValues<E, es...>>::isValidOptionSetEnum(t);
+        return (static_cast<T>(e) == t) ? true : OptionSetValueChecker<T, EnumValues<E, es...>>::isValidOptionSetEnum(t);
     }
 };
 
 template<typename T, typename E>
-struct OptionSetValueChecker<T, OptionSetValues<E>> {
+struct OptionSetValueChecker<T, EnumValues<E>> {
     static constexpr T allValidBits()
     {
         return 0;
@@ -80,31 +76,31 @@ struct OptionSetValueChecker<T, OptionSetValues<E>> {
 };
 
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr bool isValidOptionSetEnum(E e)
 {
-    return OptionSetValueChecker<std::underlying_type_t<E>, typename OptionSetTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
+    return OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
 }
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr bool isValidOptionSetEnum(E e)
 {
-    // FIXME: Remove once all OptionSet<> enums have OptionSetTraits<> defined.
+    // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
     return hasOneBitSet(static_cast<typename OptionSet<E>::StorageType>(e));
 }
 
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
 {
-    auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename OptionSetTraits<E>::values>::allValidBits();
+    auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
     return rawValue & allValidBitsValue;
 }
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
 {
-    // FIXME: Remove once all OptionSet<> enums have OptionSetTraits<> defined.
+    // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
     return rawValue;
 }
 

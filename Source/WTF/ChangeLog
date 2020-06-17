@@ -1,3 +1,16 @@
+2020-06-17  David Kilzer  <ddkilzer@apple.com>
+
+        Replace OptionSetTraits/OptionSetValues with EnumTraits/EnumValues
+        <https://webkit.org/b/213264>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/OptionSet.h:
+        (WTF::isValidOptionSetEnum):
+        (WTF::maskRawValue):
+        - Replace OptionSetTraits<>/OptionSetValues<> with
+          EnumTraits<>/EnumValues<>.
+
 2020-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Enable layout tests on more platforms

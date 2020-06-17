@@ -1,3 +1,17 @@
+2020-06-17  David Kilzer  <ddkilzer@apple.com>
+
+        Replace OptionSetTraits/OptionSetValues with EnumTraits/EnumValues
+        <https://webkit.org/b/213264>
+
+        Reviewed by Brent Fulgham.
+
+        * page/DragActions.h:
+        (EnumTraits<WebCore::DragDestinationAction>):
+        - Rename from OptionSetTraits<WebCore::DragDestinationAction>.
+        (OptionSetTraits<WebCore::DragOperation>):
+        (OptionSetTraits<WebCore::DragSourceAction>):
+        - Remove since EnumTraits<> already exist for both.
+
 2020-06-17  Geoffrey Garen  <ggaren@apple.com>
 
         media/remoteplayback-target-availability.html was a flaky failure after r262904
