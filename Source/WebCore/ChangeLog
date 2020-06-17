@@ -1,3 +1,20 @@
+2020-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Float] Move float avoiders' final position compute next to when the static position is computed
+        https://bugs.webkit.org/show_bug.cgi?id=213250
+
+        Reviewed by Antti Koivisto.
+
+        Now that the float avoider's final position has no dependecy on the computed height, we can
+        move it all the way up, next to where we computed the static position.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForAncestors): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+
 2020-06-17  Antoine Quint  <graouts@webkit.org>
 
         [Modern Media Controls] CSS "cursor" property shoud be respected in media controls shadow root
