@@ -1467,6 +1467,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
+		31A9E9A0249AA04200C7E243 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.h";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+			);
+			script = "exec \"${SRCROOT}/adjust-angle-include-paths-rule\"\n";
+		};
 		53E934DB230609D800DE060C /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -4162,6 +4175,7 @@
 				31CD00D2249197FD00486F27 /* Adjust ANGLE Paths */,
 			);
 			buildRules = (
+				31A9E9A0249AA04200C7E243 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
