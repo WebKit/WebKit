@@ -144,12 +144,6 @@ class PerfalizerTask(PatchAnalysisTask):
     def run_command(self, command):
         self.run_webkit_patch(command)
 
-    def command_passed(self, message, patch):
-        pass
-
-    def command_failed(self, message, script_error, patch):
-        self._logger(message)
-
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
 

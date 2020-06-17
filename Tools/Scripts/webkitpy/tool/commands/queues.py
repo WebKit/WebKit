@@ -57,11 +57,6 @@ class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
     ]
 
-    _skip_status = "Skip"
-    _pass_status = "Pass"
-    _fail_status = "Fail"
-    _error_status = "Error"
-
     def __init__(self, options=None):  # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
@@ -148,18 +143,6 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
 
 class AbstractPatchQueue(AbstractQueue):
-    def _next_patch(self):
-        pass
-
-    def _did_error(self, patch, reason):
-        pass
-
-    def _did_skip(self, patch):
-        pass
-
-    def _unlock_patch(self, patch):
-        pass
-
     def work_item_log_path(self, patch):
         return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
@@ -274,10 +257,8 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
             style_check_succeeded = task.run()
             return style_check_succeeded
         except UnableToApplyPatch as e:
-            self._did_error(patch, "%s unable to apply patch." % self.name)
             return False
         except PatchIsNotValid as error:
-            self._did_error(patch, "%s did not process patch. Reason: %s" % (self.name, error.failure_message))
             return False
         except ScriptError as e:
             output = re.sub(r'Failed to run .+ exit_code: 1', '', e.output)
@@ -290,12 +271,6 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
 
     def run_command(self, command):
         self.run_webkit_patch(command)
-
-    def command_passed(self, message, patch):
-        pass
-
-    def command_failed(self, message, script_error, patch):
-        pass
 
     def expected_failures(self):
         return None

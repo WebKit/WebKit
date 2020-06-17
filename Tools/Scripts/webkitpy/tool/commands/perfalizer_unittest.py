@@ -85,13 +85,12 @@ class PerfalizerTaskTest(unittest.TestCase):
 
     def test_run_with_clean_fails(self):
         self.assertEqual(self._create_and_run_perfalizer(['clean']), [
-            'Preparing to run performance tests for the attachment 10000...',
-            'Unable to clean working directory'])
+            'Preparing to run performance tests for the attachment 10000...'])
 
     def test_run_with_update_fails(self):
         logs = self._create_and_run_perfalizer(['update'])
-        self.assertEqual(len(logs), 2)
-        self.assertEqual(logs[-1], 'Unable to update working directory')
+        self.assertEqual(len(logs), 1)
+        self.assertEqual(logs[0], 'Preparing to run performance tests for the attachment 10000...')
 
     def test_run_with_build_fails(self):
         logs = self._create_and_run_perfalizer(['build'])
@@ -99,7 +98,7 @@ class PerfalizerTaskTest(unittest.TestCase):
 
     def test_run_with_build_fails(self):
         logs = self._create_and_run_perfalizer(['apply-attachment'])
-        self.assertEqual(len(logs), 4)
+        self.assertEqual(len(logs), 3)
 
     def test_run_with_perf_test_fails(self):
         logs = self._create_and_run_perfalizer(['run-perf-tests'])

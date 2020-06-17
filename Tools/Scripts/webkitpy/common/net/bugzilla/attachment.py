@@ -68,7 +68,7 @@ class Attachment(object):
             return int(bug_id_string)
         # We may not know the associated bug ID. This can happen if we do not have
         # permission to view the attachment or we failed to fetch it from Bugzilla
-        # for some other reason (see AbstractPatchQueue._next_patch()).
+        # for some other reason.
         return None
 
     def is_patch(self):

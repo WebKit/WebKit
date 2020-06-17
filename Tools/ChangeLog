@@ -1,3 +1,29 @@
+2020-06-17  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete old ews client side code - part 2
+        https://bugs.webkit.org/show_bug.cgi?id=213262
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/attachment.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTaskDelegate.command_passed): Deleted.
+        (PatchAnalysisTaskDelegate.command_failed): Deleted.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.command_passed): Deleted.
+        (AbstractEarlyWarningSystem.command_failed): Deleted.
+        * Scripts/webkitpy/tool/commands/perfalizer.py:
+        (PerfalizerTask.command_passed): Deleted.
+        (PerfalizerTask.command_failed): Deleted.
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractPatchQueue._next_patch): Deleted.
+        (AbstractPatchQueue._did_error): Deleted.
+        (AbstractPatchQueue._did_skip): Deleted.
+        (AbstractPatchQueue._unlock_patch): Deleted.
+        (StyleQueue.command_passed): Deleted.
+        (StyleQueue.command_failed): Deleted.
+
 2020-06-17  Paulo Matos  <pmatos@igalia.com>
 
         Add new Igalia EWS workers for ARM/MIPS
