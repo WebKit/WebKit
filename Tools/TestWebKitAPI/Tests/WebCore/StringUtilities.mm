@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/StringUtilities.h>
 #import <wtf/text/WTFString.h>
 
@@ -34,6 +35,8 @@ namespace TestWebKitAPI {
 
 TEST(WebCore, WildcardStringMatching)
 {
+    JSC::initializeThreading();
+
     String wildcardString = "a*b";
     EXPECT_TRUE(stringMatchesWildcardString("aaaabb", "a*b"));
     EXPECT_TRUE(stringMatchesWildcardString("ab", wildcardString));

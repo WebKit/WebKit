@@ -1,3 +1,14 @@
+2020-06-16  Mark Lam  <mark.lam@apple.com>
+
+        TestWebKitAPI.WebCore.WildcardStringMatching needs to initialize Options before accessing them.
+        https://bugs.webkit.org/show_bug.cgi?id=213270
+        <rdar://problem/64427499>
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WebCore/StringUtilities.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should not re-extract elements whose children have been manipulated
