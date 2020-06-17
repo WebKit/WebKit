@@ -1,3 +1,17 @@
+2020-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Enable layout tests on more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=212955
+        <rdar://problem/64174156>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/PlatformEnableCocoa.h: Removed ENABLE_APPLE_PAY_INSTALLMENT_IDENTIFIERS,
+        ENABLE_APPLE_PAY_INSTALLMENT_ITEMS, ENABLE_APPLE_PAY_SESSION_V8,
+        ENABLE_APPLE_PAY_SESSION_V9, and ENABLE_APPLE_PAY_SESSION_V10.
+        * wtf/PlatformHave.h: Removed HAVE_PASSKIT_INSTALLMENT_IDENTIFIERS and corrected iOS version
+        checks for HAVE_PASSKIT_INSTALLMENTS.
+
 2020-06-16  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix build with !HAVE(MACHINE_CONTEXT)

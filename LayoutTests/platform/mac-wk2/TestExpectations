@@ -34,13 +34,13 @@ fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
 fast/media/mq-monochrome-live-update.html [ Pass ]
 fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 
-http/tests/ssl/applepay/ [ Pass ]
+http/tests/ssl/applepay [ Pass ]
 
-# ApplePayInstallmentConfiguration was first available in Catalina.
+# APPLE_PAY_INSTALLMENTS was first available in Catalina.
 [ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html [ Skip ]
+[ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Skip ]
 
-# ApplePayInstallmentItem is not available in Mojave or Catalina.
-[ Mojave Catalina ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Skip ]
+webkit.org/b/212998 [ Catalina ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Failure ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]

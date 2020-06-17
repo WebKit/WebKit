@@ -1,3 +1,27 @@
+2020-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Enable layout tests on more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=212955
+        <rdar://problem/64174156>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/ssl/applepay/ApplePayInstallmentItems.https.html: Changed to fail instead of
+        time out when API version 9 isn't supported.
+
+        * http/tests/ssl/applepay/ApplePayError.html:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+        * http/tests/ssl/applepay/ApplePaySessionV3.html:
+        * http/tests/ssl/applepay/ApplePaySessionV4.html:
+        * http/tests/ssl/applepay/ApplePaySessionV5.html: Removed a custom element-clicking function
+        and used UIHelper.activateElement instead.
+
+        * platform/ios-wk2/TestExpectations: Un-skipped http/tests/ssl/applepay.
+        Marked PaymentRequest.https.html as Slow. Marked ApplePayInstallmentItems.https.html as
+        Failure.
+        * platform/mac-wk2/TestExpectations: Removed a trailing '/'. Skipped
+        ApplePayInstallmentItems.https.html on Mojave and marked it as Failure on Catalina.
+
 2020-06-17  Truitt Savell  <tsavell@apple.com>
 
         [ Catalina WK2 Release ] http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure

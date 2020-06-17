@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
 
 namespace WebCore {
 
@@ -39,4 +39,4 @@ enum class ApplePayInstallmentItemType : uint8_t {
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
+#endif // ENABLE(APPLE_PAY_INSTALLMENTS)

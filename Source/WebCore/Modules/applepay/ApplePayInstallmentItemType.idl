@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=APPLE_PAY_INSTALLMENT_ITEMS,
+    Conditional=APPLE_PAY_INSTALLMENTS,
 ] enum ApplePayInstallmentItemType {
     "generic",
     "phone",

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
 
 #include "ApplePayInstallmentItemType.h"
 #include <wtf/text/WTFString.h>
@@ -43,4 +43,4 @@ struct ApplePayInstallmentItem {
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
+#endif // ENABLE(APPLE_PAY_INSTALLMENTS)

@@ -34,9 +34,9 @@
     DOMString bindingTotalAmount;
     DOMString currencyCode;
     boolean isInStorePurchase;
-    [Conditional=APPLE_PAY_INSTALLMENT_IDENTIFIERS] DOMString merchantIdentifier;
-    [Conditional=APPLE_PAY_INSTALLMENT_IDENTIFIERS] DOMString referrerIdentifier;
-    [Conditional=APPLE_PAY_INSTALLMENT_ITEMS] sequence<ApplePayInstallmentItem> items;
-    [Conditional=APPLE_PAY_INSTALLMENT_ITEMS] JSON applicationMetadata;
-    [Conditional=APPLE_PAY_INSTALLMENT_ITEMS] ApplePayInstallmentRetailChannel retailChannel = "unknown";
+    DOMString merchantIdentifier;
+    DOMString referrerIdentifier;
+    sequence<ApplePayInstallmentItem> items;
+    JSON applicationMetadata;
+    ApplePayInstallmentRetailChannel retailChannel = "unknown";
 };

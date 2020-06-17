@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
 </head>
 <body>
 <script>
@@ -57,26 +58,12 @@ function go() {
     finishJSTest();
 }
 
-function clickElement(element) {
-    let x = element.offsetLeft + 2;
-    let y = element.offsetTop + 2;
-
-    var supportsTouchEvents = "TouchEvent" in window;
-    if (supportsTouchEvents && window.testRunner && testRunner.runUIScript) {
-        testRunner.runUIScript(`(function() { uiController.singleTapAtPoint(${x}, ${y}, function() { }); })();`, function () { });
-    } else if (window.eventSender) {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
-}
-
 window.onload = function() {
-    clickElement(document.querySelector("button"));
+    UIHelper.activateElement(document.querySelector("button"));
 }
 
 </script>
 <button onclick='go()'>Go</button>
-<script src="../../resources/js-test-post.js"></script>
+<script src="/resources/js-test-post.js"></script>
 </body>
 </html>

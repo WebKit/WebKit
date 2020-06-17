@@ -23,19 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "PaymentAPIVersion.h"
 
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
+#if ENABLE(APPLE_PAY)
+
+#import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
 
-enum class ApplePayInstallmentRetailChannel : uint8_t {
-    Unknown,
-    App,
-    Web,
-    InStore,
-};
+unsigned PaymentAPIVersion::current()
+{
+    static unsigned current = [] {
+#if HAVE(PASSKIT_NEW_BUTTON_TYPES)
+        return 10;
+#elif HAVE(PASSKIT_INSTALLMENTS)
+        if (PAL::getPKPaymentInstallmentConfigurationClass()) {
+            if (PAL::getPKPaymentInstallmentItemClass())
+                return 9;
+            return 8;
+        }
+#endif
+        return 7;
+    }();
+    return current;
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
+#endif // ENABLE(APPLE_PAY)

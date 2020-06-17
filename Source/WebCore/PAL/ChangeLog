@@ -1,3 +1,30 @@
+2020-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Enable layout tests on more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=212955
+        <rdar://problem/64174156>
+
+        Reviewed by Alex Christensen.
+
+        PassKit added SPIs for Apple Pay installments over a series of iOS 13 and macOS Catalina
+        minor updates. WebKit trunk is still built across a range of iOS 13 and macOS Catalina minor
+        update SDKs that contain none, some, or all of the installment SPIs. It's not possible to
+        reliably detect the SDK minor version at compile-time, so instead we now use our own SPI
+        declarations unless we know all minor versions of the major SDK version contain all of the
+        installments definitions.
+
+        * PAL.xcodeproj/project.pbxproj: Added PassKitInstallmentsSPI.h.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm: Used SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT on both
+        Mac and iOS to soft-link PKPaymentInstallmentConfiguration and PKPaymentInstallmentItem.
+
+        * pal/spi/cocoa/PassKitInstallmentSPI.h: Added. When building against an SDK that is known
+        to declare the PassKit installments SPIs, this file includes the SPI headers. Otherwise, it
+        declares the SPIs.
+        * pal/spi/cocoa/PassKitSPI.h: Moved PassKit installments SPI declarations to
+        PassKitInstallmentSPI.h.
+
 2020-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable download resume tests

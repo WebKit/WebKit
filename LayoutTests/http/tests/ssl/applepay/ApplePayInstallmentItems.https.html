@@ -62,6 +62,12 @@ let validRequest = () => {
 
 activateThen(() => {
 
+    if (!ApplePaySession.supportsVersion(apiVersion)) {
+        testFailed(`This build does not support API version ${apiVersion}.`);
+        finishJSTest();
+        return;
+    }
+
     debug('Test installmentConfiguration.items');
     shouldThrow('request = validRequest(); request.installmentConfiguration.items = 4; new ApplePaySession(apiVersion, request)');
     shouldThrow('request = validRequest(); request.installmentConfiguration.items = ""; new ApplePaySession(apiVersion, request)');
@@ -107,8 +113,6 @@ activateThen(() => {
     debug('');
 
     debug('Test platform conversion');
-    let session = new ApplePaySession(apiVersion, validRequest());
-    session.begin();
     shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items.length', '2');
     shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].type', 'expectedItemType');
     shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].amount', 'expectedItemAmount');

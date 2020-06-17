@@ -42,15 +42,11 @@ struct ApplePayInstallmentConfiguration {
     String bindingTotalAmount;
     String currencyCode;
     bool isInStorePurchase { false };
-#if ENABLE(APPLE_PAY_INSTALLMENT_IDENTIFIERS)
     String merchantIdentifier;
     String referrerIdentifier;
-#endif
-#if ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
     Vector<ApplePayInstallmentItem> items;
     String applicationMetadata;
     ApplePayInstallmentRetailChannel retailChannel { ApplePayInstallmentRetailChannel::Unknown };
-#endif
 };
 
 } // namespace WebCore

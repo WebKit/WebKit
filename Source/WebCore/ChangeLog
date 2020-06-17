@@ -1,3 +1,49 @@
+2020-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Enable layout tests on more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=212955
+        <rdar://problem/64174156>
+
+        Reviewed by Alex Christensen.
+
+        Added runtime checks to determine the Apple Pay API version when installments are enabled.
+
+        Enabled tests in http/tests/ssl/applepay on iOS.
+
+        * Modules/applepay/ApplePayInstallmentConfiguration.idl:
+        * Modules/applepay/ApplePayInstallmentConfigurationWebCore.h:
+        * Modules/applepay/ApplePayInstallmentItem.h:
+        * Modules/applepay/ApplePayInstallmentItem.idl:
+        * Modules/applepay/ApplePayInstallmentItemType.h:
+        * Modules/applepay/ApplePayInstallmentItemType.idl:
+        * Modules/applepay/ApplePayInstallmentRetailChannel.h:
+        * Modules/applepay/ApplePayInstallmentRetailChannel.idl: Removed uses of
+        APPLE_PAY_INSTALLMENT_IDENTIFIERS and APPLE_PAY_INSTALLMENT_ITEMS (or replaced with
+        APPLE_PAY_INSTALLMENTS).
+
+        * Modules/applepay/PaymentAPIVersion.h:
+        * Modules/applepay/cocoa/PaymentAPIVersionCocoa.mm:
+        (WebCore::PaymentAPIVersion::current): Moved the computation of current API version from
+        PaymentCoordinatorClient::supportsVersion to here. Added runtime checks to determine the
+        level of PassKit installments support since we don't have enough information to tell at
+        compile time.
+
+        * Modules/applepay/PaymentCoordinatorClient.cpp:
+        (WebCore::PaymentCoordinatorClient::supportsVersion): Changed to call
+        PaymentAPIVersion::current.
+
+        * Modules/applepay/PaymentInstallmentConfiguration.mm:
+        (WebCore::makeNSArrayElement):
+        (WebCore::createPlatformConfiguration):
+        (WebCore::PaymentInstallmentConfiguration::create):
+        (WebCore::PaymentInstallmentConfiguration::applePayInstallmentConfiguration const): Removed
+        uses of HAVE_PASSKIT_INSTALLMENT_ITEMS and HAVE_PASSKIT_INSTALLMENT_IDENTIFIERS. Used
+        runtime checks to determine support for PKPaymentInstallmentConfiguration and
+        PKPaymentInstallmentItem.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj: Added source files for PaymentAPIVersion.
+
 2020-06-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Remove redundant mapping functions

@@ -80,8 +80,6 @@ static PKPaymentSetupFeatureType platformFeatureType(ApplePaySetupFeatureType fe
     }
 }
 
-#if HAVE(PASSKIT_INSTALLMENT_ITEMS)
-
 static ApplePayInstallmentItemType applePayItemType(PKInstallmentItemType itemType)
 {
     switch (itemType) {
@@ -144,6 +142,7 @@ static PKInstallmentRetailChannel platformRetailChannel(ApplePayInstallmentRetai
 
 static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
 {
+    ASSERT(PAL::getPKPaymentInstallmentItemClass());
     auto installmentItem = adoptNS([PAL::allocPKPaymentInstallmentItemInstance() init]);
     [installmentItem setInstallmentItemType:platformItemType(item.type)];
     [installmentItem setAmount:toDecimalNumber(item.amount)];
@@ -170,10 +169,11 @@ static Optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayInstall
     };
 }
 
-#endif // HAVE(PASSKIT_INSTALLMENT_ITEMS)
-
 static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(const ApplePayInstallmentConfiguration& coreConfiguration, NSDictionary *applicationMetadata)
 {
+    if (!PAL::getPKPaymentInstallmentConfigurationClass())
+        return nil;
+
     auto configuration = adoptNS([PAL::allocPKPaymentInstallmentConfigurationInstance() init]);
 
     [configuration setFeature:platformFeatureType(coreConfiguration.featureType)];
@@ -185,29 +185,15 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
 
     auto merchandisingImageData = adoptNS([[NSData alloc] initWithBase64EncodedString:coreConfiguration.merchandisingImageData options:0]);
     [configuration setMerchandisingImageData:merchandisingImageData.get()];
-
-#if HAVE(PASSKIT_INSTALLMENT_IDENTIFIERS)
-#if PLATFORM(MAC)
-    if (![configuration respondsToSelector:@selector(setInstallmentMerchantIdentifier:)] || ![configuration respondsToSelector:@selector(setReferrerIdentifier:)])
-        return configuration;
-#endif
     [configuration setInstallmentMerchantIdentifier:coreConfiguration.merchantIdentifier];
     [configuration setReferrerIdentifier:coreConfiguration.referrerIdentifier];
-#endif
-    
-#if HAVE(PASSKIT_INSTALLMENT_ITEMS)
-#if PLATFORM(MAC)
-    if (![configuration respondsToSelector:@selector(setInstallmentItems:)]
-        || ![configuration respondsToSelector:@selector(setApplicationMetadata:)]
-        || ![configuration respondsToSelector:@selector(setRetailChannel:)])
+
+    if (!PAL::getPKPaymentInstallmentItemClass())
         return configuration;
-#endif
+
     [configuration setInstallmentItems:createNSArray(coreConfiguration.items).get()];
     [configuration setApplicationMetadata:applicationMetadata];
     [configuration setRetailChannel:platformRetailChannel(coreConfiguration.retailChannel)];
-#else
-    UNUSED_PARAM(applicationMetadata);
-#endif
 
     return configuration;
 }
@@ -215,14 +201,12 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
 ExceptionOr<PaymentInstallmentConfiguration> PaymentInstallmentConfiguration::create(const ApplePayInstallmentConfiguration& configuration)
 {
     NSDictionary *applicationMetadataDictionary = nil;
-#if ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
     if (!configuration.applicationMetadata.isNull()) {
         NSData *applicationMetadata = [configuration.applicationMetadata dataUsingEncoding:NSUTF8StringEncoding];
         applicationMetadataDictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata options:0 error:nil]);
         if (!applicationMetadataDictionary)
             return Exception { TypeError, "applicationMetadata must be a JSON object" };
     }
-#endif
 
     return PaymentInstallmentConfiguration(configuration, applicationMetadataDictionary);
 }
@@ -245,6 +229,8 @@ PKPaymentInstallmentConfiguration *PaymentInstallmentConfiguration::platformConf
 ApplePayInstallmentConfiguration PaymentInstallmentConfiguration::applePayInstallmentConfiguration() const
 {
     ApplePayInstallmentConfiguration installmentConfiguration;
+    if (!PAL::getPKPaymentInstallmentConfigurationClass())
+        return installmentConfiguration;
 
     installmentConfiguration.featureType = applePaySetupFeatureType([m_configuration feature]);
 
@@ -254,23 +240,12 @@ ApplePayInstallmentConfiguration PaymentInstallmentConfiguration::applePayInstal
     installmentConfiguration.openToBuyThresholdAmount = fromDecimalNumber([m_configuration openToBuyThresholdAmount]);
 
     installmentConfiguration.merchandisingImageData = [[m_configuration merchandisingImageData] base64EncodedStringWithOptions:0];
-
-#if HAVE(PASSKIT_INSTALLMENT_IDENTIFIERS)
-#if PLATFORM(MAC)
-    if (![m_configuration respondsToSelector:@selector(installmentMerchantIdentifier)] || ![m_configuration respondsToSelector:@selector(referrerIdentifier)])
-        return installmentConfiguration;
-#endif
     installmentConfiguration.merchantIdentifier = [m_configuration installmentMerchantIdentifier];
     installmentConfiguration.referrerIdentifier = [m_configuration referrerIdentifier];
-#endif
 
-#if ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
-#if PLATFORM(MAC)
-    if (![m_configuration respondsToSelector:@selector(installmentItems)]
-        || ![m_configuration respondsToSelector:@selector(applicationMetadata)]
-        || ![m_configuration respondsToSelector:@selector(retailChannel)])
+    if (!PAL::getPKPaymentInstallmentItemClass())
         return installmentConfiguration;
-#endif
+
     RetainPtr<NSString> applicationMetadataString;
     if (NSDictionary *applicationMetadataDictionary = [m_configuration applicationMetadata]) {
         if (NSData *applicationMetadata = [NSJSONSerialization dataWithJSONObject:applicationMetadataDictionary options:NSJSONWritingSortedKeys error:nil])
@@ -280,7 +255,6 @@ ApplePayInstallmentConfiguration PaymentInstallmentConfiguration::applePayInstal
     installmentConfiguration.items = makeVector<ApplePayInstallmentItem>([m_configuration installmentItems]);
     installmentConfiguration.applicationMetadata = applicationMetadataString.get();
     installmentConfiguration.retailChannel = applePayRetailChannel([m_configuration retailChannel]);
-#endif
 
     return installmentConfiguration;
 }

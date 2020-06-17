@@ -613,6 +613,7 @@ WHLSLStandardLibraryFunctionMap.cpp
     Modules/applepay/PaymentRequestValidator.mm
     Modules/applepay/PaymentSession.cpp
 
+    Modules/applepay/cocoa/PaymentAPIVersionCocoa.mm
     Modules/applepay/cocoa/PaymentCocoa.mm
     Modules/applepay/cocoa/PaymentContactCocoa.mm
     Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm

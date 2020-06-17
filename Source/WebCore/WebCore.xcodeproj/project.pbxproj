@@ -3025,6 +3025,7 @@
 		A1677E0E213E02A000A08C34 /* AddressErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677E0B213E02A000A08C34 /* AddressErrors.h */; };
 		A1677E13213E03C600A08C34 /* JSAddressErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677E11213E03C500A08C34 /* JSAddressErrors.h */; };
 		A1677E17213E03F100A08C34 /* JSPayerErrorFields.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677E15213E03F000A08C34 /* JSPayerErrorFields.h */; };
+		A169B043248F037B00EE8B7B /* PaymentAPIVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = A169B042248F037B00EE8B7B /* PaymentAPIVersion.h */; };
 		A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1763F411E20586E001D58DE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1763F401E20586E001D58DE /* CFNetwork.framework */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
@@ -11575,6 +11576,8 @@
 		A1677E15213E03F000A08C34 /* JSPayerErrorFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPayerErrorFields.h; sourceTree = "<group>"; };
 		A1677E16213E03F000A08C34 /* JSPayerErrorFields.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPayerErrorFields.cpp; sourceTree = "<group>"; };
 		A1677E242144532800A08C34 /* JSPaymentMethodChangeEventCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodChangeEventCustom.cpp; sourceTree = "<group>"; };
+		A169B042248F037B00EE8B7B /* PaymentAPIVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentAPIVersion.h; sourceTree = "<group>"; };
+		A169B045248F041700EE8B7B /* PaymentAPIVersionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentAPIVersionCocoa.mm; sourceTree = "<group>"; };
 		A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupport.mm; sourceTree = "<group>"; };
 		A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveDumpSupport.h; sourceTree = "<group>"; };
 		A1763F401E20586E001D58DE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -17467,6 +17470,7 @@
 				1A8A644F1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.h */,
 				1A8A64501D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.idl */,
 				1A8A64371D19FC5300D0E00F /* Payment.h */,
+				A169B042248F037B00EE8B7B /* PaymentAPIVersion.h */,
 				1AE96A861D1A0CEB00B86768 /* PaymentAuthorizationStatus.h */,
 				1A8A64381D19FC5300D0E00F /* PaymentContact.h */,
 				1A58E86B1D19E42D00C0EA73 /* PaymentCoordinator.cpp */,
@@ -17492,6 +17496,7 @@
 		1A58E8691D19D8C000C0EA73 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A169B045248F041700EE8B7B /* PaymentAPIVersionCocoa.mm */,
 				1A8A64691D19FF8700D0E00F /* PaymentCocoa.mm */,
 				1A8A646A1D19FF8700D0E00F /* PaymentContactCocoa.mm */,
 				1ADA4A1B1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm */,
@@ -32405,6 +32410,7 @@
 				A1677E08213E024C00A08C34 /* PayerErrorFields.h in Headers */,
 				1A8A643A1D19FC5300D0E00F /* Payment.h in Headers */,
 				A1F76B431F44CF7F0014C318 /* PaymentAddress.h in Headers */,
+				A169B043248F037B00EE8B7B /* PaymentAPIVersion.h in Headers */,
 				1AE96A881D1A0CEB00B86768 /* PaymentAuthorizationStatus.h in Headers */,
 				A1F76B5B1F44D3B20014C318 /* PaymentComplete.h in Headers */,
 				1A8A643B1D19FC5300D0E00F /* PaymentContact.h in Headers */,

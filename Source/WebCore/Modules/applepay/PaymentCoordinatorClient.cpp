@@ -28,23 +28,14 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "PaymentAPIVersion.h"
+
 namespace WebCore {
 
 bool PaymentCoordinatorClient::supportsVersion(unsigned version)
 {
-    ASSERT(version > 0);
-
-#if !ENABLE(APPLE_PAY_SESSION_V8)
-    static const unsigned currentVersion = 7;
-#elif !ENABLE(APPLE_PAY_SESSION_V9)
-    static const unsigned currentVersion = 8;
-#elif !ENABLE(APPLE_PAY_SESSION_V10)
-    static const unsigned currentVersion = 9;
-#else
-    static const unsigned currentVersion = 10;
-#endif
-
-    return version <= currentVersion;
+    ASSERT(version);
+    return version <= PaymentAPIVersion::current();
 }
 
 } // namespace WebCore

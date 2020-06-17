@@ -43,7 +43,10 @@ fast/viewport/ios/viewport-fit-contain.html [ Skip ]
 fast/viewport/ios/viewport-fit-cover.html [ Skip ]
 fast/viewport/ios/viewport-fit-auto.html [ Skip ]
 
-http/tests/ssl/applepay/ApplePayBillingAddress.html [ Pass ]
+http/tests/ssl/applepay [ Pass ]
+webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
+
+webkit.org/b/212998 http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Failure ]
 
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]

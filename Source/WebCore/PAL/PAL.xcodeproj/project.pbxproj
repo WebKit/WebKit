@@ -154,6 +154,7 @@
 		A1175B571F6B470500C4B9F0 /* DefaultSearchProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */; };
 		A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */; };
 		A1175B5A1F6B4A8400C4B9F0 /* NSScrollViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B591F6B4A8400C4B9F0 /* NSScrollViewSPI.h */; };
+		A169B041248EF05200EE8B7B /* PassKitInstallmentsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A169B040248EF03900EE8B7B /* PassKitInstallmentsSPI.h */; };
 		A1F63C9F21A4DBF7006FB43B /* PassKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */; };
 		A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */; };
 		A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = A30D411E1F0DD0EA00B71954 /* KillRing.h */; };
@@ -341,6 +342,7 @@
 		A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultSearchProvider.h; sourceTree = "<group>"; };
 		A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultSearchProvider.cpp; sourceTree = "<group>"; };
 		A1175B591F6B4A8400C4B9F0 /* NSScrollViewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSScrollViewSPI.h; sourceTree = "<group>"; };
+		A169B040248EF03900EE8B7B /* PassKitInstallmentsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PassKitInstallmentsSPI.h; sourceTree = "<group>"; };
 		A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PassKitSoftLink.h; sourceTree = "<group>"; };
 		A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PassKitSoftLink.mm; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
@@ -474,6 +476,7 @@
 				0C2DA1381F3BEB4900DBC317 /* NSURLFileTypeMappingsSPI.h */,
 				C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */,
 				570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */,
+				A169B040248EF03900EE8B7B /* PassKitInstallmentsSPI.h */,
 				0C2DA1391F3BEB4900DBC317 /* PassKitSPI.h */,
 				0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */,
 				0C2DA13B1F3BEB4900DBC317 /* QuartzCoreSPI.h */,
@@ -850,6 +853,7 @@
 				0C77859D1F45130F00F4EBB6 /* NSWindowSPI.h in Headers */,
 				570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */,
 				0C5AF91F1F43A4C7002EAC02 /* OpenGLESSPI.h in Headers */,
+				A169B041248EF05200EE8B7B /* PassKitInstallmentsSPI.h in Headers */,
 				A1F63C9F21A4DBF7006FB43B /* PassKitSoftLink.h in Headers */,
 				0C2DA1551F3BEB4900DBC317 /* PassKitSPI.h in Headers */,
 				0C77859E1F45130F00F4EBB6 /* PIPSPI.h in Headers */,

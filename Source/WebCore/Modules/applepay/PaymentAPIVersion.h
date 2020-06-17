@@ -25,17 +25,14 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
+#if ENABLE(APPLE_PAY)
 
 namespace WebCore {
 
-enum class ApplePayInstallmentRetailChannel : uint8_t {
-    Unknown,
-    App,
-    Web,
-    InStore,
+struct PaymentAPIVersion {
+    static unsigned current();
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
+#endif // ENABLE(APPLE_PAY)
