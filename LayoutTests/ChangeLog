@@ -1,3 +1,13 @@
+2020-06-17  Keith Miller  <keith_miller@apple.com>
+
+        WebKitTestRunner should not crash on alert with invalid utf16 strings
+        https://bugs.webkit.org/show_bug.cgi?id=213269
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/Window/alert-with-unmatched-utf16-surrogate-should-not-crash-expected.txt: Added.
+        * fast/dom/Window/alert-with-unmatched-utf16-surrogate-should-not-crash.html: Added.
+
 2020-06-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r263098): [Win10] http/tests/security/cross-origin-clean-css-resource-timing.html and http/tests/security/cross-origin-css-resource-timing.html are failing
