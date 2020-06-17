@@ -1060,12 +1060,10 @@ bool PDFPlugin::ByteRangeRequest::maybeComplete(PDFPlugin& plugin)
 
 void PDFPlugin::ByteRangeRequest::completeUnconditionally(PDFPlugin& plugin)
 {
-    if (m_position >= plugin.m_streamedBytes) {
+    if (m_position >= plugin.m_streamedBytes || !plugin.m_data) {
         completeWithBytes(nullptr, 0, plugin);
         return;
     }
-
-    ASSERT(plugin.m_data);
 
     auto count = m_position + m_count > plugin.m_streamedBytes ? plugin.m_streamedBytes - m_position : m_count;
     completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, count, plugin);

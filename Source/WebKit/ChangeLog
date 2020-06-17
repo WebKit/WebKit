@@ -1,3 +1,14 @@
+2020-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        Null check plugin.m_data before using it in PDFPlugin::ByteRangeRequest::completeUnconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=213305
+        <rdar://problem/60349279>
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::ByteRangeRequest::completeUnconditionally):
+
 2020-06-17  Darryl Pogue  <darryl@dpogue.ca>
 
         IndexedDB: Support IDBFactory databases method
