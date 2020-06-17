@@ -34,14 +34,13 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStrea
 
 [
     ActiveDOMObject,
-    Constructor(RequestInfo input, optional FetchRequestInit init),
-    ConstructorMayThrowException,
-    ConstructorCallWith=ScriptExecutionContext,
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     InterfaceName=Request,
 ] interface FetchRequest {
+    [CallWith=ScriptExecutionContext, MayThrowException] constructor(RequestInfo input, optional FetchRequestInit init);
+
     readonly attribute ByteString method;
     [ImplementedAs=urlString] readonly attribute USVString url;
     readonly attribute FetchHeaders headers; // FIXME: Should be [SameObject].

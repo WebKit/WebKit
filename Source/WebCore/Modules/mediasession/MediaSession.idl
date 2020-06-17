@@ -25,11 +25,11 @@
 
 [
     Conditional=MEDIA_SESSION,
-    ConstructorCallWith=ScriptExecutionContext,
-    CustomConstructor(optional MediaSessionKind kind = "content"),
     ExportMacro=WEBCORE_EXPORT,
     ImplementationLacksVTable,
 ] interface MediaSession {
+    [CallWith=ScriptExecutionContext] constructor(optional MediaSessionKind kind = "content");
+
     readonly attribute MediaSessionKind kind;
     readonly attribute MediaRemoteControls? controls;
 

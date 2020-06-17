@@ -19,10 +19,11 @@
  */
 
 [
-    Constructor,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker)
 ] interface TestNode : Node {
+    constructor();
+
     attribute DOMString name;
 
     [EnabledAtRuntime=DOMIterator] iterable<TestNode>;

@@ -30,9 +30,9 @@ enum FontFaceSetLoadStatus {
 
 [
     ActiveDOMObject,
-    ConstructorCallWith=Document,
-    Constructor(sequence<FontFace> initialFaces),
 ] interface FontFaceSet : EventTarget {
+    [CallWith=Document] constructor(sequence<FontFace> initialFaces);
+
     boolean has(FontFace font);
 
     // FIXME: We should add support for the setlike declaration.

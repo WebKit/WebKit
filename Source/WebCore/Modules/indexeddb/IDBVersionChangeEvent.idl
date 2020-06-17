@@ -26,8 +26,9 @@
 // FIXME: This should be exposed to workers as well.
 [
     Conditional=INDEXED_DATABASE,
-    Constructor(DOMString type, optional IDBVersionChangeEventInit eventInitDict),
 ] interface IDBVersionChangeEvent : Event {
+    constructor(DOMString type, optional IDBVersionChangeEventInit eventInitDict);
+
     readonly attribute unsigned long long oldVersion;
     readonly attribute unsigned long long? newVersion;
 };

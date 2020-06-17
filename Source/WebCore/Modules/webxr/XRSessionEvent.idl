@@ -35,7 +35,8 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    Constructor(DOMString type, XRSessionEventInit eventInitDict),
 ] interface XRSessionEvent : Event {
+    constructor(DOMString type, XRSessionEventInit eventInitDict);
+
     [SameObject] readonly attribute WebXRSession session;
 };

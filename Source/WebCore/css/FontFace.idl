@@ -43,9 +43,9 @@ dictionary FontFaceDescriptors {
 
 [
     ActiveDOMObject,
-    ConstructorCallWith=Document,
-    Constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors)
 ] interface FontFace {
+    [CallWith=Document] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
+
     [SetterCallWith=Document] attribute DOMString family;
     attribute DOMString style;
     attribute DOMString weight;

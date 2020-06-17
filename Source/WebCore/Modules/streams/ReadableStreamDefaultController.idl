@@ -29,11 +29,12 @@
 
 [
     Conditional=STREAMS_API,
-    Constructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark),
     Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier
 ] interface ReadableStreamDefaultController {
+    constructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark);
+
     [NotEnumerable] void enqueue(optional any chunk);
     [NotEnumerable] void close();
     [NotEnumerable] void error(optional any error);

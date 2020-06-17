@@ -26,12 +26,13 @@
 typedef (BufferSource or Blob or USVString) BlobPart;
 
 [
-    Constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options),
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface File : Blob {
+    constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options);
+
     readonly attribute DOMString name;
     readonly attribute long long lastModified;
 

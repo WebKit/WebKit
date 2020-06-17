@@ -33,9 +33,9 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     InterfaceName=Headers,
-    Constructor(optional HeadersInit init),
-    ConstructorMayThrowException,
 ] interface FetchHeaders {
+    [MayThrowException] constructor(optional HeadersInit init);
+
     [MayThrowException] void append(ByteString name, ByteString value);
     [MayThrowException, ImplementedAs=remove] void delete(ByteString name);
     [MayThrowException] ByteString? get(ByteString name);

@@ -34,8 +34,6 @@ typedef (
 typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 
 [
-    Constructor,
-    ConstructorCallWith=Document,
     CustomToJSObject,
     CustomHeapSnapshot,
     DOMJIT,
@@ -44,6 +42,8 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
 ] interface Document : Node {
+    [CallWith=Document] constructor();
+
     readonly attribute DOMImplementation implementation; // FIXME: Should be [SameObject].
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;

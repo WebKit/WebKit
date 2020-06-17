@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Constructor(DOMString type, optional StorageEventInit eventInitDict)
-] interface StorageEvent : Event {
+interface StorageEvent : Event {
+    constructor(DOMString type, optional StorageEventInit eventInitDict);
+
     readonly attribute DOMString? key;
     readonly attribute DOMString? oldValue;
     readonly attribute DOMString? newValue;

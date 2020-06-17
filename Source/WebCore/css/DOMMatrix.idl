@@ -25,13 +25,12 @@
 
 // FIXME: Should be [LegacyWindowAlias=(SVGMatrix, WebKitCSSMatrix)].
 [
-    Constructor(optional (DOMString or sequence<unrestricted double>) init),
-    ConstructorMayThrowException,
-    ConstructorCallWith=ScriptExecutionContext,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     ImplementationLacksVTable
- ] interface DOMMatrix : DOMMatrixReadOnly {
+] interface DOMMatrix : DOMMatrixReadOnly {
+    [CallWith=ScriptExecutionContext, MayThrowException] constructor(optional (DOMString or sequence<unrestricted double>) init);
+
     [MayThrowException, NewObject] static DOMMatrix fromMatrix(optional DOMMatrixInit other);
     [MayThrowException, NewObject] static DOMMatrix fromFloat32Array(Float32Array array32);
     [MayThrowException, NewObject] static DOMMatrix fromFloat64Array(Float64Array array64);

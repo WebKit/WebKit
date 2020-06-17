@@ -18,9 +18,9 @@
  */
 
 // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
-[
-    Constructor(DOMString type, optional HashChangeEventInit eventInitDict),
-] interface HashChangeEvent : Event {
+interface HashChangeEvent : Event {
+    constructor(DOMString type, optional HashChangeEventInit eventInitDict);
+
     // FIXME: Using "undefined" as default parameter value is wrong.
     void initHashChangeEvent(optional DOMString type = "undefined",
                              optional boolean canBubble = false,

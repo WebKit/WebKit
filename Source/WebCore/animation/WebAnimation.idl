@@ -40,10 +40,11 @@ enum AnimationReplaceState {
     ActiveDOMObject,
     EnabledAtRuntime=WebAnimations,
     InterfaceName=Animation,
-    CustomConstructor(),
     CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT
 ] interface WebAnimation : EventTarget {
+    [Custom] constructor();
+
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
     [RuntimeConditionallyReadWrite=WebAnimationsMutableTimelines] attribute AnimationTimeline? timeline;

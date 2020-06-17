@@ -26,10 +26,10 @@
 
 [
     Conditional=VIDEO,
-    Constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
-    Constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type),
-    ConstructorCallWith=Document
 ] interface DataCue : TextTrackCue {
+    [CallWith=Document] constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data);
+    [CallWith=Document] constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type);
+
     attribute ArrayBuffer data;
 
     // Proposed extensions.

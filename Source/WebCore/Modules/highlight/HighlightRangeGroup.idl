@@ -24,10 +24,11 @@
  */
 
 [
-    Constructor(StaticRange range),
     EnabledAtRuntime=HighlightAPI,
     ImplementationLacksVTable
 ] interface HighlightRangeGroup {
+    constructor(StaticRange range);
+
     setlike<StaticRange>;
     // FIXME: Add readonly attribute CSSStyleDeclaration style;
 };

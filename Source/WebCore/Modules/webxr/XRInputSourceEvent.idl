@@ -36,8 +36,9 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    Constructor(DOMString type, XRInputSourceEventInit eventInitDict),
 ] interface XRInputSourceEvent : Event {
+    constructor(DOMString type, XRInputSourceEventInit eventInitDict);
+
     [SameObject] readonly attribute WebXRFrame frame;
     [SameObject] readonly attribute WebXRInputSource inputSource;
 };

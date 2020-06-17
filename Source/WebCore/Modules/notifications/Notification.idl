@@ -33,9 +33,9 @@
     Conditional=NOTIFICATIONS,
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
-    Constructor(DOMString title, optional NotificationOptions options),
-    ConstructorCallWith=Document,
 ] interface Notification : EventTarget {
+    [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
+
     [CallWith=Document] static readonly attribute NotificationPermission permission;
     [CallWith=Document] static void requestPermission(optional NotificationPermissionCallback? deprecatedCallback); // FIXME: This should return a Promise<NotificationPermission>.
 

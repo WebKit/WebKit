@@ -27,9 +27,9 @@
     EnabledAtRuntime=InputEvents,
     ImplementationLacksVTable,
     Exposed=Window,
-    ConstructorMayThrowException,
-    Constructor(StaticRangeInit staticRangeInitDict),
 ] interface StaticRange {
+    [MayThrowException] constructor(StaticRangeInit staticRangeInitDict);
+
     readonly attribute unsigned long startOffset;
     readonly attribute unsigned long endOffset;
     readonly attribute Node startContainer;

@@ -19,11 +19,11 @@
  */
 
 [
-    Constructor,
-    ConstructorCallWith=Document,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
 ] interface Range {
+    [CallWith=Document] constructor();
+
     readonly attribute Node startContainer;
     readonly attribute long startOffset; // FIXME: Should be unsigned long.
     readonly attribute Node endContainer;

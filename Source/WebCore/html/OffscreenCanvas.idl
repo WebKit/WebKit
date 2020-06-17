@@ -42,13 +42,13 @@ enum OffscreenRenderingContextType
 };
 
 [
-    ConstructorCallWith=ScriptExecutionContext,
-    Constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height),
     GenerateIsReachable=Impl,
     EnabledAtRuntime=OffscreenCanvas,
     Conditional=OFFSCREEN_CANVAS,
     Exposed=(Window,Worker)
 ] interface OffscreenCanvas : EventTarget {
+    [CallWith=ScriptExecutionContext] constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height);
+
     attribute [EnforceRange] unsigned long width;
     attribute [EnforceRange] unsigned long height;
 

@@ -28,11 +28,10 @@
 [
     ActiveDOMObject,
     Conditional=INTERSECTION_OBSERVER,
-    ConstructorCallWith=Document,
-    ConstructorMayThrowException,
-    Constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options),
     EnabledAtRuntime=IntersectionObserver
 ] interface IntersectionObserver {
+    [CallWith=Document, MayThrowException] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
+
     readonly attribute Node? root;
     readonly attribute DOMString rootMargin;
     readonly attribute sequence<double> thresholds;

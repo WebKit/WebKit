@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Constructor(DOMString type, optional WebKitTransitionEventInit eventInitDict),
-] interface WebKitTransitionEvent : Event {
+interface WebKitTransitionEvent : Event {
+    constructor(DOMString type, optional WebKitTransitionEventInit eventInitDict);
+
     readonly attribute DOMString propertyName;
     readonly attribute double elapsedTime;
     readonly attribute DOMString pseudoElement;

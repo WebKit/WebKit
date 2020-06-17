@@ -26,14 +26,14 @@
 // https://w3c.github.io/performance-timeline/
 
 [
-    Constructor(PerformanceObserverCallback callback),
-    ConstructorCallWith=ScriptExecutionContext,
     CustomIsReachable,
     EnabledAtRuntime=PerformanceTimeline,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     JSCustomMarkFunction,
 ] interface PerformanceObserver {
+    [CallWith=ScriptExecutionContext] constructor(PerformanceObserverCallback callback);
+
     [MayThrowException] void observe(PerformanceObserverInit options);
     void disconnect();
     [CallWith=ScriptExecutionContext] static readonly attribute FrozenArray<DOMString> supportedEntryTypes;

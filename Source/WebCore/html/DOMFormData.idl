@@ -31,13 +31,14 @@
 typedef (File or USVString) FormDataEntryValue;
 
 [
-    Constructor(optional HTMLFormElement? form),
     Exposed=(Window,Worker),
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=FormData,
     ImplementationLacksVTable,
 ] interface DOMFormData {
+    constructor(optional HTMLFormElement? form);
+
     void append(USVString name, USVString value);
     void append(USVString name, Blob blobValue, optional USVString filename);
     [ImplementedAs=remove] void delete(USVString name);

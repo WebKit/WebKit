@@ -33,12 +33,13 @@ dictionary ClipboardItemOptions {
 };
 
 [
-    Constructor(record<DOMString, ClipboardItemData> items, optional ClipboardItemOptions options),
     Exposed=Window,
     EnabledBySetting=AsyncClipboardAPI,
     ImplementationLacksVTable,
     GenerateIsReachable=ReachableFromNavigator
 ] interface ClipboardItem {
+    constructor(record<DOMString, ClipboardItemData> items, optional ClipboardItemOptions options);
+
     readonly attribute FrozenArray<DOMString> types;
     [NewObject] Promise<Blob> getType(DOMString type);
     readonly attribute PresentationStyle presentationStyle;

@@ -37,8 +37,9 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    Constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict),
 ] interface XRInputSourcesChangeEvent : Event {
+    constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict);
+
     [SameObject] readonly attribute WebXRSession session;
     [SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
     [SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;

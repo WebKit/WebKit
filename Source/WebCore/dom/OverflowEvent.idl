@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Constructor(DOMString type, optional OverflowEventInit eventInitDict),
-] interface OverflowEvent : Event {
+interface OverflowEvent : Event {
+    constructor(DOMString type, optional OverflowEventInit eventInitDict);
+
     const unsigned short HORIZONTAL = 0;
     const unsigned short VERTICAL   = 1;
     const unsigned short BOTH       = 2;

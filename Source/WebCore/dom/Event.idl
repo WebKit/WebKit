@@ -21,13 +21,14 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Constructor(DOMString type, optional EventInit eventInitDict),
     CustomToJSObject,
     DOMJIT,
     ExportToWrappedFunction,
     Exposed=(Window,Worker),
     JSCustomHeader,
 ] interface Event {
+    constructor(DOMString type, optional EventInit eventInitDict);
+
     readonly attribute DOMString type;
     readonly attribute EventTarget? target;
     readonly attribute EventTarget? currentTarget;

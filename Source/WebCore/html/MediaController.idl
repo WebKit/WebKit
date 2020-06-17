@@ -24,10 +24,10 @@
  */
 
 [
-    Conditional=VIDEO,
-    Constructor,
-    ConstructorCallWith=ScriptExecutionContext,
+    Conditional=VIDEO
 ] interface MediaController : EventTarget {
+    [CallWith=ScriptExecutionContext] constructor();
+
     readonly attribute TimeRanges buffered;
     readonly attribute TimeRanges seekable;
 

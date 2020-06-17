@@ -18,10 +18,10 @@
  */
 
 [
-    Constructor(optional DOMString data = ""),
-    ConstructorCallWith=Document,
     CustomToJSObject,
 ] interface Text : CharacterData {
+    [CallWith=Document] constructor(optional DOMString data = "");
+
     [MayThrowException] Text splitText(unsigned long offset);
     readonly attribute DOMString wholeText;
 };

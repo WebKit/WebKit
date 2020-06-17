@@ -24,9 +24,9 @@
  *
  */
 
-[
-    Constructor(DOMString type, optional ClipboardEventInit eventInitDict)
-] interface ClipboardEvent : Event {
+interface ClipboardEvent : Event {
+    constructor(DOMString type, optional ClipboardEventInit eventInitDict);
+
     readonly attribute DataTransfer? clipboardData;
 };
 

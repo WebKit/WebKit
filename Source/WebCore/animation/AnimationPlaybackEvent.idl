@@ -26,8 +26,9 @@
 [
     EnabledAtRuntime=WebAnimations,
     Exposed=Window,
-    Constructor(DOMString type, optional AnimationPlaybackEventInit eventInitDict)
 ] interface AnimationPlaybackEvent : Event {
+    constructor(DOMString type, optional AnimationPlaybackEventInit eventInitDict);
+
     [ImplementedAs=bindingsCurrentTime] readonly attribute double? currentTime;
     [ImplementedAs=bindingsTimelineTime] readonly attribute double? timelineTime;
 };

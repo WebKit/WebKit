@@ -32,9 +32,9 @@
 [
     Exposed=(Window,Worker),
     ActiveDOMObject,
-    Constructor,
-    ConstructorCallWith=ScriptExecutionContext,
 ] interface FileReader : EventTarget {
+    [CallWith=ScriptExecutionContext] constructor();
+
     // ready states
     const unsigned short EMPTY = 0;
     const unsigned short LOADING = 1;

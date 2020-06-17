@@ -18,9 +18,10 @@
  */
 
 [
-    Constructor(DOMString type, optional MouseEventInit eventInitDict),
     DoNotCheckConstants,
 ] interface MouseEvent : UIEvent {
+    constructor(DOMString type, optional MouseEventInit eventInitDict);
+
     [Conditional=MOUSE_FORCE_EVENTS] const double WEBKIT_FORCE_AT_MOUSE_DOWN = 1;
     [Conditional=MOUSE_FORCE_EVENTS] const double WEBKIT_FORCE_AT_FORCE_MOUSE_DOWN = 2;
 

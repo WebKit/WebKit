@@ -31,9 +31,9 @@
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its output.
 
-[
-    Constructor(STRING hello, TEST_CALLBACK_FUNCTION testCallbackFunction, TEST_CALLBACK_INTERFACE testCallbackInterface),
-] interface TestTypedefs {
+interface TestTypedefs {
+    constructor(STRING hello, TEST_CALLBACK_FUNCTION testCallbackFunction, TEST_CALLBACK_INTERFACE testCallbackInterface);
+
     attribute ULONGLONG unsignedLongLongAttr;
 
     attribute SCRIPT_VALUE serializedScriptValue;

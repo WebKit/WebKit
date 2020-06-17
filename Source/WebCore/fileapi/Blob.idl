@@ -34,8 +34,9 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     CustomToJSObject,
-    Constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options),
 ] interface Blob {
+    constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options);
+
     readonly attribute unsigned long long size;
     readonly attribute DOMString type;
 

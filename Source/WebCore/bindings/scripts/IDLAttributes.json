@@ -95,9 +95,6 @@
         "Custom": {
             "contextsAllowed": ["attribute", "operation"]
         },
-        "CustomConstructor": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomDefineOwnProperty": {
             "contextsAllowed": ["interface"]
         },

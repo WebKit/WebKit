@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Constructor(DOMString type, optional PageTransitionEventInit eventInitDict),
-] interface PageTransitionEvent : Event {
+interface PageTransitionEvent : Event {
+    constructor(DOMString type, optional PageTransitionEventInit eventInitDict);
+
     readonly attribute boolean persisted;
 };
 

@@ -30,9 +30,10 @@
 
 [
     Conditional=WEB_RTC,
-    Constructor(DOMString type, RTCTrackEventInit eventInitDict),
-    EnabledAtRuntime=PeerConnection,
+    EnabledAtRuntime=PeerConnection
 ] interface RTCTrackEvent : Event {
+    constructor(DOMString type, RTCTrackEventInit eventInitDict);
+
     readonly attribute RTCRtpReceiver receiver;
     readonly attribute MediaStreamTrack track;
     [CachedAttribute, SameObject] readonly attribute FrozenArray<MediaStream> streams;

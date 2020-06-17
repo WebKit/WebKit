@@ -29,11 +29,10 @@ typedef USVString CSSOMString;
     EnabledAtRuntime=WebAnimations,
     Exposed=Window,
     JSGenerateToNativeObject,
-    ConstructorMayThrowException,
-    ConstructorCallWith=GlobalObject,
-    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options),
-    Constructor(KeyframeEffect source)
 ] interface KeyframeEffect : AnimationEffect {
+    [CallWith=GlobalObject, MayThrowException] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
+    [CallWith=GlobalObject, MayThrowException] constructor(KeyframeEffect source);
+
     attribute Element? target;
     [MayThrowException] attribute CSSOMString? pseudoElement;
     [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute IterationCompositeOperation iterationComposite;

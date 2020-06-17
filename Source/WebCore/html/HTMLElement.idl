@@ -19,11 +19,12 @@
  */
 
 [
-    CustomConstructor(),
     CustomPushEventHandlerScope,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface HTMLElement : Element {
+    [Custom] constructor();
+
     // Metadata attributes.
     [CEReactions, Reflect] attribute DOMString title;
     [CEReactions, Reflect] attribute DOMString lang;

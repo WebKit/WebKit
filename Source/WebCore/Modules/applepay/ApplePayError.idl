@@ -24,9 +24,10 @@
  */
 
 [
-    Constructor(ApplePayErrorCode errorCode, optional ApplePayErrorContactField contactField, optional DOMString message = ""),
-    Conditional=APPLE_PAY,
+    Conditional=APPLE_PAY
 ] interface ApplePayError {
+    constructor(ApplePayErrorCode errorCode, optional ApplePayErrorContactField contactField, optional DOMString message = "");
+
     attribute ApplePayErrorCode code;
     attribute ApplePayErrorContactField? contactField;
     attribute DOMString message;

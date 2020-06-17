@@ -24,12 +24,13 @@
 */
 
 [
-    Constructor(DOMString type, optional ExtendableEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
     Exposed=(ServiceWorker),
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface ExtendableEvent : Event {
+    constructor(DOMString type, optional ExtendableEventInit eventInitDict);
+
     [MayThrowException] void waitUntil(Promise<any> f);
 };

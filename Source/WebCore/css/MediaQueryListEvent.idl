@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Constructor(DOMString type, optional MediaQueryListEventInit mediaQueryListEventInit),
-] interface MediaQueryListEvent : Event {
+interface MediaQueryListEvent : Event {
+    constructor(DOMString type, optional MediaQueryListEventInit mediaQueryListEventInit);
+
     readonly attribute DOMString media;
     readonly attribute boolean matches;
 };

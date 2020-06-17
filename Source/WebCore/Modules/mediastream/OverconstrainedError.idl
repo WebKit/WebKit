@@ -27,10 +27,11 @@
  */
 
 [
-    Constructor(optional DOMString constraint = "", optional DOMString message = ""),
     ImplementationLacksVTable,
     Conditional=MEDIA_STREAM,
 ] exception OverconstrainedError {
+    constructor(optional DOMString constraint = "", optional DOMString message = "");
+
     readonly attribute DOMString message;
     readonly attribute DOMString constraint;
     readonly attribute DOMString name;

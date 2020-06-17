@@ -23,9 +23,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Constructor(DOMString type, optional SecurityPolicyViolationEventInit eventInitDict),
-] interface SecurityPolicyViolationEvent : Event {
+interface SecurityPolicyViolationEvent : Event {
+    constructor(DOMString type, optional SecurityPolicyViolationEventInit eventInitDict);
+
     readonly attribute USVString documentURI;
     readonly attribute DOMString referrer;
     readonly attribute USVString blockedURI;

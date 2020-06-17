@@ -29,10 +29,11 @@
  */
 
 [
-    Constructor,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface FileReaderSync {
+    constructor();
+
     [CallWith=ScriptExecutionContext, MayThrowException] ArrayBuffer readAsArrayBuffer(Blob blob);
     [CallWith=ScriptExecutionContext, MayThrowException] DOMString readAsBinaryString(Blob blob);
     [CallWith=ScriptExecutionContext, MayThrowException] DOMString readAsText(Blob blob, optional DOMString encoding = "");

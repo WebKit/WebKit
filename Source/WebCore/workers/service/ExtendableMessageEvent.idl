@@ -24,12 +24,13 @@
  */
 
 [
-    CustomConstructor(DOMString type, optional ExtendableMessageEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
     Exposed=ServiceWorker,
     JSGenerateToJSObject,
 ] interface ExtendableMessageEvent : ExtendableEvent {
+    [Custom] constructor(DOMString type, optional ExtendableMessageEventInit eventInitDict);
+
     [CachedAttribute, CustomGetter] readonly attribute any data;
     readonly attribute USVString origin;
     readonly attribute DOMString lastEventId;

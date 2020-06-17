@@ -32,9 +32,10 @@
 
 [
     Conditional=XSLT,
-    Constructor,
     ImplementationLacksVTable,
 ] interface XSLTProcessor {
+    constructor();
+
     void importStylesheet(optional Node? stylesheet = null);
     DocumentFragment transformToFragment(optional Node? source = null, optional Document? docVal = null);
     Document transformToDocument(optional Node? source = null);

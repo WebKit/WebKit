@@ -36,8 +36,9 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    Constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict),
 ] interface XRReferenceSpaceEvent : Event {
+    constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict);
+
     [SameObject] readonly attribute WebXRReferenceSpace referenceSpace;
     [SameObject] readonly attribute WebXRRigidTransform transform;
 };

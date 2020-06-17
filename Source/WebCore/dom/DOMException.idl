@@ -27,11 +27,11 @@
  */
 
 [
-    Constructor(optional DOMString message = "", optional DOMString name = "Error"),
     DoNotCheckConstants,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] exception DOMException {
+    constructor(optional DOMString message = "", optional DOMString name = "Error");
 
     [ImplementedAs=legacyCode] readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

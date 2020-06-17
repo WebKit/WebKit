@@ -23,8 +23,7 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[
-    Constructor(optional sequence<DOMString> sequenceOfStrings = []),
-    Constructor(DOMString string),
-] interface TestOverloadedConstructorsWithSequence {
+interface TestOverloadedConstructorsWithSequence {
+    constructor(optional sequence<DOMString> sequenceOfStrings = []);
+    constructor(DOMString string);
 };

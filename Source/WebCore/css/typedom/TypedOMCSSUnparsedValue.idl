@@ -29,6 +29,6 @@
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
-    Constructor(USVString serializedValue),
 ] interface TypedOMCSSUnparsedValue : TypedOMCSSStyleValue {
+    constructor(USVString serializedValue);
 };

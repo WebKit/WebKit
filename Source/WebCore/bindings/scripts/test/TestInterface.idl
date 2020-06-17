@@ -32,12 +32,11 @@
     ActiveDOMObject,
     CustomPut,
     Conditional=Condition1|Condition2,
-    ConstructorCallWith=ScriptExecutionContext,
-    Constructor(DOMString str1, optional DOMString str2 = "defaultString"),
-    ConstructorMayThrowException,
     ExportMacro=WEBCORE_EXPORT,
     ImplementationLacksVTable
 ] interface TestInterface {
+    [MayThrowException, CallWith=ScriptExecutionContext] constructor(DOMString str1, optional DOMString str2 = "defaultString");
+
     iterable<TestNode, TestObj>;
 };
 

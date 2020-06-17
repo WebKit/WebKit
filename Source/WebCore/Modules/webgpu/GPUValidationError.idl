@@ -26,9 +26,10 @@
 
 [
     Conditional=WEBGPU,
-    Constructor(DOMString message),
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable
 ] interface GPUValidationError {
+    constructor(DOMString message);
+
     readonly attribute DOMString message;
 };

@@ -26,12 +26,11 @@
 [
     ActiveDOMObject,
     Conditional=APPLE_PAY,
-    Constructor(unsigned long version, ApplePayPaymentRequest paymentRequest),
-    ConstructorCallWith=Document,
-    ConstructorMayThrowException,
     EnabledBySetting=ApplePay,
     EnabledForContext,
 ] interface ApplePaySession : EventTarget {
+    [CallWith=Document, MayThrowException] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
+
     const unsigned short STATUS_SUCCESS = 0;
     const unsigned short STATUS_FAILURE = 1;
     const unsigned short STATUS_INVALID_BILLING_POSTAL_ADDRESS = 2;

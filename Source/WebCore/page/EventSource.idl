@@ -32,10 +32,9 @@
 [
     Exposed=(Window,Worker),
     ActiveDOMObject,
-    Constructor(USVString url, optional EventSourceInit eventSourceInitDict),
-    ConstructorCallWith=ScriptExecutionContext,
-    ConstructorMayThrowException,
 ] interface EventSource : EventTarget {
+    [CallWith=ScriptExecutionContext, MayThrowException] constructor(USVString url, optional EventSourceInit eventSourceInitDict);
+
     readonly attribute USVString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute USVString url;
     readonly attribute boolean withCredentials;

@@ -26,10 +26,9 @@
 
 [
     ActiveDOMObject,
-    Constructor(USVString scriptUrl, optional WorkerOptions options),
-    ConstructorCallWith=ScriptExecutionContext&RuntimeFlags,
-    ConstructorMayThrowException
 ] interface Worker : EventTarget {
+    [CallWith=ScriptExecutionContext&RuntimeFlags, MayThrowException] constructor(USVString scriptUrl, optional WorkerOptions options);
+
     void terminate();
 
     [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);

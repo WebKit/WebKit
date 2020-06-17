@@ -32,13 +32,13 @@
 
 [
     Conditional=WEB_RTC,
-    Constructor(RTCIceCandidateInit candidateInitDict),
-    ConstructorMayThrowException,
     EnabledAtRuntime=PeerConnection,
     ImplementationLacksVTable,
     PrivateIdentifier,
     PublicIdentifier
 ] interface RTCIceCandidate {
+    [MayThrowException] constructor(RTCIceCandidateInit candidateInitDict);
+
     readonly attribute DOMString candidate;
     readonly attribute DOMString? sdpMid;
     readonly attribute unsigned short? sdpMLineIndex;

@@ -27,9 +27,9 @@
  */
 
 [
-    JSBuiltin,
-    Constructor
+    JSBuiltin
 ] interface TestJSBuiltinConstructor {
+    constructor();
 
     void testFunction();
     attribute boolean testAttribute;

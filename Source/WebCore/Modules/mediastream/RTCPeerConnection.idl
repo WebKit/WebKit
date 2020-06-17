@@ -73,11 +73,11 @@ typedef (object or DOMString) AlgorithmIdentifier;
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    ConstructorCallWith=Document,
     EnabledAtRuntime=PeerConnection,
     ExportMacro=WEBCORE_EXPORT,
-    JSBuiltinConstructor
 ] interface RTCPeerConnection : EventTarget {
+    [JSBuiltin, CallWith=Document] constructor();
+
     // JS built-in constructor handles the optional RTCConfiguration
     [PrivateIdentifier, CallWith=Document, MayThrowException] void initializeWith(RTCConfiguration configuration);
 

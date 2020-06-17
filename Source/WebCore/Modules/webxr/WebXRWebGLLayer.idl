@@ -34,11 +34,11 @@ typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    Constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit),
-    ConstructorMayThrowException,
     ImplementationLacksVTable,
     InterfaceName=XRWebGLLayer
 ] interface WebXRWebGLLayer {
+    [MayThrowException] constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit);
+
     // Attributes
     readonly attribute boolean antialias;
     readonly attribute boolean ignoreDepthValues;

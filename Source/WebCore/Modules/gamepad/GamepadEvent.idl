@@ -25,9 +25,10 @@
 
 [
     Conditional=GAMEPAD,
-    Constructor(DOMString type, optional GamepadEventInit eventInitDict),
     EnabledAtRuntime=Gamepads,
 ] interface GamepadEvent : Event {
+    constructor(DOMString type, optional GamepadEventInit eventInitDict);
+
     readonly attribute Gamepad? gamepad;
 };
 

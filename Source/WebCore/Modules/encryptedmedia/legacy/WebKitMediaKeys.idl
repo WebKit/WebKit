@@ -25,10 +25,10 @@
  
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    Constructor(DOMString keySystem),
-    ConstructorMayThrowException,
     EnabledAtRuntime=LegacyEncryptedMediaAPI,
 ] interface WebKitMediaKeys {
+    [MayThrowException] constructor(DOMString keySystem);
+
     [CallWith=ScriptExecutionContext, MayThrowException] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
     static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
     readonly attribute DOMString keySystem;

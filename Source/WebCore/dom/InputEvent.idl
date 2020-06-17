@@ -24,9 +24,10 @@
 */
 
 [
-    Constructor(DOMString type, optional InputEventInit eventInitDict),
     EnabledAtRuntime=InputEvents,
 ] interface InputEvent : UIEvent {
+    constructor(DOMString type, optional InputEventInit eventInitDict);
+
     readonly attribute DOMString inputType;
     readonly attribute DOMString? data;
     readonly attribute DataTransfer? dataTransfer;

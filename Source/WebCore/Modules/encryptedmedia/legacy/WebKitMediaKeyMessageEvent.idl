@@ -25,9 +25,10 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    Constructor(DOMString type, optional WebKitMediaKeyMessageEventInit eventInitDict),
     EnabledAtRuntime=LegacyEncryptedMediaAPI,
 ] interface WebKitMediaKeyMessageEvent : Event {
+    constructor(DOMString type, optional WebKitMediaKeyMessageEventInit eventInitDict);
+
     readonly attribute Uint8Array message;
     readonly attribute DOMString destinationURL;
 };

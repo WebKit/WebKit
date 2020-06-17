@@ -28,10 +28,10 @@
 [
     ActiveDOMObject,
     Conditional=RESIZE_OBSERVER,
-    Constructor(ResizeObserverCallback callback),
-    ConstructorCallWith=Document,
     EnabledBySetting=ResizeObserver
 ] interface ResizeObserver {
+    [CallWith=Document] constructor(ResizeObserverCallback callback);
+
     void observe(Element target);
     void unobserve(Element target);
     void disconnect();

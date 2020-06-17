@@ -28,8 +28,9 @@
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
-    Constructor(double value, USVString unit),
 ] interface TypedOMCSSUnitValue : TypedOMCSSNumericValue {
+    constructor(double value, USVString unit);
+
     attribute double value;
     readonly attribute USVString unit;
 };

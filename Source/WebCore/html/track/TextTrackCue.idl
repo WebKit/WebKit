@@ -30,11 +30,10 @@
     CustomToJSObject,
     JSCustomMarkFunction,
     SkipVTableValidation,
-    Constructor(double startTime, double endTime, DocumentFragment cueNode),
-    ConstructorCallWith=Document,
-    ConstructorEnabledBySetting=GenericCueAPI,
-    ConstructorMayThrowException,
+    ConstructorEnabledBySetting=GenericCueAPI
 ] interface TextTrackCue : EventTarget {
+    [CallWith=Document, MayThrowException] constructor(double startTime, double endTime, DocumentFragment cueNode);
+
     readonly attribute TextTrack track;
 
     attribute DOMString id;

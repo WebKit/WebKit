@@ -46,11 +46,11 @@ enum ObjSize { "small", "much-much-larger" };
 enum TestConfidence { "high", "kinda-low" };
 
 [
-    ConstructorCallWith=Document,
-    Constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction),
     InterfaceName=TestObject,
     Exposed=(Window,Worker)
 ] interface TestObj {
+    [CallWith=Document] constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction);
+
     // Attributes
     readonly attribute long            readOnlyLongAttr;
     readonly attribute DOMString       readOnlyStringAttr;

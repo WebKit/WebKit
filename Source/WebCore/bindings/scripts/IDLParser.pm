@@ -63,7 +63,6 @@ struct( IDLInterface => {
     anonymousOperations => '@', # List of 'IDLOperation'
     attributes => '@',    # List of 'IDLAttribute'
     constructors => '@', # Constructors, list of 'IDLOperation'
-    customConstructors => '@', # Custom constructors, list of 'IDLOperation'
     isException => '$', # Used for exception interfaces
     isCallback => '$', # Used for callback interfaces
     isPartial => '$', # Used for partial interfaces
@@ -89,6 +88,7 @@ struct( IDLOperation => {
     name => '$',
     type => 'IDLType', # Return type
     arguments => '@', # List of 'IDLArgument'
+    isConstructor => '$',
     isStatic => '$',
     isIterable => '$',
     isSerializer => '$',
@@ -104,6 +104,7 @@ struct( IDLOperation => {
 struct( IDLAttribute => {
     name => '$',
     type => 'IDLType',
+    isConstructor => '$',
     isStatic => '$',
     isMapLike => '$',
     isSetLike => '$',
@@ -278,16 +279,6 @@ sub assertExtendedAttributesValidForContext
     for my $extendedAttribute (keys %{$extendedAttributeList}) {
         # FIXME: Should this be done here, or when parsing the exteded attribute itself?
         # Either way, we should add validation of the values, if any, at the same place.
-
-        # Extended attribute parsing collapses multiple 'Constructor' or 'CustomConstructor'
-        # attributes into a single plural version. Eventually, it would be nice if that conversion
-        # hapened later, and the parser kept things relatively simply, but for now, we just undo
-        # this transformation for the type check.
-        if ($extendedAttribute eq "Constructors") {
-            $extendedAttribute = "Constructor";
-        } elsif ($extendedAttribute eq "CustomConstructors") {
-            $extendedAttribute = "CustomConstructor";
-        }
 
         if (!exists $self->{ExtendedAttributeMap}->{$extendedAttribute}) {
             assert "Unknown extended attribute: '${extendedAttribute}'";
@@ -480,23 +471,7 @@ sub copyExtendedAttributes
     my $attr = shift;
 
     for my $key (keys %{$attr}) {
-        if ($key eq "Constructor") {
-            push(@{$extendedAttributeList->{"Constructors"}}, $attr->{$key});
-        } elsif ($key eq "Constructors") {
-            my @constructors = @{$attr->{$key}};
-            foreach my $constructor (@constructors) {
-                push(@{$extendedAttributeList->{"Constructors"}}, $constructor);
-            }
-        } elsif ($key eq "CustomConstructor") {
-            push(@{$extendedAttributeList->{"CustomConstructors"}}, $attr->{$key});
-        } elsif ($key eq "CustomConstructors") {
-           my @customConstructors = @{$attr->{$key}};
-            foreach my $customConstructor (@customConstructors) {
-                push(@{$extendedAttributeList->{"CustomConstructors"}}, $customConstructor);
-            }
-        } else {
-            $extendedAttributeList->{$key} = $attr->{$key};
-        }
+        $extendedAttributeList->{$key} = $attr->{$key};
     }
 }
 
@@ -590,6 +565,7 @@ sub cloneOperation
         push(@{$clonedOperation->arguments}, cloneArgument($argument));
     }
 
+    $clonedOperation->isConstructor($operation->isConstructor);
     $clonedOperation->isStatic($operation->isStatic);
     $clonedOperation->isIterable($operation->isIterable);
     $clonedOperation->isSerializer($operation->isSerializer);
@@ -645,7 +621,7 @@ my $nextType_1 = '^(ByteString|DOMString|USVString|Date|any|boolean|byte|double|
 my $nextSpecials_1 = '^(deleter|getter|legacycaller|setter)$';
 my $nextDefinitions_1 = '^(callback|dictionary|enum|exception|interface|partial|typedef)$';
 my $nextExceptionMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|\[|any|boolean|byte|const|double|float|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
-my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
+my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
 my $nextSingleType_1 = '^(ByteString|DOMString|USVString|Date|boolean|byte|double|float|long|object|octet|sequence|short|unrestricted|unsigned)$';
 my $nextArgumentName_1 = '^(attribute|callback|const|deleter|dictionary|enum|exception|getter|implements|inherit|interface|legacycaller|partial|serializer|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
@@ -695,7 +671,7 @@ sub applyTypedefs
             foreach my $attribute (@{$definition->attributes}) {
                 $attribute->type($self->typeByApplyingTypedefs($attribute->type));
             }
-            foreach my $operation (@{$definition->operations}, @{$definition->anonymousOperations}, @{$definition->constructors}, @{$definition->customConstructors}) {
+            foreach my $operation (@{$definition->operations}, @{$definition->anonymousOperations}, @{$definition->constructors}) {
                 $self->applyTypedefsToOperation($operation);
             }
             if ($definition->iterable) {
@@ -947,6 +923,10 @@ sub parseInterfaceMember
     my $extendedAttributeList = shift;
 
     my $next = $self->nextToken();
+    if ($next->value() eq "constructor") {
+        return $self->parseConstructor($extendedAttributeList);
+    }
+
     if ($next->value() eq "const") {
         return $self->parseConst($extendedAttributeList);
     }
@@ -1431,6 +1411,33 @@ sub parseReadOnlyMember
         if ($next->value() eq "setlike") {
             return $self->parseSetLikeRest($extendedAttributeList, 1);
         }
+    }
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
+sub parseConstructor
+{
+    my $self = shift;
+    my $extendedAttributeList = shift;
+
+    my $next = $self->nextToken();
+    if ($next->value() eq "constructor") {
+        $self->assertTokenValue($self->getToken(), "constructor", __LINE__);
+
+        my $operation = IDLOperation->new();
+        $operation->isConstructor(1);
+
+        $self->assertTokenValue($self->getToken(), "(", __LINE__);
+
+        push(@{$operation->arguments}, @{$self->parseArgumentList()});
+
+        $self->assertTokenValue($self->getToken(), ")", __LINE__);
+        $self->assertTokenValue($self->getToken(), ";", __LINE__);
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "operation"); #FIXME: This should be "constructor"
+        $operation->extendedAttributes($extendedAttributeList);
+
+        return $operation;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2436,11 +2443,7 @@ sub parseExtendedAttributeRest
         return $attrs;
     }
 
-    if ($name eq "Constructor" || $name eq "CustomConstructor") {
-        $attrs->{$name} = [];
-    } else {
-        $attrs->{$name} = "VALUE_IS_MISSING";
-    }
+    $attrs->{$name} = "VALUE_IS_MISSING";
     return $attrs;
 }
 
@@ -3020,7 +3023,9 @@ sub applyMemberList
             next;
         }
         if (ref($item) eq "IDLOperation") {
-            if ($item->name eq "") {
+            if ($item->isConstructor) {
+                push(@{$interface->constructors}, $item);
+            } elsif ($item->name eq "") {
                 push(@{$interface->anonymousOperations}, $item);
             } else {
                 push(@{$interface->operations}, $item);
@@ -3052,20 +3057,9 @@ sub applyExtendedAttributeList
     my $interface = shift;
     my $extendedAttributeList = shift;
 
-    if (defined $extendedAttributeList->{"Constructors"}) {
-        my @constructorParams = @{$extendedAttributeList->{"Constructors"}};
-        my $index = (@constructorParams == 1) ? 0 : 1;
-        foreach my $param (@constructorParams) {
-            my $constructor = IDLOperation->new();
-            $constructor->name("Constructor");
-            $constructor->extendedAttributes($extendedAttributeList);
-            $constructor->arguments($param);
-            push(@{$interface->constructors}, $constructor);
-        }
-        delete $extendedAttributeList->{"Constructors"};
-        $extendedAttributeList->{"Constructor"} = "VALUE_IS_MISSING";
-    } elsif (defined $extendedAttributeList->{"NamedConstructor"}) {
+    if (defined $extendedAttributeList->{"NamedConstructor"}) {
         my $newDataNode = IDLOperation->new();
+        $newDataNode->isConstructor(1);
         $newDataNode->name("NamedConstructor");
         $newDataNode->extendedAttributes($extendedAttributeList);
         my %attributes = %{$extendedAttributeList->{"NamedConstructor"}};
@@ -3074,19 +3068,6 @@ sub applyExtendedAttributeList
         push(@{$newDataNode->arguments}, @{$attributes{$constructorName}});
         $extendedAttributeList->{"NamedConstructor"} = $constructorName;
         push(@{$interface->constructors}, $newDataNode);
-    }
-    if (defined $extendedAttributeList->{"CustomConstructors"}) {
-        my @customConstructorParams = @{$extendedAttributeList->{"CustomConstructors"}};
-        my $index = (@customConstructorParams == 1) ? 0 : 1;
-        foreach my $param (@customConstructorParams) {
-            my $customConstructor = IDLOperation->new();
-            $customConstructor->name("CustomConstructor");
-            $customConstructor->extendedAttributes($extendedAttributeList);
-            $customConstructor->arguments($param);
-            push(@{$interface->customConstructors}, $customConstructor);
-        }
-        delete $extendedAttributeList->{"CustomConstructors"};
-        $extendedAttributeList->{"CustomConstructor"} = "VALUE_IS_MISSING";
     }
     
     $interface->extendedAttributes($extendedAttributeList);

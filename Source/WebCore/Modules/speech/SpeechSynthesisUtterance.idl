@@ -25,9 +25,9 @@
  
 [
     Conditional=SPEECH_SYNTHESIS,
-    ConstructorCallWith=ScriptExecutionContext,
-    Constructor(optional DOMString text)
 ] interface SpeechSynthesisUtterance : EventTarget {
+    [CallWith=ScriptExecutionContext] constructor(optional DOMString text);
+
     attribute DOMString text;
     attribute DOMString lang;
     attribute SpeechSynthesisVoice? voice; // FIXME: should not be nullable.

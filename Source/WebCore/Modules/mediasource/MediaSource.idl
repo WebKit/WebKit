@@ -42,10 +42,10 @@ enum ReadyState {
 [
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
-    Constructor,
-    ConstructorCallWith=ScriptExecutionContext,
     EnabledBySetting=MediaSource,
 ] interface MediaSource : EventTarget {
+    [CallWith=ScriptExecutionContext] constructor();
+
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;
 

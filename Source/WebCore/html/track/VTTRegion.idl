@@ -26,10 +26,10 @@
 
 [
     Conditional=VIDEO,
-    Constructor(),
-    ConstructorCallWith=ScriptExecutionContext,
     JSGenerateToNativeObject,
 ] interface VTTRegion {
+    [CallWith=ScriptExecutionContext] constructor();
+
     readonly attribute TextTrack track;
 
     attribute DOMString id;

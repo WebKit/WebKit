@@ -42,12 +42,13 @@
 
 [
     Conditional=WEB_RTC,
-    Constructor(RTCSessionDescriptionInit descriptionInitDict),
     EnabledAtRuntime=PeerConnection,
     ImplementationLacksVTable,
     PrivateIdentifier,
-    PublicIdentifier,
+    PublicIdentifier
 ] interface RTCSessionDescription {
+    constructor(RTCSessionDescriptionInit descriptionInitDict);
+
     readonly attribute RTCSdpType type;
     readonly attribute DOMString sdp;
 

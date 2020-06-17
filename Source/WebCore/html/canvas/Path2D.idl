@@ -27,14 +27,15 @@
  */
 
 [
-    Constructor,
-    Constructor(Path2D path),
-    // FIXME: Implement missing constructor.
-    // Constructor(sequence<Path2D> paths, optional CanvasFillRule fillRule = "nonzero"),
-    Constructor(DOMString d),
     Exposed=(Window,Worker),
     ExportMacro=WEBCORE_EXPORT
 ] interface Path2D {
+    constructor();
+    constructor(Path2D path);
+    // FIXME: Implement missing constructor.
+    // constructor(sequence<Path2D> paths, optional CanvasFillRule fillRule = "nonzero");
+    constructor(DOMString d);
+
     [MayThrowException] void addPath(Path2D path, optional DOMMatrix2DInit transform);
 };
 

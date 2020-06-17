@@ -24,9 +24,10 @@
  */
 
 [
-    Constructor(),
     EnabledAtRuntime=HighlightAPI,
     ImplementationLacksVTable
 ] interface HighlightMap {
+    constructor();
+
     maplike<DOMString, HighlightRangeGroup>;
 };

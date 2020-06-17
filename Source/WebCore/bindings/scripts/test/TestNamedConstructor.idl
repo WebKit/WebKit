@@ -31,6 +31,7 @@
 [
     ActiveDOMObject,
     NamedConstructor=Audio(DOMString str1, optional DOMString str2 = "defaultString", optional DOMString str3),
+    ConstructorCallWith=Document,
     ConstructorMayThrowException
 ] interface TestNamedConstructor {
 };

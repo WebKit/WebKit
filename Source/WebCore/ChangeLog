@@ -1,3 +1,218 @@
+2020-06-17  Sam Weinig  <weinig@apple.com>
+
+        Use constructor operations in WebIDL
+        https://bugs.webkit.org/show_bug.cgi?id=201397
+
+        Reviewed by Eric Carlson.
+        
+        Add support for constructor syntax in WebIDL (https://heycam.github.io/webidl/#idl-constructors)
+        
+        - [Constructor(...)] extended attributes become constructor(...) operations
+        - [JSBuiltinConstructor] becomes [JSBuiltin] constructor(...)
+        - [CustomConstructor] becomes [Custom] constructor(...)
+        - [ConstructorMayThrowException] becomes [MayThrowException] constructor(...) and can 
+          now be unique per-overload
+        - [ConstructorCallWith=Foo] becomes [CallWith=Foo] constructor(...) and can now also be
+          unique per-overload
+          
+        This change leaves NamedConstructor as is, but a subsequent change will replace it with the
+        specified LegacyFactoryFunction extended attribute. 
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl:
+        * Modules/applepay/ApplePayError.idl:
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/applepay/ApplePaySetup.idl:
+        * Modules/async-clipboard/ClipboardItem.idl:
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/gamepad/GamepadEvent.idl:
+        * Modules/highlight/HighlightMap.idl:
+        * Modules/highlight/HighlightRangeGroup.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/mediarecorder/BlobEvent.idl:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediarecorder/MediaRecorderErrorEvent.idl:
+        * Modules/mediasession/MediaRemoteControls.idl:
+        * Modules/mediasession/MediaSession.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrackEvent.idl:
+        * Modules/mediastream/OverconstrainedError.idl:
+        * Modules/mediastream/OverconstrainedErrorEvent.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * Modules/mediastream/RTCDataChannelEvent.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnectionIceEvent.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/mediastream/RTCTrackEvent.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+        * Modules/paymentrequest/PaymentMethodChangeEvent.idl:
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.idl:
+        * Modules/pictureinpicture/EnterPictureInPictureEvent.idl:
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/streams/ByteLengthQueuingStrategy.idl:
+        * Modules/streams/CountQueuingStrategy.idl:
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStreamBYOBReader.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * Modules/streams/WritableStream.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webgpu/GPUOutOfMemoryError.idl:
+        * Modules/webgpu/GPUUncapturedErrorEvent.idl:
+        * Modules/webgpu/GPUValidationError.idl:
+        * Modules/websockets/CloseEvent.idl:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/webxr/WebXRRigidTransform.idl:
+        * Modules/webxr/WebXRWebGLLayer.idl:
+        * Modules/webxr/XRInputSourceEvent.idl:
+        * Modules/webxr/XRInputSourcesChangeEvent.idl:
+        * Modules/webxr/XRReferenceSpaceEvent.idl:
+        * Modules/webxr/XRSessionEvent.idl:
+        * animation/AnimationPlaybackEvent.idl:
+        * animation/DocumentTimeline.idl:
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToJSDeclaration):
+        (GetFullyQualifiedImplementationCallName):
+        (GenerateParametersCheck):
+        (GetConstructorTemplateClassName):
+        (GenerateConstructorDefinition):
+        (GenerateConstructorHelperMethods):
+        (HasCustomConstructor):
+        (IsConstructable):
+        (HasJSBuiltinConstructor):
+        (AddJSBuiltinIncludesIfNeeded):
+        (IsJSBuiltinConstructor): Deleted.
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/IDLParser.pm:
+        (assertExtendedAttributesValidForContext):
+        (copyExtendedAttributes):
+        (cloneOperation):
+        (applyTypedefs):
+        (parseInterfaceMember):
+        (parseConstructor):
+        (parseExtendedAttributeRest):
+        (applyMemberList):
+        (applyExtendedAttributeList):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorConstructor::initializeProperties):
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        (WebCore::JSTestNamedConstructorNamedConstructor::initializeProperties):
+        * bindings/scripts/test/TestClassWithJSBuiltinConstructor.idl:
+        * bindings/scripts/test/TestEventConstructor.idl:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestJSBuiltinConstructor.idl:
+        * bindings/scripts/test/TestNamedConstructor.idl:
+        * bindings/scripts/test/TestNode.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestOverloadedConstructors.idl:
+        * bindings/scripts/test/TestOverloadedConstructorsWithSequence.idl:
+        * bindings/scripts/test/TestPromiseRejectionEvent.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * css/DOMMatrix.idl:
+        * css/DOMMatrixReadOnly.idl:
+        * css/FontFace.idl:
+        * css/FontFaceSet.idl:
+        * css/MediaQueryListEvent.idl:
+        * css/WebKitCSSMatrix.idl:
+        * css/typedom/TypedOMCSSUnitValue.idl:
+        * css/typedom/TypedOMCSSUnparsedValue.idl:
+        * dom/AbortController.idl:
+        * dom/AnimationEvent.idl:
+        * dom/BeforeLoadEvent.idl:
+        * dom/ClipboardEvent.idl:
+        * dom/Comment.idl:
+        * dom/CompositionEvent.idl:
+        * dom/CustomEvent.idl:
+        * dom/DOMException.idl:
+        * dom/DOMPoint.idl:
+        * dom/DOMPointReadOnly.idl:
+        * dom/DOMQuad.idl:
+        * dom/DOMRect.idl:
+        * dom/DOMRectReadOnly.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/DragEvent.idl:
+        * dom/ErrorEvent.idl:
+        * dom/Event.idl:
+        * dom/EventTarget.idl:
+        * dom/FocusEvent.idl:
+        * dom/HashChangeEvent.idl:
+        * dom/InputEvent.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MessageChannel.idl:
+        * dom/MessageEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationObserver.idl:
+        * dom/OverflowEvent.idl:
+        * dom/PageTransitionEvent.idl:
+        * dom/PointerEvent.idl:
+        * dom/PopStateEvent.idl:
+        * dom/ProgressEvent.idl:
+        * dom/PromiseRejectionEvent.idl:
+        * dom/Range.idl:
+        * dom/SecurityPolicyViolationEvent.idl:
+        * dom/StaticRange.idl:
+        * dom/Text.idl:
+        * dom/TextDecoder.idl:
+        * dom/TextEncoder.idl:
+        * dom/TransitionEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WebKitAnimationEvent.idl:
+        * dom/WebKitTransitionEvent.idl:
+        * dom/WheelEvent.idl:
+        * fileapi/Blob.idl:
+        * fileapi/File.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMFormData.idl:
+        * html/DOMURL.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/ImageData.idl:
+        * html/MediaController.idl:
+        * html/MediaEncryptedEvent.idl:
+        * html/OffscreenCanvas.idl:
+        * html/URLSearchParams.idl:
+        * html/canvas/Path2D.idl:
+        * html/canvas/WebGLContextEvent.idl:
+        * html/track/DataCue.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/TrackEvent.idl:
+        * html/track/VTTCue.idl:
+        * html/track/VTTRegion.idl:
+        * page/EventSource.idl:
+        * page/IntersectionObserver.idl:
+        * page/IntersectionObserverEntry.idl:
+        * page/PerformanceObserver.idl:
+        * page/ResizeObserver.idl:
+        * page/UndoItem.idl:
+        * page/WebKitPoint.idl:
+        * storage/StorageEvent.idl:
+        * workers/Worker.idl:
+        * workers/service/ExtendableEvent.idl:
+        * workers/service/ExtendableMessageEvent.idl:
+        * workers/service/FetchEvent.idl:
+        * xml/DOMParser.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLSerializer.idl:
+        * xml/XPathEvaluator.idl:
+        * xml/XSLTProcessor.idl:
+
 2020-06-17  Darryl Pogue  <darryl@dpogue.ca>
 
         IndexedDB: Support IDBFactory databases method

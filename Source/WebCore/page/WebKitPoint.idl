@@ -24,9 +24,10 @@
  */
 
 [
-    Constructor(optional unrestricted float x = 0, optional unrestricted float y = 0),
     ImplementationLacksVTable
 ] interface WebKitPoint {
+    constructor(optional unrestricted float x = 0, optional unrestricted float y = 0);
+
     attribute unrestricted float x;
     attribute unrestricted float y;
 };

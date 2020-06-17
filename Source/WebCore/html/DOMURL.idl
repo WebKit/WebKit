@@ -24,12 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Constructor should be Constructor(USVString url, optional USVString base).
 [
-    Constructor(USVString url),
-    Constructor(USVString url, USVString base),
-    Constructor(USVString url, DOMURL base),
-    ConstructorMayThrowException,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     InterfaceName=URL,
@@ -37,6 +32,11 @@
     JSGenerateToNativeObject,
     LegacyWindowAlias=webkitURL,
 ] interface DOMURL {
+    // FIXME: Constructor should be constructor(USVString url, optional USVString base).
+    [MayThrowException] constructor(USVString url);
+    [MayThrowException] constructor(USVString url, USVString base);
+    [MayThrowException] constructor(USVString url, DOMURL base);
+
     [URL] stringifier attribute USVString href;
     readonly attribute USVString origin;
     attribute USVString protocol;

@@ -25,14 +25,13 @@
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
-    Constructor,
-    Constructor(MediaStream stream),
-    Constructor(sequence<MediaStreamTrack> tracks),
-    ConstructorCallWith=Document,
     ExportToWrappedFunction,
     PrivateIdentifier,
     PublicIdentifier
 ] interface MediaStream : EventTarget {
+    [CallWith=Document] constructor();
+    [CallWith=Document] constructor(MediaStream stream);
+    [CallWith=Document] constructor(sequence<MediaStreamTrack> tracks);
 
     readonly attribute DOMString id;
 
