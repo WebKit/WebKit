@@ -1,3 +1,13 @@
+2020-06-17  Sam Weinig  <weinig@apple.com>
+
+        [WPT] infrastructure/assumptions/html-elements.html fails due to changes in style when all: initial is used
+        https://bugs.webkit.org/show_bug.cgi?id=213171
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        Update test results.
+
 2020-06-17  Antoine Quint  <graouts@webkit.org>
 
         [Modern Media Controls] CSS "cursor" property shoud be respected in media controls shadow root
@@ -1775,7 +1785,7 @@
         [LFC][Table][Floats] Multi-pass table layout needs clean floating state
         https://bugs.webkit.org/show_bug.cgi?id=212889
 
-        Reviewed by Antti Koivisto.
+        Reviewed by Antti Koivisto
 
         * fast/layoutformattingcontext/float-inside-table-cell-simple-expected.html: Added.
         * fast/layoutformattingcontext/float-inside-table-cell-simple.html: Added.

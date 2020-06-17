@@ -1,8 +1,8 @@
 
 PASS (pre-req for comparison tests) all CSS short-hand supported 
 PASS (pre-req for comparison tests) initial CSS value supported 
-FAIL Compare CSS div definitions (only valid if pre-reqs pass) assert_equals: Different value for stroke-color expected "rgb(0, 0, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL Compare CSS span definitions (only valid if pre-reqs pass) assert_equals: Different value for stroke-color expected "rgb(0, 0, 0)" but got "rgba(0, 0, 0, 0)"
+PASS Compare CSS div definitions (only valid if pre-reqs pass) 
+PASS Compare CSS span definitions (only valid if pre-reqs pass) 
 PASS p is display: block 
 PASS ul > li is display: list-item 
 PASS ol > li is display: list-item 

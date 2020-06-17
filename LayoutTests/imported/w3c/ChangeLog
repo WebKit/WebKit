@@ -1,3 +1,14 @@
+2020-06-17  Sam Weinig  <weinig@apple.com>
+
+        [WPT] infrastructure/assumptions/html-elements.html fails due to changes in style when all: initial is used
+        https://bugs.webkit.org/show_bug.cgi?id=213171
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/infrastructure/assumptions/html-elements-expected.txt:
+        Update test results.
+
 2020-06-17  Youenn Fablet  <youenn@apple.com>
 
         Make ReadableStream robust against user code

@@ -538,9 +538,9 @@ public:
             image.setVerticalRule(NinePieceImageRule::Stretch);
             break;
         case Slice:
-            // Masks have a different initial value for slices. Preserve the value of 0 for backwards compatibility.
+            // Masks have a different initial value for slices. Preserve the value of "0 fill" for backwards compatibility.
             image.setImageSlices(type == BorderImage ? LengthBox(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent)) : LengthBox());
-            image.setFill(false);
+            image.setFill(type != BorderImage);
             break;
         case Width:
             // FIXME: This is a local variable to work around a bug in the GCC 8.1 Address Sanitizer.

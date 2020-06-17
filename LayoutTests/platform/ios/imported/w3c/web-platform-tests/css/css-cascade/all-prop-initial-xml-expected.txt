@@ -237,7 +237,7 @@ PASS speak-as
 PASS stop-color 
 PASS stop-opacity 
 PASS stroke 
-FAIL stroke-color assert_equals: expected "rgba(0, 0, 0, 0)" but got "rgb(0, 0, 0)"
+PASS stroke-color 
 PASS stroke-dasharray 
 PASS stroke-dashoffset 
 PASS stroke-linecap 
@@ -345,7 +345,7 @@ PASS -webkit-margin-top-collapse
 PASS -webkit-mask-box-image 
 PASS -webkit-mask-box-image-outset 
 PASS -webkit-mask-box-image-repeat 
-FAIL -webkit-mask-box-image-slice assert_equals: expected "0 fill" but got "0"
+PASS -webkit-mask-box-image-slice 
 PASS -webkit-mask-box-image-source 
 PASS -webkit-mask-box-image-width 
 PASS -webkit-mask-clip 
