@@ -65,9 +65,9 @@ struct PluginInfo {
     String file;
     String desc;
     Vector<MimeClassInfo> mimes;
-    bool isApplicationPlugin;
+    bool isApplicationPlugin { false };
 
-    PluginLoadClientPolicy clientLoadPolicy;
+    PluginLoadClientPolicy clientLoadPolicy { PluginLoadClientPolicy::Undefined };
 
     String bundleIdentifier;
 #if PLATFORM(MAC)
