@@ -12,6 +12,8 @@
 
     function runTest() {
         if (document.location.hash == "") {
+            // Clear the app bound session that will be present before a navigation occurs.
+            testRunner.clearAppBoundSession();
             // Load this test again with a random dummy value to avoid caching.
             document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html?dummyParam=" + Math.random() + "#step1";
         } else {

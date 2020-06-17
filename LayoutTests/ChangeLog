@@ -1,3 +1,19 @@
+2020-06-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=213272
+        <rdar://problem/64427778>
+
+        Reviewed by David Kilzer.
+
+        Before a navigation occurs, an app-bound network session is created
+        by default. If any non-app bound navigations occur, a new session is
+        created. Since this test only checks for the existance of an app-bound
+        session, it should clear the app-bound session after the initial load
+        to properly test functionality.
+
+        * http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html:
+
 2020-06-17  Rob Buis  <rbuis@igalia.com>
 
         Image `referrerpolicy` mutations should be considered "relevant mutations"
