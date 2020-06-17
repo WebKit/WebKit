@@ -1,3 +1,21 @@
+2020-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r255037): Broken position while comparing watch bands on www.apple.com/shop/studio/apple-watch
+        https://bugs.webkit.org/show_bug.cgi?id=213282
+        <rdar://problem/63862940>
+
+        Reviewed by Antti Koivisto.
+
+        If a scrolling tree commit has a requested scroll position update for a node, we need
+        to call applyLayerPositons() to set the UIScrollView's contentOffset.
+
+        Often the layer tree commit will contain a boundsOrigin change for the layer in question
+        (which is equivalent to setting the UIScrollView's contentOffset), but some combinations of
+        user and programmatic scrolling result in no boundsOrigin change, revealing the bug.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
 2020-06-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Check for inAppBrowserPrivacyEnabled flag in WebsiteDataStore::initializeAppBoundDomains is expensive and calls a non-static function WebsiteDataStore::parameters().

@@ -282,7 +282,7 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
 
     scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
     scrollingTree().scrollingTreeNodeDidScroll(*this, scrollingLayerPositionAction);
-    scrollingTree().didScrollByDelegatedScrolling();
+    scrollingTree().setNeedsApplyLayerPositionsAfterCommit();
 }
 
 void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

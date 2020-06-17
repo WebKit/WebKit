@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ]-->
+<html>
+<head>
+    <style>
+        #scroller {
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+
+        .contents {
+            height: 200%;
+            background-image: linear-gradient(to bottom, red, red 50%, green 50%, green);
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', () => {
+            scroller.scrollTop = 200; 
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

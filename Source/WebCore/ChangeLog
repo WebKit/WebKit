@@ -1,3 +1,20 @@
+2020-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r255037): Broken position while comparing watch bands on www.apple.com/shop/studio/apple-watch
+        https://bugs.webkit.org/show_bug.cgi?id=213282
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/scrolling/ios/user-then-programmatic-scroll.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::applyLayerPositionsAfterCommit):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::setNeedsApplyLayerPositionsAfterCommit):
+        (WebCore::ScrollingTree::didScrollByDelegatedScrolling): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+
 2020-06-16  Zalan Bujtas  <zalan@apple.com>
 
         [Subpixel] Replaced content bleeds over content box when border radius is set

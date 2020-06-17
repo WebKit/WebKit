@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ]-->
+<html>
+<head>
+    <style>
+        #scroller {
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+
+        .contents {
+            height: 400%;
+            background-image: linear-gradient(to bottom, red, red 25%, green 25%, green 50%, red 50%, red);
+        }
+        
+        #test {
+            will-change: transform;
+            height: 10px;
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        window.addEventListener('load', async () => {
+            scroller.scrollTop = 200;
+
+            const xPos = 20;
+            const yPos = 20;
+            await UIHelper.immediateScrollElementAtContentPointToOffset(xPos, yPos, 0, 100);
+            scroller.scrollTop = 200;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="contents"></div>
+    </div>
+    <div id="test">
+        
+    </div>
+</body>
+</html>
