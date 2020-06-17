@@ -1,3 +1,19 @@
+2020-06-10  Dean Jackson  <dino@apple.com>
+
+        Add a dynamic library target for ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=207591
+
+        Reviewed by Tim Horton.
+
+        In preparation for moving to a dynamic library, start
+        by compiling and linking it. It isn't used anywhere
+        but getting it into the build will help Apple's
+        build system remain happy as we migrate, as well
+        as have the system know it exists for building
+        the shared system cache.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2020-06-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         Build is broken with EVENT_LOOP_TYPE=GLib

@@ -58,7 +58,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FB39D0D01200F0E300088E69"
                BuildableName = "libANGLE.a"
-               BlueprintName = "ANGLE"
+               BlueprintName = "ANGLE (static)"
                ReferencedContainer = "container:Source/ThirdParty/ANGLE/ANGLE.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
