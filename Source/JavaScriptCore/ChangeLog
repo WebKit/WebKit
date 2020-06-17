@@ -1,3 +1,28 @@
+2020-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Add a shiftAndAdd() emitter in AssemblyHelpers.
+        https://bugs.webkit.org/show_bug.cgi?id=213255
+
+        Reviewed by Michael Saboff.
+
+        void shiftAndAdd(RegisterID base, RegisterID index, uint8_t shift, RegisterID dest, Optional<RegisterID> = { });
+
+        Emits code to compute: dest = base + index << shift.
+
+        * assembler/testmasm.cpp:
+        (doubleOperands):
+        (floatOperands):
+        (int32Operands):
+        (int64Operands):
+        (JSC::testShiftAndAdd):
+        (JSC::run):
+        (JSC::doubleOperands): Deleted.
+        (JSC::floatOperands): Deleted.
+        (JSC::int32Operands): Deleted.
+        (JSC::int64Operands): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::shiftAndAdd):
+
 2020-06-17  Michael Saboff  <msaboff@apple.com>
 
         [Wasm] Reduce the amount of memory used by the Air register coloring allocator
