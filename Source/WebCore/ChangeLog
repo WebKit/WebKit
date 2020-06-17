@@ -1,5 +1,25 @@
 2020-06-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floats] Remove redundant mapping functions
+        https://bugs.webkit.org/show_bug.cgi?id=213249
+
+        Reviewed by Antti Koivisto.
+
+        It's incorrect to map the entire display box when the height is no even computed yet.
+
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForNonFloatingFloatAvoider const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::append):
+        (WebCore::Layout::FloatingContext::absoluteDisplayBoxCoordinates const):
+        (WebCore::Layout::FloatingContext::mapTopLeftToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapToFloatingStateRoot const): Deleted.
+        (WebCore::Layout::FloatingContext::mapTopToFloatingStateRoot const): Deleted.
+        * layout/floats/FloatingContext.h:
+
+2020-06-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC]Floats] Cleanup FloatAvoider interface
         https://bugs.webkit.org/show_bug.cgi?id=213195
 

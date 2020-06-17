@@ -75,8 +75,7 @@ private:
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
     AbsoluteCoordinateValuesForFloatAvoider absoluteDisplayBoxCoordinates(const Box&) const;
-    Display::Box mapToFloatingStateRoot(const Box&) const;
-    LayoutUnit mapTopToFloatingStateRoot(const Box&) const;
+    LayoutPoint mapTopLeftToFloatingStateRoot(const Box&) const;
     Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
 
     WeakPtr<const ContainerBox> m_root;

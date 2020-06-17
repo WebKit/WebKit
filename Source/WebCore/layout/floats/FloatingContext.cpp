@@ -196,7 +196,7 @@ static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoide
 }
 
 struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
-    Display::Box displayBox;
+    LayoutPoint topLeft;
     LayoutPoint containingBlockTopLeft;
     HorizontalEdges containingBlockContentBox;
 };
@@ -229,16 +229,17 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     }
 
     // Find the top most position where the float box fits.
-    auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
     ASSERT(!isEmpty());
     auto previousFloatAbsoluteTop = floatingState().floats().last().rectWithMargin().top();
-    auto absoluteDisplayBox = absoluteDisplayBoxCoordinates.displayBox;
+    auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
+    auto absoluteTopLeft = absoluteDisplayBoxCoordinates.topLeft;
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto adjustedTop = std::max(absoluteDisplayBox.top() - absoluteDisplayBox.marginBefore(), previousFloatAbsoluteTop);
-    absoluteDisplayBox.setTop(adjustedTop + absoluteDisplayBox.marginBefore());
-    auto margins = Edges { { absoluteDisplayBox.computedMarginStart().valueOr(0), absoluteDisplayBox.computedMarginEnd().valueOr(0) }, { absoluteDisplayBox.marginBefore(), absoluteDisplayBox.marginAfter() } };
-    auto floatBox = FloatAvoider { layoutBox, absoluteDisplayBox.topLeft(), absoluteDisplayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
+    auto& displayBox = formattingContext().geometryForBox(layoutBox);
+    if (absoluteTopLeft.y() - displayBox.marginBefore() < previousFloatAbsoluteTop)
+        absoluteTopLeft.setY(previousFloatAbsoluteTop + displayBox.marginBefore());
+    auto margins = Edges { { displayBox.computedMarginStart().valueOr(0), displayBox.computedMarginEnd().valueOr(0) }, { displayBox.marginBefore(), displayBox.marginAfter() } };
+    auto floatBox = FloatAvoider { layoutBox, absoluteTopLeft, displayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // From formatting root coordinate system back to containing block's.
     auto containingBlockTopLeft = absoluteDisplayBoxCoordinates.containingBlockTopLeft;
@@ -256,9 +257,9 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
         return formattingContext().geometryForBox(layoutBox).topLeft();
 
     auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
-    auto absoluteDisplayBox = absoluteDisplayBoxCoordinates.displayBox;
-    auto margins = Edges { { absoluteDisplayBox.computedMarginStart().valueOr(0), absoluteDisplayBox.computedMarginEnd().valueOr(0) }, { absoluteDisplayBox.marginBefore(), absoluteDisplayBox.marginAfter() } };
-    auto floatAvoider = FloatAvoider { layoutBox, absoluteDisplayBox.topLeft(), absoluteDisplayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
+    auto& displayBox = formattingContext().geometryForBox(layoutBox);
+    auto margins = Edges { { displayBox.computedMarginStart().valueOr(0), displayBox.computedMarginEnd().valueOr(0) }, { displayBox.marginBefore(), displayBox.marginAfter() } };
+    auto floatAvoider = FloatAvoider { layoutBox, absoluteDisplayBoxCoordinates.topLeft, displayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteDisplayBoxCoordinates.containingBlockTopLeft;
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
@@ -283,7 +284,7 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
         //
         // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
-        auto rootRelativeTop = mapTopToFloatingStateRoot(layoutBox);
+        auto rootRelativeTop = mapTopLeftToFloatingStateRoot(layoutBox).y();
         auto clearance = *floatBottom - rootRelativeTop;
         if (clearance <= 0)
             return { };
@@ -311,7 +312,7 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
         if (&layoutBox.containingBlock() == &m_floatingState.root())
             return { Position { rootRelativeTop }, clearance };
 
-        auto containingBlockRootRelativeTop = mapTopToFloatingStateRoot(layoutBox.containingBlock());
+        auto containingBlockRootRelativeTop = mapTopLeftToFloatingStateRoot(layoutBox.containingBlock()).y();
         return { Position { rootRelativeTop - containingBlockRootRelativeTop }, clearance };
     };
 
@@ -388,7 +389,9 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
 
 void FloatingContext::append(const Box& floatBox)
 {
-    floatingState().append(FloatingState::FloatItem { floatBox, mapToFloatingStateRoot(floatBox) });
+    auto absoluteDisplayBox = Display::Box(formattingContext().geometryForBox(floatBox));
+    absoluteDisplayBox.setTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
+    floatingState().append(FloatingState::FloatItem { floatBox, absoluteDisplayBox });
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
@@ -440,37 +443,23 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
 FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteDisplayBoxCoordinates(const Box& floatAvoider) const
 {
     auto& containingBlock = floatAvoider.containingBlock();
-    auto displayBox = mapToFloatingStateRoot(floatAvoider);
+    auto& containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
+    auto absoluteTopLeft = mapTopLeftToFloatingStateRoot(floatAvoider);
 
-    if (&containingBlock == &floatingState().root()) {
-        auto containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
-        return { displayBox, { }, {  containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxRight() } };
-    }
-    auto containingBlockAbsoluteDisplayBox = mapToFloatingStateRoot(containingBlock);
-    auto containingBlockLeft = containingBlockAbsoluteDisplayBox.left();
-    return { displayBox, containingBlockAbsoluteDisplayBox.topLeft(), { containingBlockLeft + containingBlockAbsoluteDisplayBox.contentBoxLeft(), containingBlockLeft + containingBlockAbsoluteDisplayBox.contentBoxRight() } };
+    if (&containingBlock == &floatingState().root())
+        return { absoluteTopLeft, { }, { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxRight() } };
+
+    auto containingBlockAbsoluteTopLeft = mapTopLeftToFloatingStateRoot(containingBlock);
+    return { absoluteTopLeft, containingBlockAbsoluteTopLeft, { containingBlockAbsoluteTopLeft.x() + containingBlockGeometry.contentBoxLeft(), containingBlockAbsoluteTopLeft.x() + containingBlockGeometry.contentBoxRight() } };
 }
 
-Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
+LayoutPoint FloatingContext::mapTopLeftToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto& boxGeometry = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
-    auto topLeft = boxGeometry.topLeft();
+    auto topLeft = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft();
     for (auto* containingBlock = &floatBox.containingBlock(); containingBlock != &floatingStateRoot; containingBlock = &containingBlock->containingBlock())
         topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
-
-    auto mappedDisplayBox = Display::Box(boxGeometry);
-    mappedDisplayBox.setTopLeft(topLeft);
-    return mappedDisplayBox;
-}
-
-LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
-{
-    auto& floatingStateRoot = floatingState().root();
-    auto top = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
-    for (auto* containingBlock = &floatBox.containingBlock(); containingBlock != &floatingStateRoot; containingBlock = &containingBlock->containingBlock())
-        top += formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
-    return top;
+    return topLeft;
 }
 
 Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Point position) const
