@@ -1,3 +1,60 @@
+2020-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Remove FloatBox class
+        https://bugs.webkit.org/show_bug.cgi?id=213184
+
+        Reviewed by Antti Koivisto.
+
+        Apparently the only difference between a non-floating float avoider (regular formatting context root)
+        and a float box is that while float boxes intersect their margin box, simple float avoiders use their border box.
+        We can do that without subclassing FloatAvoider.
+
+        This patch is also in preparation for moving "computeFloatPosition" next to the static position computation when
+        the height value is not computed yet. So instead of passing in the display box, let's just pass in top/left and width.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        (WebCore::Layout::FloatAvoider::setHorizontalPosition):
+        (WebCore::Layout::FloatAvoider::setVerticalPosition):
+        (WebCore::Layout::FloatAvoider::initialHorizontalPosition const):
+        (WebCore::Layout::FloatAvoider::overflowsContainingBlock const):
+        (WebCore::Layout::FloatAvoider::topLeftInContainingBlock const):
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints): Deleted.
+        (WebCore::Layout::FloatAvoider::setVerticalConstraint): Deleted.
+        (WebCore::Layout::FloatAvoider::horizontalPositionCandidate): Deleted.
+        (WebCore::Layout::FloatAvoider::verticalPositionCandidate): Deleted.
+        (WebCore::Layout::FloatAvoider::rectInContainingBlock const): Deleted.
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::resetHorizontalPosition):
+        (WebCore::Layout::FloatAvoider::isLeftAligned const):
+        (WebCore::Layout::FloatAvoider::borderBoxWidth const):
+        (WebCore::Layout::FloatAvoider::marginBefore const):
+        (WebCore::Layout::FloatAvoider::marginAfter const):
+        (WebCore::Layout::FloatAvoider::marginStart const):
+        (WebCore::Layout::FloatAvoider::marginEnd const):
+        (WebCore::Layout::FloatAvoider::marginBoxWidth const):
+        (WebCore::Layout::FloatAvoider::isFloatingBox const):
+        (WebCore::Layout::FloatAvoider::layoutBox const):
+        (WebCore::Layout::FloatAvoider::top const):
+        (WebCore::Layout::FloatAvoider::left const):
+        (WebCore::Layout::FloatAvoider::right const):
+        (WebCore::Layout::FloatAvoider::rect const): Deleted.
+        (WebCore::Layout::FloatAvoider::displayBox const): Deleted.
+        (WebCore::Layout::FloatAvoider::displayBox): Deleted.
+        * layout/floats/FloatBox.cpp: Removed.
+        * layout/floats/FloatBox.h: Removed.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFormattingContextRoot const):
+        (WebCore::Layout::findAvailablePosition):
+        (WebCore::Layout::FloatingContext::findPositionForFloatBox const):
+        (WebCore::Layout::FloatingContext::findPositionForFormattingContextRoot const):
+        (WebCore::Layout::FloatPair::intersects const):
+        (WebCore::Layout::FloatPair::horizontalConstraints const):
+        * layout/floats/FloatingContext.h:
+
 2020-06-17  Youenn Fablet  <youenn@apple.com>
 
         Make ReadableStream robust against user code

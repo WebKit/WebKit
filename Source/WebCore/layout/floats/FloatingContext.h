@@ -35,7 +35,6 @@ namespace WebCore {
 namespace Layout {
 
 class FloatAvoider;
-class FloatBox;
 class FormattingContext;
 class Box;
 class LayoutState;
@@ -72,7 +71,7 @@ private:
     const FormattingContext& formattingContext() const { return m_formattingContext; }
     const ContainerBox& root() const { return *m_root; }
 
-    void findPositionForFloatBox(FloatBox&) const;
+    void findPositionForFloatBox(FloatAvoider&) const;
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
