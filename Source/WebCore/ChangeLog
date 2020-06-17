@@ -1,3 +1,70 @@
+2020-06-17  Darryl Pogue  <darryl@dpogue.ca>
+
+        IndexedDB: Support IDBFactory databases method
+        https://bugs.webkit.org/show_bug.cgi?id=211043
+
+        Reviewed by Youenn Fablet.
+
+        Add support for fetching the list of IDB database names and versions
+        from the IDBServer, and expose the functionality as
+        `IDBFactory.prototype.databases()`.
+
+        Spec: https://w3c.github.io/IndexedDB/#dom-idbfactory-databases
+
+        * Headers.cmake:
+        * Modules/indexeddb/IDBActiveDOMObject.h:
+        (WebCore::IDBActiveDOMObject::performCallbackOnOriginThread):
+        * Modules/indexeddb/IDBDatabaseNameAndVersionRequest.cpp: Added.
+        (WebCore::IDBDatabaseNameAndVersionRequest::create):
+        (WebCore::IDBDatabaseNameAndVersionRequest::IDBDatabaseNameAndVersionRequest):
+        (WebCore::IDBDatabaseNameAndVersionRequest::~IDBDatabaseNameAndVersionRequest):
+        (WebCore::IDBDatabaseNameAndVersionRequest::complete):
+        (WebCore::IDBDatabaseNameAndVersionRequest::activeDOMObjectName const):
+        (WebCore::IDBDatabaseNameAndVersionRequest::virtualHasPendingActivity const):
+        (WebCore::IDBDatabaseNameAndVersionRequest::stop):
+        * Modules/indexeddb/IDBDatabaseNameAndVersionRequest.h: Added.
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::databases):
+        (WebCore::IDBFactory::getAllDatabaseNames):
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::connectionToServerLost):
+        (WebCore::IDBClient::IDBConnectionProxy::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBClient::IDBConnectionProxy::didGetAllDatabaseNamesAndVersions):
+        (WebCore::IDBClient::IDBConnectionProxy::forgetActivityForCurrentThread):
+        (WebCore::IDBClient::IDBConnectionProxy::getAllDatabaseNames): Deleted.
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBClient::IDBConnectionToServer::didGetAllDatabaseNamesAndVersions):
+        (WebCore::IDBClient::IDBConnectionToServer::getAllDatabaseNames): Deleted.
+        (WebCore::IDBClient::IDBConnectionToServer::didGetAllDatabaseNames): Deleted.
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllDatabaseNamesAndVersions):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllDatabaseNames): Deleted.
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNames): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameAndVersionFromFile):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameFromFile): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/shared/IDBDatabaseNameAndVersion.h: Added.
+        (WebCore::IDBDatabaseNameAndVersion::encode const):
+        (WebCore::IDBDatabaseNameAndVersion::decode):
+        (WebCore::IDBDatabaseNameAndVersion::isolatedCopy const):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        * loader/EmptyClients.cpp:
+
 2020-06-17  Sam Weinig  <weinig@apple.com>
 
         [WPT] infrastructure/assumptions/html-elements.html fails due to changes in style when all: initial is used

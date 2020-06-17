@@ -90,7 +90,7 @@ public:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
     void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
-    void getAllDatabaseNames(const WebCore::SecurityOriginData& mainFrameOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID) final;
+    void getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&) final;
 
     // IDBConnectionToClient
     WebCore::IDBConnectionIdentifier identifier() const final;
@@ -116,7 +116,7 @@ public:
     void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
-    void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames) final;
+    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const Vector<WebCore::IDBDatabaseNameAndVersion>&) final;
 
     void closeAndDeleteDatabasesModifiedSince(WallTime);
 

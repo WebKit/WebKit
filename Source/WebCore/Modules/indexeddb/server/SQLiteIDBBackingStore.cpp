@@ -912,19 +912,31 @@ String SQLiteIDBBackingStore::fullDatabasePath() const
     return fullDatabasePathForDirectory(m_databaseDirectory);
 }
 
-String SQLiteIDBBackingStore::databaseNameFromFile(const String& databasePath)
+Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersionFromFile(const String& databasePath)
 {
     SQLiteDatabase database;
     if (!database.open(databasePath)) {
         LOG_ERROR("Failed to open SQLite database at path '%s' when getting database name", databasePath.utf8().data());
-        return { };
+        return WTF::nullopt;
     }
     if (!database.tableExists("IDBDatabaseInfo"_s)) {
         LOG_ERROR("Could not find IDBDatabaseInfo table and get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
-        return { };
+        return WTF::nullopt;
     }
-    SQLiteStatement sql(database, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';");
-    return sql.getColumnText(0);
+
+    SQLiteStatement namesql(database, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';");
+    auto databaseName = namesql.getColumnText(0);
+
+    SQLiteStatement versql(database, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
+    String stringVersion = versql.getColumnText(0);
+    bool ok;
+    uint64_t databaseVersion = stringVersion.toUInt64Strict(&ok);
+    if (!ok) {
+        LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().data());
+        return WTF::nullopt;
+    }
+
+    return IDBDatabaseNameAndVersion { databaseName, databaseVersion };
 }
 
 String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()

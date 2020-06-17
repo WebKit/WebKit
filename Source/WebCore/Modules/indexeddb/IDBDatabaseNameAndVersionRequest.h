@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Darryl Pogue (darryl@dpogue.ca)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,57 +27,61 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
-#include <wtf/Function.h>
+#include "IDBActiveDOMObject.h"
+#include "IDBDatabaseNameAndVersion.h"
+#include "IDBResourceIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC {
-class CallFrame;
-class JSGlobalObject;
-class JSValue;
-}
-
 namespace WebCore {
 
-class IDBOpenDBRequest;
 class ScriptExecutionContext;
-class SecurityOrigin;
 
 namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
+class WEBCORE_EXPORT IDBDatabaseNameAndVersionRequest final : public ThreadSafeRefCounted<IDBDatabaseNameAndVersionRequest>, public IDBActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(IDBDatabaseNameAndVersionRequest);
 public:
-    static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
-    ~IDBFactory();
+    using InfoCallback = Function<void(Optional<Vector<IDBDatabaseNameAndVersion>>&&)>;
 
-    struct DatabaseInfo {
-        String name;
-        uint64_t version;
-    };
+    static Ref<IDBDatabaseNameAndVersionRequest> create(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, InfoCallback&&);
 
-    ExceptionOr<Ref<IDBOpenDBRequest>> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version);
-    ExceptionOr<Ref<IDBOpenDBRequest>> deleteDatabase(ScriptExecutionContext&, const String& name);
+    ~IDBDatabaseNameAndVersionRequest();
 
-    ExceptionOr<short> cmp(JSC::JSGlobalObject&, JSC::JSValue first, JSC::JSValue second);
+    const IDBResourceIdentifier& resourceIdentifier() const;
 
-    using IDBDatabasesResponsePromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<IDBFactory::DatabaseInfo>>>;
+    using ThreadSafeRefCounted<IDBDatabaseNameAndVersionRequest>::ref;
+    using ThreadSafeRefCounted<IDBDatabaseNameAndVersionRequest>::deref;
 
-    void databases(ScriptExecutionContext&, IDBDatabasesResponsePromise&&);
-
-    WEBCORE_EXPORT void getAllDatabaseNames(ScriptExecutionContext&, Function<void(const Vector<String>&)>&&);
+    void complete(Optional<Vector<IDBDatabaseNameAndVersion>>&&);
 
 private:
-    explicit IDBFactory(IDBClient::IDBConnectionProxy&);
+    IDBDatabaseNameAndVersionRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, InfoCallback&&);
 
-    ExceptionOr<Ref<IDBOpenDBRequest>> openInternal(ScriptExecutionContext&, const String& name, uint64_t version);
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
+    const char* activeDOMObjectName() const final;
+    void stop() final;
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
+    IDBResourceIdentifier m_resourceIdentifier;
+    InfoCallback m_callback;
 };
+
+inline const IDBResourceIdentifier& IDBDatabaseNameAndVersionRequest::resourceIdentifier() const
+{
+    return m_resourceIdentifier;
+}
+
+inline IDBDatabaseNameAndVersionRequest::~IDBDatabaseNameAndVersionRequest()
+{
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+}
 
 } // namespace WebCore
 

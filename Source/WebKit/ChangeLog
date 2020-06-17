@@ -1,3 +1,29 @@
+2020-06-17  Darryl Pogue  <darryl@dpogue.ca>
+
+        IndexedDB: Support IDBFactory databases method
+        https://bugs.webkit.org/show_bug.cgi?id=211043
+
+        Reviewed by Youenn Fablet.
+
+        Plumbing for returning a list of IDB databases and versions.
+
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::didGetAllDatabaseNamesAndVersions):
+        (WebKit::WebIDBConnectionToClient::didGetAllDatabaseNames): Deleted.
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::getAllDatabaseNamesAndVersions):
+        (WebKit::WebIDBServer::getAllDatabaseNames): Deleted.
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.messages.in:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::getAllDatabaseNamesAndVersions):
+        (WebKit::WebIDBConnectionToServer::didGetAllDatabaseNamesAndVersions):
+        (WebKit::WebIDBConnectionToServer::getAllDatabaseNames): Deleted.
+        (WebKit::WebIDBConnectionToServer::didGetAllDatabaseNames): Deleted.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+
 2020-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r255037): Broken position while comparing watch bands on www.apple.com/shop/studio/apple-watch

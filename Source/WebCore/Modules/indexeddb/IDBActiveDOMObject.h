@@ -50,7 +50,7 @@ public:
         ASSERT(&originThread() == &object.originThread());
 
         if (canCurrentThreadAccessThreadLocalData(object.originThread())) {
-            (object.*method)(arguments...);
+            (object.*method)(std::forward<Arguments>(arguments)...);
             return;
         }
 

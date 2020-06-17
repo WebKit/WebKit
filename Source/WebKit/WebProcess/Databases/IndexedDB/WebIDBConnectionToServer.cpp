@@ -207,9 +207,9 @@ void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requ
     send(Messages::WebIDBServer::OpenDBRequestCancelled(requestData));
 }
 
-void WebIDBConnectionToServer::getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
+void WebIDBConnectionToServer::getAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
 {
-    send(Messages::WebIDBServer::GetAllDatabaseNames(topOrigin, openingOrigin, callbackID));
+    send(Messages::WebIDBServer::GetAllDatabaseNamesAndVersions(requestIdentifier, origin));
 }
 
 void WebIDBConnectionToServer::didDeleteDatabase(const IDBResultData& result)
@@ -322,9 +322,9 @@ void WebIDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdent
     m_connectionToServer->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
 }
 
-void WebIDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+void WebIDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Vector<IDBDatabaseNameAndVersion>&& databases)
 {
-    m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
+    m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
 }
 
 void WebIDBConnectionToServer::connectionToServerLost()

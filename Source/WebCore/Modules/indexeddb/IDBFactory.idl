@@ -29,5 +29,14 @@
 ] interface IDBFactory {
     [CallWith=ScriptExecutionContext, MayThrowException] IDBOpenDBRequest open(DOMString name, optional [EnforceRange] unsigned long long version);
     [CallWith=ScriptExecutionContext, MayThrowException] IDBOpenDBRequest deleteDatabase(DOMString name);
+    [CallWith=ScriptExecutionContext] Promise<sequence<IDBDatabaseInfo>> databases();
     [CallWith=GlobalObject, MayThrowException] short cmp(any first, any second);
+};
+
+[
+    Conditional=INDEXED_DATABASE,
+    JSGenerateToJSObject,
+] dictionary IDBDatabaseInfo {
+    DOMString name;
+    unsigned long long version;
 };

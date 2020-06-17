@@ -30,6 +30,7 @@
 
 #include "IDBConnectionProxy.h"
 #include "IDBDatabase.h"
+#include "IDBDatabaseNameAndVersion.h"
 #include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
@@ -494,27 +495,27 @@ void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectio
         m_delegate->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void IDBConnectionToServer::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, Function<void (const Vector<String>&)>&& callback)
+void IDBConnectionToServer::getAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
 {
-    static uint64_t callbackID = 0;
+    LOG(IndexedDB, "IDBConnectionToServer::getAllDatabaseNamesAndVersions");
+    ASSERT(isMainThread());
 
-    m_getAllDatabaseNamesCallbacks.add(++callbackID, WTFMove(callback));
-
-    if (m_serverConnectionIsValid)
-        m_delegate->getAllDatabaseNames(mainFrameOrigin.data(), openingOrigin.data(), callbackID);
-    else {
-        callOnMainThread([this, protectedThis = makeRef(*this), callbackID = callbackID] {
-            didGetAllDatabaseNames(callbackID, { });
-        });
+    if (m_serverConnectionIsValid) {
+        m_delegate->getAllDatabaseNamesAndVersions(requestIdentifier, origin);
+        return;
     }
+
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier] {
+        didGetAllDatabaseNamesAndVersions(requestIdentifier, { });
+    });
 }
 
-void IDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+void IDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Vector<IDBDatabaseNameAndVersion>&& databases)
 {
-    auto callback = m_getAllDatabaseNamesCallbacks.take(callbackID);
-    ASSERT(callback);
+    LOG(IndexedDB, "IDBConnectionToServer::didGetAllDatabaseNamesAndVersions");
+    ASSERT(isMainThread());
 
-    callback(databaseNames);
+    m_proxy->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
 }
 
 } // namespace IDBClient

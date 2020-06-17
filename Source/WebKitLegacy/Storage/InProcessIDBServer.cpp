@@ -476,18 +476,18 @@ void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBRequestData& r
     });
 }
 
-void InProcessIDBServer::getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
+void InProcessIDBServer::getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
 {
-    dispatchTask([this, protectedThis = makeRef(*this), identifier = m_connectionToServer->identifier(), mainFrameOrigin = mainFrameOrigin.isolatedCopy(), openingOrigin = openingOrigin.isolatedCopy(), callbackID] {
+    dispatchTask([this, protectedThis = makeRef(*this), identifier = m_connectionToServer->identifier(), requestIdentifier, origin = origin.isolatedCopy()] {
         LockHolder locker(m_server->lock());
-        m_server->getAllDatabaseNames(identifier, mainFrameOrigin, openingOrigin, callbackID);
+        m_server->getAllDatabaseNamesAndVersions(identifier, requestIdentifier, origin);
     });
 }
 
-void InProcessIDBServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+void InProcessIDBServer::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const Vector<WebCore::IDBDatabaseNameAndVersion>& databases)
 {
-    dispatchTaskReply([this, protectedThis = makeRef(*this), callbackID, databaseNames = databaseNames.isolatedCopy()] {
-        m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
+    dispatchTaskReply([this, protectedThis = makeRef(*this), requestIdentifier, databases = databases.isolatedCopy()]() mutable {
+        m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
     });
 }
 

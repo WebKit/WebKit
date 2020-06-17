@@ -41,6 +41,7 @@ class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
 
+struct ClientOrigin;
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
 struct IDBIterateCursorData;
@@ -87,7 +88,7 @@ public:
     virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer) = 0;
     virtual void openDBRequestCancelled(const IDBRequestData&) = 0;
 
-    virtual void getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID) = 0;
+    virtual void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) = 0;
 };
 
 } // namespace IDBClient

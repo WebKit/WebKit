@@ -80,7 +80,7 @@ public:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
     void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void getAllDatabaseNames(IPC::Connection&, const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, uint64_t callbackID);
+    void getAllDatabaseNamesAndVersions(IPC::Connection&, const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&);
 
     void addConnection(IPC::Connection&, WebCore::ProcessIdentifier);
     void removeConnection(IPC::Connection&);
