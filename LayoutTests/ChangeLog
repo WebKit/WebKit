@@ -1,3 +1,18 @@
+2020-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/ruby/ruby-expansion tests more robust
+        <rdar://problem/59688895>
+
+        Unreviewed test gardening.
+
+        Update the tests to no longer be sensitive to arbitrary fallback font metrics.
+
+        * fast/ruby/ruby-expansion-cjk-2.html:
+        * fast/ruby/ruby-expansion-cjk-3.html:
+        * fast/ruby/ruby-expansion-cjk-4.html:
+        * fast/ruby/ruby-expansion-cjk.html:
+        * platform/mac-wk1/TestExpectations:
+
 2020-06-16  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r262643): DumpRenderTree at com.apple.WebCore: WebCore::Document::prepareCanvasesForDisplayIfNeeded

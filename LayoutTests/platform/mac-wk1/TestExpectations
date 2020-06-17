@@ -410,8 +410,6 @@ fast/images/async-image-background-change.html
 fast/images/async-image-src-change.html
 http/tests/multipart/multipart-async-image.html
 
-fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
-
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
