@@ -1,3 +1,12 @@
+2020-06-17  Truitt Savell  <tsavell@apple.com>
+
+        [ Catalina WK2 Release ] http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213292
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update baselines and test expectations after r263143.
