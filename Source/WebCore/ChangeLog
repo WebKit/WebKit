@@ -1,3 +1,58 @@
+2020-06-17  Geoffrey Garen  <ggaren@apple.com>
+
+        media/remoteplayback-target-availability.html was a flaky failure after r262904
+        https://bugs.webkit.org/show_bug.cgi?id=213294
+
+        Reviewed by Sam Weinig.
+
+        AirPlay availability is a global that depends on a timer (and/or an
+        external piece of hardware). Therefore, the first value RemotePlayback
+        sees for AirPlay availability, while usually 'unavailable', is sometimes
+        'available'. Flaky!
+
+        In this case, media/remoteplayback-prompt.html triggered an AirPlay
+        availability check, and then media/remoteplayback-target-availability.html,
+        if run in the same process, sometimes saw 'available' as its initial
+        availability state.
+
+        Make RemotePlayback's initial availability state deterministic by
+        recording availability state at the time we enqueue our task, rather
+        than at the time we dequeue our task. (By specification and
+        implementation, RemotePlayback's initial availability state is always
+        'unavailable', regardless of AirPlay state.) This is OK to do because,
+        if the state ever changes after we enqueue our task, we'll get an update
+        notification and enqueue a new task.
+
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::watchAvailability): Copy the availability
+        state when we enqueue our task, and do not update it when we dequeue our
+        task. This is the heart of the bug fix.
+
+        Make sure to manually update availability state when we first register
+        to monitor availability, since we never got an update notification for
+        the current state.
+
+        (WebCore::RemotePlayback::prompt): For consistency with
+        watchAvailability, do not update availability state when we dequeue our
+        task. (This means that prompting before watching availability is always
+        an error, which is fine, and consistent with the spec, which says, "If
+        the user agent stops monitoring the list of available remote playback
+        devices... It SHOULD also set the availability value for all media
+        elements to false.")
+
+        Make sure to manually update availability state when we first register
+        to monitor availability, since we never got an update notification for
+        the current state.
+
+        (WebCore::RemotePlayback::availabilityChanged): For consistency with
+        watchAvailability, do not update availability state when we dequeue our
+        task.
+
+        (WebCore::RemotePlayback::updateAvailability): Deleted. We never
+        synchronously update our state anymore. All state changes are queued and
+        processed in order.
+        * Modules/remoteplayback/RemotePlayback.h:
+
 2020-06-17  Rob Buis  <rbuis@igalia.com>
 
         Image `referrerpolicy` mutations should be considered "relevant mutations"

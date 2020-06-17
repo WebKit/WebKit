@@ -96,18 +96,19 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
         // 8. Fulfill promise with the callbackId and run the following steps in parallel:
         promise->whenSettled([this, protectedThis = makeRefPtr(this), callbackId] {
             // 8.1 Queue a task to invoke the callback with the current availability for the media element.
-            m_taskQueue.enqueueTask([this, callbackId] {
+            m_taskQueue.enqueueTask([this, callbackId, available = m_available] {
                 auto foundCallback = m_callbackMap.find(callbackId);
                 if (foundCallback == m_callbackMap.end())
                     return;
 
-                if (updateAvailability() == UpdateResults::Unchanged)
-                    foundCallback->value->handleEvent(m_available);
+                foundCallback->value->handleEvent(available);
             });
 
             // 8.2 Run the algorithm to monitor the list of available remote playback devices.
-            if (m_mediaElement)
+            if (m_mediaElement) {
+                availabilityChanged(m_mediaElement->mediaSession().hasWirelessPlaybackTargets());
                 m_mediaElement->remoteHasAvailabilityCallbacksChanged();
+            }
         });
         promise->resolve<IDLLong>(callbackId);
     });
@@ -200,8 +201,6 @@ void RemotePlayback::prompt(Ref<DeferredPromise>&& promise)
         //    the list of available remote playback devices, run the steps to monitor the list of available remote
         //    playback devices in parallel.
         // NOTE: Monitoring enabled by adding to m_promptPromises and calling remoteHasAvailabilityCallbacksChanged().
-        //       Meanwhile, just update availability for step 9.
-        updateAvailability();
 
         // 8. If the list of available remote playback devices is empty and will remain so before the request for
         //    user permission is completed, reject promise with a NotFoundError exception and abort all remaining steps.
@@ -215,6 +214,7 @@ void RemotePlayback::prompt(Ref<DeferredPromise>&& promise)
         }
 
         m_promptPromises.append(WTFMove(promise));
+        availabilityChanged(m_mediaElement->mediaSession().hasWirelessPlaybackTargets());
         m_mediaElement->remoteHasAvailabilityCallbacksChanged();
         m_mediaElement->webkitShowPlaybackTargetPicker();
 
@@ -322,16 +322,6 @@ void RemotePlayback::disconnect()
     });
 }
 
-RemotePlayback::UpdateResults RemotePlayback::updateAvailability()
-{
-    bool available = m_mediaElement ? m_mediaElement->mediaSession().hasWirelessPlaybackTargets() : false;
-    if (available == m_available)
-        return UpdateResults::Unchanged;
-
-    availabilityChanged(available);
-    return UpdateResults::Changed;
-}
-
 void RemotePlayback::playbackTargetPickerWasDismissed()
 {
     // 6.2.2 Prompt user for changing remote playback state [Ctd]
@@ -384,7 +374,7 @@ void RemotePlayback::availabilityChanged(bool available)
         return;
     m_available = available;
 
-    m_taskQueue.enqueueTask([this] {
+    m_taskQueue.enqueueTask([this, available] {
         // Protect m_callbackMap against mutation while it's being iterated over.
         Vector<Ref<RemotePlaybackAvailabilityCallback>> callbacks;
         callbacks.reserveInitialCapacity(m_callbackMap.size());
@@ -393,7 +383,7 @@ void RemotePlayback::availabilityChanged(bool available)
         for (auto& callback : m_callbackMap.values())
             callbacks.uncheckedAppend(callback.copyRef());
         for (auto& callback : callbacks)
-            callback->handleEvent(m_available);
+            callback->handleEvent(available);
     });
 }
 
