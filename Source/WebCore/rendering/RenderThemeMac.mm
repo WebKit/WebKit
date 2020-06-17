@@ -2810,12 +2810,12 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
     return { Image::loadPlatformResource("AttachmentPlaceholder"), 1 };
 }
 
-#endif
-
 String RenderThemeMac::extraDefaultStyleSheet()
 {
     return { };
 }
+
+#endif
 
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
