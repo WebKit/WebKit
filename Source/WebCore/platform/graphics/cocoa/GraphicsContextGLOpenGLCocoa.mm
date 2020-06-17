@@ -733,10 +733,10 @@ bool GraphicsContextGLOpenGL::texImageIOSurface2D(GCGLenum target, GCGLenum inte
 }
 
 #if USE(OPENGL)
-void GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
+bool GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
 {
     LOG(WebGL, "GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore at %d x %d. (%p)", size.width(), size.height(), this);
-    [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
+    return [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
 }
 
 void GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer()
@@ -792,10 +792,10 @@ void GraphicsContextGLOpenGL::updateCGLContext()
 }
 #endif
 
-void GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
+bool GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
 {
     LOG(WebGL, "GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore at %d x %d. (%p)", size.width(), size.height(), this);
-    [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
+    return [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
 }
 
 void GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer()

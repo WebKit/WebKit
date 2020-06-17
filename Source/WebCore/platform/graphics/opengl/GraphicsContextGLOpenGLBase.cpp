@@ -189,7 +189,11 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_texture);
     setRenderbufferStorageFromDrawable(m_currentWidth, m_currentHeight);
 #else
-    allocateIOSurfaceBackingStore(IntSize(width, height));
+    if (!allocateIOSurfaceBackingStore(size)) {
+        RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", width, height);
+        forceContextLost();
+        return true;
+    }
     updateFramebufferTextureBackingStoreFromLayer();
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, m_texture, 0);
 #endif // !USE(OPENGL_ES))

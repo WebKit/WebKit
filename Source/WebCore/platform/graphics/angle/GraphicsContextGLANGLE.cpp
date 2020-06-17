@@ -218,7 +218,11 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     ASSERT(m_texture);
 
 #if PLATFORM(COCOA)
-    allocateIOSurfaceBackingStore(IntSize(width, height));
+    if (!allocateIOSurfaceBackingStore(size)) {
+        RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", width, height);
+        forceContextLost();
+        return true;
+    }
     updateFramebufferTextureBackingStoreFromLayer();
     if (m_preserveDrawingBufferTexture) {
         // The context requires the use of an intermediate texture in order to implement

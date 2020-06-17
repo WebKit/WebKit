@@ -274,7 +274,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 #endif
 
 #if USE(OPENGL) || USE(ANGLE)
-- (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha
+- (bool)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha
 {
     _bufferSize = size;
     _usingAlpha = usingAlpha;
@@ -282,9 +282,8 @@ static void freeData(void *, const void *data, size_t /* size */)
     _drawingBuffer = WebCore::IOSurface::create(size, WebCore::sRGBColorSpaceRef());
     _spareBuffer = WebCore::IOSurface::create(size, WebCore::sRGBColorSpaceRef());
 
-    ASSERT(_contentsBuffer);
-    ASSERT(_drawingBuffer);
-    ASSERT(_spareBuffer);
+    if (!_contentsBuffer || !_drawingBuffer || !_spareBuffer)
+        return false;
 
     _contentsBuffer->migrateColorSpaceToProperties();
     _drawingBuffer->migrateColorSpaceToProperties();
@@ -307,7 +306,12 @@ static void freeData(void *, const void *data, size_t /* size */)
     _contentsPbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _contentsBuffer->surface(), _eglConfig, surfaceAttributes);
     _drawingPbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _drawingBuffer->surface(), _eglConfig, surfaceAttributes);
     _sparePbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _spareBuffer->surface(), _eglConfig, surfaceAttributes);
+
+    if (!_contentsPbuffer || !_drawingPbuffer || !_sparePbuffer)
+        return false;
 #endif
+
+    return true;
 }
 
 - (void)bindFramebufferToNextAvailableSurface

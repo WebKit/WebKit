@@ -54,7 +54,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)prepareForDisplay;
 
 #if USE(OPENGL) || USE(ANGLE)
-- (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;
+- (bool)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;
 - (void)bindFramebufferToNextAvailableSurface;
 #endif
 

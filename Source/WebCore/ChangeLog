@@ -1,3 +1,27 @@
+2020-06-16  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Lose the context if IOSurface allocation fails
+        https://bugs.webkit.org/show_bug.cgi?id=213265
+        <rdar://problem/64424742>
+
+        Reviewed by Simon Fraser.
+
+        If we are unable to allocate the backing store for the WebGL
+        content, we should immediately lose the context.
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::reshapeFBOs): Lose the context if the
+        call to allocateIOSurfaceBackingStore didn't work.
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore):
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]): Return a boolean
+        so that we can detect if the allocation failed.
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+        (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+
 2020-06-16  Eric Carlson  <eric.carlson@apple.com>
 
         Don't claim to support fullscreen mode unless fullScreenEnabled setting is enabled

@@ -554,7 +554,7 @@ public:
 #endif
 
 #if USE(OPENGL) || USE(ANGLE)
-    void allocateIOSurfaceBackingStore(IntSize);
+    bool allocateIOSurfaceBackingStore(IntSize);
     void updateFramebufferTextureBackingStoreFromLayer();
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void updateCGLContext();
