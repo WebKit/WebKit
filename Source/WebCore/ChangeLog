@@ -1,3 +1,16 @@
+2020-06-16  Zalan Bujtas  <zalan@apple.com>
+
+        [Subpixel] Replaced content bleeds over content box when border radius is set
+        https://bugs.webkit.org/show_bug.cgi?id=213275
+        <rdar://problem/64320995>
+
+        Reviewed by Simon Fraser.
+
+        Snap the border to device pixels on the replaced box when border radius is set.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+
 2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should not re-extract elements whose children have been manipulated

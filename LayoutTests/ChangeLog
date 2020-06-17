@@ -1,3 +1,14 @@
+2020-06-16  Zalan Bujtas  <zalan@apple.com>
+
+        [Subpixel] Replaced content bleeds over content box when border radius is set
+        https://bugs.webkit.org/show_bug.cgi?id=213275
+        <rdar://problem/64320995>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/hidpi-image-position-on-device-pixels-with-border-radius-expected.html: Added.
+        * fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html: Added.
+
 2020-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make fast/ruby/ruby-expansion tests more robust

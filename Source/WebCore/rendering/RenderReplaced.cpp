@@ -206,16 +206,13 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     bool completelyClippedOut = false;
     if (style().hasBorderRadius()) {
-        LayoutRect borderRect = LayoutRect(adjustedPaintOffset, size());
-
-        if (borderRect.isEmpty())
-            completelyClippedOut = true;
-        else {
+        completelyClippedOut = size().isEmpty();
+        if (!completelyClippedOut) {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context().save();
-            FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(paintRect,
-                paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
-            clipRoundedInnerRect(paintInfo.context(), paintRect, roundedInnerRect);
+            auto pixelSnappedRoundedRect = style().getRoundedInnerBorderFor(paintRect,
+                paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor());
+            clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
         }
     }
 
