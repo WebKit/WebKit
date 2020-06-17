@@ -1,3 +1,17 @@
+2020-06-17  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r263044): [macOS] TestWebKitAPI.TextManipulation.InsertingContentIntoAlreadyManipulatedContentCreatesTextManipulationItem is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213311
+        <rdar://problem/64456413>
+
+        Reviewed by Wenson Hsieh.
+
+        TextManipulation.InsertingContentIntoAlreadyManipulatedContentCreatesTextManipulationItem does not wait long 
+        enough to make sure TextManipulationController gets notified about the insertion and starts observing.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-17  Aakash Jain  <aakash_jain@apple.com>
 
         Delete code for old ews bindings queue

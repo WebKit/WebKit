@@ -2460,11 +2460,6 @@ TEST(TextManipulation, InsertingContentIntoAlreadyManipulatedContentCreatesTextM
     EXPECT_STREQ("hey", firstItem.tokens[0].content.UTF8String);
     EXPECT_STREQ(" dude", firstItem.tokens[1].content.UTF8String);
 
-    __block BOOL foundNewItemAfterCompletingTextManipulation = false;
-    [delegate setItemCallback:^(_WKTextManipulationItem *) {
-        foundNewItemAfterCompletingTextManipulation = true;
-    }];
-
     done = false;
     [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(firstItem.identifier, {
         { firstItem.tokens[0].identifier, @"hello," },
@@ -2473,12 +2468,16 @@ TEST(TextManipulation, InsertingContentIntoAlreadyManipulatedContentCreatesTextM
         EXPECT_EQ(errors, nil);
         done = true;
     }];
-
     TestWebKitAPI::Util::run(&done);
-    [webView stringByEvaluatingJavaScript:@"span = document.createElement('span'); span.textContent = ' WebKit!'; document.querySelector('b').after(span);"];
-    [webView waitForNextPresentationUpdate];
 
-    EXPECT_TRUE(foundNewItemAfterCompletingTextManipulation);
+    done = false;
+    [delegate setItemCallback:^(_WKTextManipulationItem *) {
+        done = true;
+    }];
+    [webView stringByEvaluatingJavaScript:@"span = document.createElement('span'); span.textContent = ' WebKit!'; document.querySelector('b').after(span);"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(items.count, 2UL);
     EXPECT_WK_STREQ("<p><i><b>hello,</b><span> WebKit!</span></i> world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
