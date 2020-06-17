@@ -340,7 +340,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQuerySet* sheetQ
     m_dynamicMediaQueryRules.appendVector(WTFMove(mediaQueryCollector.dynamicMediaQueryRules));
 
     // Set the initial values.
-    evaluteDynamicMediaQueryRules(evaluator, firstNewIndex);
+    evaluateDynamicMediaQueryRules(evaluator, firstNewIndex);
 }
 
 void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& mediaQueryCollector, Resolver* resolver, AddRulesMode mode)
@@ -396,9 +396,9 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_universalRules);
 }
 
-Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
-    auto collectedChanges = evaluteDynamicMediaQueryRules(evaluator, 0);
+    auto collectedChanges = evaluateDynamicMediaQueryRules(evaluator, 0);
 
     if (collectedChanges.requiredFullReset)
         return { { DynamicMediaQueryEvaluationChanges::Type::ResetStyle } };
@@ -418,7 +418,7 @@ Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRu
     return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.copyRef() } } };
 }
 
-RuleSet::CollectedMediaQueryChanges RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator, size_t startIndex)
+RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator, size_t startIndex)
 {
     CollectedMediaQueryChanges collectedChanges;
 

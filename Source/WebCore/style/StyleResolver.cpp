@@ -574,7 +574,7 @@ bool Resolver::hasViewportDependentMediaQueries() const
 
 Optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMediaQueries()
 {
-    return m_ruleSets.evaluteDynamicMediaQueryRules(m_mediaQueryEvaluator);
+    return m_ruleSets.evaluateDynamicMediaQueryRules(m_mediaQueryEvaluator);
 }
 
 } // namespace Style

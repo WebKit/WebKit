@@ -81,7 +81,7 @@ public:
 
     bool hasViewportDependentMediaQueries() const;
 
-    Optional<DynamicMediaQueryEvaluationChanges> evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&);
+    Optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&);
 
     RuleFeatureSet& mutableFeatures();
 

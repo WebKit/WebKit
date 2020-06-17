@@ -148,14 +148,14 @@ bool ScopeRuleSets::hasViewportDependentMediaQueries() const
     return false;
 }
 
-Optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+Optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
     Optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
 
     auto evaluate = [&](auto* ruleSet) {
         if (!ruleSet)
             return;
-        if (auto changes = ruleSet->evaluteDynamicMediaQueryRules(evaluator)) {
+        if (auto changes = ruleSet->evaluateDynamicMediaQueryRules(evaluator)) {
             if (evaluationChanges)
                 evaluationChanges->append(WTFMove(*changes));
             else

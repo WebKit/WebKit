@@ -113,7 +113,7 @@ public:
 
     bool hasViewportDependentMediaQueries() const { return m_hasViewportDependentMediaQueries; }
 
-    Optional<DynamicMediaQueryEvaluationChanges> evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&);
+    Optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&);
 
     const RuleFeatureSet& features() const { return m_features; }
 
@@ -149,7 +149,7 @@ private:
         Vector<size_t> changedQueryIndexes { };
         Vector<const Vector<RuleFeature>*> ruleFeatures { };
     };
-    CollectedMediaQueryChanges evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&, size_t startIndex);
+    CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&, size_t startIndex);
 
     template<typename Function> void traverseRuleDatas(Function&&);
 

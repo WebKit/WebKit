@@ -1,3 +1,22 @@
+2020-06-17  Antti Koivisto  <antti@apple.com>
+
+        Fix spelling of evaluteDynamicMediaQueryRules
+        https://bugs.webkit.org/show_bug.cgi?id=213287
+
+        Unreviewed.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRulesFromSheet):
+        (WebCore::Style::RuleSet::evaluateDynamicMediaQueryRules):
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules): Deleted.
+        * style/RuleSet.h:
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::evaluateDynamicMediaQueries):
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ScopeRuleSets::evaluateDynamicMediaQueryRules):
+        (WebCore::Style::ScopeRuleSets::evaluteDynamicMediaQueryRules): Deleted.
+        * style/StyleScopeRuleSets.h:
+
 2020-06-17  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION(r262994): [GTK] More than 100 tests are failing
