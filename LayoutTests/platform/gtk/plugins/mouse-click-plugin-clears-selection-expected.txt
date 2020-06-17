@@ -13,4 +13,3 @@ layer at (13,113) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 35x17
       text run at (0,0) width 35: "hello"
-caret: position 1 of child 1 {EMBED} of body

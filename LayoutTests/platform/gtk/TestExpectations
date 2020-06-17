@@ -3826,7 +3826,6 @@ webkit.org/b/172279 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
 
 webkit.org/b/172811 fast/block/float/032.html [ Failure ]
 webkit.org/b/172811 fast/forms/input-text-word-wrap.html [ Failure ]
-webkit.org/b/172811 fast/css/input-search-padding.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-rtl.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-layer.html [ Failure ]
@@ -3891,12 +3890,7 @@ webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.htm
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
-# This one is only failing on the release bots.
-webkit.org/b/18328 [ Release ] imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
-
 webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
-
-webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]
 
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 

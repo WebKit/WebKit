@@ -1,3 +1,18 @@
+2020-06-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines and test expectations after r263143.
+
+        * platform/glib/svg/custom/svg-fonts-in-text-controls-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/form-control-value-settable-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/gtk/fast/css/line-height-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+        * platform/gtk/http/tests/plugins/plugin-javascript-access-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt:
+        * platform/gtk/plugins/mouse-click-plugin-clears-selection-expected.txt:
+
 2020-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r255037): Broken position while comparing watch bands on www.apple.com/shop/studio/apple-watch

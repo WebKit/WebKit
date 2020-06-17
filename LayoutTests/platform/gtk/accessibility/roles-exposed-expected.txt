@@ -17,7 +17,7 @@ abbr[title]
       AXRole: AXStatic
       
 address
-      AXRole: AXLandmarkContentInfo
+      AXRole: AXGroup
       
 article
       AXRole: AXArticle
