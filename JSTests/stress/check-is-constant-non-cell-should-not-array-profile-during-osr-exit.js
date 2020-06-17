@@ -1,4 +1,4 @@
-//@ skip if ["arm", "mips"].include?($architecture)
+//@ skip if $memoryLimited
 
 function foo() {
   function bar(a0) {

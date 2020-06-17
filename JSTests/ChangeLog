@@ -1,3 +1,14 @@
+2020-06-17  Saam Barati  <sbarati@apple.com>
+
+        Skip JSTests/stress/check-is-constant-non-cell-should-not-array-profile-during-osr-exit.js on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=213321
+
+        Reviewed by Mark Lam.
+
+        It uses ~1GB of memory and jetsams on iOS devices.
+
+        * stress/check-is-constant-non-cell-should-not-array-profile-during-osr-exit.js:
+
 2020-06-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Freeze JSBigInt when setting it as a constant in AI
