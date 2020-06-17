@@ -1,3 +1,12 @@
+2020-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: move some unused data inside ENABLE(JIT) to unbreak the CLoop build.
+        https://bugs.webkit.org/show_bug.cgi?id=213255
+
+        Not reviewed.
+
+        * assembler/testmasm.cpp:
+
 2020-06-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, avoid node access in link-task

@@ -46,6 +46,15 @@
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
 
+static void usage()
+{
+    dataLog("Usage: testmasm [<filter>]\n");
+    if (hiddenTruthBecauseNoReturnIsStupid())
+        exit(1);
+}
+
+#if ENABLE(JIT)
+
 static Vector<double> doubleOperands()
 {
     return Vector<double> {
@@ -120,15 +129,6 @@ static Vector<int64_t> int64Operands()
     };
 }
 #endif
-
-static void usage()
-{
-    dataLog("Usage: testmasm [<filter>]\n");
-    if (hiddenTruthBecauseNoReturnIsStupid())
-        exit(1);
-}
-
-#if ENABLE(JIT)
 
 #if ENABLE(MASM_PROBE)
 namespace WTF {
