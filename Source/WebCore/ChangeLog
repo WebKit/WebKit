@@ -1,3 +1,26 @@
+2020-06-18  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] Avoid setting GstContext twice in GLVideoSinkGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=213029
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        There is a reported issued in GStrearGL < 1.17 for GLBaseFilter
+        can't handle its GLContext and Display reassignation. This patch
+        aims to to avoid setting Display or GL Context in GL video sink
+        multiple times by checking if the video sink bin already has those
+        contexts.
+
+        Also, instead of relying on an assert if something goes wrong at
+        fetching the GL parameters, it returns an error at state change.
+
+        No new tests required.
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (requestGLContext):
+        (setGLContext): new function.
+        (webKitGLVideoSinkChangeState):
+
 2020-06-18  Doug Kelly  <dougk@apple.com>
 
         Clamp text run width to zero

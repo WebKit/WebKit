@@ -45,8 +45,6 @@ enum {
 
 struct _WebKitGLVideoSinkPrivate {
     GRefPtr<GstElement> appSink;
-    GRefPtr<GstContext> glDisplayElementContext;
-    GRefPtr<GstContext> glAppElementContext;
     MediaPlayerPrivateGStreamer* mediaPlayerPrivate;
 };
 
@@ -117,12 +115,14 @@ void webKitGLVideoSinkFinalize(GObject* object)
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
-GRefPtr<GstContext> requestGLContext(const char* contextType)
+Optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
 {
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
     auto* gstGLDisplay = sharedDisplay.gstGLDisplay();
     auto* gstGLContext = sharedDisplay.gstGLContext();
-    ASSERT(gstGLDisplay && gstGLContext);
+
+    if (!(gstGLDisplay && gstGLContext))
+        return WTF::nullopt;
 
     if (!g_strcmp0(contextType, GST_GL_DISPLAY_CONTEXT_TYPE)) {
         GstContext* displayContext = gst_context_new(GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
@@ -141,14 +141,23 @@ GRefPtr<GstContext> requestGLContext(const char* contextType)
         return adoptGRef(appContext);
     }
 
-    return nullptr;
+    return WTF::nullopt;
+}
+
+static bool setGLContext(GstElement* elementSink, const char* contextType)
+{
+    GRefPtr<GstContext> oldContext = gst_element_get_context(elementSink, contextType);
+    if (!oldContext) {
+        auto newContext = requestGLContext(contextType);
+        if (!newContext.hasValue())
+            return false;
+        gst_element_set_context(elementSink, newContext->get());
+    }
+    return true;
 }
 
 static GstStateChangeReturn webKitGLVideoSinkChangeState(GstElement* element, GstStateChange transition)
 {
-    WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(element);
-    WebKitGLVideoSinkPrivate* priv = sink->priv;
-
 #if GST_CHECK_VERSION(1, 14, 0)
     GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
 #endif
@@ -159,17 +168,10 @@ static GstStateChangeReturn webKitGLVideoSinkChangeState(GstElement* element, Gs
     case GST_STATE_CHANGE_READY_TO_READY:
 #endif
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
-        if (!priv->glDisplayElementContext)
-            priv->glDisplayElementContext = requestGLContext(GST_GL_DISPLAY_CONTEXT_TYPE);
-
-        if (priv->glDisplayElementContext)
-            gst_element_set_context(GST_ELEMENT_CAST(sink), priv->glDisplayElementContext.get());
-
-        if (!priv->glAppElementContext)
-            priv->glAppElementContext = requestGLContext("gst.gl.app_context");
-
-        if (priv->glAppElementContext)
-            gst_element_set_context(GST_ELEMENT_CAST(sink), priv->glAppElementContext.get());
+        if (!setGLContext(element, GST_GL_DISPLAY_CONTEXT_TYPE))
+            return GST_STATE_CHANGE_FAILURE;
+        if (!setGLContext(element, "gst.gl.app_context"))
+            return GST_STATE_CHANGE_FAILURE;
         break;
     }
     default:
