@@ -1604,6 +1604,9 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness,
     Color localStrokeColor(strokeColor());
 
     FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(FloatRect(point, FloatSize(widths.last(), thickness)), printing, localStrokeColor);
+    if (bounds.isEmpty())
+        return;
+
     bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
     
     Vector<CGRect, 4> dashBounds;
@@ -1629,9 +1632,9 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness,
         if (!dashWidth)
             dashBounds.append(CGRectMake(bounds.x() + left, bounds.y(), width, bounds.height()));
         else {
-            auto startParticle = static_cast<unsigned>(std::ceil(left / (2 * dashWidth)));
-            auto endParticle = static_cast<unsigned>((left + width) / (2 * dashWidth));
-            for (unsigned j = startParticle; j < endParticle; ++j)
+            auto startParticle = static_cast<int>(std::ceil(left / (2 * dashWidth)));
+            auto endParticle = static_cast<int>((left + width) / (2 * dashWidth));
+            for (auto j = startParticle; j < endParticle; ++j)
                 dashBounds.append(CGRectMake(bounds.x() + j * 2 * dashWidth, bounds.y(), dashWidth, bounds.height()));
         }
     }

@@ -545,6 +545,9 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     if (!measuredWidth)
         measuredWidth = renderer.width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow);
 
+    ASSERT(measuredWidth >= 0);
+    ASSERT(hyphenWidth >= 0);
+
     run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());

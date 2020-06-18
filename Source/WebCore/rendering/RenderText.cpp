@@ -1400,7 +1400,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
         w = f.width(run, fallbackFonts, glyphOverflow);
     }
 
-    return w;
+    return clampTo(w, 0.f);
 }
 
 IntRect RenderText::linesBoundingBox() const

@@ -1,3 +1,22 @@
+2020-06-18  Doug Kelly  <dougk@apple.com>
+
+        Clamp text run width to zero
+        https://bugs.webkit.org/show_bug.cgi?id=212655
+        <rdar://problem/61462335>
+
+        Reviewed by Said Abou-Hallawa.
+
+        It's possible to end up with a text run with negative width, if the text run is relatively short
+        and the character spacing is relatively large (but negative).  If this occurs, clamp the value to
+        zero.  This also adds additional asserts and checks to ensure the value remains non-negative.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLinesForText):
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::width const):
+
 2020-06-18  David Kilzer  <ddkilzer@apple.com>
 
         Fix misspellings of "namespace" in comments
