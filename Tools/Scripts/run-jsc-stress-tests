@@ -1130,7 +1130,11 @@ end
 def runWebAssemblyJetStream2
     return if !$jitTests
     return if !$isFTLPlatform
-    return if $memoryLimited
+
+    if $memoryLimited
+        skip
+        return
+    end
 
     prepareExtraAbsoluteFiles(JETSTREAM2_PATH, ["JetStreamDriver.js"])
     prepareExtraRelativeFilesWithBaseDirectory(Dir[JETSTREAM2_PATH + "wasm" + "*.js"].map { |f| "wasm/" + File.basename(f) }, $collection.dirname, $extraFilesBaseDir.dirname)

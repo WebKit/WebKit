@@ -1,3 +1,14 @@
+2020-06-18  Saam Barati  <sbarati@apple.com>
+
+        call skip when skipping JetStream2 wasm test
+        https://bugs.webkit.org/show_bug.cgi?id=213354
+
+        Reviewed by Yusuke Suzuki.
+
+        So we can see the logging that we're skipping.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-06-18  Joonghun Park  <jh718.park@samsung.com>
 
     Unreviewed. Remove the build warning below since r262971.
