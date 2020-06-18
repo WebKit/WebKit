@@ -1,3 +1,19 @@
+2020-06-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Workaround for UIKit layout bug in time picker.
+        https://bugs.webkit.org/show_bug.cgi?id=213346
+        <rdar://problem/64042277>
+
+        Reviewed by Tim Horton.
+
+        There is a bug in the layout of UIKit that needs to be fixed.
+        Until then, this workaround should give us a view that is viable.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimeContextMenuViewController preferredContentSize]):
+
 2020-06-18  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] OptionSet<> values should be validated

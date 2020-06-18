@@ -79,7 +79,16 @@ using namespace WebKit;
 
 - (CGSize)preferredContentSize
 {
-    return [self.view systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    // FIXME: Workaround, should be able to be readdressed after <rdar://problem/64143534>
+    UIView *view = self.view;
+    if (UIEdgeInsetsEqualToEdgeInsets(view.layoutMargins, UIEdgeInsetsZero)) {
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        [view layoutIfNeeded];
+        view.translatesAutoresizingMaskIntoConstraints = YES;
+        view.layoutMargins = UIEdgeInsetsMake(16, 16, 16, 16);
+    }
+
+    return [view systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 }
 
 @end
