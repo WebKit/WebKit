@@ -45,6 +45,7 @@ public:
     double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
     uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
     bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
+    bool haveEverRegisteredAsNowPlayingApplication() const final { return m_haveEverRegisteredAsNowPlayingApplication; }
     void prepareToSendUserMediaPermissionRequest() final;
 
 protected:
@@ -69,6 +70,7 @@ private:
 
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
+    bool m_haveEverRegisteredAsNowPlayingApplication { false };
 
     // For testing purposes only.
     String m_lastUpdatedNowPlayingTitle;

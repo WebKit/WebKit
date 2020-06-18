@@ -105,12 +105,13 @@ enum CompositingPolicy {
     Conditional=VIDEO,
     JSGenerateToJSObject,
 ] dictionary NowPlayingState {
-    boolean hasActiveSession;
-    boolean registeredAsNowPlayingApplication;
     DOMString title;
     unrestricted double duration;
     unrestricted double elapsedTime;
     unsigned long long uniqueIdentifier;
+    boolean hasActiveSession;
+    boolean registeredAsNowPlayingApplication;
+    boolean haveEverRegisteredAsNowPlayingApplication;
 };
 
 [

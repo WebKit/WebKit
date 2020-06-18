@@ -162,6 +162,9 @@ intersection-observer [ Skip ]
 # testRunner.queueLoad() does not support loading data URLs in Mac WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
 
+# Media session manager is a singletons
+media/now-playing-status-without-media.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////

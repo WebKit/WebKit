@@ -1139,6 +1139,9 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 # This is a Mac specific feature
 webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
 
+# Currently enabled on Mac only
+media/now-playing-status-without-media.html [ Skip ]
+
 # No support for WebGPU yet
 webkit.org/b/191005 webgpu/ [ Skip ]
 webkit.org/b/191005 inspector/canvas/create-context-webgpu.html [ Skip ]
