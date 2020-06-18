@@ -605,6 +605,8 @@ localizedStrings["Frame %d"] = "Frame %d";
 localizedStrings["Frame URL"] = "Frame URL";
 localizedStrings["Frames"] = "Frames";
 localizedStrings["Frames %d \u2013 %d"] = "Frames %d \u2013 %d";
+/* Title for list of HTML subframe JavaScript execution contexts */
+localizedStrings["Frames @ Execution Context Picker"] = "Frames";
 localizedStrings["Full Garbage Collection"] = "Full Garbage Collection";
 localizedStrings["Full URL"] = "Full URL";
 localizedStrings["Full-Screen"] = "Full-Screen";
@@ -1441,7 +1443,8 @@ localizedStrings["Worker"] = "Worker";
 localizedStrings["Worker Thread"] = "Worker Thread";
 localizedStrings["Worker Threads"] = "Worker Threads";
 localizedStrings["Worker: %s"] = "Worker: %s";
-localizedStrings["Workers"] = "Workers";
+/* Title for list of JavaScript web worker execution contexts */
+localizedStrings["Workers @ Execution Context Picker"] = "Workers";
 localizedStrings["Wrap lines to editor width"] = "Wrap lines to editor width";
 localizedStrings["XBM"] = "XBM";
 localizedStrings["XHR"] = "XHR";

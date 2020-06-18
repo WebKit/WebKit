@@ -282,7 +282,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         let otherFrames = WI.networkManager.frames.filter((frame) => frame !== mainFrame && frame.executionContextList.pageExecutionContext);
         if (otherFrames.length) {
-            contextMenu.appendHeader(WI.UIString("Frames"));
+            contextMenu.appendHeader(WI.UIString("Frames", "Frames @ Execution Context Picker", "Title for list of HTML subframe JavaScript execution contexts"));
 
             for (let frame of otherFrames)
                 addExecutionContextsForFrame(frame);
@@ -290,7 +290,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         let workerTargets = WI.targetManager.workerTargets;
         if (workerTargets.length) {
-            contextMenu.appendHeader(WI.UIString("Workers"));
+            contextMenu.appendHeader(WI.UIString("Workers", "Workers @ Execution Context Picker", "Title for list of JavaScript web worker execution contexts"));
 
             for (let target of workerTargets)
                 addExecutionContext(target.executionContext);
