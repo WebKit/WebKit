@@ -1114,7 +1114,7 @@ bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& resp
     return shouldIntercept(response.url(), NetworkStage::Response);
 }
 
-void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);

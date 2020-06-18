@@ -832,7 +832,7 @@ bool InspectorInstrumentation::shouldInterceptResponseImpl(InstrumentingAgents& 
     return false;
 }
 
-void InspectorInstrumentation::interceptRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+void InspectorInstrumentation::interceptRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->interceptRequest(loader, WTFMove(handler));

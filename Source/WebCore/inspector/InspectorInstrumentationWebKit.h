@@ -27,6 +27,7 @@
 
 #include "InspectorInstrumentationPublic.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -38,13 +39,13 @@ class WEBCORE_EXPORT InspectorInstrumentationWebKit {
 public:
     static bool shouldInterceptRequest(const Frame*, const ResourceRequest&);
     static bool shouldInterceptResponse(const Frame*, const ResourceResponse&);
-    static void interceptRequest(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
+    static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const Frame*, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
 private:
     static bool shouldInterceptRequestInternal(const Frame&, const ResourceRequest&);
     static bool shouldInterceptResponseInternal(const Frame&, const ResourceResponse&);
-    static void interceptRequestInternal(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
+    static void interceptRequestInternal(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponseInternal(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 };
 
@@ -66,7 +67,7 @@ inline bool InspectorInstrumentationWebKit::shouldInterceptResponse(const Frame*
     return shouldInterceptResponseInternal(*frame, response);
 }
 
-inline void InspectorInstrumentationWebKit::interceptRequest(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+inline void InspectorInstrumentationWebKit::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
     ASSERT(InspectorInstrumentationWebKit::shouldInterceptRequest(loader.frame(), loader.request()));
     interceptRequestInternal(loader, WTFMove(handler));
