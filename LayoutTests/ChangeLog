@@ -1,3 +1,23 @@
+2020-06-18  Geoffrey Garen  <ggaren@apple.com>
+
+        inspector/canvas/create-context-webgpu.html was a flaky failure after r262904
+        https://bugs.webkit.org/show_bug.cgi?id=213343
+
+        Reviewed by Darin Adler.
+
+        This test races a zero-delay GC timer against WebCore releasing its last
+        reference to a WebGPU canvas. Flaky!
+
+        Make GC deterministic by continually retrying GC until the Web
+        Inspector is notified that the canvas has been collected.
+
+        Also make sure to stop GC'ing afterwards. I'm not sure if this matters
+        or not, but it is good to prevent one test from changing behavior in
+        another.
+
+        * inspector/canvas/resources/create-context-utilities.js:
+        (destroyCanvases):
+
 2020-06-18  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r263098): [Win10] http/tests/security/cross-origin-clean-css-resource-timing.html and http/tests/security/cross-origin-css-resource-timing.html are failing

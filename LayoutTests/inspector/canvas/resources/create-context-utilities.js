@@ -22,6 +22,8 @@ function createCSSCanvas(contextType, canvasName) {
     window.contexts.push();
 }
 
+let destroyCanvasesInterval = null;
+
 function destroyCanvases() {
     for (let context of window.contexts) {
         if (!context)
@@ -36,7 +38,12 @@ function destroyCanvases() {
 
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
     // does not receive Canvas.canvasRemoved events.
-    setTimeout(() => { GCController.collect(); }, 0);
+    destroyCanvasesInterval = setInterval(() => { GCController.collect(); }, 0);
+}
+
+function stopDestroyingCanvases()
+{
+    clearInterval(destroyCanvasesInterval);
 }
 
 TestPage.registerInitializer(() => {
@@ -107,7 +114,7 @@ TestPage.registerInitializer(() => {
                         return;
                     }
 
-                    let promise = awaitCanvasRemoved(canvas.identifier);
+                    let promise = awaitCanvasRemoved(canvas.identifier).then(() => { InspectorTest.evaluateInPage(`stopDestroyingCanvases()`); });
                     InspectorTest.evaluateInPage(`destroyCanvases()`);
                     return promise;
                 })
