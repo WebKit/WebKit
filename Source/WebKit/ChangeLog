@@ -1,3 +1,10 @@
+2020-06-18  Yuri Chornoivan  <yurchor@ukr.net>
+
+        Unreviewed. Fix a typo introduced in r263085
+
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkit_website_data_manager_class_init):
+
 2020-06-17  Chris Dumez  <cdumez@apple.com>
 
         Add experimental feature flag for modern & unprefixed WebAudio API

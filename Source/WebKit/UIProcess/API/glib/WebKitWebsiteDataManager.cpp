@@ -382,7 +382,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_ITP_DIRECTORY,
         g_param_spec_string(
             "itp-directory",
-            _("ITP Direcory"),
+            _("ITP Directory"),
             _("The directory where Intelligent Tracking Prevention data will be stored"),
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
