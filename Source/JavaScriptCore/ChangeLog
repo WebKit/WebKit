@@ -1,5 +1,17 @@
 2020-06-18  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed, address Darin's feedback on r263227.
+
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::UNumberFormatDeleter::operator() const):
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        (JSC::IntlRelativeTimeFormat::formatToParts const):
+        * runtime/IntlRelativeTimeFormat.h:
+        Keep ownership over our UNumberFormat instance after all,
+        to avoid relying on behavior ICU isn't explicitly guaranteeing.
+
+2020-06-18  Ross Kirsling  <ross.kirsling@sony.com>
+
         [Intl] Enable RelativeTimeFormat and Locale by default
         https://bugs.webkit.org/show_bug.cgi?id=213324
 

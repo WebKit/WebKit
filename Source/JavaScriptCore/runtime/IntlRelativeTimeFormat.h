@@ -69,9 +69,12 @@ private:
     struct URelativeDateTimeFormatterDeleter {
         void operator()(URelativeDateTimeFormatter*) const;
     };
+    struct UNumberFormatDeleter {
+        void operator()(UNumberFormat*) const;
+    };
 
     std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter> m_relativeDateTimeFormatter;
-    UNumberFormat* m_rawNumberFormat;
+    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
 
     String m_locale;
     String m_numberingSystem;
