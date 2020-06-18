@@ -36,19 +36,22 @@ namespace WebCore {
 struct FileChooserFileInfo;
 class FileList;
 
-class FileListCreator : public ThreadSafeRefCounted<FileListCreator> {
+class DirectoryFileListCreator : public ThreadSafeRefCounted<DirectoryFileListCreator> {
 public:
     using CompletionHandler = Function<void(Ref<FileList>&&)>;
 
-    enum class ShouldResolveDirectories { No, Yes };
-    static RefPtr<FileListCreator> create(const Vector<FileChooserFileInfo>&, ShouldResolveDirectories, CompletionHandler&&);
+    static Ref<DirectoryFileListCreator> create(CompletionHandler&& completionHandler)
+    {
+        return adoptRef(*new DirectoryFileListCreator(WTFMove(completionHandler)));
+    }
 
-    ~FileListCreator();
+    ~DirectoryFileListCreator();
 
+    void start(const Vector<FileChooserFileInfo>&);
     void cancel();
 
 private:
-    FileListCreator(const Vector<FileChooserFileInfo>&, CompletionHandler&&);
+    explicit DirectoryFileListCreator(CompletionHandler&&);
 
     RefPtr<WorkQueue> m_workQueue;
     CompletionHandler m_completionHandler;

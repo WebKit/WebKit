@@ -24,12 +24,12 @@
 
 #include "Chrome.h"
 #include "DOMFormData.h"
+#include "DirectoryFileListCreator.h"
 #include "DragData.h"
 #include "ElementChildIterator.h"
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
-#include "FileListCreator.h"
 #include "FormController.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
@@ -409,19 +409,36 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     if (!displayString.isEmpty())
         m_displayString = displayString;
 
-    if (m_fileListCreator)
-        m_fileListCreator->cancel();
+    if (m_directoryFileListCreator)
+        m_directoryFileListCreator->cancel();
 
-    auto shouldResolveDirectories = allowsDirectories() ? FileListCreator::ShouldResolveDirectories::Yes : FileListCreator::ShouldResolveDirectories::No;
-    m_fileListCreator = FileListCreator::create(paths, shouldResolveDirectories, [this, weakThis = makeWeakPtr(*this), icon = makeRefPtr(icon)](Ref<FileList>&& fileList) mutable {
-        auto protectedThis = makeRefPtr(weakThis.get());
-        if (!protectedThis)
+    if (!allowsDirectories()) {
+        auto files = paths.map([](auto& fileInfo) {
+            return File::create(fileInfo.path, fileInfo.displayName);
+        });
+        didCreateFileList(FileList::create(WTFMove(files)), icon);
+        return;
+    }
+
+    m_directoryFileListCreator = DirectoryFileListCreator::create([this, weakThis = makeWeakPtr(*this), icon = makeRefPtr(icon)](Ref<FileList>&& fileList) mutable {
+        ASSERT(isMainThread());
+        if (!weakThis)
             return;
-        setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No);
-        if (icon && !m_fileList->isEmpty() && element())
-            iconLoaded(WTFMove(icon));
-        m_fileListCreator = nullptr;
+        didCreateFileList(WTFMove(fileList), WTFMove(icon));
     });
+    m_directoryFileListCreator->start(paths);
+}
+
+void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& icon)
+{
+    auto protectedThis = makeRef(*this);
+
+    ASSERT(!allowsDirectories() || m_directoryFileListCreator);
+    m_directoryFileListCreator = nullptr;
+
+    setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No);
+    if (icon && !m_fileList->isEmpty() && element())
+        iconLoaded(WTFMove(icon));
 }
 
 String FileInputType::displayString() const
