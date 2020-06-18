@@ -1,3 +1,18 @@
+2020-06-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Available space computation for the float avoider needs coordinate mapping
+        https://bugs.webkit.org/show_bug.cgi?id=213339
+
+        Reviewed by Antti Koivisto.
+
+        The FloatConstraints position values are in formatting root coordinates but the available space
+        requires containing block coordinates.
+
+        Test: fast/layoutformattingcontext/float-avoider-available-horizontal-space.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider):
+
 2020-06-18  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix for errors with structured bindings to const structure

@@ -1,3 +1,13 @@
+2020-06-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Available space computation for the float avoider needs coordinate mapping
+        https://bugs.webkit.org/show_bug.cgi?id=213339
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-avoider-available-horizontal-space-expected.html: Added.
+        * fast/layoutformattingcontext/float-avoider-available-horizontal-space.html: Added.
+
 2020-06-18  Geoffrey Garen  <ggaren@apple.com>
 
         inspector/canvas/create-context-webgpu.html was a flaky failure after r262904

@@ -177,28 +177,37 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     // Vertical static position is not computed yet for this formatting context root, so let's just pre-compute it for now.
     precomputeVerticalPositionForBoxAndAncestors(layoutBox, constraintsPair);
 
-    auto mapLogicalTopToFormattingContextRoot = [&] {
-        auto& formattingContextRoot = root();
-        ASSERT(layoutBox.isInFormattingContextOf(formattingContextRoot));
-        auto top = geometryForBox(layoutBox).top();
-        for (auto* ancestor = &layoutBox.containingBlock(); ancestor != &formattingContextRoot; ancestor = &ancestor->containingBlock())
+    auto logicalTopInFormattingContextRootCoordinate = [&] (auto& floatAvoider) {
+        auto top = geometryForBox(floatAvoider).top();
+        for (auto* ancestor = &floatAvoider.containingBlock(); ancestor != &root(); ancestor = &ancestor->containingBlock())
             top += geometryForBox(*ancestor).top();
         return top;
     };
 
-    auto verticalPosition = mapLogicalTopToFormattingContextRoot();
+    auto floatConstraintsInContainingBlockCoordinate = [&] (auto floatConstraints) {
+        if (!floatConstraints.left && !floatConstraints.right)
+            return FloatingContext::Constraints { };
+        auto offset = LayoutSize { };
+        for (auto* ancestor = &layoutBox.containingBlock(); ancestor != &root(); ancestor = &ancestor->containingBlock())
+            offset += toLayoutSize(geometryForBox(*ancestor).topLeft());
+        if (floatConstraints.left)
+            floatConstraints.left = PointInContextRoot { *floatConstraints.left - offset };
+        if (floatConstraints.right)
+            floatConstraints.right = PointInContextRoot { *floatConstraints.right - offset };
+        return floatConstraints;
+    };
+
     // FIXME: Check if the non-yet-computed height affects this computation - and whether we have to resolve it at a later point.
-    auto constraints = floatingContext.constraints(verticalPosition, verticalPosition);
+    auto logicalTop = logicalTopInFormattingContextRootCoordinate(layoutBox);
+    auto constraints = floatConstraintsInContainingBlockCoordinate(floatingContext.constraints(logicalTop, logicalTop));
     if (!constraints.left && !constraints.right)
         return { };
     // Shrink the available space if the floats are actually intruding at this vertical position.
     auto availableWidth = constraintsPair.containingBlock.horizontal.logicalWidth;
     if (constraints.left)
         availableWidth -= constraints.left->x;
-    if (constraints.right) {
-        // FIXME: Map the logicalRight to the root's coordinate system.
+    if (constraints.right)
         availableWidth -= std::max(0_lu, constraintsPair.containingBlock.horizontal.logicalRight() - constraints.right->x);
-    }
     return availableWidth;
 }
 
