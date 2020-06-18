@@ -1,3 +1,38 @@
+2020-06-17  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r258092): fast/forms/ios/file-upload-panel.html fails when HAVE(UICONTEXTMENU_LOCATION)
+        https://bugs.webkit.org/show_bug.cgi?id=213314
+        <rdar://problem/60339129>
+
+        Reviewed by Maciej Stachowiak.
+
+        fast/forms/ios/file-upload-panel.html sets the shouldHandleRunOpenPanel and
+        shouldPresentPopovers test options to false so that WKTR will (a) not register a
+        runOpenPanel UI delegate callback, causing WebKit to create a WKFileUploadPanel instead, and
+        (b) swizzle two UIKit view controller presentation methods to prevent the document picker
+        menu from being presented. The test merely wants the WKFileUploadPanel instance to exist in
+        order to query its available actions, not for it to show UI.
+
+        In r258092, WKFileUploadPanel now sometimes uses a UIContextMenuInteraction instance to
+        present the document picker menu, but -[UIContextMenuInteraction _presentMenuAtLocation:]
+        fails due to WKTR's above-mentioned swizzling. When this failure occurs,
+        UIContextMenuInteraction calls -contextMenuInteraction:willEndForConfiguration:animator: on
+        its delegate (the WKFileUploadPanel), which dismisses the open panel before the test has had
+        a chance to query the available actions.
+
+        Fixed this by swizzling -[UIContextMenuInteraction _presentMenuAtLocation:] when the
+        shouldPresentPopovers test option is false.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (overridePresentMenuOrPopoverOrViewController): Renamed from
+        overridePresentViewControllerOrPopover.
+        (WTR::TestController::platformResetStateToConsistentValues): Swizzled
+        -[UIContextMenuInteraction _presentMenuAtLocation:] with
+        overridePresentMenuOrPopoverOrViewController when the shouldPresentPopovers test option is
+        false.
+        (overridePresentViewControllerOrPopover): Renamed to
+        overridePresentMenuOrPopoverOrViewController.
+
 2020-06-17  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r263044): [macOS] TestWebKitAPI.TextManipulation.InsertingContentIntoAlreadyManipulatedContentCreatesTextManipulationItem is a flaky failure
