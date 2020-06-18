@@ -1,3 +1,26 @@
+2020-06-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: ASSERTION FAILED: decodedLength >= dataLength at WebCore::NetworkResourcesData::ResourceData::decodeDataToContent()
+        https://bugs.webkit.org/show_bug.cgi?id=213271
+        <rdar://problem/64168350>
+
+        Reviewed by Brian Burg.
+
+        Remove the invalid `ASSERT(decodedLength >= dataLength)` as it's very possible for decoded
+        content to be smaller than encoded content (e.g. something gzipped).
+
+        Use `String::sizeInBytes` instead of `StringImpl::sizeInBytes` as the latter also includes
+        `sizeof(*this)`, which is not really part of the resource's size, as it's really more of an
+        implementation detail.
+
+        * inspector/NetworkResourcesData.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::removeContent):
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::contentSizeInBytes): Deleted.
+
 2020-06-18  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Fix a log message typo in PaymentCoordinator::didAuthorizePayment
