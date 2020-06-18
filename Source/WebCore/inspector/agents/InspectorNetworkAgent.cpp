@@ -1186,10 +1186,10 @@ void InspectorNetworkAgent::interceptWithRequest(ErrorString& errorString, const
         request.setHTTPMethod(*method);
     if (headers) {
         HTTPHeaderMap explicitHeaders;
-        for (auto& [key, value] : *headers) {
+        for (auto& header : *headers) {
             String headerValue;
-            if (value->asString(headerValue))
-                explicitHeaders.add(key, headerValue);
+            if (header.value->asString(headerValue))
+                explicitHeaders.add(header.key, headerValue);
         }
         request.setHTTPHeaderFields(WTFMove(explicitHeaders));
     }
@@ -1283,10 +1283,10 @@ void InspectorNetworkAgent::interceptRequestWithResponse(ErrorString& errorStrin
     response.setHTTPStatusCode(status);
     response.setHTTPStatusText(statusText);
     HTTPHeaderMap explicitHeaders;
-    for (auto& [key, value] : headers) {
+    for (auto& header : headers) {
         String headerValue;
-        if (value->asString(headerValue))
-            explicitHeaders.add(key, headerValue);
+        if (header.value->asString(headerValue))
+            explicitHeaders.add(header.key, headerValue);
     }
     response.setHTTPHeaderFields(WTFMove(explicitHeaders));
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, response.mimeType());

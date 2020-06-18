@@ -1,3 +1,17 @@
+2020-06-18  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Build fix for errors with structured bindings to const structure
+        https://bugs.webkit.org/show_bug.cgi?id=213323
+
+        Reviewed by Fujii Hironori.
+
+        Our system seems to have trouble with these structured bindings,
+        similar to what was previously seen for clang-cl.
+
+        No new tests, build fix.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+
 2020-06-18  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r263098): [Win10] http/tests/security/cross-origin-clean-css-resource-timing.html and http/tests/security/cross-origin-css-resource-timing.html are failing
