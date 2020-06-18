@@ -1,3 +1,13 @@
+2020-06-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Intl] Enable RelativeTimeFormat and Locale by default
+        https://bugs.webkit.org/show_bug.cgi?id=213324
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+        Remove feature flags.
+
 2020-06-18  Andy Estes  <aestes@apple.com>
 
         Unreviewed build fix after r263194

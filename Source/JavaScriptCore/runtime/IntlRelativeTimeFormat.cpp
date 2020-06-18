@@ -46,12 +46,6 @@ void IntlRelativeTimeFormat::URelativeDateTimeFormatterDeleter::operator()(URela
         ureldatefmt_close(relativeDateTimeFormatter);
 }
 
-void IntlRelativeTimeFormat::UNumberFormatDeleter::operator()(UNumberFormat* numberFormat) const
-{
-    if (numberFormat)
-        unum_close(numberFormat);
-}
-
 IntlRelativeTimeFormat* IntlRelativeTimeFormat::create(VM& vm, Structure* structure)
 {
     auto* format = new (NotNull, allocateCell<IntlRelativeTimeFormat>(vm.heap)) IntlRelativeTimeFormat(vm, structure);
@@ -149,14 +143,15 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     m_numeric = (numeric == "always");
 
     UErrorCode status = U_ZERO_ERROR;
-    m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(UNUM_DECIMAL, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status));
+    m_rawNumberFormat = unum_open(UNUM_DECIMAL, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status);
     if (UNLIKELY(U_FAILURE(status))) {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
     }
 
-    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), m_numberFormat.get(), m_style, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
+    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), m_rawNumberFormat, m_style, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
     if (UNLIKELY(U_FAILURE(status))) {
+        unum_close(m_rawNumberFormat);
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
     }
@@ -282,7 +277,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     double absValue = std::abs(value);
 
     Vector<UChar, 32> buffer;
-    status = callBufferProducingFunction(unum_formatDoubleForFields, m_numberFormat.get(), absValue, buffer, iterator.get());
+    status = callBufferProducingFunction(unum_formatDoubleForFields, m_rawNumberFormat, absValue, buffer, iterator.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format relative time"_s);
 

@@ -2,8 +2,6 @@
 ---
 flags:
   BigInt: useBigInt
-  Intl.Locale: useIntlLocale
-  Intl.RelativeTimeFormat: useIntlRelativeTimeFormat
   WeakRef: useWeakRefs
   class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields

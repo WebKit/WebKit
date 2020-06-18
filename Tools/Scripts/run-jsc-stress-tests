@@ -731,14 +731,6 @@ def runBigIntEnabledBaseline(*optionalTestSpecificOptions)
     run("big-int-enabled-baseline", "--useBigInt=true", "--useDFGJIT=0", *optionalTestSpecificOptions)
 end
 
-def runIntlLocaleEnabled(*optionalTestSpecificOptions)
-    run("intl-locale-enabled", "--useIntlLocale=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runIntlRelativeTimeFormatEnabled(*optionalTestSpecificOptions)
-    run("intl-relativetimeformat-enabled", "--useIntlRelativeTimeFormat=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
-end
-
 def runFTLNoCJIT(*optionalTestSpecificOptions)
     run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end

@@ -1,5 +1,3 @@
-//@ runIntlLocaleEnabled("--useIntlRelativeTimeFormat=true")
-
 const tag = 'ja-Hant-KR-u-ca-buddhist-co-eor-hc-h11-kf-lower-kn-false-nu-thai';
 const locale = new Intl.Locale(tag);
 
