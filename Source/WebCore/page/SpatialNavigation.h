@@ -143,4 +143,4 @@ LayoutRect virtualRectForDirection(FocusDirection, const LayoutRect& startingRec
 LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement*, FocusDirection);
 HTMLFrameOwnerElement* frameOwnerElement(FocusCandidate&);
 
-} // namspace WebCore
+} // namespace WebCore

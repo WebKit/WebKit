@@ -1,5 +1,12 @@
 2020-06-18  David Kilzer  <ddkilzer@apple.com>
 
+        Fix misspellings of "namespace" in comments
+
+        * page/SpatialNavigation.h:
+        * platform/gtk/RenderThemeScrollbar.cpp:
+
+2020-06-18  David Kilzer  <ddkilzer@apple.com>
+
         [IPC hardening] OptionSet<> values should be validated
         <https://webkit.org/b/213199>
         <rdar://problem/64369963>

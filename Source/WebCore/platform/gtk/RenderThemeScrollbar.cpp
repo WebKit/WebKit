@@ -133,6 +133,6 @@ RenderThemeGadget* RenderThemeScrollbar::stepper(RenderThemeScrollbarGadget::Ste
     return nullptr;
 }
 
-} // namepsace WebCore
+} // namespace WebCore
 
 #endif // !USE(GTK4)
