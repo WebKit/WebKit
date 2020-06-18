@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,3 +58,22 @@ enum class ActivityStateForCPUSampling {
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<ActivityState::Flag>);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ActivityState::Flag> {
+    using values = EnumValues<
+        WebCore::ActivityState::Flag,
+        WebCore::ActivityState::Flag::WindowIsActive,
+        WebCore::ActivityState::Flag::IsFocused,
+        WebCore::ActivityState::Flag::IsVisible,
+        WebCore::ActivityState::Flag::IsVisibleOrOccluded,
+        WebCore::ActivityState::Flag::IsInWindow,
+        WebCore::ActivityState::Flag::IsVisuallyIdle,
+        WebCore::ActivityState::Flag::IsAudible,
+        WebCore::ActivityState::Flag::IsLoading,
+        WebCore::ActivityState::Flag::IsCapturingMedia
+    >;
+};
+
+} // namespace WTF

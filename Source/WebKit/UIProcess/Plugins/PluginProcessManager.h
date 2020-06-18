@@ -47,7 +47,7 @@ namespace WebKit {
 class PluginInfoStore;
 class PluginProcessProxy;
 class WebProcessProxy;
-enum class WebsiteDataFetchOption;
+enum class WebsiteDataFetchOption : uint8_t;
 
 class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);

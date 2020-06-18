@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum class WebsiteDataType {
+enum class WebsiteDataType : uint32_t {
     Cookies = 1 << 0,
     DiskCache = 1 << 1,
     MemoryCache = 1 << 2,

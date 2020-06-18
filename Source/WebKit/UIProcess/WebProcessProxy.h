@@ -94,7 +94,7 @@ class WebPageProxy;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
-enum class WebsiteDataType;
+enum class WebsiteDataType : uint32_t;
 struct BackForwardListItemState;
 struct UserMessage;
 struct WebNavigationDataStore;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,3 +41,17 @@ enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t {
 };
 
 } // namespace IPC
+
+namespace WTF {
+
+template<> struct EnumTraits<IPC::MessageFlags> {
+    using values = EnumValues<
+        IPC::MessageFlags,
+        IPC::MessageFlags::SyncMessage,
+        IPC::MessageFlags::DispatchMessageWhenWaitingForSyncReply,
+        IPC::MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply,
+        IPC::MessageFlags::UseFullySynchronousModeForTesting
+    >;
+};
+
+} // namespace WTF

@@ -1,3 +1,40 @@
+2020-06-18  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] OptionSet<> values should be validated
+        <https://webkit.org/b/213199>
+        <rdar://problem/64369963>
+
+        Reviewed by Anders Carlsson.
+
+        Summary:
+        - Add WTF::EnumTraits<> for all OptionSet<> enums.
+        - Specify unsigned backing types for enum classes.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSession.h:
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<OptionSet<T>>::encode):
+        (IPC::ArgumentCoder<OptionSet<T>>::decode):
+        - Add WTF::isValidOptionSet() checks.
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.h:
+        - Replace <wtf/EnumTraits.h> with <wtf/OptionSet.h> since the
+          latter now includes the former.
+        * Platform/IPC/MessageFlags.h:
+        * Shared/DocumentEditingContext.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/WebEvent.h:
+        * Shared/WebsiteAutoplayQuirk.h:
+        * Shared/WebsiteData/WebsiteData.h:
+        * Shared/WebsiteData/WebsiteDataFetchOption.h:
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * Shared/ios/GestureTypes.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebProcess.h:
+
 2020-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to configure and handle service worker registrations to WebKitWebsiteDataManager

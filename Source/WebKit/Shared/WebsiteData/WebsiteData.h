@@ -38,7 +38,7 @@ class Encoder;
 
 namespace WebKit {
 
-enum class WebsiteDataType;
+enum class WebsiteDataType : uint32_t;
 
 enum class WebsiteDataProcessType { Network, UI, Web };
 

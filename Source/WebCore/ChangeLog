@@ -1,3 +1,24 @@
+2020-06-18  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] OptionSet<> values should be validated
+        <https://webkit.org/b/213199>
+        <rdar://problem/64369963>
+
+        Reviewed by Anders Carlsson.
+
+        Summary:
+        - Add WTF::EnumTraits<> for all OptionSet<> enums.
+        - Specify unsigned backing types for enum classes.
+
+        * loader/CrossOriginAccessControl.h:
+        * page/ActivityState.h:
+        * page/AutoplayEvent.h:
+        * page/CrossSiteNavigationDataTransfer.h:
+        * page/LayoutMilestone.h:
+        * page/TextIndicator.h:
+        * platform/PlatformEvent.h:
+        * platform/graphics/GraphicsContext.h:
+
 2020-06-17  Clark Wang  <clark_wang@apple.com>
 
         Added missing orientation attributes to PannerNode

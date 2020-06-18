@@ -60,7 +60,7 @@ class WebResourceLoadStatisticsStore;
 class WebSocketTask;
 struct NetworkSessionCreationParameters;
 
-enum class WebsiteDataType;
+enum class WebsiteDataType : uint32_t;
 
 namespace NetworkCache {
 class Cache;

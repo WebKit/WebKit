@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,23 @@ enum class AutoplayEvent : uint8_t {
     UserDidInterfereWithPlayback,
 };
 
-enum class AutoplayEventFlags {
+enum class AutoplayEventFlags : uint8_t {
     HasAudio = 1 << 0,
     PlaybackWasPrevented = 1 << 1,
     MediaIsMainContent = 1 << 2,
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::AutoplayEventFlags> {
+    using values = EnumValues<
+        WebCore::AutoplayEventFlags,
+        WebCore::AutoplayEventFlags::HasAudio,
+        WebCore::AutoplayEventFlags::PlaybackWasPrevented,
+        WebCore::AutoplayEventFlags::MediaIsMainContent
+    >;
+};
+
+} // namespace WTF

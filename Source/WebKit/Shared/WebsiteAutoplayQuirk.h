@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebKit {
 
-enum class WebsiteAutoplayQuirk {
+enum class WebsiteAutoplayQuirk : uint8_t {
     SynthesizedPauseEvents = 1 << 0,
     InheritedUserGestures = 1 << 1,
     ArbitraryUserGestures = 1 << 2,
@@ -35,3 +37,17 @@ enum class WebsiteAutoplayQuirk {
 };
 
 }
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebsiteAutoplayQuirk> {
+    using values = EnumValues<
+        WebKit::WebsiteAutoplayQuirk,
+        WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents,
+        WebKit::WebsiteAutoplayQuirk::InheritedUserGestures,
+        WebKit::WebsiteAutoplayQuirk::ArbitraryUserGestures,
+        WebKit::WebsiteAutoplayQuirk::PerDocumentAutoplayBehavior
+    >;
+};
+
+} // namespace WTF

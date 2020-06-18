@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,21 @@
 
 namespace WebKit {
 
-enum class WebsiteDataFetchOption {
+enum class WebsiteDataFetchOption : uint8_t {
     ComputeSizes = 1 << 0,
     DoNotCreateProcesses = 1 << 1,
 };
 
-}
+} // namespace WebKit
 
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebsiteDataFetchOption> {
+    using values = EnumValues<
+        WebKit::WebsiteDataFetchOption,
+        WebKit::WebsiteDataFetchOption::ComputeSizes,
+        WebKit::WebsiteDataFetchOption::DoNotCreateProcesses
+    >;
+};
+
+} // namespace WTF

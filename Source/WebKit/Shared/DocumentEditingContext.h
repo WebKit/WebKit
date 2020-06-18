@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,4 +108,20 @@ template<> struct ArgumentCoder<WebKit::DocumentEditingContextRequest> {
 };
 }
 
-#endif
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::DocumentEditingContextRequest::Options> {
+    using values = EnumValues<
+        WebKit::DocumentEditingContextRequest::Options,
+        WebKit::DocumentEditingContextRequest::Options::Text,
+        WebKit::DocumentEditingContextRequest::Options::AttributedText,
+        WebKit::DocumentEditingContextRequest::Options::Rects,
+        WebKit::DocumentEditingContextRequest::Options::Spatial,
+        WebKit::DocumentEditingContextRequest::Options::Annotation,
+        WebKit::DocumentEditingContextRequest::Options::MarkedTextRects
+    >;
+};
+
+} // namespace WTF
+
+#endif // PLATFORM(IOS_FAMILY)

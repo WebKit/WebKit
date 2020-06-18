@@ -30,7 +30,7 @@
 #include "MessageNames.h"
 #include "StringReference.h"
 #include <WebCore/ContextMenuItem.h>
-#include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 namespace IPC {

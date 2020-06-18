@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,4 +38,16 @@ struct CrossSiteNavigationDataTransfer {
 };
 
 } // namespace WebCore
-#endif
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CrossSiteNavigationDataTransfer::Flag> {
+    using values = EnumValues<
+        WebCore::CrossSiteNavigationDataTransfer::Flag,
+        WebCore::CrossSiteNavigationDataTransfer::Flag::DestinationLinkDecoration,
+        WebCore::CrossSiteNavigationDataTransfer::Flag::ReferrerLinkDecoration
+    >;
+};
+
+} // namespace WTF
+#endif // ENABLE(RESOURCE_LOAD_STATISTICS)

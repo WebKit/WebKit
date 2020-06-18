@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,3 +134,19 @@ protected:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlatformEvent::Modifier> {
+    using values = EnumValues<
+        WebCore::PlatformEvent::Modifier,
+        WebCore::PlatformEvent::Modifier::AltKey,
+        WebCore::PlatformEvent::Modifier::ControlKey,
+        WebCore::PlatformEvent::Modifier::MetaKey,
+        WebCore::PlatformEvent::Modifier::ShiftKey,
+        WebCore::PlatformEvent::Modifier::CapsLockKey,
+        WebCore::PlatformEvent::Modifier::AltGraphKey
+    >;
+};
+
+} // namespace WTF

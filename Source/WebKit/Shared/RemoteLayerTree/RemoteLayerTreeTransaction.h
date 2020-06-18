@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -325,3 +325,51 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::RemoteLayerTreeTransaction::LayerChange> {
+    using values = EnumValues<
+        WebKit::RemoteLayerTreeTransaction::LayerChange,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::NameChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ChildrenChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::PositionChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BoundsChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BackgroundColorChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::AnchorPointChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BorderWidthChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BorderColorChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::OpacityChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::TransformChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::SublayerTransformChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::HiddenChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::GeometryFlippedChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::DoubleSidedChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::MasksToBoundsChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::OpaqueChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ContentsHiddenChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::MaskLayerChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ClonedContentsChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ContentsRectChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ContentsScaleChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::CornerRadiusChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ShapeRoundedRectChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ShapePathChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::MinificationFilterChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::MagnificationFilterChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BlendModeChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::WindRuleChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::SpeedChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::TimeOffsetChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BackingStoreChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::BackingStoreAttachmentChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::FiltersChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::AnimationsChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::EdgeAntialiasingMaskChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::CustomAppearanceChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::UserInteractionEnabledChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::EventRegionChanged
+    >;
+};
+
+} // namespace WTF

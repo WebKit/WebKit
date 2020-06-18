@@ -1,3 +1,14 @@
+2020-06-18  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] OptionSet<> values should be validated
+        <https://webkit.org/b/213199>
+        <rdar://problem/64369963>
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/OptionSet.h:
+        (WTF::isValidOptionSet): Add.
+
 2020-06-17  Mark Lam  <mark.lam@apple.com>
 
         Replace JSC::FreeList linked list with a Bitmap.

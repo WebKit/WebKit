@@ -32,6 +32,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/OptionSet.h>
 #include <wtf/SHA1.h>
 #include <wtf/Unexpected.h>
 #include <wtf/Variant.h>
@@ -55,6 +56,7 @@ template<typename T> struct SimpleArgumentCoder {
 template<typename T> struct ArgumentCoder<OptionSet<T>> {
     static void encode(Encoder& encoder, const OptionSet<T>& optionSet)
     {
+        ASSERT(WTF::isValidOptionSet(optionSet));
         encoder << optionSet.toRaw();
     }
 
@@ -63,8 +65,9 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
         typename OptionSet<T>::StorageType value;
         if (!decoder.decode(value))
             return false;
-
         optionSet = OptionSet<T>::fromRaw(value);
+        if (!WTF::isValidOptionSet(optionSet))
+            return false;
         return true;
     }
 
@@ -74,7 +77,10 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
         decoder >> value;
         if (!value)
             return WTF::nullopt;
-        return OptionSet<T>::fromRaw(*value);
+        auto optionSet = OptionSet<T>::fromRaw(*value);
+        if (!WTF::isValidOptionSet(optionSet))
+            return WTF::nullopt;
+        return optionSet;
     }
 };
 

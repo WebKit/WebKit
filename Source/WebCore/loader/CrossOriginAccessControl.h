@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const Resourc
 enum class SameOriginFlag { No, Yes };
 CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, ResourceLoaderOptions&&, Document&, const String& crossOriginAttribute, SameOriginFlag = SameOriginFlag::No);
 
-enum class HTTPHeadersToKeepFromCleaning {
+enum class HTTPHeadersToKeepFromCleaning : uint8_t {
     ContentType = 1 << 0,
     Referer = 1 << 1,
     Origin = 1 << 2,
@@ -85,3 +85,18 @@ Optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const
 String validateCrossOriginRedirectionURL(const URL&);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::HTTPHeadersToKeepFromCleaning> {
+    using values = EnumValues<
+        WebCore::HTTPHeadersToKeepFromCleaning,
+        WebCore::HTTPHeadersToKeepFromCleaning::ContentType,
+        WebCore::HTTPHeadersToKeepFromCleaning::Referer,
+        WebCore::HTTPHeadersToKeepFromCleaning::Origin,
+        WebCore::HTTPHeadersToKeepFromCleaning::UserAgent,
+        WebCore::HTTPHeadersToKeepFromCleaning::AcceptEncoding
+    >;
+};
+
+} // namespace WTF

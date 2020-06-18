@@ -125,7 +125,7 @@ struct UserMessage;
 struct WebProcessCreationParameters;
 struct WebProcessDataStoreParameters;
 class WebProcessSupplement;
-enum class WebsiteDataType;
+enum class WebsiteDataType : uint32_t;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;

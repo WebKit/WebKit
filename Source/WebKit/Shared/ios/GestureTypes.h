@@ -83,6 +83,18 @@ enum class RespectSelectionAnchor : bool {
 
 namespace WTF {
 
+template<> struct EnumTraits<WebKit::GestureRecognizerState> {
+    using values = EnumValues<
+        WebKit::GestureRecognizerState,
+        WebKit::GestureRecognizerState::Possible,
+        WebKit::GestureRecognizerState::Began,
+        WebKit::GestureRecognizerState::Changed,
+        WebKit::GestureRecognizerState::Ended,
+        WebKit::GestureRecognizerState::Cancelled,
+        WebKit::GestureRecognizerState::Failed
+    >;
+};
+
 template<> struct EnumTraits<WebKit::GestureType> {
     using values = EnumValues<
         WebKit::GestureType,
@@ -103,6 +115,14 @@ template<> struct EnumTraits<WebKit::GestureType> {
     >;
 };
 
+template<> struct EnumTraits<WebKit::SelectionFlags> {
+    using values = EnumValues<
+        WebKit::SelectionFlags,
+        WebKit::SelectionFlags::WordIsNearTap,
+        WebKit::SelectionFlags::PhraseBoundaryChanged
+    >;
+};
+
 template<> struct EnumTraits<WebKit::SelectionTouch> {
     using values = EnumValues<
         WebKit::SelectionTouch,
@@ -112,19 +132,6 @@ template<> struct EnumTraits<WebKit::SelectionTouch> {
         WebKit::SelectionTouch::EndedMovingForward,
         WebKit::SelectionTouch::EndedMovingBackward,
         WebKit::SelectionTouch::EndedNotMoving
-    >;
-};
-
-
-template<> struct EnumTraits<WebKit::GestureRecognizerState> {
-    using values = EnumValues<
-        WebKit::GestureRecognizerState,
-        WebKit::GestureRecognizerState::Possible,
-        WebKit::GestureRecognizerState::Began,
-        WebKit::GestureRecognizerState::Changed,
-        WebKit::GestureRecognizerState::Ended,
-        WebKit::GestureRecognizerState::Cancelled,
-        WebKit::GestureRecognizerState::Failed
     >;
 };
 

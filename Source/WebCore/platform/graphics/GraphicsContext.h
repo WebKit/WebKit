@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -771,6 +771,35 @@ template<> struct EnumTraits<WebCore::DocumentMarkerLineStyle::Mode> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::GraphicsContextState::Change> {
+    using values = EnumValues<
+        WebCore::GraphicsContextState::Change,
+        WebCore::GraphicsContextState::Change::StrokeGradientChange,
+        WebCore::GraphicsContextState::Change::StrokePatternChange,
+        WebCore::GraphicsContextState::Change::FillGradientChange,
+        WebCore::GraphicsContextState::Change::FillPatternChange,
+        WebCore::GraphicsContextState::Change::StrokeThicknessChange,
+        WebCore::GraphicsContextState::Change::StrokeColorChange,
+        WebCore::GraphicsContextState::Change::StrokeStyleChange,
+        WebCore::GraphicsContextState::Change::FillColorChange,
+        WebCore::GraphicsContextState::Change::FillRuleChange,
+        WebCore::GraphicsContextState::Change::ShadowChange,
+        WebCore::GraphicsContextState::Change::ShadowsIgnoreTransformsChange,
+        WebCore::GraphicsContextState::Change::AlphaChange,
+        WebCore::GraphicsContextState::Change::CompositeOperationChange,
+        WebCore::GraphicsContextState::Change::BlendModeChange,
+        WebCore::GraphicsContextState::Change::TextDrawingModeChange,
+        WebCore::GraphicsContextState::Change::ShouldAntialiasChange,
+        WebCore::GraphicsContextState::Change::ShouldSmoothFontsChange,
+        WebCore::GraphicsContextState::Change::ShouldSubpixelQuantizeFontsChange,
+        WebCore::GraphicsContextState::Change::DrawLuminanceMaskChange,
+        WebCore::GraphicsContextState::Change::ImageInterpolationQualityChange
+#if HAVE(OS_DARK_MODE_SUPPORT)
+        , WebCore::GraphicsContextState::Change::UseDarkAppearanceChange
+#endif
+    >;
+};
+
 template<> struct EnumTraits<WebCore::StrokeStyle> {
     using values = EnumValues<
     WebCore::StrokeStyle,
@@ -780,6 +809,17 @@ template<> struct EnumTraits<WebCore::StrokeStyle> {
     WebCore::StrokeStyle::DashedStroke,
     WebCore::StrokeStyle::DoubleStroke,
     WebCore::StrokeStyle::WavyStroke
+    >;
+};
+
+template<> struct EnumTraits<WebCore::TextDrawingMode> {
+    using values = EnumValues<
+        WebCore::TextDrawingMode,
+        WebCore::TextDrawingMode::Fill,
+        WebCore::TextDrawingMode::Stroke
+#if ENABLE(LETTERPRESS)
+        , WebCore::TextDrawingMode::Letterpress
+#endif
     >;
 };
 

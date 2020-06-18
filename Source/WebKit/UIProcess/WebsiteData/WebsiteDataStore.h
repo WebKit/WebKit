@@ -81,8 +81,8 @@ class WebProcessPool;
 class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
 enum class CacheModel : uint8_t;
-enum class WebsiteDataFetchOption;
-enum class WebsiteDataType;
+enum class WebsiteDataFetchOption : uint8_t;
+enum class WebsiteDataType : uint32_t;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 

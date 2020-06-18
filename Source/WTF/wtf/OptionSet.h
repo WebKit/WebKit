@@ -250,6 +250,13 @@ private:
     StorageType m_storage { 0 };
 };
 
+template<typename E>
+WARN_UNUSED_RETURN constexpr bool isValidOptionSet(OptionSet<E> optionSet)
+{
+    auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
+    return (optionSet.toRaw() | allValidBitsValue) == allValidBitsValue;
+}
+
 } // namespace WTF
 
 using WTF::OptionSet;
