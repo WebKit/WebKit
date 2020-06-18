@@ -1,3 +1,11 @@
+2020-06-18  Andy Estes  <aestes@apple.com>
+
+        Unreviewed build fix after r263194
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues): Guarded code that mentions
+        UIContextMenuInteraction with USE(UICONTEXTMENU).
+
 2020-06-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed infrastructure fix, temporarily remove ews116 due to hardware failure tracked with rdar://64424245

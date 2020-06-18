@@ -177,7 +177,9 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
     m_presentPopoverSwizzlers.clear();
     if (!options.shouldPresentPopovers) {
+#if USE(UICONTEXTMENU)
         m_presentPopoverSwizzlers.append(makeUnique<InstanceMethodSwizzler>([UIContextMenuInteraction class], @selector(_presentMenuAtLocation:), reinterpret_cast<IMP>(overridePresentMenuOrPopoverOrViewController)));
+#endif
         m_presentPopoverSwizzlers.append(makeUnique<InstanceMethodSwizzler>([UIPopoverController class], @selector(presentPopoverFromRect:inView:permittedArrowDirections:animated:), reinterpret_cast<IMP>(overridePresentMenuOrPopoverOrViewController)));
         m_presentPopoverSwizzlers.append(makeUnique<InstanceMethodSwizzler>([UIViewController class], @selector(presentViewController:animated:completion:), reinterpret_cast<IMP>(overridePresentMenuOrPopoverOrViewController)));
     }
