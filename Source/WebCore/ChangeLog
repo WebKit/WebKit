@@ -1,3 +1,33 @@
+2020-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Shift-tab in a bullet list in Mail Compose jumps back to Subject field
+        https://bugs.webkit.org/show_bug.cgi?id=213320
+        <rdar://problem/63831962>
+
+        Reviewed by Tim Horton.
+
+        After the changes in r262051, pressing shift-tab in a bulleted list in Mail compose on macOS no longer triggers
+        an outdent command. This is because the default behavior of the "keydown" event will now relinquish focus to the
+        embedding client (i.e. the "chrome"). In this case, Mail makes the Subject field above the compose web view the
+        first responder.
+
+        This is necessary on iOS, where Mail does not attempt to intercept shift+tab and move focus to the subject line.
+        However, Mail on macOS intercepts the keypress event, and either triggers outdent (if the selection is inside a
+        list or blockquote) or focuses the Subject line. Since focus is relinquished during "keydown", this logic no
+        longer runs, and hitting shift+tab in a list always relinquishes focus.
+
+        To address this, refactor the changes made in r262051 so that we treat the default behavior of the "keypress"
+        event (rather than "keydown") as relinquishing focus. See WebKit/ChangeLog for more details.
+
+        Test: WebKit.ShiftTabDoesNotTakeFocusFromEditableWebViewWhenPreventingKeyPress
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultTabEventHandler):
+
+        Remove a call to relinquish focus when handling tab.
+
+        * page/FocusController.h:
+
 2020-06-16  Antoine Quint  <graouts@webkit.org>
 
         quikr.com: unable to select item from dropdown

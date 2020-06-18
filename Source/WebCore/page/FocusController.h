@@ -78,7 +78,7 @@ public:
     void setFocusedElementNeedsRepaint();
     Seconds timeSinceFocusWasSet() const;
 
-    bool relinquishFocusToChrome(FocusDirection);
+    WEBCORE_EXPORT bool relinquishFocusToChrome(FocusDirection);
 
 private:
     void setActiveInternal(bool);

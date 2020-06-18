@@ -294,6 +294,9 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     if (platformEvent->type() != PlatformEvent::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation")
         return false;
 
+    if (handleKeyEventByRelinquishingFocusToChrome(event))
+        return true;
+
     bool eventWasHandled = false;
 
     // Are there commands that could just cause text insertion if executed via Editor?

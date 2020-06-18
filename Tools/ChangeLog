@@ -1,3 +1,16 @@
+2020-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Shift-tab in a bullet list in Mail Compose jumps back to Subject field
+        https://bugs.webkit.org/show_bug.cgi?id=213320
+        <rdar://problem/63831962>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that preventing the "keypress" event for shift+tab in an SPI-editable web view
+        causes us to avoid relinquishing focus.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+
 2020-06-17  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r258092): fast/forms/ios/file-upload-panel.html fails when HAVE(UICONTEXTMENU_LOCATION)

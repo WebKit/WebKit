@@ -863,6 +863,34 @@ TEST(WebKit, ShiftTabTakesFocusFromEditableWebView)
     ASSERT_EQ([delegate takenDirection], _WKFocusDirectionBackward);
 }
 
+TEST(WebKit, ShiftTabDoesNotTakeFocusFromEditableWebViewWhenPreventingKeyPress)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    auto delegate = adoptNS([[FocusDelegate alloc] init]);
+    [delegate setUseShiftTab:YES];
+    [webView setUIDelegate:delegate.get()];
+    NSString *markup = @"<script>"
+        "    function loaded() {"
+        "        document.body.focus();"
+        "        document.body.addEventListener('keypress', e => e.preventDefault());"
+        "        document.body.addEventListener('keyup', () => webkit.messageHandlers.testHandler.postMessage('keyup'));"
+        "        alert('ready');"
+        "    }"
+        "</script>"
+        "<body onload='loaded()'></body>";
+
+    __block bool handledKeyUp = false;
+    [webView performAfterReceivingMessage:@"keyup" action:^{
+        handledKeyUp = true;
+    }];
+    [webView synchronouslyLoadHTMLString:markup];
+
+    TestWebKitAPI::Util::run(&handledKeyUp);
+    EXPECT_FALSE(delegate->_done);
+}
+
 TEST(WebKit, TabDoesNotTakeFocusFromEditableWebView)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);

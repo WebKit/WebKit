@@ -1,3 +1,26 @@
+2020-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Shift-tab in a bullet list in Mail Compose jumps back to Subject field
+        https://bugs.webkit.org/show_bug.cgi?id=213320
+        <rdar://problem/63831962>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more detail.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleKeyEventByRelinquishingFocusToChrome):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
+        Hoist logic for relinquishing focus as a result of shift+tab from EventHandler to WebPage, so that it is the
+        default behavior when processing a "keypress" event that corresponds to shift+tab in an editable web view on
+        Cocoa platforms. If we do end up relinquishing focus, then we consider the keypress event to be handled.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
 2020-06-17  Beth Dakin  <bdakin@apple.com>
 
         Remove references to blacklist/whitelist in the old C API

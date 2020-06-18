@@ -1417,6 +1417,7 @@ private:
 #endif
 
     bool performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);
+    bool handleKeyEventByRelinquishingFocusToChrome(const WebCore::KeyboardEvent&);
 
 #if PLATFORM(MAC)
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
