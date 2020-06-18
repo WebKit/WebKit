@@ -1509,9 +1509,6 @@ test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-returns-throws.js:
 test/built-ins/TypedArray/prototype/map/speciesctor-get-species-custom-ctor-length-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/set/array-arg-primitive-toobject.js:
-  default: 'TypeError: First argument should be an object (Testing with Float64Array.)'
-  strict mode: 'TypeError: First argument should be an object (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-other-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'

@@ -1,3 +1,19 @@
+2020-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        TypedArray.prototype.set is incorrect with primitives
+        https://bugs.webkit.org/show_bug.cgi?id=212730
+
+        Reviewed by Yusuke Suzuki.
+
+        This change implements step 14 of %TypedArray%.prototype.set [1],
+        which coerces primitives to objects instead of throwing an error,
+        aligning JSC with V8 and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-%typedarray%.prototype.set-array-offset
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSet):
+
 2020-06-17  Mark Lam  <mark.lam@apple.com>
 
         Replace JSC::FreeList linked list with a Bitmap.

@@ -123,9 +123,8 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
     if (UNLIKELY(thisObject->isNeutered()))
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    JSObject* sourceArray = jsDynamicCast<JSObject*>(vm, callFrame->uncheckedArgument(0));
-    if (UNLIKELY(!sourceArray))
-        return throwVMTypeError(globalObject, scope, "First argument should be an object"_s);
+    JSObject* sourceArray = callFrame->uncheckedArgument(0).toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     unsigned length;
     if (isTypedView(sourceArray->classInfo(vm)->typedArrayStorageType)) {
