@@ -139,9 +139,9 @@ enum class PreflightPolicy : uint8_t {
 };
 static constexpr unsigned bitWidthOfPreflightPolicy = 2;
 
-enum class LoadedFromOpaqueSource : bool {
-    No,
-    Yes
+enum class LoadedFromOpaqueSource : uint8_t {
+    Yes,
+    No
 };
 static constexpr unsigned bitWidthOfLoadedFromOpaqueSource = 1;
 

@@ -4469,9 +4469,6 @@ webkit.org/b/209582 webanimations/css-transition-in-flight-reversal-accelerated.
 
 webkit.org/b/209601 animations/many-pseudo-animations.html [ Pass Failure ]
 
-webkit.org/b/213303 http/tests/security/cross-origin-clean-css-resource-timing.html [ Failure ]
-webkit.org/b/213303 http/tests/security/cross-origin-css-resource-timing.html [ Failure ]
-
 # IntersectionObserver is off by default
 http/tests/lazyload [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html [ Skip ]

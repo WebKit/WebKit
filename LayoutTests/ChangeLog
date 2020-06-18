@@ -1,3 +1,13 @@
+2020-06-18  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r263098): [Win10] http/tests/security/cross-origin-clean-css-resource-timing.html and http/tests/security/cross-origin-css-resource-timing.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=213303
+        <rdar://problem/64452203>
+
+        Reviewed by Alex Christensen.
+
+        * platform/win/TestExpectations:
+
 2020-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         TypedArray.prototype.set is incorrect with primitives
