@@ -58,7 +58,7 @@ if (platformSupportsSamplingProfiler() && $vm.isWasmSupported()) {
 
     const importObject = { env: { _silly: i => {
         var result = 0;
-        for (var i = 0; i < 100000; ++i)
+        for (var i = 0; i < 2000000; ++i)
             result++;
         return result;
     } } };

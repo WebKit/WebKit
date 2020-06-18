@@ -1,3 +1,16 @@
+2020-06-18  Saam Barati  <sbarati@apple.com>
+
+        sampling-profiler-wasm-name-section should run for more iterations
+        https://bugs.webkit.org/show_bug.cgi?id=207576
+        <rdar://problem/59431250>
+
+        Reviewed by Mark Lam.
+
+        This test was flaky because the sampling profiler is inherently probabilistic.
+        We need to run it for more iterations to ensure it's not flaky.
+
+        * stress/sampling-profiler-wasm-name-section.js:
+
 2020-06-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Intl] Enable RelativeTimeFormat and Locale by default
