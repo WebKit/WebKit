@@ -196,7 +196,7 @@ void PaymentCoordinator::didAuthorizePayment(const Payment& payment)
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("validateMerchant()");
+    RELEASE_LOG_IF_ALLOWED("didAuthorizePayment()");
     m_activeSession->didAuthorizePayment(payment);
 }
 

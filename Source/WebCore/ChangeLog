@@ -1,3 +1,12 @@
+2020-06-18  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Fix a log message typo in PaymentCoordinator::didAuthorizePayment
+
+        Rubber-stamped by Beth Dakin.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::didAuthorizePayment): Logged the correct function name.
+
 2020-06-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Available space computation for the float avoider needs coordinate mapping
