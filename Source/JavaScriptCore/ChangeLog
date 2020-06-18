@@ -1,3 +1,24 @@
+2020-06-17  Mark Lam  <mark.lam@apple.com>
+
+        StructureIDTable::validate() doesn't work when compiled with GCC.
+        https://bugs.webkit.org/show_bug.cgi?id=213302
+        <rdar://problem/64452172>
+
+        Reviewed by Yusuke Suzuki.
+
+        I was previously using ensureStillAliveHere() to force the validation load to
+        not be elided.  However, this is not how ensureStillAliveHere() works.  The proper
+        way to force the load is to use a volatile pointer instead, which is applied in
+        this patch.
+
+        With Clang, the ensureStillAliveHere() happened to do what I expected, but with
+        GCC it did not.  The compiler is at liberty to elide the load because there is
+        no memory clobbering operation between the load and the call to
+        ensureStillAliveHere().  Switching to using the volatile pointer solution.
+
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::validate):
+
 2020-06-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Freeze JSBigInt when setting it as a constant in AI

@@ -183,8 +183,7 @@ ALWAYS_INLINE void StructureIDTable::validate(StructureID structureID)
     uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
     Structure* structure = decode(table()[structureIndex].encodedStructureBits, structureID);
     RELEASE_ASSERT(structureIndex < m_capacity);
-    uint64_t value = *bitwise_cast<uint64_t*>(structure);
-    ensureStillAliveHere(value);
+    *bitwise_cast<volatile uint64_t*>(structure);
 }
 
 #else // not USE(JSVALUE64)
