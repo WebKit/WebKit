@@ -334,6 +334,14 @@ WebAudioEnabled:
   defaultValue: true
   condition: ENABLE(WEB_AUDIO)
 
+ModernUnprefixedWebAudioEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(WEB_AUDIO)
+  humanReadableName: "Modern WebAudio API"
+  humanReadableDescription: "Modern and unprefixed WebAudio API"
+  category: experimental
+
 AttachmentElementEnabled:
   type: bool
   defaultValue: false

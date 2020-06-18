@@ -25,7 +25,7 @@
 [
     Conditional=WEB_AUDIO,
 ] interface AudioNode : EventTarget {
-    readonly attribute AudioContext context;
+    [ImplementedAs=contextForBindings] readonly attribute (AudioContext or WebKitAudioContext) context;
     readonly attribute unsigned long numberOfInputs;
     readonly attribute unsigned long numberOfOutputs;
 

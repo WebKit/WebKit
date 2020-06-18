@@ -37,7 +37,7 @@ class AudioProcessor;
 class AudioBasicProcessorNode : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBasicProcessorNode);
 public:
-    AudioBasicProcessorNode(AudioContext&, float sampleRate);
+    AudioBasicProcessorNode(AudioContextBase&, float sampleRate);
 
     // AudioNode
     void process(size_t framesToProcess) override;

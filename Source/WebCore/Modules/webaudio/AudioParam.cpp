@@ -41,7 +41,7 @@ namespace WebCore {
 const double AudioParam::DefaultSmoothingConstant = 0.05;
 const double AudioParam::SnapThreshold = 0.001;
 
-AudioParam::AudioParam(AudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units)
+AudioParam::AudioParam(AudioContextBase& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units)
     : AudioSummingJunction(context)
     , m_name(name)
     , m_value(defaultValue)

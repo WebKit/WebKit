@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-class AudioContext;
+class AudioContextBase;
 class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode final : public AudioBasicInspectorNode {
     WTF_MAKE_ISO_ALLOCATED(MediaStreamAudioDestinationNode);
 public:
-    static Ref<MediaStreamAudioDestinationNode> create(AudioContext&, size_t numberOfChannels);
+    static Ref<MediaStreamAudioDestinationNode> create(AudioContextBase&, size_t numberOfChannels);
 
     virtual ~MediaStreamAudioDestinationNode();
 
@@ -49,7 +49,7 @@ public:
     void reset() final;
     
 private:
-    MediaStreamAudioDestinationNode(AudioContext&, size_t numberOfChannels);
+    MediaStreamAudioDestinationNode(AudioContextBase&, size_t numberOfChannels);
 
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }

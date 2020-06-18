@@ -32,7 +32,7 @@ namespace WebCore {
 class AnalyserNode final : public AudioBasicInspectorNode {
     WTF_MAKE_ISO_ALLOCATED(AnalyserNode);
 public:
-    static Ref<AnalyserNode> create(AudioContext& context, float sampleRate)
+    static Ref<AnalyserNode> create(AudioContextBase& context, float sampleRate)
     {
         return adoptRef(*new AnalyserNode(context, sampleRate));
     }
@@ -58,7 +58,7 @@ public:
     void getByteTimeDomainData(const RefPtr<JSC::Uint8Array>& array) { m_analyser.getByteTimeDomainData(array.get()); }
 
 private:
-    AnalyserNode(AudioContext&, float sampleRate);
+    AnalyserNode(AudioContextBase&, float sampleRate);
 
     void process(size_t framesToProcess) final;
     void reset() final;

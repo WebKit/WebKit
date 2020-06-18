@@ -1,3 +1,18 @@
+2020-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Add experimental feature flag for modern & unprefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=213268
+
+        Reviewed by Jer Noble.
+
+        Rebaseline a few web-platform-tests now that they are passing or failing at a later stage.
+        This is due to our WebAudio getting properly unprefixed in the context of layout tests.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-detached-execution-context.tentative-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-method-chaining-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.tentative-expected.txt:
+
 2020-06-17  Rob Buis  <rbuis@igalia.com>
 
         Image `referrerpolicy` mutations should be considered "relevant mutations"

@@ -1,7 +1,7 @@
 
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "decoding-on-detached-iframe" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.OfflineAudioContext(1, 1, 3000)')"
+FAIL Executing "decoding-on-detached-iframe" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [decoding-on-detached-iframe]  
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 

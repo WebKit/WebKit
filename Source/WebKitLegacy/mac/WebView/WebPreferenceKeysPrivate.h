@@ -118,6 +118,7 @@
 #define WebKitContentChangeObserverEnabledPreferenceKey @"WebKitContentChangeObserverEnabled"
 #define WebKitShowRepaintCounterPreferenceKey @"WebKitShowRepaintCounter"
 #define WebKitWebAudioEnabledPreferenceKey @"WebKitWebAudioEnabled"
+#define WebKitModernUnprefixedWebAudioEnabledPreferenceKey @"WebKitModernUnprefixedWebAudioEnabled"
 #define WebKitWebGLEnabledPreferenceKey @"WebKitWebGLEnabled"
 #define WebKitWebGL2EnabledPreferenceKey @"WebKitWebGL2Enabled"
 #define WebKitWebGPUEnabledPreferenceKey @"WebKitWebGPUEnabled"

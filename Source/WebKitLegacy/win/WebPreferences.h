@@ -305,6 +305,8 @@ public:
     // IWebPreferencesPrivate8
     virtual HRESULT STDMETHODCALLTYPE allowTopNavigationToDataURLs(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAllowTopNavigationToDataURLs(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE modernUnprefixedWebAudioEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setModernUnprefixedWebAudioEnabled(BOOL);
 
     // WebPreferences
 

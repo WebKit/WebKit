@@ -26,6 +26,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include "AudioContext.h"
 #include "AudioListener.h"
 #include "AudioNode.h"
 #include "AudioParam.h"
@@ -41,6 +42,16 @@ namespace WebCore {
 
 class HRTFDatabaseLoader;
 
+class PannerNodeBase : public AudioNode {
+public:
+    virtual ~PannerNodeBase() = default;
+
+    virtual float dopplerRate() = 0;
+
+protected:
+    PannerNodeBase(AudioContextBase&, float sampleRate);
+};
+
 // PannerNode is an AudioNode with one input and one output.
 // It positions a sound in 3D space, with the exact effect dependent on the panning model.
 // It has a position and an orientation in 3D space which is relative to the position and orientation of the context's AudioListener.
@@ -48,7 +59,7 @@ class HRTFDatabaseLoader;
 // A cone effect will attenuate the gain as the orientation moves away from the listener.
 // All of these effects follow the OpenAL specification very closely.
 
-class PannerNode final : public AudioNode {
+class PannerNode final : public PannerNodeBase {
     WTF_MAKE_ISO_ALLOCATED(PannerNode);
 public:
     static Ref<PannerNode> create(AudioContext& context, float sampleRate)
@@ -57,6 +68,9 @@ public:
     }
 
     virtual ~PannerNode();
+
+    AudioContext& context() { return downcast<AudioContext>(AudioNode::context()); }
+    const AudioContext& context() const { return downcast<AudioContext>(AudioNode::context()); }
 
     // AudioNode
     void process(size_t framesToProcess) override;
@@ -111,7 +125,7 @@ public:
     void setConeOuterGain(double angle) { m_coneEffect.setOuterGain(angle); }
 
     void getAzimuthElevation(double* outAzimuth, double* outElevation);
-    float dopplerRate();
+    float dopplerRate() final;
 
     // Accessors for dynamically calculated gain values.
     AudioParam* distanceGain() { return m_distanceGain.get(); }

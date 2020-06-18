@@ -1,0 +1,23 @@
+This tests if TypeError is thrown or not when we call a constructor as a normal function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SKIP AudioContext is not implemented.
+PASS FormData() threw exception TypeError: Constructor requires 'new' operator.
+PASS EventSource() threw exception TypeError: Constructor requires 'new' operator.
+PASS FileReader() threw exception TypeError: Constructor requires 'new' operator.
+PASS Audio() threw exception TypeError: Constructor requires 'new' operator.
+PASS Image() threw exception TypeError: Constructor requires 'new' operator.
+PASS Option() threw exception TypeError: Constructor requires 'new' operator.
+PASS MessageChannel() threw exception TypeError: Constructor requires 'new' operator.
+PASS WebKitCSSMatrix() threw exception TypeError: Constructor requires 'new' operator.
+PASS WebKitPoint() threw exception TypeError: Constructor requires 'new' operator.
+PASS WebSocket() threw exception TypeError: Constructor requires 'new' operator.
+PASS Worker() threw exception TypeError: Constructor requires 'new' operator.
+PASS XMLHttpRequest() threw exception TypeError: Constructor requires 'new' operator.
+PASS XSLTProcessor() threw exception TypeError: Constructor requires 'new' operator.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

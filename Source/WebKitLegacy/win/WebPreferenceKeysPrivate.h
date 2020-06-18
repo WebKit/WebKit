@@ -75,6 +75,7 @@
 #define WebKitLocalStorageDatabasePathPreferenceKey "WebKitLocalStorageDatabasePath"
 #define WebKitHyperlinkAuditingEnabledPreferenceKey "WebKitHyperlinkAuditingEnabled"
 #define WebKitWebAudioEnabledPreferenceKey "WebKitWebAudioEnabled"
+#define WebKitModernUnprefixedWebAudioEnabledPreferenceKey "WebKitWebAudioEnabled"
 #define WebKitShouldDisplaySubtitlesPreferenceKey "WebKitShouldDisplaySubtitles"
 #define WebKitShouldDisplayCaptionsPreferenceKey "WebKitShouldDisplayCaptions"
 #define WebKitShouldDisplayTextDescriptionsPreferenceKey "WebKitShouldDisplayTextDescriptions"

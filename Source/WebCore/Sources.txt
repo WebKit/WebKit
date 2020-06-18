@@ -269,6 +269,9 @@ Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/WaveShaperDSPKernel.cpp
 Modules/webaudio/WaveShaperNode.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
+Modules/webaudio/WebKitAudioContext.cpp
+Modules/webaudio/WebKitAudioPannerNode.cpp
+Modules/webaudio/WebKitOfflineAudioContext.cpp
 
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/AuthenticatorAssertionResponse.cpp
@@ -2744,6 +2747,7 @@ JSAudioBufferCallback.cpp
 JSAudioBufferSourceNode.cpp
 JSAudioConfiguration.cpp
 JSAudioContext.cpp
+JSAudioContextState.cpp
 JSAudioDestinationNode.cpp
 JSAudioListener.cpp
 JSAudioNode.cpp
@@ -2914,6 +2918,7 @@ JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp
 JSDeviceOrientationOrMotionEvent.cpp
+JSDistanceModelType.cpp
 JSDocument.cpp
 JSDocumentAndElementEventHandlers.cpp
 JSDocumentFragment.cpp
@@ -3211,6 +3216,7 @@ JSOverflowEvent.cpp
 JSPageTransitionEvent.cpp
 JSPaintRenderingContext2D.cpp
 JSPannerNode.cpp
+JSPanningModelType.cpp
 JSParentNode.cpp
 JSPath2D.cpp
 JSPayerErrorFields.cpp
@@ -3567,7 +3573,10 @@ JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
 JSWebGPUTextureView.cpp
 JSWebKitAnimationEvent.cpp
+JSWebKitAudioContext.cpp
+JSWebKitAudioPannerNode.cpp
 JSWebKitCSSMatrix.cpp
+JSWebKitOfflineAudioContext.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
 JSWebKitTransitionEvent.cpp

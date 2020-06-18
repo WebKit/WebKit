@@ -23,19 +23,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum AudioContextState {
-    "suspended",
-    "running",
-    "interrupted",
-    "closed"
-};
-
 [
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudio,
+    EnabledBySetting=ModernUnprefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
-    InterfaceName=webkitAudioContext,
 ] interface AudioContext : EventTarget {
     [CallWith=Document, MayThrowException] constructor();
 

@@ -979,6 +979,7 @@ static void resetWebPreferencesToConsistentValues()
 #endif
 
     [preferences setWebAudioEnabled:YES];
+    [preferences setModernUnprefixedWebAudioEnabled:YES];
     [preferences setMediaSourceEnabled:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
 

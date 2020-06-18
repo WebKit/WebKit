@@ -38,12 +38,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamAudioSourceNode);
 
-Ref<MediaStreamAudioSourceNode> MediaStreamAudioSourceNode::create(AudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
+Ref<MediaStreamAudioSourceNode> MediaStreamAudioSourceNode::create(AudioContextBase& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
 {
     return adoptRef(*new MediaStreamAudioSourceNode(context, mediaStream, audioTrack));
 }
 
-MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(AudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
+MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(AudioContextBase& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
     : AudioNode(context, context.sampleRate())
     , m_mediaStream(mediaStream)
     , m_audioTrack(audioTrack)

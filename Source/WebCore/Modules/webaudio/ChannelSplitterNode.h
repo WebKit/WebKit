@@ -33,7 +33,7 @@ class AudioContext;
 class ChannelSplitterNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(ChannelSplitterNode);
 public:
-    static RefPtr<ChannelSplitterNode> create(AudioContext&, float sampleRate, unsigned numberOfOutputs);
+    static RefPtr<ChannelSplitterNode> create(AudioContextBase&, float sampleRate, unsigned numberOfOutputs);
 
     // AudioNode
     void process(size_t framesToProcess) override;
@@ -43,7 +43,7 @@ private:
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
 
-    ChannelSplitterNode(AudioContext&, float sampleRate, unsigned numberOfOutputs);
+    ChannelSplitterNode(AudioContextBase&, float sampleRate, unsigned numberOfOutputs);
 };
 
 } // namespace WebCore

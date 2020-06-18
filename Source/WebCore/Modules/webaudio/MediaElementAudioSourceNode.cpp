@@ -43,12 +43,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaElementAudioSourceNode);
 
-Ref<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(AudioContext& context, HTMLMediaElement& mediaElement)
+Ref<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(AudioContextBase& context, HTMLMediaElement& mediaElement)
 {
     return adoptRef(*new MediaElementAudioSourceNode(context, mediaElement));
 }
 
-MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext& context, HTMLMediaElement& mediaElement)
+MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContextBase& context, HTMLMediaElement& mediaElement)
     : AudioNode(context, context.sampleRate())
     , m_mediaElement(mediaElement)
     , m_sourceNumberOfChannels(0)
@@ -97,7 +97,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
 
         {
             // The context must be locked when changing the number of output channels.
-            AudioContext::AutoLocker contextLocker(context());
+            AudioContextBase::AutoLocker contextLocker(context());
 
             // Do any necesssary re-configuration to the output's number of channels.
             output(0)->setNumberOfChannels(numberOfChannels);

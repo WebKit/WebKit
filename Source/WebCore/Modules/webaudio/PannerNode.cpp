@@ -48,8 +48,13 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-PannerNode::PannerNode(AudioContext& context, float sampleRate)
+PannerNodeBase::PannerNodeBase(AudioContextBase& context, float sampleRate)
     : AudioNode(context, sampleRate)
+{
+}
+
+PannerNode::PannerNode(AudioContext& context, float sampleRate)
+    : PannerNodeBase(context, sampleRate)
     , m_panningModel(PanningModelType::HRTF)
     , m_lastGain(-1.0)
     , m_positionX(AudioParam::create(context, "positionX"_s, 0, -FLT_MAX, FLT_MAX))

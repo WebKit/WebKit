@@ -1,4 +1,6 @@
 
 
-FAIL Verify CORS XHR of fetch() in a Service Worker promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new win.AudioContext()')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Verify CORS XHR of fetch() in a Service Worker Test timed out
 

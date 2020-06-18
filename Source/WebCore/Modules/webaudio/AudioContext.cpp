@@ -107,6 +107,7 @@ const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContextBase);
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document() && document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
@@ -137,9 +138,14 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document)
     return audioContext;
 }
 
+AudioContextBase::AudioContextBase(Document& document)
+    : ActiveDOMObject(document)
+{
+}
+
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document& document)
-    : ActiveDOMObject(document)
+    : AudioContextBase(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -164,7 +170,7 @@ AudioContext::AudioContext(Document& document)
 
 // Constructor for offline (non-realtime) rendering.
 AudioContext::AudioContext(Document& document, AudioBuffer* renderTarget)
-    : ActiveDOMObject(document)
+    : AudioContextBase(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -366,7 +372,7 @@ const char* AudioContext::activeDOMObjectName() const
     return "AudioContext";
 }
 
-Document* AudioContext::document() const
+Document* AudioContextBase::document() const
 {
     return downcast<Document>(m_scriptExecutionContext);
 }
@@ -1002,9 +1008,14 @@ void AudioContext::removeMarkedSummingJunction(AudioSummingJunction* summingJunc
     m_dirtySummingJunctions.remove(summingJunction);
 }
 
+EventTargetInterface AudioContext::eventTargetInterface() const
+{
+    return AudioContextEventTargetInterfaceType;
+}
+
 void AudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)
 {
-    ASSERT(isGraphOwner());    
+    ASSERT(isGraphOwner());
     m_dirtyAudioNodeOutputs.add(output);
 }
 
@@ -1068,7 +1079,7 @@ void AudioContext::processAutomaticPullNodes(size_t framesToProcess)
         node->processIfNecessary(framesToProcess);
 }
 
-ScriptExecutionContext* AudioContext::scriptExecutionContext() const
+ScriptExecutionContext* AudioContextBase::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
 }

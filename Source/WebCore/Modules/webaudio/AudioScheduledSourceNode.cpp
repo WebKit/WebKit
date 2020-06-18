@@ -49,7 +49,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AudioScheduledSourceNode);
 
 const double AudioScheduledSourceNode::UnknownTime = -1;
 
-AudioScheduledSourceNode::AudioScheduledSourceNode(AudioContext& context, float sampleRate)
+AudioScheduledSourceNode::AudioScheduledSourceNode(AudioContextBase& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , ActiveDOMObject(context.scriptExecutionContext())
     , m_endTime(UnknownTime)

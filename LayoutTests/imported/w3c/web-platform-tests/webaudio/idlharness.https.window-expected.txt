@@ -43,7 +43,7 @@ FAIL BaseAudioContext interface: operation createWaveShaper() assert_own_propert
 FAIL BaseAudioContext interface: operation decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
 FAIL AudioContext interface: existence and properties of interface object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
 PASS AudioContext interface object length 
-FAIL AudioContext interface object name assert_equals: wrong value for AudioContext.name expected "AudioContext" but got "webkitAudioContext"
+PASS AudioContext interface object name 
 FAIL AudioContext interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
 PASS AudioContext interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioContext interface: existence and properties of interface prototype object's @@unscopables property 
@@ -58,7 +58,7 @@ PASS AudioContext interface: operation createMediaStreamSource(MediaStream)
 FAIL AudioContext interface: operation createMediaStreamTrackSource(MediaStreamTrack) assert_own_property: interface prototype object missing non-static operation expected property "createMediaStreamTrackSource" missing
 PASS AudioContext interface: operation createMediaStreamDestination() 
 PASS AudioContext must be primary interface of context 
-FAIL Stringification of context assert_class_string: class string of context expected "[object AudioContext]" but got "[object webkitAudioContext]"
+PASS Stringification of context 
 FAIL AudioContext interface: context must inherit property "baseLatency" with the proper type assert_inherits: property "baseLatency" not found in prototype chain
 FAIL AudioContext interface: context must inherit property "outputLatency" with the proper type assert_inherits: property "outputLatency" not found in prototype chain
 FAIL AudioContext interface: context must inherit property "getOutputTimestamp()" with the proper type assert_inherits: property "getOutputTimestamp" not found in prototype chain
@@ -108,7 +108,7 @@ PASS BaseAudioContext interface: context must inherit property "decodeAudioData(
 FAIL BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError assert_unreached: Throws "TypeError: Not enough arguments" instead of rejecting promise Reached unreachable code
 FAIL OfflineAudioContext interface: existence and properties of interface object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
 FAIL OfflineAudioContext interface object length assert_equals: wrong value for OfflineAudioContext.length expected 1 but got 3
-FAIL OfflineAudioContext interface object name assert_equals: wrong value for OfflineAudioContext.name expected "OfflineAudioContext" but got "webkitOfflineAudioContext"
+PASS OfflineAudioContext interface object name 
 FAIL OfflineAudioContext interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's "constructor" property 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's @@unscopables property 
@@ -118,7 +118,7 @@ FAIL OfflineAudioContext interface: operation suspend(double) assert_own_propert
 FAIL OfflineAudioContext interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL OfflineAudioContext interface: attribute oncomplete assert_own_property: expected property "oncomplete" missing
 PASS OfflineAudioContext must be primary interface of new OfflineAudioContext(1, 1, sample_rate) 
-FAIL Stringification of new OfflineAudioContext(1, 1, sample_rate) assert_class_string: class string of new OfflineAudioContext(1, 1, sample_rate) expected "[object OfflineAudioContext]" but got "[object webkitOfflineAudioContext]"
+PASS Stringification of new OfflineAudioContext(1, 1, sample_rate) 
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "startRendering()" with the proper type 
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "resume()" with the proper type 
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "suspend(double)" with the proper type 
@@ -904,7 +904,7 @@ FAIL AudioNode interface: new OscillatorNode(context) must inherit property "cha
 FAIL AudioNode interface: new OscillatorNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context)')"
 PASS PannerNode interface: existence and properties of interface object 
 FAIL PannerNode interface object length assert_equals: wrong value for PannerNode.length expected 1 but got 0
-FAIL PannerNode interface object name assert_equals: wrong value for PannerNode.name expected "PannerNode" but got "webkitAudioPannerNode"
+PASS PannerNode interface object name 
 PASS PannerNode interface: existence and properties of interface prototype object 
 PASS PannerNode interface: existence and properties of interface prototype object's "constructor" property 
 PASS PannerNode interface: existence and properties of interface prototype object's @@unscopables property 

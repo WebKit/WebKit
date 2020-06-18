@@ -49,6 +49,7 @@ namespace WebCore {
     macro(ApplePaySetupFeature) \
     macro(AttachmentElement) \
     macro(Audio) \
+    macro(AudioContext) \
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \
@@ -165,9 +166,11 @@ namespace WebCore {
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
     macro(NavigatorUserMedia) \
+    macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \
     macro(PaintRenderingContext2D) \
+    macro(PannerNode) \
     macro(PaymentAddress) \
     macro(PaymentMethodChangeEvent) \
     macro(PaymentRequest) \

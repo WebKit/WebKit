@@ -36,9 +36,9 @@ PASS   The return value of GainNode.connect(ChannelMergerNode, 0, 1) matches the
 PASS   The return value of OscillatorNode.connect(GainNode) matches the destination GainNode is equal to true. 
 PASS   The return value of OscillatorNode.connect(BiquadFilterNode, 0) matches the destination BiquadFilterNode is equal to true. 
 PASS   The return value of OscillatorNode.connect(ChannelMergerNode, 0, 1) matches the destination ChannelMergerNode is equal to true. 
-PASS   The return value of webkitAudioPannerNode.connect(GainNode) matches the destination GainNode is equal to true. 
-PASS   The return value of webkitAudioPannerNode.connect(BiquadFilterNode, 0) matches the destination BiquadFilterNode is equal to true. 
-PASS   The return value of webkitAudioPannerNode.connect(ChannelMergerNode, 0, 1) matches the destination ChannelMergerNode is equal to true. 
+PASS   The return value of PannerNode.connect(GainNode) matches the destination GainNode is equal to true. 
+PASS   The return value of PannerNode.connect(BiquadFilterNode, 0) matches the destination BiquadFilterNode is equal to true. 
+PASS   The return value of PannerNode.connect(ChannelMergerNode, 0, 1) matches the destination ChannelMergerNode is equal to true. 
 PASS   The return value of ScriptProcessorNode.connect(GainNode) matches the destination GainNode is equal to true. 
 PASS   The return value of ScriptProcessorNode.connect(BiquadFilterNode, 0) matches the destination BiquadFilterNode is equal to true. 
 PASS   The return value of ScriptProcessorNode.connect(ChannelMergerNode, 0, 1) matches the destination ChannelMergerNode is equal to true. 

@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ConvolverNode);
 
-ConvolverNode::ConvolverNode(AudioContext& context, float sampleRate)
+ConvolverNode::ConvolverNode(AudioContextBase& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     setNodeType(NodeTypeConvolver);

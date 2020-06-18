@@ -52,7 +52,7 @@ public:
 
     // hasValue is set to true if a valid timeline value is returned.
     // otherwise defaultValue is returned.
-    float valueForContextTime(AudioContext&, float defaultValue, bool& hasValue);
+    float valueForContextTime(AudioContextBase&, float defaultValue, bool& hasValue);
 
     // Given the time range, calculates parameter values into the values buffer
     // and returns the last parameter value calculated for "values" or the defaultValue if none were calculated.

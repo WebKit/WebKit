@@ -574,6 +574,7 @@ public:
         @NO, WebKitDiagnosticLoggingEnabledKey,
         @(WebAllowAllStorage), WebKitStorageBlockingPolicyKey,
         @NO, WebKitPlugInSnapshottingEnabledPreferenceKey,
+        @NO, WebKitModernUnprefixedWebAudioEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
         @YES, WebKitContentChangeObserverEnabledPreferenceKey,
@@ -2146,6 +2147,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebAudioEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebAudioEnabledPreferenceKey];
+}
+
+- (BOOL)modernUnprefixedWebAudioEnabled
+{
+    return [self _boolValueForKey:WebKitModernUnprefixedWebAudioEnabledPreferenceKey];
+}
+
+- (void)setModernUnprefixedWebAudioEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitModernUnprefixedWebAudioEnabledPreferenceKey];
 }
 
 - (BOOL)subpixelCSSOMElementMetricsEnabled

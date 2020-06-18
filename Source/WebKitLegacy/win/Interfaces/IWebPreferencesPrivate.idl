@@ -267,4 +267,6 @@ interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
 {
     HRESULT allowTopNavigationToDataURLs([out, retval] BOOL* enabled);
     HRESULT setAllowTopNavigationToDataURLs([in] BOOL enabled);
+    HRESULT modernUnprefixedWebAudioEnabled([out, retval] BOOL* enabled);
+    HRESULT setModernUnprefixedWebAudioEnabled([in] BOOL enabled);
 }

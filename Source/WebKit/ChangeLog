@@ -1,3 +1,15 @@
+2020-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Add experimental feature flag for modern & unprefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=213268
+
+        Reviewed by Jer Noble.
+
+        Add experimental feature flag for modern & unprefixed WebAudio API,
+        off by default.
+
+        * Shared/WebPreferences.yaml:
+
 2020-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Shift-tab in a bullet list in Mail Compose jumps back to Subject field

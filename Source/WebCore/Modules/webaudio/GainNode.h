@@ -38,7 +38,7 @@ class AudioContext;
 class GainNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(GainNode);
 public:
-    static Ref<GainNode> create(AudioContext& context, float sampleRate)
+    static Ref<GainNode> create(AudioContextBase& context, float sampleRate)
     {
         return adoptRef(*new GainNode(context, sampleRate));
     }
@@ -57,7 +57,7 @@ private:
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
 
-    GainNode(AudioContext&, float sampleRate);
+    GainNode(AudioContextBase&, float sampleRate);
 
     float m_lastGain; // for de-zippering
     RefPtr<AudioParam> m_gain;

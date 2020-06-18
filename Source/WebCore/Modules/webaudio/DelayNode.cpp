@@ -37,14 +37,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DelayNode);
 
 const double maximumAllowedDelayTime = 180;
 
-inline DelayNode::DelayNode(AudioContext& context, float sampleRate, double maxDelayTime)
+inline DelayNode::DelayNode(AudioContextBase& context, float sampleRate, double maxDelayTime)
     : AudioBasicProcessorNode(context, sampleRate)
 {
     setNodeType(NodeTypeDelay);
     m_processor = makeUnique<DelayProcessor>(context, sampleRate, 1, maxDelayTime);
 }
 
-ExceptionOr<Ref<DelayNode>> DelayNode::create(AudioContext& context, float sampleRate, double maxDelayTime)
+ExceptionOr<Ref<DelayNode>> DelayNode::create(AudioContextBase& context, float sampleRate, double maxDelayTime)
 {
     if (maxDelayTime <= 0 || maxDelayTime >= maximumAllowedDelayTime)
         return Exception { NotSupportedError };

@@ -433,6 +433,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioBufferCallback.idl
     Modules/webaudio/AudioBufferSourceNode.idl
     Modules/webaudio/AudioContext.idl
+    Modules/webaudio/AudioContextState.idl
     Modules/webaudio/AudioDestinationNode.idl
     Modules/webaudio/AudioListener.idl
     Modules/webaudio/AudioNode.idl
@@ -443,6 +444,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ChannelSplitterNode.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/DelayNode.idl
+    Modules/webaudio/DistanceModelType.idl
     Modules/webaudio/DynamicsCompressorNode.idl
     Modules/webaudio/GainNode.idl
     Modules/webaudio/MediaElementAudioSourceNode.idl
@@ -452,9 +454,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/OfflineAudioContext.idl
     Modules/webaudio/OscillatorNode.idl
     Modules/webaudio/PannerNode.idl
+    Modules/webaudio/PanningModelType.idl
     Modules/webaudio/PeriodicWave.idl
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
+    Modules/webaudio/WebKitAudioContext.idl
+    Modules/webaudio/WebKitAudioPannerNode.idl
+    Modules/webaudio/WebKitOfflineAudioContext.idl
 
     Modules/webauthn/AttestationConveyancePreference.idl
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl

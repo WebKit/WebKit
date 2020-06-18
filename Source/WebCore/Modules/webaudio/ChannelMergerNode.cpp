@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelMergerNode);
 
-RefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContext& context, float sampleRate, unsigned numberOfInputs)
+RefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContextBase& context, float sampleRate, unsigned numberOfInputs)
 {
     if (!numberOfInputs || numberOfInputs > AudioContext::maxNumberOfChannels())
         return nullptr;
@@ -51,7 +51,7 @@ RefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContext& context, float
     return adoptRef(*new ChannelMergerNode(context, sampleRate, numberOfInputs));      
 }
 
-ChannelMergerNode::ChannelMergerNode(AudioContext& context, float sampleRate, unsigned numberOfInputs)
+ChannelMergerNode::ChannelMergerNode(AudioContextBase& context, float sampleRate, unsigned numberOfInputs)
     : AudioNode(context, sampleRate)
     , m_desiredNumberOfOutputChannels(DefaultNumberOfOutputChannels)
 {

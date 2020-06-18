@@ -300,6 +300,7 @@ $(PROJECT_DIR)/Modules/webaudio/AudioBuffer.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferCallback.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioContext.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioContextState.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioDestinationNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioListener.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioNode.idl
@@ -310,6 +311,7 @@ $(PROJECT_DIR)/Modules/webaudio/ChannelMergerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelSplitterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverNode.idl
 $(PROJECT_DIR)/Modules/webaudio/DelayNode.idl
+$(PROJECT_DIR)/Modules/webaudio/DistanceModelType.idl
 $(PROJECT_DIR)/Modules/webaudio/DynamicsCompressorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/GainNode.idl
 $(PROJECT_DIR)/Modules/webaudio/MediaElementAudioSourceNode.idl
@@ -319,9 +321,13 @@ $(PROJECT_DIR)/Modules/webaudio/OfflineAudioCompletionEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/OfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/OscillatorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/PannerNode.idl
+$(PROJECT_DIR)/Modules/webaudio/PanningModelType.idl
 $(PROJECT_DIR)/Modules/webaudio/PeriodicWave.idl
 $(PROJECT_DIR)/Modules/webaudio/ScriptProcessorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WaveShaperNode.idl
+$(PROJECT_DIR)/Modules/webaudio/WebKitAudioContext.idl
+$(PROJECT_DIR)/Modules/webaudio/WebKitAudioPannerNode.idl
+$(PROJECT_DIR)/Modules/webaudio/WebKitOfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webauthn/AttestationConveyancePreference.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl

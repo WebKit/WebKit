@@ -35,7 +35,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WaveShaperNode);
 
-WaveShaperNode::WaveShaperNode(AudioContext& context)
+WaveShaperNode::WaveShaperNode(AudioContextBase& context)
     : AudioBasicProcessorNode(context, context.sampleRate())
 {
     setNodeType(NodeTypeWaveShaper);

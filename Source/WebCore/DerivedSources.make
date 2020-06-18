@@ -383,6 +383,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
     $(WebCore)/Modules/webaudio/AudioContext.idl \
+    $(WebCore)/Modules/webaudio/AudioContextState.idl \
     $(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
     $(WebCore)/Modules/webaudio/AudioListener.idl \
     $(WebCore)/Modules/webaudio/AudioNode.idl \
@@ -393,6 +394,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \
+    $(WebCore)/Modules/webaudio/DistanceModelType.idl \
     $(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
     $(WebCore)/Modules/webaudio/GainNode.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
@@ -402,9 +404,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
     $(WebCore)/Modules/webaudio/OscillatorNode.idl \
     $(WebCore)/Modules/webaudio/PannerNode.idl \
+    $(WebCore)/Modules/webaudio/PanningModelType.idl \
     $(WebCore)/Modules/webaudio/PeriodicWave.idl \
     $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
+    $(WebCore)/Modules/webaudio/WebKitAudioContext.idl \
+    $(WebCore)/Modules/webaudio/WebKitAudioPannerNode.idl \
+    $(WebCore)/Modules/webaudio/WebKitOfflineAudioContext.idl \
     $(WebCore)/Modules/webauthn/AttestationConveyancePreference.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl \

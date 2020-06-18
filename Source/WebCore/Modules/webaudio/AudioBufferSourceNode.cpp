@@ -49,12 +49,12 @@ const double DefaultGrainDuration = 0.020; // 20ms
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
-Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext& context, float sampleRate)
+Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContextBase& context, float sampleRate)
 {
     return adoptRef(*new AudioBufferSourceNode(context, sampleRate));
 }
 
-AudioBufferSourceNode::AudioBufferSourceNode(AudioContext& context, float sampleRate)
+AudioBufferSourceNode::AudioBufferSourceNode(AudioContextBase& context, float sampleRate)
     : AudioScheduledSourceNode(context, sampleRate)
     , m_buffer(nullptr)
     , m_isLooping(false)
@@ -413,7 +413,7 @@ void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     DEBUG_LOG(LOGIDENTIFIER);
 
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
-    AudioContext::AutoLocker contextLocker(context());
+    AudioContextBase::AutoLocker contextLocker(context());
     
     // This synchronizes with process().
     auto locker = holdLock(m_processMutex);
@@ -557,7 +557,7 @@ bool AudioBufferSourceNode::propagatesSilence() const
     return !isPlayingOrScheduled() || hasFinished() || !m_buffer;
 }
 
-void AudioBufferSourceNode::setPannerNode(PannerNode* pannerNode)
+void AudioBufferSourceNode::setPannerNode(PannerNodeBase* pannerNode)
 {
     if (m_pannerNode != pannerNode && !hasFinished()) {
         if (pannerNode)

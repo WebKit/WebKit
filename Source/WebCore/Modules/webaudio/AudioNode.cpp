@@ -33,6 +33,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
 #include "Logging.h"
+#include "WebKitAudioContext.h"
 #include <wtf/Atomics.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -95,7 +96,7 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-AudioNode::AudioNode(AudioContext& context, float sampleRate)
+AudioNode::AudioNode(AudioContextBase& context, float sampleRate)
     : m_isInitialized(false)
     , m_nodeType(NodeTypeUnknown)
     , m_context(context)
@@ -194,7 +195,7 @@ AudioNodeOutput* AudioNode::output(unsigned i)
 ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContextBase::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, destination.nodeType(), ", output = ", outputIndex, ", input = ", inputIndex);
     
@@ -205,7 +206,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
     if (inputIndex >= destination.numberOfInputs())
         return Exception { IndexSizeError };
 
-    if (context() != destination.context())
+    if (&context() != &destination.context())
         return Exception { SyntaxError };
 
     auto* input = destination.input(inputIndex);
@@ -220,7 +221,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
 ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 {
-    AudioContext::AutoLocker locker(context());
+    AudioContextBase::AutoLocker locker(context());
 
     ASSERT(isMainThread());
 
@@ -229,7 +230,7 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
     if (outputIndex >= numberOfOutputs())
         return Exception { IndexSizeError };
 
-    if (context() != param.context())
+    if (&context() != &param.context())
         return Exception { SyntaxError };
 
     auto* output = this->output(outputIndex);
@@ -241,7 +242,7 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 ExceptionOr<void> AudioNode::disconnect(unsigned outputIndex)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContextBase::AutoLocker locker(context());
 
     // Sanity check input and output indices.
     if (outputIndex >= numberOfOutputs())
@@ -263,7 +264,7 @@ unsigned AudioNode::channelCount()
 ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContextBase::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, channelCount);
     
@@ -296,7 +297,7 @@ String AudioNode::channelCountMode()
 ExceptionOr<void> AudioNode::setChannelCountMode(const String& mode)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContextBase::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, mode);
     
@@ -332,7 +333,7 @@ String AudioNode::channelInterpretation()
 ExceptionOr<void> AudioNode::setChannelInterpretation(const String& interpretation)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContextBase::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, interpretation);
     
@@ -437,7 +438,7 @@ void AudioNode::enableOutputsIfNecessary()
 {
     if (m_isDisabled && m_connectionRefCount > 0) {
         ASSERT(isMainThread());
-        AudioContext::AutoLocker locker(context());
+        AudioContextBase::AutoLocker locker(context());
 
         m_isDisabled = false;
         for (auto& output : m_outputs)
@@ -501,7 +502,7 @@ void AudioNode::deref(RefType refType)
     // In the case of the audio thread, we must use a tryLock to avoid glitches.
     bool hasLock = false;
     bool mustReleaseLock = false;
-    
+
     if (context().isAudioThread()) {
         // Real-time audio thread must not contend lock (to avoid glitches).
         hasLock = context().tryLock(mustReleaseLock);
@@ -528,6 +529,13 @@ void AudioNode::deref(RefType refType)
     // because AudioNodes keep a reference to the context.
     if (context().isAudioThreadFinished())
         context().deleteMarkedNodes();
+}
+
+Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>> AudioNode::contextForBindings() const
+{
+    if (m_context->isWebKitAudioContext())
+        return makeRefPtr(static_cast<WebKitAudioContext&>(m_context.get()));
+    return makeRefPtr(static_cast<AudioContext&>(m_context.get()));
 }
 
 void AudioNode::finishDeref(RefType refType)

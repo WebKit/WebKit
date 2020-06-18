@@ -45,7 +45,7 @@ public:
         Custom
     };
 
-    static Ref<OscillatorNode> create(AudioContext&, float sampleRate);
+    static Ref<OscillatorNode> create(AudioContextBase&, float sampleRate);
 
     virtual ~OscillatorNode();
 
@@ -60,7 +60,7 @@ public:
     void setPeriodicWave(PeriodicWave*);
 
 private:
-    OscillatorNode(AudioContext&, float sampleRate);
+    OscillatorNode(AudioContextBase&, float sampleRate);
 
     void process(size_t framesToProcess) final;
     void reset() final;

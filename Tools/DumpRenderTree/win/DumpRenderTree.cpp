@@ -836,6 +836,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 #endif
 
     prefsPrivate->setAllowTopNavigationToDataURLs(TRUE);
+    prefsPrivate->setModernUnprefixedWebAudioEnabled(TRUE);
     prefsPrivate->setAllowUniversalAccessFromFileURLs(TRUE);
     prefsPrivate->setAllowFileAccessFromFileURLs(TRUE);
     preferences->setStandardFontFamily(standardFamily);

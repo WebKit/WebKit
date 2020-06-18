@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBus.h"
+#include "AudioContextState.h"
 #include "AudioDestinationNode.h"
 #include "EventTarget.h"
 #include "MediaCanStartListener.h"
@@ -79,20 +80,127 @@ class WaveShaperNode;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-// AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
-// For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
-
-class AudioContext
+class AudioContextBase
     : public ActiveDOMObject
     , public ThreadSafeRefCounted<AudioContext>
     , public EventTargetWithInlineData
     , public MediaCanStartListener
     , public MediaProducer
+#if !RELEASE_LOG_DISABLED
+    , public LoggerHelper
+#endif
+{
+    WTF_MAKE_ISO_ALLOCATED(AudioContextBase);
+public:
+    virtual ~AudioContextBase() = default;
+
+    // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
+    using ThreadSafeRefCounted::ref;
+    using ThreadSafeRefCounted::deref;
+
+    Document* document() const;
+
+    virtual bool isInitialized() const = 0;
+
+    virtual size_t currentSampleFrame() const = 0;
+    virtual float sampleRate() const = 0;
+    virtual double currentTime() const = 0;
+    virtual bool isGraphOwner() const = 0;
+
+    virtual void setAudioThread(Thread&) = 0;
+    virtual bool isAudioThread() const = 0;
+    virtual bool isAudioThreadFinished() = 0;
+
+    virtual void isPlayingAudioDidChange() = 0;
+    virtual void nodeWillBeginPlayback() = 0;
+
+    virtual void postTask(WTF::Function<void()>&&) = 0;
+    virtual bool isStopped() const = 0;
+    virtual const SecurityOrigin* origin() const = 0;
+    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message) = 0;
+
+    virtual void markForDeletion(AudioNode&) = 0;
+    virtual void deleteMarkedNodes() = 0;
+
+    virtual void handlePreRenderTasks() = 0;
+    virtual void handlePostRenderTasks() = 0;
+    virtual void processAutomaticPullNodes(size_t framesToProcess) = 0;
+    virtual void addDeferredFinishDeref(AudioNode*) = 0;
+
+    virtual void removeMarkedSummingJunction(AudioSummingJunction*) = 0;
+    virtual void markSummingJunctionDirty(AudioSummingJunction*) = 0;
+    virtual void markAudioNodeOutputDirty(AudioNodeOutput*) = 0;
+
+    enum BehaviorRestrictionFlags {
+        NoRestrictions = 0,
+        RequireUserGestureForAudioStartRestriction = 1 << 0,
+        RequirePageConsentForAudioStartRestriction = 1 << 1,
+    };
+    typedef unsigned BehaviorRestrictions;
+    virtual BehaviorRestrictions behaviorRestrictions() const = 0;
+    virtual void addBehaviorRestriction(BehaviorRestrictions) = 0;
+    virtual void removeBehaviorRestriction(BehaviorRestrictions) = 0;
+
+#if !RELEASE_LOG_DISABLED
+    virtual const void* nextAudioNodeLogIdentifier() = 0;
+    virtual const void* nextAudioParameterLogIdentifier() = 0;
+#endif
+
+    virtual void addAutomaticPullNode(AudioNode&) = 0;
+    virtual void removeAutomaticPullNode(AudioNode&) = 0;
+
+    virtual void notifyNodeFinishedProcessing(AudioNode*) = 0;
+
+    virtual void finishedRendering(bool didRendering) = 0;
+
+    virtual void incrementConnectionCount() = 0;
+    virtual void incrementActiveSourceCount() = 0;
+    virtual void decrementActiveSourceCount() = 0;
+
+    virtual bool isOfflineContext() const = 0;
+    virtual bool isAudioContext() const = 0;
+    virtual bool isWebKitAudioContext() const = 0;
+
+    // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
+    virtual void lock(bool& mustReleaseLock) = 0;
+    virtual bool tryLock(bool& mustReleaseLock) = 0;
+    virtual void unlock() = 0;
+
+    class AutoLocker {
+    public:
+        explicit AutoLocker(AudioContextBase& context)
+            : m_context(context)
+        {
+            m_context.lock(m_mustReleaseLock);
+        }
+
+        ~AutoLocker()
+        {
+            if (m_mustReleaseLock)
+                m_context.unlock();
+        }
+
+    private:
+        AudioContextBase& m_context;
+        bool m_mustReleaseLock;
+    };
+
+    // EventTarget
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
+
+protected:
+    explicit AudioContextBase(Document&);
+};
+
+// AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
+// For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
+
+class AudioContext
+    : public AudioContextBase
     , private PlatformMediaSessionClient
     , private VisibilityChangeClient
-#if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
-#endif
 {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
@@ -101,22 +209,20 @@ public:
 
     virtual ~AudioContext();
 
-    bool isInitialized() const;
+    bool isInitialized() const final;
     
-    bool isOfflineContext() const { return m_isOfflineContext; }
-
-    Document* document() const; // ASSERTs if document no longer exists.
+    bool isOfflineContext() const final { return m_isOfflineContext; }
 
     DocumentIdentifier hostingDocumentIdentifier() const final;
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
-    size_t currentSampleFrame() const { return m_destinationNode ? m_destinationNode->currentSampleFrame() : 0; }
-    double currentTime() const { return m_destinationNode ? m_destinationNode->currentTime() : 0.; }
-    float sampleRate() const { return m_destinationNode ? m_destinationNode->sampleRate() : 0.f; }
+    size_t currentSampleFrame() const final { return m_destinationNode ? m_destinationNode->currentSampleFrame() : 0; }
+    double currentTime() const final { return m_destinationNode ? m_destinationNode->currentTime() : 0.; }
+    float sampleRate() const final { return m_destinationNode ? m_destinationNode->sampleRate() : 0.f; }
     unsigned long activeSourceCount() const { return static_cast<unsigned long>(m_activeSourceCount); }
 
-    void incrementActiveSourceCount();
-    void decrementActiveSourceCount();
+    void incrementActiveSourceCount() final;
+    void decrementActiveSourceCount() final;
     
     ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
     ExceptionOr<Ref<AudioBuffer>> createBuffer(ArrayBuffer&, bool mixToMono);
@@ -130,7 +236,7 @@ public:
     void resumeRendering(DOMPromiseDeferred<void>&&);
     void close(DOMPromiseDeferred<void>&&);
 
-    enum class State { Suspended, Running, Interrupted, Closed };
+    using State = AudioContextState;
     State state() const;
     bool isClosed() const { return m_state == State::Closed; }
 
@@ -160,31 +266,31 @@ public:
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Float32Array& real, Float32Array& imaginary);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
-    void notifyNodeFinishedProcessing(AudioNode*);
+    void notifyNodeFinishedProcessing(AudioNode*) final;
 
     // Called at the start of each render quantum.
-    void handlePreRenderTasks();
+    void handlePreRenderTasks() final;
 
     // Called at the end of each render quantum.
-    void handlePostRenderTasks();
+    void handlePostRenderTasks() final;
 
     // Called periodically at the end of each render quantum to dereference finished source nodes.
     void derefFinishedSourceNodes();
 
     // We schedule deletion of all marked nodes at the end of each realtime render quantum.
-    void markForDeletion(AudioNode&);
-    void deleteMarkedNodes();
+    void markForDeletion(AudioNode&) final;
+    void deleteMarkedNodes() final;
 
     // AudioContext can pull node(s) at the end of each render quantum even when they are not connected to any downstream nodes.
     // These two methods are called by the nodes who want to add/remove themselves into/from the automatic pull lists.
-    void addAutomaticPullNode(AudioNode&);
-    void removeAutomaticPullNode(AudioNode&);
+    void addAutomaticPullNode(AudioNode&) final;
+    void removeAutomaticPullNode(AudioNode&) final;
 
     // Called right before handlePostRenderTasks() to handle nodes which need to be pulled even when they are not connected to anything.
-    void processAutomaticPullNodes(size_t framesToProcess);
+    void processAutomaticPullNodes(size_t framesToProcess) final;
 
     // Keeps track of the number of connections made.
-    void incrementConnectionCount()
+    void incrementConnectionCount() final
     {
         ASSERT(isMainThread());
         m_connectionCount++;
@@ -196,103 +302,70 @@ public:
     // Thread Safety and Graph Locking:
     //
     
-    void setAudioThread(Thread& thread) { m_audioThread = &thread; } // FIXME: check either not initialized or the same
+    void setAudioThread(Thread& thread) final { m_audioThread = &thread; } // FIXME: check either not initialized or the same
     Thread* audioThread() const { return m_audioThread; }
-    bool isAudioThread() const;
+    bool isAudioThread() const final;
 
     // Returns true only after the audio thread has been started and then shutdown.
-    bool isAudioThreadFinished() { return m_isAudioThreadFinished; }
+    bool isAudioThreadFinished() final { return m_isAudioThreadFinished; }
     
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
-    void lock(bool& mustReleaseLock);
+    void lock(bool& mustReleaseLock) final;
 
     // Returns true if we own the lock.
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
-    bool tryLock(bool& mustReleaseLock);
+    bool tryLock(bool& mustReleaseLock) final;
 
-    void unlock();
+    void unlock() final;
 
     // Returns true if this thread owns the context's lock.
-    bool isGraphOwner() const;
+    bool isGraphOwner() const final;
 
     // Returns the maximum number of channels we can support.
     static unsigned maxNumberOfChannels() { return MaxNumberOfChannels; }
-
-    class AutoLocker {
-    public:
-        explicit AutoLocker(AudioContext& context)
-            : m_context(context)
-        {
-            m_context.lock(m_mustReleaseLock);
-        }
-        
-        ~AutoLocker()
-        {
-            if (m_mustReleaseLock)
-                m_context.unlock();
-        }
-
-    private:
-        AudioContext& m_context;
-        bool m_mustReleaseLock;
-    };
     
     // In AudioNode::deref() a tryLock() is used for calling finishDeref(), but if it fails keep track here.
-    void addDeferredFinishDeref(AudioNode*);
+    void addDeferredFinishDeref(AudioNode*) final;
 
     // In the audio thread at the start of each render cycle, we'll call handleDeferredFinishDerefs().
     void handleDeferredFinishDerefs();
 
     // Only accessed when the graph lock is held.
-    void markSummingJunctionDirty(AudioSummingJunction*);
-    void markAudioNodeOutputDirty(AudioNodeOutput*);
+    void markSummingJunctionDirty(AudioSummingJunction*) final;
+    void markAudioNodeOutputDirty(AudioNodeOutput*) final;
 
     // Must be called on main thread.
-    void removeMarkedSummingJunction(AudioSummingJunction*);
+    void removeMarkedSummingJunction(AudioSummingJunction*) final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return AudioContextEventTargetInterfaceType; }
-
-    // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
-    using ThreadSafeRefCounted::ref;
-    using ThreadSafeRefCounted::deref;
+    EventTargetInterface eventTargetInterface() const final;
 
     void startRendering();
-    void finishedRendering(bool didRendering);
+    void finishedRendering(bool didRendering) final;
 
     static unsigned s_hardwareContextCount;
 
     // Restrictions to change default behaviors.
-    enum BehaviorRestrictionFlags {
-        NoRestrictions = 0,
-        RequireUserGestureForAudioStartRestriction = 1 << 0,
-        RequirePageConsentForAudioStartRestriction = 1 << 1,
-    };
-    typedef unsigned BehaviorRestrictions;
+    BehaviorRestrictions behaviorRestrictions() const final { return m_restrictions; }
+    void addBehaviorRestriction(BehaviorRestrictions restriction) final { m_restrictions |= restriction; }
+    void removeBehaviorRestriction(BehaviorRestrictions restriction) final { m_restrictions &= ~restriction; }
 
-    BehaviorRestrictions behaviorRestrictions() const { return m_restrictions; }
-    void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
-    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
+    void isPlayingAudioDidChange() final;
 
-    void isPlayingAudioDidChange();
-
-    void nodeWillBeginPlayback();
+    void nodeWillBeginPlayback() final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
-    const void* nextAudioNodeLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioNodeIdentifier); }
-    const void* nextAudioParameterLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
+    const void* nextAudioNodeLogIdentifier() final { return childLogIdentifier(m_logIdentifier, ++m_nextAudioNodeIdentifier); }
+    const void* nextAudioParameterLogIdentifier() final { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
 #endif
 
-    void postTask(WTF::Function<void()>&&);
-    bool isStopped() const { return m_isStopScheduled; }
-    const SecurityOrigin* origin() const;
-    void addConsoleMessage(MessageSource, MessageLevel, const String& message);
-
-    // EventTarget
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    void postTask(WTF::Function<void()>&&) final;
+    bool isStopped() const final { return m_isStopScheduled; }
+    const SecurityOrigin* origin() const final;
+    void addConsoleMessage(MessageSource, MessageLevel, const String& message) final;
 
 protected:
     explicit AudioContext(Document&);
@@ -360,9 +433,8 @@ private:
 
     void visibilityStateChanged() final;
 
-    // EventTarget
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
+    bool isAudioContext() const final { return true; }
+    bool isWebKitAudioContext() const final { return false; }
 
     void handleDirtyAudioSummingJunctions();
     void handleDirtyAudioNodeOutputs();
@@ -446,21 +518,13 @@ private:
     RefPtr<PendingActivity<AudioContext>> m_pendingActivity;
 };
 
-// FIXME: Find out why these ==/!= functions are needed and remove them if possible.
-
-inline bool operator==(const AudioContext& lhs, const AudioContext& rhs)
-{
-    return &lhs == &rhs;
-}
-
-inline bool operator!=(const AudioContext& lhs, const AudioContext& rhs)
-{
-    return &lhs != &rhs;
-}
-
 inline AudioContext::State AudioContext::state() const
 {
     return m_state;
 }
 
 } // WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioContext)
+    static bool isType(const WebCore::AudioContextBase& context) { return context.isAudioContext(); }
+SPECIALIZE_TYPE_TRAITS_END()

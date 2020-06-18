@@ -269,6 +269,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)webAudioEnabled;
 - (void)setWebAudioEnabled:(BOOL)enabled;
 
+- (BOOL)modernUnprefixedWebAudioEnabled;
+- (void)setModernUnprefixedWebAudioEnabled:(BOOL)enabled;
+
 - (BOOL)subpixelCSSOMElementMetricsEnabled;
 - (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled;
 

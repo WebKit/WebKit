@@ -24,25 +24,8 @@
 
 [
     Conditional=WEB_AUDIO,
-    ImplementedAs=PanningModelType
-] enum PanningModelType {
-    "equalpower",
-    "HRTF"
-};
-
-[
-    Conditional=WEB_AUDIO,
-    ImplementedAs=DistanceModelType
-] enum DistanceModelType {
-    "linear",
-    "inverse",
-    "exponential"
-};
-
-[
-    Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
-    InterfaceName=webkitAudioPannerNode,
+    EnabledBySetting=ModernUnprefixedWebAudio,
 ] interface PannerNode : AudioNode {
     // Default model for stereo is HRTF 
     attribute PanningModelType panningModel;

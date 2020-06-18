@@ -232,6 +232,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptRuntimeFlagsPreferenceKey), CFSTR("0"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowTopNavigationToDataURLsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAudioEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), kCFBooleanFalse);
@@ -2497,5 +2498,19 @@ HRESULT WebPreferences::allowTopNavigationToDataURLs(_Out_ BOOL* allowAccess)
 HRESULT WebPreferences::setAllowTopNavigationToDataURLs(BOOL allowAccess)
 {
     setBoolValue(WebKitAllowTopNavigationToDataURLsPreferenceKey, allowAccess);
+    return S_OK;
+}
+
+HRESULT WebPreferences::modernUnprefixedWebAudioEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitWebAudioEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setModernUnprefixedWebAudioEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitWebAudioEnabledPreferenceKey, enabled);
     return S_OK;
 }

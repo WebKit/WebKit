@@ -24,8 +24,8 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=ModernUnprefixedWebAudio,
     JSGenerateToJSObject,
-    InterfaceName=webkitOfflineAudioContext
 ] interface OfflineAudioContext : AudioContext {
     [CallWith=ScriptExecutionContext, MayThrowException] constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
 };

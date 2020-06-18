@@ -34,7 +34,7 @@ class AudioParam;
 class BiquadFilterNode final : public AudioBasicProcessorNode {
     WTF_MAKE_ISO_ALLOCATED(BiquadFilterNode);
 public:
-    static Ref<BiquadFilterNode> create(AudioContext& context, float sampleRate)
+    static Ref<BiquadFilterNode> create(AudioContextBase& context, float sampleRate)
     {
         return adoptRef(*new BiquadFilterNode(context, sampleRate));
     }
@@ -52,7 +52,7 @@ public:
     void getFrequencyResponse(const RefPtr<Float32Array>& frequencyHz, const RefPtr<Float32Array>& magResponse, const RefPtr<Float32Array>& phaseResponse);
 
 private:
-    BiquadFilterNode(AudioContext&, float sampleRate);
+    BiquadFilterNode(AudioContextBase&, float sampleRate);
 
     BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
 };

@@ -41,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
     
 const size_t renderQuantumSize = 128;    
 
-OfflineAudioDestinationNode::OfflineAudioDestinationNode(AudioContext& context, AudioBuffer* renderTarget)
+OfflineAudioDestinationNode::OfflineAudioDestinationNode(AudioContextBase& context, AudioBuffer* renderTarget)
     : AudioDestinationNode(context, renderTarget->sampleRate())
     , m_renderTarget(renderTarget)
     , m_startedRendering(false)

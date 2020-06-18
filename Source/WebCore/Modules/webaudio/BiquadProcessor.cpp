@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-BiquadProcessor::BiquadProcessor(AudioContext& context, float sampleRate, size_t numberOfChannels, bool autoInitialize)
+BiquadProcessor::BiquadProcessor(AudioContextBase& context, float sampleRate, size_t numberOfChannels, bool autoInitialize)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
     , m_type(BiquadFilterType::Lowpass)
     , m_parameter1(0)

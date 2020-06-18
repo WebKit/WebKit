@@ -280,6 +280,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioContext.h"
+#include "WebKitAudioContext.h"
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -4290,22 +4291,29 @@ void Internals::sendMediaControlEvent(MediaControlEvent event)
 #endif // ENABLE(MEDIA_SESSION)
 
 #if ENABLE(WEB_AUDIO)
-void Internals::setAudioContextRestrictions(AudioContext& context, StringView restrictionsString)
+void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
 {
-    AudioContext::BehaviorRestrictions restrictions = context.behaviorRestrictions();
-    context.removeBehaviorRestriction(restrictions);
+    RefPtr<AudioContextBase> context;
+    switchOn(contextVariant, [&](RefPtr<AudioContext> entry) {
+        context = entry;
+    }, [&](RefPtr<WebKitAudioContext> entry) {
+        context = entry;
+    });
 
-    restrictions = AudioContext::NoRestrictions;
+    auto restrictions = context->behaviorRestrictions();
+    context->removeBehaviorRestriction(restrictions);
+
+    restrictions = AudioContextBase::NoRestrictions;
 
     for (StringView restrictionString : restrictionsString.split(',')) {
         if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
-            restrictions |= AudioContext::NoRestrictions;
+            restrictions |= AudioContextBase::NoRestrictions;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudiostart"))
-            restrictions |= AudioContext::RequireUserGestureForAudioStartRestriction;
+            restrictions |= AudioContextBase::RequireUserGestureForAudioStartRestriction;
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"))
-            restrictions |= AudioContext::RequirePageConsentForAudioStartRestriction;
+            restrictions |= AudioContextBase::RequirePageConsentForAudioStartRestriction;
     }
-    context.addBehaviorRestriction(restrictions);
+    context->addBehaviorRestriction(restrictions);
 }
 
 void Internals::useMockAudioDestinationCocoa()

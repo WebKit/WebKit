@@ -3267,6 +3267,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled([preferences webAudioEnabled]);
+    settings.setModernUnprefixedWebAudioEnabled([preferences modernUnprefixedWebAudioEnabled]);
 #endif
 
 #if ENABLE(FULLSCREEN_API)

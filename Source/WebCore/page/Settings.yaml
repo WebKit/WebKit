@@ -255,6 +255,8 @@ loadDeferringEnabled:
   initial: true
 webAudioEnabled:
   initial: false
+modernUnprefixedWebAudioEnabled:
+  initial: false
 paginateDuringLayoutEnabled:
   initial: false
 fullScreenEnabled:

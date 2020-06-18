@@ -3,7 +3,7 @@ This tests if TypeError is thrown or not when we call a constructor as a normal 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-SKIP AudioContext is not implemented.
+PASS AudioContext() threw exception TypeError: Constructor requires 'new' operator.
 PASS FormData() threw exception TypeError: Constructor requires 'new' operator.
 PASS EventSource() threw exception TypeError: Constructor requires 'new' operator.
 PASS FileReader() threw exception TypeError: Constructor requires 'new' operator.
