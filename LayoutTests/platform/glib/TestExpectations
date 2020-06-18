@@ -18,6 +18,8 @@
 # * CSS
 # * GStreamer
 # * HiDPI
+# * IndexedDB
+# * PageOverlay
 # * Perf
 # * Scrolling
 # * SVG
@@ -89,10 +91,21 @@ webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failu
 # HiDPI-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html
+webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HiDPI-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# IndexedDB-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -220,6 +233,8 @@ webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
+
+webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
 
 # Failing since deferred async loading enabled until document is loaded enabled.
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure Pass ]

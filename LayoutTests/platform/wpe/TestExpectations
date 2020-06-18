@@ -1191,6 +1191,8 @@ webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure 
 
 webkit.org/b/212959 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass Timeout ]
 
+webkit.org/b/213228 fast/viewport/viewport-1.html [ Crash Timeout Pass ]
+
 webkit.org/b/213230 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213231 fast/block/float/float-with-anonymous-previous-sibling.html [ ImageOnlyFailure Pass ]
@@ -1218,6 +1220,9 @@ webkit.org/b/212960 jquery/manipulation.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Slow ]
+
+fast/workers/dedicated-worker-lifecycle.html [ Slow ]
+js/dom/create-lots-of-workers.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS TIMING OUT
@@ -2226,6 +2231,8 @@ webkit.org/b/212208 fast/text/reset-drag-on-mouse-down.html [ Failure ]
 webkit.org/b/212209 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/212210 fast/text/space-width.html [ ImageOnlyFailure ]
 webkit.org/b/212211 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
+
+webkit.org/b/213334 fast/events/touch/touch-event-constructor.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

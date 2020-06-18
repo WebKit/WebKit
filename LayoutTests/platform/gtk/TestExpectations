@@ -2471,8 +2471,6 @@ webkit.org/b/206875 inspector/debugger/breakpoints/resolved-dump-each-line.html 
 
 webkit.org/b/206498 animations/transform-non-accelerated.html [ Failure Pass ]
 
-webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
-
 webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-interpolation.html [ Failure Pass ]
 webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-image-interpolation.html [ Failure Pass ]
 webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-interpolation.html [ Failure Pass ]
@@ -2594,7 +2592,6 @@ webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/transaction-relaxe
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-deactivation-timing.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/cursor-leak-private.html [ Failure Pass ]
-webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/modern/blob-cursor.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/modern/blob-svg-image.html [ Failure Pass ]
 
