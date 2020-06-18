@@ -1,3 +1,14 @@
+2020-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        RebaselineServer: "Rebaseline queue" button is placed behind the footer
+        https://bugs.webkit.org/show_bug.cgi?id=213258
+
+        Reviewed by Zalan Bujtas.
+
+        * Scripts/webkitpy/tool/servers/data/rebaselineserver/index.html: Moved 'log' and 'queue' elements after 'footer' element.
+        * Scripts/webkitpy/tool/servers/data/rebaselineserver/main.css:
+        (#queue): Changed 'bottom' property from 3em to 4em.
+
 2020-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Shift-tab in a bullet list in Mail Compose jumps back to Subject field
