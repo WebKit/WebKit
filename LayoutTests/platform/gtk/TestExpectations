@@ -1310,7 +1310,7 @@ webkit.org/b/211887 fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadArgs.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Failure ]
-webkit.org/b/211887 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Failure ]
+webkit.org/b/211887 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Failure Timeout ]
 
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
@@ -1321,6 +1321,8 @@ webkit.org/b/212017 http/tests/resourceLoadStatistics/third-party-cookie-blockin
 webkit.org/b/212223 compositing/tiling/perspective-on-scroller-tile-coverage.html [ Failure ]
 
 webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
+
+webkit.org/b/213328 http/tests/inspector/network/intercept-request-properties.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1922,6 +1924,7 @@ webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pa
 
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
+webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Pass Failure ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
 
@@ -2505,7 +2508,7 @@ webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
 
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ] 
 
-webkit.org/b/212892 webrtc/peer-connection-audio-mute2.html [ Failure Pass ]
+webkit.org/b/212892 webrtc/peer-connection-audio-mute2.html [ Failure Timeout Pass ]
 
 webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
 webkit.org/b/208126 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Failure Pass ]
@@ -4286,6 +4289,8 @@ webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-us
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
 
 webkit.org/b/212745 imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ ImageOnlyFailure Pass ]
+
+imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ DumpJSConsoleLogInStdErr ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

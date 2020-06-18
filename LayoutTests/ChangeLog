@@ -1,3 +1,12 @@
+2020-06-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update test expectations after r263197.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/plugins/plugin-javascript-access-allow-all-plugins-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+
 2020-06-16  Antoine Quint  <graouts@webkit.org>
 
         quikr.com: unable to select item from dropdown

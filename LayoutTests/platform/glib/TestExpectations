@@ -17,6 +17,7 @@
 # * Accessibilty
 # * CSS
 # * GStreamer
+# * HiDPI
 # * Perf
 # * Scrolling
 # * SVG
@@ -75,11 +76,23 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
 
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
+webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
 webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# HiDPI-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of HiDPI-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -192,8 +205,6 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failu
 # WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
-
 webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
@@ -232,6 +243,8 @@ webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and
 
 webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/213331 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -261,9 +274,12 @@ media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html [ 
 webkit.org/b/205857 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
 webkit.org/b/205857 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
+
 webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
 
 webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Pass Crash ]
+webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Crash Pass ]
+
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]

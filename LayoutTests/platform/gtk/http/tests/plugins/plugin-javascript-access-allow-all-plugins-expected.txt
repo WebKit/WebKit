@@ -1,0 +1,37 @@
+Test: Confirm the plugin is present.
+
+Name: WebKit Test PlugIn
+
+Description: Simple Netscape® plug-in that handles test content for WebKit
+
+Filename: libTestNetscapePlugIn.so
+
+Mime Types:
+
+Type: application/x-webkit-test-netscape
+
+Description: test netscape content
+
+Suffixes: testnetscape
+
+
+Plugin.item() works.
+
+Plugin.namedItem() works.
+
+Type: image/png
+
+Description: png image
+
+Suffixes: png
+
+
+Plugin.item() works.
+
+Plugin.namedItem() works.
+
+PluginArray.item() works.
+
+PluginArray.namedItem() works.
+
+PASS! (Found the netscape test plugin on a non-local file!)
