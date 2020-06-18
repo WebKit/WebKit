@@ -1,3 +1,11 @@
+2020-06-18  Joonghun Park  <jh718.park@samsung.com>
+
+    Unreviewed. Remove the build warning below since r262971.
+    warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::getAllStorageAccessEntriesCallback):
+
 2020-06-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Intl] Enable RelativeTimeFormat and Locale by default
