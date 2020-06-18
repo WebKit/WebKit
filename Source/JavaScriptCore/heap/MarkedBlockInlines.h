@@ -303,6 +303,66 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         return;
     }
 
+#if ENABLE(BITMAP_FREELIST)
+    AtomsBitmap localFreeAtoms;
+    AtomsBitmap& freeAtoms = freeList ? freeList->atomsBitmap() : localFreeAtoms;
+    size_t count = 0;
+
+    auto handleDeadCell = [&] (size_t i) {
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(atomAt(i));
+
+        if (destructionMode != BlockHasNoDestructors)
+            destroy(cell);
+
+        if (sweepMode == SweepToFreeList) {
+            if (scribbleMode == Scribble)
+                scribble(cell, cellSize);
+            ++count;
+        }
+    };
+
+    bool isEmpty = true;
+
+    AtomsBitmap cellLocations;
+    cellLocations.setEachNthBit(m_atomsPerCell, 0, m_endAtom);
+
+    if (emptyMode == NotEmpty) {
+        if (marksMode == MarksNotStale) {
+            freeAtoms = footer.m_marks;
+            if (newlyAllocatedMode == HasNewlyAllocated)
+                freeAtoms |= footer.m_newlyAllocated;
+        } else if (newlyAllocatedMode == HasNewlyAllocated)
+            freeAtoms = footer.m_newlyAllocated;
+        // At this point, a set bit in freeAtoms represents live cells.
+        isEmpty = freeAtoms.isEmpty();
+
+        // Invert the bits at each cell location so that the ones for live cells
+        // are cleared, and the ones for dead cells are set.
+        freeAtoms ^= cellLocations;
+    } else
+        freeAtoms = cellLocations; // all cells are free.
+    
+    // We only want to discard the newlyAllocated bits if we're creating a FreeList,
+    // otherwise we would lose information on what's currently alive.
+    if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
+        footer.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
+
+    if (space()->isMarking())
+        footer.m_lock.unlock();
+
+    if (destructionMode != BlockHasNoDestructors)
+        freeAtoms.forEachSetBit(handleDeadCell);
+
+    if (sweepMode == SweepToFreeList) {
+        freeList->initializeAtomsBitmap(this, freeAtoms, count * cellSize);
+        setIsFreeListed();
+    } else if (isEmpty)
+        m_directory->setIsEmpty(NoLockingNecessary, this, true);
+    if (false)
+        dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
+
+#else // not ENABLE(BITMAP_FREELIST)
+
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.
@@ -361,6 +421,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         m_directory->setIsEmpty(NoLockingNecessary, this, true);
     if (false)
         dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
+#endif // ENABLE(BITMAP_FREELIST)
 }
 
 template<typename DestroyFunc>

@@ -1,5 +1,151 @@
 2020-06-17  Mark Lam  <mark.lam@apple.com>
 
+        Replace JSC::FreeList linked list with a Bitmap.
+        https://bugs.webkit.org/show_bug.cgi?id=213071
+
+        Reviewed by Filip Pizlo.
+
+        Implement an alternative to the linked list FreeList.  This alternative uses
+        a Bitmap to record which atom in the block is available for allocation.
+
+        The intuition here is that allocation using the Bitmap implementation will do:
+            2 loads - m_currentRowBitmap, m_currentMarkedBlockRowAddress
+            1 store - m_currentRowBitmap
+
+        whereas the linked list implementation will do:
+            3 loads - m_scrambledHead, m_secret, result->scrambledNext
+            1 store - m_scrambledHead
+
+        and result->scrambledNext is from a different region of code and therefore not
+        in the same cache line.
+
+        The downside of the Bitmap implementation is that it uses more instructions.
+
+        This change is currently only enabled for x86_64, which shows about a 0.8%
+        progression on Speedometer 2.
+
+        It appears to be about a 1% regression on ARM64E.  Hence, for now, we keep the
+        linked list implementation for ARM64 builds.
+
+        This is how the Bitmap FreeList works:
+
+        1. The Bitmap implementation only replaces the linked list implementation.  It
+           does not replace the bump allocator.
+
+        2. The Bitmap allocator keeps a m_bitmap that is initialized in
+           MarkedBlock::Handle::specializedSweep() to have a bit set for each atom
+           location that is available for allocation (i.e. is free).  Note that a cell
+           is usually allocated using more than 1 atom.  Only the bit corresponding to
+           the first atom (in that cell length range of free atoms) will be set.
+
+           This is consistent with how bits in MarkedBlock::Footer::m_marks and
+           MarkedBlock::Footer::m_newlyAllocated are set i.e. only the bit for the first
+           atom in the cell can be set.
+
+        3. The allocation algorithm thinks of the MarkedBlock as consisting of rows
+           of atoms, where the number of atoms in a row equals the number of bits in
+           a AtomsBitmap::Word.  On 64-bit CPUs, this would be 64.
+
+           We will start allocating from the last (highest numbered) row down to the
+           first (row 0).  As we allocate, we will only update m_currentRowIndex and
+           m_currentRowBitmap.  m_bitmap will not be updated.  This is so in order to
+           reduce the number of instructions executed during an allocation.
+
+           When m_currentRowIndex points to N, the AtomsBitmap::Word for row N in
+           m_bitmap will have been copied into m_currentRowBitmap.  This is the row
+           that we will be allocating from until the row is exhausted.
+
+           This is how we know whether an atom is available for allocation or not:
+             i. Atoms in any rows above m_currentRowIndex are guaranteed to be
+                allocated already (because we allocate downwards), and hence, are not
+                available.
+            ii. For row m_currentRowIndex, m_currentRowBitmap is the source of truth
+                on which atoms in the row are available for allocation.
+           iii. For rows below m_currentRowIndex, m_bitmap is the source of truth on
+                which atoms are available for allocation.
+
+           When m_currentRowIndex reaches 0, the info in m_bitmap is completely
+           obsoleted, and m_currentRowBitmap holds the availability info for row 0.
+           When both m_currentRowIndex and m_currentRowBitmap are 0, then we have
+           completely exhausted the block and no more atoms are available for
+           allocation.
+
+        4. Allocation happens in 3 paths: fast, middle, slow.
+
+           The fast path checks m_currentRowBitmap.  If it's not 0, then we compute the
+           bit number of the lowest set bit in it.  That bit number will be used together
+           with m_currentMarkedBlockRowAddress to compute the address of the atom
+           location available for allocation.  m_currentRowBitmap will be updated to clear
+           the bit for the atom that has just ben allocated.
+
+           If m_currentRowBitmap is 0, then we'll go to the middle path.
+
+           The middle path checks m_currentRowIndex to see if we have more rows to allocate
+           from.  For each m_currentRowIndex, we check its corresponding AtomsBitmap::Word
+           in m_bitmap.  If the word is non-zero, we copy it to m_currentRowBitmap and
+           jump to the fast path to do the allocation.  The middle path will update
+           m_currentRowIndex to point to the current row we're allocating from.
+
+           If we have decremented m_currentRowIndex down to 0 but still can't find a
+           non-zero AtomsBitmap::Word in m_bitmap, then the block has been exhausted, and
+           we'll go to the slow path.
+
+           The slow path is analogous to the old slow path i.e. we try to refill the
+           LocalAllocator with a new MarkedBlock.
+
+        5. On the layout of fields in FreeList (see changes in FreeList.h), we try to
+           preserve the positions of the bump allocator fields.  The only change we made
+           there is n the location of m_cellSize.  It is now moved up next to m_remaining,
+           and m_originalSize is moved down.  This is because m_originalSize is only
+           accessed in the slow path, and m_cellSize is accessed in the bump allocation
+           path.
+
+           Next, we try to put Bitmap allocation fields where the linked list fields
+           would have been.  The one bit of trickiness is that we'll put
+           m_currentMarkedBlockRowAddress in a union with m_payloadEnd.  This is because
+           m_payloadEnd is only used in the bump allocation path.  If m_remaining is 0,
+           then we can reuse this location for m_currentMarkedBlockRowAddress.
+
+           With this, we would have 4 bytes of padding after m_currentRowIndex.  For
+           compactness, we put m_originalSize there in that space.  For builds that use
+           the linked list implementation, m_originalSize will be located below after
+           m_cellSize.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        * heap/FreeList.cpp:
+        (JSC::FreeList::clear):
+        (JSC::FreeList::initializeAtomsBitmap):
+        (JSC::FreeList::initializeBump):
+        (JSC::FreeList::contains const):
+        (JSC::FreeList::dump const):
+        * heap/FreeList.h:
+        (JSC::FreeList::bitmapIsEmpty const):
+        (JSC::FreeList::allocationWillFail const):
+        (JSC::FreeList::offsetOfCurrentRowBitmap):
+        (JSC::FreeList::offsetOfBitmapRows):
+        (JSC::FreeList::offsetOfCurrentRowIndex):
+        (JSC::FreeList::offsetOfCurrentMarkedBlockRowAddress):
+        (JSC::FreeList::offsetOfRemaining):
+        (JSC::FreeList::atomsBitmap):
+        (JSC::FreeList::bitmapRows const):
+        (JSC::FreeList::offsetOfOriginalSize): Deleted.
+        * heap/FreeListInlines.h:
+        (JSC::FreeList::allocate):
+        (JSC::FreeList::forEach const):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::isFreeListedCell const):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::atomAt const):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+
+2020-06-17  Mark Lam  <mark.lam@apple.com>
+
         StructureIDTable::validate() doesn't work when compiled with GCC.
         https://bugs.webkit.org/show_bug.cgi?id=213302
         <rdar://problem/64452172>

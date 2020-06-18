@@ -130,9 +130,15 @@ public:
 
     unsigned hash() const;
 
+    // Low level interface.
+    using Word = WordType;
+    static constexpr unsigned bitsInWord = countOfBits<WordType>;
+    static constexpr unsigned numberOfWords = (bitmapSize + bitsInWord - 1) / bitsInWord;
+    WordType wordAt(size_t wordIndex) const { return bits[wordIndex]; }
+
 private:
-    static constexpr unsigned wordSize = sizeof(WordType) * 8;
-    static constexpr unsigned words = (bitmapSize + wordSize - 1) / wordSize;
+    static constexpr unsigned wordSize = bitsInWord;
+    static constexpr unsigned words = numberOfWords;
 
     // the literal '1' is of type signed int.  We want to use an unsigned
     // version of the correct size when doing the calculations because if
@@ -377,14 +383,14 @@ inline void Bitmap<bitmapSize, WordType>::forEachSetBit(const Func& func) const
 {
     for (size_t i = 0; i < words; ++i) {
         WordType word = bits[i];
-        if (!word)
-            continue;
         size_t base = i * wordSize;
-        for (size_t j = 0; j < wordSize; ++j) {
+        size_t j = 0;
+        for (; word; ++j) {
             if (word & 1)
                 func(base + j);
             word >>= 1;
         }
+        ASSERT(j <= wordSize);
     }
 }
 

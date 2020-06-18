@@ -503,7 +503,7 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 }
 #endif
 
-void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath, Optional<GPRReg> optionalScratchGPR2, Optional<GPRReg> optionalScratchGPR3)
 {
     if (Options::forceGCSlowPaths()) {
         slowPath.append(jump());
@@ -516,7 +516,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     // - We *can* use RegisterSet::macroScratchRegisters on ARM.
 
     Jump popPath;
-    Jump done;
+    JumpList done;
     
     if (allocator.isConstant())
         move(TrustedImmPtr(allocator.allocator().localAllocator()), allocatorGPR);
@@ -534,10 +534,124 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     Address payloadEndAddr = Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfPayloadEnd());
     addPtr(payloadEndAddr, resultGPR);
 
-    done = jump();
+    done.append(jump());
         
+#if ENABLE(BITMAP_FREELIST)
+    ASSERT(resultGPR != scratchGPR);
+
+    auto rowIndexGPR = resultGPR;
+    auto rowBitmapGPR = scratchGPR;
+
+    GPRReg scratchGPR2 = optionalScratchGPR2 ? optionalScratchGPR2.value() : scratchRegister();
+    ASSERT(scratchGPR2 != resultGPR);
+    ASSERT(scratchGPR2 != scratchGPR);
+
+    auto rowAddressGPR = scratchGPR2;
+    auto clearBit64ScratchGPR = scratchGPR2;
+
+    bool canPreloadRowAddressGPR = false;
+    if (optionalScratchGPR3) {
+        clearBit64ScratchGPR = optionalScratchGPR3.value();
+        canPreloadRowAddressGPR = true;
+    } else if (isX86_64()) {
+        // x86_64's clearBit64() does actually need to use clearBit64ScratchGPR.
+        // So, we can preload the row address into it.
+        clearBit64ScratchGPR = InvalidGPRReg;
+        canPreloadRowAddressGPR = true;
+#if CPU(ARM64)
+    } else if (isARM64()) {
+        // ARM64's fast path does actually need to use the memoryTempRegister.
+        // So, we can use that for the clearBit64ScratchGPR and allow the
+        // row address to be preloaded in scratchGPR2.
+        clearBit64ScratchGPR = getCachedMemoryTempRegisterIDAndInvalidate();
+        canPreloadRowAddressGPR = true;
+#endif
+    }
+    ASSERT(clearBit64ScratchGPR != resultGPR);
+    ASSERT(clearBit64ScratchGPR != scratchGPR);
+    if (canPreloadRowAddressGPR)
+        ASSERT(clearBit64ScratchGPR != scratchGPR2);
+
+    // The code below for rowBitmapGPR relies on this.
+    static_assert(sizeof(FreeList::AtomsBitmap::Word) == sizeof(uint64_t));
+
+    // Check for middle path: have another row to visit?
+    Label checkForMoreRows = label();
+
+    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentRowIndex()), rowIndexGPR);
+
+    if (!canPreloadRowAddressGPR)
+        loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentMarkedBlockRowAddress()), rowAddressGPR);
+
+    slowPath.append(branchTestPtr(Zero, rowIndexGPR));
+
+    // Middle path: there is another row left to visit.
+    Jump foundNonEmptyRow;
+    Label checkNextRow = label();
+    {
+        // Load the next row bitmap and point m_currentMarkedBlockRowAddress to the next row.
+
+        // Note: offsetOfBitmapRows() points to 1 word before m_bitmap. We do this
+        // deliberately because it allows us to schedule instructions better and
+        // do this load before the decrement below.
+        load64(BaseIndex(allocatorGPR, rowIndexGPR, TimesEight, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfBitmapRows()), rowBitmapGPR);
+
+        sub64(TrustedImm32(1), rowIndexGPR);
+        subPtr(TrustedImm32(FreeList::atomsRowBytes), rowAddressGPR);
+
+        foundNonEmptyRow = branchTest64(NonZero, rowBitmapGPR);
+        branchTestPtr(NonZero, rowIndexGPR).linkTo(checkNextRow, this);
+    }
+
+    // Slow path: no more rows.
+    // Both rowIndexGPR and rowBitmapGPR should be null here.
+    store32(rowIndexGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentRowIndex()));
+    store64(rowBitmapGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentRowBitmap()));
+    slowPath.append(jump());
+
+    // Transition from middle path back to fast path to allocate.
+    foundNonEmptyRow.link(this);
+    storePtr(rowAddressGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentMarkedBlockRowAddress()));
+    store32(rowIndexGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentRowIndex()));
+
+    Jump allocateFromCurrentRow = jump();
+
     popPath.link(this);
-        
+
+    // Check for fast path: have available bit in m_currentRowBitmap?
+    load64(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentRowBitmap()), rowBitmapGPR);
+
+    if (canPreloadRowAddressGPR) {
+        // Preload the row address needed on the fast and middle path.
+        loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentMarkedBlockRowAddress()), rowAddressGPR);
+    }
+
+    branchTest64(Zero, rowBitmapGPR).linkTo(checkForMoreRows, this);
+
+    // Fast path: we have a bit to use.
+    allocateFromCurrentRow.link(this);
+    {
+        // Remove this bit from m_currentRowBitmap.
+        auto atomIndexInRowGPR = resultGPR;
+        countTrailingZeros64WithoutNullCheck(rowBitmapGPR, atomIndexInRowGPR);
+        clearBit64(atomIndexInRowGPR, rowBitmapGPR, clearBit64ScratchGPR);
+
+        if (!canPreloadRowAddressGPR)
+            loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentMarkedBlockRowAddress()), rowAddressGPR);
+
+        store64(rowBitmapGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfCurrentRowBitmap()));
+
+        // Compute atom address of this bit.
+        ASSERT(resultGPR == atomIndexInRowGPR);
+        shiftAndAdd(rowAddressGPR, resultGPR, FreeList::atomSizeShift, resultGPR);
+    }
+
+#else
+    UNUSED_PARAM(optionalScratchGPR2);
+    UNUSED_PARAM(optionalScratchGPR3);
+
+    popPath.link(this);
+
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
     xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
     slowPath.append(branchTestPtr(Zero, resultGPR));
@@ -546,7 +660,8 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     // it's still on the GC's free list.
     loadPtr(Address(resultGPR, FreeCell::offsetOfScrambledNext()), scratchGPR);
     storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()));
-        
+#endif
+
     done.link(this);
 }
 

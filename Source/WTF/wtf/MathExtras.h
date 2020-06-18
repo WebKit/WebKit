@@ -593,7 +593,7 @@ void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
 template <typename T>
 constexpr unsigned clzConstexpr(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
@@ -610,13 +610,13 @@ constexpr unsigned clzConstexpr(T value)
 template<typename T>
 inline unsigned clz(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
 #if COMPILER(GCC_COMPATIBLE)
-    constexpr unsigned bitSize64 = sizeof(uint64_t) * CHAR_BIT;
+    constexpr unsigned bitSize64 = countOfBits<uint64_t>;
     if (uValue)
         return __builtin_clzll(uValue) - (bitSize64 - bitSize);
     return bitSize;
@@ -638,7 +638,7 @@ inline unsigned clz(T value)
 template <typename T>
 constexpr unsigned ctzConstexpr(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
@@ -657,7 +657,7 @@ constexpr unsigned ctzConstexpr(T value)
 template<typename T>
 inline unsigned ctz(T value)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
@@ -695,7 +695,7 @@ constexpr unsigned getLSBSetConstexpr(T t)
 template<typename T>
 inline unsigned getMSBSet(T t)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
     ASSERT(t);
     return bitSize - 1 - clz(t);
 }
@@ -703,10 +703,13 @@ inline unsigned getMSBSet(T t)
 template<typename T>
 constexpr unsigned getMSBSetConstexpr(T t)
 {
-    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize = countOfBits<T>;
     ASSERT_UNDER_CONSTEXPR_CONTEXT(t);
     return bitSize - 1 - clzConstexpr(t);
 }
+
+template<typename T> unsigned log2(T value) { return getMSBSet(value); }
+template<typename T> constexpr unsigned log2Constexpr(T value) { return getMSBSetConstexpr(value); }
 
 } // namespace WTF
 

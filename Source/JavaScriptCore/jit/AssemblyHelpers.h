@@ -44,6 +44,7 @@
 #include "TagRegistersMode.h"
 #include "TypeofType.h"
 #include "VM.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -1951,8 +1952,8 @@ public:
     // that allocator is non-null; allocator can be null as a signal that we don't know what the
     // value of allocatorGPR is. Additionally, if the allocator is not null, then there is no need
     // to populate allocatorGPR - this code will ignore the contents of allocatorGPR.
-    void emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath);
-    
+    void emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator&, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath, Optional<GPRReg> scratchGPR2 = { }, Optional<GPRReg> scratchGPR3 = { });
+
     void emitAllocate(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath);
     
     template<typename StructureType>

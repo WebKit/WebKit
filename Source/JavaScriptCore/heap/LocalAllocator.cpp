@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -272,7 +272,7 @@ bool LocalAllocator::isFreeListedCell(const void* target) const
     // if we know that the block owning the object is free-listed, then it's impossible for any
     // objects to be in the dead-but-not-destructed state.
     // FIXME: Get rid of this abomination. https://bugs.webkit.org/show_bug.cgi?id=181655
-    return m_freeList.contains(bitwise_cast<HeapCell*>(target));
+    return m_freeList.contains(bitwise_cast<HeapCell*>(target), m_currentBlock);
 }
 
 } // namespace JSC

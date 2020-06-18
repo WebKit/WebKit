@@ -15079,7 +15079,14 @@ private:
             patchpoint->numGPScratchRegisters++;
         else
             patchpoint->appendSomeRegisterWithClobber(allocator);
-        patchpoint->numGPScratchRegisters++;
+#if ENABLE(BITMAP_FREELIST)
+        constexpr unsigned scratchRegistersNeeded = 3;
+        constexpr unsigned allocatorScratch = 3;
+#else
+        constexpr unsigned scratchRegistersNeeded = 1;
+        constexpr unsigned allocatorScratch = 1;
+#endif
+        patchpoint->numGPScratchRegisters += scratchRegistersNeeded;
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         
         m_out.appendSuccessor(usually(continuation));
@@ -15092,7 +15099,7 @@ private:
                 
                 GPRReg allocatorGPR;
                 if (actualAllocator.isConstant())
-                    allocatorGPR = params.gpScratch(1);
+                    allocatorGPR = params.gpScratch(allocatorScratch);
                 else
                     allocatorGPR = params[1].gpr();
                 
@@ -15104,7 +15111,11 @@ private:
                 // all of the compiler tiers.
                 jit.emitAllocateWithNonNullAllocator(
                     params[0].gpr(), actualAllocator, allocatorGPR, params.gpScratch(0),
-                    jumpToSlowPath);
+                    jumpToSlowPath
+#if ENABLE(BITMAP_FREELIST)
+                    , params.gpScratch(1), params.gpScratch(2)
+#endif
+                    );
                 
                 CCallHelpers::Jump jumpToSuccess;
                 if (!params.fallsThroughToSuccessor(0))

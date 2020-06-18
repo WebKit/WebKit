@@ -1,3 +1,27 @@
+2020-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Replace JSC::FreeList linked list with a Bitmap.
+        https://bugs.webkit.org/show_bug.cgi?id=213071
+
+        Reviewed by Filip Pizlo.
+
+        1. Use countOfBits<> template to compute the number of bits.
+        2. Introduce log2() and log2Constexpr() utility functions.
+        3. Make Bitmap<>::forEachSetBit() a little bit more efficient: we don't need to
+           keep iterating if the bitmap word is already empty of bits.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::forEachSetBit const):
+        * wtf/MathExtras.h:
+        (WTF::clzConstexpr):
+        (WTF::clz):
+        (WTF::ctzConstexpr):
+        (WTF::ctz):
+        (WTF::getMSBSet):
+        (WTF::getMSBSetConstexpr):
+        (WTF::log2):
+        (WTF::log2Constexpr):
+
 2020-06-17  David Kilzer  <ddkilzer@apple.com>
 
         Replace OptionSetTraits/OptionSetValues with EnumTraits/EnumValues
