@@ -3919,6 +3919,8 @@ imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.ht
 
 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
 
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////

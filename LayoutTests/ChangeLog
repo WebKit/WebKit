@@ -1,5 +1,13 @@
 2020-06-18  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update test expectations after r263207.
+
+        * platform/glib/js/dom/constructor-length-expected.txt: Updated.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt: Added.
+
+2020-06-18  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Update status of flaky timeout failures after r263206.
 
         * platform/gtk/TestExpectations:
