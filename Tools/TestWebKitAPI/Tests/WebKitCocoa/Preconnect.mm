@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if HAVE(NETWORK_FRAMEWORK)
+
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -89,3 +91,5 @@ TEST(Preconnect, HTTPS)
 #endif
 
 }
+
+#endif

@@ -1,5 +1,15 @@
 2020-06-18  Jonathan Bedard  <jbedard@apple.com>
 
+        Add SPI to preconnect to a server (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=213109
+        <rdar://problem/64184412>
+
+        Unreviewed build-fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Preconnect.mm: HTTPServer does not exist if HAVE(NETWORK_FRAMEWORK) is false.
+
+2020-06-18  Jonathan Bedard  <jbedard@apple.com>
+
         [iOS] Two KeyboardInputTests are failing on recent iOS SDK versions (build-fix)
         https://bugs.webkit.org/show_bug.cgi?id=213183
         <rdar://problem/64273483>
