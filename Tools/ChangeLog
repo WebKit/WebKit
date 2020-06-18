@@ -1,3 +1,9 @@
+2020-06-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed infrastructure fix, temporarily remove ews116 due to hardware failure tracked with rdar://64424245
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to configure and handle service worker registrations to WebKitWebsiteDataManager

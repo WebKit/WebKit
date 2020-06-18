@@ -415,7 +415,7 @@
       "configuration": "debug",
       "architectures": ["x86_64"],
       "triggers": ["macos-mojave-debug-wk1-tests-ews"],
-      "workernames": ["ews112", "ews113", "ews115", "ews116", "ews117"]
+      "workernames": ["ews112", "ews113", "ews115", "ews117"]
     },
     {
       "name": "macOS-Mojave-Debug-WK1-Tests-EWS",
