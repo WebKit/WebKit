@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DirectoryFileListCreator.h"
+#include "FileListCreator.h"
 
 #include "FileChooser.h"
 #include "FileList.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-DirectoryFileListCreator::~DirectoryFileListCreator()
+FileListCreator::~FileListCreator()
 {
     ASSERT(!m_completionHandler);
 }
@@ -57,11 +57,12 @@ static void appendDirectoryFiles(const String& directory, const String& relative
     }
 }
 
+template<FileListCreator::ShouldResolveDirectories shouldResolveDirectories>
 static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>& paths)
 {
     Vector<Ref<File>> fileObjects;
     for (auto& info : paths) {
-        if (FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
+        if (shouldResolveDirectories == FileListCreator::ShouldResolveDirectories::Yes && FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
             appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), fileObjects);
         else
             fileObjects.append(File::create(info.path, info.displayName));
@@ -69,24 +70,31 @@ static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>& paths)
     return FileList::create(WTFMove(fileObjects));
 }
 
-DirectoryFileListCreator::DirectoryFileListCreator(CompletionHandler&& completionHandler)
-    : m_workQueue(WorkQueue::create("DirectoryFileListCreator Work Queue"))
-    , m_completionHandler(WTFMove(completionHandler))
+RefPtr<FileListCreator> FileListCreator::create(const Vector<FileChooserFileInfo>& paths, ShouldResolveDirectories shouldResolveDirectories, CompletionHandler&& completionHandler)
 {
+    if (shouldResolveDirectories == ShouldResolveDirectories::No) {
+        completionHandler(createFileList<ShouldResolveDirectories::No>(paths));
+        return nullptr;
+    }
+
+    return adoptRef(*new FileListCreator(paths, WTFMove(completionHandler)));
 }
 
-void DirectoryFileListCreator::start(const Vector<FileChooserFileInfo>& paths)
+FileListCreator::FileListCreator(const Vector<FileChooserFileInfo>& paths, CompletionHandler&& completionHandler)
+    : m_workQueue(WorkQueue::create("FileListCreator Work Queue"))
+    , m_completionHandler(WTFMove(completionHandler))
 {
     // Resolve directories on a background thread to avoid blocking the main thread.
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), paths = crossThreadCopy(paths)]() mutable {
-        callOnMainThread([this, protectedThis = WTFMove(protectedThis), fileList = createFileList(paths)]() mutable {
-            if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+        auto fileList = createFileList<ShouldResolveDirectories::Yes>(paths);
+        callOnMainThread([this, protectedThis = WTFMove(protectedThis), fileList = WTFMove(fileList)]() mutable {
+            if (auto completionHandler = WTFMove(m_completionHandler))
                 completionHandler(WTFMove(fileList));
         });
     });
 }
 
-void DirectoryFileListCreator::cancel()
+void FileListCreator::cancel()
 {
     m_completionHandler = nullptr;
     m_workQueue = nullptr;
