@@ -1,5 +1,11 @@
 2020-06-18  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Remove stale flaky failures after r263205.
+
+        * platform/gtk/TestExpectations:
+
+2020-06-18  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Remove stake flaky crash failures after r263204.
 
         * platform/gtk/TestExpectations:
