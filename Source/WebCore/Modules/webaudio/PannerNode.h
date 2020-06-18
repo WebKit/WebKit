@@ -94,10 +94,13 @@ public:
     AudioParam& positionZ() { return m_positionZ.get(); }
 
     // Orientation
-    FloatPoint3D orientation() const { return m_orientation; }
-    void setOrientation(float x, float y, float z) { m_orientation = FloatPoint3D(x, y, z); }
+    FloatPoint3D orientation() const;
+    void setOrientation(float x, float y, float z);
+    AudioParam& orientationX() { return m_orientationX.get(); }
+    AudioParam& orientationY() { return m_orientationY.get(); }
+    AudioParam& orientationZ() { return m_orientationZ.get(); }
 
-    // Velocity
+    // FIXME: Remove velocity from PannerNode
     FloatPoint3D velocity() const { return m_velocity; }
     void setVelocity(float x, float y, float z) { m_velocity = FloatPoint3D(x, y, z); }
 
@@ -147,7 +150,7 @@ private:
     std::unique_ptr<Panner> m_panner;
     PanningModelType m_panningModel;
 
-    FloatPoint3D m_orientation;
+    // FIXME: Remove velocity from PannerNode
     FloatPoint3D m_velocity;
 
     // Gain
@@ -160,6 +163,10 @@ private:
     Ref<AudioParam> m_positionX;
     Ref<AudioParam> m_positionY;
     Ref<AudioParam> m_positionZ;
+    
+    Ref<AudioParam> m_orientationX;
+    Ref<AudioParam> m_orientationY;
+    Ref<AudioParam> m_orientationZ;
 
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;

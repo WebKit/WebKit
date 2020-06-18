@@ -27,15 +27,17 @@
     JSGenerateToJSObject,
     EnabledBySetting=ModernUnprefixedWebAudio,
 ] interface PannerNode : AudioNode {
-    // Default model for stereo is HRTF 
+    // Default model for stereo is equalpower
     attribute PanningModelType panningModel;
 
     // Uses a 3D cartesian coordinate system 
     void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
     void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z);
+    
+    // FIXME: Remove velocity from PannerNode
     void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 
-    // Distance model
+    // Default distance model is inverse
     attribute DistanceModelType distanceModel;
 
     attribute unrestricted double refDistance;
@@ -51,4 +53,9 @@
     readonly attribute AudioParam positionX;
     readonly attribute AudioParam positionY;
     readonly attribute AudioParam positionZ;
+    
+    // Vector of direction of audio source in 3D cartesian system
+    readonly attribute AudioParam orientationX;
+    readonly attribute AudioParam orientationY;
+    readonly attribute AudioParam orientationZ;
 };

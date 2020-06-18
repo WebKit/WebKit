@@ -912,9 +912,9 @@ PASS PannerNode interface: attribute panningModel
 PASS PannerNode interface: attribute positionX 
 PASS PannerNode interface: attribute positionY 
 PASS PannerNode interface: attribute positionZ 
-FAIL PannerNode interface: attribute orientationX assert_true: The prototype object must have a property "orientationX" expected true got false
-FAIL PannerNode interface: attribute orientationY assert_true: The prototype object must have a property "orientationY" expected true got false
-FAIL PannerNode interface: attribute orientationZ assert_true: The prototype object must have a property "orientationZ" expected true got false
+PASS PannerNode interface: attribute orientationX 
+PASS PannerNode interface: attribute orientationY 
+PASS PannerNode interface: attribute orientationZ 
 PASS PannerNode interface: attribute distanceModel 
 PASS PannerNode interface: attribute refDistance 
 PASS PannerNode interface: attribute maxDistance 

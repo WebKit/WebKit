@@ -60,6 +60,9 @@ PannerNode::PannerNode(AudioContext& context, float sampleRate)
     , m_positionX(AudioParam::create(context, "positionX"_s, 0, -FLT_MAX, FLT_MAX))
     , m_positionY(AudioParam::create(context, "positionY"_s, 0, -FLT_MAX, FLT_MAX))
     , m_positionZ(AudioParam::create(context, "positionZ"_s, 0, -FLT_MAX, FLT_MAX))
+    , m_orientationX(AudioParam::create(context, "orientationX"_s, 1, -FLT_MAX, FLT_MAX))
+    , m_orientationY(AudioParam::create(context, "orientationY"_s, 0, -FLT_MAX, FLT_MAX))
+    , m_orientationZ(AudioParam::create(context, "orientationZ"_s, 0, -FLT_MAX, FLT_MAX))
     , m_connectionCount(0)
 {
     setNodeType(NodeTypePanner);
@@ -78,7 +81,7 @@ PannerNode::PannerNode(AudioContext& context, float sampleRate)
     m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
 
-    m_orientation = FloatPoint3D(1, 0, 0);
+    // FIXME: Remove velocity from PannerNode
     m_velocity = FloatPoint3D(0, 0, 0);
 
     initialize();
@@ -206,6 +209,18 @@ void PannerNode::setPosition(float x, float y, float z)
     m_positionX->setValue(x);
     m_positionY->setValue(y);
     m_positionZ->setValue(z);
+}
+
+FloatPoint3D PannerNode::orientation() const
+{
+    return FloatPoint3D(m_orientationX->value(), m_orientationY->value(), m_orientationZ->value());
+}
+
+void PannerNode::setOrientation(float x, float y, float z)
+{
+    m_orientationX->setValue(x);
+    m_orientationY->setValue(y);
+    m_orientationZ->setValue(z);
 }
 
 DistanceModelType PannerNode::distanceModel() const
@@ -341,7 +356,7 @@ float PannerNode::distanceConeGain()
     m_distanceGain->setValue(static_cast<float>(distanceGain));
 
     // FIXME: could optimize by caching coneGain
-    double coneGain = m_coneEffect.gain(sourcePosition, m_orientation, listenerPosition);
+    double coneGain = m_coneEffect.gain(sourcePosition, orientation(), listenerPosition);
     
     m_coneGain->setValue(static_cast<float>(coneGain));
 
