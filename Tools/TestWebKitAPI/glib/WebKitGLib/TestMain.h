@@ -125,11 +125,12 @@ public:
         GUniquePtr<char> webSQLDirectory(g_build_filename(dataDirectory(), "websql", nullptr));
         GUniquePtr<char> hstsDirectory(g_build_filename(dataDirectory(), "hsts", nullptr));
         GUniquePtr<char> itpDirectory(g_build_filename(dataDirectory(), "itp", nullptr));
+        GUniquePtr<char> swRegistrationsDirectory(g_build_filename(dataDirectory(), "serviceworkers", nullptr));
         GRefPtr<WebKitWebsiteDataManager> websiteDataManager = adoptGRef(webkit_website_data_manager_new(
             "local-storage-directory", localStorageDirectory.get(), "indexeddb-directory", indexedDBDirectory.get(),
             "disk-cache-directory", diskCacheDirectory.get(), "offline-application-cache-directory", applicationCacheDirectory.get(),
             "websql-directory", webSQLDirectory.get(), "hsts-cache-directory", hstsDirectory.get(),
-            "itp-directory", itpDirectory.get(), nullptr));
+            "itp-directory", itpDirectory.get(), "service-worker-registrations-directory", swRegistrationsDirectory.get(), nullptr));
 
         m_webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
             "website-data-manager", websiteDataManager.get(),

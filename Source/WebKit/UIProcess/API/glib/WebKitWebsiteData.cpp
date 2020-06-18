@@ -79,7 +79,8 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
 #endif
         WebsiteDataType::Cookies,
         WebsiteDataType::DeviceIdHashSalt,
-        WebsiteDataType::ResourceLoadStatistics
+        WebsiteDataType::ResourceLoadStatistics,
+        WebsiteDataType::ServiceWorkerRegistrations
     });
 }
 
@@ -112,6 +113,8 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT;
     if (types.contains(WebsiteDataType::ResourceLoadStatistics))
         returnValue |= WEBKIT_WEBSITE_DATA_ITP;
+    if (types.contains(WebsiteDataType::ServiceWorkerRegistrations))
+        returnValue |= WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS;
     return static_cast<WebKitWebsiteDataTypes>(returnValue);
 }
 

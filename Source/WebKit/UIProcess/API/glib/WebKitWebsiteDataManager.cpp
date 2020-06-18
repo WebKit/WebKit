@@ -87,6 +87,7 @@ enum {
     PROP_WEBSQL_DIRECTORY,
     PROP_HSTS_CACHE_DIRECTORY,
     PROP_ITP_DIRECTORY,
+    PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY,
     PROP_IS_EPHEMERAL
 };
 
@@ -106,6 +107,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> webSQLDirectory;
     GUniquePtr<char> hstsCacheDirectory;
     GUniquePtr<char> itpDirectory;
+    GUniquePtr<char> swRegistrationsDirectory;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     Vector<WebProcessPool*> processPools;
@@ -147,6 +149,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
     case PROP_ITP_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_itp_directory(manager));
         break;
+    case PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY:
+        g_value_set_string(value, webkit_website_data_manager_get_service_worker_registrations_directory(manager));
+        break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
         break;
@@ -187,6 +192,9 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_ITP_DIRECTORY:
         manager->priv->itpDirectory.reset(g_value_dup_string(value));
         break;
+    case PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY:
+        manager->priv->swRegistrationsDirectory.reset(g_value_dup_string(value));
+        break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = WebKit::WebsiteDataStore::createNonPersistent();
@@ -210,6 +218,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
             priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", nullptr));
         if (!priv->itpDirectory)
             priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "itp", nullptr));
+        if (!priv->swRegistrationsDirectory)
+            priv->swRegistrationsDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "serviceworkers", nullptr));
     }
 
     if (priv->baseCacheDirectory) {
@@ -388,6 +398,23 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
+     * WebKitWebsiteDataManager:service-worker-registrations-directory:
+     *
+     * The directory where service workers registrations will be stored.
+     *
+     * Since: 2.30
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY,
+        g_param_spec_string(
+            "service-worker-registrations-directory",
+            _("Service Worker Registrations Directory"),
+            _("The directory where service workers registrations will be stored"),
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
      * WebKitWebsiteDataManager:is-ephemeral:
      *
      * Whether the #WebKitWebsiteDataManager is ephemeral. An ephemeral #WebKitWebsiteDataManager
@@ -427,6 +454,8 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             WebKit::WebsiteDataStore::defaultHSTSDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
         configuration->setResourceLoadStatisticsDirectory(!priv->itpDirectory ?
             WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.get()));
+        configuration->setServiceWorkerRegistrationDirectory(!priv->swRegistrationsDirectory ?
+            WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
         configuration->setMediaKeysStorageDirectory(WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory());
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
     }
@@ -712,6 +741,29 @@ const gchar* webkit_website_data_manager_get_itp_directory(WebKitWebsiteDataMana
 }
 
 /**
+ * webkit_website_data_manager_get_service_worker_registrations_directory:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get the #WebKitWebsiteDataManager:service-worker-registrations-directory property.
+ *
+ * Returns: (allow-none): the directory where service worker registrations are stored or %NULL if @manager is ephemeral.
+ *
+ * Since: 2.30
+ */
+const gchar* webkit_website_data_manager_get_service_worker_registrations_directory(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
+    if (!priv->swRegistrationsDirectory)
+        priv->swRegistrationsDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory().utf8().data()));
+    return priv->swRegistrationsDirectory.get();
+}
+
+/**
  * webkit_website_data_manager_get_cookie_manager:
  * @manager: a #WebKitWebsiteDataManager
  *
@@ -796,6 +848,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::DeviceIdHashSalt);
     if (types & WEBKIT_WEBSITE_DATA_ITP)
         returnValue.add(WebsiteDataType::ResourceLoadStatistics);
+    if (types & WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS)
+        returnValue.add(WebsiteDataType::ServiceWorkerRegistrations);
     return returnValue;
 }
 

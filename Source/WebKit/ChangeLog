@@ -1,3 +1,31 @@
+2020-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to configure and handle service worker registrations to WebKitWebsiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=213290
+
+        Reviewed by Michael Catanzaro.
+
+        The default path is always used even for apps setting a base data directory. We should handle
+        WebsiteDataType::ServiceWorkerRegistrations to configure the directory and allow to fetch and clear them.
+
+        * UIProcess/API/glib/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes):
+        (toWebKitWebsiteDataTypes):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerGetProperty):
+        (webkitWebsiteDataManagerSetProperty):
+        (webkitWebsiteDataManagerConstructed):
+        (webkit_website_data_manager_class_init):
+        (webkitWebsiteDataManagerGetDataStore):
+        (webkit_website_data_manager_get_service_worker_registrations_directory):
+        (toWebsiteDataTypes):
+        * UIProcess/API/gtk/WebKitWebsiteData.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitWebsiteData.h:
+        * UIProcess/API/wpe/WebKitWebsiteDataManager.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2020-06-18  Yuri Chornoivan  <yurchor@ukr.net>
 
         Unreviewed. Fix a typo introduced in r263085

@@ -1,3 +1,24 @@
+2020-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to configure and handle service worker registrations to WebKitWebsiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=213290
+
+        Reviewed by Michael Catanzaro.
+
+        Handle new website data in MiniBrowser and add a unit test.
+
+        * MiniBrowser/gtk/main.c:
+        (gotWebsiteDataCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback):
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataEphemeral):
+        (testWebsiteDataITP):
+        (testWebsiteDataServiceWorkerRegistrations):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+
 2020-06-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         RebaselineServer: "Rebaseline queue" button is placed behind the footer

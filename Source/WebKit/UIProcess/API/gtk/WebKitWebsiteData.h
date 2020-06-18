@@ -47,6 +47,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT: Hash salt used to generate the device ids used by webpages. Since 2.24
  * @WEBKIT_WEBSITE_DATA_HSTS_CACHE: HSTS cache. Since 2.26
  * @WEBKIT_WEBSITE_DATA_ITP: Intelligent Tracking Prevention data. Since 2.30.
+ * @WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS: Service worker registrations. Since 2.30
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
@@ -54,19 +55,20 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * Since: 2.16
  */
 typedef enum {
-    WEBKIT_WEBSITE_DATA_MEMORY_CACHE              = 1 << 0,
-    WEBKIT_WEBSITE_DATA_DISK_CACHE                = 1 << 1,
-    WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE = 1 << 2,
-    WEBKIT_WEBSITE_DATA_SESSION_STORAGE           = 1 << 3,
-    WEBKIT_WEBSITE_DATA_LOCAL_STORAGE             = 1 << 4,
-    WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES          = 1 << 5,
-    WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES       = 1 << 6,
-    WEBKIT_WEBSITE_DATA_PLUGIN_DATA               = 1 << 7,
-    WEBKIT_WEBSITE_DATA_COOKIES                   = 1 << 8,
-    WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT       = 1 << 9,
-    WEBKIT_WEBSITE_DATA_HSTS_CACHE                = 1 << 10,
-    WEBKIT_WEBSITE_DATA_ITP                       = 1 << 11,
-    WEBKIT_WEBSITE_DATA_ALL                       = (1 << 12) - 1
+    WEBKIT_WEBSITE_DATA_MEMORY_CACHE                 = 1 << 0,
+    WEBKIT_WEBSITE_DATA_DISK_CACHE                   = 1 << 1,
+    WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE    = 1 << 2,
+    WEBKIT_WEBSITE_DATA_SESSION_STORAGE              = 1 << 3,
+    WEBKIT_WEBSITE_DATA_LOCAL_STORAGE                = 1 << 4,
+    WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES             = 1 << 5,
+    WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES          = 1 << 6,
+    WEBKIT_WEBSITE_DATA_PLUGIN_DATA                  = 1 << 7,
+    WEBKIT_WEBSITE_DATA_COOKIES                      = 1 << 8,
+    WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT          = 1 << 9,
+    WEBKIT_WEBSITE_DATA_HSTS_CACHE                   = 1 << 10,
+    WEBKIT_WEBSITE_DATA_ITP                          = 1 << 11,
+    WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS = 1 << 12,
+    WEBKIT_WEBSITE_DATA_ALL                          = (1 << 13) - 1
 } WebKitWebsiteDataTypes;
 
 WEBKIT_API GType
