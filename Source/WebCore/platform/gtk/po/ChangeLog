@@ -1,3 +1,12 @@
+2020-06-18  Yuri Chornoivan  <yurchor@ukr.net>
+
+        [GTK] [l10n] Updated Ukrainian translation of WebKitGTK
+        https://bugs.webkit.org/show_bug.cgi?id=212844
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * uk.po:
+
 2020-05-20  Yuri Chornoivan  <yurchor@ukr.net>
 
         [GTK] [l10n] Updated Ukrainian translation of WebKitGTK+
