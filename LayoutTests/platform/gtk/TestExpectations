@@ -1348,8 +1348,6 @@ webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failur
 
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html [ ImageOnlyFailure ]
 
-webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Timeout Crash ]
-webkit.org/b/196542 printing/printing-events.html [ Timeout Crash ]
 
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Pass Crash ]
 
@@ -2072,7 +2070,6 @@ webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [
 
 webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html [ Pass Timeout ]
 
-webkit.org/b/208291 webanimations/accelerated-animation-renderer-change.html [ Pass Timeout ]
 
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Timeout Pass ]
@@ -2273,7 +2270,6 @@ Bug(GTK) [ Debug ] js/dfg-uint32array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint32array-overflow-values.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint8array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint8clampedarray.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dom/random-array-gc-stress.html [ Pass Slow ]
 Bug(GTK) js/dom/string-replacement-outofmemory.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dom/toString-and-valueOf-override.html [ Pass Slow ]
 Bug(GTK) jquery/event.html [ Pass Slow ]
@@ -2438,8 +2434,6 @@ webkit.org/b/144690 editing/spelling/spelling-exactly-selected-word.html [ Timeo
 webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout ]
 
-# May take too long on the bots.
-
 webkit.org/b/153949 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
 
 webkit.org/b/156109 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout ]
@@ -2448,15 +2442,8 @@ webkit.org/b/156109 http/tests/security/contentSecurityPolicy/video-redirect-blo
 webkit.org/b/158923 webkit.org/b/198830 media/airplay-autoplay.html [ Timeout Crash ]
 webkit.org/b/158923 webkit.org/b/198830 media/airplay-allows-buffering.html [ Timeout Crash ]
 
-webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cookie.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-same-origin.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cookie.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/area-same-origin.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Timeout Crash ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Failure Timeout Crash ]
+# WKTR singleTapAtPoint is not implemented.
+webkit.org/b/162017 http/tests/navigation/ping-attribute [ Skip ]
 
 webkit.org/b/163779 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
 
@@ -2485,7 +2472,6 @@ webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
 
-webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash Timeout Pass ]
 webkit.org/b/177940 webkit.org/b/186638 workers/wasm-hashset-many.html [ Crash Timeout Pass ]
 
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
