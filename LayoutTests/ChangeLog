@@ -1,3 +1,58 @@
+2020-06-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r263128. rdar://problem/64492837
+
+    REGRESSION (r262643): DumpRenderTree at com.apple.WebCore: WebCore::Document::prepareCanvasesForDisplayIfNeeded
+    https://bugs.webkit.org/show_bug.cgi?id=213221
+    rdar://64260400
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    A Document could still be holding a pointer to an HTMLCanvasElement after the
+    canvas had been deleted because the CanvasObserver protocol was disconnected
+    too early. The fix is to explicitly clear the canvas from the Document as it
+    stops observing.
+    
+    Test: webgl/preparation-removed-from-document.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::prepareCanvasesForDisplayIfNeeded): Copy the HashSet to a Vector
+    just in case something weird happens to the set during iteration.
+    (WebCore::Document::clearCanvasPreparation): Remove the canvas from the list of
+    of elements that need preparation.
+    * dom/Document.h: Add the new clearCanvasPreparation method.
+    
+    * html/HTMLCanvasElement.cpp:
+    (WebCore::HTMLCanvasElement::~HTMLCanvasElement): Clear the document.
+    (WebCore::HTMLCanvasElement::didMoveToNewDocument): Ditto.
+    (WebCore::HTMLCanvasElement::removedFromAncestor): Ditto.
+    
+    LayoutTests:
+    
+    Test that triggers a rendering on a canvas, then rips it out of
+    the document before drawing.
+    
+    * webgl/preparation-removed-from-document-expected.txt: Added.
+    * webgl/preparation-removed-from-document.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@263128 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-16  Dean Jackson  <dino@apple.com>
+
+            REGRESSION (r262643): DumpRenderTree at com.apple.WebCore: WebCore::Document::prepareCanvasesForDisplayIfNeeded
+            https://bugs.webkit.org/show_bug.cgi?id=213221
+            rdar://64260400
+
+            Reviewed by Simon Fraser.
+
+            Test that triggers a rendering on a canvas, then rips it out of
+            the document before drawing.
+
+            * webgl/preparation-removed-from-document-expected.txt: Added.
+            * webgl/preparation-removed-from-document.html: Added.
+
 2020-06-15  Megan Gardner  <megan_gardner@apple.com>
 
         Text form controls can scroll by 1px when value is the same length as size. No scrolling should happen.

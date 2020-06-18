@@ -8589,7 +8589,7 @@ void Document::prepareCanvasesForDisplayIfNeeded()
 {
     // Some canvas contexts need to do work when rendering has finished but
     // before their content is composited.
-    for (auto* canvas : m_canvasesNeedingDisplayPreparation) {
+    for (auto* canvas : copyToVector(m_canvasesNeedingDisplayPreparation)) {
         // However, if they are not in the document body, then they won't
         // be composited and thus don't need preparation. Unfortunately they
         // can't tell at the time they were added to the list, since they
@@ -8601,6 +8601,11 @@ void Document::prepareCanvasesForDisplayIfNeeded()
         protectedCanvas->prepareForDisplay();
     }
     m_canvasesNeedingDisplayPreparation.clear();
+}
+
+void Document::clearCanvasPreparation(HTMLCanvasElement* canvas)
+{
+    m_canvasesNeedingDisplayPreparation.remove(canvas);
 }
 
 void Document::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
