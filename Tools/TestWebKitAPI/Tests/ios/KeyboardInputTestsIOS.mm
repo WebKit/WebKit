@@ -187,9 +187,9 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<Test
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
 
-    __block BOOL doneWaiting = NO;
+    __block bool doneWaiting = false;
     [inputDelegate setFocusStartsInputSessionPolicyHandler:^_WKFocusStartsInputSessionPolicy(WKWebView *, id <_WKFocusedElementInfo>) {
-        doneWaiting = YES;
+        doneWaiting = true;
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];

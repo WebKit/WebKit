@@ -1,3 +1,14 @@
+2020-06-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS] Two KeyboardInputTests are failing on recent iOS SDK versions (build-fix)
+        https://bugs.webkit.org/show_bug.cgi?id=213183
+        <rdar://problem/64273483>
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (webViewWithAutofocusedInput): bool may not be the same type as BOOL.
+
 2020-06-18  Saam Barati  <sbarati@apple.com>
 
         call skip when skipping JetStream2 wasm test
