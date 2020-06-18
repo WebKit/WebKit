@@ -291,10 +291,10 @@ function Promise(executor)
 
     try {
         executor(
-            function (resolution) {
+            (resolution) => {
                 return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
             },
-            function (reason) {
+            (reason) => {
                 return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
             });
     } catch (error) {
@@ -317,10 +317,10 @@ function InternalPromise(executor)
 
     try {
         executor(
-            function (resolution) {
+            (resolution) => {
                 return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
             },
-            function (reason) {
+            (reason) => {
                 return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
             });
     } catch (error) {

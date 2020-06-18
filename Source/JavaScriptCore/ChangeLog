@@ -1,5 +1,42 @@
 2020-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Promise built-in functions should be anonymous non-constructors
+        https://bugs.webkit.org/show_bug.cgi?id=213317
+
+        Reviewed by Darin Adler.
+
+        This patch makes userland-exposed Promise built-in functions
+        non-constructors and sets their "name" properties to empty strings
+        as per spec [1], aligning JSC with V8 and SpiderMonkey.
+
+        @createResolvingFunctionsWithoutPromise change is covered by test262's
+        async-generator/yield-thenable-create-resolving-functions-*.js cases.
+
+        Promise microbenchmarks are neutral. Promise constructors bytecode is
+        unchanged, while @createResolvingFunctions* bytecode is reduced by 2
+        instructions.
+
+        [1]: https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects
+
+        * builtins/PromiseConstructor.js:
+        (nakedConstructor.Promise):
+        (nakedConstructor.InternalPromise):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseCapabilitySlow):
+        (globalPrivate.createResolvingFunctions):
+        (globalPrivate.createResolvingFunctionsWithoutPromise):
+        (globalPrivate.createResolvingFunctions.resolve): Deleted.
+        (globalPrivate.createResolvingFunctions.reject): Deleted.
+        (resolve): Deleted.
+        (reject): Deleted.
+        * builtins/PromisePrototype.js:
+        (globalPrivate.getThenFinally):
+        (globalPrivate.getCatchFinally):
+        (valueThunk): Deleted.
+        (thrower): Deleted.
+
+2020-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         TypedArray.prototype.set is incorrect with primitives
         https://bugs.webkit.org/show_bug.cgi?id=212730
 
