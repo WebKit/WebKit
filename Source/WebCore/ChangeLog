@@ -1,3 +1,35 @@
+2020-06-18  Doug Kelly  <dougk@apple.com>
+
+        Use paintCellAndSetFocusedElementNeedsRepaintIfNecessary() for search field buttons
+        https://bugs.webkit.org/show_bug.cgi?id=213352
+        <rdar://problem/57129008>
+
+        Reviewed by Simon Fraser.
+
+        The search fields cancel and results buttons should use the common
+        paintCellAndSetFocusedElementNeedsRepaintIfNecessary() function instead of directly painting the cell.
+        This allows for an image buffer to be used for drawing specifically in cases when it becomes needed,
+        when a scale (either via zoom or CSS transform) is applied.
+
+        This also moves the logic for determining if an image buffer should be used into
+        ThemeMac::drawCellOrFocusRingWithViewIntoContext(), which uses the current user-defined CTM
+        (inverting the base CTM to negate the effect of a device-specific scale factor).  This also negates
+        the need for the page scale factor and the effective zoom applied to the renderer style, since it is
+        computed into the CTM already.
+
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintToggleButton):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        (WebCore::paintColorWell):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2020-06-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: ASSERTION FAILED: decodedLength >= dataLength at WebCore::NetworkResourcesData::ResourceData::decodeDataToContent()

@@ -1801,9 +1801,8 @@ void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell
 {
     LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance());
     bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On;
-    bool shouldUseImageBuffer = renderer.style().effectiveZoom() != 1 || renderer.page().pageScaleFactor() != 1;
     bool shouldDrawCell = true;
-    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, renderer.page().deviceScaleFactor()))
+    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, renderer.page().deviceScaleFactor()))
         renderer.page().focusController().setFocusedElementNeedsRepaint();
 }
 
@@ -1933,8 +1932,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     bool shouldDrawCell = true;
     bool shouldDrawFocusRing = false;
     float deviceScaleFactor = o.page().deviceScaleFactor();
-    bool shouldUseImageBuffer = deviceScaleFactor != 1 || zoomLevel != 1;
-    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor);
+    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, deviceScaleFactor);
     [sliderThumbCell setControlView:nil];
 
     return false;
@@ -2086,7 +2084,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
         paintInfo.context().scale(zoomLevel);
         paintInfo.context().translate(-unzoomedRect.location());
     }
-    [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(box)];
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search cancelButtonCell], inputBox, paintInfo, unzoomedRect);
     [[search cancelButtonCell] setControlView:nil];
     return false;
 }
@@ -2222,7 +2220,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
         paintInfo.context().translate(-unzoomedRect.location());
     }
 
-    [[search searchButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(box)];
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search searchButtonCell], inputBox, paintInfo, unzoomedRect);
     [[search searchButtonCell] setControlView:nil];
 
     return false;
