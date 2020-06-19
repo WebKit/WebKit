@@ -59,15 +59,21 @@ struct WaylandEGLConnection {
         std::call_once(s_onceFlag,
             [] {
                 s_connection.display = wl_display_connect(nullptr);
-                if (!s_connection.display)
+                if (!s_connection.display) {
+                    g_warning("WaylandEGLConnection: Could not connect to Wayland Display");
                     return;
+                }
 
                 EGLDisplay eglDisplay = eglGetDisplay(s_connection.display);
-                if (eglDisplay == EGL_NO_DISPLAY)
+                if (eglDisplay == EGL_NO_DISPLAY) {
+                    g_warning("WaylandEGLConnection: No EGL Display available in this connection");
                     return;
+                }
 
-                if (!eglInitialize(eglDisplay, nullptr, nullptr) || !eglBindAPI(EGL_OPENGL_ES_API))
+                if (!eglInitialize(eglDisplay, nullptr, nullptr) || !eglBindAPI(EGL_OPENGL_ES_API)) {
+                    g_warning("WaylandEGLConnection: Failed to initialize and bind the EGL Display");
                     return;
+                }
 
                 s_connection.eglDisplay = eglDisplay;
                 wpe_fdo_initialize_for_egl_display(s_connection.eglDisplay);
@@ -512,11 +518,15 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     m_initialSize.height = height;
 
     auto& connection = WaylandEGLConnection::singleton();
-    if (!connection.display)
+    if (!connection.display) {
+        g_warning("WindowViewBackend: No Wayland EGL connection available");
         return;
+    }
 
-    if (connection.eglDisplay == EGL_NO_DISPLAY || !initialize(connection.eglDisplay))
+    if (connection.eglDisplay == EGL_NO_DISPLAY || !initialize(connection.eglDisplay)) {
+        g_warning("WindowViewBackend: Could not initialize EGL display");
         return;
+    }
 
     {
         auto* registry = wl_display_get_registry(connection.display);
@@ -563,11 +573,15 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     auto createPlatformWindowSurface =
         reinterpret_cast<PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC>(eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT"));
     m_eglSurface = createPlatformWindowSurface(connection.eglDisplay, m_eglConfig, m_eglWindow, nullptr);
-    if (!m_eglSurface)
+    if (!m_eglSurface) {
+        g_warning("WindowViewBackend: Could not create EGL platform window surface");
         return;
+    }
 
-    if (!eglMakeCurrent(connection.eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
+    if (!eglMakeCurrent(connection.eglDisplay, m_eglSurface, m_eglSurface, m_eglContext)) {
+        g_warning("WindowViewBackend: Could not make EGL surface current");
         return;
+    }
 
     imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 

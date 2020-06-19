@@ -1,5 +1,19 @@
 2020-06-19  Lauro Moura  <lmoura@igalia.com>
 
+        [WPE] Warn potential issues when creating WindowViewBackend
+        https://bugs.webkit.org/show_bug.cgi?id=213326
+
+        Reviewed by Philippe Normand.
+
+        Make it easier to debug eventual GL issues when starting up MiniBrowser in
+        windowed mode.
+
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WaylandEGLConnection::singleton):
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+
+2020-06-19  Lauro Moura  <lmoura@igalia.com>
+
         [webkitpy][WPE] Default to headless if _display_server is xfvb
         https://bugs.webkit.org/show_bug.cgi?id=213327
 
