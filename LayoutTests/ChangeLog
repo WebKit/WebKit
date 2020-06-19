@@ -1,3 +1,13 @@
+2020-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Do not special-case empty tables
+        https://bugs.webkit.org/show_bug.cgi?id=213378
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-min-max-width-empty-content-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-min-max-width-empty-content-simple.html: Added.
+
 2020-06-19  Jason Lawrence  <lawrence.j@apple.com>
 
         Mac wk2 Debug] webaudio/biquad-bandpass.html is flaky crashing with alert WTFCrash - WebCore::WebKitAudioContext::~WebKitAudioContext() + 654 (WebKitAudioContext.cpp:209).
