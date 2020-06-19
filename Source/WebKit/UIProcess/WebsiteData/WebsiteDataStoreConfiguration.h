@@ -180,7 +180,7 @@ private:
 #else
     bool m_networkCacheSpeculativeValidationEnabled { false };
 #endif
-    bool m_staleWhileRevalidateEnabled { false };
+    bool m_staleWhileRevalidateEnabled { true };
     String m_localStorageDirectory;
     String m_mediaKeysStorageDirectory;
     String m_alternativeServicesDirectory;

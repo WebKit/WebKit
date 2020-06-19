@@ -1,3 +1,16 @@
+2020-06-19  Rob Buis  <rbuis@igalia.com>
+
+        Enable stale-while-revalidate support by default
+        https://bugs.webkit.org/show_bug.cgi?id=213286
+
+        Reviewed by Youenn Fablet.
+
+        Enable stale-while-revalidate support for Mac/GTK/WPE by changing the default
+        to true. Note that platforms that do not support speculative loads, which s-w-r
+        relies on, will not see any change in bahavior.
+
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+
 2020-06-19  Alexander Mikhaylenko  <alexm@gnome.org>
 
         REGRESSION(r253360): [GTK] Page starts loading during animation in back/forward gesture
