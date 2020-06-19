@@ -2496,6 +2496,43 @@ EncodedJSValue JSC_HOST_CALL functionAsDoubleNumber(JSGlobalObject* globalObject
 
 int jscmain(int argc, char** argv);
 
+#if OS(DARWIN) || OS(LINUX)
+static size_t memoryLimit;
+
+static void crashIfExceedingMemoryLimit()
+{
+    if (!memoryLimit)
+        return;
+    MemoryFootprint footprint = MemoryFootprint::now();
+    if (footprint.current > memoryLimit) {
+        dataLogLn("Crashing because current footprint: ", footprint.current, " exceeds limit: ", memoryLimit);
+        CRASH();
+    }
+}
+
+static void startMemoryMonitoringThreadIfNeeded()
+{
+    char* memoryLimitString = getenv("JSCTEST_memoryLimit");
+    if (!memoryLimitString)
+        return;
+
+    if (sscanf(memoryLimitString, "%zu", &memoryLimit) != 1) {
+        dataLogLn("WARNING: malformed JSCTEST_memoryLimit environment variable");
+        return;
+    }
+
+    if (!memoryLimit)
+        return;
+
+    Thread::create("jsc Memory Monitor", [=] {
+        while (true) {
+            sleep(Seconds::fromMilliseconds(5));
+            crashIfExceedingMemoryLimit();
+        }
+    });
+}
+#endif // OS(DARWIN) || OS(LINUX)
+
 static double s_desiredTimeout;
 static double s_timeoutMultiplier = 1.0;
 static Seconds s_timeoutDuration;
@@ -3253,6 +3290,10 @@ int jscmain(int argc, char** argv)
     JSC::initializeThreading();
     initializeTimeoutIfNeeded();
 
+#if OS(DARWIN) || OS(LINUX)
+    startMemoryMonitoringThreadIfNeeded();
+#endif
+
     if (Options::useSuperSampler())
         enableSuperSampler();
 
@@ -3276,6 +3317,8 @@ int jscmain(int argc, char** argv)
     Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);
     Box<Synchronous> memoryPressureSynchronousState = Box<Synchronous>::create(Synchronous::No);
     memoryPressureHandler.setLowMemoryHandler([=] (Critical critical, Synchronous synchronous) {
+        crashIfExceedingMemoryLimit();
+
         // We set these racily with respect to reading them from the JS execution thread.
         *memoryPressureCriticalState = critical;
         *memoryPressureSynchronousState = synchronous;

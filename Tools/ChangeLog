@@ -1,3 +1,14 @@
+2020-06-19  Saam Barati  <sbarati@apple.com>
+
+        Have a memory monitor thread in jsc shell when running tests using --memory-limited
+        https://bugs.webkit.org/show_bug.cgi?id=213389
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+
 2020-06-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make isolated tree enablement status dependent on client preference

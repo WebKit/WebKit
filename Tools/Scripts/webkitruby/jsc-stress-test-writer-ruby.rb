@@ -313,6 +313,7 @@ class Plan
         script += "/.runner\") do\n"
         script += "            ENV[\"DYLD_FRAMEWORK_PATH\"] = \"#{$testingFrameworkPath.dirname}\"\n"
         script += "            ENV[\"JSCTEST_timeout\"] = \"#{ENV['JSCTEST_timeout']}\"\n"
+        script += "            ENV[\"JSCTEST_memoryLimit\"] = \"#{ENV['JSCTEST_memoryLimit']}\"\n"
 
         script += "            #{shellCommand}"
         script += "            print out\n"
