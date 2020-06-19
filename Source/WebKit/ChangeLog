@@ -1,3 +1,26 @@
+2020-06-19  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: web process crash in AXObjectCache::postNotification.
+        https://bugs.webkit.org/show_bug.cgi?id=213398
+
+        Reviewed by Chris Fleizach.
+
+        AXObjectCache was being instantiated on the AX secondary thread.
+        Therefore the timers for the different delayed notifications where
+        initialized with the secondary thread. When postNotification was triggered
+        on the main thread as it should, and the timer was accessed, the timer
+        would assert/crash for being accessed in a thread different than where
+        it was created. This change guaranties that AXObjectCache is always
+        created on the main thread.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase axObjectCache]):
+        (-[WKAccessibilityWebPageObjectBase accessibilityPluginObject]):
+        (-[WKAccessibilityWebPageObjectBase accessibilityRootObjectWrapper]):
+        (-[WKAccessibilityWebPageObjectBase setWebPage:]):
+        (-[WKAccessibilityWebPageObjectBase setHasMainFramePlugin:]):
+        (-[WKAccessibilityWebPageObjectBase setRemoteParent:]):
+
 2020-06-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make isolated tree enablement status dependent on client preference

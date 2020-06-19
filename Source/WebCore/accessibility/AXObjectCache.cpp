@@ -195,6 +195,7 @@ bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
 void AXObjectCache::enableAccessibility()
 {
+    ASSERT(isMainThread());
     gAccessibilityEnabled = true;
 }
 
@@ -222,6 +223,7 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_currentModalNode(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
 {
+    ASSERT(isMainThread());
 }
 
 AXObjectCache::~AXObjectCache()
@@ -1129,6 +1131,7 @@ void AXObjectCache::postNotification(AXCoreObject* object, Document* document, A
 {
     AXTRACE("AXObjectCache::postNotification");
     AXLOG(std::make_pair(object, notification));
+    ASSERT(isMainThread());
 
     stopCachingComputedObjectAttributes();
 
