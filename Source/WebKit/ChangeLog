@@ -1,3 +1,14 @@
+2020-06-19  Rob Buis  <rbuis@igalia.com>
+
+        Enable referrer policy attribute support by default
+        https://bugs.webkit.org/show_bug.cgi?id=213285
+
+        Reviewed by Youenn Fablet.
+
+        Enable referrer policy attribute support by default by flipping the switch.
+
+        * Shared/WebPreferences.yaml:
+
 2020-06-19  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCSocketClient::sendTo is too verbose in case of error

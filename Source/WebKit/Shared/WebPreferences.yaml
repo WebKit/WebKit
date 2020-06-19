@@ -1877,7 +1877,7 @@ EnterKeyHintEnabled:
 
 ReferrerPolicyAttributeEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Referrer Policy attribute"
   humanReadableDescription: "Enable Referrer Policy attribute"
   category: experimental

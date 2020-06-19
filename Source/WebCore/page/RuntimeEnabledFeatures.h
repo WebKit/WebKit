@@ -618,7 +618,7 @@ private:
 
     bool m_isITPDatabaseEnabled { true };
 
-    bool m_referrerPolicyAttributeEnabled { false };
+    bool m_referrerPolicyAttributeEnabled { true };
     bool m_interruptAudioOnPageVisibilityChangeEnabled { false };
 
     bool m_linkPreloadResponsiveImagesEnabled { false };
