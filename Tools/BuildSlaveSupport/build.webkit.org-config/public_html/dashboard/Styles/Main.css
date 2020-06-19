@@ -201,6 +201,26 @@ table.queue-grid tr.platform.ios-13 img.logo {
     content: -webkit-image-set(url(../Images/IOS13@2x.png) 2x, url(../Images/IOS13.png) 1x);
 }
 
+table.queue-grid tr.platform.tvos-simulator-13 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/TvOS13Simulator@2x.png) 2x, url(../Images/TvOS13Simulator.png) 1x);
+}
+
+table.queue-grid tr.platform.tvos-13 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/TvOS13@2x.png) 2x, url(../Images/TvOS13.png) 1x);
+}
+
+table.queue-grid tr.platform.watchos-simulator-6 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/WatchOSSimulator6@2x.png) 2x, url(../Images/WatchOSSimulator6.png) 1x);
+}
+
+table.queue-grid tr.platform.watchos-6 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/WatchOS6@2x.png) 2x, url(../Images/WatchOS6.png) 1x);
+}
+
 table.queue-grid tr.platform.macos-mojave img.logo {
     content: -webkit-image-set(url(../Images/Mojave@2x.png) 2x, url(../Images/Mojave.png) 1x);
 }

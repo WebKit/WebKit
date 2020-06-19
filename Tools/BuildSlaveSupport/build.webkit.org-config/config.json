@@ -50,6 +50,11 @@
                     { "name": "bot667", "platform": "ios-simulator-13"},
                     { "name": "bot664", "platform": "ios-simulator-13"},
 
+                    { "name": "bot607", "platform": "tvos-13" },
+                    { "name": "bot608", "platform": "tvos-simulator-13" },
+                    { "name": "bot609", "platform": "watchos-6" },
+                    { "name": "bot672", "platform": "watchos-simulator-6" },
+
                     { "name": "bot545", "platform": "win" },
                     { "name": "bot546", "platform": "win" },
                     { "name": "bot547", "platform": "win" },
@@ -232,6 +237,26 @@
                       "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot664"]
+                    },
+                    {
+                      "name": "Apple-tvOS-13-Release-Build", "type": "Build", "builddir": "tvos-13-release",
+                      "platform": "tvos-13", "configuration": "release", "architectures": ["arm64"],
+                      "slavenames": ["bot607"]
+                    },
+                    {
+                      "name": "Apple-tvOS-Simulator-13-Release-Build", "type": "Build", "builddir": "tvos-simulator-13-release",
+                      "platform": "tvos-simulator-13", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["bot608"]
+                    },
+                    {
+                      "name": "Apple-watchOS-6-Release-Build", "type": "Build", "builddir": "watchos-13-release",
+                      "platform": "watchos-6", "configuration": "release", "architectures": ["arm64"],
+                      "slavenames": ["bot609"]
+                    },
+                    {
+                      "name": "Apple-watchOS-Simulator-6-Release-Build", "type": "Build", "builddir": "watchos-simulator-13-release",
+                      "platform": "watchos-simulator-6", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["bot672"]
                     },
                     {
                       "name": "Apple Win 10 Release (Build)", "type": "Build", "builddir": "win10-release",
@@ -483,6 +508,18 @@
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-13", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple iOS 13 Simulator Release (Build)", "Apple iOS 13 Simulator Debug (Build)"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-13", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-13-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-13", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-Simulator-13-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-6", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-watchOS-6-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-6", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-watchOS-Simulator-6-Release-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win 10 Release (Build)", "Apple Win 10 Debug (Build)"]

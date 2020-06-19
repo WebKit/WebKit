@@ -1,3 +1,28 @@
+2020-06-19  Jonathan Bedard  <jbedard@apple.com>
+
+        Bring up watchOS/tvOS on build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=213402
+        <rdar://problem/64542588>
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add AppleTV and watchOS builders.
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (BuildFactory.__init__): Support AppleTV and watchOS.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS13.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS13@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS13Simulator.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS13Simulator@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOS6.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOS6@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOSSimulator6.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOSSimulator6@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-06-19  Saam Barati  <sbarati@apple.com>
 
         Have a memory monitor thread in jsc shell when running tests using --memory-limited

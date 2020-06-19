@@ -59,7 +59,7 @@ class BuildFactory(Factory):
         if triggers:
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
-            if platform.startswith('mac') or platform.startswith('ios-simulator'):
+            if platform.startswith('mac') or platform.startswith('ios-simulator') or platform.startswith('tvos-simulator') or platform.startswith('watchos-simulator'):
                 self.addStep(ArchiveMinifiedBuiltProduct())
                 self.addStep(UploadMinifiedBuiltProduct())
             if self.ShouldRunJSCBundleStep:
