@@ -1311,23 +1311,20 @@ static RenderThemeIOS::CSSValueToSystemColorMap& globalCSSValueToSystemColorMap(
 
 const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystemColorMap()
 {
-    static NeverDestroyed<CSSValueToSystemColorMap> map;
-
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [] {
+    ASSERT(RunLoop::isMain());
+    static const NeverDestroyed<CSSValueToSystemColorMap> colorMap = [] {
+        CSSValueToSystemColorMap map;
         for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
             for (bool useDarkAppearance : { false, true }) {
                 for (bool useElevatedUserInterfaceLevel : { false, true }) {
                     if (auto color = systemColorFromCSSValueID(cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel))
-                        map.get().add(CSSValueKey { cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, *color);
+                        map.add(CSSValueKey { cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, *color);
                 }
             }
         }
-    });
-
-    return map;
+        return map;
+    }();
+    return colorMap;
 }
 
 void RenderThemeIOS::setCSSValueToSystemColorMap(CSSValueToSystemColorMap&& colorMap)
