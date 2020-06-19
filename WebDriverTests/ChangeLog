@@ -1,5 +1,16 @@
 2020-06-19  Lauro Moura  <lmoura@igalia.com>
 
+        [WebDriver][GTK] Some tests fails to click elements because element is outside visible rect
+        https://bugs.webkit.org/show_bug.cgi?id=211330
+
+        Unreviewed test gardening.
+
+        These tests have been passing since r262861 landed.
+
+        * TestExpectations.json:
+
+2020-06-19  Lauro Moura  <lmoura@igalia.com>
+
         [WebDriver][WPE] Update imported selenium to a version with the WPE WebDriver
         https://bugs.webkit.org/show_bug.cgi?id=213263
 

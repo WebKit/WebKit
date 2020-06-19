@@ -9,9 +9,6 @@
             },
             "testShouldHandleAlertOnPageBeforeUnload": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "testShouldHandleAlertOnPageLoad": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
             }
         }
     },
@@ -27,22 +24,6 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/appcache_tests.py": {
         "expected": {"all": {"status": ["SKIP"]}}
-    },
-    "imported/selenium/py/test/selenium/webdriver/common/correct_event_firing_tests.py": {
-        "subtests": {
-            "testShouldFireClickEventWhenClicking": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            },
-            "testShouldFireMouseDownEventWhenClicking": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            },
-            "testShouldFireMouseUpEventWhenClicking": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            },
-            "testShouldIssueClickEvents": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            }
-        }
     },
     "imported/selenium/py/test/selenium/webdriver/common/click_scrolling_tests.py": {
         "subtests": {
@@ -171,22 +152,6 @@
             },
             "testShouldSayElementsWithParentWithNegativeTransformAreNotDisplayed": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
-            },
-            "testShouldModifyTheVisibilityOfAnElementDynamically" : {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            }
-        }
-    },
-    "imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py": {
-        "subtests": {
-            "testExpectedConditionVisibilityOfElementLocated": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            },
-            "testExpectedConditionVisibilityOf": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
-            },
-            "testExpectedConditionElementToBeClickable": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
             }
         }
     },
@@ -194,9 +159,6 @@
         "subtests": {
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
-            },
-            "testThatAccessingFindingAnElementAfterWindowIsClosedAndHaventswitchedDoesntCrash": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
             }
         }
     },
