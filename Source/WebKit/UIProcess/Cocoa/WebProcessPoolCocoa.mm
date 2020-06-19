@@ -453,7 +453,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
     if (requiresContainerManagerAccess()) {
         SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd", WTF::nullopt, handle);
+        SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd"_s, WTF::nullopt, handle);
         parameters.containerManagerExtensionHandle = WTFMove(handle);
     }
 
