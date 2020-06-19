@@ -81,7 +81,6 @@ if port.name() in ['gtk', 'wpe']:
             print '*** Run update-webkitgtk-libs or update-webkit-flatpak before build-webkit to ensure proper testing..'
             print '***'
 
-port._display_server = options.display_server
 runner = WebDriverTestRunner(port)
 runner.run(args)
 runner.teardown()

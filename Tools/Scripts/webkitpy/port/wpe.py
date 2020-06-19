@@ -42,6 +42,9 @@ class WPEPort(Port):
         super(WPEPort, self).__init__(*args, **kwargs)
 
         self._display_server = self.get_option("display_server")
+        if self._display_server == 'xvfb':
+            # While not supported by WPE, xvfb is used as the default value in the main scripts
+            self._display_server = 'headless'
         if self._should_use_jhbuild():
             self._jhbuild_wrapper = [self.path_from_webkit_base('Tools', 'jhbuild', 'jhbuild-wrapper'), '--wpe', 'run']
             self.set_option_default('wrapper', ' '.join(self._jhbuild_wrapper))

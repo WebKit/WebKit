@@ -1,3 +1,26 @@
+2020-06-19  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitpy][WPE] Default to headless if _display_server is xfvb
+        https://bugs.webkit.org/show_bug.cgi?id=213327
+
+        Reviewed by Philippe Normand.
+
+        Xvfb is used as the default display server for some scripts, and the
+        equivalent for WPE is the headless one.
+
+        WTR and the API tests already create only HeadlessViewBackends, but the
+        WebDriver tests create them through MiniBrowser, which requires the
+        '--headless' parameter.
+
+        * Scripts/run-webdriver-tests: Do not override _display_server
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Define _display_server for all ports to avoid
+        eventually needing to override it.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.__init__): Default to 'headless' if _display_server is 'xvfb'
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (main): Dot not override _display_server
+
 2020-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add support for fetching registrable domains with resource load statistics

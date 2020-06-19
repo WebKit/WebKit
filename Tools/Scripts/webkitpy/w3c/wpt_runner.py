@@ -78,7 +78,6 @@ def main(script_name, argv):
             _log.warning('jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.')
 
     # Create the Port-specific driver.
-    port._display_server = options.display_server
     display_driver = port.create_driver(worker_number=0, no_timeout=True)._make_driver(pixel_tests=False)
     if not display_driver.check_driver(port):
         raise RuntimeError("Failed to check driver %s" % display_driver.__class__.__name__)
