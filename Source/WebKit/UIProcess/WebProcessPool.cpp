@@ -1115,11 +1115,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     process.send(Messages::WebProcess::BacklightLevelDidChange(displayBrightness()), 0);
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR)
-    // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
-    Inspector::RemoteInspector::singleton();
-#endif
-
 #if PLATFORM(MAC)
     registerDisplayConfigurationCallback();
 #endif

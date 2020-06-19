@@ -1,5 +1,24 @@
 2020-06-19  Chris Dumez  <cdumez@apple.com>
 
+        Web Inspector: RemoteInspector::singleton() slows down MobileSafari launch
+        https://bugs.webkit.org/show_bug.cgi?id=213381
+        <rdar://problem/64533003>
+
+        Reviewed by Darin Adler.
+
+        RemoteInspector::singleton() is expensive according to traces. It was called in WebProcessPool::initializeNewWebProcess()
+        which happens on MobileSafari launch because we prewarm a WebProcess. However, there is no reason to initialize remote
+        Web Inspector at this point. Per associated comment, Remote Web Inspector needs to be initialized once there is a
+        sub process hosting one of our Web View. As a result, I moved the initialization call to WebPageProxy::initializeWebPage()
+        which is when we actually send the IPC to the WebProcess to create the WebPage that is backing the UI-side WebView.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+
+2020-06-19  Chris Dumez  <cdumez@apple.com>
+
         Move Prefixed WebAudio interfaces behind their own feature flag
         https://bugs.webkit.org/show_bug.cgi?id=213356
 

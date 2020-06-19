@@ -1059,6 +1059,11 @@ void WebPageProxy::initializeWebPage()
     setDrawingArea(pageClient().createDrawingAreaProxy(m_process));
     ASSERT(m_drawingArea);
 
+#if ENABLE(REMOTE_INSPECTOR)
+    // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
+    Inspector::RemoteInspector::singleton();
+#endif
+
     send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(m_process, *m_drawingArea)), 0);
 
     m_process->addVisitedLinkStoreUser(visitedLinkStore(), m_identifier);
