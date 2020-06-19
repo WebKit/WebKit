@@ -35,7 +35,6 @@
 #include "WebXRRenderState.h"
 #include "WebXRSpace.h"
 #include "XREnvironmentBlendMode.h"
-#include "XRFrameRequestCallback.h"
 #include "XRInteractionMode.h"
 #include "XRReferenceSpaceType.h"
 #include "XRSessionMode.h"
@@ -48,6 +47,7 @@
 
 namespace WebCore {
 
+class XRFrameRequestCallback;
 class WebXRReferenceSpace;
 class WebXRSystem;
 struct XRRenderStateInit;
@@ -73,8 +73,8 @@ public:
     void updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
 
-    XRFrameRequestCallback::Id requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
-    void cancelAnimationFrame(XRFrameRequestCallback::Id handle);
+    unsigned requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
+    void cancelAnimationFrame(unsigned callbackId);
 
     void end(EndPromise&&);
 
@@ -112,7 +112,7 @@ private:
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
 
-    XRFrameRequestCallback::Id m_nextCallbackId { 0 };
+    unsigned m_nextCallbackId { 1 };
     Vector<Ref<XRFrameRequestCallback>> m_callbacks;
     Vector<Ref<XRFrameRequestCallback>> m_runningCallbacks;
 

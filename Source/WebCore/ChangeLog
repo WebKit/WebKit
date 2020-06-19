@@ -1,3 +1,25 @@
+2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] unsigned long in IDL should be translated as unsigned in C++ code
+        https://bugs.webkit.org/show_bug.cgi?id=213020
+
+        Reviewed by Darin Adler.
+
+        The "unsigned long" type definition in IDL must be translated to unsigned in C++ code.
+
+        I'm also replacing the very long XRFrameRequestCallback::Identifier by simply unsigned as it
+        isn't adding anything.
+
+        No new test required as there is no change in functionality, just removing an alias.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::requestAnimationFrame):
+        (WebCore::WebXRSession::cancelAnimationFrame):
+        * Modules/webxr/WebXRSession.h:
+        * Modules/webxr/XRFrameRequestCallback.h:
+        (WebCore::XRFrameRequestCallback::callbackId):
+        (WebCore::XRFrameRequestCallback::setCallbackId):
+
 2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify "font:" CSS shorthand values between macOS and iOS family
