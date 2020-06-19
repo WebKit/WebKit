@@ -52,6 +52,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <initializer_list>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RefPtr.h>
 
@@ -238,7 +239,7 @@ public:
     static bool willIntercept(const Frame*, const ResourceRequest&);
     static bool shouldInterceptRequest(const Frame&, const ResourceRequest&);
     static bool shouldInterceptResponse(const Frame&, const ResourceResponse&);
-    static void interceptRequest(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
+    static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -448,7 +449,7 @@ private:
     static bool willInterceptImpl(InstrumentingAgents&, const ResourceRequest&);
     static bool shouldInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
     static bool shouldInterceptResponseImpl(InstrumentingAgents&, const ResourceResponse&);
-    static void interceptRequestImpl(InstrumentingAgents&, ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
+    static void interceptRequestImpl(InstrumentingAgents&, ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponseImpl(InstrumentingAgents&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -1286,7 +1287,7 @@ inline bool InspectorInstrumentation::shouldInterceptResponse(const Frame& frame
     return false;
 }
 
-inline void InspectorInstrumentation::interceptRequest(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+inline void InspectorInstrumentation::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
     ASSERT(InspectorInstrumentation::shouldInterceptRequest(*loader.frame(), loader.request()));
     if (auto* instrumentingAgents = instrumentingAgentsForFrame(loader.frame()))

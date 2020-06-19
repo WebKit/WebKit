@@ -40,7 +40,7 @@ bool InspectorInstrumentationWebKit::shouldInterceptResponseInternal(const Frame
     return InspectorInstrumentation::shouldInterceptResponse(frame, response);
 }
 
-void InspectorInstrumentationWebKit::interceptRequestInternal(ResourceLoader& loader, CompletionHandler<void(const ResourceRequest&)>&& handler)
+void InspectorInstrumentationWebKit::interceptRequestInternal(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
     InspectorInstrumentation::interceptRequest(loader, WTFMove(handler));
 }

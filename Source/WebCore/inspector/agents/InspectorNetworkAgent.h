@@ -125,7 +125,7 @@ public:
     bool shouldInterceptRequest(const ResourceRequest&);
     bool shouldInterceptResponse(const ResourceResponse&);
     void interceptResponse(const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-    void interceptRequest(ResourceLoader&, CompletionHandler<void(const ResourceRequest&)>&&);
+    void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
     void searchInRequest(ErrorString&, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
@@ -164,25 +164,25 @@ private:
         WTF_MAKE_NONCOPYABLE(PendingInterceptRequest);
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        PendingInterceptRequest(RefPtr<ResourceLoader> loader, CompletionHandler<void(const ResourceRequest&)>&& completionHandler)
+        PendingInterceptRequest(RefPtr<ResourceLoader> loader, Function<void(const ResourceRequest&)>&& callback)
             : m_loader(loader)
-            , m_completionHandler(WTFMove(completionHandler))
+            , m_completionCallback(WTFMove(callback))
         { }
 
         void continueWithOriginalRequest()
         {
             if (!m_loader->reachedTerminalState())
-                m_completionHandler(m_loader->request());
+                m_completionCallback(m_loader->request());
         }
 
         void continueWithRequest(const ResourceRequest& request)
         {
-            m_completionHandler(request);
+            m_completionCallback(request);
         }
 
         PendingInterceptRequest() = default;
         RefPtr<ResourceLoader> m_loader;
-        CompletionHandler<void(const ResourceRequest&)> m_completionHandler;
+        Function<void(const ResourceRequest&)> m_completionCallback;
     };
 
     class PendingInterceptResponse {
