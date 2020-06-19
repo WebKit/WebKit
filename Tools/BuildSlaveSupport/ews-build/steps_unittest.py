@@ -24,6 +24,7 @@ import inspect
 import operator
 import os
 import shutil
+import sys
 import tempfile
 
 from buildbot.process import remotetransfer
@@ -3424,6 +3425,11 @@ class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase
         self.expectHidden(False)
         self.expectOutcome(result=FAILURE, state_string='committer@webkit.org does not have reviewer permissions')
         return self.runStep()
+
+    def test_load_contributors_from_disk(self):
+        ValidateCommiterAndReviewer._addToLog = lambda cls, logtype, log: sys.stdout.write(log)
+        contributors = ValidateCommiterAndReviewer().load_contributors_from_disk()
+        self.assertEqual(contributors['Aakash Jain']['nicks'], ['aakash_jain'])
 
 
 class TestCheckPatchStatusOnEWSQueues(BuildStepMixinAdditions, unittest.TestCase):

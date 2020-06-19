@@ -678,17 +678,32 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
     url_text = '{}?format=txt'.format(url)
     contributors = {}
 
-    def load_contributors(self):
+    def load_contributors_from_disk(self):
+        cwd = os.path.abspath(os.path.dirname(__file__))
+        tools_dir_path = os.path.dirname(os.path.dirname(cwd))
+        contributors_path = os.path.join(tools_dir_path, 'Scripts/webkitpy/common/config/contributors.json')
+        try:
+            return json.load(open(contributors_path))
+        except Exception as e:
+            self._addToLog('stdio', 'Failed to load {}\n'.format(contributors_path))
+            return {}
+
+    def load_contributors_from_trac(self):
         try:
             response = requests.get(self.url_text)
             if response.status_code != 200:
                 self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(self.url_text, response.status_code))
                 return {}
+            return response.json()
         except Exception as e:
             self._addToLog('stdio', 'Failed to access {url}\n'.format(url=self.url_text))
             return {}
 
-        contributors_json = response.json()
+    def load_contributors(self):
+        contributors_json = self.load_contributors_from_trac()
+        if not contributors_json:
+            contributors_json = self.load_contributors_from_disk()
+
         contributors = {}
         for key, value in contributors_json.iteritems():
             emails = value.get('emails')

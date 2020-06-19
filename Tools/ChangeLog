@@ -1,3 +1,16 @@
+2020-06-19  Aakash Jain  <aakash_jain@apple.com>
+
+        Improve handling of trac downtime by commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=213377
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py: Load contributors.json from disk when loading from trac fails.
+        (ValidateCommiterAndReviewer.load_contributors_from_disk):
+        (ValidateCommiterAndReviewer.load_contributors_from_trac):
+        (ValidateCommiterAndReviewer.load_contributors):
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-test
+
 2020-06-19  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Warn potential issues when creating WindowViewBackend
