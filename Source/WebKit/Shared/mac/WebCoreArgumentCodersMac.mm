@@ -132,7 +132,7 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
         return false;
 
     *objectCount = archiveListArrayCount;
-    *objects = static_cast<CFTypeRef*>(malloc(bufferSize.unsafeGet()));
+    *objects = static_cast<CFTypeRef*>(fastMalloc(bufferSize.unsafeGet()));
 
     CFArrayGetValues(archiveListArray, CFRangeMake(0, *objectCount), *objects);
     for (CFIndex i = 0; i < *objectCount; ++i) {
@@ -171,7 +171,7 @@ static RetainPtr<CFURLRequestRef> createCFURLRequestFromSerializableRepresentati
         return nullptr;
 
     auto cfRequest = adoptCF(_CFURLRequestCreateFromArchiveList(kCFAllocatorDefault, version, objects, objectCount, protocolProperties));
-    free(objects);
+    fastFree(objects);
     return WTFMove(cfRequest);
 }
 

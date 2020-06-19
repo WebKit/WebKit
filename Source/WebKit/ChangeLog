@@ -1,3 +1,14 @@
+2020-06-18  David Kilzer  <ddkilzer@apple.com>
+
+        Use fastMalloc/fastFree in WebCoreArgumentCodersMac.mm
+        <https://webkit.org/b/213325>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::createArchiveList):
+        (IPC::createCFURLRequestFromSerializableRepresentation):
+
 2020-06-18  Tim Horton  <timothy_horton@apple.com>
 
         Remove some vestiges of the 32-bit Plugin Process
