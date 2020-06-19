@@ -1070,6 +1070,13 @@ void ResourceLoadStatisticsMemoryStore::removeDataForDomain(const RegistrableDom
     }
 }
 
+Vector<RegistrableDomain> ResourceLoadStatisticsMemoryStore::allDomains() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    return copyToVector(m_resourceStatisticsMap.keys());
+}
+
 void ResourceLoadStatisticsMemoryStore::setPrevalentResource(const RegistrableDomain& domain)
 {
     ASSERT(!RunLoop::isMain());

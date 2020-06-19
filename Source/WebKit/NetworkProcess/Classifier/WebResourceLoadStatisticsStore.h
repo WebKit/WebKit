@@ -219,6 +219,7 @@ struct ThirdPartyData {
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void removeDataForDomain(const RegistrableDomain, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
+    void registrableDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     StorageAccessWasGranted grantStorageAccessInStorageSession(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);

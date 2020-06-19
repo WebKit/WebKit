@@ -2261,6 +2261,20 @@ void ResourceLoadStatisticsDatabaseStore::removeDataForDomain(const RegistrableD
     }
 }
 
+Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::allDomains() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto scopedStatement = this->scopedStatement(m_getAllDomainsStatement, getAllDomainsQuery, "allDomains"_s);
+    if (!scopedStatement)
+        return { };
+
+    Vector<RegistrableDomain> domains;
+    while (scopedStatement->step() == SQLITE_ROW)
+        domains.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(scopedStatement->getColumnText(0)));
+    return domains;
+}
+
 void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());

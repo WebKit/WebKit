@@ -1578,6 +1578,19 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         }
     }
 #endif
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
+        if (auto* session = networkSession(sessionID)) {
+            if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
+                resourceLoadStatistics->registrableDomains([callbackAggregator = callbackAggregator.copyRef()](auto&& domains) mutable {
+                    while (!domains.isEmpty())
+                        callbackAggregator->m_websiteData.registrableDomainsWithResourceLoadStatistics.add(domains.takeLast());
+                });
+            }
+        }
+    }
+#endif
 }
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, CallbackID callbackID)

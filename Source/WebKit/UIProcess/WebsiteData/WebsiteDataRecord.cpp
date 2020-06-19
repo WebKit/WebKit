@@ -28,7 +28,6 @@
 
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/PublicSuffix.h>
-#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOrigin.h>
 
 #if PLATFORM(COCOA)
@@ -113,6 +112,14 @@ void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
     UNUSED_PARAM(hostName);
 #endif
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain& domain)
+{
+    types.add(WebsiteDataType::ResourceLoadStatistics);
+    resourceLoadStatisticsRegistrableDomains.add(domain);
+}
+#endif
 
 static inline bool hostIsInDomain(StringView host, StringView domain)
 {

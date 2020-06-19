@@ -113,6 +113,7 @@ public:
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
     void removeDataForDomain(const RegistrableDomain&) override;
+    Vector<RegistrableDomain> allDomains() const final;
     void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
 
 private:

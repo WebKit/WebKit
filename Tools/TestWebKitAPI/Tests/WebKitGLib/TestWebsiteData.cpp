@@ -670,7 +670,7 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
     g_rmdir(itpDirectory);
 
     g_assert_false(webkit_website_data_manager_get_itp_enabled(test->m_manager));
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
 
     webkit_website_data_manager_set_itp_enabled(test->m_manager, TRUE);
@@ -678,13 +678,27 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
     g_assert_false(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
     g_assert_false(g_file_test(itpLogFile.get(), G_FILE_TEST_IS_REGULAR));
 
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
 
     test->waitUntilFileChanged(itpLogFile.get(), G_FILE_MONITOR_EVENT_CREATED);
-
     g_assert_true(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
     g_assert_true(g_file_test(itpLogFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_ITP);
+    g_assert_nonnull(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    auto* data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert_nonnull(data);
+    WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
+    g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
+    webkit_security_origin_unref(origin);
+
+    // Remove the registration.
+    GList removeList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_ITP, &removeList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_ITP);
+    g_assert_null(dataList);
 
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndITP = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_ITP | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);

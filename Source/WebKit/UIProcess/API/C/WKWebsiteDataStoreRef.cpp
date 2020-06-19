@@ -72,7 +72,7 @@ void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef
 {
     WebKit::WebsiteDataRecord dataRecord;
     dataRecord.types.add(WebKit::WebsiteDataType::ResourceLoadStatistics);
-    dataRecord.displayName = WebKit::toImpl(host)->string();
+    dataRecord.addResourceLoadStatisticsRegistrableDomain(WebCore::RegistrableDomain::uncheckedCreateFromHost(WebKit::toImpl(host)->string()));
     Vector<WebKit::WebsiteDataRecord> dataRecords = { WTFMove(dataRecord) };
 
     OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ResourceLoadStatistics;

@@ -144,6 +144,7 @@ public:
     bool isNewResourceLoadStatisticsDatabaseFile() const { return m_isNewResourceLoadStatisticsDatabaseFile; }
     void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
     void removeDataForDomain(const RegistrableDomain&) override;
+    Vector<RegistrableDomain> allDomains() const final;
     bool domainIDExistsInDatabase(int);
     Optional<Vector<String>> checkForMissingTablesInSchema();
     void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;

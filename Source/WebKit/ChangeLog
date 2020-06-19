@@ -1,3 +1,39 @@
+2020-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add support for fetching registrable domains with resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=213291
+
+        Reviewed by Adrian Perez de Castro and Youenn Fablet.
+
+        WebsiteDataStore::fetchData() doesn't return anything for resource load statistics because
+        NetworkProcess::fetchWebsiteData() doesn't handle WebsiteDataType::ResourceLoadStatistics.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::allDomains const): Query all registrable domains from database.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::allDomains const): Return all registrable domains in memory map.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::registrableDomains): Get the list of registrable domains.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData): Handle WebsiteDataType::ResourceLoadStatistics.
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::encode const): Encode registrableDomainsWithResourceLoadStatistics.
+        (WebKit::WebsiteData::decode): Decode registrableDomainsWithResourceLoadStatistics.
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveITPDataForDomain): Use WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain()
+        instead of the display name.
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain): Add the given registrable domain to the list.
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply): Handle registrable domains with resource load statistics.
+        (WebKit::WebsiteDataStore::removeData): Use resourceLoadStatisticsRegistrableDomains instead of the display name.
+
 2020-06-18  David Kilzer  <ddkilzer@apple.com>
 
         Use fastMalloc/fastFree in WebCoreArgumentCodersMac.mm

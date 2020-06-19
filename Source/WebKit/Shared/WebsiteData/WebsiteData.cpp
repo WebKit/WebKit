@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "WebsiteDataType.h"
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
 
@@ -67,6 +68,9 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
     encoder << hostNamesWithPluginData;
 #endif
     encoder << hostNamesWithHSTSCache;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    encoder << registrableDomainsWithResourceLoadStatistics;
+#endif
 }
 
 bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
@@ -81,6 +85,10 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
 #endif
     if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (!decoder.decode(result.registrableDomainsWithResourceLoadStatistics))
+        return false;
+#endif
     return true;
 }
 

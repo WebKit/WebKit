@@ -366,6 +366,20 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 record.addHSTSCacheHostname(hostName);
             }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+            for (const auto& domain : websiteData.registrableDomainsWithResourceLoadStatistics) {
+                auto displayName = WebsiteDataRecord::displayNameForHostName(domain.string());
+                if (!displayName)
+                    continue;
+
+                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
+                if (!record.displayName)
+                    record.displayName = WTFMove(displayName);
+
+                record.addResourceLoadStatisticsRegistrableDomain(domain);
+            }
+#endif
+
             callIfNeeded();
         }
 
@@ -996,7 +1010,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                     cookieHostNames.append(hostName);
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
                     HSTSCacheHostNames.append(hostName);
-                registrableDomains.append(WebCore::RegistrableDomain::uncheckedCreateFromHost(dataRecord.displayName));
+                for (auto& registrableDomain : dataRecord.resourceLoadStatisticsRegistrableDomains)
+                    registrableDomains.append(registrableDomain);
             }
 
             callbackAggregator->addPendingCallback();

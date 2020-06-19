@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -59,6 +60,9 @@ struct WebsiteData {
     HashSet<String> hostNamesWithPluginData;
 #endif
     HashSet<String> hostNamesWithHSTSCache;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
+#endif
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebsiteData&);
