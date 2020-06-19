@@ -80,8 +80,11 @@ webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 webkit.org/b/210528 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
+webkit.org/b/210528 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]
 
 webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
+
+webkit.org/b/213385 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -335,7 +338,6 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Pass ]

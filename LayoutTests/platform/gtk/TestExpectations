@@ -1182,9 +1182,7 @@ webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
 
-# r250624 allows the playbin to handle the redirections directly. The referenced bug below is the
-# mac one about removing this test altogether.
-webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
+webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure Timeout ]
 
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html [ Failure ]
@@ -2263,6 +2261,10 @@ webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]
 
 webkit.org/b/212894 http/wpt/workers/microtasks.any.worker.html [ Failure Pass ]
 
+webkit.org/b/213386 fast/images/low-memory-decode.html [ Failure Timeout Pass ]
+
+webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introduction-4/event_noupdate.https.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2598,6 +2600,7 @@ webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Skip ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed-database.html [ Timeout Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
