@@ -24,6 +24,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=PrefixedWebAudio,
     JSGenerateToJSObject,
     InterfaceName=webkitAudioPannerNode,
 ] interface WebKitAudioPannerNode : AudioNode {

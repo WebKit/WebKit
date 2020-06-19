@@ -334,6 +334,14 @@ WebAudioEnabled:
   defaultValue: true
   condition: ENABLE(WEB_AUDIO)
 
+PrefixedWebAudioEnabled:
+  type: bool
+  defaultValue: true
+  condition: ENABLE(WEB_AUDIO)
+  humanReadableName: "Prefixed WebAudio API"
+  humanReadableDescription: "Prefixed WebAudio API"
+  category: internal
+
 ModernUnprefixedWebAudioEnabled:
   type: bool
   defaultValue: false

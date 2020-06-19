@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
-    EnabledBySetting=ModernUnprefixedWebAudio,
+    EnabledBySetting=WebAudio&ModernUnprefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
 ] interface AudioContext : EventTarget {
     [CallWith=Document, MayThrowException] constructor();

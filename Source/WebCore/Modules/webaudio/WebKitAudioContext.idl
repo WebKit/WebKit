@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudio,
+    EnabledBySetting=WebAudio&PrefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
     InterfaceName=webkitAudioContext,
 ] interface WebKitAudioContext : EventTarget {

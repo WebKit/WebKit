@@ -388,6 +388,7 @@ namespace WebCore {
     macro(visualViewport) \
     macro(webkit) \
     macro(webkitAudioContext) \
+    macro(webkitAudioPannerNode) \
     macro(webkitIDBCursor) \
     macro(webkitIDBDatabase) \
     macro(webkitIDBFactory) \
@@ -397,6 +398,7 @@ namespace WebCore {
     macro(webkitIDBRequest) \
     macro(webkitIDBTransaction) \
     macro(webkitIndexedDB) \
+    macro(webkitOfflineAudioContext) \
     macro(window) \
     macro(writing) \
     WEBCORE_ADDITIONAL_PRIVATE_IDENTIFIERS(macro) \

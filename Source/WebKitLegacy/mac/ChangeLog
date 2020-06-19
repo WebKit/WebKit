@@ -1,3 +1,13 @@
+2020-06-19  Chris Dumez  <cdumez@apple.com>
+
+        Move Prefixed WebAudio interfaces behind their own feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=213356
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Provide alternatively-named SPI for user style sheets and scripts

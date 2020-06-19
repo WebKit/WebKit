@@ -24,6 +24,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=PrefixedWebAudio,
     InterfaceName=webkitOfflineAudioContext,
     JSGenerateToJSObject,
 ] interface WebKitOfflineAudioContext : WebKitAudioContext {
