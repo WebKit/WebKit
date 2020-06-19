@@ -264,6 +264,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     
     m_directory->setIsDestructible(NoLockingNecessary, this, false);
     
+    char* startOfLastCell = static_cast<char*>(cellAlign(block.atoms() + m_endAtom - 1));
+    char* payloadEnd = startOfLastCell + cellSize;
+    RELEASE_ASSERT(payloadEnd - MarkedBlock::blockSize <= bitwise_cast<char*>(&block));
+    char* payloadBegin = bitwise_cast<char*>(block.atoms());
+
     if (Options::useBumpAllocator()
         && emptyMode == IsEmpty
         && newlyAllocatedMode == DoesNotHaveNewlyAllocated) {
@@ -279,11 +284,6 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
                     UNREACHABLE_FOR_PLATFORM();
                 });
         }
-        
-        char* startOfLastCell = static_cast<char*>(cellAlign(block.atoms() + m_endAtom - 1));
-        char* payloadEnd = startOfLastCell + cellSize;
-        RELEASE_ASSERT(payloadEnd - MarkedBlock::blockSize <= bitwise_cast<char*>(&block));
-        char* payloadBegin = bitwise_cast<char*>(block.atoms());
         
         if (sweepMode == SweepToFreeList)
             setIsFreeListed();
@@ -304,44 +304,60 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     }
 
 #if ENABLE(BITMAP_FREELIST)
+    // The code below is an optimized version of the following by merging the
+    // various loops over the bitmaps.
+    //
+    //    AtomsBitmap cellLocations;
+    //    cellLocations.setEachNthBit(m_atomsPerCell, 0, m_endAtom);
+    //
+    //    if (emptyMode == NotEmpty) {
+    //        if (marksMode == MarksNotStale) {
+    //            freeAtoms = footer.m_marks;
+    //            if (newlyAllocatedMode == HasNewlyAllocated)
+    //                freeAtoms |= footer.m_newlyAllocated;
+    //        } else if (newlyAllocatedMode == HasNewlyAllocated)
+    //            freeAtoms = footer.m_newlyAllocated;
+    //        // At this point, a set bit in freeAtoms represents live cells.
+    //        isEmpty = freeAtoms.isEmpty();
+    //
+    //        // Invert the bits at each cell location so that the ones for live cells
+    //        // are cleared, and the ones for dead cells are set.
+    //        freeAtoms ^= cellLocations;
+    //    } else
+    //        freeAtoms = cellLocations; // all cells are free.
+
     AtomsBitmap localFreeAtoms;
     AtomsBitmap& freeAtoms = freeList ? freeList->atomsBitmap() : localFreeAtoms;
-    size_t count = 0;
 
-    auto handleDeadCell = [&] (size_t i) {
-        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(atomAt(i));
+    AtomsBitmap::Word* free = freeAtoms.words();
+    AtomsBitmap::Word* marks = footer.m_marks.words();
+    AtomsBitmap::Word* newlyAllocated = footer.m_newlyAllocated.words();
 
-        if (destructionMode != BlockHasNoDestructors)
-            destroy(cell);
+    unsigned roundedUpEndAtoms = roundUpToMultipleOf<AtomsBitmap::bitsInWord>(m_endAtom);
+    unsigned endWordIndex = roundedUpEndAtoms / AtomsBitmap::bitsInWord;
+    ASSERT(m_endAtom <= endWordIndex * AtomsBitmap::bitsInWord);
 
-        if (sweepMode == SweepToFreeList) {
-            if (scribbleMode == Scribble)
-                scribble(cell, cellSize);
-            ++count;
-        }
-    };
-
-    bool isEmpty = true;
-
-    AtomsBitmap cellLocations;
-    cellLocations.setEachNthBit(m_atomsPerCell, 0, m_endAtom);
+    if (freeList)
+        freeAtoms.clearAll();
+    freeAtoms.setEachNthBit(m_atomsPerCell, 0, m_endAtom);
 
     if (emptyMode == NotEmpty) {
-        if (marksMode == MarksNotStale) {
-            freeAtoms = footer.m_marks;
-            if (newlyAllocatedMode == HasNewlyAllocated)
-                freeAtoms |= footer.m_newlyAllocated;
-        } else if (newlyAllocatedMode == HasNewlyAllocated)
-            freeAtoms = footer.m_newlyAllocated;
-        // At this point, a set bit in freeAtoms represents live cells.
-        isEmpty = freeAtoms.isEmpty();
+        if (marksMode == MarksNotStale && newlyAllocatedMode == HasNewlyAllocated) {
+            for (unsigned i = 0; i < endWordIndex; ++i)
+                free[i] ^= marks[i] | newlyAllocated[i];
 
-        // Invert the bits at each cell location so that the ones for live cells
-        // are cleared, and the ones for dead cells are set.
-        freeAtoms ^= cellLocations;
-    } else
-        freeAtoms = cellLocations; // all cells are free.
-    
+        } else if (marksMode == MarksNotStale) {
+            for (unsigned i = 0; i < endWordIndex; ++i)
+                free[i] ^= marks[i];
+
+        } else if (newlyAllocatedMode == HasNewlyAllocated) {
+            for (unsigned i = 0; i < endWordIndex; ++i)
+                free[i] ^= newlyAllocated[i];
+        }
+    }
+
+    // At this point, a set bit in freeAtoms represents a dead cell.
+
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
     // otherwise we would lose information on what's currently alive.
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
@@ -350,11 +366,25 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     if (space()->isMarking())
         footer.m_lock.unlock();
 
-    if (destructionMode != BlockHasNoDestructors)
-        freeAtoms.forEachSetBit(handleDeadCell);
+    // Handle dead cells.
+    unsigned deadCellCount = 0;
+    freeAtoms.forEachSetBit([&] (size_t i) {
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(atomAt(i));
 
+        if (destructionMode != BlockHasNoDestructors)
+            destroy(cell);
+
+        if (sweepMode == SweepToFreeList) {
+            if (scribbleMode == Scribble)
+                scribble(cell, cellSize);
+        }
+        ++deadCellCount;
+    });
+
+    unsigned numberOfCellsInBlock = (payloadEnd - payloadBegin) / cellSize;
+    bool isEmpty = (deadCellCount == numberOfCellsInBlock);
     if (sweepMode == SweepToFreeList) {
-        freeList->initializeAtomsBitmap(this, freeAtoms, count * cellSize);
+        freeList->initializeAtomsBitmap(this, freeAtoms, deadCellCount * cellSize);
         setIsFreeListed();
     } else if (isEmpty)
         m_directory->setIsEmpty(NoLockingNecessary, this, true);

@@ -56,10 +56,10 @@ ALWAYS_INLINE HeapCell* FreeList::allocate(const Func& slowPath)
         unsigned rowIndex = m_currentRowIndex;
         auto* rowAddress = m_currentMarkedBlockRowAddress;
         while (rowIndex) {
-            // We load before decrementing rowIndex because bitmapRows() points
-            // to 1 word before m_bitmap. See comments about offsetOfBitmapRows()
+            // We load before decrementing rowIndex because bitmapRowsMinusOne() points
+            // to 1 word before m_bitmap. See comments about offsetOfBitmapRowsMinusOne()
             // for why we do this.
-            rowBitmap = bitmapRows()[rowIndex--];
+            rowBitmap = bitmapRowsMinusOne()[rowIndex--];
             rowAddress -= atomsPerRow;
             if (rowBitmap)
                 break;
@@ -106,10 +106,10 @@ void FreeList::forEach(const Func& func) const
             }
 
             while (rowIndex) {
-                // We load before decrementing rowIndex because bitmapRows() points
-                // to 1 word before m_bitmap. See comments about offsetOfBitmapRows()
+                // We load before decrementing rowIndex because bitmapRowsMinusOne() points
+                // to 1 word before m_bitmap. See comments about offsetOfBitmapRowsMinusOne()
                 // for why we do this.
-                rowBitmap = bitmapRows()[rowIndex--];
+                rowBitmap = bitmapRowsMinusOne()[rowIndex--];
                 currentMarkedBlockRowAddress -= atomsPerRow;
                 if (rowBitmap)
                     break;

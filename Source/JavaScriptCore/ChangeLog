@@ -1,3 +1,56 @@
+2020-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Unify Bitmap math loops in MarkedBlock::Handle::specializedSweep().
+        https://bugs.webkit.org/show_bug.cgi?id=213345
+
+        Reviewed by Robin Morisset and Saam Barati.
+
+        This change appears to be performance neutral.  However, we'll take the change
+        because we know that it does less work, and the new way of expressing the Bitmap
+        math in MarkedBlock::Handle::specializedSweep() does appear to be easier to
+        understand than the old code.
+
+        Also addressed feedback from Robin and Saam in https://bugs.webkit.org/show_bug.cgi?id=213071.
+
+        Changes made:
+
+        1. Use the new Bitmap::words() API to get direct access to the underlying bits
+           storage.  With this, we can do the merging of the marked and newlyAllocated
+           bits with a single pass looping thru the bitmap words.
+
+        2. In MarkedBlock::Handle::specializedSweep()'s Bitmap free list code, moved the
+           implementation of handleDeadCells lambda down to the call to freeAtoms.forEachSetBit()
+           because this is the only place it is used.
+
+        3. Fixed MarkedBlock::Handle::specializedSweep()'s Bitmap free list code to
+           handle the dead cells unconditionally.  This condition check was wrongly
+           adapted from the linked list implementation where handleDeadCell() was called
+           in 2 places depending on the destruction mode.  With the Bitmap free list,
+           there is only once place to handle the dead cells, and it should be executed
+           unconditionally.
+
+           This fixes a bug where the FreeList::originalSize() never gets computed if the
+           cells in the block does not need destruction.
+
+        4. Renamed FreeList::bitmapRows() to FreeList::bitmapRowsMinusOne().
+           Renamed FreeList::offsetOfBitmapRows() to FreeList::offsetOfBitmapRowsMinusOne().
+
+        5. Also fixed some typos in comments.
+
+        * heap/FreeList.h:
+        (JSC::FreeList::bitmapIsEmpty const):
+        (JSC::FreeList::offsetOfBitmapRowsMinusOne):
+        (JSC::FreeList::bitmapRowsMinusOne const):
+        (JSC::FreeList::offsetOfBitmapRows): Deleted.
+        (JSC::FreeList::bitmapRows const): Deleted.
+        * heap/FreeListInlines.h:
+        (JSC::FreeList::allocate):
+        (JSC::FreeList::forEach const):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+
 2020-06-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove dead non-ICU locale Date code since we are always using ICU version
@@ -205,7 +258,7 @@
 
         5. On the layout of fields in FreeList (see changes in FreeList.h), we try to
            preserve the positions of the bump allocator fields.  The only change we made
-           there is n the location of m_cellSize.  It is now moved up next to m_remaining,
+           there is in the location of m_cellSize.  It is now moved up next to m_remaining,
            and m_originalSize is moved down.  This is because m_originalSize is only
            accessed in the slow path, and m_cellSize is accessed in the bump allocation
            path.

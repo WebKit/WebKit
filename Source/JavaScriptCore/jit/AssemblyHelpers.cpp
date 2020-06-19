@@ -591,10 +591,10 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     {
         // Load the next row bitmap and point m_currentMarkedBlockRowAddress to the next row.
 
-        // Note: offsetOfBitmapRows() points to 1 word before m_bitmap. We do this
+        // Note: offsetOfBitmapRowsMinusOne() points to 1 word before m_bitmap. We do this
         // deliberately because it allows us to schedule instructions better and
         // do this load before the decrement below.
-        load64(BaseIndex(allocatorGPR, rowIndexGPR, TimesEight, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfBitmapRows()), rowBitmapGPR);
+        load64(BaseIndex(allocatorGPR, rowIndexGPR, TimesEight, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfBitmapRowsMinusOne()), rowBitmapGPR);
 
         sub64(TrustedImm32(1), rowIndexGPR);
         subPtr(TrustedImm32(FreeList::atomsRowBytes), rowAddressGPR);

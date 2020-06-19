@@ -105,7 +105,7 @@ public:
     {
         // Remember, we don't actually clear the bits in m_bitmap as we allocate
         // the atoms. Instead, m_currentRowBitmap and m_currentRowIndex tells us
-        // if there atoms still available for allocation. See comment blob below
+        // if there are atoms still available for allocation. See comment blob below
         // at the declaration of m_currentRowIndex for more details.
         return !m_currentRowBitmap && !m_currentRowIndex;
     }
@@ -116,7 +116,7 @@ public:
     // We're deliberately returning the address of 1 word before m_bitmap so that
     // we can schedule instructions better i.e. to do a load before decrementing the
     // row index.
-    static ptrdiff_t offsetOfBitmapRows() { return OBJECT_OFFSETOF(FreeList, m_bitmap) - sizeof(AtomsBitmap::Word); }
+    static ptrdiff_t offsetOfBitmapRowsMinusOne() { return OBJECT_OFFSETOF(FreeList, m_bitmap) - sizeof(AtomsBitmap::Word); }
 
     static ptrdiff_t offsetOfCurrentRowIndex() { return OBJECT_OFFSETOF(FreeList, m_currentRowIndex); }
     static ptrdiff_t offsetOfCurrentMarkedBlockRowAddress() { return OBJECT_OFFSETOF(FreeList, m_currentMarkedBlockRowAddress); }
@@ -141,9 +141,9 @@ private:
 
 #if ENABLE(BITMAP_FREELIST)
     AtomsBitmap& atomsBitmap() { return m_bitmap; }
-    AtomsBitmap::Word* bitmapRows() const
+    AtomsBitmap::Word* bitmapRowsMinusOne() const
     {
-        // See comment about offsetOfBitmapRows().
+        // See comment about offsetOfBitmapRowsMinusOne().
         return bitwise_cast<AtomsBitmap::Word*>(&m_bitmap) - 1;
     }
 

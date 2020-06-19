@@ -1,3 +1,43 @@
+2020-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Unify Bitmap math loops in MarkedBlock::Handle::specializedSweep().
+        https://bugs.webkit.org/show_bug.cgi?id=213345
+
+        Reviewed by Robin Morisset and Saam Barati.
+
+        1. Removed Bitmap::words.  Use Bitmap::numberOfWords instead.
+        2. Removed Bitmap::wordSize.  Use Bitmap::bitsInWord instead.
+        3. Added a new Bitmap::words() method which returns the address of the underlying
+           bitmap storage as a Bitmap::Word*.  This enables clients to do direct bit
+           manipulation on the Bitmap words if needed.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::get const):
+        (WTF::WordType>::set):
+        (WTF::WordType>::testAndSet):
+        (WTF::WordType>::testAndClear):
+        (WTF::WordType>::concurrentTestAndSet):
+        (WTF::WordType>::concurrentTestAndClear):
+        (WTF::WordType>::clear):
+        (WTF::WordType>::invert):
+        (WTF::WordType>::nextPossiblyUnset const):
+        (WTF::WordType>::count const):
+        (WTF::WordType>::isEmpty const):
+        (WTF::WordType>::isFull const):
+        (WTF::WordType>::merge):
+        (WTF::WordType>::filter):
+        (WTF::WordType>::exclude):
+        (WTF::WordType>::concurrentFilter):
+        (WTF::WordType>::subsumes const):
+        (WTF::WordType>::forEachSetBit const):
+        (WTF::WordType>::findBit const):
+        (WTF::WordType>::mergeAndClear):
+        (WTF::WordType>::setAndClear):
+        (WTF::WordType>::setEachNthBit):
+        (WTF::= const):
+        (WTF::=):
+        (WTF::WordType>::hash const):
+
 2020-06-18  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, re-landing r262904.
