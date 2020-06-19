@@ -1,3 +1,38 @@
+2020-06-18  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some vestiges of the 32-bit Plugin Process
+        https://bugs.webkit.org/show_bug.cgi?id=213361
+
+        Reviewed by Dan Bernstein.
+
+        We haven't launched 32-bit plugins for a while, but there are some
+        build system complications and random references in the code that we can get rid of.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * Configurations/PluginService.xcconfig: Renamed from Source/WebKit/Configurations/PluginService.64.xcconfig.
+        No need for .64 in the name anymore, since it's the only one.
+        We do have to leave the .64 in the product name because there are other things in the system that depend on this.
+
+        * PluginProcess/EntryPoint/Cocoa/XPCService/PluginService.Info.plist: Renamed from Source/WebKit/PluginProcess/EntryPoint/Cocoa/XPCService/PluginService.64.Info.plist.
+        No need for .64 in the name anymore.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes):
+        There need only be one ProcessType for the plugin process now!
+
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes):
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bubblewrapSpawn):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        GTK WebKit appears to also only launch 64-bit plugin processes.
+
 2020-06-18  Megan Gardner  <megan_gardner@apple.com>
 
         Workaround for UIKit layout bug in time picker.

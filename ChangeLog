@@ -1,3 +1,13 @@
+2020-06-18  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some vestiges of the 32-bit Plugin Process
+        https://bugs.webkit.org/show_bug.cgi?id=213361
+
+        Reviewed by Dan Bernstein.
+
+        * Makefile.shared:
+        This hack from r203348 is no longer needed, because WebKit cannot be built for 32-bit anymore.
+
 2020-06-17  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r260760): ENABLE_GRAPHICS_CONTEXT_GL should be ON, not TRUE

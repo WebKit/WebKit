@@ -62,8 +62,7 @@ public:
     enum class ProcessType {
         Web,
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        Plugin32,
-        Plugin64,
+        Plugin,
 #endif
         Network,
 #if ENABLE(GPU_PROCESS)

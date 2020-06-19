@@ -61,10 +61,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return "com.apple.WebKit.GPU";
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    case ProcessLauncher::ProcessType::Plugin32:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    case ProcessLauncher::ProcessType::Plugin64:
+    case ProcessLauncher::ProcessType::Plugin:
         return "com.apple.WebKit.Plugin.64";
 #endif
     }

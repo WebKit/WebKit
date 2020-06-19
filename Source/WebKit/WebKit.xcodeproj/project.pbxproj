@@ -4851,7 +4851,7 @@
 		BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.xcconfig; sourceTree = "<group>"; };
 		BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Networking.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginServiceEntryPoint.mm; sourceTree = "<group>"; };
-		BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.64.xcconfig; sourceTree = "<group>"; };
+		BC8283F416B4FC5300A278FE /* PluginService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.xcconfig; sourceTree = "<group>"; };
 		BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Plugin.64.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		BC8452A61162C80900CAB9B5 /* DrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingArea.h; sourceTree = "<group>"; };
@@ -4989,7 +4989,7 @@
 		BCF69FA11176D01400471A52 /* APINavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APINavigationData.cpp; path = UIProcess/API/APINavigationData.cpp; sourceTree = SOURCE_ROOT; };
 		BCF69FA71176D1CB00471A52 /* WKNavigationDataRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDataRef.h; sourceTree = "<group>"; };
 		BCF69FA81176D1CB00471A52 /* WKNavigationDataRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationDataRef.cpp; sourceTree = "<group>"; };
-		BCFCA89516DE96CB00074069 /* PluginService.64.Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PluginService.64.Info.plist; sourceTree = "<group>"; };
+		BCFCA89516DE96CB00074069 /* PluginService.Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PluginService.Info.plist; sourceTree = "<group>"; };
 		BCFD5489132D82680055D816 /* WKErrorCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKErrorCF.cpp; sourceTree = "<group>"; };
 		BCFD548A132D82680055D816 /* WKErrorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorCF.h; sourceTree = "<group>"; };
 		BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewPrivate.h; sourceTree = "<group>"; };
@@ -5835,7 +5835,7 @@
 				2D9FB22A237523FB0049F936 /* GPUService.xcconfig */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
 				A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */,
-				BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */,
+				BC8283F416B4FC5300A278FE /* PluginService.xcconfig */,
 				37E83D401B37D27B002079EE /* SandboxProfiles.xcconfig */,
 				A1B89B92221E023300EB4CEA /* SDKVariant.xcconfig */,
 				A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */,
@@ -9709,7 +9709,7 @@
 		BC8283E916B4F8E200A278FE /* PluginService */ = {
 			isa = PBXGroup;
 			children = (
-				BCFCA89516DE96CB00074069 /* PluginService.64.Info.plist */,
+				BCFCA89516DE96CB00074069 /* PluginService.Info.plist */,
 			);
 			name = PluginService;
 			sourceTree = "<group>";
@@ -13534,21 +13534,21 @@
 		};
 		BC82842B16B4FDF700A278FE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */;
+			baseConfigurationReference = BC8283F416B4FC5300A278FE /* PluginService.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		BC82842C16B4FDF700A278FE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */;
+			baseConfigurationReference = BC8283F416B4FC5300A278FE /* PluginService.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		BC82842D16B4FDF700A278FE /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */;
+			baseConfigurationReference = BC8283F416B4FC5300A278FE /* PluginService.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;

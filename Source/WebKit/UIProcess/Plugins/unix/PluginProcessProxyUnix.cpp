@@ -52,7 +52,7 @@ using namespace WebCore;
 
 void PluginProcessProxy::platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
-    launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
+    launchOptions.processType = ProcessLauncher::ProcessType::Plugin;
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
 }
 

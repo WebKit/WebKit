@@ -24,13 +24,6 @@ ifneq (,$(ARCHS))
 	else
 		XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(ARCHS)"
 		XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
-		# Make Plugin.32 and Plugin.64 build even when they can't be built for the specified architecture.
-		ifeq ($(ARCHS),i386)
-			XCODE_OPTIONS += VALID_ARCHS=i386
-		endif
-		ifeq ($(ARCHS),x86_64)
-			XCODE_OPTIONS += VALID_ARCHS=x86_64
-		endif
 	endif
 endif
 
