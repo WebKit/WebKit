@@ -65,6 +65,10 @@ public:
 
     WEBCORE_EXPORT static void setFocusRingColor(const Color&);
 
+#if ENABLE(FULL_KEYBOARD_ACCESS)
+    WEBCORE_EXPORT static Color systemFocusRingColor();
+#endif
+
 private:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
 

@@ -1,5 +1,18 @@
 2020-06-19  Chris Dumez  <cdumez@apple.com>
 
+        Avoid initializing RenderTheme singleton unnecessarily in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=213406
+
+        Reviewed by Per Arne Vollan.
+
+        Avoid initializing RenderTheme singleton unnecessarily in the UIProcess. Instead, introduce
+        a static function to get the focus ring color on iOS.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
+2020-06-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r263288.
 
         * UIProcess/Cocoa/WebProcessPoolCocoa.mm:

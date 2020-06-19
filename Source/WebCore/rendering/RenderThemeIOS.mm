@@ -1145,13 +1145,18 @@ static Optional<Color>& cachedFocusRingColor()
 }
 
 #if ENABLE(FULL_KEYBOARD_ACCESS)
+Color RenderThemeIOS::systemFocusRingColor()
+{
+    if (!cachedFocusRingColor().hasValue()) {
+        // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
+        cachedFocusRingColor() = colorFromUIColor([PAL::getUIColorClass() systemBlueColor]);
+    }
+    return *cachedFocusRingColor();
+}
+
 Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
 {
-    if (cachedFocusRingColor().hasValue())
-        return *cachedFocusRingColor();
-
-    // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
-    return colorFromUIColor([PAL::getUIColorClass() systemBlueColor]);
+    return systemFocusRingColor();
 }
 #endif
 
