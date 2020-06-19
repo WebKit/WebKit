@@ -292,6 +292,18 @@ static const Vector<String>& agxCompilerClasses()
 
 #endif
 
+static bool requiresContainerManagerAccess()
+{
+#if PLATFORM(MAC)
+    return WebCore::MacApplication::isAppleMail();
+#elif PLATFORM(IOS)
+    return WebCore::IOSApplication::isMobileMail();
+#else
+    return false;
+#endif
+}
+
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -439,6 +451,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 #endif
     
+    if (requiresContainerManagerAccess()) {
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd", WTF::nullopt, handle);
+        parameters.containerManagerExtensionHandle = WTFMove(handle);
+    }
+
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
