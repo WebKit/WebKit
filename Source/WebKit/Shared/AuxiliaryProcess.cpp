@@ -27,8 +27,10 @@
 #include "AuxiliaryProcess.h"
 
 #include "ContentWorldShared.h"
+#include "LogInitialization.h"
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
+#include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
 
 #if !OS(WINDOWS)
@@ -75,6 +77,11 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
 
     SandboxInitializationParameters sandboxParameters;
     initializeSandbox(parameters, sandboxParameters);
+
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    WebCore::initializeLogChannelsIfNecessary();
+    WebKit::initializeLogChannelsIfNecessary();
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
     initializeProcessName(parameters);
 
