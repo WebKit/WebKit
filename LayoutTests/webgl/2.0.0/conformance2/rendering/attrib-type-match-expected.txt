@@ -38,32 +38,32 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/attrib-type-match.
 [ 35: PASS ] getError was expected value: NO_ERROR : Setting up succeeds
 [ 36: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElements succeeds
 [ 37: FAIL ] should be 255,0,0,255 at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 38: PASS ] getError was expected value: NO_ERROR : drawRangeElements succeeds
+[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawRangeElements succeeds
 [ 39: FAIL ] should be 255,0,0,255 at (0, 0) expected: 255,0,0,255 was 0,0,0,0
 [ 40: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced succeeds
 [ 41: FAIL ] should be 255,0,0,255 at (0, 0) expected: 255,0,0,255 was 0,0,0,0
 [ 42: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 43: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 43: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 44: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 45: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 46: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 46: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 47: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 48: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 49: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 49: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 50: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 51: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 52: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 52: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 53: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 54: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 55: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 55: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 56: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 57: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 58: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 58: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 59: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 60: PASS ] getError was expected value: NO_ERROR : Setting up succeeds
 [ 61: PASS ] getError was expected value: NO_ERROR : drawArrays succeeds
 [ 62: PASS ] should be 0,255,0,255
-[ 63: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced succeeds
+[ 63: PASS ] getError was expected value: NO_ERROR : drawArraysInstanced succeeds
 [ 64: PASS ] should be 0,255,0,255
 [ 65: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 66: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
@@ -82,26 +82,26 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/attrib-type-match.
 [ 79: PASS ] should be 0,255,0,255
 [ 80: PASS ] getError was expected value: NO_ERROR : drawRangeElements succeeds
 [ 81: PASS ] should be 0,255,0,255
-[ 82: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced succeeds
+[ 82: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced succeeds
 [ 83: PASS ] should be 0,255,0,255
 [ 84: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 85: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 85: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 86: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 87: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 88: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 88: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 89: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 90: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 91: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 91: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 92: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 93: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 94: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 94: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 95: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 96: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 97: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 97: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 98: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 99: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
-[ 100: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : type mismatch
+[ 100: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 101: PASS ] getError was expected value: INVALID_OPERATION : type mismatch
 [ 102: PASS ] successfullyParsed is true
-[ FAIL ] 27 failures reported
+[ FAIL ] 14 failures reported
 

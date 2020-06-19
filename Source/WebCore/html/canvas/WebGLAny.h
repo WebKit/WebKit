@@ -60,6 +60,7 @@ using WebGLAny = Variant<
     String,
     Vector<bool>,
     Vector<int>,
+    Vector<unsigned>,
     RefPtr<Float32Array>,
     RefPtr<Int32Array>,
     RefPtr<Uint32Array>,

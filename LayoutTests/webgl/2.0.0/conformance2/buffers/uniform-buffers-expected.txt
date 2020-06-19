@@ -1,23 +1,5 @@
-CONSOLE MESSAGE: TypeError: Value is not a sequence
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/uniform-buffers.html
-[ 1: PASS ] WebGL context exists
-[ 2: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
-[ 3: PASS ] getError was expected value: NO_ERROR : UNIFORM_BUFFER_BINDING query should succeed
-[ 4: PASS ] getError was expected value: NO_ERROR : createBuffer should not set an error
-[ 5: PASS ] b1 is non-null.
-[ 6: PASS ] b2 is non-null.
-[ 7: PASS ] getError was expected value: NO_ERROR : should be able to bind uniform buffer
-[ 8: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is b1
-[ 9: PASS ] getError was expected value: NO_ERROR : should be able to update uniform buffer binding
-[ 10: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is b2
-[ 11: PASS ] getError was expected value: NO_ERROR : should be able to unbind uniform buffer
-[ 12: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
-[ 13: PASS ] getError was expected value: INVALID_OPERATION : binding a deleted buffer should generate INVALID_OPERATION
-[ 14: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
-[ 15: PASS ] To define the same uniform in two uniform blocks should fail
-[ 16: PASS ] UNIFORM_BUFFER_OFFSET_ALIGNMENT is divisible by four
-[ 17: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

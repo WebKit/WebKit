@@ -109,6 +109,13 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
             RELEASE_ASSERT(!list.hasOverflowed());
             return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
         },
+        [&] (const Vector<unsigned>& values) {
+            MarkedArgumentBuffer list;
+            for (auto& value : values)
+                list.append(jsNumber(value));
+            RELEASE_ASSERT(!list.hasOverflowed());
+            return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
+        },
         [&] (const RefPtr<Float32Array>& array) {
             return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },

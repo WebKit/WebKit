@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: TypeError: Value is not a sequence
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/uniform-block-buffer-size.html
-[ 1: PASS ] WebGL context exists
-[ 2: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

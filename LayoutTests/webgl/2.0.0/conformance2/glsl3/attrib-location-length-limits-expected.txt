@@ -1,15 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/attrib-location-length-limits.html
-[ 1: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
-[ 2: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 3: FAIL ] attrib location was -1, should not be
-[ 4: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 5: PASS ] wtu.loadProgramFromScriptExpectError(gl, "badVertexShader", "fragmentShader") is null
-[ 6: PASS ] getError was expected value: NO_ERROR :
-[ 7: PASS ] getError was expected value: INVALID_VALUE :
-[ 8: PASS ] gl.getAttribLocation(program, attrib1025Name) is -1
-[ 9: PASS ] getError was expected value: INVALID_VALUE :
-[ 10: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ PASS ] All tests passed
 

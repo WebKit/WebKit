@@ -1,14 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-overflow-test.html
-[ 1: PASS ] getError was expected value: NO_ERROR : Calling bindBufferRange on a buffer where no storage is allocated should succeed.
-[ 2: FAIL ] buffer1 should be null. Was [object WebGLBuffer].
-[ 3: FAIL ] 4 should be null (of type object). Was 4 (of type number).
-[ 4: FAIL ] 0 should be null (of type object). Was 0 (of type number).
-[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Calling bindBufferRange on a buffer where the storage is not big enough should succeed.
-[ 6: FAIL ] buffer2 should be null. Was [object WebGLBuffer].
-[ 7: FAIL ] 8 should be null (of type object). Was 8 (of type number).
-[ 8: FAIL ] 0 should be null (of type object). Was 0 (of type number).
-[ 9: PASS ] successfullyParsed is true
-[ FAIL ] 7 failures reported
+[ PASS ] All tests passed
 

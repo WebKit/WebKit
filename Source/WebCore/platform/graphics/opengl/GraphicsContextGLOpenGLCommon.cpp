@@ -1572,7 +1572,17 @@ void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLfloat* value)
     makeContextCurrent();
     ::glGetFloatv(pname, value);
 }
-    
+
+void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value)
+{
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(index);
+    makeContextCurrent();
+    *value = 0;
+    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
+    // ::glGetIntegeri_v(pname, index, value);
+}
+
 void GraphicsContextGLOpenGL::getInteger64v(GCGLenum pname, GCGLint64* value)
 {
     UNUSED_PARAM(pname);
@@ -1580,6 +1590,16 @@ void GraphicsContextGLOpenGL::getInteger64v(GCGLenum pname, GCGLint64* value)
     *value = 0;
     // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
     // ::glGetInteger64v(pname, value);
+}
+
+void GraphicsContextGLOpenGL::getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value)
+{
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(index);
+    makeContextCurrent();
+    *value = 0;
+    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
+    // ::glGetInteger64i_v(pname, index, value);
 }
 
 void GraphicsContextGLOpenGL::getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value)

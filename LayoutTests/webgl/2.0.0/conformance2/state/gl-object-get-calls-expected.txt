@@ -291,12 +291,12 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 287: PASS ] getInternalformatParameter correctly handled invalid target enums
 [ 288: PASS ] getInternalformatParameter correctly handled invalid pname enums
 [ 289: FAIL ] getInternalformatParameter returned 4,2 instead of null for invalid internalformat enum: 0x81a7
-[ 290: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0) should be [object WebGLBuffer]. Was null.
-[ 291: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_SIZE, 0) should be 8 (of type number). Was null (of type object).
-[ 292: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_START, 0) should be 4 (of type number). Was null (of type object).
-[ 293: FAIL ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_BINDING, 1) should be [object WebGLBuffer]. Was null.
-[ 294: FAIL ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_SIZE, 1) should be 8 (of type number). Was null (of type object).
-[ 295: FAIL ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_START, 1) should be 256 (of type number). Was null (of type object).
+[ 290: PASS ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0) is buffer
+[ 291: PASS ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_SIZE, 0) is 8
+[ 292: PASS ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_START, 0) is 4
+[ 293: PASS ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_BINDING, 1) is buffer1
+[ 294: PASS ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_SIZE, 1) is 8
+[ 295: PASS ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_START, 1) is offsetUniform
 [ 296: PASS ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_BINDING, 1) is null
 [ 297: PASS ] getIndexedParameter correctly handled invalid target enums
 [ 298: PASS ] gl.getSamplerParameter(sampler, gl.TEXTURE_COMPARE_FUNC) is gl.LEQUAL
@@ -311,5 +311,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 307: PASS ] getSamplerParameter correctly handled invalid pname enums
 [ 308: FAIL ] gl.getSyncParameter(sync, gl.OBJECT_TYPE) should be 37142. Threw exception TypeError: Argument 1 ('sync') to WebGL2RenderingContext.getSyncParameter must be an instance of WebGLSync
 [ 309: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 64 failures reported
+[ FAIL ] 58 failures reported
 

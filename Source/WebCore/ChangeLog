@@ -1,3 +1,144 @@
+2020-06-19  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Uniform Buffer Objects
+        https://bugs.webkit.org/show_bug.cgi?id=209518
+
+        Reviewed by Dean Jackson.
+
+        All uniform buffer object conformance tests pass.
+
+        Implemented Uniform Buffer Object related functions:
+        bindBufferBase, bindBufferRange, getUniformIndices, getActiveUniforms, getUniformBlockIndex,
+        getActiveUniformBlockParameter, getActiveUniformBlockName, uniformBlockBinding
+
+        Additionally, fixed many tangentially related issues:
+        getIntegeri_v and getInteger64i_v were not present.
+        drawArraysInstances and drawElementsInstanced did not work for WebGL 2.
+        drawRangeElements was not implemented.
+        WebGLAny did not support Vector<unsigned>, so Uint32Arrays could not be returned from WebGL functions.
+        The maximum uniform location length was wrong for WebGL 2.
+        Transform feedback indexed binding points weren't being tracked.
+        Some functions in ExtensionsGLANGLE didn't call makeContextCurrent.
+        New WebGL 2 buffer usage types COPY and READ weren't supported in bufferData.
+        pause/resumeTransformFeedback were unimplemented.
+        getParameter(READ_BUFFER) was unimplemented.
+        readBuffer conformance test was incorrect.
+
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::~WebGL2RenderingContext):
+        (WebCore::WebGL2RenderingContext::initializeNewContext):
+        (WebCore::WebGL2RenderingContext::drawRangeElements):
+        (WebCore::WebGL2RenderingContext::setIndexedBufferBinding):
+        (WebCore::WebGL2RenderingContext::bindBufferBase):
+        (WebCore::WebGL2RenderingContext::bindBufferRange):
+        (WebCore::WebGL2RenderingContext::getIndexedParameter):
+        (WebCore::WebGL2RenderingContext::getUniformIndices):
+        (WebCore::WebGL2RenderingContext::getActiveUniforms):
+        (WebCore::WebGL2RenderingContext::getUniformBlockIndex):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockName):
+        (WebCore::WebGL2RenderingContext::uniformBlockBinding):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLAny.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateLocationLength):
+        (WebCore::WebGLRenderingContextBase::validateBufferDataParameters):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp:
+        (WebCore::ExtensionsGLANGLE::getTranslatedShaderSourceANGLE):
+        (WebCore::ExtensionsGLANGLE::blitFramebuffer):
+        (WebCore::ExtensionsGLANGLE::renderbufferStorageMultisample):
+        (WebCore::ExtensionsGLANGLE::drawBuffersEXT):
+        (WebCore::ExtensionsGLANGLE::getBooleanvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getBufferParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getFloatvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getFramebufferAttachmentParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getIntegervRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getProgramivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getRenderbufferParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getShaderivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getTexParameterfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getTexParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getUniformfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getUniformivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getVertexAttribfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getVertexAttribivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getVertexAttribPointervRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::readPixelsRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texImage2DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texParameterfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texSubImage2DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::compressedTexImage2DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::compressedTexSubImage2DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::compressedTexImage3DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::compressedTexSubImage3DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texImage3DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texSubImage3DRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryObjectuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getBufferPointervRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getIntegeri_vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getInternalformativRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getVertexAttribIivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getVertexAttribIuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getUniformuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getActiveUniformBlockivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getInteger64vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getInteger64i_vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getBufferParameteri64vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::samplerParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::samplerParameterfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getSamplerParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getSamplerParameterfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getFramebufferParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getProgramInterfaceivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getBooleani_vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getMultisamplefvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getTexLevelParameterivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getTexLevelParameterfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getPointervRobustANGLERobustANGLE):
+        (WebCore::ExtensionsGLANGLE::readnPixelsRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getnUniformfvRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getnUniformivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getnUniformuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texParameterIivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::texParameterIuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getTexParameterIivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getTexParameterIuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::samplerParameterIivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::samplerParameterIuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getSamplerParameterIivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getSamplerParameterIuivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryObjectivRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryObjecti64vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryObjectui64vRobustANGLE):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getIntegeri_v):
+        (WebCore::GraphicsContextGLOpenGL::getInteger64v):
+        (WebCore::GraphicsContextGLOpenGL::getInteger64i_v):
+        (WebCore::GraphicsContextGLOpenGL::drawArraysInstanced):
+        (WebCore::GraphicsContextGLOpenGL::drawElementsInstanced):
+        (WebCore::GraphicsContextGLOpenGL::getUniformBlockIndex):
+        (WebCore::GraphicsContextGLOpenGL::getActiveUniformBlockiv):
+        (WebCore::GraphicsContextGLOpenGL::getActiveUniformBlockName):
+        (WebCore::GraphicsContextGLOpenGL::uniformBlockBinding):
+        (WebCore::GraphicsContextGLOpenGL::drawRangeElements):
+        (WebCore::GraphicsContextGLOpenGL::pauseTransformFeedback):
+        (WebCore::GraphicsContextGLOpenGL::resumeTransformFeedback):
+        (WebCore::GraphicsContextGLOpenGL::bindBufferRange):
+        (WebCore::GraphicsContextGLOpenGL::getUniformIndices):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getIntegeri_v):
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getInteger64v):
+        (WebCore::GraphicsContextGLOpenGL::getInteger64i_v):
+
 2020-06-19  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Drop std::call_once() from RenderThemeIOS::cssValueToSystemColorMap()

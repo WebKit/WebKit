@@ -275,7 +275,9 @@ public:
     void getFloatv(GCGLenum pname, GCGLfloat* value) final;
     void getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value) final;
     void getIntegerv(GCGLenum pname, GCGLint* value) final;
+    void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value) final;
     void getInteger64v(GCGLenum pname, GCGLint64* value) final;
+    void getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value) final;
     void getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value) final;
 #if !USE(ANGLE)
     void getNonBuiltInActiveSymbolCount(PlatformGLObject program, GCGLenum pname, GCGLint* value);

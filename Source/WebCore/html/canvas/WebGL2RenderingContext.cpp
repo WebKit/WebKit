@@ -113,6 +113,9 @@ WebGL2RenderingContext::~WebGL2RenderingContext()
     m_readFramebufferBinding = nullptr;
     m_boundTransformFeedback = nullptr;
     m_boundTransformFeedbackBuffers.clear();
+    m_boundTransformFeedbackBuffer = nullptr;
+    m_boundUniformBuffer = nullptr;
+    m_boundIndexedUniformBuffers.clear();
     m_activeQueries.clear();
 }
 
@@ -138,7 +141,8 @@ void WebGL2RenderingContext::initializeNewContext()
 
     // NEEDS_PORT: set up default transform feedback object
 
-    // NEEDS_PORT: set up bound indexed uniform buffers, max bound uniform buffer index
+    m_boundIndexedUniformBuffers.resize(getIntParameter(GraphicsContextGL::MAX_UNIFORM_BUFFER_BINDINGS));
+    m_uniformBufferOffsetAlignment = getIntParameter(GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT);
 
     // NEEDS_PORT: set up pack parameters: row length, skip pixels, skip rows
 
@@ -275,6 +279,28 @@ bool WebGL2RenderingContext::validateBufferTargetCompatibility(const char* funct
     }
 
     return true;
+}
+
+WebGLBuffer* WebGL2RenderingContext::validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage)
+{
+    WebGLBuffer* buffer = validateBufferDataTarget(functionName, target);
+    if (!buffer)
+        return nullptr;
+    switch (usage) {
+    case GraphicsContextGL::STREAM_DRAW:
+    case GraphicsContextGL::STATIC_DRAW:
+    case GraphicsContextGL::DYNAMIC_DRAW:
+        return buffer;
+    case GraphicsContextGL::STREAM_COPY:
+    case GraphicsContextGL::STATIC_COPY:
+    case GraphicsContextGL::DYNAMIC_COPY:
+    case GraphicsContextGL::STREAM_READ:
+    case GraphicsContextGL::STATIC_READ:
+    case GraphicsContextGL::DYNAMIC_READ:
+        return buffer;
+    }
+    synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid usage");
+    return nullptr;
 }
 
 WebGLBuffer* WebGL2RenderingContext::validateBufferDataTarget(const char* functionName, GCGLenum target)
@@ -778,6 +804,18 @@ void WebGL2RenderingContext::invalidateSubFramebuffer(GCGLenum, const Vector<GCG
 
 void WebGL2RenderingContext::readBuffer(GCGLenum src)
 {
+    if (src == GraphicsContextGL::BACK) {
+        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
+        if (m_readFramebufferBinding) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readBuffer", "BACK is valid for default framebuffer only");
+            return;
+        }
+        src = GraphicsContextGL::COLOR_ATTACHMENT0;
+    } else if (!m_readFramebufferBinding && src != GraphicsContextGL::NONE) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readBuffer", "default framebuffer only supports NONE or BACK");
+        return;
+    }
+
     m_context->readBuffer(src);
 }
 
@@ -1385,9 +1423,12 @@ void WebGL2RenderingContext::drawElementsInstanced(GCGLenum mode, GCGLsizei coun
     WebGLRenderingContextBase::drawElementsInstanced(mode, count, type, offset, instanceCount);
 }
 
-void WebGL2RenderingContext::drawRangeElements(GCGLenum, GCGLuint, GCGLuint, GCGLsizei, GCGLenum, GCGLint64)
+void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLint64 offset)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] drawRangeElements()");
+    if (isContextLostOrPending())
+        return;
+
+    m_context->drawRangeElements(mode, start, end, count, type, offset);
 }
 
 void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
@@ -1828,40 +1869,67 @@ void WebGL2RenderingContext::resumeTransformFeedback()
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] resumeTransformFeedback()");
 }
 
-void WebGL2RenderingContext::bindBufferBase(GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
+bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
 {
     if (isContextLostOrPending())
-        return;
+        return false;
 
-    if (!checkObjectToBeBound("bindBufferBase", buffer))
-        return;
+    if (!checkObjectToBeBound(functionName, buffer))
+        return false;
 
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
         if (index >= m_boundTransformFeedbackBuffers.size()) {
-            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindBufferBase", "index out of range");
-            return;
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
+            return false;
         }
         break;
     case GraphicsContextGL::UNIFORM_BUFFER:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindBufferBase", "target not yet supported");
-        return;
+        if (index >= m_boundIndexedUniformBuffers.size()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
+            return false;
+        }
+        break;
     default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindBufferBase", "invalid target");
-        return;
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
+        return false;
     }
 
-    if (!validateAndCacheBufferBinding("bindBufferBase", target, buffer))
-        return;
+    if (!validateAndCacheBufferBinding(functionName, target, buffer))
+        return false;
 
-    // FIXME: NEEDS_PORT: store the buffer in the indexed binding point.
-
-    m_context->bindBufferBase(target, index, objectOrZero(buffer));
+    switch (target) {
+    case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        m_boundTransformFeedbackBuffers[index] = buffer;
+        break;
+    case GraphicsContextGL::UNIFORM_BUFFER:
+        m_boundIndexedUniformBuffers[index] = buffer;
+        break;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
+        return false;
+    }
+    return true;
 }
 
-void WebGL2RenderingContext::bindBufferRange(GCGLenum, GCGLuint, WebGLBuffer*, GCGLint64, GCGLint64)
+void WebGL2RenderingContext::bindBufferBase(GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindBufferRange()");
+    if (setIndexedBufferBinding("bindBufferBase", target, index, buffer))
+        m_context->bindBufferBase(target, index, objectOrZero(buffer));
+}
+
+void WebGL2RenderingContext::bindBufferRange(GCGLenum target, GCGLuint index, WebGLBuffer* buffer, GCGLint64 offset, GCGLint64 size)
+{
+    if (target == GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER && (offset % 4 || size % 4)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindBufferRange", "invalid offset or size");
+        return;
+    }
+    if (target == GraphicsContextGL::UNIFORM_BUFFER && (offset % m_uniformBufferOffsetAlignment)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindBufferRange", "invalid offset");
+        return;
+    }
+    if (setIndexedBufferBinding("bindBufferRange", target, index, buffer))
+        m_context->bindBufferRange(target, index, objectOrZero(buffer), offset, size);
 }
 
 WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint index)
@@ -1878,10 +1946,18 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
         return m_boundTransformFeedbackBuffers[index];
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_SIZE:
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_START:
-    case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
     case GraphicsContextGL::UNIFORM_BUFFER_SIZE:
-    case GraphicsContextGL::UNIFORM_BUFFER_START:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter", "parameter name not yet supported");
+    case GraphicsContextGL::UNIFORM_BUFFER_START: {
+        GCGLint64 value = 0;
+        m_context->getInteger64i_v(target, index, &value);
+        return value;
+    }
+    case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
+        if (index >= m_boundIndexedUniformBuffers.size()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter", "index out of range");
+            return nullptr;
+        }
+        return m_boundIndexedUniformBuffers[index];
         return nullptr;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter", "invalid parameter name");
@@ -1889,10 +1965,16 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
     }
 }
 
-Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
+Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending() || !validateWebGLObject("getUniformIndices", &program))
+        return WTF::nullopt;
+    return m_context->getUniformIndices(program.object(), names);
+#else
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] getUniformIndices()");
     return WTF::nullopt;
+#endif
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname)
@@ -1900,46 +1982,106 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
     if (isContextLostOrPending() || !validateWebGLObject("getActiveUniforms", &program))
         return nullptr;
 
+    Vector<GCGLint> result(uniformIndices.size(), 0);
+    
     switch (pname) {
     case GraphicsContextGL::UNIFORM_TYPE:
+        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+        return result.map([](auto x) { return static_cast<GCGLenum>(x); });
     case GraphicsContextGL::UNIFORM_SIZE:
+        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+        return result.map([](auto x) { return static_cast<GCGLuint>(x); });
     case GraphicsContextGL::UNIFORM_BLOCK_INDEX:
     case GraphicsContextGL::UNIFORM_OFFSET:
     case GraphicsContextGL::UNIFORM_ARRAY_STRIDE:
     case GraphicsContextGL::UNIFORM_MATRIX_STRIDE:
+        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+        return WTFMove(result);
     case GraphicsContextGL::UNIFORM_IS_ROW_MAJOR:
-        {
-            Vector<GCGLint> params(uniformIndices.size(), 0);
-            m_context->getActiveUniforms(program.object(), uniformIndices, pname, params);
-            return WTFMove(params);
-        }
+        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+        return result.map([](auto x) { return static_cast<bool>(x); });
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getActiveUniforms", "invalid parameter name");
         return nullptr;
     }
 }
 
-GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram&, const String&)
+GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram& program, const String& uniformBlockName)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending() || !validateWebGLObject("getUniformBlockIndex", &program))
+        return 0;
+    return m_context->getUniformBlockIndex(program.object(), uniformBlockName);
+#else
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockName);
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] getUniformBlockIndex()");
     return 0;
+#endif
 }
 
-WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram&, GCGLuint, GCGLenum)
+WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLenum pname)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending() || !validateWebGLObject("getActiveUniformBlockParameter", &program))
+        return nullptr;
+    GLint result = 0;
+    switch (pname) {
+    case GraphicsContextGL::UNIFORM_BLOCK_BINDING:
+    case GraphicsContextGL::UNIFORM_BLOCK_DATA_SIZE:
+    case GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORMS:
+        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, pname, sizeof(result), nullptr, &result);
+        return static_cast<GLuint>(result);
+    case GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES: {
+        GLint size = 0;
+        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORMS, sizeof(size), nullptr, &size);
+        Vector<GCGLint> params(size, 0);
+        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, pname, sizeof(params[0]) * params.size(), nullptr, params.data());
+        return params.map([](auto x) { return static_cast<GCGLuint>(x); });
+    }
+    case GraphicsContextGL::UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER:
+    case GraphicsContextGL::UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER:
+        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, pname, sizeof(result), nullptr, &result);
+        return static_cast<bool>(result);
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getActiveUniformBlockParameter", "invalid parameter name");
+        return nullptr;
+    }
+#else
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockIndex);
+    UNUSED_PARAM(pname);
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] getActiveUniformBlockParameter()");
     return nullptr;
+#endif
 }
 
-WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram&, GCGLuint)
+WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program, GCGLuint index)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending() || !validateWebGLObject("getActiveUniformBlockName", &program))
+        return String();
+    return m_context->getActiveUniformBlockName(program.object(), index);
+#else
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(index);
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] getActiveUniformBlockName()");
     return nullptr;
+#endif
 }
 
-void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram&, GCGLuint, GCGLuint)
+void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending() || !validateWebGLObject("uniformBlockBinding", &program))
+        return;
+    m_context->uniformBlockBinding(program.object(), uniformBlockIndex, uniformBlockBinding);
+#else
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockIndex);
+    UNUSED_PARAM(uniformBlockBinding);
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformBlockBinding()");
+#endif
 }
 
 RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
@@ -2531,10 +2673,12 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return m_boundPixelUnpackBuffer;
     case GraphicsContextGL::RASTERIZER_DISCARD:
         return getBooleanParameter(pname);
-    case GraphicsContextGL::READ_BUFFER:
-        // FIXME: NEEDS_PORT
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, READ_BUFFER not yet supported");
-        return nullptr;
+    case GraphicsContextGL::READ_BUFFER: {
+        GLint value = getIntParameter(pname);
+        if (!m_readFramebufferBinding && value != GL_NONE)
+            return GL_BACK;
+        return value;
+    }
     case GraphicsContextGL::READ_FRAMEBUFFER_BINDING:
         return m_readFramebufferBinding;
     case GraphicsContextGL::SAMPLER_BINDING:

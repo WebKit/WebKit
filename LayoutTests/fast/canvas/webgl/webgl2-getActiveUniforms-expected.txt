@@ -11,7 +11,7 @@ PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_BLOCK_INDEX) is [-1
 PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_OFFSET) is [-1]
 PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_ARRAY_STRIDE) is [-1]
 PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_MATRIX_STRIDE) is [-1]
-PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_IS_ROW_MAJOR) is [0]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_IS_ROW_MAJOR) is [false]
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_NAME_LENGTH) is null
 PASS gl.getError() is gl.INVALID_ENUM

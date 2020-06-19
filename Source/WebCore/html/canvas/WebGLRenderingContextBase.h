@@ -957,7 +957,7 @@ protected:
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.
-    WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage);
+    virtual WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage);
 
     // Helper function for tex{Sub}Image2D to make sure image is ready.
     ExceptionOr<bool> validateHTMLImageElement(const char* functionName, HTMLImageElement*);

@@ -268,6 +268,7 @@ private:
     void initializeVertexArrayObjects() final;
     bool validateBufferTarget(const char* functionName, GCGLenum target) final;
     bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
+    WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;
     WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
     bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*) final;
     GCGLint getMaxDrawBuffers() final;
@@ -284,6 +285,7 @@ private:
     GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
     bool isIntegerFormat(GCGLenum internalformat);
     void initializeShaderExtensions();
+    bool setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer*);
 
     IntRect getTextureSourceSubRectangle(GLsizei width, GLsizei height);
 
@@ -310,6 +312,7 @@ private:
     RefPtr<WebGLBuffer> m_boundPixelUnpackBuffer;
     RefPtr<WebGLBuffer> m_boundTransformFeedbackBuffer;
     RefPtr<WebGLBuffer> m_boundUniformBuffer;
+    Vector<RefPtr<WebGLBuffer>> m_boundIndexedUniformBuffers;
 
     HashMap<GCGLenum, RefPtr<WebGLQuery>> m_activeQueries;
 
@@ -320,6 +323,7 @@ private:
     GCGLint m_unpackRowLength { 0 };
     GCGLint m_unpackImageHeight { 0 };
     GCGLint m_unpackSkipImages { 0 };
+    GCGLint m_uniformBufferOffsetAlignment { 0 };
 };
 
 } // namespace WebCore

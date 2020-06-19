@@ -25,7 +25,7 @@ shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_BLOCK_INDEX)",
 shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_OFFSET)", "[-1]");
 shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_ARRAY_STRIDE)", "[-1]");
 shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_MATRIX_STRIDE)", "[-1]");
-shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_IS_ROW_MAJOR)", "[0]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_IS_ROW_MAJOR)", "[false]");
 shouldBe("gl.getError()", "gl.NO_ERROR");
 
 // Invalid parameter for getActiveUniforms() in WebGL2.

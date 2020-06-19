@@ -27,31 +27,31 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/instanced-arrays.h
 [ 24: FAIL ] should be 0,0,255,255 at (0, 0) expected: 0,0,255,255 was 0,0,0,0
 [ 25: FAIL ] should be 255,255,0,255 at (25, 0) expected: 255,255,0,255 was 0,0,0,0
 [ 26: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : drawArraysInstanced cannot have a primcount less than 0
-[ 27: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : drawArraysInstanced cannot have a count less than 0
+[ 27: PASS ] getError was expected value: INVALID_VALUE : drawArraysInstanced cannot have a count less than 0
 [ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : It's allowed for all vertex attributes to have non-zero divisors when calling drawArraysInstanced
 [ 29: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with POINTS should succeed
 [ 30: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with LINES should succeed
 [ 31: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with LINE_LIST should return succeed
 [ 32: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with TRI_LIST should succeed
-[ 33: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : drawArraysInstanced with QUAD_STRIP should return INVALID_ENUM
-[ 34: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : drawArraysInstanced with QUADS should return INVALID_ENUM
-[ 35: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : drawArraysInstanced with POLYGON should return INVALID_ENUM
+[ 33: PASS ] getError was expected value: INVALID_ENUM : drawArraysInstanced with QUAD_STRIP should return INVALID_ENUM
+[ 34: PASS ] getError was expected value: INVALID_ENUM : drawArraysInstanced with QUADS should return INVALID_ENUM
+[ 35: PASS ] getError was expected value: INVALID_ENUM : drawArraysInstanced with POLYGON should return INVALID_ENUM
 [ 36: FAIL ] should be 255,0,0,255 at (0, 25) expected: 255,0,0,255 was 0,0,0,0
 [ 37: FAIL ] should be 0,255,0,255 at (25, 25) expected: 0,255,0,255 was 0,0,0,0
 [ 38: FAIL ] should be 0,0,255,255 at (0, 0) expected: 0,0,255,255 was 0,0,0,0
 [ 39: FAIL ] should be 255,255,0,255 at (25, 0) expected: 255,255,0,255 was 0,0,0,0
-[ 40: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : drawElementsInstanced cannot have a primcount less than 0
-[ 41: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : drawElementsInstanced cannot have a count less than 0
+[ 40: PASS ] getError was expected value: INVALID_VALUE : drawElementsInstanced cannot have a primcount less than 0
+[ 41: PASS ] getError was expected value: INVALID_VALUE : drawElementsInstanced cannot have a count less than 0
 [ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : It's allowed for all vertex attributes to have non-zero divisors when calling drawElementsInstanced
 [ 43: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced with UNSIGNED_BYTE should succeed
-[ 44: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced with POINTS should succeed
-[ 45: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced with LINES should succeed
-[ 46: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced with LINE_LIST should return succeed
-[ 47: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced with TRI_LIST should succeed
-[ 48: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : drawElementsInstanced with QUAD_STRIP should return INVALID_ENUM
-[ 49: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : drawElementsInstanced with QUADS should return INVALID_ENUM
-[ 50: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : drawElementsInstanced with POLYGON should return INVALID_ENUM
+[ 44: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with POINTS should succeed
+[ 45: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with LINES should succeed
+[ 46: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with LINE_LIST should return succeed
+[ 47: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with TRI_LIST should succeed
+[ 48: PASS ] getError was expected value: INVALID_ENUM : drawElementsInstanced with QUAD_STRIP should return INVALID_ENUM
+[ 49: PASS ] getError was expected value: INVALID_ENUM : drawElementsInstanced with QUADS should return INVALID_ENUM
+[ 50: PASS ] getError was expected value: INVALID_ENUM : drawElementsInstanced with POLYGON should return INVALID_ENUM
 [ 51: PASS ] getError was expected value: NO_ERROR : there should be no errors
 [ 52: PASS ] successfullyParsed is true
-[ FAIL ] 30 failures reported
+[ FAIL ] 17 failures reported
 

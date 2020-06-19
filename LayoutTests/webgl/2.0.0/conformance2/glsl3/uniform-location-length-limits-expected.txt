@@ -1,13 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/uniform-location-length-limits.html
-[ 1: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
-[ 2: FAIL ] uniformLoc should be non-null. Was null
-[ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 4: PASS ] getError was expected value: NO_ERROR :
-[ 5: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
-[ 6: PASS ] getError was expected value: INVALID_VALUE :
-[ 7: PASS ] uniformLoc is null
-[ 8: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ PASS ] All tests passed
 

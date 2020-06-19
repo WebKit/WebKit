@@ -1,40 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/state/gl-enum-tests.html
-[ 1: PASS ] context exists
-[ 2: PASS ] getError was expected value: NO_ERROR :
-[ 3: PASS ] getError was expected value: INVALID_ENUM : gl.disable(desktopGL['CLIP_PLANE0']) should return INVALID_ENUM.
-[ 4: PASS ] getError was expected value: INVALID_ENUM : gl.disable(desktopGL['POINT_SPRITE']) should return INVALID_ENUM.
-[ 5: PASS ] getError was expected value: INVALID_ENUM : gl.getBufferParameter(gl.ARRAY_BUFFER, desktopGL['PIXEL_PACK_BUFFER']) should return INVALID_ENUM.
-[ 6: PASS ] getError was expected value: INVALID_ENUM : gl.hint(desktopGL['PERSPECTIVE_CORRECTION_HINT'], gl.FASTEST) should return INVALID_ENUM.
-[ 7: PASS ] getError was expected value: INVALID_ENUM : gl.isEnabled(desktopGL['CLIP_PLANE0']) should return INVALID_ENUM.
-[ 8: PASS ] getError was expected value: INVALID_ENUM : gl.isEnabled(desktopGL['POINT_SPRITE']) should return INVALID_ENUM.
-[ 9: PASS ] getError was expected value: INVALID_ENUM : gl.pixelStorei(desktopGL['PACK_SWAP_BYTES'], 1) should return INVALID_ENUM.
-[ 10: PASS ] getError was expected value: INVALID_ENUM : gl.getParameter(desktopGL['NUM_COMPRESSED_TEXTURE_FORMATS']) should return INVALID_ENUM.
-[ 11: PASS ] getError was expected value: INVALID_ENUM : gl.getParameter(desktopGL['EXTENSIONS']) should return INVALID_ENUM.
-[ 12: PASS ] getError was expected value: INVALID_ENUM : gl.getParameter(desktopGL['SHADER_COMPILER']) should return INVALID_ENUM.
-[ 13: PASS ] getError was expected value: INVALID_ENUM : gl.getParameter(desktopGL['SHADER_BINARY_FORMATS']) should return INVALID_ENUM.
-[ 14: PASS ] getError was expected value: INVALID_ENUM : gl.getParameter(desktopGL['NUM_SHADER_BINARY_FORMATS']) should return INVALID_ENUM.
-[ 15: PASS ] getError was expected value: INVALID_ENUM : gl.bindTexture(desktopGL['TEXTURE_RECTANGLE_EXT'], tex) should return INVALID_ENUM.
-[ 16: PASS ] getError was expected value: INVALID_ENUM : gl.enable(desktopGL['PRIMITIVE_RESTART_FIXED_INDEX']) should return INVALID_ENUM.
-[ 17: PASS ] getError was expected value: INVALID_ENUM : gl.getActiveUniforms(program, [0], desktopGL['UNIFORM_NAME_LENGTH']) should return INVALID_ENUM.
-[ 18: PASS ] getError was expected value: INVALID_ENUM : gl.getProgramParameter(program, desktopGL['ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH']) should return INVALID_ENUM.
-[ 19: PASS ] getError was expected value: INVALID_ENUM : gl.getProgramParameter(program, desktopGL['TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH']) should return INVALID_ENUM.
-[ 20: PASS ] getError was expected value: INVALID_ENUM : gl.getProgramParameter(program, desktopGL['PROGRAM_BINARY_RETRIEVABLE_HINT']) should return INVALID_ENUM.
-[ 21: PASS ] getError was expected value: INVALID_ENUM : gl.getProgramParameter(program, desktopGL['PROGRAM_BINARY_LENGTH']) should return INVALID_ENUM.
-[ 22: PASS ] getError was expected value: INVALID_ENUM : gl.getParameter(program, desktopGL['NUM_PROGRAM_BINARY_FORMATS']) should return INVALID_ENUM.
-[ 23: PASS ] getError was expected value: NO_ERROR :
-[ 24: PASS ] getError was expected value: INVALID_ENUM : gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP']) should return INVALID_ENUM.
-[ 25: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'], 1) should return INVALID_ENUM.
-[ 26: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, desktopGL['CLAMP_TO_BORDER']) should return INVALID_ENUM.
-[ 27: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_R_EXT'], gl.RED) should return INVALID_ENUM.
-[ 28: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_G_EXT'], gl.RED) should return INVALID_ENUM.
-[ 29: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_B_EXT'], gl.RED) should return INVALID_ENUM.
-[ 30: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_A_EXT'], gl.RED) should return INVALID_ENUM.
-[ 31: PASS ] getError was expected value: INVALID_ENUM : gl.texParameteri(desktopGL['TEXTURE_2D'], gl.TEXTURE_WRAP_R, desktopGL['CLAMP_TO_BORDER']) should return INVALID_ENUM.
-[ 32: PASS ] gl.getProgramParameter(uniformBlockProgram, gl.LINK_STATUS) is true
-[ 33: PASS ] gl.getError() is gl.NO_ERROR
-[ 34: FAIL ] gl.getError() should be 1280. Was 0.
-[ 35: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

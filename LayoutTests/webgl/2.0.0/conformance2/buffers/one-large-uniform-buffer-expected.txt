@@ -1,14 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/one-large-uniform-buffer.html
-[ 1: PASS ] WebGL context exists
-[ 2: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Setting up uniform block should succeed
-[ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Draw with uniform block should succeed
-[ 4: FAIL ] canvas should be same as input uniform at (0, 0) expected: 127,191,64,255 was 0,0,0,0
-[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Setting up uniform block should succeed
-[ 6: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Draw with uniform block should succeed
-[ 7: FAIL ] canvas should be same as input uniform at (0, 0) expected: 127,191,64,255 was 0,0,0,0
-[ 8: PASS ] getError was expected value: NO_ERROR : Readback from uniform block should succeed
-[ 9: PASS ] successfullyParsed is true
-[ FAIL ] 6 failures reported
+[ PASS ] All tests passed
 

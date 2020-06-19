@@ -991,7 +991,9 @@ public:
     virtual String getString(GCGLenum name) = 0;
     virtual void getFloatv(GCGLenum pname, GCGLfloat* value) = 0;
     virtual void getIntegerv(GCGLenum pname, GCGLint* value) = 0;
+    virtual void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value) = 0;
     virtual void getInteger64v(GCGLenum pname, GCGLint64* value) = 0;
+    virtual void getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value) = 0;
     virtual void getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value) = 0;
     virtual void getBooleanv(GCGLenum pname, GCGLboolean* value) = 0;
 

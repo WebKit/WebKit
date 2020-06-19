@@ -367,6 +367,12 @@ void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
     }
 }
 
+void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value)
+{
+    makeContextCurrent();
+    gl::GetIntegeri_v(pname, index, value);
+}
+
 void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision)
 {
     makeContextCurrent();
@@ -1575,11 +1581,16 @@ void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLfloat* value)
     
 void GraphicsContextGLOpenGL::getInteger64v(GCGLenum pname, GCGLint64* value)
 {
-    UNUSED_PARAM(pname);
     makeContextCurrent();
     *value = 0;
-    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
-    // gl::GetInteger64v(pname, value);
+    gl::GetInteger64v(pname, value);
+}
+
+void GraphicsContextGLOpenGL::getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value)
+{
+    makeContextCurrent();
+    *value = 0;
+    gl::GetInteger64i_v(pname, index, value);
 }
 
 void GraphicsContextGLOpenGL::getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value)
@@ -1900,13 +1911,19 @@ void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, G
 
 void GraphicsContextGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
-    getExtensions().drawArraysInstanced(mode, first, count, primcount);
+    if (m_isForWebGL2)
+        gl::DrawArraysInstanced(mode, first, count, primcount);
+    else
+        getExtensions().drawArraysInstanced(mode, first, count, primcount);
     checkGPUStatus();
 }
 
 void GraphicsContextGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei primcount)
 {
-    getExtensions().drawElementsInstanced(mode, count, type, offset, primcount);
+    if (m_isForWebGL2)
+        gl::DrawElementsInstanced(mode, count, type, reinterpret_cast<void*>(offset), primcount);
+    else
+        getExtensions().drawElementsInstanced(mode, count, type, offset, primcount);
     checkGPUStatus();
 }
 
@@ -1917,14 +1934,15 @@ void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divis
 
 GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockName);
-
-    return 0;
+    ASSERT(program);
+    makeContextCurrent();
+    return gl::GetUniformBlockIndex(program, uniformBlockName.utf8().data());
 }
 
 void GraphicsContextGLOpenGL::getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLint* params)
 {
+    RELEASE_LOG(WebGL, "Use getActiveUniformBlockivRobustANGLE instead.");
+    notImplemented();
     UNUSED_PARAM(program);
     UNUSED_PARAM(uniformBlockIndex);
     UNUSED_PARAM(pname);
@@ -1933,18 +1951,20 @@ void GraphicsContextGLOpenGL::getActiveUniformBlockiv(PlatformGLObject program, 
 
 String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockIndex);
-
-    return emptyString();
+    ASSERT(program);
+    makeContextCurrent();
+    GLint maxLength = 0;
+    gl::GetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &maxLength);
+    Vector<GLchar> buffer(maxLength);
+    gl::GetActiveUniformBlockName(program, uniformBlockIndex, buffer.size(), nullptr, buffer.data());
+    return String(buffer.data());
 }
 
 void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockIndex);
-    UNUSED_PARAM(uniformBlockBinding);
-
+    ASSERT(program);
+    makeContextCurrent();
+    gl::UniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
 }
 
 // Query Functions
@@ -2417,12 +2437,7 @@ void GraphicsContextGLOpenGL::vertexAttribI4uiv(GCGLuint index, const GCGLuint* 
 
 void GraphicsContextGLOpenGL::drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset)
 {
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(start);
-    UNUSED_PARAM(end);
-    UNUSED_PARAM(count);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(offset);
+    gl::DrawRangeElements(mode, start, end, count, type, reinterpret_cast<void*>(offset));
 }
 
 void GraphicsContextGLOpenGL::drawBuffers(const Vector<GCGLenum>& buffers)
@@ -2578,27 +2593,31 @@ void GraphicsContextGLOpenGL::getSynciv(PlatformGLObject sync, GCGLenum pname, G
 
 void GraphicsContextGLOpenGL::pauseTransformFeedback()
 {
+    makeContextCurrent();
+    gl::PauseTransformFeedback();
 }
 
 void GraphicsContextGLOpenGL::resumeTransformFeedback()
 {
+    makeContextCurrent();
+    gl::ResumeTransformFeedback();
 }
 
 void GraphicsContextGLOpenGL::bindBufferRange(GCGLenum target, GCGLuint index, PlatformGLObject buffer, GCGLintptr offset, GCGLsizeiptr size)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    makeContextCurrent();
+    gl::BindBufferRange(target, index, buffer, offset, size);
 }
 
 Vector<GCGLuint> GraphicsContextGLOpenGL::getUniformIndices(PlatformGLObject program, const Vector<String>& uniformNames)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformNames);
-
-    return { };
+    ASSERT(program);
+    makeContextCurrent();
+    Vector<CString> utf8 = uniformNames.map([](auto& x) { return x.utf8(); });
+    Vector<const char*> cstr = utf8.map([](auto& x) { return x.data(); });
+    Vector<GCGLuint> result(cstr.size(), 0);
+    gl::GetUniformIndices(program, cstr.size(), cstr.data(), result.data());
+    return result;
 }
 
 void GraphicsContextGLOpenGL::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr pboOffset)

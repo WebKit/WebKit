@@ -1,35 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/renderbuffers/readbuffer.html
-[ 1: PASS ] context exists
-[ 2: PASS ] getError was expected value: NO_ERROR : should be no errors when reading from GL_BACK on the default framebuffer.
-[ 3: PASS ] the color should be [0,0,0,255]
-[ 4: FAIL ] gl.getParameter(gl.READ_BUFFER) should be 1029 (of type number). Was null (of type object).
-[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : calling readBuffer with GL_NONE on the default framebuffer should succeed.
-[ 6: PASS ] getError was expected value: INVALID_OPERATION : should generate INVALID_OPERATION when reading from framebuffer and read buffer is GL_NONE.
-[ 7: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : calling readBuffer with GL_BACK on the default framebuffer should succeed.
-[ 8: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : calling readBuffer with GL_COLOR_ATTACHMENT0 on the default framebuffer should generate INVALID_OPERATION.
-[ 9: PASS ] getError was expected value: NO_ERROR : should be no errors when reading from GL_COLOR_ATTACHMENT0 on fbo.
-[ 10: PASS ] the color should be [255,0,0,255]
-[ 11: FAIL ] gl.getParameter(gl.READ_BUFFER) should be 36064 (of type number). Was null (of type object).
-[ 12: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : calling readBuffer with GL_BACK on fbo should generate INVALID_OPERATION.
-[ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : calling readBuffer with GL_NONE on fbo should succeed.
-[ 14: PASS ] getError was expected value: INVALID_OPERATION : should generate INVALID_OPERATION when reading from framebuffer and read buffer is GL_NONE.
-[ 15: PASS ] getError was expected value: NO_ERROR : calling readBuffer with GL_COLOR_ATTACHMENT0 on fbo should succeed.
-[ 16: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : calling readBuffer with GL_COLOR_ATTACHMENTi that exceeds MAX_COLOR_ATTACHMENT on fbo should generate INVALID_ENUM.
-[ 17: PASS ] getError was expected value: NO_ERROR : calling readBuffer with GL_COLOR_ATTACHMENT1 on the fbo should succeed.
-[ 18: FAIL ] gl.getParameter(gl.READ_BUFFER) should be 36065 (of type number). Was null (of type object).
-[ 19: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no error after setup and clear render buffer
-[ 20: PASS ] getError was expected value: NO_ERROR : should be no errors when reading from GL_COLOR_ATTACHMENT1 on fbo.
-[ 21: PASS ] the color should be [0,255,0,255]
-[ 22: FAIL ] gl.getParameter(gl.READ_BUFFER) should be 36065 (of type number). Was null (of type object).
-[ 23: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : should generate INVALID_OPERATION when reading from GL_COLOR_ATTACHMENT1 but this attachment has no image currently.
-[ 24: FAIL ] gl.getParameter(gl.READ_BUFFER) should be 36064 (of type number). Was null (of type object).
-[ 25: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors when reading from GL_COLOR_ATTACHMENT0 on another fbo.
-[ 26: PASS ] the color should be [0,0,255,255]
-[ 27: FAIL ] gl.getParameter(gl.READ_BUFFER) should be 1029 (of type number). Was null (of type object).
-[ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors when reading from GL_BACK on the default framebuffer.
-[ 29: PASS ] the color should be [0,0,0,255]
-[ 30: PASS ] successfullyParsed is true
-[ FAIL ] 16 failures reported
+[ PASS ] All tests passed
 
