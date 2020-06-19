@@ -1742,7 +1742,7 @@ static EncodedJSValue JSC_HOST_CALL functionCpuClflush(JSGlobalObject* globalObj
 #if CPU(X86_64) && !OS(WINDOWS)
     VM& vm = globalObject->vm();
 
-    if (!callFrame->argument(1).isInt32())
+    if (!callFrame->argument(1).isUInt32())
         return JSValue::encode(jsBoolean(false));
 
     auto clflush = [] (void* ptr) {

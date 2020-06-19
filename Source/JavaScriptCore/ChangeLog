@@ -1,3 +1,14 @@
+2020-06-19  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        functionCpuClflush checks that the second argument is Int32 but it actually expects it to be UInt32
+        https://bugs.webkit.org/show_bug.cgi?id=213388
+
+        Reviewed by Saam Barati.
+
+        This changes the check from isInt32() to isUInt32() so that the logic is consistent.
+
+        * tools/JSDollarVM.cpp:
+
 2020-06-18  Mark Lam  <mark.lam@apple.com>
 
         Unify Bitmap math loops in MarkedBlock::Handle::specializedSweep().
