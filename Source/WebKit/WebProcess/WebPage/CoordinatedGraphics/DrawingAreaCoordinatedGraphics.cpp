@@ -696,6 +696,9 @@ void DrawingAreaCoordinatedGraphics::display()
     ASSERT(!m_isWaitingForDidUpdate);
     ASSERT(!m_inUpdateBackingStoreState);
 
+    if (m_layerTreeStateIsFrozen)
+        return;
+
     if (m_isPaintingSuspended)
         return;
 

@@ -1,3 +1,18 @@
+2020-06-19  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        REGRESSION(r253360): [GTK] Page starts loading during animation in back/forward gesture
+        https://bugs.webkit.org/show_bug.cgi?id=205650
+
+        Reviewed by Carlos Garcia Campos.
+
+        r253360 changed the swipe gesture to start loading the page during the gesture, relying on
+        freezing the layer tree state to prevent unwanted redraws. However, it was implemented for
+        AC mode, but didn't prevent redraws in non-accelerated mode. Add a simple check to skip
+        redraws in this case.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::display): Skip drawing if layer tree state is frozen.
+
 2020-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add support for fetching registrable domains with resource load statistics
