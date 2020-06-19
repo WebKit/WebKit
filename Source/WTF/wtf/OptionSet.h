@@ -253,7 +253,7 @@ private:
 template<typename E>
 WARN_UNUSED_RETURN constexpr bool isValidOptionSet(OptionSet<E> optionSet)
 {
-    auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
+    auto allValidBitsValue = OptionSetValueChecker<std::make_unsigned_t<std::underlying_type_t<E>>, typename EnumTraits<E>::values>::allValidBits();
     return (optionSet.toRaw() | allValidBitsValue) == allValidBitsValue;
 }
 

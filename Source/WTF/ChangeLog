@@ -1,3 +1,16 @@
+2020-06-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wsign-compare in isValidOptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=213383
+
+        Reviewed by Darin Adler.
+
+        The OptionSet's StorageType is always unsigned, even if the enum's underlying value is not.
+        Match this in isValidOptionSet to avoid -Wsign-compare during validity checking.
+
+        * wtf/OptionSet.h:
+        (WTF::isValidOptionSet):
+
 2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify "font:" CSS shorthand values between macOS and iOS family
