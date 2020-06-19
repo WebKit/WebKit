@@ -64,6 +64,7 @@ private:
     Type m_type;
     NetworkRTCProvider& m_rtcProvider;
     std::unique_ptr<rtc::AsyncPacketSocket> m_socket;
+    int m_sendError { 0 };
 };
 
 } // namespace WebKit

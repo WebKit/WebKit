@@ -72,8 +72,8 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
 void LibWebRTCSocketClient::sendTo(const WebCore::SharedBuffer& buffer, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
 {
     auto result = m_socket->SendTo(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size(), socketAddress, options);
-    UNUSED_PARAM(result);
-    RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::sendTo failed with error %d", m_socket->GetError());
+    RELEASE_LOG_ERROR_IF(result && m_sendError != result, Network, "LibWebRTCSocketClient::sendTo failed with error %d", m_socket->GetError());
+    m_sendError = result;
 }
 
 void LibWebRTCSocketClient::close()
