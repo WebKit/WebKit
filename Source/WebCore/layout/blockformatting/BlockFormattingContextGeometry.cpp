@@ -283,31 +283,35 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(con
     return inFlowReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overrideHorizontalValues);
 }
 
-ContentWidthAndMargin BlockFormattingContext::Geometry::computedWidthAndMargin(const Box& layoutBox, const ConstraintsPair& constraintsPair)
+ContentWidthAndMargin BlockFormattingContext::Geometry::computedWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, Optional<LayoutUnit> availableWidthFloatAvoider)
 {
-    auto& horizontalConstraints = constraintsPair.containingBlock.horizontal;
-    auto compute = [&](Optional<LayoutUnit> usedWidth) {
+    auto compute = [&] (auto constraintsForWidth, Optional<LayoutUnit> usedWidth) {
         if (layoutBox.isFloatingPositioned())
-            return floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+            return floatingWidthAndMargin(layoutBox, constraintsForWidth, { usedWidth, { } });
 
         if (layoutBox.isInFlow())
-            return inFlowWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+            return inFlowWidthAndMargin(layoutBox, constraintsForWidth, { usedWidth, { } });
 
         ASSERT_NOT_REACHED();
         return ContentWidthAndMargin { };
     };
 
-    auto contentWidthAndMargin = compute({ });
-
+    auto horizontalConstraintsForWidth = horizontalConstraints;
+    if (layoutBox.style().logicalWidth().isAuto() && availableWidthFloatAvoider) {
+        // While the non-auto width values should all be resolved against the containing block's width, when
+        // the width is auto the available horizontal space is shrunk by neighboring floats.
+        horizontalConstraintsForWidth.logicalWidth = *availableWidthFloatAvoider;
+    }
+    auto contentWidthAndMargin = compute(horizontalConstraintsForWidth, { });
     auto availableWidth = horizontalConstraints.logicalWidth;
     if (auto maxWidth = computedMaxWidth(layoutBox, availableWidth)) {
-        auto maxWidthAndMargin = compute(maxWidth);
+        auto maxWidthAndMargin = compute(horizontalConstraints, maxWidth);
         if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
             contentWidthAndMargin = maxWidthAndMargin;
     }
 
     auto minWidth = computedMinWidth(layoutBox, availableWidth).valueOr(0);
-    auto minWidthAndMargin = compute(minWidth);
+    auto minWidthAndMargin = compute(horizontalConstraints, minWidth);
     if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
         contentWidthAndMargin = minWidthAndMargin;
     return contentWidthAndMargin;

@@ -85,7 +85,7 @@ protected:
 
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
-        ContentWidthAndMargin computedWidthAndMargin(const Box&, const ConstraintsPair&);
+        ContentWidthAndMargin computedWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
 
     private:
         ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);

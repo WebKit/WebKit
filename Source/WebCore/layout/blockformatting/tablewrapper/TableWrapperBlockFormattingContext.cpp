@@ -145,8 +145,7 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
 {
     ASSERT(tableBox.isTableBox());
     if (!tableBox.hasChild()) {
-        auto constraintsPair = ConstraintsPair { { horizontalConstraints, { } }, { horizontalConstraints, { } } };
-        auto computedWidthAndMargin = geometry().computedWidthAndMargin(tableBox, constraintsPair);
+        auto computedWidthAndMargin = geometry().computedWidthAndMargin(tableBox, horizontalConstraints, { });
         auto& displayBox = formattingState().displayBox(tableBox);
         displayBox.setContentBoxWidth(computedWidthAndMargin.contentWidth);
         displayBox.setHorizontalMargin(computedWidthAndMargin.usedMargin);

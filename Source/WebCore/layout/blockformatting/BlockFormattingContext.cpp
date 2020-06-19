@@ -314,14 +314,12 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
 
 void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair& constraintsPair)
 {
-    auto adjustedConstraints = constraintsPair;
-    if (layoutBox.isFloatAvoider() && layoutBox.style().logicalWidth().isAuto()) {
+    auto availableWidthFloatAvoider = Optional<LayoutUnit> { };
+    if (layoutBox.isFloatAvoider()) {
         // Float avoiders' available width might be shrunk by existing floats in the context.
-        if (auto availableWidthForFloatAvoider = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, constraintsPair))
-            adjustedConstraints.containingBlock.horizontal.logicalWidth = *availableWidthForFloatAvoider;
+        availableWidthFloatAvoider = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, constraintsPair);
     }
-
-    auto contentWidthAndMargin = geometry().computedWidthAndMargin(layoutBox, adjustedConstraints);
+    auto contentWidthAndMargin = geometry().computedWidthAndMargin(layoutBox, constraintsPair.containingBlock.horizontal, availableWidthFloatAvoider);
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
     displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
