@@ -1,3 +1,12 @@
+2020-06-19  Mark Lam  <mark.lam@apple.com>
+
+        Make $vm properties non-configurable, non-enumerable, and non-writable.
+        https://bugs.webkit.org/show_bug.cgi?id=213395
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        * stress/dollarVM-properties-should-not-be-enumerable.js: Added.
+
 2020-06-18  Saam Barati  <sbarati@apple.com>
 
         sampling-profiler-wasm-name-section should run for more iterations

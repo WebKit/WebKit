@@ -1,3 +1,22 @@
+2020-06-19  Mark Lam  <mark.lam@apple.com>
+
+        Make $vm properties non-configurable, non-enumerable, and non-writable.
+        https://bugs.webkit.org/show_bug.cgi?id=213395
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        $vm provides functions for test development and VM debugging.  There's no reason
+        for them to be configurable, enumerable, and writable.
+
+        We particularly don't want them to be enumerable as this can trip up some fuzzers.
+        Fuzzers should not be fuzzing the $vm object which doesn't exist in real world
+        uses of JavaScriptCore.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::JSDollarVM::addFunction):
+        (JSC::JSDollarVM::addConstructibleFunction):
+
 2020-06-19  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         functionCpuClflush checks that the second argument is Int32 but it actually expects it to be UInt32
