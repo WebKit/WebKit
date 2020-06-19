@@ -1,3 +1,12 @@
+2020-06-19  Jason Lawrence  <lawrence.j@apple.com>
+
+        Mac wk2 Debug] webaudio/biquad-bandpass.html is flaky crashing with alert WTFCrash - WebCore::WebKitAudioContext::~WebKitAudioContext() + 654 (WebKitAudioContext.cpp:209).
+        https://bugs.webkit.org/show_bug.cgi?id=213375
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION(r262254?): [WPE] imported/w3c/web-platform-tests/webxr/idlharness.https.window.html is failing
