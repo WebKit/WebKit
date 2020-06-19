@@ -9,6 +9,10 @@
 #ifndef LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 #define LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 
+#import "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+
 #include "libANGLE/renderer/gl/DisplayGL.h"
 
 #ifdef __OBJC__
@@ -92,5 +96,7 @@ class DisplayEAGL : public DisplayGL
 };
 
 }  // namespace rx
+
+#endif // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
 #endif  // LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_

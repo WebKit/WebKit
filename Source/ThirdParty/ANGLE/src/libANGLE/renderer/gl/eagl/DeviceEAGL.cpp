@@ -8,7 +8,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_IOS)
+#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
 #    include "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
 
@@ -56,4 +56,4 @@ void DeviceEAGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_PLATFORM_IOS)
+#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)

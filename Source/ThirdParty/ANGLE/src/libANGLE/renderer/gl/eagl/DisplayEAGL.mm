@@ -378,4 +378,4 @@ void DisplayEAGL::populateFeatureList(angle::FeatureList *features)
 }
 }
 
-#endif  // defined(ANGLE_PLATFORM_IOS)
+#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)

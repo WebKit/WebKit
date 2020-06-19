@@ -1,3 +1,16 @@
+2020-06-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [ANGLE] Correct Catalyst guards
+        https://bugs.webkit.org/show_bug.cgi?id=211410
+        <rdar://problem/62891185>
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp: Do not compile on Mac.
+        * src/libANGLE/renderer/gl/eagl/DeviceEAGL.h:  Definitions should not be available on Mac.
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.h: Definitions should not be available on Mac.
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm: Do not compile on Mac.
+
 2020-06-10  Dean Jackson  <dino@apple.com>
 
         Add a dynamic library target for ANGLE
