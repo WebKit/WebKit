@@ -1,3 +1,98 @@
+2020-06-19  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Update imported selenium to a version with the WPE WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=213263
+
+        Reviewed by Carlos Garcia Campos.
+
+        Updated Selenium tests to 0d7e57a7079c, which added the WPE WebDriver.
+
+        * imported/selenium/common/src/web/button.png: Added.
+        * imported/selenium/common/src/web/formPage.html:
+        * imported/selenium/common/src/web/inputs.html:
+        * imported/selenium/common/src/web/relative_locators.html: Added.
+        * imported/selenium/common/src/web/screen/screen.css:
+        * imported/selenium/common/src/web/selectableItems.html:
+        * imported/selenium/common/src/web/simpleTest.html:
+        * imported/selenium/common/src/web/upload.html:
+        * imported/selenium/common/src/web/upload_invisible.html:
+        * imported/selenium/common/src/web/xhtmlTest.html:
+        * imported/selenium/importer.json: Modified hash and skipped folders
+        * imported/selenium/py/conftest.py:
+        * imported/selenium/py/selenium/__init__.py:
+        * imported/selenium/py/selenium/common/exceptions.py:
+        * imported/selenium/py/selenium/webdriver/__init__.py:
+        * imported/selenium/py/selenium/webdriver/common/action_chains.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/action_builder.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/input_device.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/interaction.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/key_actions.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/mouse_button.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/pointer_actions.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/pointer_input.py:
+        * imported/selenium/py/selenium/webdriver/common/alert.py:
+        * imported/selenium/py/selenium/webdriver/common/desired_capabilities.py:
+        * imported/selenium/py/selenium/webdriver/common/html5/application_cache.py:
+        * imported/selenium/py/selenium/webdriver/common/options.py: Added.
+        * imported/selenium/py/selenium/webdriver/common/proxy.py:
+        * imported/selenium/py/selenium/webdriver/common/timeouts.py: Added.
+        * imported/selenium/py/selenium/webdriver/common/utils.py:
+        * imported/selenium/py/selenium/webdriver/common/window.py: Copied from WebDriverTests/imported/selenium/py/selenium/__init__.py.
+        * imported/selenium/py/selenium/webdriver/remote/command.py:
+        * imported/selenium/py/selenium/webdriver/remote/errorhandler.py:
+        * imported/selenium/py/selenium/webdriver/remote/remote_connection.py:
+        * imported/selenium/py/selenium/webdriver/remote/switch_to.py:
+        * imported/selenium/py/selenium/webdriver/remote/utils.py:
+        * imported/selenium/py/selenium/webdriver/remote/webdriver.py:
+        * imported/selenium/py/selenium/webdriver/remote/webelement.py:
+        * imported/selenium/py/selenium/webdriver/safari/permissions.py: Copied from WebDriverTests/imported/selenium/py/selenium/__init__.py.
+        * imported/selenium/py/selenium/webdriver/safari/remote_connection.py: Copied from WebDriverTests/imported/selenium/py/test/selenium/webdriver/remote/remote_firefox_profile_tests.py.
+        * imported/selenium/py/selenium/webdriver/safari/service.py:
+        * imported/selenium/py/selenium/webdriver/safari/webdriver.py:
+        * imported/selenium/py/selenium/webdriver/support/color.py:
+        * imported/selenium/py/selenium/webdriver/support/event_firing_webdriver.py:
+        * imported/selenium/py/selenium/webdriver/support/expected_conditions.py:
+        * imported/selenium/py/selenium/webdriver/support/relative_locator.py: Added.
+        * imported/selenium/py/selenium/webdriver/support/select.py:
+        * imported/selenium/py/selenium/webdriver/support/wait.py:
+        * imported/selenium/py/selenium/webdriver/webkitgtk/options.py:
+        * imported/selenium/py/selenium/webdriver/webkitgtk/webdriver.py:
+        * imported/selenium/py/selenium/webdriver/wpewebkit/__init__.py: Copied from WebDriverTests/imported/selenium/py/selenium/__init__.py.
+        * imported/selenium/py/selenium/webdriver/wpewebkit/options.py: Copied from WebDriverTests/imported/selenium/py/selenium/webdriver/webkitgtk/options.py.
+        * imported/selenium/py/selenium/webdriver/wpewebkit/service.py: Copied from WebDriverTests/imported/selenium/py/selenium/webdriver/safari/service.py.
+        * imported/selenium/py/selenium/webdriver/wpewebkit/webdriver.py: Copied from WebDriverTests/imported/selenium/py/selenium/webdriver/webkitgtk/webdriver.py.
+        * imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/appcache_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/click_scrolling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/cookie_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/correct_event_firing_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/driver_element_finding_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/element_attribute_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/form_handling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/interactions_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_loading_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/proxy_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/rendered_webelement_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/select_element_handling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/takes_screenshots_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/timeout_tests.py: Added.
+        * imported/selenium/py/test/selenium/webdriver/common/typing_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/remote/remote_firefox_profile_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/safari/launcher_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/support/event_firing_webdriver_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/support/expected_conditions_tests.py: Added.
+        * imported/selenium/py/test/selenium/webdriver/support/relative_by_tests.py: Added.
+
 2020-06-12  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][WPE] Add remaining WPE failures to expectations.
