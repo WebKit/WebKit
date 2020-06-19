@@ -115,7 +115,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         }
 
         if (isPinError(error)) {
-            if (!m_pinAuth.isEmpty()) // Skip the very first command that acts like wink.
+            if (!m_pinAuth.isEmpty() && observer()) // Skip the very first command that acts like wink.
                 observer()->authenticatorStatusUpdated(toStatus(error));
             if (tryRestartPin(error))
                 return;
@@ -154,7 +154,7 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
             return;
 
         if (isPinError(error)) {
-            if (!m_pinAuth.isEmpty()) // Skip the very first command that acts like wink.
+            if (!m_pinAuth.isEmpty() && observer()) // Skip the very first command that acts like wink.
                 observer()->authenticatorStatusUpdated(toStatus(error));
             if (tryRestartPin(error))
                 return;
@@ -274,9 +274,17 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
 
 void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, const CryptoKeyEC& peerKey)
 {
+    if (pin.isNull()) {
+        receiveRespond(ExceptionData { UnknownError, "Pin is null."_s });
+        return;
+    }
+
     auto pinUtf8 = pin::validateAndConvertToUTF8(pin);
     if (!pinUtf8) {
-        receiveRespond(ExceptionData { UnknownError, makeString("Pin is not valid: ", pin) });
+        // Fake a pin invalid response from the authenticator such that clients could show some error to the user.
+        if (auto* observer = this->observer())
+            observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinInvalid);
+        tryRestartPin(CtapDeviceResponseCode::kCtap2ErrPinInvalid);
         return;
     }
     auto tokenRequest = pin::TokenRequest::tryCreate(*pinUtf8, peerKey);
@@ -301,7 +309,8 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
         auto error = getResponseCode(data);
 
         if (isPinError(error)) {
-            observer()->authenticatorStatusUpdated(toStatus(error));
+            if (auto* observer = this->observer())
+                observer->authenticatorStatusUpdated(toStatus(error));
             if (tryRestartPin(error))
                 return;
         }

@@ -118,13 +118,13 @@ void WebAuthenticationPanelClient::dismissPanel(WebAuthenticationResult result) 
 void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler) const
 {
     if (!m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler) {
-        completionHandler(emptyString());
+        completionHandler(String());
         return;
     }
 
     auto delegate = m_delegate.get();
     if (!delegate) {
-        completionHandler(emptyString());
+        completionHandler(String());
         return;
     }
 

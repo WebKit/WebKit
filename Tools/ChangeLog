@@ -1,3 +1,16 @@
+2020-06-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Provide a _WKWebAuthenticationPanelUpdatePINInvalid update to UI clients if the returned PIN from the client is not valid
+        https://bugs.webkit.org/show_bug.cgi?id=213404
+        <rdar://problem/64543894>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html: Added.
+
 2020-06-19  Jonathan Bedard  <jbedard@apple.com>
 
         Bring up watchOS/tvOS on build.webkit.org

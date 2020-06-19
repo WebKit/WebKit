@@ -937,7 +937,7 @@ TEST(WebAuthenticationPanel, PinRequestPinErrorNoDelegate)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Pin is not valid: "];
+    [webView waitForMessage:@"Pin is null."];
 }
 
 TEST(WebAuthenticationPanel, PinRequestPinErrorNullDelegate)
@@ -954,13 +954,13 @@ TEST(WebAuthenticationPanel, PinRequestPinErrorNullDelegate)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Pin is not valid: "];
+    [webView waitForMessage:@"Pin is null."];
 }
 
 TEST(WebAuthenticationPanel, PinRequestPinError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
@@ -971,7 +971,9 @@ TEST(WebAuthenticationPanel, PinRequestPinError)
 
     webAuthenticationPanelPin = "123";
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Pin is not valid: 123"];
+    Util::run(&webAuthenticationPanelUpdatePINInvalid);
+    webAuthenticationPanelPin = "1234";
+    [webView waitForMessage:@"Succeeded!"];
 }
 
 TEST(WebAuthenticationPanel, PinGetPinTokenPinBlockedError)

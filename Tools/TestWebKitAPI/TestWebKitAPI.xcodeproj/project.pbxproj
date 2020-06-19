@@ -371,6 +371,7 @@
 		5742178A2400AED8002B303D /* web-authentication-make-credential-la-duplicate-credential.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 574217892400AED0002B303D /* web-authentication-make-credential-la-duplicate-credential.html */; };
 		5742178E2400D2DF002B303D /* web-authentication-make-credential-la.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */; };
 		574F55D2204D47F0002948C6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
+		5751B28A249D5BC500664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5751B289249D5B9900664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html */; };
 		5758597F23A2527A00C74572 /* CtapPinTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5758597E23A2527A00C74572 /* CtapPinTest.cpp */; };
 		5758598423C3C3A400C74572 /* web-authentication-make-credential-hid-pin-get-retries-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5758598323C3C36200C74572 /* web-authentication-make-credential-hid-pin-get-retries-error.html */; };
 		57599E211F07191900A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */; };
@@ -1225,6 +1226,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				5751B28A249D5BC500664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -2054,6 +2056,7 @@
 		574217892400AED0002B303D /* web-authentication-make-credential-la-duplicate-credential.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la-duplicate-credential.html"; sourceTree = "<group>"; };
 		5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la.html"; sourceTree = "<group>"; };
 		574F55D0204D471C002948C6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		5751B289249D5B9900664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html"; sourceTree = "<group>"; };
 		5758597D23A2527A00C74572 /* CtapPinTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapPinTest.h; sourceTree = "<group>"; };
 		5758597E23A2527A00C74572 /* CtapPinTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapPinTest.cpp; sourceTree = "<group>"; };
 		5758598323C3C36200C74572 /* web-authentication-make-credential-hid-pin-get-retries-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-retries-error.html"; sourceTree = "<group>"; };
@@ -3741,6 +3744,7 @@
 				57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */,
 				578DA44723ECD01300246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html */,
 				570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */,
+				5751B289249D5B9900664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html */,
 				578DA44123ECC76B00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html */,
 				578DA44523ECCBD000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html */,
 				570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html */,
