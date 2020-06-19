@@ -1,3 +1,22 @@
+2020-06-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove dead non-ICU locale Date code since we are always using ICU version
+        https://bugs.webkit.org/show_bug.cgi?id=213362
+
+        Reviewed by Ross Kirsling.
+
+        There are old non-ICU version of Date locale code. But this is now dead code since we are always using ICU version,
+        which is invoked from builtin JS DatePrototype.js. We should remove these dead code.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        (): Deleted.
+        (JSC::styleFromArgString): Deleted.
+        (JSC::formatLocaleDate): Deleted.
+        (JSC::dateProtoFuncToLocaleString): Deleted.
+        (JSC::dateProtoFuncToLocaleDateString): Deleted.
+        (JSC::dateProtoFuncToLocaleTimeString): Deleted.
+
 2020-06-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, address Darin's feedback on r263227.
