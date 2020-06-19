@@ -1,3 +1,12 @@
+2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION(r262254?): [WPE] imported/w3c/web-platform-tests/webxr/idlharness.https.window.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212897
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wpe/TestExpectations: Re-enable the idlharness.https.window.html test.
+
 2020-06-18  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Garden some flaky crashes and start expect reorg

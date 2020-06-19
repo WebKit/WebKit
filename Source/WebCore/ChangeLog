@@ -1,3 +1,22 @@
+2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION(r262254?): [WPE] imported/w3c/web-platform-tests/webxr/idlharness.https.window.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212897
+
+        Reviewed by Youenn Fablet.
+
+        WPT tests were updated in r262254 and they already include the latest changes in the specs. Among others the
+        XR interface was renamed to XRSystem. We were already using that name in the C++ code but not in the JS interface.
+        The WPT update brings in another set of changes like the new XRLayer which is already not supported (I am
+        adding it soon in another patch). Last but not least, the new tests include checks for the XRPermissionStatus interface
+        which is not going to be implemented soon as it requires the Permission API which is not supported in WebKit yet. All in
+        all, this patch renames XR to XRSystem and marks as failing the XRLayer (temporarily) and XRPermissionStatus checks.
+
+        No new tests as there is no change in functionality.
+
+        * Modules/webxr/WebXRSystem.idl: Rename XR to XRSystem.
+        * bindings/js/WebCoreBuiltinNames.h: Ditto.
+
 2020-06-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Min/max-width should always be resolved against the containing block width
