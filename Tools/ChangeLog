@@ -1,3 +1,11 @@
+2020-06-19  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Change my (Tomoki Imai's) status to committer
+
+        Unreviewed, just updating contributors.json for myself.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-06-18  Jonathan Bedard  <jbedard@apple.com>
 
         Add SPI to preconnect to a server (Follow-up fix)
