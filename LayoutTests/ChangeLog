@@ -1,3 +1,10 @@
+2020-06-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update test expectations after r263222.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https-expected.txt: Added.
+
 2020-06-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix test failure in Windows part 2

@@ -1172,6 +1172,7 @@ webkit.org/b/206655 inspector/page/overrideSetting-MockCaptureDevicesEnabled.htm
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Crash Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
+webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Crash Pass ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
@@ -1334,6 +1335,8 @@ webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash Im
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
 webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
 
+webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash ]
+
 webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass Timeout ]
 
 # Crashes only when GNOME icon theme is not installed
@@ -1348,6 +1351,8 @@ webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failur
 
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html [ ImageOnlyFailure ]
 
+webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
+webkit.org/b/196542 printing/printing-events.html [ Crash ]
 
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Pass Crash ]
 
