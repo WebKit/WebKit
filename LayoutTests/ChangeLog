@@ -1,3 +1,16 @@
+2020-06-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Garden some flaky crashes and start expect reorg
+
+        Unreviewed test gardening.
+
+        Also start new section in the top of the file to follow the glib
+        expectation grouping.
+
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/glib/TestExpectations:
+
 2020-06-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Min/max-width should always be resolved against the containing block width

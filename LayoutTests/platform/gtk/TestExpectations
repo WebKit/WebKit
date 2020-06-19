@@ -35,6 +35,32 @@ webkit.org/b/206055 imported/w3c/web-platform-tests/html/canvas/offscreen/drawin
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Triaged Expectations
+# * KEEP THE SECTIONS SORTED ALPHABETICALLY.
+# * ALWAYS WITH BUG ENTRIES for things like Timeout, Failure and Crash.
+#
+# For more info, check the glib/TestExpectations file
+# If unsure of where to put the expectations, add the test to the end of the file and
+# ask for triaging.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
+webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
+
+# Printing
+webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
+webkit.org/b/196542 printing/printing-events.html [ Crash ]
+
+# Workers
+## Also timeouts sometimes in Wayland
+webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End of Triaged Expectations
+# Legacy Expectations sections below
+#//////////////////////////////////////////////////////////////////////////////////////////
+
 # This list is divided into several sections to make it easy for us to triage and close issues.
 # 1. TESTS THAT REQUIRE NEW RESULTS
 # Please don't add any tests to this list. Instead just ping a GTK+ developer
@@ -1335,8 +1361,6 @@ webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash Im
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
 webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
 
-webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash ]
-
 webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass Timeout ]
 
 # Crashes only when GNOME icon theme is not installed
@@ -1350,9 +1374,6 @@ webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash Pas
 webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Crash ]
 
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html [ ImageOnlyFailure ]
-
-webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
-webkit.org/b/196542 printing/printing-events.html [ Crash ]
 
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Pass Crash ]
 

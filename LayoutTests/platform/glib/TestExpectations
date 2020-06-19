@@ -79,6 +79,7 @@ webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
 
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
+webkit.org/b/210528 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
 
 webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
 
