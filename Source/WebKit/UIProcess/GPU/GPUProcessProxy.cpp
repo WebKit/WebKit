@@ -102,12 +102,12 @@ GPUProcessProxy& GPUProcessProxy::singleton()
         bool needsCameraSandboxExtension = shouldCreateCameraSandboxExtension();
         bool needsMicrophoneSandboxExtension = shouldCreateMicrophoneSandboxExtension();
         if (needsCameraSandboxExtension)
-            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera", parameters.cameraSandboxExtensionHandle);
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s, parameters.cameraSandboxExtensionHandle);
         if (needsMicrophoneSandboxExtension)
-            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.microphoneSandboxExtensionHandle);
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.microphoneSandboxExtensionHandle);
 #if PLATFORM(IOS)
         if (needsCameraSandboxExtension || needsMicrophoneSandboxExtension)
-            SandboxExtension::createHandleForMachLookup("com.apple.tccd", WTF::nullopt, parameters.tccSandboxExtensionHandle);
+            SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, WTF::nullopt, parameters.tccSandboxExtensionHandle);
 #endif
 #endif
         parameters.parentPID = getCurrentProcessID();

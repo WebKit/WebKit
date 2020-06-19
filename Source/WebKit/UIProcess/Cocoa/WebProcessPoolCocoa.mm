@@ -212,80 +212,80 @@ static bool isInternalInstall()
 #endif
 
 // FIXME(207716): The following should be removed when the GPU process is complete.
-static const Vector<String>& mediaRelatedMachServices()
+static const Vector<ASCIILiteral>& mediaRelatedMachServices()
 {
     ASSERT(isMainThread());
-    static const auto services = makeNeverDestroyed(Vector<String> {
-        "com.apple.audio.AudioComponentPrefs", "com.apple.audio.AudioComponentRegistrar",
-        "com.apple.audio.AudioQueueServer", "com.apple.audio.toolbox.reporting.service", "com.apple.coremedia.endpoint.xpc",
-        "com.apple.coremedia.routediscoverer.xpc", "com.apple.coremedia.routingcontext.xpc",
-        "com.apple.coremedia.volumecontroller.xpc", "com.apple.accessibility.mediaaccessibilityd",
-        "com.apple.mediaremoted.xpc",
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
+        "com.apple.audio.AudioQueueServer"_s, "com.apple.audio.toolbox.reporting.service"_s, "com.apple.coremedia.endpoint.xpc"_s,
+        "com.apple.coremedia.routediscoverer.xpc"_s, "com.apple.coremedia.routingcontext.xpc"_s,
+        "com.apple.coremedia.volumecontroller.xpc"_s, "com.apple.accessibility.mediaaccessibilityd"_s,
+        "com.apple.mediaremoted.xpc"_s,
 #if PLATFORM(IOS_FAMILY)
-        "com.apple.audio.AudioSession", "com.apple.MediaPlayer.RemotePlayerService",
-        "com.apple.coremedia.admin",
-        "com.apple.coremedia.asset.xpc", "com.apple.coremedia.assetimagegenerator.xpc",
-        "com.apple.coremedia.audiodeviceclock.xpc", "com.apple.coremedia.audioprocessingtap.xpc",
-        "com.apple.coremedia.capturesession", "com.apple.coremedia.capturesource",
-        "com.apple.coremedia.compressionsession", "com.apple.coremedia.cpe.xpc",
-        "com.apple.coremedia.cpeprotector.xpc", "com.apple.coremedia.customurlloader.xpc",
-        "com.apple.coremedia.decompressionsession", "com.apple.coremedia.figcontentkeysession.xpc",
-        "com.apple.coremedia.figcpecryptor", "com.apple.coremedia.formatreader.xpc",
-        "com.apple.coremedia.player.xpc", "com.apple.coremedia.remaker",
-        "com.apple.coremedia.remotequeue", "com.apple.coremedia.routingsessionmanager.xpc",
-        "com.apple.coremedia.samplebufferaudiorenderer.xpc", "com.apple.coremedia.samplebufferrendersynchronizer.xpc",
-        "com.apple.coremedia.sandboxserver.xpc", "com.apple.coremedia.sts",
-        "com.apple.coremedia.systemcontroller.xpc", "com.apple.coremedia.videoqueue",
-        "com.apple.coremedia.visualcontext.xpc", "com.apple.airplay.apsynccontroller.xpc",
-        "com.apple.audio.AURemoteIOServer"
+        "com.apple.audio.AudioSession"_s, "com.apple.MediaPlayer.RemotePlayerService"_s,
+        "com.apple.coremedia.admin"_s,
+        "com.apple.coremedia.asset.xpc"_s, "com.apple.coremedia.assetimagegenerator.xpc"_s,
+        "com.apple.coremedia.audiodeviceclock.xpc"_s, "com.apple.coremedia.audioprocessingtap.xpc"_s,
+        "com.apple.coremedia.capturesession"_s, "com.apple.coremedia.capturesource"_s,
+        "com.apple.coremedia.compressionsession"_s, "com.apple.coremedia.cpe.xpc"_s,
+        "com.apple.coremedia.cpeprotector.xpc"_s, "com.apple.coremedia.customurlloader.xpc"_s,
+        "com.apple.coremedia.decompressionsession"_s, "com.apple.coremedia.figcontentkeysession.xpc"_s,
+        "com.apple.coremedia.figcpecryptor"_s, "com.apple.coremedia.formatreader.xpc"_s,
+        "com.apple.coremedia.player.xpc"_s, "com.apple.coremedia.remaker"_s,
+        "com.apple.coremedia.remotequeue"_s, "com.apple.coremedia.routingsessionmanager.xpc"_s,
+        "com.apple.coremedia.samplebufferaudiorenderer.xpc"_s, "com.apple.coremedia.samplebufferrendersynchronizer.xpc"_s,
+        "com.apple.coremedia.sandboxserver.xpc"_s, "com.apple.coremedia.sts"_s,
+        "com.apple.coremedia.systemcontroller.xpc"_s, "com.apple.coremedia.videoqueue"_s,
+        "com.apple.coremedia.visualcontext.xpc"_s, "com.apple.airplay.apsynccontroller.xpc"_s,
+        "com.apple.audio.AURemoteIOServer"_s
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        "com.apple.coremedia.endpointstream.xpc", "com.apple.coremedia.endpointplaybacksession.xpc",
-        "com.apple.coremedia.endpointremotecontrolsession.xpc", "com.apple.coremedia.videodecoder",
-        "com.apple.coremedia.videoencoder", "com.apple.BluetoothServices"
+        "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
+        "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
+        "com.apple.coremedia.videoencoder"_s, "com.apple.BluetoothServices"_s
 #endif
     });
     return services;
 }
 
 #if PLATFORM(IOS_FAMILY)
-static const Vector<String>& nonBrowserServices()
+static const Vector<ASCIILiteral>& nonBrowserServices()
 {
     ASSERT(isMainThread());
-    static const auto services = makeNeverDestroyed(Vector<String> {
-        "com.apple.lsd.open",
-        "com.apple.mobileassetd",
-        "com.apple.iconservices",
-        "com.apple.PowerManagement.control",
-        "com.apple.frontboard.systemappservices"
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.lsd.open"_s,
+        "com.apple.mobileassetd"_s,
+        "com.apple.iconservices"_s,
+        "com.apple.PowerManagement.control"_s,
+        "com.apple.frontboard.systemappservices"_s
     });
     return services;
 }
 
-static const Vector<String>& diagnosticServices()
+static const Vector<ASCIILiteral>& diagnosticServices()
 {
     ASSERT(isMainThread());
-    static const auto services = makeNeverDestroyed(Vector<String> {
-        "com.apple.diagnosticd",
-        "com.apple.osanalytics.osanalyticshelper"
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.diagnosticd"_s,
+        "com.apple.osanalytics.osanalyticshelper"_s
     });
     return services;
 }
 
-static const Vector<String>& agxCompilerClasses()
+static const Vector<ASCIILiteral>& agxCompilerClasses()
 {
     ASSERT(isMainThread());
-    static const auto iokitClasses = makeNeverDestroyed(Vector<String> {
-        "AGXCommandQueue",
-        "AGXDevice",
-        "AGXSharedUserClient",
-        "IOAccelContext",
-        "IOAccelContext2",
-        "IOAccelDevice",
-        "IOAccelDevice2",
-        "IOAccelSharedUserClient",
-        "IOAccelSharedUserClient2"
-        "IOAccelSubmitter2",
+    static const auto iokitClasses = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "AGXCommandQueue"_s,
+        "AGXDevice"_s,
+        "AGXSharedUserClient"_s,
+        "IOAccelContext"_s,
+        "IOAccelContext2"_s,
+        "IOAccelDevice"_s,
+        "IOAccelDevice2"_s,
+        "IOAccelSharedUserClient"_s,
+        "IOAccelSharedUserClient2"_s,
+        "IOAccelSubmitter2"_s,
     });
     return iokitClasses;
 }
@@ -387,7 +387,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
     if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInUIProcessEnabled() && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled())
-        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
+        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.audioCaptureExtensionHandle);
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
@@ -403,7 +403,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(IOS)
     if (WebCore::deviceHasAGXCompilerService()) {
         SandboxExtension::Handle compilerServiceExtensionHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService", WTF::nullopt, compilerServiceExtensionHandle);
+        SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService"_s, WTF::nullopt, compilerServiceExtensionHandle);
         parameters.compilerServiceExtensionHandle = WTFMove(compilerServiceExtensionHandle);
     }
 #endif
@@ -422,31 +422,31 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(COCOA)
     if ([getNEFilterSourceClass() filterRequired]) {
         SandboxExtension::Handle helperHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.nehelper", WTF::nullopt, helperHandle);
+        SandboxExtension::createHandleForMachLookup("com.apple.nehelper"_s, WTF::nullopt, helperHandle);
         parameters.neHelperExtensionHandle = WTFMove(helperHandle);
         SandboxExtension::Handle managerHandle;
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager", WTF::nullopt, managerHandle);
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager"_s, WTF::nullopt, managerHandle);
 #else
-        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter", WTF::nullopt, managerHandle);
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter"_s, WTF::nullopt, managerHandle);
 #endif
         parameters.neSessionManagerExtensionHandle = WTFMove(managerHandle);
     }
     parameters.systemHasBattery = systemHasBattery();
 
     SandboxExtension::Handle mapDBHandle;
-    if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
+    if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb"_s, WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
         parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
     
 #if PLATFORM(IOS)
     if ([getWebFilterEvaluatorClass() isManagedSession]) {
         SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI", WTF::nullopt, handle);
+        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, WTF::nullopt, handle);
         parameters.contentFilterExtensionHandle = WTFMove(handle);
 
         SandboxExtension::Handle frontboardServiceExtensionHandle;
-        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices", WTF::nullopt, frontboardServiceExtensionHandle))
+        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, frontboardServiceExtensionHandle))
             parameters.frontboardServiceExtensionHandle = WTFMove(frontboardServiceExtensionHandle);
     }
 #endif

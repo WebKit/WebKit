@@ -97,12 +97,12 @@ private:
             return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, extensionFlags);
         case SandboxExtension::Type::Mach:
             if (!auditToken)
-                return sandbox_extension_issue_mach("com.apple.webkit.extension.mach"_s, path, extensionFlags);
-            return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach"_s, path, extensionFlags, *auditToken);
+                return sandbox_extension_issue_mach("com.apple.webkit.extension.mach", path, extensionFlags);
+            return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach", path, extensionFlags, *auditToken);
         case SandboxExtension::Type::IOKit:
             if (!auditToken)
-                return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit"_s, path, extensionFlags);
-            return sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit"_s, path, extensionFlags, *auditToken);
+                return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit", path, extensionFlags);
+            return sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit", path, extensionFlags, *auditToken);
         case SandboxExtension::Type::Generic:
             return sandbox_extension_issue_generic(path, extensionFlags);
         case SandboxExtension::Type::ReadByProcess:
@@ -281,7 +281,8 @@ bool SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     return createHandleWithoutResolvingPath(resolvePathForSandboxExtension(path), type, handle);
 }
 
-static SandboxExtension::HandleArray createHandlesForResources(const Vector<String>& resources, Function<bool(const String&, SandboxExtension::Handle& handle)>&& createFunction)
+template <typename T>
+static SandboxExtension::HandleArray createHandlesForResources(const Vector<T>& resources, Function<bool(const T&, SandboxExtension::Handle& handle)>&& createFunction)
 {
     SandboxExtension::HandleArray handleArray;
 
@@ -298,18 +299,18 @@ static SandboxExtension::HandleArray createHandlesForResources(const Vector<Stri
     return handleArray;
 }
 
-SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(const String& logLabel, const Vector<String>& paths)
+SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths)
 {
-    return createHandlesForResources(paths, [&logLabel] (const String& path, Handle& handle) {
+    return createHandlesForResources(paths, Function<bool(const String&, Handle&)>([&logLabel] (const String& path, Handle& handle) {
         if (!SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly, handle)) {
             // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
             // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
-            WTFLogAlways("%s: could not create a sandbox extension for '%s'\n", logLabel.utf8().data(), path.utf8().data());
+            WTFLogAlways("%s: could not create a sandbox extension for '%s'\n", logLabel.characters(), path.utf8().data());
             ASSERT_NOT_REACHED();
             return false;
         }
         return true;
-    });
+    }));
 }
 
 bool SandboxExtension::createHandleForReadWriteDirectory(const String& path, SandboxExtension::Handle& handle)
@@ -350,41 +351,41 @@ String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type
     return String(path.data());
 }
 
-bool SandboxExtension::createHandleForGenericExtension(const String& extensionClass, Handle& handle)
+bool SandboxExtension::createHandleForGenericExtension(ASCIILiteral extensionClass, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(extensionClass.utf8().data(), Type::Generic);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(extensionClass.characters(), Type::Generic);
     if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create a '%s' sandbox extension", extensionClass.utf8().data());
+        WTFLogAlways("Could not create a '%s' sandbox extension", extensionClass.characters());
         return false;
     }
     
     return true;
 }
 
-bool SandboxExtension::createHandleForMachLookup(const String& service, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
+bool SandboxExtension::createHandleForMachLookup(ASCIILiteral service, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
 {
     ASSERT(!handle.m_sandboxExtension);
     
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(service.utf8().data(), Type::Mach, auditToken, flags);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(service.characters(), Type::Mach, auditToken, flags);
     if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create a '%s' sandbox extension", service.utf8().data());
+        WTFLogAlways("Could not create a '%s' sandbox extension", service.characters());
         return false;
     }
     
     return true;
 }
 
-SandboxExtension::HandleArray SandboxExtension::createHandlesForMachLookup(const Vector<String>& services, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
+SandboxExtension::HandleArray SandboxExtension::createHandlesForMachLookup(const Vector<ASCIILiteral>& services, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
 {
-    return createHandlesForResources(services, [auditToken, flags] (const String& service, Handle& handle) {
+    return createHandlesForResources(services, Function<bool(const ASCIILiteral&, Handle&)>([auditToken, flags] (const ASCIILiteral& service, Handle& handle) {
         if (!SandboxExtension::createHandleForMachLookup(service, auditToken, handle, flags)) {
             ASSERT_NOT_REACHED();
             return false;
         }
         return true;
-    });
+    }));
 }
 
 bool SandboxExtension::createHandleForReadByAuditToken(const String& path, audit_token_t auditToken, Handle& handle)
@@ -400,28 +401,28 @@ bool SandboxExtension::createHandleForReadByAuditToken(const String& path, audit
     return true;
 }
 
-bool SandboxExtension::createHandleForIOKitClassExtension(const String& ioKitClass, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
+bool SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClass, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(ioKitClass.utf8().data(), Type::IOKit, auditToken);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(ioKitClass.characters(), Type::IOKit, auditToken);
     if (!handle.m_sandboxExtension) {
-        LOG_ERROR("Could not create a sandbox extension for '%s'", ioKitClass.utf8().data());
+        LOG_ERROR("Could not create a sandbox extension for '%s'", ioKitClass.characters());
         return false;
     }
 
     return true;
 }
 
-SandboxExtension::HandleArray SandboxExtension::createHandlesForIOKitClassExtensions(const Vector<String>& iokitClasses, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
+SandboxExtension::HandleArray SandboxExtension::createHandlesForIOKitClassExtensions(const Vector<ASCIILiteral>& iokitClasses, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
 {
-    return createHandlesForResources(iokitClasses, [auditToken, flags] (const String& iokitClass, Handle& handle) {
+    return createHandlesForResources(iokitClasses, Function<bool(const ASCIILiteral&, Handle&)>([auditToken, flags] (const ASCIILiteral& iokitClass, Handle& handle) {
         if (!SandboxExtension::createHandleForIOKitClassExtension(iokitClass, auditToken, handle, flags)) {
             ASSERT_NOT_REACHED();
             return false;
         }
         return true;
-    });
+    }));
 }
 
 SandboxExtension::SandboxExtension(const Handle& handle)

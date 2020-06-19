@@ -111,17 +111,17 @@ public:
     
     static RefPtr<SandboxExtension> create(Handle&&);
     static bool createHandle(const String& path, Type, Handle&);
-    static SandboxExtension::HandleArray createReadOnlyHandlesForFiles(const String& logLabel, const Vector<String>& paths);
+    static SandboxExtension::HandleArray createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths);
     static bool createHandleWithoutResolvingPath(const String& path, Type, Handle&);
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
-    static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
+    static bool createHandleForGenericExtension(ASCIILiteral extensionClass, Handle&);
 #if HAVE(AUDIT_TOKEN)
-    static bool createHandleForMachLookup(const String& service, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
-    static HandleArray createHandlesForMachLookup(const Vector<String>& services, Optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
+    static bool createHandleForMachLookup(ASCIILiteral service, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
+    static HandleArray createHandlesForMachLookup(const Vector<ASCIILiteral>& services, Optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
     static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
-    static bool createHandleForIOKitClassExtension(const String& iokitClass, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
-    static HandleArray createHandlesForIOKitClassExtensions(const Vector<String>& iokitClasses, Optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
+    static bool createHandleForIOKitClassExtension(ASCIILiteral iokitClass, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
+    static HandleArray createHandlesForIOKitClassExtensions(const Vector<ASCIILiteral>& iokitClasses, Optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
 #endif
     ~SandboxExtension();
 
@@ -160,11 +160,11 @@ inline void SandboxExtension::HandleArray::encode(IPC::Encoder&) const { }
 inline auto SandboxExtension::HandleArray::decode(IPC::Decoder&) -> Optional<HandleArray> { return {{ }}; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
-inline SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(const String&, const Vector<String>&) { return { }; }
+inline SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) { return { }; }
 inline bool SandboxExtension::createHandleWithoutResolvingPath(const String&, Type, Handle&) { return true; }
 inline bool SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { return true; }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
-inline bool SandboxExtension::createHandleForGenericExtension(const String& /*extensionClass*/, Handle&) { return true; }
+inline bool SandboxExtension::createHandleForGenericExtension(ASCIILiteral /*extensionClass*/, Handle&) { return true; }
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }

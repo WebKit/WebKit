@@ -202,7 +202,7 @@ void WebProcessProxy::enableRemoteInspectorIfNeeded()
         return;
     SandboxExtension::Handle handle;
     auto auditToken = connection() ? connection()->getAuditToken() : WTF::nullopt;
-    if (SandboxExtension::createHandleForMachLookup("com.apple.webinspector", auditToken, handle))
+    if (SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, auditToken, handle))
         send(Messages::WebProcess::EnableRemoteWebInspector(handle), 0);
 }
 #endif

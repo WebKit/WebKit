@@ -1,3 +1,40 @@
+2020-06-19  Chris Dumez  <cdumez@apple.com>
+
+        Use ASCIILiteral more for SandboxExtension functions
+        https://bugs.webkit.org/show_bug.cgi?id=213400
+
+        Reviewed by Per Arne Vollan.
+
+        Use ASCIILiteral more for SandboxExtension functions. Functions like createHandleForMachLookup() / createHandleForIOKitClassExtension()
+        don't need to take in Strings, ASCIILiteral is enough.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::createHandlesForResources):
+        (WebKit::SandboxExtension::createReadOnlyHandlesForFiles):
+        (WebKit::SandboxExtension::createHandleForGenericExtension):
+        (WebKit::SandboxExtension::createHandleForMachLookup):
+        (WebKit::SandboxExtension::createHandlesForMachLookup):
+        (WebKit::SandboxExtension::createHandleForIOKitClassExtension):
+        (WebKit::SandboxExtension::createHandlesForIOKitClassExtensions):
+        * Shared/SandboxExtension.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::mediaRelatedMachServices):
+        (WebKit::nonBrowserServices):
+        (WebKit::diagnosticServices):
+        (WebKit::agxCompilerClasses):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::enableRemoteInspectorIfNeeded):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::singleton):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::grantAccessToAssetServices):
+
 2020-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS, macOS] Allow access to the container manager to support Mail InjectedBundle
