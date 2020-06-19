@@ -958,8 +958,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(JSGlobalObject* globalObjec
     JSValue thisValue = callFrame->thisValue();
     // Also used for valueOf.
 
-    if (thisValue.isString())
+    if (thisValue.isString()) {
+        Integrity::auditStructureID(vm, thisValue.asCell()->structureID());
         return JSValue::encode(thisValue);
+    }
 
     auto* stringObject = jsDynamicCast<StringObject*>(vm, thisValue);
     if (!stringObject)

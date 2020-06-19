@@ -1,3 +1,13 @@
+2020-06-19  Mark Lam  <mark.lam@apple.com>
+
+        toString of String doesn't check integrity of structureID in one path.
+        https://bugs.webkit.org/show_bug.cgi?id=213338
+
+        Reviewed by Saam Barati.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToString):
+
 2020-06-19  Saam Barati  <sbarati@apple.com>
 
         Have a memory monitor thread in jsc shell when running tests using --memory-limited
