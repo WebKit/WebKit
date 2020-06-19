@@ -1456,6 +1456,22 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 #endif
 }
 
+- (void)_setAccessibilityIsolatedTreeEnabled:(BOOL)accessibilityIsolatedTreeEnabled
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    _preferences->setIsAccessibilityIsolatedTreeEnabled(accessibilityIsolatedTreeEnabled);
+#endif
+}
+
+- (BOOL)_accessibilityIsolatedTreeEnabled
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    return _preferences->isAccessibilityIsolatedTreeEnabled();
+#else
+    return false;
+#endif
+}
+
 @end
 
 

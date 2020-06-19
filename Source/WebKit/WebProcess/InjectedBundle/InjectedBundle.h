@@ -144,6 +144,7 @@ public:
     void setSerialLoadingEnabled(bool);
     void setWebAnimationsEnabled(bool);
     void setWebAnimationsCSSIntegrationEnabled(bool);
+    void setAccessibilityIsolatedTreeEnabled(bool);
     void dispatchPendingLoadRequests();
 
 #if PLATFORM(COCOA)

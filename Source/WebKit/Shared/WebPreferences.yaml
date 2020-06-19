@@ -2013,7 +2013,7 @@ DialogElementEnabled:
 
 IsAccessibilityIsolatedTreeEnabled:
     type: bool
-    defaultValue: true
+    defaultValue: false
     humanReadableName: "Isolated Accessibility Tree Mode"
     humanReadableDescription: "Enable an accessibility hierarchy for VoiceOver that can be accessed on a secondary thread for improved performance"
     webcoreBinding: RuntimeEnabledFeatures

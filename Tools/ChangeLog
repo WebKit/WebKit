@@ -1,3 +1,14 @@
+2020-06-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make isolated tree enablement status dependent on client preference
+        https://bugs.webkit.org/show_bug.cgi?id=213355
+        <rdar://problem/64506577>
+
+        Reviewed by Zalan Bujtas.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate defaultConfiguration]):
+
 2020-06-19  Aakash Jain  <aakash_jain@apple.com>
 
         Improve handling of trac downtime by commit-queue

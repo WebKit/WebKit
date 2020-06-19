@@ -292,6 +292,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebXREnabled(enabled);
 #endif
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (preference == "IsAccessibilityIsolatedTreeEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setIsAccessibilityIsolatedTreeEnabled(enabled);
+#endif
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \
@@ -612,6 +617,13 @@ void InjectedBundle::setWebAnimationsEnabled(bool enabled)
 void InjectedBundle::setWebAnimationsCSSIntegrationEnabled(bool enabled)
 {
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCSSIntegrationEnabled(enabled);
+}
+
+void InjectedBundle::setAccessibilityIsolatedTreeEnabled(bool enabled)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    RuntimeEnabledFeatures::sharedFeatures().setIsAccessibilityIsolatedTreeEnabled(enabled);
+#endif
 }
 
 } // namespace WebKit
