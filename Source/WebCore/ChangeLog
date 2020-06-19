@@ -1,3 +1,23 @@
+2020-06-19  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] RenderThemeIOS::cssValueToSystemColorMap() does an unnecessary linear search under systemColorFromCSSValueID()
+        https://bugs.webkit.org/show_bug.cgi?id=213396
+
+        Reviewed by Timothy Hatcher.
+
+        RenderThemeIOS::cssValueToSystemColorMap() does an unnecessary linear search under systemColorFromCSSValueID().
+        cssValueToSystemColorMap() already has the selector, yet it passes a CSSValueID to systemColorFromCSSValueID() which
+        then does a linear search to match the CSSValueID to a selector. This was very inefficient / unfortunate.
+
+        This patch introduces a systemColorFromCSSValueIDSelector() which takes in a selector instead of a CSSValueID. I have
+        also moved the constructor of the LocalCurrentTraitCollection variable to the call site so that we don't keep
+        constructing / destroying it for each loop iteration. The traces show us spending a lot of time in its constructor /
+        destructor.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::systemColorFromCSSValueIDSelector):
+        (WebCore::RenderThemeIOS::cssValueToSystemColorMap):
+
 2020-06-19  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Uniform Buffer Objects

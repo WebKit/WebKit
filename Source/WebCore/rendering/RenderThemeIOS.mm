@@ -1283,6 +1283,13 @@ static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
     return cssValueIDSelectorList;
 }
 
+static inline Optional<Color> systemColorFromCSSValueIDSelector(CSSValueIDAndSelector idAndSelector)
+{
+    if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), idAndSelector.selector))
+        return Color { color.CGColor, Color::Semantic };
+    return WTF::nullopt;
+}
+
 static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
     LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
@@ -1314,11 +1321,12 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
     ASSERT(RunLoop::isMain());
     static const NeverDestroyed<CSSValueToSystemColorMap> colorMap = [] {
         CSSValueToSystemColorMap map;
-        for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
-            for (bool useDarkAppearance : { false, true }) {
-                for (bool useElevatedUserInterfaceLevel : { false, true }) {
-                    if (auto color = systemColorFromCSSValueID(cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel))
-                        map.add(CSSValueKey { cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, *color);
+        for (bool useDarkAppearance : { false, true }) {
+            for (bool useElevatedUserInterfaceLevel : { false, true }) {
+                LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
+                for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
+                    if (auto color = systemColorFromCSSValueIDSelector(cssValueIDSelector))
+                        map.add(CSSValueKey { cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
                 }
             }
         }
