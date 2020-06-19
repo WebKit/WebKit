@@ -802,19 +802,6 @@ int ThemeMac::baselinePositionAdjustment(ControlPart part) const
     return Theme::baselinePositionAdjustment(part);
 }
 
-double ThemeMac::systemFontSizeFor(NSControlSize size)
-{
-#if HAVE(LARGE_CONTROL_SIZE)
-    if (size == NSControlSizeLarge) {
-        // This is a workaround for <rdar://problem/60350699>. Once this is fixed,
-        // we should remove ThemeMac::systemFontSizeFor as well as this hard-coded
-        // value.
-        return 15;
-    }
-#endif
-    return [NSFont systemFontSizeForControlSize:size];
-}
-
 Optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const FontCascade& font, float zoomFactor) const
 {
     switch (part) {
@@ -822,7 +809,7 @@ Optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const F
         FontCascadeDescription fontDescription;
         fontDescription.setIsAbsoluteSize(true);
 
-        NSFont* nsFont = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(controlSizeForFont(font))];
+        NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
         fontDescription.setOneFamily(AtomString("-apple-system", AtomString::ConstructFromLiteral));
         fontDescription.setComputedSize([nsFont pointSize] * zoomFactor);
         fontDescription.setSpecifiedSize([nsFont pointSize] * zoomFactor);

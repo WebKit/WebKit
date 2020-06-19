@@ -283,6 +283,11 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
+CFStringRef RenderThemeMac::contentSizeCategory() const
+{
+    return kCTFontContentSizeCategoryL;
+}
+
 RenderThemeMac::RenderThemeMac()
     : m_notificationObserver(adoptNS([[WebCoreRenderThemeNotificationObserver alloc] init]))
 {
@@ -476,79 +481,6 @@ Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColor::Opt
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor findHighlightColor]);
-}
-
-static FontSelectionValue toFontWeight(NSInteger appKitFontWeight)
-{
-    ASSERT(appKitFontWeight > 0 && appKitFontWeight < 15);
-    if (appKitFontWeight > 14)
-        appKitFontWeight = 14;
-    else if (appKitFontWeight < 1)
-        appKitFontWeight = 1;
-
-    static const FontSelectionValue fontWeights[] = {
-        FontSelectionValue(100),
-        FontSelectionValue(100),
-        FontSelectionValue(200),
-        FontSelectionValue(300),
-        FontSelectionValue(400),
-        FontSelectionValue(500),
-        FontSelectionValue(600),
-        FontSelectionValue(600),
-        FontSelectionValue(700),
-        FontSelectionValue(800),
-        FontSelectionValue(800),
-        FontSelectionValue(900),
-        FontSelectionValue(900),
-        FontSelectionValue(900)
-    };
-    return fontWeights[appKitFontWeight - 1];
-}
-
-void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, FontCascadeDescription& fontDescription) const
-{
-    NSFont* font;
-    // System-font-ness can't be encapsulated by simply a font name. Instead, we must use a token
-    // which FontCache will look for.
-    // Make sure we keep this list of possible tokens in sync with FontCascade::primaryFontIsSystemFont()
-    AtomString fontName;
-    switch (cssValueId) {
-        case CSSValueSmallCaption:
-            font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
-            break;
-        case CSSValueMenu:
-            font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
-            fontName = AtomString("-apple-menu", AtomString::ConstructFromLiteral);
-            break;
-        case CSSValueStatusBar:
-            font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
-            fontName = AtomString("-apple-status-bar", AtomString::ConstructFromLiteral);
-            break;
-        case CSSValueWebkitMiniControl:
-            font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(NSControlSizeMini)];
-            break;
-        case CSSValueWebkitSmallControl:
-            font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(NSControlSizeSmall)];
-            break;
-        case CSSValueWebkitControl:
-            font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(NSControlSizeRegular)];
-            break;
-        default:
-            font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-    }
-
-    if (!font)
-        return;
-
-    if (fontName.isNull())
-        fontName = AtomString("system-ui", AtomString::ConstructFromLiteral);
-
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily(fontName);
-    fontDescription.setSpecifiedSize([font pointSize]);
-    fontDescription.setWeight(toFontWeight([fontManager weightOfFont:font]));
-    fontDescription.setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
 }
 
 static SimpleColor menuBackgroundColor()
@@ -1087,7 +1019,7 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
     FontCascadeDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
 
-    NSFont* font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(controlSize)];
+    NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
     fontDescription.setOneFamily(AtomString("-apple-system", AtomString::ConstructFromLiteral));
     fontDescription.setComputedSize([font pointSize] * style.effectiveZoom());
     fontDescription.setSpecifiedSize([font pointSize] * style.effectiveZoom());
@@ -1103,12 +1035,12 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style)
 {
     int fontSize = style.computedFontPixelSize();
 #if HAVE(LARGE_CONTROL_SIZE)
-    if (fontSize >= ThemeMac::systemFontSizeFor(NSControlSizeLarge) && ThemeMac::supportsLargeFormControls())
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
 #endif
-    if (fontSize >= ThemeMac::systemFontSizeFor(NSControlSizeRegular))
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
         return NSControlSizeRegular;
-    if (fontSize >= ThemeMac::systemFontSizeFor(NSControlSizeSmall))
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
         return NSControlSizeSmall;
     return NSControlSizeMini;
 }

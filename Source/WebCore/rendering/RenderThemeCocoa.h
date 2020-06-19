@@ -33,6 +33,11 @@ OBJC_CLASS NSDateComponentsFormatter;
 namespace WebCore {
 
 class RenderThemeCocoa : public RenderTheme {
+public:
+    static RenderThemeCocoa& singleton();
+
+    virtual CFStringRef contentSizeCategory() const = 0;
+
 private:
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
@@ -40,6 +45,9 @@ private:
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
     bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
+
+    FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;
+    void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const override;
 
 protected:
     String mediaControlsFormattedStringForDuration(double) override;

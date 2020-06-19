@@ -36,7 +36,6 @@ public:
 #if HAVE(LARGE_CONTROL_SIZE)
     static bool supportsLargeFormControls();
 #endif
-    static double systemFontSizeFor(NSControlSize);
 
     static NSView *ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     static void setFocusRingClipRect(const FloatRect&);

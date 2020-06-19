@@ -1,3 +1,72 @@
+2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify "font:" CSS shorthand values between macOS and iOS family
+        https://bugs.webkit.org/show_bug.cgi?id=213332
+        <rdar://problem/64479189>
+
+        Reviewed by Tim Horton and Darin Adler.
+
+        * TestExpectations:
+        * fast/text/text-styles/-apple-system/-apple-system-body-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-body.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-caption1-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-caption1.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-caption2-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-caption2.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-footnote-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-footnote.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-headline-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-headline.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-body-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-body.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-caption1-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-caption1.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-footnote-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-footnote.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-headline-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-headline.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-subheadline-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-short-subheadline.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-subheadline-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-subheadline.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-tall-body-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-tall-body.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title0-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title0.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title1-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title1.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title2-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title2.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title3-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title3.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title4-expected-mismatch.html: Added.
+        * fast/text/text-styles/-apple-system/-apple-system-title4.html: Added.
+        * fast/text/text-styles/-webkit-control-expected-mismatch.html: Added.
+        * fast/text/text-styles/-webkit-control.html: Added.
+        * fast/text/text-styles/-webkit-mini-control-expected-mismatch.html: Added.
+        * fast/text/text-styles/-webkit-mini-control.html: Added.
+        * fast/text/text-styles/-webkit-small-control-expected-mismatch.html: Added.
+        * fast/text/text-styles/-webkit-small-control.html: Added.
+        * fast/text/text-styles/bogus-expected.html: Added.
+        * fast/text/text-styles/bogus.html: Added.
+        * fast/text/text-styles/caption-expected-mismatch.html: Added.
+        * fast/text/text-styles/caption.html: Added.
+        * fast/text/text-styles/icon-expected-mismatch.html: Added.
+        * fast/text/text-styles/icon.html: Added.
+        * fast/text/text-styles/menu-expected-mismatch.html: Added.
+        * fast/text/text-styles/menu.html: Added.
+        * fast/text/text-styles/message-box-expected-mismatch.html: Added.
+        * fast/text/text-styles/message-box.html: Added.
+        * fast/text/text-styles/small-caption-expected-mismatch.html: Added.
+        * fast/text/text-styles/small-caption.html: Added.
+        * fast/text/text-styles/status-bar-expected-mismatch.html: Added.
+        * fast/text/text-styles/status-bar.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/text/international/system-language/system-font-punctuation-expected.txt:
+        * platform/mac-mojave/fast/text/international/system-language/system-font-punctuation-expected.txt: Added.
+
 2020-06-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update test expectations after r263222.

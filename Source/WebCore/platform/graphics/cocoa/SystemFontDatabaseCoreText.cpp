@@ -28,11 +28,9 @@
 
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
-#include <wtf/cf/TypeCastsCF.h>
+#include "RenderThemeCocoa.h"
 
-#if PLATFORM(IOS_FAMILY)
-#include "RenderThemeIOS.h"
-#endif
+#include <wtf/cf/TypeCastsCF.h>
 
 namespace WebCore {
 
@@ -84,18 +82,12 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemDesignFont(SystemFo
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const CascadeListParameters& parameters)
 {
-#if PLATFORM(IOS_FAMILY)
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), RenderThemeIOS::contentSizeCategory(), parameters.locale.string().createCFString().get()));
+    auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), RenderThemeCocoa::singleton().contentSizeCategory(), parameters.locale.string().createCFString().get()));
     // FIXME: Use createFontByApplyingWeightItalicsAndFallbackBehavior() once <rdar://problem/33046041> is fixed.
     CTFontSymbolicTraits traits = (parameters.weight >= kCTFontWeightSemibold ? kCTFontTraitBold : 0) | (parameters.italic ? kCTFontTraitItalic : 0);
     if (traits)
-        fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), traits, traits));
-    return createFontForInstalledFonts(fontDescriptor.get(), parameters.size, parameters.allowUserInstalledFonts);
-#else
-    UNUSED_PARAM(parameters);
-    ASSERT_NOT_REACHED();
-    return nullptr;
-#endif
+        descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
+    return createFontForInstalledFonts(descriptor.get(), parameters.size, parameters.allowUserInstalledFonts);
 }
 
 Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const CascadeListParameters& parameters, SystemFontKind systemFontKind)

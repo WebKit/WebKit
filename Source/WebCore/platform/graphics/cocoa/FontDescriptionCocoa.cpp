@@ -33,8 +33,6 @@ namespace WebCore {
 
 #if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
-#if PLATFORM(IOS_FAMILY)
-
 template<typename T, typename U, std::size_t size, std::size_t... indices> std::array<T, size> convertArray(U (&array)[size], std::index_sequence<indices...>)
 {
     return { { array[indices]... } };
@@ -44,7 +42,6 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
 {
     return convertArray<T>(array, std::make_index_sequence<size> { });
 }
-#endif
 
 static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& string)
 {
@@ -64,7 +61,6 @@ static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& stri
         return SystemFontKind::UIRounded;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
     static const CFStringRef styles[] = {
         kCTUIFontTextStyleHeadline,
         kCTUIFontTextStyleBody,
@@ -81,18 +77,13 @@ static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& stri
         kCTUIFontTextStyleShortFootnote,
         kCTUIFontTextStyleShortCaption1,
         kCTUIFontTextStyleTallBody,
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_0)
         kCTUIFontTextStyleTitle0,
-#endif
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_4)
         kCTUIFontTextStyleTitle4,
-#endif
     };
     
     static auto strings { makeNeverDestroyed(convertArray<AtomString>(styles)) };
     if (std::find(strings.get().begin(), strings.get().end(), string) != strings.get().end())
         return SystemFontKind::TextStyle;
-#endif
 
     return WTF::nullopt;
 }

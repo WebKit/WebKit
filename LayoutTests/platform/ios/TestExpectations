@@ -3492,3 +3492,5 @@ webkit.org/b/212493 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid
 
 # This test requires an update to system decoders
 webkit.org/b/212565 imported/w3c/web-platform-tests/encoding/single-byte-decoder.html [ Failure ]
+
+fast/text/text-styles/-apple-system [ Pass ]

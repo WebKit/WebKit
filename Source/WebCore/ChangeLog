@@ -1,3 +1,102 @@
+2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify "font:" CSS shorthand values between macOS and iOS family
+        https://bugs.webkit.org/show_bug.cgi?id=213332
+        <rdar://problem/64479189>
+
+        Reviewed by Tim Horton and Darin Adler.
+
+        They exist on all Cocoa platforms, so we might as well hook them up.
+
+        This unifies the shorthand CSS value handling from RenderThemeMac and
+        RenderThemeIOS into RenderThemeCocoa. This has two effects:
+
+        - It hooks up the -apple-system keywords on macOS (they previously were
+          only implemented for the iOS family).
+        - It hooks up the CSS2 keywords (caption, menu, etc.) on the iOS family
+          (they previously were only implemented on Mac).
+
+        All these fonts have been around since Mojave, so there is no need to
+        introduce any new platform guards.
+
+        Tests: fast/text/text-styles/-apple-system/-apple-system-body.html
+               fast/text/text-styles/-apple-system/-apple-system-caption1.html
+               fast/text/text-styles/-apple-system/-apple-system-caption2.html
+               fast/text/text-styles/-apple-system/-apple-system-footnote.html
+               fast/text/text-styles/-apple-system/-apple-system-headline.html
+               fast/text/text-styles/-apple-system/-apple-system-short-body.html
+               fast/text/text-styles/-apple-system/-apple-system-short-caption1.html
+               fast/text/text-styles/-apple-system/-apple-system-short-footnote.html
+               fast/text/text-styles/-apple-system/-apple-system-short-headline.html
+               fast/text/text-styles/-apple-system/-apple-system-short-subheadline.html
+               fast/text/text-styles/-apple-system/-apple-system-subheadline.html
+               fast/text/text-styles/-apple-system/-apple-system-tall-body.html
+               fast/text/text-styles/-apple-system/-apple-system-title0.html
+               fast/text/text-styles/-apple-system/-apple-system-title1.html
+               fast/text/text-styles/-apple-system/-apple-system-title2.html
+               fast/text/text-styles/-apple-system/-apple-system-title3.html
+               fast/text/text-styles/-apple-system/-apple-system-title4.html
+               fast/text/text-styles/-webkit-control.html
+               fast/text/text-styles/-webkit-mini-control.html
+               fast/text/text-styles/-webkit-small-control.html
+               fast/text/text-styles/bogus.html
+               fast/text/text-styles/caption.html
+               fast/text/text-styles/icon.html
+               fast/text/text-styles/menu.html
+               fast/text/text-styles/message-box.html
+               fast/text/text-styles/small-caption.html
+               fast/text/text-styles/status-bar.html
+
+        * css/CSSValueKeywords.in: All Cocoa ports should be able to parse these values
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontWithFamilySpecialCase): Move code that used to be in the Mac and
+        iOS implementations of platformFontWithFamilySpecialCase() (inside FontCacheMac.mm
+        and FontCacheIOS.mm) to be shared to be shared inside fontWithFamilySpecialCase().
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp: Remove platform guards.
+        (WebCore::convertArray):
+        (WebCore::matchSystemFontUse):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp: Ditto.
+        (WebCore::SystemFontDatabaseCoreText::createTextStyleFont):
+        * platform/graphics/ios/FontCacheIOS.mm: Move code from here into FontCacheCoreText.
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCacheMac.mm: Ditto.
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/mac/ThemeMac.h: Delete systemFontSizeFor(NSControlSize) because
+        <rdar://problem/60350699> is fixed.
+        * platform/mac/ThemeMac.mm: Ditto.
+        (WebCore::ThemeMac::controlFont const):
+        (WebCore::ThemeMac::systemFontSizeFor): Deleted.
+        * rendering/RenderThemeCocoa.h: Previously, code was calling
+        RenderThemeIOS::contentSizeCategory(), which was a static function. Now, both Mac
+        and iOS need to be able to call this. However, the implementation of this function
+        is different between Mac and iOS. So, turn it from a static function in RenderThemeIOS
+        into a method in RenderThemeCocoa, and give RenderThemeCocoa a singleton() function
+        that downcasts the return of RenderTheme::singleton(). This way, instead of calling
+        RenderThemeIOS::contentSizeCategory(), code can call
+        RenderThemeCocoa::singleton().contentSizeCategory().
+        * rendering/RenderThemeCocoa.mm: Move code from RenderThemeIOS and RenderThemeMac
+        into RenderThemeCocoa.
+        (WebCore::RenderThemeCocoa::singleton):
+        (WebCore::RenderThemeCocoa::cachedSystemFontDescription const):
+        (WebCore::cssWeightOfSystemFont):
+        (WebCore::RenderThemeCocoa::updateCachedSystemFontDescription const):
+        * rendering/RenderThemeIOS.h: Ditto.
+        * rendering/RenderThemeIOS.mm: Ditto.
+        (WebCore::RenderThemeIOS::contentSizeCategory const):
+        (WebCore::attachmentActionFont):
+        (WebCore::attachmentTitleFont):
+        (WebCore::RenderThemeIOS::contentSizeCategory): Deleted.
+        (WebCore::RenderThemeIOS::cachedSystemFontDescription const): Deleted.
+        (WebCore::cssWeightOfSystemFont): Deleted.
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription const): Deleted.
+        * rendering/RenderThemeMac.h: Ditto.
+        * rendering/RenderThemeMac.mm: Ditto.
+        (WebCore::RenderThemeMac::contentSizeCategory const):
+        (WebCore::RenderThemeMac::setFontFromControlSize const):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont const):
+        (WebCore::toFontWeight): Deleted.
+        (WebCore::RenderThemeMac::updateCachedSystemFontDescription const): Deleted.
+
 2020-06-18  Doug Kelly  <dougk@apple.com>
 
         Use paintCellAndSetFocusedElementNeedsRepaintIfNecessary() for search field buttons

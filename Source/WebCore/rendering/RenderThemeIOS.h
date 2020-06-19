@@ -50,7 +50,7 @@ public:
 
     static void adjustRoundBorderRadius(RenderStyle&, RenderBox&);
 
-    static CFStringRef contentSizeCategory();
+    CFStringRef contentSizeCategory() const final;
 
     WEBCORE_EXPORT static void setContentSizeCategory(const String&);
 
@@ -67,9 +67,7 @@ public:
 
 private:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
-    
-    FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;
-    void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
+
     int baselinePosition(const RenderBox&) const override;
 
     bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const override;

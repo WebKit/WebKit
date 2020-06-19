@@ -74,7 +74,6 @@
 #import <CoreImage/CoreImage.h>
 #import <objc/runtime.h>
 #import <pal/ios/UIKitSoftLink.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -305,7 +304,7 @@ static String& _contentSizeCategory()
     return _contentSizeCategory.get();
 }
 
-CFStringRef RenderThemeIOS::contentSizeCategory()
+CFStringRef RenderThemeIOS::contentSizeCategory() const
 {
     if (!_contentSizeCategory().isNull())
         return (__bridge CFStringRef)static_cast<NSString*>(_contentSizeCategory());
@@ -1166,207 +1165,6 @@ bool RenderThemeIOS::supportsFocusRing(const RenderStyle&) const
     return false;
 }
 
-FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID valueID) const
-{
-    static NeverDestroyed<FontCascadeDescription> systemFont;
-    static NeverDestroyed<FontCascadeDescription> headlineFont;
-    static NeverDestroyed<FontCascadeDescription> bodyFont;
-    static NeverDestroyed<FontCascadeDescription> subheadlineFont;
-    static NeverDestroyed<FontCascadeDescription> footnoteFont;
-    static NeverDestroyed<FontCascadeDescription> caption1Font;
-    static NeverDestroyed<FontCascadeDescription> caption2Font;
-    static NeverDestroyed<FontCascadeDescription> shortHeadlineFont;
-    static NeverDestroyed<FontCascadeDescription> shortBodyFont;
-    static NeverDestroyed<FontCascadeDescription> shortSubheadlineFont;
-    static NeverDestroyed<FontCascadeDescription> shortFootnoteFont;
-    static NeverDestroyed<FontCascadeDescription> shortCaption1Font;
-    static NeverDestroyed<FontCascadeDescription> tallBodyFont;
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_0)
-    static NeverDestroyed<FontCascadeDescription> title0Font;
-#endif
-    static NeverDestroyed<FontCascadeDescription> title1Font;
-    static NeverDestroyed<FontCascadeDescription> title2Font;
-    static NeverDestroyed<FontCascadeDescription> title3Font;
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_4)
-    static NeverDestroyed<FontCascadeDescription> title4Font;
-#endif
-
-    static CFStringRef userTextSize = contentSizeCategory();
-
-    if (userTextSize != contentSizeCategory()) {
-        userTextSize = contentSizeCategory();
-
-        headlineFont.get().setIsAbsoluteSize(false);
-        bodyFont.get().setIsAbsoluteSize(false);
-        subheadlineFont.get().setIsAbsoluteSize(false);
-        footnoteFont.get().setIsAbsoluteSize(false);
-        caption1Font.get().setIsAbsoluteSize(false);
-        caption2Font.get().setIsAbsoluteSize(false);
-        shortHeadlineFont.get().setIsAbsoluteSize(false);
-        shortBodyFont.get().setIsAbsoluteSize(false);
-        shortSubheadlineFont.get().setIsAbsoluteSize(false);
-        shortFootnoteFont.get().setIsAbsoluteSize(false);
-        shortCaption1Font.get().setIsAbsoluteSize(false);
-        tallBodyFont.get().setIsAbsoluteSize(false);
-    }
-
-    switch (valueID) {
-    case CSSValueAppleSystemHeadline:
-        return headlineFont;
-    case CSSValueAppleSystemBody:
-        return bodyFont;
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_0)
-    case CSSValueAppleSystemTitle0:
-        return title0Font;
-#endif
-    case CSSValueAppleSystemTitle1:
-        return title1Font;
-    case CSSValueAppleSystemTitle2:
-        return title2Font;
-    case CSSValueAppleSystemTitle3:
-        return title3Font;
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_4)
-    case CSSValueAppleSystemTitle4:
-        return title4Font;
-#endif
-    case CSSValueAppleSystemSubheadline:
-        return subheadlineFont;
-    case CSSValueAppleSystemFootnote:
-        return footnoteFont;
-    case CSSValueAppleSystemCaption1:
-        return caption1Font;
-    case CSSValueAppleSystemCaption2:
-        return caption2Font;
-        // Short version.
-    case CSSValueAppleSystemShortHeadline:
-        return shortHeadlineFont;
-    case CSSValueAppleSystemShortBody:
-        return shortBodyFont;
-    case CSSValueAppleSystemShortSubheadline:
-        return shortSubheadlineFont;
-    case CSSValueAppleSystemShortFootnote:
-        return shortFootnoteFont;
-    case CSSValueAppleSystemShortCaption1:
-        return shortCaption1Font;
-        // Tall version.
-    case CSSValueAppleSystemTallBody:
-        return tallBodyFont;
-    default:
-        return systemFont;
-    }
-}
-
-static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
-{
-    RetainPtr<CFDictionaryRef> traits = adoptCF(CTFontCopyTraits(font));
-    CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontWeightTrait);
-    float result = 0;
-    CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
-    // These numbers were experimentally gathered from weights of the system font.
-    static float weightThresholds[] = { -0.6, -0.365, -0.115, 0.130, 0.235, 0.350, 0.5, 0.7 };
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(weightThresholds); ++i) {
-        if (result < weightThresholds[i])
-            return FontSelectionValue((static_cast<int>(i) + 1) * 100);
-    }
-    return FontSelectionValue(900);
-}
-
-void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
-{
-    RetainPtr<CTFontDescriptorRef> fontDescriptor;
-    CFStringRef textStyle;
-    switch (valueID) {
-    case CSSValueAppleSystemHeadline:
-        textStyle = kCTUIFontTextStyleHeadline;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemBody:
-        textStyle = kCTUIFontTextStyleBody;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_0)
-    case CSSValueAppleSystemTitle0:
-        textStyle = kCTUIFontTextStyleTitle0;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-#endif
-    case CSSValueAppleSystemTitle1:
-        textStyle = kCTUIFontTextStyleTitle1;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemTitle2:
-        textStyle = kCTUIFontTextStyleTitle2;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemTitle3:
-        textStyle = kCTUIFontTextStyleTitle3;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-#if HAVE(SYSTEM_FONT_STYLE_TITLE_4)
-    case CSSValueAppleSystemTitle4:
-        textStyle = kCTUIFontTextStyleTitle4;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-#endif
-    case CSSValueAppleSystemSubheadline:
-        textStyle = kCTUIFontTextStyleSubhead;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemFootnote:
-        textStyle = kCTUIFontTextStyleFootnote;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemCaption1:
-        textStyle = kCTUIFontTextStyleCaption1;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemCaption2:
-        textStyle = kCTUIFontTextStyleCaption2;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-
-    // Short version.
-    case CSSValueAppleSystemShortHeadline:
-        textStyle = kCTUIFontTextStyleShortHeadline;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemShortBody:
-        textStyle = kCTUIFontTextStyleShortBody;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemShortSubheadline:
-        textStyle = kCTUIFontTextStyleShortSubhead;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemShortFootnote:
-        textStyle = kCTUIFontTextStyleShortFootnote;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-    case CSSValueAppleSystemShortCaption1:
-        textStyle = kCTUIFontTextStyleShortCaption1;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-
-    // Tall version.
-    case CSSValueAppleSystemTallBody:
-        textStyle = kCTUIFontTextStyleTallBody;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
-        break;
-
-    default:
-        textStyle = kCTFontDescriptorTextStyleEmphasized;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, nullptr));
-    }
-
-    ASSERT(fontDescriptor);
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily(textStyle);
-    fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
-    fontDescription.setWeight(cssWeightOfSystemFont(font.get()));
-    fontDescription.setItalic(normalItalicValue());
-}
-
 String RenderThemeIOS::mediaControlsStyleSheet()
 {
     if (m_legacyMediaControlsStyleSheet.isEmpty())
@@ -1592,7 +1390,7 @@ const CFIndex attachmentWrappingTextMaximumLineCount = 2;
 
 static RetainPtr<CTFontRef> attachmentActionFont()
 {
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortFootnote, RenderThemeIOS::contentSizeCategory(), 0));
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortFootnote, RenderThemeIOS::singleton().contentSizeCategory(), 0));
     RetainPtr<CTFontDescriptorRef> emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(),
         (CFDictionaryRef)@{
             (id)kCTFontDescriptorTextStyleAttribute: (id)kCTFontDescriptorTextStyleEmphasized
@@ -1607,7 +1405,7 @@ static UIColor *attachmentActionColor(const RenderAttachment& attachment)
 
 static RetainPtr<CTFontRef> attachmentTitleFont()
 {
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, RenderThemeIOS::contentSizeCategory(), 0));
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, RenderThemeIOS::singleton().contentSizeCategory(), 0));
     return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
 }
 

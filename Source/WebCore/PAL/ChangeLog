@@ -1,3 +1,16 @@
+2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify "font:" CSS shorthand values between macOS and iOS family
+        https://bugs.webkit.org/show_bug.cgi?id=213332
+        <rdar://problem/64479189>
+
+        Reviewed by Tim Horton and Darin Adler.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
+        The implementation of RenderThemeMac::contentSizeCategory() needs to use
+        kCTFontContentSizeCategoryL.
+
 2020-06-17  Andy Estes  <aestes@apple.com>
 
         Another unreviewed build fix after r263150

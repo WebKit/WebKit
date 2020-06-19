@@ -4315,3 +4315,7 @@ webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-002.html [ ImageOnlyFailure ]
 webkit.org/b/212267 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-self-baseline-001.html [ Skip ]
+
+# Only Cocoa ports support the -apple-system font keywords
+fast/text/text-styles/-apple-system [ ImageOnlyFailure ]
+

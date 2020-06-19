@@ -110,16 +110,6 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family,
         return adoptCF(CTFontCreateCopyWithAttributes(result.get(), size, nullptr, modification.get()));
     }
 
-    if (equalLettersIgnoringASCIICase(family, "-apple-menu")) {
-        RetainPtr<CTFontRef> result = toCTFont([NSFont menuFontOfSize:size]);
-        return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
-    }
-
-    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar")) {
-        RetainPtr<CTFontRef> result = toCTFont([NSFont labelFontOfSize:size]);
-        return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
-    }
-
     if (equalLettersIgnoringASCIICase(family, "lastresort")) {
         static const CTFontDescriptorRef lastResort = CTFontDescriptorCreateLastResort();
         return adoptCF(CTFontCreateWithFontDescriptor(lastResort, size, nullptr));

@@ -29,6 +29,7 @@
 #include "Font.h"
 #include "FontCascadeDescription.h"
 #include "FontFamilySpecificationCoreText.h"
+#include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
 #include <pal/spi/cocoa/CoreTextSPI.h>
 
@@ -1268,8 +1269,28 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
 
     if (systemDesign) {
         auto cascadeList = SystemFontDatabaseCoreText::singleton().cascadeList(fontDescription, family, *systemDesign, allowUserInstalledFonts);
-        if (!cascadeList.isEmpty())
-            return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
+        if (cascadeList.isEmpty())
+            return nullptr;
+        return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
+    }
+
+    if (family.startsWith("UICTFontTextStyle")) {
+        const auto& request = fontDescription.fontSelectionRequest();
+        CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) || FontCache::singleton().shouldMockBoldSystemFontForAccessibility() ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
+        auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), RenderThemeCocoa::singleton().contentSizeCategory(), fontDescription.computedLocale().string().createCFString().get()));
+        if (traits)
+            descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
+        return createFontForInstalledFonts(descriptor.get(), size, allowUserInstalledFonts);
+    }
+
+    if (equalLettersIgnoringASCIICase(family, "-apple-menu")) {
+        auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontMenuItem, size, fontDescription.computedLocale().string().createCFString().get()));
+        return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
+    }
+
+    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar")) {
+        auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get()));
+        return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
     }
 
     return nullptr;

@@ -41,6 +41,8 @@ class RenderThemeMac final : public RenderThemeCocoa {
 public:
     friend NeverDestroyed<RenderThemeMac>;
 
+    CFStringRef contentSizeCategory() const final;
+
     // A method asking if the control changes its tint when the window has focus or not.
     bool controlSupportsTints(const RenderObject&) const final;
 
@@ -100,9 +102,6 @@ public:
 
 private:
     RenderThemeMac();
-
-    // System fonts.
-    void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const final;
 
     String extraDefaultStyleSheet() final;
 
