@@ -60,8 +60,6 @@ for (let testFunction of testFunctions) {
 let masquerader = makeMasquerader();
 for (let testFunction of testFunctions) {
     for (let i = 0; i < 10000; i++) {
-        for (let i = 0; i < 10000; i++) {
-            assert(testFunction(masquerader) === false);
-        }
+        assert(testFunction(masquerader) === false);
     }
 }

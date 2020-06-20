@@ -17,5 +17,6 @@ function test(set) {
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i)
+const iterationCount = $vm.useJIT() ? 1e6 : 1e4;
+for (var i = 0; i < iterationCount; ++i)
     shouldBe(test(set), 4950);

@@ -27,8 +27,9 @@ for (let i=0; i<arr1.length; ++i) {
     arr1[i] = i
 }
 
-for (let i=0; i<10000000; ++i) noLoop(arr1, arr2)
-for (let i=0; i<10000000; ++i) invalidStart(arr1, arr2)
+const iterationCount = $vm.useJIT() ? 10000000 : 100000;
+for (let i=0; i<iterationCount; ++i) noLoop(arr1, arr2)
+for (let i=0; i<iterationCount; ++i) invalidStart(arr1, arr2)
 
 arr2 = new Int32Array(arr1.length)
 invalidStart(arr1, arr2)

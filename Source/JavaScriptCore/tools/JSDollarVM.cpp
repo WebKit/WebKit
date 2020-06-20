@@ -3094,6 +3094,11 @@ static EncodedJSValue JSC_HOST_CALL functionIsMemoryLimited(JSGlobalObject*, Cal
 #endif
 }
 
+static EncodedJSValue JSC_HOST_CALL functionUseJIT(JSGlobalObject*, CallFrame*)
+{
+    return JSValue::encode(jsBoolean(Options::useJIT()));
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -3237,6 +3242,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "assertEnabled", functionAssertEnabled, 0);
 
     addFunction(vm, "isMemoryLimited", functionIsMemoryLimited, 0);
+    addFunction(vm, "useJIT", functionUseJIT, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

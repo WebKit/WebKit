@@ -1,3 +1,28 @@
+2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Attempt to reduce timeout failures on Apple Watch Series 3
+        https://bugs.webkit.org/show_bug.cgi?id=213419
+
+        Reviewed by Mark Lam.
+
+        Look into timeout tests, and
+
+        1. If the test is using too many iterations, decrease the count.
+        2. If the test is still useful while iteration count is not so much, try attaching `slow!` to see the effect on the bot.
+
+        * stress/memcpy-typed-loops.js:
+        * stress/op_bitand.js:
+        * stress/op_bitor.js:
+        * stress/op_bitxor.js:
+        * stress/op_mul-ConstVar.js:
+        * stress/op_mul-VarConst.js:
+        * stress/op_mul-VarVar.js:
+        * stress/op_sub-ConstVar.js:
+        * stress/op_sub-VarConst.js:
+        * stress/op_sub-VarVar.js:
+        * stress/set-iteration-oas.js:
+        * stress/value-to-boolean.js:
+
 2020-06-19  Mark Lam  <mark.lam@apple.com>
 
         Make $vm properties non-configurable, non-enumerable, and non-writable.
