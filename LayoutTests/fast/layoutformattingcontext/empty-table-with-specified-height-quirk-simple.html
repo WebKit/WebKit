@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container {
+  width: 100px;
+  height: 100px;
+}
+
+.floatBox {
+  float: left;
+  width: 40px;
+  height: 100px;
+  background-color: green;
+}
+
+.table {
+  display: table;
+  height: 20px;
+  outline: 8px solid blue;
+}
+</style>
+<!-- note the quirk mode -->
+<div class=container>
+  <div class=floatBox></div>
+  <div class=table></div>
+</div>

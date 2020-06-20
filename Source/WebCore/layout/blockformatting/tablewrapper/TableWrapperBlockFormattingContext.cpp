@@ -192,8 +192,7 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     ASSERT(tableBox.isTableBox());
     // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all
     // already been taken into account during the TFC layout.
-    auto usedHeight = geometry().contentHeightForFormattingContextRoot(tableBox);
-    auto heightAndMargin = geometry().inFlowHeightAndMargin(tableBox, constraints.horizontal, { usedHeight });
+    auto heightAndMargin = geometry().inFlowHeightAndMargin(tableBox, constraints.horizontal, { quirks().overrideTableHeight(tableBox) });
 
     auto marginCollapse = this->marginCollapse();
     auto collapsedAndPositiveNegativeValues = marginCollapse.collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);

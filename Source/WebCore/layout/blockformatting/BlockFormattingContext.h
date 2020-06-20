@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingState.h"
 #include "FormattingContext.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
@@ -37,7 +38,6 @@ class LayoutUnit;
 
 namespace Layout {
 
-class BlockFormattingState;
 class Box;
 class FloatingContext;
 
@@ -149,6 +149,8 @@ protected:
 
     class Quirks : public FormattingContext::Quirks {
     public:
+        Quirks(const BlockFormattingContext&);
+
         bool needsStretching(const Box&) const;
         LayoutUnit stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
 
@@ -156,11 +158,8 @@ protected:
         bool shouldIgnoreMarginBefore(const Box&) const;
         bool shouldIgnoreMarginAfter(const Box&) const;
 
-    private:
-        friend class BlockFormattingContext;
-        Quirks(const BlockFormattingContext&);
-
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Quirks::formattingContext()); }
+        BlockFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
 
     };
     BlockFormattingContext::Quirks quirks() const { return Quirks(*this); }

@@ -1494,6 +1494,7 @@ layout/blockformatting/BlockFormattingState.cpp
 layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/PrecomputedBlockMarginCollapse.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp
+layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
 layout/displaytree/DisplayBox.cpp
 layout/displaytree/DisplayInlineContent.cpp
 layout/displaytree/DisplayPainter.cpp

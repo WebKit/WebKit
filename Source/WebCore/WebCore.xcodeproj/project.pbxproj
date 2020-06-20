@@ -9436,6 +9436,7 @@
 		6F4A5BD522F9F16B00A80F25 /* LayoutPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPhase.cpp; sourceTree = "<group>"; };
 		6F5B7EAA2300A79E0067D9C3 /* TableGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableGrid.cpp; sourceTree = "<group>"; };
 		6F6383F42427AF4900DABA53 /* LayoutInitialContainingBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutInitialContainingBlock.h; sourceTree = "<group>"; };
+		6F6638D4249E268B001925FC /* TableWrapperBlockFormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableWrapperBlockFormattingContextQuirks.cpp; sourceTree = "<group>"; };
 		6F73918C2106CEDD006AF262 /* LayoutUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutUnits.h; sourceTree = "<group>"; };
 		6F77868523491AC6004D9636 /* DisplayPainter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayPainter.cpp; sourceTree = "<group>"; };
 		6F77868723491AD7004D9636 /* DisplayPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayPainter.h; sourceTree = "<group>"; };
@@ -21396,6 +21397,7 @@
 			children = (
 				6F17264C2470C5F700518C96 /* TableWrapperBlockFormattingContext.cpp */,
 				6F17264E2470C60A00518C96 /* TableWrapperBlockFormattingContext.h */,
+				6F6638D4249E268B001925FC /* TableWrapperBlockFormattingContextQuirks.cpp */,
 			);
 			path = tablewrapper;
 			sourceTree = "<group>";

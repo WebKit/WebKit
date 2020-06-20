@@ -92,7 +92,7 @@ LayoutUnit BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layo
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
     if (documentBox.isInFlow()) {
-        auto geometry = formattingContext.geometry();
+        auto geometry = this->geometry();
         auto precomputeDocumentBoxVerticalMargin = geometry.computedVerticalMargin(documentBox, geometry.constraintsForInFlowContent(initialContainingBlock, EscapeReason::BodyStrechesToViewportQuirk).horizontal);
         bodyBoxContentHeight -= precomputeDocumentBoxVerticalMargin.before.valueOr(0) + precomputeDocumentBoxVerticalMargin.after.valueOr(0);
     }

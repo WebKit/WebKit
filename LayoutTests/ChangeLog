@@ -1,3 +1,15 @@
+2020-06-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC][Quirk] Table height needs quirk handling
+        https://bugs.webkit.org/show_bug.cgi?id=213430
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/empty-table-with-specified-height-quirk-simple-expected.html: Added.
+        * fast/layoutformattingcontext/empty-table-with-specified-height-quirk-simple.html: Added.
+        * fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple-expected.html: Added.
+        * fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple.html: Added.
+
 2020-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Windows] fast/forms/search-field-buttons-do-not-have-focus-rings.html is failing
