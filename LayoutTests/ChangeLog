@@ -1,3 +1,14 @@
+2020-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        [AutoSizing] Resolve viewport units against the preferred content size
+        https://bugs.webkit.org/show_bug.cgi?id=213408
+        <rdar://problem/64267539>
+
+        Reviewed by Tim Horton.
+
+        * fast/dynamic/size-to-content-autosize-with-viewport-units-expected.txt: Added.
+        * fast/dynamic/size-to-content-autosize-with-viewport-units.html: Added.
+
 2020-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed test gardening on Windows

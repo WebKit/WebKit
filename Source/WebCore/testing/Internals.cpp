@@ -3713,6 +3713,14 @@ void Internals::enableFixedWidthAutoSizeMode(bool enabled, int width, int height
     document->view()->enableFixedWidthAutoSizeMode(enabled, { width, height });
 }
 
+void Internals::enableSizeToContentAutoSizeMode(bool enabled, int width, int height)
+{
+    auto* document = contextDocument();
+    if (!document || !document->view())
+        return;
+    document->view()->enableSizeToContentAutoSizeMode(enabled, { width, height });
+}
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 void Internals::initializeMockCDM()

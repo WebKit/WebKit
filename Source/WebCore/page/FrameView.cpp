@@ -3479,19 +3479,18 @@ void FrameView::performSizeToContentAutoSize()
     auto* document = frame().document();
     auto* renderView = document->renderView();
 
-    IntSize minAutoSize(1, 1);
-
     // Start from the minimum size and allow it to grow.
-    resize(minAutoSize.width(), minAutoSize.height());
-    IntSize size = frameRect().size();
+    auto minAutoSize = IntSize { 1, 1 };
+    resize(minAutoSize);
+    auto size = frameRect().size();
     // Do the resizing twice. The first time is basically a rough calculation using the preferred width
     // which may result in a height change during the second iteration.
+    // Let's ignore renderers with viewport units first and resolve these boxes during the second phase of the autosizing.
+    resetOverriddenViewportWidthForCSSViewportUnits();
     for (int i = 0; i < 2; i++) {
         // Update various sizes including contentsSize, scrollHeight, etc.
         document->updateLayoutIgnorePendingStylesheets();
-        int width = renderView->minPreferredLogicalWidth();
-        int height = renderView->documentRect().height();
-        IntSize newSize(width, height);
+        auto newSize = IntSize { renderView->minPreferredLogicalWidth(), renderView->documentRect().height() };
 
         // Check to see if a scrollbar is needed for a given dimension and
         // if so, increase the other dimension to account for the scrollbar.
@@ -3502,7 +3501,6 @@ void FrameView::performSizeToContentAutoSize()
             if (!localHorizontalScrollbar)
                 localHorizontalScrollbar = createScrollbar(HorizontalScrollbar);
             newSize.expand(0, localHorizontalScrollbar->occupiedHeight());
-
             // Don't bother checking for a vertical scrollbar because the width is at
             // already greater the maximum.
         } else if (newSize.height() > m_autoSizeConstraint.height()) {
@@ -3510,7 +3508,6 @@ void FrameView::performSizeToContentAutoSize()
             if (!localVerticalScrollbar)
                 localVerticalScrollbar = createScrollbar(VerticalScrollbar);
             newSize.expand(localVerticalScrollbar->occupiedWidth(), 0);
-
             // Don't bother checking for a horizontal scrollbar because the height is
             // already greater the maximum.
         }
@@ -3543,6 +3540,9 @@ void FrameView::performSizeToContentAutoSize()
         // on pages (e.g. quirks mode) where the body/document resize to the view size,
         // we'll end up not shrinking back down after resizing to the computed preferred width.
         resize(newSize.width(), i ? newSize.height() : minAutoSize.height());
+        // Protect the content from evergrowing layout.
+        auto preferredViewportWidth = std::min(newSize.width(), m_autoSizeConstraint.width());
+        overrideViewportWidthForCSSViewportUnits(preferredViewportWidth);
         // Force the scrollbar state to avoid the scrollbar code adding them and causing them to be needed. For example,
         // a vertical scrollbar may cause text to wrap and thus increase the height (which is the only reason the scollbar is needed).
         setVerticalScrollbarLock(false);
@@ -3550,7 +3550,6 @@ void FrameView::performSizeToContentAutoSize()
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
     // All the resizing above may have invalidated style (for example if viewport units are being used).
-
     document->updateStyleIfNeeded();
     // FIXME: Use the final layout's result as the content size (webkit.org/b/173561).
     document->updateLayoutIgnorePendingStylesheets();
@@ -4607,7 +4606,7 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize, AutoSiz
     setNeedsLayoutAfterViewConfigurationChange();
     layoutContext().scheduleLayout();
     if (m_shouldAutoSize) {
-        overrideViewportSizeForCSSViewportUnits({ m_autoSizeConstraint.width(), m_overrideViewportSize ? m_overrideViewportSize->height : WTF::nullopt });
+        overrideViewportWidthForCSSViewportUnits(m_autoSizeConstraint.width());
         return;
     }
 
@@ -5407,6 +5406,16 @@ void FrameView::clearViewportSizeOverrideForCSSViewportUnits()
 void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
 {
     overrideViewportSizeForCSSViewportUnits({ size.width(), size.height() });
+}
+
+void FrameView::overrideViewportWidthForCSSViewportUnits(int width)
+{
+    overrideViewportSizeForCSSViewportUnits({ width, m_overrideViewportSize ? m_overrideViewportSize->height : WTF::nullopt });
+}
+
+void FrameView::resetOverriddenViewportWidthForCSSViewportUnits()
+{
+    overrideViewportSizeForCSSViewportUnits({ { }, m_overrideViewportSize ? m_overrideViewportSize->height : WTF::nullopt });
 }
 
 void FrameView::overrideViewportSizeForCSSViewportUnits(OverrideViewportSize size)

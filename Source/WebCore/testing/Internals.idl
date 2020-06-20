@@ -614,6 +614,7 @@ enum CompositingPolicy {
     void reloadExpiredOnly();
 
     void enableFixedWidthAutoSizeMode(boolean enabled, long width, long height);
+    void enableSizeToContentAutoSizeMode(boolean enabled, long width, long height);
 
     [Conditional=VIDEO] sequence<DOMString> mediaResponseSources(HTMLMediaElement media);
     [Conditional=VIDEO] sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);

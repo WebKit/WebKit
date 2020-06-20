@@ -830,6 +830,8 @@ private:
         bool operator==(const OverrideViewportSize& rhs) const { return rhs.width == width && rhs.height == height; }
     };
     void overrideViewportSizeForCSSViewportUnits(OverrideViewportSize);
+    void overrideViewportWidthForCSSViewportUnits(int);
+    void resetOverriddenViewportWidthForCSSViewportUnits();
 
     static MonotonicTime sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 

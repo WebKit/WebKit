@@ -1,3 +1,30 @@
+2020-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        [AutoSizing] Resolve viewport units against the preferred content size
+        https://bugs.webkit.org/show_bug.cgi?id=213408
+        <rdar://problem/64267539>
+
+        Reviewed by Tim Horton.
+
+        Instead of resolving the viewport units against the maximum content size constraints, let's use the preferred content size.
+        It ensures that content with vw, vh units does not grow beyond the preferred content size.
+
+        Test: fast/dynamic/size-to-content-autosize-with-viewport-units.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performSizeToContentAutoSize):
+        (WebCore::FrameView::enableAutoSizeMode): Let's "ignore" viewport units during the initial
+        pass and use the preferred width to finalize the vw vh unit values (we don't really ignore them, but they are resolved against a [ 1, 1 ] viewport).
+        This approach fails if the main content has 100vw with overflow hidden. Such content would end up with a [ 1, 1 ] size (we might want to detect it 
+        and resolved the values against the horizontal constraint).
+        (WebCore::FrameView::overrideViewportWidthForCSSViewportUnits):
+        (WebCore::FrameView::resetOverriddenViewportWidthForCSSViewportUnits):
+        * page/FrameView.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::enableSizeToContentAutoSizeMode):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Move progress bar painting code off of Carbon API
