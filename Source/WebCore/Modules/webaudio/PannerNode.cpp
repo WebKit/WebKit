@@ -81,9 +81,6 @@ PannerNode::PannerNode(AudioContext& context, float sampleRate)
     m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
 
-    // FIXME: Remove velocity from PannerNode
-    m_velocity = FloatPoint3D(0, 0, 0);
-
     initialize();
 }
 
@@ -307,14 +304,12 @@ float PannerNode::dopplerRate()
     if (dopplerFactor > 0.0) {
         double speedOfSound = listener()->speedOfSound();
 
-        const FloatPoint3D &sourceVelocity = m_velocity;
-        const FloatPoint3D &listenerVelocity = listener()->velocity();
+        const FloatPoint3D& listenerVelocity = listener()->velocity();
 
-        // Don't bother if both source and listener have no velocity
-        bool sourceHasVelocity = !sourceVelocity.isZero();
+        // Don't bother if listener has no velocity
         bool listenerHasVelocity = !listenerVelocity.isZero();
 
-        if (sourceHasVelocity || listenerHasVelocity) {
+        if (listenerHasVelocity) {
             // Calculate the source to listener vector
             FloatPoint3D listenerPosition = listener()->position();
             FloatPoint3D sourceToListener = position() - listenerPosition;
@@ -322,16 +317,13 @@ float PannerNode::dopplerRate()
             double sourceListenerMagnitude = sourceToListener.length();
 
             double listenerProjection = sourceToListener.dot(listenerVelocity) / sourceListenerMagnitude;
-            double sourceProjection = sourceToListener.dot(sourceVelocity) / sourceListenerMagnitude;
 
             listenerProjection = -listenerProjection;
-            sourceProjection = -sourceProjection;
 
             double scaledSpeedOfSound = speedOfSound / dopplerFactor;
             listenerProjection = std::min(listenerProjection, scaledSpeedOfSound);
-            sourceProjection = std::min(sourceProjection, scaledSpeedOfSound);
 
-            dopplerShift = ((speedOfSound - dopplerFactor * listenerProjection) / (speedOfSound - dopplerFactor * sourceProjection));
+            dopplerShift = ((speedOfSound - dopplerFactor * listenerProjection) / speedOfSound);
             fixNANs(dopplerShift); // avoid illegal values
 
             // Limit the pitch shifting to 4 octaves up and 3 octaves down.

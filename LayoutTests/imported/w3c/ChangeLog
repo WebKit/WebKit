@@ -1,3 +1,14 @@
+2020-06-19  Clark Wang  <clark_wang@apple.com>
+
+        Remove setVelocity() from PannerNode
+        https://bugs.webkit.org/show_bug.cgi?id=213360
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined previous test that now passes with velocity removed.
+
+        * web-platform-tests/webaudio/historical-expected.txt:
+
 2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION(r262254?): [WPE] imported/w3c/web-platform-tests/webxr/idlharness.https.window.html is failing

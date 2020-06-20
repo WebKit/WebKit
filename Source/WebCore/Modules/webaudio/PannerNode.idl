@@ -34,9 +34,6 @@
     void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
     void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z);
     
-    // FIXME: Remove velocity from PannerNode
-    void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
-
     // Default distance model is inverse
     attribute DistanceModelType distanceModel;
 

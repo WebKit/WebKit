@@ -100,10 +100,6 @@ public:
     AudioParam& orientationY() { return m_orientationY.get(); }
     AudioParam& orientationZ() { return m_orientationZ.get(); }
 
-    // FIXME: Remove velocity from PannerNode
-    FloatPoint3D velocity() const { return m_velocity; }
-    void setVelocity(float x, float y, float z) { m_velocity = FloatPoint3D(x, y, z); }
-
     // Distance parameters
     DistanceModelType distanceModel() const;
     void setDistanceModel(DistanceModelType);
@@ -149,9 +145,6 @@ private:
 
     std::unique_ptr<Panner> m_panner;
     PanningModelType m_panningModel;
-
-    // FIXME: Remove velocity from PannerNode
-    FloatPoint3D m_velocity;
 
     // Gain
     RefPtr<AudioParam> m_distanceGain;
