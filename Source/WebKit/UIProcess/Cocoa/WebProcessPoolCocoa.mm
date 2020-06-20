@@ -79,27 +79,14 @@
 #import <QuartzCore/CARemoteLayerServer.h>
 #else
 #import "UIKitSPI.h"
-#import <pal/ios/ManagedConfigurationSoftLink.h>
-#import <pal/spi/ios/ManagedConfigurationSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
-#if PLATFORM(IOS)
-#import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
-SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
-#endif
-
 #if PLATFORM(COCOA)
 #import <WebCore/SystemBattery.h>
-#import <pal/spi/cocoa/NEFilterSourceSPI.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
-SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 #endif
 
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
@@ -408,35 +395,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
     
 #if PLATFORM(COCOA)
-    if ([getNEFilterSourceClass() filterRequired]) {
-        SandboxExtension::Handle helperHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.nehelper"_s, WTF::nullopt, helperHandle);
-        parameters.neHelperExtensionHandle = WTFMove(helperHandle);
-        SandboxExtension::Handle managerHandle;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager"_s, WTF::nullopt, managerHandle);
-#else
-        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter"_s, WTF::nullopt, managerHandle);
-#endif
-        parameters.neSessionManagerExtensionHandle = WTFMove(managerHandle);
-    }
     parameters.systemHasBattery = systemHasBattery();
 
     SandboxExtension::Handle mapDBHandle;
     if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb"_s, WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
         parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
-#endif
-    
-#if PLATFORM(IOS)
-    if ([getWebFilterEvaluatorClass() isManagedSession]) {
-        SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, WTF::nullopt, handle);
-        parameters.contentFilterExtensionHandle = WTFMove(handle);
-
-        SandboxExtension::Handle frontboardServiceExtensionHandle;
-        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, frontboardServiceExtensionHandle))
-            parameters.frontboardServiceExtensionHandle = WTFMove(frontboardServiceExtensionHandle);
-    }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

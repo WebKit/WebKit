@@ -388,6 +388,15 @@ public:
 
     bool hasSleepDisabler() const;
 
+#if PLATFORM(COCOA)
+    bool hasNetworkExtensionSandboxAccess() const { return m_hasNetworkExtensionSandboxAccess; }
+    void markHasNetworkExtensionSandboxAccess() { m_hasNetworkExtensionSandboxAccess = true; }
+#endif
+#if PLATFORM(IOS)
+    bool hasManagedSessionSandboxAccess() const { return m_hasManagedSessionSandboxAccess; }
+    void markHasManagedSessionSandboxAccess() { m_hasManagedSessionSandboxAccess = true; }
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 
@@ -577,6 +586,12 @@ private:
     bool m_isPrewarmed;
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
     bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };
+#endif
+#if PLATFORM(COCOA)
+    bool m_hasNetworkExtensionSandboxAccess { false };
+#endif
+#if PLATFORM(IOS)
+    bool m_hasManagedSessionSandboxAccess { false };
 #endif
     Optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
 

@@ -45,19 +45,39 @@
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/PaymentCoordinator.h>
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 
+#if PLATFORM(IOS)
+#import <WebCore/ParentalControlsContentFilter.h>
+#endif
+
 #if PLATFORM(COCOA)
 
 namespace WebKit {
 
-void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParameters)
+void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
-    m_dataDetectionContext = loadParameters.dataDetectionContext;
+    m_dataDetectionContext = parameters.dataDetectionContext;
+
+    if (parameters.neHelperExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.neHelperExtensionHandle);
+    if (parameters.neSessionManagerExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
+    NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
+
+#if PLATFORM(IOS)
+    if (parameters.contentFilterExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
+    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
+
+    if (parameters.frontboardServiceExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
+#endif
 }
 
 void WebPage::requestActiveNowPlayingSessionInfo(CallbackID callbackID)

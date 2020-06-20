@@ -47,12 +47,24 @@
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
+#import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
 #endif
+
+#if PLATFORM(IOS)
+#import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
+SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
+#endif
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
+SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
@@ -129,9 +141,38 @@ void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&
 }
 #endif
 
-void WebPageProxy::addPlatformLoadParameters(LoadParameters& loadParameters)
+void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParameters& loadParameters)
 {
     loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
+
+    if (!process.hasNetworkExtensionSandboxAccess() && [getNEFilterSourceClass() filterRequired]) {
+        SandboxExtension::Handle helperHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.nehelper"_s, WTF::nullopt, helperHandle);
+        loadParameters.neHelperExtensionHandle = WTFMove(helperHandle);
+        SandboxExtension::Handle managerHandle;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager"_s, WTF::nullopt, managerHandle);
+#else
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter"_s, WTF::nullopt, managerHandle);
+#endif
+        loadParameters.neSessionManagerExtensionHandle = WTFMove(managerHandle);
+
+        process.markHasNetworkExtensionSandboxAccess();
+    }
+
+#if PLATFORM(IOS)
+    if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, WTF::nullopt, handle);
+        loadParameters.contentFilterExtensionHandle = WTFMove(handle);
+
+        SandboxExtension::Handle frontboardServiceExtensionHandle;
+        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, frontboardServiceExtensionHandle))
+            loadParameters.frontboardServiceExtensionHandle = WTFMove(frontboardServiceExtensionHandle);
+
+        process.markHasManagedSessionSandboxAccess();
+    }
+#endif
 }
 
 void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles)

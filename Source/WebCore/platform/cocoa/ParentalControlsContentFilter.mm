@@ -150,6 +150,9 @@ void ParentalControlsContentFilter::updateFilterState()
 #if PLATFORM(IOS)
 void ParentalControlsContentFilter::setHasConsumedSandboxExtension(bool hasConsumedSandboxExtension)
 {
+    if (m_sandboxExtensionState == SandboxExtensionState::Consumed)
+        return;
+
     m_sandboxExtensionState = (hasConsumedSandboxExtension ? SandboxExtensionState::Consumed : SandboxExtensionState::NotConsumed);
 }
 #endif

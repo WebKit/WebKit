@@ -1,3 +1,46 @@
+2020-06-19  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Delay issuing ManagedSession & Network Extension sandbox extensions until a load is actually issued
+        https://bugs.webkit.org/show_bug.cgi?id=213414
+        <rdar://problem/64548684>
+
+        Reviewed by Per Arne Vollan.
+
+        Delay issuing ManagedSession & Network Extension sandbox extensions until a load is actually issued.
+        This is a Safari launch time optimization since the checks needed to decide whether or not to issue
+        the extensions are expensive and there is no reason to issue them as soon as the process launches
+        (especially in the case of a prewarmed process).
+
+        * Shared/Cocoa/LoadParametersCocoa.mm:
+        (WebKit::LoadParameters::platformEncode const):
+        (WebKit::LoadParameters::platformDecode):
+        * Shared/LoadParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::hasNetworkExtensionSandboxAccess const):
+        (WebKit::WebProcessProxy::markHasNetworkExtensionSandboxAccess):
+        (WebKit::WebProcessProxy::hasManagedSessionSandboxAccess const):
+        (WebKit::WebProcessProxy::markHasManagedSessionSandboxAccess):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-06-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r263287.

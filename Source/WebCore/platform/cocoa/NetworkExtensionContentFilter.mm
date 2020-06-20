@@ -228,6 +228,9 @@ void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, 
 
 void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasConsumedSandboxExtensions)
 {
+    if (m_sandboxExtensionsState == SandboxExtensionsState::Consumed)
+        return;
+
     m_sandboxExtensionsState = (hasConsumedSandboxExtensions ? SandboxExtensionsState::Consumed : SandboxExtensionsState::NotConsumed);
 }
 

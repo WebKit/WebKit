@@ -1266,7 +1266,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 }
 
 #if !PLATFORM(COCOA)
-void WebPageProxy::addPlatformLoadParameters(LoadParameters&)
+void WebPageProxy::addPlatformLoadParameters(WebProcessProxy&, LoadParameters&)
 {
 }
 #endif
@@ -1323,7 +1323,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     maybeInitializeSandboxExtensionHandle(process, url, m_pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
-    addPlatformLoadParameters(loadParameters);
+    addPlatformLoadParameters(process, loadParameters);
 
     preconnectTo(url);
 
@@ -1385,7 +1385,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     const bool checkAssumedReadAccessToResourceURL = false;
     maybeInitializeSandboxExtensionHandle(m_process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
-    addPlatformLoadParameters(loadParameters);
+    addPlatformLoadParameters(m_process, loadParameters);
 
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (m_process->isLaunching())
@@ -1445,7 +1445,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.websitePolicies = WTFMove(websitePolicies);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
-    addPlatformLoadParameters(loadParameters);
+    addPlatformLoadParameters(process, loadParameters);
 
     process->assumeReadAccessToBaseURL(*this, baseURL);
     process->send(Messages::WebPage::LoadData(loadParameters), webPageID);
@@ -1487,7 +1487,7 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     loadParameters.unreachableURLString = unreachableURL.string();
     loadParameters.provisionalLoadErrorURLString = m_failingProvisionalLoadURL;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-    addPlatformLoadParameters(loadParameters);
+    addPlatformLoadParameters(process(), loadParameters);
 
     m_process->assumeReadAccessToBaseURL(*this, baseURL.string());
     m_process->assumeReadAccessToBaseURL(*this, unreachableURL.string());
@@ -1516,7 +1516,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     loadParameters.MIMEType = "application/x-webarchive"_s;
     loadParameters.encodingName = "utf-16"_s;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-    addPlatformLoadParameters(loadParameters);
+    addPlatformLoadParameters(process(), loadParameters);
 
     send(Messages::WebPage::LoadData(loadParameters));
     m_process->startResponsivenessTimer();
