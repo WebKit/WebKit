@@ -1,3 +1,28 @@
+2020-06-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS, macOS] Allow access to the container manager to support Mail InjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=213357
+        <rdar://problem/63837247>
+
+        Reviewed by Darin Adler.
+
+        The Mail Injected Bundle requires access to the container manager to support certain OS operations. We do not need
+        this access for web browsing, and should limit this access to this one case.
+
+        This patch creates a dynamic mach extension to the container manager for this single use case. It also denies the
+        non-extension access case with a backtrace so we can see if any other clients are hitting this.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-06-19  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Delay issuing ManagedSession & Network Extension sandbox extensions until a load is actually issued

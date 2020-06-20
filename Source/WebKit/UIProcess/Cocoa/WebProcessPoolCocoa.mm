@@ -279,6 +279,17 @@ static const Vector<ASCIILiteral>& agxCompilerClasses()
 
 #endif
 
+static bool requiresContainerManagerAccess()
+{
+#if PLATFORM(MAC)
+    return WebCore::MacApplication::isAppleMail();
+#elif PLATFORM(IOS)
+    return WebCore::IOSApplication::isMobileMail();
+#else
+    return false;
+#endif
+}
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -401,6 +412,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb"_s, WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
         parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
+
+    if (requiresContainerManagerAccess()) {
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd"_s, WTF::nullopt, handle);
+        parameters.containerManagerExtensionHandle = WTFMove(handle);
+    }
 
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
