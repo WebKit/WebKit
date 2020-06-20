@@ -1,5 +1,15 @@
 2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Check Gigacage usage before launching VM
+        https://bugs.webkit.org/show_bug.cgi?id=213410
+
+        Reviewed by Mark Lam.
+
+        * stress/exhaust-gigacage-and-allocate-vm.js: Added.
+        (foo):
+
+2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Attempt to reduce timeout failures on Apple Watch Series 3
         https://bugs.webkit.org/show_bug.cgi?id=213419
 

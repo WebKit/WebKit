@@ -137,7 +137,7 @@ BINLINE void* addressOfBasePtr(Kind kind)
     return &g_gigacageConfig.basePtrs[kind];
 }
 
-BINLINE size_t size(Kind kind)
+BINLINE size_t maxSize(Kind kind)
 {
     switch (kind) {
     case Primitive:
@@ -153,13 +153,16 @@ BINLINE size_t size(Kind kind)
 
 BINLINE size_t alignment(Kind kind)
 {
-    return size(kind);
+    return maxSize(kind);
 }
 
 BINLINE size_t mask(Kind kind)
 {
-    return gigacageSizeToMask(size(kind));
+    return gigacageSizeToMask(maxSize(kind));
 }
+
+BEXPORT size_t size(Kind);
+BEXPORT size_t footprint(Kind);
 
 template<typename Func>
 void forEachKind(const Func& func)
@@ -210,7 +213,9 @@ BINLINE void* basePtr(Kind)
     static void* unreachable;
     return unreachable;
 }
-BINLINE size_t size(Kind) { BCRASH(); return 0; }
+BINLINE size_t maxSize(Kind) { BCRASH(); return 0; }
+BINLINE size_t size(Kind) { return 0; }
+BINLINE size_t footprint(Kind) { return 0; }
 BINLINE void ensureGigacage() { }
 BINLINE bool contains(const void*) { return false; }
 BINLINE bool disablingPrimitiveGigacageIsForbidden() { return false; }

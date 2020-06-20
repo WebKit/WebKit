@@ -1,3 +1,15 @@
+2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Check Gigacage usage before launching VM
+        https://bugs.webkit.org/show_bug.cgi?id=213410
+
+        Reviewed by Mark Lam.
+
+        * wtf/Gigacage.h:
+        (Gigacage::footprint):
+        (Gigacage::maxSize):
+        (Gigacage::size):
+
 2020-06-19  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r263223.

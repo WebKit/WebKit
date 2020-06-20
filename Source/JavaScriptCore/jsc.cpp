@@ -1879,6 +1879,17 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(JSGlobalObject* globalObje
     Lock didStartLock;
     Condition didStartCondition;
     bool didStart = false;
+
+    auto isGigacageMemoryExhausted = [&](Gigacage::Kind kind) {
+        if (!Gigacage::isEnabled(kind))
+            return false;
+        if (Gigacage::footprint(kind) < Gigacage::size(kind) * 0.8)
+            return false;
+        return true;
+    };
+
+    if (isGigacageMemoryExhausted(Gigacage::JSValue) || isGigacageMemoryExhausted(Gigacage::Primitive))
+        return JSValue::encode(throwOutOfMemoryError(globalObject, scope, "Gigacage is exhausted"_s));
     
     Thread::create(
         "JSC Agent",

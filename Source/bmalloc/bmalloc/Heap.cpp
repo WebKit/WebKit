@@ -60,8 +60,10 @@ Heap::Heap(HeapKind kind, LockHolder&)
         RELEASE_BASSERT(gigacageBasePtr);
         uint64_t random[2];
         cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
-        size_t size = roundDownToMultipleOf(vmPageSize(), gigacageSize() - (random[0] % Gigacage::maximumCageSizeReductionForSlide));
-        ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize() - size));
+        size_t gigacageSize = Gigacage::maxSize(gigacageKind(kind));
+        size_t size = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % Gigacage::maximumCageSizeReductionForSlide));
+        m_gigacageSize = size;
+        ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - size));
         void* base = reinterpret_cast<unsigned char*>(gigacageBasePtr) + offset;
         m_largeFree.add(LargeRange(base, size, 0, 0));
     }
@@ -82,7 +84,7 @@ void* Heap::gigacageBasePtr()
 
 size_t Heap::gigacageSize()
 {
-    return Gigacage::size(gigacageKind(m_kind));
+    return m_gigacageSize;
 }
 
 size_t Heap::freeableMemory(UniqueLockHolder&)

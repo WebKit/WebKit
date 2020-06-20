@@ -84,6 +84,7 @@ public:
 
     size_t freeableMemory(UniqueLockHolder&);
     size_t footprint();
+    size_t gigacageSize();
 
     void externalDecommit(void* ptr, size_t);
     void externalDecommit(UniqueLockHolder&, void* ptr, size_t);
@@ -107,7 +108,6 @@ private:
     
     bool usingGigacage();
     void* gigacageBasePtr(); // May crash if !usingGigacage().
-    size_t gigacageSize();
 
     void allocateSmallBumpRangesByMetadata(UniqueLockHolder&,
         size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&, FailureAction);
@@ -140,6 +140,7 @@ private:
 
     Scavenger* m_scavenger { nullptr };
 
+    size_t m_gigacageSize { 0 };
     size_t m_footprint { 0 };
     size_t m_freeableMemory { 0 };
 

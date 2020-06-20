@@ -1,3 +1,19 @@
+2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Check Gigacage usage before launching VM
+        https://bugs.webkit.org/show_bug.cgi?id=213410
+
+        Reviewed by Mark Lam.
+
+        Since VM allocates JSBigInt from Gigacage, it is possible that VM creation fails when Gigacage is exhausted.
+        As a work-around for internal testing, we insert ad-hoc Gigacage usage check before launching a new agent.
+        If 80% of Gigacage is used, we fail to launch a new VM gracefully.
+
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+        * jsc.cpp:
+        (functionDollarAgentStart):
+
 2020-06-19  James Darpinian  <jdarpinian@chromium.org>
 
         Typed array constructor behaves differently when length is not passed or when undefined is passed

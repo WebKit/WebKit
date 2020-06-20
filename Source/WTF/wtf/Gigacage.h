@@ -69,6 +69,9 @@ ALWAYS_INLINE bool contains(const void*) { return false; }
 ALWAYS_INLINE bool disablingPrimitiveGigacageIsForbidden() { return false; }
 ALWAYS_INLINE bool isEnabled(Kind) { return false; }
 ALWAYS_INLINE size_t mask(Kind) { return 0; }
+ALWAYS_INLINE size_t footprint(Kind) { return 0; }
+ALWAYS_INLINE size_t maxSize(Kind) { return 0; }
+ALWAYS_INLINE size_t size(Kind) { return 0; }
 
 template<typename T>
 inline T* caged(Kind, T* ptr) { return ptr; }

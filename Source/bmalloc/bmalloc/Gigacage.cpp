@@ -137,7 +137,7 @@ void ensureGigacage()
                 return roundUpToMultipleOf(alignment(kind), totalSize);
             };
             auto bump = [] (Kind kind, size_t totalSize) -> size_t {
-                return totalSize + size(kind);
+                return totalSize + maxSize(kind);
             };
             
             size_t totalSize = 0;
@@ -278,6 +278,16 @@ bool shouldBeEnabled()
             g_gigacageConfig.shouldBeEnabled = true;
         });
     return g_gigacageConfig.shouldBeEnabled;
+}
+
+size_t size(Kind kind)
+{
+    return PerProcess<PerHeapKind<Heap>>::get()->at(heapKind(kind)).gigacageSize();
+}
+
+size_t footprint(Kind kind)
+{
+    return PerProcess<PerHeapKind<Heap>>::get()->at(heapKind(kind)).footprint();
 }
 
 } // namespace Gigacage

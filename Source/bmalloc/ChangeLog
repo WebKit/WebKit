@@ -1,3 +1,27 @@
+2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Check Gigacage usage before launching VM
+        https://bugs.webkit.org/show_bug.cgi?id=213410
+
+        Reviewed by Mark Lam.
+
+        Add Gigacage::footprint and Gigacage::size functions to expose usage to API users.
+        Rename Gigacage::size to Gigacage::maxSize.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::size):
+        (Gigacage::footprint):
+        * bmalloc/Gigacage.h:
+        (Gigacage::maxSize):
+        (Gigacage::alignment):
+        (Gigacage::mask):
+        (Gigacage::size):
+        (Gigacage::footprint):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::gigacageSize):
+        * bmalloc/Heap.h:
+
 2020-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Work around broken system version macro
