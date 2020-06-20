@@ -267,7 +267,7 @@ void NetworkProcess::didClose(IPC::Connection&)
     // Make sure we flush all cookies and resource load statistics to disk before exiting.
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     forEachNetworkSession([&] (auto& networkSession) {
-        networkSession.destroyResourceLoadStatistics([callbackAggregator = callbackAggregator.copyRef()] { });
+        networkSession.flushAndDestroyPersistentStore([callbackAggregator = callbackAggregator.copyRef()] { });
     });
 #endif
     platformSyncAllCookies([callbackAggregator = callbackAggregator.copyRef()] { });

@@ -222,8 +222,13 @@ void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<
 {
     ASSERT(RunLoop::isMain());
 
+    auto callbackAggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler)] () mutable {
+        completionHandler();
+    });
+
     m_networkSession = nullptr;
-    flushAndDestroyPersistentStore(WTFMove(completionHandler));
+    flushAndDestroyPersistentStore([callbackAggregator] { });
+    destroyResourceLoadStatisticsStore([callbackAggregator] { });
 }
 
 inline void WebResourceLoadStatisticsStore::postTask(WTF::Function<void()>&& task)
@@ -243,6 +248,21 @@ inline void WebResourceLoadStatisticsStore::postTaskReply(WTF::Function<void()>&
     RunLoop::main().dispatch(WTFMove(reply));
 }
 
+void WebResourceLoadStatisticsStore::destroyResourceLoadStatisticsStore(CompletionHandler<void()>&& completionHandler)
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler();
+        return;
+    }
+
+    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        m_statisticsStore = nullptr;
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
 void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore(CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_ASSERT(RunLoop::isMain());
@@ -251,7 +271,6 @@ void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore(CompletionHa
     // is destroyed because it has a C++ reference to us.
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
         m_persistentStorage = nullptr;
-        m_statisticsStore = nullptr;
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }

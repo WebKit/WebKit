@@ -148,6 +148,14 @@ void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& c
     m_resourceLoadStatistics->didDestroyNetworkSession(WTFMove(completionHandler));
     m_resourceLoadStatistics = nullptr;
 }
+
+void NetworkSession::flushAndDestroyPersistentStore(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_resourceLoadStatistics)
+        return completionHandler();
+
+    m_resourceLoadStatistics->flushAndDestroyPersistentStore(WTFMove(completionHandler));
+}
 #endif
 
 void NetworkSession::invalidateAndCancel()

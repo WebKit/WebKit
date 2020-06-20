@@ -106,6 +106,7 @@ public:
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
     void setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled);
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
+    void flushAndDestroyPersistentStore(CompletionHandler<void()>&&);
 #endif
     
     virtual bool hasAppBoundSession() const { return false; }
