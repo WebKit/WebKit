@@ -1,3 +1,31 @@
+2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/international/system-language/navigator-language/navigator-language tests are failing on Catalina and iOS
+        <rdar://problem/64468227>
+
+        Unreviewed test gardening.
+
+        Rather than marking the tests as flakey, we can just commit -expected results for every OS.
+
+        * fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-419-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-ja-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-zh-HK-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2020-06-19  Zalan Bujtas  <zalan@apple.com>
 
         [AutoSizing] Resolve viewport units against the preferred content size

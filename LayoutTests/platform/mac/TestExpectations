@@ -1787,7 +1787,6 @@ webkit.org/b/205867 webgpu/draw-indexed-triangles.html [ Pass ImageOnlyFailure ]
 webkit.org/b/197204 webexposed/css-properties-behind-flags.html [ Pass Failure ]
 
 # The navigator.language tests rely on functionality only available in recent releases of macOS Catalina and onward.
-webkit.org/b/200043 [ Mojave Catalina ] fast/text/international/system-language/navigator-language [ Pass Failure ]
 webkit.org/b/208023 [ Sierra HighSierra Mojave ] fast/text/international/system-language/declarative-language.html [ Failure ]
 
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]

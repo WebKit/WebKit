@@ -3362,8 +3362,6 @@ webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properti
 
 webkit.org/b/204757 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-no-load-event.https.html [ Pass Failure ]
 
-webkit.org/b/200043 fast/text/international/system-language/navigator-language [ Pass Failure ]
-
 webkit.org/b/203222 svg/wicd/rightsizing-grid.xhtml [ Pass Failure ]
 
 webkit.org/b/206864 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
