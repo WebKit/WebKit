@@ -1,3 +1,16 @@
+2020-06-19  James Darpinian  <jdarpinian@chromium.org>
+
+        Typed array constructor behaves differently when length is not passed or when undefined is passed
+        https://bugs.webkit.org/show_bug.cgi?id=184232
+
+        Reviewed by Yusuke Suzuki.
+
+        Passing undefined for length should have the same effect as omitting the argument. It was being
+        treated as 0 instead.
+
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+
 2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Attempt to reduce timeout failures on Apple Watch Series 3
