@@ -1,3 +1,23 @@
+2020-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Move progress bar painting code off of Carbon API
+        https://bugs.webkit.org/show_bug.cgi?id=213405
+        <rdar://problem/63958537>
+
+        Reviewed by Tim Horton.
+
+        Adopts CoreUI constants and AppKit SPI (`-[NSAppearance _drawInRect:context:options:]`) when painting progress
+        elements. This is being done in light of recent changes around how `HIThemeDrawTrack` draws progress bars on
+        recent versions of macOS; it has been recommended to us that we move away from using Carbon, and instead use
+        AppKit.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+
+        The `NSControlSize` to `CUISize` mapping here looks counterintuitive, but matches our current behavior. This is
+        because `kThemeLargeProgressBar` and `kThemeLargeIndeterminateBar` both map to `kCUISizeRegular`, while
+        `kThemeMediumIndeterminateBar` and `kThemeMediumProgressBar` map to `kCUISizeSmall`.
+
 2020-06-19  Clark Wang  <clark_wang@apple.com>
 
         Remove setVelocity() from PannerNode

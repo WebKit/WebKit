@@ -35,5 +35,21 @@ extern const CFStringRef kCUIWidgetKey;
 extern const CFStringRef kCUIIsFlippedKey;
 
 extern const CFStringRef kCUIWidgetScrollBarTrackCorner;
+extern const CFStringRef kCUIWidgetProgressIndeterminateBar;
+extern const CFStringRef kCUIWidgetProgressBar;
+
+extern const CFStringRef kCUIUserInterfaceLayoutDirectionLeftToRight;
+extern const CFStringRef kCUIPresentationStateActiveKey;
+extern const CFStringRef kCUIPresentationStateInactive;
+extern const CFStringRef kCUIOrientHorizontal;
+extern const CFStringRef kCUISizeSmall;
+extern const CFStringRef kCUISizeRegular;
+extern const CFStringRef kCUIValueKey;
+extern const CFStringRef kCUISizeKey;
+extern const CFStringRef kCUIUserInterfaceLayoutDirectionKey;
+extern const CFStringRef kCUIScaleKey;
+extern const CFStringRef kCUIPresentationStateKey;
+extern const CFStringRef kCUIOrientationKey;
+extern const CFStringRef kCUIAnimationFrameKey;
 
 #endif

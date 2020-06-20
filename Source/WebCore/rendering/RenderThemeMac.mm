@@ -72,6 +72,8 @@
 #import <math.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
@@ -1384,39 +1386,41 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
 
     IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
     NSControlSize controlSize = controlSizeForFont(renderObject.style());
-
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
-    HIThemeTrackDrawInfo trackInfo;
-    trackInfo.version = 0;
-
-    bool shouldUseLargeProgressBarIfPossible = controlSize == NSControlSizeRegular;
-#if HAVE(LARGE_CONTROL_SIZE)
-    if (ThemeMac::supportsLargeFormControls())
-        shouldUseLargeProgressBarIfPossible |= controlSize == NSControlSizeLarge;
-#endif
-    if (shouldUseLargeProgressBarIfPossible)
-        trackInfo.kind = renderProgress.position() < 0 ? kThemeLargeIndeterminateBar : kThemeLargeProgressBar;
-    else
-        trackInfo.kind = renderProgress.position() < 0 ? kThemeMediumIndeterminateBar : kThemeMediumProgressBar;
-
     float deviceScaleFactor = renderObject.document().deviceScaleFactor();
-    trackInfo.bounds = IntRect(IntPoint(), inflatedRect.size());
-    trackInfo.min = 0;
-    trackInfo.max = std::numeric_limits<SInt32>::max();
-    trackInfo.value = lround(renderProgress.position() * nextafter(trackInfo.max, 0));
-    trackInfo.trackInfo.progress.phase = lround(renderProgress.animationProgress() * nextafter(progressAnimationNumFrames, 0) * deviceScaleFactor);
-    trackInfo.attributes = kThemeTrackHorizontal;
-    trackInfo.enableState = isActive(renderObject) ? kThemeTrackActive : kThemeTrackInactive;
-    trackInfo.reserved = 0;
-    trackInfo.filler1 = 0;
-
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size(), deviceScaleFactor, ColorSpace::SRGB, paintInfo.context());
+    bool isIndeterminate = renderProgress.position() < 0;
+    auto animationFrame = lround(renderProgress.animationProgress() * nextafter(progressAnimationNumFrames, 0) * deviceScaleFactor);
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size(), deviceScaleFactor, ColorSpace::SRGB, paintInfo.context());
     if (!imageBuffer)
         return true;
 
     ContextContainer cgContextContainer(imageBuffer->context());
     CGContextRef cgContext = cgContextContainer.context();
-    HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
+
+    auto coreUISizeForProgressBarSize = [](NSControlSize size) -> CFStringRef {
+        switch (size) {
+        case NSControlSizeMini:
+        case NSControlSizeSmall:
+            return kCUISizeSmall;
+        case NSControlSizeRegular:
+#if HAVE(LARGE_CONTROL_SIZE)
+        case NSControlSizeLarge:
+#endif
+            return kCUISizeRegular;
+        }
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    };
+    [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, inflatedRect.width(), inflatedRect.height()) context:cgContext options:@{
+        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)(isIndeterminate ? kCUIWidgetProgressIndeterminateBar : kCUIWidgetProgressBar),
+        (__bridge NSString *)kCUIValueKey: @(isIndeterminate ? 1 : std::min(nextafter(1.0, -1), renderProgress.position())),
+        (__bridge NSString *)kCUISizeKey: (__bridge NSString *)coreUISizeForProgressBarSize(controlSize),
+        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
+        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
+        (__bridge NSString *)kCUIPresentationStateKey: (__bridge NSString *)(isActive(renderObject) ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive),
+        (__bridge NSString *)kCUIOrientationKey: (__bridge NSString *)kCUIOrientHorizontal,
+        (__bridge NSString *)kCUIAnimationFrameKey: @(isIndeterminate ? animationFrame : 0)
+    }];
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
