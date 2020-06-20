@@ -880,9 +880,6 @@ webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Skip ]
 webkit.org/b/203146 http/wpt/offscreen-canvas [ Skip ]
 webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip ]
 
-# Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
-media/video-supports-fullscreen.html [ Skip ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
