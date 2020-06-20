@@ -1,3 +1,15 @@
+2020-06-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r263287.
+
+        Caused tests to exit early with crashes on Catalina.
+
+        Reverted changeset:
+
+        "[iOS, macOS] Allow access to the container manager to support Mail InjectedBundle"
+        https://bugs.webkit.org/show_bug.cgi?id=213357
+        https://trac.webkit.org/changeset/263287
+
 2020-06-19  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit::ProcessAndUIAssertion::updateRunInBackgroundCount()

@@ -161,8 +161,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << frontboardServiceExtensionHandle;
 #endif
 
-    encoder << containerManagerExtensionHandle;
-    
 #if PLATFORM(IOS_FAMILY)
     encoder << diagnosticsExtensionHandles;
     encoder << dynamicMachExtensionHandles;
@@ -436,12 +434,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.frontboardServiceExtensionHandle = WTFMove(*frontboardServiceExtensionHandle);
 #endif
-
-    Optional<Optional<SandboxExtension::Handle>> containerManagerExtensionHandle;
-    decoder >> containerManagerExtensionHandle;
-    if (!containerManagerExtensionHandle)
-        return false;
-    parameters.containerManagerExtensionHandle = WTFMove(*containerManagerExtensionHandle);
 
 #if PLATFORM(IOS_FAMILY)
     Optional<SandboxExtension::HandleArray> diagnosticsExtensionHandles;

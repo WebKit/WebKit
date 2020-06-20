@@ -205,8 +205,6 @@ struct WebProcessCreationParameters {
     Optional<SandboxExtension::Handle> frontboardServiceExtensionHandle;
 #endif
 
-    Optional<SandboxExtension::Handle> containerManagerExtensionHandle;
-
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::HandleArray diagnosticsExtensionHandles;
     SandboxExtension::HandleArray dynamicMachExtensionHandles;

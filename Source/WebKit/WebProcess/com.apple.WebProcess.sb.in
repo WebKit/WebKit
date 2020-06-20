@@ -898,12 +898,6 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-(deny mach-lookup (with telemetry-backtrace)
-    (global-name "com.apple.containermanagerd")
-)
-#endif
-
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
@@ -917,7 +911,6 @@
             "com.apple.webinspector"
             "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
-            "com.apple.containermanagerd"
             "com.apple.tccd"
             "com.apple.lsd.mapdb"
             "com.apple.BluetoothServices"

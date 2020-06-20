@@ -940,17 +940,12 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-(deny mach-lookup (with telemetry-backtrace)
-    (global-name "com.apple.containermanagerd")
-)
-
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
             "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
-            "com.apple.containermanagerd"
             "com.apple.diagnosticd"
             "com.apple.iphone.axserver-systemwide"
             "com.apple.lsd.mapdb"
