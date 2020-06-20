@@ -503,8 +503,14 @@ void ProcessAndUIAssertion::uiAssertionWillExpireImminently()
 
 void ProcessAndUIAssertion::processAssertionWasInvalidated()
 {
+    ASSERT(RunLoop::isMain());
+
+    auto weakThis = makeWeakPtr(*this);
     ProcessAssertion::processAssertionWasInvalidated();
-    updateRunInBackgroundCount();
+
+    // Calling ProcessAssertion::processAssertionWasInvalidated() may have destroyed |this|.
+    if (weakThis)
+        updateRunInBackgroundCount();
 }
 
 } // namespace WebKit
