@@ -1,3 +1,23 @@
+2020-06-19  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete dead code for old ews api tests
+        https://bugs.webkit.org/show_bug.cgi?id=213421
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_api_tests_command): Deleted.
+        * Scripts/webkitpy/common/net/apitestresults.py: Removed.
+        * Scripts/webkitpy/common/net/apitestresults_unittest.py: Removed.
+        * Scripts/webkitpy/port/base.py:
+        (Port.bindings_results_directory):
+        (Port.api_results_directory): Deleted.
+        * Scripts/webkitpy/tool/bot/apitestresultsreader.py: Removed.
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests._run_api_tests): Deleted.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (test_runtests_api_debug): Deleted.
+
 2020-06-19  Jonathan Bedard  <jbedard@apple.com>
 
         Bring up watchOS/tvOS on build.webkit.org

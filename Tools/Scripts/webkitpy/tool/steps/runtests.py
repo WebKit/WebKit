@@ -62,10 +62,6 @@ class RunTests(AbstractStep):
             self._run_javascriptcore_tests()
             return
 
-        if self._options.group == "api":
-            self._run_api_tests()
-            return
-
         if self._options.iterate_on_new_tests:
             _log.info("Running run-webkit-tests on new tests")
             self._run_webkit_tests(self._options.iterate_on_new_tests)
@@ -139,12 +135,5 @@ class RunTests(AbstractStep):
 
         results_directory = self._tool.port_factory.get(options=self._options).jsc_results_directory()
         results_file_path = self._tool.filesystem.join(results_directory, "jsc_test_results.json")
-        args.append("--json-output=%s" % results_file_path)
-        self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
-
-    def _run_api_tests(self):
-        args = self._tool.deprecated_port().run_api_tests_command(self._options.build_style)
-        results_directory = self._tool.port_factory.get(options=self._options).api_results_directory()
-        results_file_path = self._tool.filesystem.join(results_directory, "api_test_results.json")
         args.append("--json-output=%s" % results_file_path)
         self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
