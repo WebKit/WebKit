@@ -180,7 +180,7 @@ protected:
     void convertToLuminanceMask() override
     {
         if (auto* backend = ensureBackendCreated()) {
-            flushDrawingContext();
+            flushContext();
             backend->convertToLuminanceMask();
         }
     }
