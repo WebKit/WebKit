@@ -4675,6 +4675,19 @@ void Document::nodeWillBeRemoved(Node& node)
         m_markers->removeMarkers(node);
 }
 
+void Document::parentlessNodeMovedToNewDocument(Node& node)
+{
+    Vector<Range*, 5> rangesAffected;
+
+    for (auto* range : m_ranges) {
+        if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
+            rangesAffected.append(range);
+    }
+
+    for (auto* range : rangesAffected)
+        range->updateRangeForParentlessNodeMovedToNewDocument(node);
+}
+
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
 {
     return node.previousSibling() ? node.previousSibling() : node.parentNode();

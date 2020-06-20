@@ -1612,6 +1612,18 @@ void Range::nodeWillBeRemoved(Node& node)
     boundaryNodeWillBeRemoved(m_end, node);
 }
 
+bool Range::parentlessNodeMovedToNewDocumentAffectsRange(Node& node)
+{
+    return node.containsIncludingShadowDOM(m_start.container());
+}
+
+void Range::updateRangeForParentlessNodeMovedToNewDocument(Node& node)
+{
+    m_ownerDocument->detachRange(*this);
+    m_ownerDocument = node.document();
+    m_ownerDocument->attachRange(*this);
+}
+
 static inline void boundaryTextInserted(RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
 {
     if (boundary.container() != &text)

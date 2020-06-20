@@ -127,6 +127,8 @@ public:
     void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);
     void nodeWillBeRemoved(Node&);
+    bool parentlessNodeMovedToNewDocumentAffectsRange(Node&);
+    void updateRangeForParentlessNodeMovedToNewDocument(Node&);
 
     void textInserted(Node&, unsigned offset, unsigned length);
     void textRemoved(Node&, unsigned offset, unsigned length);
