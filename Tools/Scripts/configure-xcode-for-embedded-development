@@ -56,7 +56,7 @@ MISSING_FRAMEWORKS = [
     ("IOKit.framework", True),
     ("IOSurface.framework", True),
     ("LocalAuthentication.framework", False),
-    ("MediaAccessibility.framework", False),
+    ("MediaAccessibility.framework", True),
     ("MediaToolbox.framework", False),
     ("Metal.framework", True),
     ("OpenGLES.framework", True),

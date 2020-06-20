@@ -549,8 +549,7 @@ sub extractNonMacOSHostConfiguration
         my $line = $_;
         my $flag = 0;
         foreach (@extract) {
-            if (length($line) >= length($_) && substr($line, 0, length($_)) eq $_
-                && index($line, 'i386') == -1 && index($line, 'x86_64') == -1) {
+            if (length($line) >= length($_) && substr($line, 0, length($_)) eq $_ && index($line, 'x86_64') == -1) {
                 $flag = 1;
             }
         }

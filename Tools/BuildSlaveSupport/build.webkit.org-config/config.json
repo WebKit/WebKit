@@ -250,7 +250,7 @@
                     },
                     {
                       "name": "Apple-watchOS-6-Release-Build", "type": "Build", "builddir": "watchos-13-release",
-                      "platform": "watchos-6", "configuration": "release", "architectures": ["arm64"],
+                      "platform": "watchos-6", "configuration": "release", "architectures": ["arm64_32"],
                       "slavenames": ["bot609"]
                     },
                     {
