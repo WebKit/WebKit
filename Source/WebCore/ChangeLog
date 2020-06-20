@@ -1,3 +1,25 @@
+2020-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r263253): Search field results and cancel buttons have their own focus rings
+        https://bugs.webkit.org/show_bug.cgi?id=213413
+        <rdar://problem/64548419>
+
+        Reviewed by Tim Horton.
+
+        After r263253, `paintCellAndSetFocusedElementNeedsRepaintIfNecessary` is used when painting the buttons in a
+        search field's shadow root. However, the renderer that is passed in (which is used to determine whether we
+        should additionally draw focus rings) is the input element's renderer rather than the renderers of the results
+        and cancel buttons themselves. This means that when the search field is focused, we will draw focus rings around
+        each of the buttons in the shadow root as well.
+
+        Address this by using `box` (the buttons' RenderBoxes) instead.
+
+        Test: fast/forms/search-field-buttons-do-not-have-focus-rings.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2020-06-19  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Crash in WebCore::Range::borderAndTextRects

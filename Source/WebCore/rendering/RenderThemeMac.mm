@@ -2016,7 +2016,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
         paintInfo.context().scale(zoomLevel);
         paintInfo.context().translate(-unzoomedRect.location());
     }
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search cancelButtonCell], inputBox, paintInfo, unzoomedRect);
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search cancelButtonCell], box, paintInfo, unzoomedRect);
     [[search cancelButtonCell] setControlView:nil];
     return false;
 }
@@ -2152,7 +2152,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
         paintInfo.context().translate(-unzoomedRect.location());
     }
 
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search searchButtonCell], inputBox, paintInfo, unzoomedRect);
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search searchButtonCell], box, paintInfo, unzoomedRect);
     [[search searchButtonCell] setControlView:nil];
 
     return false;
