@@ -2165,6 +2165,8 @@ webkit.org/b/140865 fast/forms/textarea-placeholder-set-attribute.html [ Pass Im
 # Tiny image-only difference
 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
+webkit.org/b/213422 fast/forms/search-field-buttons-do-not-have-focus-rings.html [ ImageOnlyFailure ]
+
 # new timeouts, need bug reports
 fast/forms/button-state-restore.html [ Skip ]
 fast/forms/radio/state-restore-radio-group.html [ Skip ]
