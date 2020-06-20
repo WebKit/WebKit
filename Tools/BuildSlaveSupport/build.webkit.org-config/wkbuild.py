@@ -37,7 +37,21 @@ def _should_file_trigger_build(target_platform, file):
     # and start using it for their bots. Someone familiar with each platform
     # will have to figure out what the right set of directories/patterns is for
     # that platform.
-    assert(target_platform in ("mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "mac-catalina", "win", "ios-13", "ios-simulator-13"))
+    assert(target_platform in (
+        "mac-yosemite",
+        "mac-elcapitan",
+        "mac-sierra",
+        "mac-highsierra",
+        "mac-mojave",
+        "mac-catalina",
+        "win",
+        "ios-13",
+        "ios-simulator-13",
+        "tvos-13",
+        "tvos-simulator-13",
+        "watchos-6",
+        "watchos-simulator-6",
+    ))
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.
@@ -66,15 +80,15 @@ def _should_file_trigger_build(target_platform, file):
         ("LayoutTests/platform/mac", ["mac", "win"]),
         ("LayoutTests/platform/wk2", ["mac", "ios"]),
         ("cairo", ["gtk", "wincairo"]),
-        ("cf", ["mac", "win", "ios"]),
-        ("cocoa", ["mac", "ios"]),
+        ("cf", ["mac", "win", "ios", "tvos", "watchos"]),
+        ("cocoa", ["mac", "ios", "tvos", "watchos"]),
         ("curl", ["gtk", "wincairo"]),
         ("gobject", ["gtk"]),
         ("gstreamer", ["gtk"]),
         ("gtk", ["gtk"]),
-        ("ios", ["ios"]),
+        ("ios", ["ios", "tvos", "watchos"]),
         ("mac", ["mac"]),
-        ("objc", ["mac", "ios"]),
+        ("objc", ["mac", "ios", "tvos", "watchos"]),
         ("soup", ["gtk"]),
         ("win", ["win"]),
     ]
@@ -92,13 +106,13 @@ def _should_file_trigger_build(target_platform, file):
         # Patterns that should trigger builds on only some bots.
         (r"(?:^|/)PlatformGTK\.cmake$", ["gtk"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
-        (r"IOS\.(?:cpp|h|mm)$", ["ios"]),
+        (r"IOS\.(?:cpp|h|mm)$", ["ios", "tvos", "watchos"]),
         (r"\.(?:vcproj|vsprops|sln|vcxproj|props|filters)$", ["win"]),
-        (r"\.exp(?:\.in)?$", ["mac", "ios"]),
-        (r"\.order$", ["mac", "ios"]),
+        (r"\.exp(?:\.in)?$", ["mac", "ios", "tvos", "watchos"]),
+        (r"\.order$", ["mac", "ios", "tvos", "watchos"]),
         (r"\.(?:vcproj|vcxproj)/", ["win"]),
-        (r"\.xcconfig$", ["mac", "ios"]),
-        (r"\.xcodeproj/", ["mac", "ios"]),
+        (r"\.xcconfig$", ["mac", "ios", "tvos", "watchos"]),
+        (r"\.xcodeproj/", ["mac", "ios", "tvos", "watchos"]),
     ]
 
     base_platform = target_platform.split("-")[0]
