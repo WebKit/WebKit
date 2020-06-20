@@ -1,3 +1,18 @@
+2020-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Windows] fast/forms/search-field-buttons-do-not-have-focus-rings.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=213422
+
+        Reviewed by Tim Horton.
+
+        Refactor this test so that it doesn't attempt to hard-code the position and sizes of the search field buttons.
+        To do this, we use an internal helper to grab the `div` elements that correspond to the results and cancel
+        buttons, and then use their bounding rects to place the opaque `div`s to cover these buttons.
+
+        * fast/forms/search-field-buttons-do-not-have-focus-rings-expected.html:
+        * fast/forms/search-field-buttons-do-not-have-focus-rings.html:
+        * platform/win/TestExpectations:
+
 2020-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         fast/text/international/system-language/navigator-language/navigator-language tests are failing on Catalina and iOS

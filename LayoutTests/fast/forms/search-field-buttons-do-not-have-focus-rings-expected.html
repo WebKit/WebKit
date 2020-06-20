@@ -11,7 +11,6 @@
             position: absolute;
             top: 0;
             left: 0;
-            zoom: 1.4;
             -webkit-appearance: none;
         }
 
@@ -20,18 +19,8 @@
             background-color: white;
         }
 
-        #cover-results {
-            top: 10px;
-            left: 4px;
-            width: 28px;
-            height: 22px;
-        }
-
-        #cover-cancel {
-            top: 10px;
-            left: 316px;
-            width: 28px;
-            height: 24px;
+        p {
+            margin-top: 100px;
         }
     </style>
 </head>
@@ -39,5 +28,25 @@
     <input type="search" results="5" value="foo" autofocus></input>
     <div id="cover-results"></div>
     <div id="cover-cancel"></div>
+    <p>This test verifies that the search and results buttons in a search field do not each draw their own focus rings. This test must be run under WebKitTestRunner or DumpRenderTree.</p>
+    <script>
+    if (window.internals) {
+        const search = document.querySelector("input[type=search]");
+
+        const coverCancel = document.querySelector("#cover-cancel");
+        const cancelButtonBounds = internals.shadowRoot(search).querySelector("div[pseudo='-webkit-search-cancel-button']").getBoundingClientRect();
+        coverCancel.style.left = `${Math.round(cancelButtonBounds.left) - 1}px`;
+        coverCancel.style.top = `${Math.round(cancelButtonBounds.top) - 1}px`;
+        coverCancel.style.width = `${Math.round(cancelButtonBounds.width) + 2}px`;
+        coverCancel.style.height = `${Math.round(cancelButtonBounds.height) + 2}px`;
+
+        const coverResults = document.querySelector("#cover-results");
+        const resultsButtonBounds = internals.shadowRoot(search).querySelector("div[pseudo='-webkit-search-results-button']").getBoundingClientRect();
+        coverResults.style.left = `${Math.round(resultsButtonBounds.left) - 1}px`;
+        coverResults.style.top = `${Math.round(resultsButtonBounds.top) - 1}px`;
+        coverResults.style.width = `${Math.round(resultsButtonBounds.width) + 2}px`;
+        coverResults.style.height = `${Math.round(resultsButtonBounds.height) + 2}px`;
+    }
+    </script>
 </body>
 </html>
