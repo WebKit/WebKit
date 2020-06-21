@@ -1,3 +1,14 @@
+2020-06-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [AppSSO] Should do null check on m_page in dismissViewController()
+        https://bugs.webkit.org/show_bug.cgi?id=213415
+        <rdar://problem/59672418>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::dismissViewController):
+
 2020-06-20  Jer Noble  <jer.noble@apple.com>
 
         RecoveryOS: PAL::getAVPlayerLayerClass() will crash when AVFoundation is missing

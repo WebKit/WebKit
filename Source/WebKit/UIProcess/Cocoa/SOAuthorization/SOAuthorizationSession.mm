@@ -297,7 +297,8 @@ void SOAuthorizationSession::dismissViewController()
 
     // This is a workaround for an AppKit issue: <rdar://problem/59125329>.
     // [m_sheetWindow sheetParent] is null if the parent is minimized or the host app is hidden.
-    if (auto *presentingWindow = m_page->platformWindow()) {
+    if (m_page && m_page->platformWindow()) {
+        auto *presentingWindow = m_page->platformWindow();
         if (presentingWindow.miniaturized) {
             if (m_presentingWindowDidDeminiaturizeObserver)
                 return;
