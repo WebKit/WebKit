@@ -104,6 +104,7 @@ def ensure_extracted_build(args):
                     data = zip_fd.read(8192)
                     sys.stdout.write('\b')
 
+                zip_file.flush()
                 path = get_build_path(args.platform, build_type, build_number)
                 print(f"Extracting build to {path}")
                 os.system(f"unzip -qq -o {zip_file.name} -d {path}")

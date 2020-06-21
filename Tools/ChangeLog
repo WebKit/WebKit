@@ -1,3 +1,13 @@
+2020-06-21  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] Nightly runner fails to extract zip files
+        https://bugs.webkit.org/show_bug.cgi?id=213445
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit-flatpak-run-nightly: Ensure the buffered zip data is written to disk before
+        extraction.
+
 2020-06-21  Jer Noble  <jer.noble@apple.com>
 
         WebKit fails to leave audio routing arbitration during navigation, closing.
