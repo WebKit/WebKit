@@ -83,22 +83,14 @@ AudioSession::CategoryType AudioSession::category() const
 void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
 {
 #if ENABLE(ROUTING_ARBITRATION)
-    if (category == AmbientSound || category == SoloAmbientSound || category == AudioProcessing) {
-        m_private->category = category;
-        return;
-    }
-
     if (category == m_private->category)
         return;
+    m_private->category = category;
 
     if (m_private->setupArbitrationOngoing) {
         RELEASE_LOG_ERROR(Media, "AudioSession::setCategory() - a beginArbitrationWithCategory is still ongoing");
         return;
     }
-
-    m_private->category = category;
-    if (m_private->category == None)
-        return;
 
     if (!m_routingArbitrationClient)
         return;
@@ -107,6 +99,9 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
         m_private->inRoutingArbitration = false;
         m_routingArbitrationClient->leaveRoutingAbritration();
     }
+
+    if (category == AmbientSound || category == SoloAmbientSound || category == AudioProcessing || category == None)
+        return;
 
     using RoutingArbitrationError = AudioSessionRoutingArbitrationClient::RoutingArbitrationError;
     using DefaultRouteChanged = AudioSessionRoutingArbitrationClient::DefaultRouteChanged;

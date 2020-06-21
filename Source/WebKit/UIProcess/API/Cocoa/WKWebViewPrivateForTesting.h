@@ -26,6 +26,12 @@
 #import "WKWebViewPrivateForTestingIOS.h"
 #import "WKWebViewPrivateForTestingMac.h"
 
+typedef enum {
+    WKWebViewAudioRoutingArbitrationStatusNone,
+    WKWebViewAudioRoutingArbitrationStatusPending,
+    WKWebViewAudioRoutingArbitrationStatusActive,
+} WKWebViewAudioRoutingArbitrationStatus;
+
 @interface WKWebView (WKTesting)
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin;
@@ -66,4 +72,5 @@
 + (void)_clearApplicationBundleIdentifierTestingOverride;
 
 - (BOOL)_hasSleepDisabler;
+- (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus;
 @end

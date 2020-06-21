@@ -160,18 +160,24 @@ AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 void AudioSessionRoutingArbitratorProxy::processDidTerminate()
 {
     if (SharedArbitrator::sharedInstance().isInRoutingArbitrationForArbitrator(*this))
-        SharedArbitrator::sharedInstance().endRoutingArbitrationForArbitrator(*this);
+        endRoutingArbitration();
 }
 
 void AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType category, ArbitrationCallback&& callback)
 {
     m_category = category;
-    SharedArbitrator::sharedInstance().beginRoutingArbitrationForArbitrator(*this, WTFMove(callback));
+    m_arbitrationStatus = ArbitrationStatus::Pending;
+    SharedArbitrator::sharedInstance().beginRoutingArbitrationForArbitrator(*this, [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+        if (weakThis)
+            weakThis->m_arbitrationStatus = error == RoutingArbitrationError::None ? ArbitrationStatus::Active : ArbitrationStatus::None;
+        callback(error, routeChanged);
+    });
 }
 
 void AudioSessionRoutingArbitratorProxy::endRoutingArbitration()
 {
     SharedArbitrator::sharedInstance().endRoutingArbitrationForArbitrator(*this);
+    m_arbitrationStatus = ArbitrationStatus::None;
 }
 
 }

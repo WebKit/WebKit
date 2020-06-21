@@ -397,6 +397,10 @@ public:
     void markHasManagedSessionSandboxAccess() { m_hasManagedSessionSandboxAccess = true; }
 #endif
 
+#if ENABLE(ROUTING_ARBITRATION)
+    AudioSessionRoutingArbitratorProxy& audioSessionRoutingArbitrator() { return m_routingArbitrator.get(); }
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 

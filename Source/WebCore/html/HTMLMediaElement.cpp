@@ -7369,6 +7369,9 @@ bool HTMLMediaElement::canProduceAudio() const
         return true;
 #endif
 
+    if (isSuspended())
+        return false;
+
     if (muted())
         return false;
 

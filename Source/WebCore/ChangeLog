@@ -1,3 +1,21 @@
+2020-06-21  Jer Noble  <jer.noble@apple.com>
+
+        WebKit fails to leave audio routing arbitration during navigation, closing.
+        https://bugs.webkit.org/show_bug.cgi?id=213426
+        <rdar://problem/64395051>
+
+        Reviewed by Eric Carlson.
+
+        When setting the AudioSession category, make sure to leave routing arbitration before bailing out early. Also,
+        HTMLMediaElement::canProduceAudio() should return `false` when the element's document is suspended or stopped.
+        Otherwise, the AudioSession will continue in the `MediaPlayback` category indefinitely, and routing arbitration
+        will remain active.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canProduceAudio const):
+        * platform/audio/mac/AudioSessionMac.mm:
+        (WebCore::AudioSession::setCategory):
+
 2020-06-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for percentage min/max-width

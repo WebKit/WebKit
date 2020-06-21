@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKWebViewPrivateForTesting.h"
 
+#import "AudioSessionRoutingArbitratorProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
 #import "WKWebViewIOS.h"
@@ -234,6 +235,20 @@
 - (BOOL)_hasSleepDisabler
 {
     return _page && _page->process().hasSleepDisabler();
+}
+
+- (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus
+{
+#if ENABLE(ROUTING_ARBITRATION)
+    switch (_page->process().audioSessionRoutingArbitrator().arbitrationStatus()) {
+    default: ASSERT_NOT_REACHED();
+    case WebKit::AudioSessionRoutingArbitratorProxy::ArbitrationStatus::None: return WKWebViewAudioRoutingArbitrationStatusNone;
+    case WebKit::AudioSessionRoutingArbitratorProxy::ArbitrationStatus::Pending: return WKWebViewAudioRoutingArbitrationStatusPending;
+    case WebKit::AudioSessionRoutingArbitratorProxy::ArbitrationStatus::Active: return WKWebViewAudioRoutingArbitrationStatusActive;
+    }
+#else
+    return WKWebViewAudioRoutingArbitrationStatusNone;
+#endif
 }
 
 @end

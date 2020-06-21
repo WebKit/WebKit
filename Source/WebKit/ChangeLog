@@ -1,3 +1,31 @@
+2020-06-21  Jer Noble  <jer.noble@apple.com>
+
+        WebKit fails to leave audio routing arbitration during navigation, closing.
+        https://bugs.webkit.org/show_bug.cgi?id=213426
+        <rdar://problem/64395051>
+
+        Reviewed by Eric Carlson.
+
+        Add testing SPIs to verify whether a WebPage successfully entered or left audio routing
+        arbitration. Notify the Arbitration proxy when the page is shut down, which ensures arbitration
+        will end if the client closes the WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _audioRoutingArbitrationStatus]):
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.h:
+        (WebKit::AudioSessionRoutingArbitratorProxy::arbitrationStatus const):
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::AudioSessionRoutingArbitratorProxy::processDidTerminate):
+        (WebKit::AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory):
+        (WebKit::AudioSessionRoutingArbitratorProxy::endRoutingArbitration):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::audioSessionRoutingArbitrator):
+
 2020-06-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Specify underlying storage type for InputMethodState::Hint

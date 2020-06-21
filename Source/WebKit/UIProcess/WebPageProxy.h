@@ -2837,10 +2837,6 @@ private:
     bool m_userScriptsNotified { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
-
-#if ENABLE(ROUTING_ARBITRATION)
-    std::unique_ptr<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
-#endif
 };
 
 } // namespace WebKit

@@ -52,6 +52,14 @@ public:
     using DefaultRouteChanged = WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged;
     using ArbitrationCallback = CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>;
 
+    enum class ArbitrationStatus : uint8_t {
+        None,
+        Pending,
+        Active,
+    };
+
+    ArbitrationStatus arbitrationStatus() const { return m_arbitrationStatus; }
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -62,6 +70,7 @@ private:
 
     WebProcessProxy& m_process;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::None };
+    ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
 };
 
 }
