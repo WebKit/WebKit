@@ -61,7 +61,7 @@ void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize con
     m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
     [m_videoInlineLayer setFrame:m_videoInlineFrame];
     [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];
-    if ([videoLayer isKindOfClass:PAL::getAVPlayerLayerClass()])
+    if (PAL::isAVFoundationFrameworkAvailable() && [videoLayer isKindOfClass:PAL::getAVPlayerLayerClass()])
         [m_videoInlineLayer setPlayerLayer:(AVPlayerLayer *)videoLayer];
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

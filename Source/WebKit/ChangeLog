@@ -1,5 +1,18 @@
 2020-06-20  Jer Noble  <jer.noble@apple.com>
 
+        RecoveryOS: PAL::getAVPlayerLayerClass() will crash when AVFoundation is missing
+        https://bugs.webkit.org/show_bug.cgi?id=213437
+        <rdar://problem/64563064>
+
+        Reviewed by Eric Carlson.
+
+        Check PAL::isAVFoundationAvailable() before calling PAL::getAVPlayerLayerClass();
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::clone const):
+
+2020-06-20  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION(r259219): Sleep assertion remains active if WKWebView is closed or WebContent process crashes
         https://bugs.webkit.org/show_bug.cgi?id=213434
         <rdar://problem/57541662>

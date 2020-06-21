@@ -1,3 +1,21 @@
+2020-06-20  Jer Noble  <jer.noble@apple.com>
+
+        RecoveryOS: PAL::getAVPlayerLayerClass() will crash when AVFoundation is missing
+        https://bugs.webkit.org/show_bug.cgi?id=213437
+        <rdar://problem/64563064>
+
+        Reviewed by Eric Carlson.
+
+        Check PAL::isAVFoundationAvailable() before calling PAL::getAVPlayerLayerClass();
+
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        (WebCore::VideoLayerManagerObjC::setVideoLayer):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        (WebCore::PlatformCALayerCocoa::clone const):
+        (WebCore::PlatformCALayerCocoa::avPlayerLayer const):
+
 2020-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under ScrollController::startSnapRubberbandTimer() firing
