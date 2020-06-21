@@ -1,3 +1,17 @@
+2020-06-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add basic support for width: fit-content
+        https://bugs.webkit.org/show_bug.cgi?id=213444
+
+        Reviewed by Antti Koivisto.
+
+        At this point this is just a shrink-to-fit sizing (missing the case when the available horizontal space is not specified).
+
+        Test: fast/layoutformattingcontext/fit-content-width-simple.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedWidthValue):
+
 2020-06-21  Jer Noble  <jer.noble@apple.com>
 
         WebKit fails to leave audio routing arbitration during navigation, closing.

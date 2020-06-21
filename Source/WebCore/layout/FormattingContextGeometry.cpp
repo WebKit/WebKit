@@ -129,7 +129,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedWidthValue(const Box& 
     if (auto computedValue = this->computedValue(width, containingBlockWidth))
         return computedValue;
 
-    if (width.isMinContent() || width.isMaxContent()) {
+    if (width.isMinContent() || width.isMaxContent() || width.isFitContent()) {
         if (!is<ContainerBox>(layoutBox))
             return { };
         auto& containerBox = downcast<ContainerBox>(layoutBox);
@@ -143,7 +143,15 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedWidthValue(const Box& 
                 return *intrinsicWidthConstraints;
             return LayoutContext::createFormattingContext(containerBox, layoutState())->computedIntrinsicWidthConstraints();
         }();
-        return width.isMinContent() ? intrinsicWidthConstraints.minimum : intrinsicWidthConstraints.maximum;
+        if (width.isMinContent())
+            return intrinsicWidthConstraints.minimum;
+        if (width.isMaxContent())
+            return intrinsicWidthConstraints.maximum;
+        ASSERT(width.isFitContent());
+        // If the available space in a given axis is definite, equal to min(max-content size,
+        // max(min-content size, stretch-fit size)). Otherwise, equal to the max-content size in that axis.
+        // FIXME: We don't yet have indefinite available size.
+        return std::min(intrinsicWidthConstraints.maximum, std::max(intrinsicWidthConstraints.minimum, containingBlockWidth));
     }
     return { };
 }

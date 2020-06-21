@@ -1,5 +1,15 @@
 2020-06-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add basic support for width: fit-content
+        https://bugs.webkit.org/show_bug.cgi?id=213444
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/fit-content-width-simple-expected.html: Added.
+        * fast/layoutformattingcontext/fit-content-width-simple.html: Added.
+
+2020-06-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add support for percentage min/max-width
         https://bugs.webkit.org/show_bug.cgi?id=213436
 
