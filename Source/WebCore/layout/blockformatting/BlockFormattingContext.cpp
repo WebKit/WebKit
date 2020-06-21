@@ -39,6 +39,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "Logging.h"
+#include "TableWrapperBlockFormattingContext.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -123,7 +124,10 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                         precomputeVerticalPositionForBoxAndAncestors(containerBox, { constraints, containingBlockConstraints });
                     }
                     // Layout the inflow descendants of this formatting context root.
-                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(containerBox));
+                    auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
+                    if (containerBox.isTableWrapperBox())
+                        downcast<TableWrapperBlockFormattingContext>(*formattingContext).setHorizontalConstraintsIgnoringFloats(containingBlockConstraints.horizontal);
+                    formattingContext->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(containerBox));
                 }
                 break;
             }

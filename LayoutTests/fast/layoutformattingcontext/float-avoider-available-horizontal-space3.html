@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container {
+  width: 100px;
+  height: 20px;
+}
+
+.floatBox {
+  float: left;
+  width: 50px;
+  height: 20px;
+  background-color: green;
+}
+
+.table {
+  display: table;
+  height: 20px;
+  background-color: blue;
+}
+</style>
+<div class=container>
+  <div class=floatBox></div>
+  <div class=table style="width: 50%"></div>
+</div>
+<div class=container>
+  <div class=floatBox></div>
+  <div class=table style="min-width: 50%; width: 10%"></div>
+</div>
+<div class=container>
+  <div class=floatBox></div>
+  <div class=table style="max-width: 20%; width: 50%"></div>
+</div>

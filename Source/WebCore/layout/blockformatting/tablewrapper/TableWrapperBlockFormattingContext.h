@@ -42,6 +42,8 @@ public:
 
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) final;
 
+    void setHorizontalConstraintsIgnoringFloats(const HorizontalConstraints& horizontalConstraints) { m_horizontalConstraintsIgnoringFloats = horizontalConstraints; }
+
 private:
     class Quirks : public BlockFormattingContext::Quirks {
     public:
@@ -56,6 +58,9 @@ private:
     void computeBorderAndPaddingForTableBox(const ContainerBox&, const HorizontalConstraints&);
     void computeWidthAndMarginForTableBox(const ContainerBox&, const HorizontalConstraints&);
     void computeHeightAndMarginForTableBox(const ContainerBox&, const ConstraintsForInFlowContent&);
+
+private:
+    HorizontalConstraints m_horizontalConstraintsIgnoringFloats;
 };
 
 inline TableWrapperBlockFormattingContext::Quirks::Quirks(const TableWrapperBlockFormattingContext& formattingContext)
@@ -65,5 +70,7 @@ inline TableWrapperBlockFormattingContext::Quirks::Quirks(const TableWrapperBloc
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(TableWrapperBlockFormattingContext, isTableWrapperBlockFormattingContext())
 
 #endif
