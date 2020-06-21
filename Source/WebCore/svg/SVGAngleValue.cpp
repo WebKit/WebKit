@@ -80,7 +80,7 @@ String SVGAngleValue::valueAsString() const
     return String();
 }
 
-static inline SVGAngleValue::Type parseAngleType(const UChar* ptr, const UChar* end)
+template<typename CharacterType> static inline SVGAngleValue::Type parseAngleType(const CharacterType* ptr, const CharacterType* end)
 {
     switch (end - ptr) {
     case 0:
@@ -106,21 +106,27 @@ ExceptionOr<void> SVGAngleValue::setValueAsString(const String& value)
         return { };
     }
 
-    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
-    const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + value.length();
+    auto helper = [&](auto* ptr, auto* end) -> ExceptionOr<void> {
+        auto valueInSpecifiedUnits = parseNumber(ptr, end, SuffixSkippingPolicy::DontSkip);
+        if (!valueInSpecifiedUnits)
+            return Exception { SyntaxError };
 
-    float valueInSpecifiedUnits = 0;
-    if (!parseNumber(ptr, end, valueInSpecifiedUnits, false))
-        return Exception { SyntaxError };
+        auto unitType = parseAngleType(ptr, end);
+        if (unitType == SVGAngleValue::SVG_ANGLETYPE_UNKNOWN)
+            return Exception { SyntaxError };
 
-    auto unitType = parseAngleType(ptr, end);
-    if (unitType == SVG_ANGLETYPE_UNKNOWN)
-        return Exception { SyntaxError };
+        m_unitType = unitType;
+        m_valueInSpecifiedUnits = *valueInSpecifiedUnits;
+        return { };
+    };
 
-    m_unitType = unitType;
-    m_valueInSpecifiedUnits = valueInSpecifiedUnits;
-    return { };
+    if (value.is8Bit()) {
+        auto* ptr = value.characters8();
+        return helper(ptr, ptr + value.length());
+    }
+
+    auto* ptr = value.characters16();
+    return helper(ptr, ptr + value.length());
 }
 
 ExceptionOr<void> SVGAngleValue::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

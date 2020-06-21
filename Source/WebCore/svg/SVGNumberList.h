@@ -54,7 +54,6 @@ public:
     {
         clearItems();
 
-        float number = 0;
         auto upconvertedCharacters = StringView(value).upconvertedCharacters();
         const UChar* ptr = upconvertedCharacters;
         const UChar* end = ptr + value.length();
@@ -62,9 +61,10 @@ public:
         // The spec (section 4.1) strangely doesn't allow leading whitespace.
         // We might choose to violate that intentionally.
         while (ptr < end) {
-            if (!parseNumber(ptr, end, number))
+            auto number = parseNumber(ptr, end);
+            if (!number)
                 break;
-            append(SVGNumber::create(number));
+            append(SVGNumber::create(*number));
         }
 
         return ptr == end;

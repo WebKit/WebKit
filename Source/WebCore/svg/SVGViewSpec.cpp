@@ -89,10 +89,10 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
                 if (currViewSpec >= end || *currViewSpec != '(')
                     return false;
                 currViewSpec++;
-                FloatRect viewBox;
-                if (!SVGFitToViewBox::parseViewBox(currViewSpec, end, viewBox, false))
+                auto viewBox = SVGFitToViewBox::parseViewBox(currViewSpec, end, false);
+                if (!viewBox)
                     return false;
-                setViewBox(viewBox);
+                setViewBox(WTFMove(*viewBox));
                 if (currViewSpec >= end || *currViewSpec != ')')
                     return false;
                 currViewSpec++;

@@ -1,5 +1,249 @@
 2020-06-21  Sam Weinig  <weinig@apple.com>
 
+        Convert much of the SVG string parsing code to use Optional based return values rather than out-parameters
+        https://bugs.webkit.org/show_bug.cgi?id=213416
+
+        Reviewed by Darin Adler.
+
+        Update SVG parsers to use Optional style return programming rather than out parameters.
+        To make things even nicer, SVGPathSource based parsers now have a type per-parse function,
+        which makes working with them much easier. In the future, we should consider exanding these
+        new types to be used by SVGPathConsumer family of classes as well.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add SVGPathSegValue.h, which was missing from the Xcode project.
+
+        * svg/SVGAngleValue.cpp:
+        (WebCore::parseAngleType): 
+        (WebCore::SVGAngleValue::setValueAsString):
+        Adopt updated parseNumber() function, and do a drive by removal of an easy to remove
+        upconvertedCharacters.
+ 
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::calculateToAtEndOfDurationValue):
+        (WebCore::SVGAnimateMotionElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateMotionElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateMotionElement::calculateDistance):
+        Now uses new parsePoint() function. Using Optional.valueOr() where
+        the old code would have had parsePoint() doing the clearing.
+    
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines):
+        Now returns an Optional<Vector<UnitBezier>>.
+        (WebCore::SVGAnimationElement::parseAttribute):
+        Now uses new parseKeySplines, and does an explicit clear on parse failure (old code 
+        did it implicitly in the parse function).
+
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::parseAttribute):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::parseAttribute):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::parseAttribute):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseAttribute):
+        Adopt Optional based parseNumberOptionalNumber.
+
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseAttribute):
+        Simplify by using the SVGPreserveAspectRatioValue constructor
+        which calls parse. No need for three lines.
+
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseAttribute):
+        Adopt new Optional based parseViewBox.
+        Simplify by using the SVGPreserveAspectRatioValue constructor
+        which calls parse. No need for three lines.
+
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        Convert to be Optional based, and adopt new parseNumber functions.
+
+        * svg/SVGFitToViewBox.h:
+        Updated signatures for new Optional based functions.
+
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::parseFloat):
+        Adopt Optional based parseNumber.
+        
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair const):
+        * svg/SVGHKernElement.h:
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::buildVerticalKerningPair const):
+        * svg/SVGVKernElement.h:
+        Convert to be Optional based. Update a few callers to use makeString.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::addKerningPair const):
+        (WebCore::SVGToOTFFontConverter::appendKERNSubtable):
+        Adopt new Optional based kerning pair builders. Add some moves
+        to avoid some copies.
+
+        * svg/SVGLengthValue.cpp:
+        (WebCore::SVGLengthValue::setValueAsString):
+        Adopt Optional based parseNumber.
+
+        * svg/SVGNumberList.h:
+        (WebCore::SVGNumberList::parse):
+        Adopt Optional based parseNumber.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber):
+        (WebCore::parseNumber):
+        (WebCore::genericParseArcFlag):
+        (WebCore::parseArcFlag):
+        (WebCore::parseNumberOptionalNumber):
+        (WebCore::parsePoint):
+        (WebCore::parseRect):
+        (WebCore::parseGlyphName):
+        (WebCore::parseUnicodeRange):
+        (WebCore::parseKerningUnicodeString):
+        (WebCore::genericParseFloatPoint):
+        (WebCore::parseFloatPoint):
+        (WebCore::parseSVGNumber): Deleted.
+        (WebCore::parseNumberFromString): Deleted.
+        (WebCore::parseDelimitedString): Deleted.
+        (WebCore::parseFloatPoint2): Deleted.
+        (WebCore::parseFloatPoint3): Deleted.
+        * svg/SVGParserUtilities.h:
+        (WebCore::isSVGSpace):
+        (WebCore::skipOptionalSVGSpaces):
+        (WebCore::skipOptionalSVGSpacesOrDelimiter):
+        - Converts parse* functions to return Optional values rather than using outparameters.
+        - Removes unused parseSVGNumber and parseDelimitedString.
+        - Removes parseFloatPoint2 and parseFloatPoint3. They weren't useful enough to keep around.
+        - Renames parseNumberFromString to parseNumber. The argument is a String, it's clear enough.
+        - Replace boolean skip parameters with new enum SuffixSkippingPolicy.
+        - Make parseFloatPoint have two overloads rather than being templatized to be consistent.
+
+
+        * svg/SVGPathBlender.cpp:
+        (WebCore::pullFromSources):
+        (WebCore::SVGPathBlender::blendMoveToSegment):
+        (WebCore::SVGPathBlender::blendLineToSegment):
+        (WebCore::SVGPathBlender::blendLineToHorizontalSegment):
+        (WebCore::SVGPathBlender::blendLineToVerticalSegment):
+        (WebCore::SVGPathBlender::blendCurveToCubicSegment):
+        (WebCore::SVGPathBlender::blendCurveToCubicSmoothSegment):
+        (WebCore::SVGPathBlender::blendCurveToQuadraticSegment):
+        (WebCore::SVGPathBlender::blendCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathBlender::blendArcToSegment):
+        (WebCore::SVGPathBlender::canBlendPaths):
+        (WebCore::SVGPathBlender::blendAnimatedPath):
+        Update to adopt new SVGPathSource interface. Added pullFromSources helper
+        which substantially simplifies pulling from both the from and to source at
+        the same time and is now possible due to all the SVGPathSource functions
+        returning the segment types rather than taking them as out parameters.
+
+        * svg/SVGPathByteStreamSource.cpp:
+        (WebCore::SVGPathByteStreamSource::nextCommand):
+        (WebCore::SVGPathByteStreamSource::parseSVGSegmentType):
+        (WebCore::SVGPathByteStreamSource::parseMoveToSegment):
+        (WebCore::SVGPathByteStreamSource::parseLineToSegment):
+        (WebCore::SVGPathByteStreamSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathByteStreamSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathByteStreamSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathByteStreamSource::parseArcToSegment):
+        * svg/SVGPathByteStreamSource.h:
+        Adopt new SVGPathSource interface.
+
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::parseMoveToSegment):
+        (WebCore::SVGPathParser::parseLineToSegment):
+        (WebCore::SVGPathParser::parseLineToHorizontalSegment):
+        (WebCore::SVGPathParser::parseLineToVerticalSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSegment):
+        (WebCore::SVGPathParser::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathParser::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathParser::parseArcToSegment):
+        (WebCore::SVGPathParser::parsePathData):
+        Adapt to new SVGPathSource interface. Code reads a bit nicer now
+        that we don't have a ton of local variables in each method. Could
+        be made nicer in the future by adopting Segment types in the path
+        consumer code.
+
+        * svg/SVGPathSegListSource.cpp:
+        (WebCore::SVGPathSegListSource::nextCommand):
+        (WebCore::SVGPathSegListSource::parseSVGSegmentType):
+        (WebCore::SVGPathSegListSource::parseMoveToSegment):
+        (WebCore::SVGPathSegListSource::parseLineToSegment):
+        (WebCore::SVGPathSegListSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathSegListSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathSegListSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathSegListSource::parseArcToSegment):
+        * svg/SVGPathSegListSource.h:
+        Adopt new SVGPathSource interface.
+
+        * svg/SVGPathSource.h:
+        Update interface to return Optionals, with a specific type for
+        segment kind that be parsed.
+
+        * svg/SVGPathStringSource.cpp:
+        (WebCore::nextCommandHelper):
+        (WebCore::SVGPathStringSource::nextCommand):
+        (WebCore::parseSVGSegmentTypeHelper):
+        (WebCore::SVGPathStringSource::parseSVGSegmentType):
+        (WebCore::SVGPathStringSource::parseMoveToSegment):
+        (WebCore::SVGPathStringSource::parseLineToSegment):
+        (WebCore::SVGPathStringSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathStringSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathStringSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathStringSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathStringSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathStringSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathStringSource::parseArcToSegment):
+        (WebCore::parseArcToSegmentHelper): Deleted.
+        * svg/SVGPathStringSource.h:
+        Adopt new SVGPathSource interface. Replace out of line helpers (or use of things
+        like parseFloatPoint2) with generic lambda helpers, helping to keep the code more
+        localized.
+    
+        * svg/SVGPointList.h:
+        (WebCore::SVGPointList::parse):
+        Adopt Optional based parseNumber.
+
+        * svg/SVGTransformList.h:
+        * svg/SVGTransformable.cpp:
+        (WebCore::parseTransformParamList):
+        (WebCore::SVGTransformable::parseTransformValue):
+        (WebCore::SVGTransformable::parseAndSkipType):
+        (WebCore::SVGTransformable::parseTransformType):
+        * svg/SVGTransformable.h:
+        Convert parseTransformValue/parseAndSkipType to be Optional based.
+
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec):
+        Adopt Optional based parseViewBox.
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        Adopt Optional based parseNumber.
+
+        * svg/properties/SVGPropertyTraits.h:
+        (WebCore::SVGPropertyTraits<float>::fromString):
+        (WebCore::SVGPropertyTraits<float>::parse):
+        (WebCore::SVGPropertyTraits<FloatPoint>::fromString):
+        (WebCore::SVGPropertyTraits<FloatPoint>::parse):
+        (WebCore::SVGPropertyTraits<FloatRect>::fromString):
+        (WebCore::SVGPropertyTraits<FloatRect>::parse):
+        Adopt Optional based parsers.
+
+2020-06-21  Sam Weinig  <weinig@apple.com>
+
         Convert DateComponents parsing code to use Optional based return values rather than out-parameters
         https://bugs.webkit.org/show_bug.cgi?id=213440
 

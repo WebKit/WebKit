@@ -67,10 +67,10 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     }
 
     if (name == SVGNames::orderAttr) {
-        float x, y;
-        if (parseNumberOptionalNumber(value, x, y) && x >= 1 && y >= 1) {
-            m_orderX->setBaseValInternal(x);
-            m_orderY->setBaseValInternal(y);
+        auto result = parseNumberOptionalNumber(value);
+        if (result && result->first >= 1 && result->second >= 1) {
+            m_orderX->setBaseValInternal(result->first);
+            m_orderY->setBaseValInternal(result->second);
         } else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing order=\"" + value + "\". Filtered element will not be displayed.");
         return;
@@ -115,10 +115,10 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     }
 
     if (name == SVGNames::kernelUnitLengthAttr) {
-        float x, y;
-        if (parseNumberOptionalNumber(value, x, y) && x > 0 && y > 0) {
-            m_kernelUnitLengthX->setBaseValInternal(x);
-            m_kernelUnitLengthY->setBaseValInternal(y);
+        auto result = parseNumberOptionalNumber(value);
+        if (result && result->first > 0 && result->second > 0) {
+            m_kernelUnitLengthX->setBaseValInternal(result->first);
+            m_kernelUnitLengthY->setBaseValInternal(result->second);
         } else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing kernelUnitLength=\"" + value + "\". Filtered element will not be displayed.");
         return;

@@ -46,7 +46,6 @@ using namespace SVGNames;
 
 inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, Document& document)
     : SVGAnimationElement(tagName, document)
-    , m_hasToPointAtEndOfDuration(false)
 {
     setCalcMode(CalcMode::Paced);
     ASSERT(hasTagName(animateMotionTag));
@@ -161,27 +160,25 @@ void SVGAnimateMotionElement::stopAnimation(SVGElement* targetElement)
 
 bool SVGAnimateMotionElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
 {
-    parsePoint(toAtEndOfDurationString, m_toPointAtEndOfDuration);
-    m_hasToPointAtEndOfDuration = true;
+    m_toPointAtEndOfDuration = parsePoint(toAtEndOfDurationString).valueOr(FloatPoint { });
     return true;
 }
 
 bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
-    m_hasToPointAtEndOfDuration = false;
-    parsePoint(fromString, m_fromPoint);
-    parsePoint(toString, m_toPoint);
+    m_toPointAtEndOfDuration = WTF::nullopt;
+    m_fromPoint = parsePoint(fromString).valueOr(FloatPoint { });
+    m_toPoint = parsePoint(toString).valueOr(FloatPoint { });
     return true;
 }
     
 bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString, const String& byString)
 {
-    m_hasToPointAtEndOfDuration = false;
+    m_toPointAtEndOfDuration = WTF::nullopt;
     if (animationMode() == AnimationMode::By && !isAdditive())
         return false;
-    parsePoint(fromString, m_fromPoint);
-    FloatPoint byPoint;
-    parsePoint(byString, byPoint);
+    m_fromPoint = parsePoint(fromString).valueOr(FloatPoint { });
+    auto byPoint = parsePoint(byString).valueOr(FloatPoint { });
     m_toPoint = FloatPoint(m_fromPoint.x() + byPoint.x(), m_fromPoint.y() + byPoint.y());
     return true;
 }
@@ -222,8 +219,8 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
 
     if (animationMode() != AnimationMode::Path) {
         FloatPoint toPointAtEndOfDuration = m_toPoint;
-        if (isAccumulated() && repeatCount && m_hasToPointAtEndOfDuration)
-            toPointAtEndOfDuration = m_toPointAtEndOfDuration;
+        if (isAccumulated() && repeatCount && m_toPointAtEndOfDuration)
+            toPointAtEndOfDuration = *m_toPointAtEndOfDuration;
 
         float animatedX = 0;
         animateAdditiveNumber(percentage, repeatCount, m_fromPoint.x(), m_toPoint.x(), toPointAtEndOfDuration.x(), animatedX);
@@ -275,13 +272,13 @@ void SVGAnimateMotionElement::applyResultsToTarget()
 
 Optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
 {
-    FloatPoint from;
-    FloatPoint to;
-    if (!parsePoint(fromString, from))
+    auto from = parsePoint(fromString);
+    if (!from)
         return { };
-    if (!parsePoint(toString, to))
+    auto to = parsePoint(toString);
+    if (!to)
         return { };
-    FloatSize diff = to - from;
+    auto diff = *to - *from;
     return std::hypot(diff.width(), diff.height());
 }
 

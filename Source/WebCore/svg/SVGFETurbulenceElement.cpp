@@ -67,10 +67,9 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::baseFrequencyAttr) {
-        float x, y;
-        if (parseNumberOptionalNumber(value, x, y)) {
-            m_baseFrequencyX->setBaseValInternal(x);
-            m_baseFrequencyY->setBaseValInternal(y);
+        if (auto result = parseNumberOptionalNumber(value)) {
+            m_baseFrequencyX->setBaseValInternal(result->first);
+            m_baseFrequencyY->setBaseValInternal(result->second);
         }
         return;
     }

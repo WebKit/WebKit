@@ -63,12 +63,13 @@ public:
         bool delimParsed = false;
         while (cur < end) {
             delimParsed = false;
-            float xPos = 0.0f;
-            if (!parseNumber(cur, end, xPos))
+
+            auto xPos = parseNumber(cur, end);
+            if (!xPos)
                 return false;
 
-            float yPos = 0.0f;
-            if (!parseNumber(cur, end, yPos, false))
+            auto yPos = parseNumber(cur, end, SuffixSkippingPolicy::DontSkip);
+            if (!yPos)
                 return false;
 
             skipOptionalSVGSpaces(cur, end);
@@ -79,7 +80,7 @@ public:
             }
             skipOptionalSVGSpaces(cur, end);
 
-            append(SVGPoint::create({ xPos, yPos }));
+            append(SVGPoint::create({ *xPos, *yPos }));
         }
 
         return !delimParsed;

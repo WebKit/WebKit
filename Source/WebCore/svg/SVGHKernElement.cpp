@@ -44,24 +44,47 @@ Ref<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGHKernElement(tagName, document));
 }
 
-bool SVGHKernElement::buildHorizontalKerningPair(SVGKerningPair& kerningPair) const
+Optional<SVGKerningPair> SVGHKernElement::buildHorizontalKerningPair() const
 {
+    // FIXME: Can this be shared with SVGVKernElement::buildVerticalKerningPair?
+
     auto& u1 = attributeWithoutSynchronization(SVGNames::u1Attr);
     auto& g1 = attributeWithoutSynchronization(SVGNames::g1Attr);
+    if (u1.isEmpty() && g1.isEmpty())
+        return WTF::nullopt;
+
     auto& u2 = attributeWithoutSynchronization(SVGNames::u2Attr);
     auto& g2 = attributeWithoutSynchronization(SVGNames::g2Attr);
-    if ((u1.isEmpty() && g1.isEmpty()) || (u2.isEmpty() && g2.isEmpty()))
-        return false;
+    if (u2.isEmpty() && g2.isEmpty())
+        return WTF::nullopt;
 
-    if (parseGlyphName(g1, kerningPair.glyphName1)
-        && parseGlyphName(g2, kerningPair.glyphName2)
-        && parseKerningUnicodeString(u1, kerningPair.unicodeRange1, kerningPair.unicodeName1)
-        && parseKerningUnicodeString(u2, kerningPair.unicodeRange2, kerningPair.unicodeName2)) {
-        bool ok = false;
-        kerningPair.kerning = attributeWithoutSynchronization(SVGNames::kAttr).string().toFloat(&ok);
-        return ok;
-    }
-    return false;
+    auto glyphName1 = parseGlyphName(g1);
+    if (!glyphName1)
+        return WTF::nullopt;
+    auto glyphName2 = parseGlyphName(g2);
+    if (!glyphName2)
+        return WTF::nullopt;
+    auto unicodeString1 = parseKerningUnicodeString(u1);
+    if (!unicodeString1)
+        return WTF::nullopt;
+    auto unicodeString2 = parseKerningUnicodeString(u2);
+    if (!unicodeString2)
+        return WTF::nullopt;
+
+    bool ok = false;
+    auto kerning = attributeWithoutSynchronization(SVGNames::kAttr).string().toFloat(&ok);
+    if (!ok)
+        return WTF::nullopt;
+
+    return SVGKerningPair {
+        WTFMove(unicodeString1->first),
+        WTFMove(unicodeString1->second),
+        WTFMove(*glyphName1),
+        WTFMove(unicodeString2->first),
+        WTFMove(unicodeString2->second),
+        WTFMove(*glyphName2),
+        kerning
+    };
 }
 
 }

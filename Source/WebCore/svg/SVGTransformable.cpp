@@ -43,8 +43,12 @@ static int parseTransformParamList(const UChar*& ptr, const UChar* end, float* v
     skipOptionalSVGSpaces(ptr, end);
 
     while (requiredParams < required) {
-        if (ptr >= end || !parseNumber(ptr, end, values[requiredParams], false))
+        if (ptr >= end)
             return -1;
+        auto parsedNumber = parseNumber(ptr, end, SuffixSkippingPolicy::DontSkip);
+        if (!parsedNumber)
+            return -1;
+        values[requiredParams] = *parsedNumber;
         requiredParams++;
         if (requiredParams < required)
             skipOptionalSVGSpacesOrDelimiter(ptr, end);
@@ -63,8 +67,12 @@ static int parseTransformParamList(const UChar*& ptr, const UChar* end, float* v
             return -1;
     } else {
         while (optionalParams < optional) {
-            if (ptr >= end || !parseNumber(ptr, end, values[requiredParams + optionalParams], false))
+            if (ptr >= end)
                 return -1;
+            auto parsedNumber = parseNumber(ptr, end, SuffixSkippingPolicy::DontSkip);
+            if (!parsedNumber)
+                return -1;
+            values[requiredParams + optionalParams] = *parsedNumber;
             optionalParams++;
             if (optionalParams < optional)
                 skipOptionalSVGSpacesOrDelimiter(ptr, end);
@@ -90,16 +98,17 @@ static const int optionalValuesForType[] =  {0, 0, 1, 1, 2, 0, 0};
 // This destructor is needed in order to link correctly with Intel ICC.
 SVGTransformable::~SVGTransformable() = default;
 
-bool SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, const UChar*& ptr, const UChar* end, SVGTransformValue& transform)
+Optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, const UChar*& ptr, const UChar* end)
 {
     if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
-        return false;
+        return WTF::nullopt;
 
     int valueCount = 0;
     float values[] = {0, 0, 0, 0, 0, 0};
     if ((valueCount = parseTransformParamList(ptr, end, values, requiredValuesForType[type], optionalValuesForType[type])) < 0)
-        return false;
+        return WTF::nullopt;
 
+    SVGTransformValue transform;
     switch (type) {
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
         ASSERT_NOT_REACHED();
@@ -133,7 +142,7 @@ bool SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType t
         break;
     }
 
-    return true;
+    return transform;
 }
 
 static const UChar skewXDesc[] =  {'s', 'k', 'e', 'w', 'X'};
@@ -143,39 +152,35 @@ static const UChar translateDesc[] =  {'t', 'r', 'a', 'n', 's', 'l', 'a', 't', '
 static const UChar rotateDesc[] =  {'r', 'o', 't', 'a', 't', 'e'};
 static const UChar matrixDesc[] =  {'m', 'a', 't', 'r', 'i', 'x'};
 
-bool SVGTransformable::parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransformValue::SVGTransformType& type)
+Optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseAndSkipType(const UChar*& currTransform, const UChar* end)
 {
     if (currTransform >= end)
-        return false;
+        return WTF::nullopt;
 
     if (*currTransform == 's') {
         if (skipString(currTransform, end, skewXDesc, WTF_ARRAY_LENGTH(skewXDesc)))
-            type = SVGTransformValue::SVG_TRANSFORM_SKEWX;
+            return SVGTransformValue::SVG_TRANSFORM_SKEWX;
         else if (skipString(currTransform, end, skewYDesc, WTF_ARRAY_LENGTH(skewYDesc)))
-            type = SVGTransformValue::SVG_TRANSFORM_SKEWY;
+            return SVGTransformValue::SVG_TRANSFORM_SKEWY;
         else if (skipString(currTransform, end, scaleDesc, WTF_ARRAY_LENGTH(scaleDesc)))
-            type = SVGTransformValue::SVG_TRANSFORM_SCALE;
+            return SVGTransformValue::SVG_TRANSFORM_SCALE;
         else
-            return false;
+            return WTF::nullopt;
     } else if (skipString(currTransform, end, translateDesc, WTF_ARRAY_LENGTH(translateDesc)))
-        type = SVGTransformValue::SVG_TRANSFORM_TRANSLATE;
+        return SVGTransformValue::SVG_TRANSFORM_TRANSLATE;
     else if (skipString(currTransform, end, rotateDesc, WTF_ARRAY_LENGTH(rotateDesc)))
-        type = SVGTransformValue::SVG_TRANSFORM_ROTATE;
+        return SVGTransformValue::SVG_TRANSFORM_ROTATE;
     else if (skipString(currTransform, end, matrixDesc, WTF_ARRAY_LENGTH(matrixDesc)))
-        type = SVGTransformValue::SVG_TRANSFORM_MATRIX;
-    else
-        return false;
+        return SVGTransformValue::SVG_TRANSFORM_MATRIX;
 
-    return true;
+    return WTF::nullopt;
 }
 
 SVGTransformValue::SVGTransformType SVGTransformable::parseTransformType(const String& typeString)
 {
-    SVGTransformValue::SVGTransformType type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
     auto upconvertedCharacters = StringView(typeString).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
-    parseAndSkipType(characters, characters + typeString.length(), type);
-    return type;
+    return parseAndSkipType(characters, characters + typeString.length()).valueOr(SVGTransformValue::SVG_TRANSFORM_UNKNOWN);
 }
 
 }

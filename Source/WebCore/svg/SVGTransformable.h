@@ -32,9 +32,9 @@ class SVGTransformable : public SVGLocatable {
 public:
     virtual ~SVGTransformable();
 
-    static bool parseTransformValue(SVGTransformValue::SVGTransformType, const UChar*& ptr, const UChar* end, SVGTransformValue&);
+    static Optional<SVGTransformValue> parseTransformValue(SVGTransformValue::SVGTransformType, const UChar*& ptr, const UChar* end);
     static SVGTransformValue::SVGTransformType parseTransformType(const String&);
-    static bool parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransformValue::SVGTransformType&);
+    static Optional<SVGTransformValue::SVGTransformType> parseAndSkipType(const UChar*& currTransform, const UChar* end);
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;

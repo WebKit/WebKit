@@ -10090,6 +10090,7 @@
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
 		7C85B20122FB04850030684F /* WHLSLUnnamedType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLUnnamedType.cpp; sourceTree = "<group>"; };
 		7C85B20422FB06320030684F /* WHLSLUnnamedTypeHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLUnnamedTypeHash.h; sourceTree = "<group>"; };
+		7C8824C4249D7B0500ED8FC4 /* SVGPathSegValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegValue.h; sourceTree = "<group>"; };
 		7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertAny.h; sourceTree = "<group>"; };
 		7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBase.h; sourceTree = "<group>"; };
 		7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBoolean.h; sourceTree = "<group>"; };
@@ -25209,6 +25210,7 @@
 				84B6B976120F13E500B8EFAF /* SVGPathSegListSource.h */,
 				B22278EF0D00BF210071B782 /* SVGPathSegMovetoAbs.idl */,
 				B22278F00D00BF210071B782 /* SVGPathSegMovetoRel.idl */,
+				7C8824C4249D7B0500ED8FC4 /* SVGPathSegValue.h */,
 				84300BD7120C9AD40021954A /* SVGPathSource.h */,
 				8419D2B7120E0C7600141F8F /* SVGPathStringBuilder.cpp */,
 				8419D2B8120E0C7600141F8F /* SVGPathStringBuilder.h */,

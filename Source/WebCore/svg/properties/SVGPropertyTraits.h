@@ -75,10 +75,10 @@ struct SVGPropertyTraits<std::pair<int, int>> {
     static std::pair<int, int> initialValue() { return { }; }
     static std::pair<int, int> fromString(const String& string)
     {
-        float firstNumber = 0, secondNumber = 0;
-        if (!parseNumberOptionalNumber(string, firstNumber, secondNumber))
+        auto result = parseNumberOptionalNumber(string);
+        if (!result)
             return { };
-        return std::make_pair(static_cast<int>(roundf(firstNumber)), static_cast<int>(roundf(secondNumber)));
+        return std::make_pair(static_cast<int>(std::round(result->first)), static_cast<int>(std::round(result->second)));
     }
     static Optional<std::pair<int, int>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(std::pair<int, int>) { ASSERT_NOT_REACHED(); return emptyString(); }
@@ -89,17 +89,11 @@ struct SVGPropertyTraits<float> {
     static float initialValue() { return 0; }
     static float fromString(const String& string)
     {
-        float number = 0;
-        if (!parseNumberFromString(string, number))
-            return 0;
-        return number;
+        return parseNumber(string).valueOr(0);
     }
     static Optional<float> parse(const QualifiedName&, const String& string)
     {
-        float number;
-        if (!parseNumberFromString(string, number))
-            return WTF::nullopt;
-        return number;
+        return parseNumber(string);
     }
     static String toString(float type) { return String::number(type); }
 };
@@ -109,10 +103,7 @@ struct SVGPropertyTraits<std::pair<float, float>> {
     static std::pair<float, float> initialValue() { return { }; }
     static std::pair<float, float> fromString(const String& string)
     {
-        float firstNumber = 0, secondNumber = 0;
-        if (!parseNumberOptionalNumber(string, firstNumber, secondNumber))
-            return { };
-        return std::make_pair(firstNumber, secondNumber);
+        return parseNumberOptionalNumber(string).valueOr(std::pair<float, float> { });
     }
     static Optional<std::pair<float, float>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(std::pair<float, float>) { ASSERT_NOT_REACHED(); return emptyString(); }
@@ -123,17 +114,11 @@ struct SVGPropertyTraits<FloatPoint> {
     static FloatPoint initialValue() { return FloatPoint(); }
     static FloatPoint fromString(const String& string)
     {
-        FloatPoint point;
-        if (!parsePoint(string, point))
-            return { };
-        return point;
+        return parsePoint(string).valueOr(FloatPoint { });
     }
     static Optional<FloatPoint> parse(const QualifiedName&, const String& string)
     {
-        FloatPoint point;
-        if (!parsePoint(string, point))
-            return WTF::nullopt;
-        return point;
+        return parsePoint(string);
     }
     static String toString(const FloatPoint& type)
     {
@@ -146,17 +131,11 @@ struct SVGPropertyTraits<FloatRect> {
     static FloatRect initialValue() { return FloatRect(); }
     static FloatRect fromString(const String& string)
     {
-        FloatRect rect;
-        if (!parseRect(string, rect))
-            return { };
-        return rect;
+        return parseRect(string).valueOr(FloatRect { });
     }
     static Optional<FloatRect> parse(const QualifiedName&, const String& string)
     {
-        FloatRect rect;
-        if (!parseRect(string, rect))
-            return WTF::nullopt;
-        return rect;
+        return parseRect(string);
     }
     static String toString(const FloatRect& type)
     {

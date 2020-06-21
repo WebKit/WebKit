@@ -291,12 +291,12 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(const String& string)
     if (string.isEmpty())
         return { };
 
-    float convertedNumber = 0;
     auto upconvertedCharacters = StringView(string).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + string.length();
 
-    if (!parseNumber(ptr, end, convertedNumber, false))
+    auto convertedNumber = parseNumber(ptr, end, SuffixSkippingPolicy::DontSkip);
+    if (!convertedNumber)
         return Exception { SyntaxError };
 
     auto lengthType = parseLengthType(ptr, end);
@@ -304,7 +304,7 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(const String& string)
         return Exception { SyntaxError };
 
     m_lengthType = lengthType;
-    m_valueInSpecifiedUnits = convertedNumber;
+    m_valueInSpecifiedUnits = *convertedNumber;
     return { };
 }
 

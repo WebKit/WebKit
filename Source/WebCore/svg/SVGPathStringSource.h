@@ -32,18 +32,18 @@ public:
 private:
     bool hasMoreData() const final;
     bool moveToNextToken() final;
-    bool parseSVGSegmentType(SVGPathSegType&) final;
     SVGPathSegType nextCommand(SVGPathSegType previousCommand) final;
 
-    bool parseMoveToSegment(FloatPoint&) final;
-    bool parseLineToSegment(FloatPoint&) final;
-    bool parseLineToHorizontalSegment(float&) final;
-    bool parseLineToVerticalSegment(float&) final;
-    bool parseCurveToCubicSegment(FloatPoint&, FloatPoint&, FloatPoint&) final;
-    bool parseCurveToCubicSmoothSegment(FloatPoint&, FloatPoint&) final;
-    bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) final;
-    bool parseCurveToQuadraticSmoothSegment(FloatPoint&) final;
-    bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) final;
+    Optional<SVGPathSegType> parseSVGSegmentType() final;
+    Optional<MoveToSegment> parseMoveToSegment() final;
+    Optional<LineToSegment> parseLineToSegment() final;
+    Optional<LineToHorizontalSegment> parseLineToHorizontalSegment() final;
+    Optional<LineToVerticalSegment> parseLineToVerticalSegment() final;
+    Optional<CurveToCubicSegment> parseCurveToCubicSegment() final;
+    Optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment() final;
+    Optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment() final;
+    Optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment() final;
+    Optional<ArcToSegment> parseArcToSegment() final;
 
     String m_string;
     bool m_is8BitSource;

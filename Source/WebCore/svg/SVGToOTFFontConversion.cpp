@@ -229,8 +229,8 @@ private:
     void addCodepointRanges(const UnicodeRanges&, HashSet<Glyph>& glyphSet) const;
     void addCodepoints(const HashSet<String>& codepoints, HashSet<Glyph>& glyphSet) const;
     void addGlyphNames(const HashSet<String>& glyphNames, HashSet<Glyph>& glyphSet) const;
-    void addKerningPair(Vector<KerningData>&, const SVGKerningPair&) const;
-    template<typename T> size_t appendKERNSubtable(bool (T::*buildKerningPair)(SVGKerningPair&) const, uint16_t coverage);
+    void addKerningPair(Vector<KerningData>&, SVGKerningPair&&) const;
+    template<typename T> size_t appendKERNSubtable(Optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage);
     size_t finishAppendingKERNSubtable(Vector<KerningData>, uint16_t coverage);
 
     void appendLigatureSubtable(size_t subtableRecordLocation);
@@ -1040,7 +1040,7 @@ void SVGToOTFFontConverter::addGlyphNames(const HashSet<String>& glyphNames, Has
     }
 }
 
-void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, const SVGKerningPair& kerningPair) const
+void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerningPair&& kerningPair) const
 {
     HashSet<Glyph> glyphSet1;
     HashSet<Glyph> glyphSet2;
@@ -1059,13 +1059,12 @@ void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, const SVGK
     }
 }
 
-template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(bool (T::*buildKerningPair)(SVGKerningPair&) const, uint16_t coverage)
+template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(Optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage)
 {
     Vector<KerningData> kerningData;
     for (auto& element : childrenOfType<T>(m_fontElement)) {
-        SVGKerningPair kerningPair;
-        if ((element.*buildKerningPair)(kerningPair))
-            addKerningPair(kerningData, kerningPair);
+        if (auto kerningPair = (element.*buildKerningPair)())
+            addKerningPair(kerningData, WTFMove(*kerningPair));
     }
     return finishAppendingKERNSubtable(WTFMove(kerningData), coverage);
 }

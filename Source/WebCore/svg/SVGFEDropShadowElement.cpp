@@ -61,10 +61,9 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::stdDeviationAttr) {
-        float x, y;
-        if (parseNumberOptionalNumber(value, x, y)) {
-            m_stdDeviationX->setBaseValInternal(x);
-            m_stdDeviationY->setBaseValInternal(y);
+        if (auto result = parseNumberOptionalNumber(value)) {
+            m_stdDeviationX->setBaseValInternal(result->first);
+            m_stdDeviationY->setBaseValInternal(result->second);
         }
         return;
     }

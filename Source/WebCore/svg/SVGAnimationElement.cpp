@@ -77,44 +77,37 @@ fail:
     result.clear();
 }
 
-static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
+static Optional<Vector<UnitBezier>> parseKeySplines(const StringView& parse)
 {
-    result.clear();
     if (parse.isEmpty())
-        return;
+        return WTF::nullopt;
 
-    auto upconvertedCharacters = StringView(parse).upconvertedCharacters();
+    auto upconvertedCharacters = parse.upconvertedCharacters();
     const UChar* cur = upconvertedCharacters;
     const UChar* end = cur + parse.length();
 
     skipOptionalSVGSpaces(cur, end);
 
+    Vector<UnitBezier> result;
+
     bool delimParsed = false;
     while (cur < end) {
         delimParsed = false;
-        float posA = 0;
-        if (!parseNumber(cur, end, posA)) {
-            result.clear();
-            return;
-        }
+        auto posA = parseNumber(cur, end);
+        if (!posA)
+            return WTF::nullopt;
 
-        float posB = 0;
-        if (!parseNumber(cur, end, posB)) {
-            result.clear();
-            return;
-        }
+        auto posB = parseNumber(cur, end);
+        if (!posB)
+            return WTF::nullopt;
 
-        float posC = 0;
-        if (!parseNumber(cur, end, posC)) {
-            result.clear();
-            return;
-        }
+        auto posC = parseNumber(cur, end);
+        if (!posC)
+            return WTF::nullopt;
 
-        float posD = 0;
-        if (!parseNumber(cur, end, posD, false)) {
-            result.clear();
-            return;
-        }
+        auto posD = parseNumber(cur, end, SuffixSkippingPolicy::DontSkip);
+        if (!posD)
+            return WTF::nullopt;
 
         skipOptionalSVGSpaces(cur, end);
 
@@ -122,12 +115,16 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
             delimParsed = true;
             cur++;
         }
+
         skipOptionalSVGSpaces(cur, end);
 
-        result.append(UnitBezier(posA, posB, posC, posD));
+        result.append(UnitBezier { *posA, *posB, *posC, *posD });
     }
+
     if (!(cur == end && !delimParsed))
-        result.clear();
+        return WTF::nullopt;
+
+    return result;
 }
 
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -180,7 +177,10 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == SVGNames::keySplinesAttr) {
-        parseKeySplines(value, m_keySplines);
+        if (auto keySplines = parseKeySplines(value))
+            m_keySplines = WTFMove(*keySplines);
+        else
+            m_keySplines.clear();
         return;
     }
 

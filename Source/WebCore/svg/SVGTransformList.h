@@ -114,17 +114,18 @@ private:
         bool delimParsed = false;
         while (start < end) {
             delimParsed = false;
-            SVGTransformValue::SVGTransformType type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
             skipOptionalSVGSpaces(start, end);
-
-            if (!SVGTransformable::parseAndSkipType(start, end, type))
+            
+            auto type = SVGTransformable::parseAndSkipType(start, end);
+            if (!type)
                 return false;
 
-            Ref<SVGTransform> transform = SVGTransform::create(type);
-            if (!SVGTransformable::parseTransformValue(type, start, end, transform->value()))
+            auto parsedTransformValue = SVGTransformable::parseTransformValue(*type, start, end);
+            if (!parsedTransformValue)
                 return false;
 
-            append(WTFMove(transform));
+            append(SVGTransform::create(*parsedTransformValue));
+
             skipOptionalSVGSpaces(start, end);
             if (start < end && *start == ',') {
                 delimParsed = true;

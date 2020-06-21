@@ -69,9 +69,7 @@ bool SVGImageElement::hasSingleSecurityOrigin() const
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::preserveAspectRatioAttr) {
-        SVGPreserveAspectRatioValue preserveAspectRatio;
-        preserveAspectRatio.parse(value);
-        m_preserveAspectRatio->setBaseValInternal(preserveAspectRatio);
+        m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { value });
         return;
     }
 

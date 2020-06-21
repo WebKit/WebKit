@@ -66,73 +66,71 @@ void SVGFitToViewBox::reset()
 bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::viewBoxAttr) {
-        FloatRect viewBox;
-        if (!value.isNull() && parseViewBox(value, viewBox))
-            setViewBox(viewBox);
-        else
-            resetViewBox();
+        if (!value.isNull()) {
+            if (auto result = parseViewBox(value)) {
+                setViewBox(WTFMove(*result));
+                return true;
+            }
+        }
+        resetViewBox();
         return true;
     }
 
     if (name == SVGNames::preserveAspectRatioAttr) {
-        SVGPreserveAspectRatioValue preserveAspectRatio;
-        preserveAspectRatio.parse(value);
-        setPreserveAspectRatio(preserveAspectRatio);
+        setPreserveAspectRatio(SVGPreserveAspectRatioValue { value });
         return true;
     }
 
     return false;
 }
 
-bool SVGFitToViewBox::parseViewBox(const AtomString& value, FloatRect& viewBox)
+Optional<FloatRect> SVGFitToViewBox::parseViewBox(const StringView& value)
 {
-    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+    auto upconvertedCharacters = value.upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
-    return parseViewBox(characters, characters + value.length(), viewBox);
+    return parseViewBox(characters, characters + value.length());
 }
 
-bool SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, FloatRect& viewBox, bool validate)
+Optional<FloatRect> SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, bool validate)
 {
-    String str(c, end - c);
+    StringView str(c, end - c);
 
     skipOptionalSVGSpaces(c, end);
 
-    float x = 0.0f;
-    float y = 0.0f;
-    float width = 0.0f;
-    float height = 0.0f;
-    bool valid = parseNumber(c, end, x) && parseNumber(c, end, y) && parseNumber(c, end, width) && parseNumber(c, end, height, false);
+    auto x = parseNumber(c, end);
+    auto y = parseNumber(c, end);
+    auto width = parseNumber(c, end);
+    auto height = parseNumber(c, end, SuffixSkippingPolicy::DontSkip);
 
     if (validate) {
         Document& document = m_viewBox->contextElement()->document();
 
-        if (!valid) {
-            document.accessSVGExtensions().reportWarning("Problem parsing viewBox=\"" + str + "\"");
-            return false;
+        if (!x || !y || !width || !height) {
+            document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", str, "\""));
+            return WTF::nullopt;
         }
 
         // Check that width is positive.
-        if (width < 0.0) {
+        if (*width < 0.0) {
             document.accessSVGExtensions().reportError("A negative value for ViewBox width is not allowed");
-            return false;
+            return WTF::nullopt;
         }
 
         // Check that height is positive.
-        if (height < 0.0) {
+        if (*height < 0.0) {
             document.accessSVGExtensions().reportError("A negative value for ViewBox height is not allowed");
-            return false;
+            return WTF::nullopt;
         }
 
         // Nothing should come after the last, fourth number.
         skipOptionalSVGSpaces(c, end);
         if (c < end) {
-            document.accessSVGExtensions().reportWarning("Problem parsing viewBox=\"" + str + "\"");
-            return false;
+            document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", str, "\""));
+            return WTF::nullopt;
         }
     }
 
-    viewBox = { x, y, width, height };
-    return true;
+    return FloatRect { x.valueOr(0), y.valueOr(0), width.valueOr(0), height.valueOr(0) };
 }
 
 AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue& preserveAspectRatio, float viewWidth, float viewHeight)

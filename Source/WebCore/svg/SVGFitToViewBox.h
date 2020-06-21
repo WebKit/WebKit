@@ -65,8 +65,8 @@ protected:
 
     void reset();
     bool parseAttribute(const QualifiedName&, const AtomString&);
-    bool parseViewBox(const AtomString& value, FloatRect& viewBox);
-    bool parseViewBox(const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
+    Optional<FloatRect> parseViewBox(const StringView& value);
+    Optional<FloatRect> parseViewBox(const UChar*& start, const UChar* end, bool validate = true);
 
 private:
     Ref<SVGAnimatedRect> m_viewBox;
