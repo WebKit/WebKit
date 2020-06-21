@@ -42,8 +42,8 @@
         function doTest()
         {
             findMediaElement();
-            waitForEvent('canplaythrough', canplaythrough);
-            waitForEvent('seeked', testComplete);
+            waitForEvent('canplaythrough', () => requestAnimationFrame(() => { canplaythrough(); }));
+            waitForEvent('seeked', () => requestAnimationFrame(() => { testComplete(); }));
             video.src = findMediaFile('video', '../../media/content/pure-color-green');
         }
         

@@ -1,3 +1,31 @@
+2020-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        compositing/video/video-border-radius-clipping.html was a flaky failure after r263223
+        https://bugs.webkit.org/show_bug.cgi?id=213424
+
+        Reviewed by Darin Adler.
+
+        The last attempt to unflake this test was r253310. Let's try again.
+
+        I took a screen recording of a few hundred loads of this test @ r263222,
+        and it looks like it was always possible for canplaythrough and seeked
+        to fire before the video had rendered its first frame. So, this is a
+        test issue.
+
+        The screen recording seems to show that waiting for
+        requestAnimationFrame ensures that the video renders its first frame.
+        This might be for a principled system vsync reason, or just a lucky
+        delay. Either way, the test seems less flaky now.
+
+        This might mean that we can remove the previous seeked event workaround,
+        but I chose not to tempt fate, and left it in place.
+
+        * compositing/video/video-border-radius-clipping-expected.html:
+        * compositing/video/video-border-radius-clipping.html:
+        * media/video-test.js:
+        (_eventCallback):
+        (waitForEvent):
+
 2020-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         fast/text/international/system-language/navigator-language/navigator-language tests are failing on Mojave
