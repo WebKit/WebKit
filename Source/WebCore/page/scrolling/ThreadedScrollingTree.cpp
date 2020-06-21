@@ -76,6 +76,8 @@ void ThreadedScrollingTree::invalidate()
     ASSERT(ScrollingThread::isCurrentThread());
 
     LockHolder treeLocker(m_treeMutex);
+    
+    removeAllNodes();
     m_delayedRenderingUpdateDetectionTimer = nullptr;
 
     // Since this can potentially be the last reference to the scrolling coordinator,

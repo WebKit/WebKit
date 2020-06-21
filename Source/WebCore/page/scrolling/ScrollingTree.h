@@ -210,6 +210,8 @@ protected:
     Optional<unsigned> nominalFramesPerSecond();
 
     void applyLayerPositionsInternal();
+    void removeAllNodes();
+
     Lock m_treeMutex; // Protects the scrolling tree.
 
 private:
@@ -224,8 +226,6 @@ private:
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
     
-    void removeAllNodes();
-
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;

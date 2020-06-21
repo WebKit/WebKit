@@ -1,3 +1,28 @@
+2020-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash under ScrollController::startSnapRubberbandTimer() firing
+        https://bugs.webkit.org/show_bug.cgi?id=213439
+        <rdar://problem/63986013>
+
+        Reviewed by Tim Horton.
+
+        A wholesale destruction of the ScrollingTree (e.g. via ScrollingCoordinatorMac::pageDestroyed()) never
+        ran the code to stop CFRunLoopTimers in ScrollController, which could lead to this crash.
+        Fix by calling removeAllNodes() in ThreadedScrollingTree::invalidate().
+
+        Add an assertion in ScrollController's destructor that stopAllTimers() has been called, and have
+        ScrollAnimator's destructor call stopAllTimers() too.
+
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::invalidate):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::~ScrollAnimator):
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::~ScrollController):
+        (WebCore::ScrollController::stopAllTimers):
+
 2020-06-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC][Quirk] Table height needs quirk handling

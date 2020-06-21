@@ -65,7 +65,12 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
 {
 }
 
-ScrollAnimator::~ScrollAnimator() = default;
+ScrollAnimator::~ScrollAnimator()
+{
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    m_scrollController.stopAllTimers();
+#endif
+}
 
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {

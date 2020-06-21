@@ -89,6 +89,11 @@ ScrollController::ScrollController(ScrollControllerClient& client)
 {
 }
 
+ScrollController::~ScrollController()
+{
+    ASSERT(m_timersWereStopped);
+}
+
 void ScrollController::stopAllTimers()
 {
 #if ENABLE(RUBBER_BANDING)
@@ -102,6 +107,10 @@ void ScrollController::stopAllTimers()
 
     if (m_scrollSnapTimer)
         m_scrollSnapTimer->stop();
+#endif
+
+#if ASSERT_ENABLED
+    m_timersWereStopped = true;
 #endif
 }
 

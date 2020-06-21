@@ -131,6 +131,7 @@ class ScrollController {
 
 public:
     explicit ScrollController(ScrollControllerClient&);
+    ~ScrollController();
 
 #if PLATFORM(MAC)
     bool handleWheelEvent(const PlatformWheelEvent&);
@@ -216,6 +217,10 @@ private:
     bool m_inScrollGesture { false };
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
+#endif
+
+#if ASSERT_ENABLED
+    bool m_timersWereStopped { false };
 #endif
 
     bool m_activeScrollSnapIndexDidChange { false };
