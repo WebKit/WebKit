@@ -24,13 +24,14 @@
  */
 
 #import "config.h"
-
-#if WK_HAVE_C_SPI
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/Threading.h>
+
+#if WK_HAVE_C_SPI
 
 TEST(WebKit, SleepDisabler)
 {
@@ -62,3 +63,175 @@ TEST(WebKit, SleepDisabler)
 }
 
 #endif // WK_HAVE_C_SPI
+
+class SleepDisabler : public testing::Test {
+public:
+    RetainPtr<TestWKWebView> webView;
+
+    void SetUp() final
+    {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        configuration.get()._mediaDataLoadsAutomatically = YES;
+        configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 240) configuration:configuration.get() addToWindow:YES]);
+    }
+
+    void TearDown() final
+    {
+        [webView _close];
+    }
+
+    void loadPlayingPage(NSString* pageName)
+    {
+        bool isPlaying = false;
+        [webView performAfterReceivingMessage:@"playing" action:[&] { isPlaying = true; }];
+        [webView synchronouslyLoadTestPageNamed:pageName];
+        TestWebKitAPI::Util::run(&isPlaying);
+        [webView clearMessageHandlers:@[@"playing"]];
+    }
+
+    void hasSleepDisablerShouldBecomeEqualTo(bool shouldHaveSleepDisabler)
+    {
+        int tries = 0;
+        do {
+            if ([webView _hasSleepDisabler] == shouldHaveSleepDisabler)
+                break;
+
+            TestWebKitAPI::Util::sleep(0.1);
+        } while (++tries <= 100);
+
+        EXPECT_EQ(shouldHaveSleepDisabler, [webView _hasSleepDisabler]);
+    }
+};
+
+TEST_F(SleepDisabler, Basic)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+}
+
+TEST_F(SleepDisabler, Pause)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').pause()" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, Mute)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').muted = true" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, Unmute)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    loadPlayingPage(@"video-with-muted-audio");
+    hasSleepDisablerShouldBecomeEqualTo(false);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').muted = false" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(true);
+}
+
+TEST_F(SleepDisabler, DisableAudioTrack)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').audioTracks[0].enabled = false" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, Loop)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').loop = true" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, ChangeSrc)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"video = document.querySelector('video').src = 'video-without-audio.mp4'" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, Load)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"video = document.querySelector('video'); video.load(); video.play()" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+    hasSleepDisablerShouldBecomeEqualTo(true);
+}
+
+TEST_F(SleepDisabler, Unload)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView evaluateJavaScript:@"video = document.querySelector('video'); video.src = ''; video.load()" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, Navigate)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView synchronouslyLoadHTMLString:@"<html>no contents</html>"];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, NavigateBack)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    loadPlayingPage(@"video-without-audio");
+    hasSleepDisablerShouldBecomeEqualTo(false);
+
+    [webView goBack];
+    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
+    hasSleepDisablerShouldBecomeEqualTo(true);
+}
+
+TEST_F(SleepDisabler, Reload)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView reload];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+    hasSleepDisablerShouldBecomeEqualTo(true);
+}
+
+TEST_F(SleepDisabler, Close)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView _close];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}
+
+TEST_F(SleepDisabler, Crash)
+{
+    loadPlayingPage(@"video-with-audio");
+    hasSleepDisablerShouldBecomeEqualTo(true);
+
+    [webView _killWebContentProcess];
+    hasSleepDisablerShouldBecomeEqualTo(false);
+}

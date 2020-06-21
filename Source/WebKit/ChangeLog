@@ -1,3 +1,33 @@
+2020-06-20  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r259219): Sleep assertion remains active if WKWebView is closed or WebContent process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=213434
+        <rdar://problem/57541662>
+
+        Reviewed by Eric Carlson.
+
+        Tests: TestWebKitAPI tests:
+            SleepDisabler.Basic
+            SleepDisabler.Pause
+            SleepDisabler.Mute
+            SleepDisabler.Unmute
+            SleepDisabler.DisableAudioTrack
+            SleepDisabler.Loop
+            SleepDisabler.ChangeSrc
+            SleepDisabler.Load
+            SleepDisabler.Unload
+            SleepDisabler.Navigate
+            SleepDisabler.NavigateBack
+            SleepDisabler.Reload
+            SleepDisabler.Close
+            SleepDisabler.Crash
+
+        Ensure the SleepDisablers are cleared when the WebProcess closes or crashes.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+
 2020-06-20  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS, macOS] Allow access to the container manager to support Mail InjectedBundle

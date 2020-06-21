@@ -1,3 +1,16 @@
+2020-06-20  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r259219): Sleep assertion remains active if WKWebView is closed or WebContent process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=213434
+        <rdar://problem/57541662>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/SleepDisabler.mm:
+        (SleepDisabler::loadPlayingPage):
+        (SleepDisabler::hasSleepDisablerShouldBecomeEqualTo):
+        (TEST_F):
+
 2020-06-20  Jonathan Bedard  <jbedard@apple.com>
 
         Bring up watchOS/tvOS on build.webkit.org (Follow-up fix x2)

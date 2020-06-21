@@ -432,6 +432,7 @@ void WebProcessProxy::shutDown()
     m_webUserContentControllerProxies.clear();
 
     m_userInitiatedActionMap.clear();
+    m_sleepDisablers.clear();
 
     m_processPool->disconnectProcess(this);
 }
@@ -850,6 +851,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
         if (provisionalPage)
             provisionalPage->processDidTerminate();
     }
+
+    m_sleepDisablers.clear();
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
