@@ -53,7 +53,7 @@ struct InputMethodState {
         Password
     };
 
-    enum class Hint {
+    enum class Hint : uint8_t {
         None = 0,
         Spellcheck = 1 << 0,
         Lowercase = 1 << 1,
