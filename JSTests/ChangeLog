@@ -1,3 +1,12 @@
+2020-06-21  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Attempt to unskip stress test array-buffer-view-watchpoint-can-be-fired-really-add-in-dfg.js on most architectures
+        https://bugs.webkit.org/show_bug.cgi?id=213433
+
+        Reviewed by Darin Adler.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Check Gigacage usage before launching VM

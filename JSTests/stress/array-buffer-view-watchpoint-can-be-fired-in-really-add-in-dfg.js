@@ -1,5 +1,4 @@
 //@ skip if $memoryLimited
-//@ skip if ["arm", "powerpc", "powerpc64", "s390"].include?($architecture) and $hostOS == "linux"
 //@ requireOptions("-e", "let iterations=40000") if ["mips"].include?($architecture)
 //@ runDefault("--jitPolicyScale=0")
 
