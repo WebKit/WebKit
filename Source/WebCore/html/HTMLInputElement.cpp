@@ -1674,12 +1674,10 @@ bool HTMLInputElement::isSteppable() const
     return m_inputType->isSteppable();
 }
 
-#if PLATFORM(IOS_FAMILY)
 DateComponents::Type HTMLInputElement::dateType() const
 {
     return m_inputType->dateType();
 }
-#endif
 
 bool HTMLInputElement::isTextButton() const
 {

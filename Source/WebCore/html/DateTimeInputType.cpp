@@ -69,17 +69,14 @@ StepRange DateTimeInputType::createStepRange(AnyStepHandling anyStepHandling) co
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, dateTimeStepDescription);
 }
 
-bool DateTimeInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
+Optional<DateComponents> DateTimeInputType::parseToDateComponents(const StringView& source) const
 {
-    ASSERT(out);
-    unsigned end;
-    return out->parseDateTime(characters, length, 0, end) && end == length;
+    return DateComponents::fromParsingDateTime(source);
 }
 
-bool DateTimeInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
+Optional<DateComponents> DateTimeInputType::setMillisecondToDateComponents(double value) const
 {
-    ASSERT(date);
-    return date->setMillisecondsSinceEpochForDateTime(value);
+    return DateComponents::fromMillisecondsSinceEpochForDateTime(value);
 }
 
 bool DateTimeInputType::isDateTimeField() const
@@ -89,10 +86,10 @@ bool DateTimeInputType::isDateTimeField() const
 
 String DateTimeInputType::sanitizeValue(const String& proposedValue) const
 {
-    DateComponents date;
-    if (!parseToDateComponents(proposedValue, &date))
-        return String();
-    return date.toString();
+    auto date = parseToDateComponents(proposedValue);
+    if (!date)
+        return { };
+    return date->toString();
 }
 
 } // namespace WebCore

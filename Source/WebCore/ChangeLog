@@ -1,3 +1,50 @@
+2020-06-21  Sam Weinig  <weinig@apple.com>
+
+        Convert DateComponents parsing code to use Optional based return values rather than out-parameters
+        https://bugs.webkit.org/show_bug.cgi?id=213440
+
+        Reviewed by Darin Adler.
+
+        Rework DateComponents and Date/Time related InputTypes to use Optional based programming
+        for parsing results. Also take the opportunity to remove unicode upconversion from 
+        DateComponent parsing and instead separate UChar and LChar variants via templates. 
+
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/BaseDateAndTimeInputType.h:
+        * html/DateInputType.cpp:
+        * html/DateInputType.h:
+        * html/DateTimeInputType.cpp:
+        * html/DateTimeInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        * html/DateTimeLocalInputType.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        * html/WeekInputType.h:
+            - Removes parseToDateComponentsInternal. No need it and parseToDateComponents.
+            - Makes parseToDateComponents pure virtual. The old code had a default implementations
+              down in InputType, but it had no callers.
+            - Remove iOS vs. non-iOS difference for dateType(). It is now available on InputType
+              on all platforms. 
+            - Make setMillisecondToDateComponents and parseToDateComponents return an Optional.
+        
+        * platform/DateComponents.cpp:
+        * platform/DateComponents.h:
+            - Replace member function based interfaces for parsing/setting explicit time offsets
+              with new factory functions that return Optional<DateComponents>.
+            - These factories are implemented using the existing member functions, which are
+              now private.
+            - Make max/min constants constexpr.
+            - Make parse* member functions templates to allow factory parse functions to
+              call them without upconverting.
+            - Replace header guard with #pragma once.
+
 2020-06-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add basic support for width: fit-content

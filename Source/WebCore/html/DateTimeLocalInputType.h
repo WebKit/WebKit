@@ -46,8 +46,8 @@ private:
     double valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(double) const final;
     StepRange createStepRange(AnyStepHandling) const final;
-    bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const final;
-    bool setMillisecondToDateComponents(double, DateComponents*) const final;
+    Optional<DateComponents> parseToDateComponents(const StringView&) const final;
+    Optional<DateComponents> setMillisecondToDateComponents(double) const final;
     bool isDateTimeLocalField() const final;
 };
 
