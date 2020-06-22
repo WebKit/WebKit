@@ -42,6 +42,7 @@
 #include <wtf/Optional.h>
 #include <wtf/OSLogPrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TranslatedProcess.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
 
@@ -427,6 +428,12 @@ void Options::recomputeDependentOptions()
 
     if (!jitEnabledByDefault() && !Options::useJIT())
         Options::useLLInt() = true;
+
+    if (WTF::isX86BinaryRunningOnARM() && Options::useJIT()) {
+        Options::useBaselineJIT() = false;
+        Options::useDFGJIT() = false;
+        Options::useFTLJIT() = false;
+    }
 
     if (!Options::useWebAssembly())
         Options::useFastTLSForWasmContext() = false;

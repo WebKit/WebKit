@@ -1,5 +1,19 @@
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
+        Disable the JS JIT when running in a translated process
+        https://bugs.webkit.org/show_bug.cgi?id=213478
+
+        Reviewed by Saam Barati.
+
+        * wtf/PlatformHave.h:
+        * wtf/TranslatedProcess.h: Added.
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        Add a helper function that can be used to determine that the current process
+        is being translated; currently the only case is an x86_64 process running on arm64e.
+
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
         Update macOS version macros
         https://bugs.webkit.org/show_bug.cgi?id=213484
 

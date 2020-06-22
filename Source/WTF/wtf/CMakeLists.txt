@@ -265,6 +265,7 @@ set(WTF_PUBLIC_HEADERS
     TimingScope.h
     TinyLRUCache.h
     TinyPtrSet.h
+    TranslatedProcess.h
     TriState.h
     TypeCasts.h
     URL.h

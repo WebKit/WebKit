@@ -1,5 +1,18 @@
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
+        Disable the JS JIT when running in a translated process
+        https://bugs.webkit.org/show_bug.cgi?id=213478
+
+        Reviewed by Saam Barati.
+
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        Based on our performance experiements, disable the JavaScript JIT
+        (but not the regular expression, DOM, or Wasm JIT) when running
+        in a translated process.
+
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
         Update macOS version macros
         https://bugs.webkit.org/show_bug.cgi?id=213484
 
