@@ -1,3 +1,13 @@
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Update macOS version macros
+        https://bugs.webkit.org/show_bug.cgi?id=213484
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
 2020-06-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Console: add comments for localized strings in execution context picker

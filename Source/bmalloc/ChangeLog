@@ -1,3 +1,13 @@
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Update macOS version macros
+        https://bugs.webkit.org/show_bug.cgi?id=213484
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Check Gigacage usage before launching VM
