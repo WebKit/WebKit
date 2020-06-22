@@ -217,8 +217,12 @@ body.window-inactive * {
     --border-color-dark: hsl(0, 0%, 72%);
 }
 
-body.mac-platform:not(.docked) {
+body.mac-platform:not(.big-sur):not(.docked) {
     --undocked-title-area-height: calc(22px / var(--zoom-factor));
+}
+
+body.mac-platform.big-sur:not(.docked) {
+    --undocked-title-area-height: calc(25px / var(--zoom-factor));
 }
 
 @media (prefers-color-scheme: dark) {

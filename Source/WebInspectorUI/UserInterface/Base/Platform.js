@@ -45,21 +45,40 @@ WI.Platform = {
     }
 
     let osVersionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
-    if (osVersionMatch && osVersionMatch[1] === "10") {
-        WI.Platform.version.base = 10;
+    if (osVersionMatch) {
+        WI.Platform.version.base = parseInt(osVersionMatch[1]);
         WI.Platform.version.release = parseInt(osVersionMatch[2]);
-        switch (osVersionMatch[2]) {
-        case "14":
-            WI.Platform.version.name = "mojave";
+
+        switch (WI.Platform.version.base) {
+        case 10:
+            switch (WI.Platform.version.release) {
+            case 15:
+                WI.Platform.version.name = "catalina";
+                break;
+            case 14:
+                WI.Platform.version.name = "mojave";
+                break;
+            case 13:
+                WI.Platform.version.name = "high-sierra";
+                break;
+            case 12:
+                WI.Platform.version.name = "sierra";
+                break;
+            default:
+                WI.Platform.version.name = "unknown-mac";
+                break;
+            }
             break;
-        case "13":
-            WI.Platform.version.name = "high-sierra";
-            break;
-        case "12":
-            WI.Platform.version.name = "sierra";
-            break;
-        default:
-            WI.Platform.version.name = "unknown-mac";
+
+        case 11:
+            switch (WI.Platform.version.release) {
+            case 0:
+                WI.Platform.version.name = "big-sur";
+                break;
+            default:
+                WI.Platform.version.name = "unknown-mac";
+                break;
+            }
             break;
         }
     }

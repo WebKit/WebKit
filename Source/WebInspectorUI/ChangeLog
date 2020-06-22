@@ -1,5 +1,20 @@
 2020-06-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: adjust height of undocked title area to match macOS Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=213490
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Variables.css:
+        (body.mac-platform:not(.big-sur):not(.docked)): Added.
+        (body.mac-platform.big-sur:not(.docked)): Added.
+        (body.mac-platform:not(.docked)): Deleted.
+
+        * UserInterface/Base/Platform.js:
+        Add logic for detecting macOS Big Sur (and Catalina).
+
+2020-06-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Node: use a `WI.ContextMenu` instead of a `<select>` for listener filtering
         https://bugs.webkit.org/show_bug.cgi?id=213492
 
