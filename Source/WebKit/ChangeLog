@@ -1,3 +1,17 @@
+2020-06-22  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Public API should not allow trying to register a special URI scheme
+        https://bugs.webkit.org/show_bug.cgi?id=209900
+        <rdar://problem/61200217>
+
+        Reviewed by Adrian Perez de Castro
+
+        Epiphany prior to 3.36 registers a scheme handler for ftp. This introduced criticals. Let's
+        use g_warning() instead, and avoid hardcoding the list of disallowed schemes.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_register_uri_scheme):
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         dlopen() always fails on arm64, cannot load soft-linked libraries

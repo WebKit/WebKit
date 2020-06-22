@@ -70,6 +70,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/URLParser.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -1274,13 +1275,16 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     g_return_if_fail(scheme);
     g_return_if_fail(callback);
 
-    // List from Source/WTF/URLParser.cpp, enum Scheme.
-    g_return_if_fail(g_ascii_strcasecmp(scheme, "ws") != 0);
-    g_return_if_fail(g_ascii_strcasecmp(scheme, "wss") != 0);
-    g_return_if_fail(g_ascii_strcasecmp(scheme, "file") != 0);
-    g_return_if_fail(g_ascii_strcasecmp(scheme, "ftp") != 0);
-    g_return_if_fail(g_ascii_strcasecmp(scheme, "http") != 0);
-    g_return_if_fail(g_ascii_strcasecmp(scheme, "https") != 0);
+    auto canonicalizedScheme = WTF::URLParser::maybeCanonicalizeScheme(scheme);
+    if (!canonicalizedScheme) {
+        g_critical("Cannot register invalid URI scheme %s", scheme);
+        return;
+    }
+
+    if (WTF::URLParser::isSpecialScheme(canonicalizedScheme.value())) {
+        g_warning("Registering special URI scheme %s is no longer allowed", scheme);
+        return;
+    }
 
     auto handler = WebKitURISchemeHandler::create(context, callback, userData, destroyNotify);
     auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WTFMove(handler));
