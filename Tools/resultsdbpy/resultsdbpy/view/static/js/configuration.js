@@ -179,6 +179,8 @@ class Configuration {
             result += ' ' + this.style.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
         } if (this.model != null)
             result += ' on ' + this.model;
+        if (this.architecture != null)
+            result += ' with ' + this.architecture;
 
         if (this.sdk != null)
             result += ' (' + this.sdk + ')';

@@ -1,3 +1,14 @@
+2020-06-22  Jonathan Bedard  <jbedard@apple.com>
+
+        resultsdbpy: Make architecture differences explicit
+        https://bugs.webkit.org/show_bug.cgi?id=213473
+        <rdar://problem/64602736>
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.prototype.toString):
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Update macOS version macros
