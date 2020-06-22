@@ -1,3 +1,14 @@
+2020-06-22  Jonathan Bedard  <jbedard@apple.com>
+
+        Bring up watchOS/tvOS on build.webkit.org (Follow-up fix x3)
+        https://bugs.webkit.org/show_bug.cgi?id=213402
+        <rdar://problem/64542588>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): 64 bit is more correct for watchOS embedded builds.
+
 2020-06-22  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Switch contributors.json url from trac to svn server

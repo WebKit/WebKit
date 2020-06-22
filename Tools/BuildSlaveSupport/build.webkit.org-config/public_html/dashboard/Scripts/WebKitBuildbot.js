@@ -56,7 +56,7 @@ WebKitBuildbot = function()
         "Apple-tvOS-13-Release-Build": {platform: Dashboard.Platform.tvOS13Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-tvOS-Simulator-13-Release-Build": {platform: Dashboard.Platform.tvOS13Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-watchOS-6-Release-Build": {platform: Dashboard.Platform.watchOS6Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
-        "Apple-watchOS-Simulator-6-Release-Build": {platform: Dashboard.Platform.watchOS6Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
+        "Apple-watchOS-Simulator-6-Release-Build": {platform: Dashboard.Platform.watchOS6Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple Win 10 Debug (Build)": {platform: Dashboard.Platform.Windows10, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit },
         "Apple Win 10 Release (Build)": {platform: Dashboard.Platform.Windows10, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
         "Apple Win 10 Debug (Tests)": {platform: Dashboard.Platform.Windows10, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
