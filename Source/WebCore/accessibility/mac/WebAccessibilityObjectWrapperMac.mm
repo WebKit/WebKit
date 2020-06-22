@@ -1972,8 +1972,8 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 - (NSValue *)position
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (_AXUIElementRequestServicedBySecondaryAXThread())
-        return [NSValue valueWithPoint:(NSPoint)self.axBackingObject->relativeFrame().location()];
+    if (AXObjectCache::isIsolatedTreeEnabled())
+        return [NSValue valueWithPoint:self.axBackingObject->relativeFrame().location()];
 #endif
 
     auto rect = snappedIntRect(self.axBackingObject->elementRect());

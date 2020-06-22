@@ -343,10 +343,11 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
     CFRetain((__bridge CFTypeRef)self);
     CFAutorelease((__bridge CFTypeRef)self);
 
-    if (!self.axBackingObject)
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
         return nil;
 
-    self.axBackingObject->updateBackingStore();
+    backingObject->updateBackingStore();
 
     return self.axBackingObject;
 }

@@ -1,3 +1,19 @@
+2020-06-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Code cleanup in WebAccessibilityObjectWrapper updateObjectBackingStore and position.
+        https://bugs.webkit.org/show_bug.cgi?id=213438
+
+        Reviewed by Darin Adler.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+        Removed unnecessary call to axBackingObject.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper position]):
+        Check for isIsolatedTreeEnabled instead of for the request thread,
+        since isolated tree mode = 1 runs on the main thread.
+
 2020-06-22  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Add support for freeze/pause receiver stats
