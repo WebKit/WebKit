@@ -1,5 +1,17 @@
 2020-06-21  Lauro Moura  <lmoura@igalia.com>
 
+        [WebDriver][GTK] Some executing_async_javascript_tests.py tests are failing with TimeoutExceptions
+        https://bugs.webkit.org/show_bug.cgi?id=211496
+
+        Unreviewed test gardening.
+
+        The two tests started passing with the updated selenium imported
+        tests from r263264;
+
+        * TestExpectations.json:
+
+2020-06-21  Lauro Moura  <lmoura@igalia.com>
+
         WebDriver: several tests in imported/selenium/py/test/selenium/webdriver/common/visibility_tests.py fail
         https://bugs.webkit.org/show_bug.cgi?id=182334
 

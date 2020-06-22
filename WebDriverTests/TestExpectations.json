@@ -41,16 +41,6 @@
             }
         }
     },
-    "imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py": {
-        "subtests": {
-            "testShouldNotTimeoutIfScriptCallsbackInsideAZeroTimeout": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211496"}}
-            },
-            "testShouldBeAbleToExecuteAsynchronousScripts": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211496"}}
-            }
-        }
-    },
     "imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py": {
         "subtests": {
             "testShouldNotSwitchMagicallyToTheTopWindow": {
