@@ -1104,6 +1104,12 @@
         (syscall-number SYS_gethostuuid)
     )
 
+    (if (equal? (param "CPU") "arm64")
+        (allow syscall-unix
+            (syscall-number SYS_mremap_encrypted)
+        )
+    )
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (if (defined? 'SYS_objc_bp_assist_cfg_np)
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))

@@ -1,5 +1,20 @@
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
+        dlopen() always fails on arm64, cannot load soft-linked libraries
+        https://bugs.webkit.org/show_bug.cgi?id=213480
+
+        Reviewed by Alexey Proskuryakov and Per Arne Vollan.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters):
+        Expose the auxiliary process' CPU family as a parameter to the sandbox profile,
+        so that it can be used to predicate sandbox expressions.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Allow mremap_encrypted from the Web Content process, because the arm64 dlopen() needs it.
+
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
         Update macOS version macros
         https://bugs.webkit.org/show_bug.cgi?id=213484
 

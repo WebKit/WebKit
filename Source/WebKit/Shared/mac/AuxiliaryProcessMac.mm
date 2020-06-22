@@ -672,6 +672,14 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
     sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", FileSystem::fileSystemRepresentation(path).data());
     path.append("/Preferences");
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
+
+#if CPU(X86_64)
+    sandboxParameters.addParameter("CPU", "x86_64");
+#elif CPU(ARM64)
+    sandboxParameters.addParameter("CPU", "arm64");
+#else
+#error "Unknown architecture."
+#endif
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
