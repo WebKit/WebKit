@@ -1,3 +1,21 @@
+2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Ping attribute tests have been timeout since r204720
+        https://bugs.webkit.org/show_bug.cgi?id=162017
+
+        Reviewed by Adrian Perez de Castro.
+
+        The tests are using "TouchEvent" in window to check whether it's a touch screen and use
+        uiController.singleTapAtPoint() instead of the eventSender. TouchEvent is always added to the window object when
+        building with touch events enabled, which is the case of the GTK port. However, the ontouch event handlers are
+        added at runtime only when there's an actual touch screen (EnabledAtRuntime=TouchEvents). So, we can check
+        "ontouchstart" in window instead.
+
+        * http/tests/inspector/network/ping-type.html:
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clickElement):
+        * platform/gtk/TestExpectations:
+
 2020-06-21  Geoffrey Garen  <ggaren@apple.com>
 
         compositing/video/video-border-radius-clipping.html was a flaky failure after r263223

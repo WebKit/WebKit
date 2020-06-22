@@ -10,7 +10,7 @@ if (window.testRunner && window.internals)
 function clickElement(element) {
     let x = element.offsetLeft + 2;
     let y = element.offsetTop + 2;
-    let supportsTouchEvents = "TouchEvent" in window;
+    let supportsTouchEvents = "ontouchstart" in window;
     if (supportsTouchEvents && window.testRunner && testRunner.runUIScript)
         testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + ", function() { /* Do nothing */ }); })();", function() { /* Do nothing */ });
     else if (window.eventSender) {

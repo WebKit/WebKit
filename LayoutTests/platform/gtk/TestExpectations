@@ -2470,9 +2470,6 @@ webkit.org/b/156109 http/tests/security/contentSecurityPolicy/video-redirect-blo
 webkit.org/b/158923 webkit.org/b/198830 media/airplay-autoplay.html [ Timeout Crash ]
 webkit.org/b/158923 webkit.org/b/198830 media/airplay-allows-buffering.html [ Timeout Crash ]
 
-# WKTR singleTapAtPoint is not implemented.
-webkit.org/b/162017 http/tests/navigation/ping-attribute [ Skip ]
-
 webkit.org/b/163779 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
 
 webkit.org/b/163780 media/media-controls-drag-timeline-set-controls-property.html [ Timeout Crash Pass ]
@@ -2492,8 +2489,6 @@ webkit.org/b/174459 fast/images/async-image-multiple-clients-repaint.html [ Time
 
 webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-http.html [ Timeout ]
 webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeout ]
-
-webkit.org/b/177941 http/tests/inspector/network/ping-type.html [ Timeout Crash ]
 
 webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
 webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]

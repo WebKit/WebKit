@@ -36,7 +36,7 @@ function clickElement(element)
 {
     var x = element.offsetLeft + 2;
     var y = element.offsetTop + 2;
-    var supportsTouchEvents = "TouchEvent" in window;
+    var supportsTouchEvents = "ontouchstart" in window;
     if (supportsTouchEvents && window.testRunner && testRunner.runUIScript)
         testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + ", function() { /* Do nothing */ }); })();", function () { /* Do nothing */ });
     else if (window.eventSender) {
