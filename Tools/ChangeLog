@@ -1,3 +1,16 @@
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        API Test WeakLinking.WeakImport fails on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=213477
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-iOS-v2.tbd:
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-iOS.tbd:
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-macOS-v2.tbd:
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-macOS.tbd:
+        Add this architecture to the TBD files.
+
 2020-06-22  Jonathan Bedard  <jbedard@apple.com>
 
         Bring up watchOS/tvOS on build.webkit.org (Follow-up fix x3)

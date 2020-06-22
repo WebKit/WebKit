@@ -1,9 +1,9 @@
 ---
-archs: [ i386, x86_64 ]
+archs: [ i386, x86_64, arm64 ]
 platform: macosx
 install-name: /usr/local/lib/libTestWTFAlwaysMissing.dylib
 objc-constraint: none
 exports:
-  - archs: [ i386, x86_64 ]
+  - archs: [ i386, x86_64, arm64 ]
     symbols: [ _TestWTFAlwaysMissing, _TestWTFAlwaysMissingWithoutAttributeWeakImport ]
 ...

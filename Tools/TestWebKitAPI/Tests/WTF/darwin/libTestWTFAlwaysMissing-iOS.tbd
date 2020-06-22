@@ -1,9 +1,9 @@
 ---
-archs: [ i386, x86_64, armv7, armv7s, arm64 ]
+archs: [ i386, x86_64, armv7, armv7s, arm64, arm64e ]
 platform: ios
 install-name: /usr/local/lib/libTestWTFAlwaysMissing.dylib
 objc-constraint: none
 exports:
-  - archs: [ i386, x86_64, armv7, armv7s, arm64 ]
+  - archs: [ i386, x86_64, armv7, armv7s, arm64, arm64e ]
     symbols: [ _TestWTFAlwaysMissing, _TestWTFAlwaysMissingWithoutAttributeWeakImport ]
 ...
