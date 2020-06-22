@@ -38,9 +38,10 @@
 
     // Copies the current frequency data into the passed array.
     // If the array has fewer elements than the frequencyBinCount, the excess elements will be dropped.
-    void getFloatFrequencyData(Float32Array? array); // FIXME: The parameter should not be nullable.
-    void getByteFrequencyData(Uint8Array? array); // FIXME: The parameter should not be nullable.
+    void getFloatFrequencyData(Float32Array array);
+    void getByteFrequencyData(Uint8Array array);
 
     // Real-time waveform data
-    void getByteTimeDomainData(Uint8Array? array); // FIXME: The parameter should not be nullable.
+    [EnabledBySetting=ModernUnprefixedWebAudio] void getFloatTimeDomainData(Float32Array array);
+    void getByteTimeDomainData(Uint8Array array);
 };

@@ -1,3 +1,14 @@
+2020-06-22  Clark Wang  <clark_wang@apple.com>
+
+        Added getFloatTimeDomainData method to AnalyserNode
+        https://bugs.webkit.org/show_bug.cgi?id=213393
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined test to show a new passing test.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+
 2020-06-22  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for <link>

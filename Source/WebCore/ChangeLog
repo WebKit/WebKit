@@ -1,3 +1,26 @@
+2020-06-22  Clark Wang  <clark_wang@apple.com>
+
+        Added getFloatTimeDomainData method to AnalyserNode
+        https://bugs.webkit.org/show_bug.cgi?id=213393
+
+        Reviewed by Chris Dumez.
+
+        Added getFloatTimeDomainData method, as per spec: https://www.w3.org/TR/webaudio/#analysernode.
+        Implementation of RealtimeAnalyser::getFloatTimeDomainData(Float32Array* destinationArray) is based on:
+        https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/modules/webaudio/realtime_analyser.cc.
+        Removed nullable option from some AnalyserNode methods.
+
+        Re-baselined existing tests to show new passing test.
+
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::getFloatFrequencyData):
+        (WebCore::RealtimeAnalyser::getByteFrequencyData):
+        (WebCore::RealtimeAnalyser::getFloatTimeDomainData):
+        (WebCore::RealtimeAnalyser::getByteTimeDomainData):
+        * Modules/webaudio/RealtimeAnalyser.h:
+
 2020-06-22  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for <link>

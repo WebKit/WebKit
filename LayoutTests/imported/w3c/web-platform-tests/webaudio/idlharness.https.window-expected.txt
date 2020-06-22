@@ -271,7 +271,7 @@ PASS AnalyserNode interface: existence and properties of interface prototype obj
 PASS AnalyserNode interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AnalyserNode interface: operation getFloatFrequencyData(Float32Array) 
 PASS AnalyserNode interface: operation getByteFrequencyData(Uint8Array) 
-FAIL AnalyserNode interface: operation getFloatTimeDomainData(Float32Array) assert_own_property: interface prototype object missing non-static operation expected property "getFloatTimeDomainData" missing
+PASS AnalyserNode interface: operation getFloatTimeDomainData(Float32Array) 
 PASS AnalyserNode interface: operation getByteTimeDomainData(Uint8Array) 
 PASS AnalyserNode interface: attribute fftSize 
 PASS AnalyserNode interface: attribute frequencyBinCount 
