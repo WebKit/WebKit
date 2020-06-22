@@ -1,3 +1,20 @@
+2020-06-22  Jer Noble  <jer.noble@apple.com>
+
+        [ macOS iOS ] (r263321): TestWebKitAPI.SleepDisabler.Load & TestWebKitAPI.SleepDisabler.Reload are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=213475
+        <rdar://problem/64603555>
+
+        Reviewed by Eric Carlson.
+
+        Looks like the SleepDisabler can come and go while the TestWebKitAPI process is spinning, so make the
+        Reload and Load tests more deterministic by only checking SleepDisabler after getting a "playing" message
+        from the WebContent process.
+
+        * TestWebKitAPI/Tests/WebKit/SleepDisabler.mm:
+        (SleepDisabler::runAndWaitUntilPlaying):
+        (SleepDisabler::loadPlayingPage):
+        (TEST_F):
+
 2020-06-22  Jonathan Bedard  <jbedard@apple.com>
 
         resultsdbpy: Make architecture differences explicit

@@ -81,13 +81,22 @@ public:
         [webView _close];
     }
 
-    void loadPlayingPage(NSString* pageName)
+    void runAndWaitUntilPlaying(Function<void()>&& function)
     {
         bool isPlaying = false;
         [webView performAfterReceivingMessage:@"playing" action:[&] { isPlaying = true; }];
-        [webView synchronouslyLoadTestPageNamed:pageName];
+
+        function();
+
         TestWebKitAPI::Util::run(&isPlaying);
         [webView clearMessageHandlers:@[@"playing"]];
+    }
+
+    void loadPlayingPage(NSString* pageName)
+    {
+        runAndWaitUntilPlaying([&] {
+            [webView synchronouslyLoadTestPageNamed:pageName];
+        });
     }
 
     void hasSleepDisablerShouldBecomeEqualTo(bool shouldHaveSleepDisabler)
@@ -172,8 +181,9 @@ TEST_F(SleepDisabler, Load)
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
 
-    [webView evaluateJavaScript:@"video = document.querySelector('video'); video.load(); video.play()" completionHandler:nil];
-    hasSleepDisablerShouldBecomeEqualTo(false);
+    runAndWaitUntilPlaying([&] {
+        [webView evaluateJavaScript:@"video = document.querySelector('video'); video.load(); go()" completionHandler:nil];
+    });
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
@@ -213,8 +223,9 @@ TEST_F(SleepDisabler, Reload)
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
 
-    [webView reload];
-    hasSleepDisablerShouldBecomeEqualTo(false);
+    runAndWaitUntilPlaying([&] {
+        [webView reload];
+    });
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
