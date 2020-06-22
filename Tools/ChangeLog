@@ -1,3 +1,14 @@
+2020-06-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Switch contributors.json url from trac to svn server
+        https://bugs.webkit.org/show_bug.cgi?id=213457
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidateCommiterAndReviewer):
+        (ValidateCommiterAndReviewer.load_contributors_from_trac):
+
 2020-06-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Persist sccache auth token across flatpak updates

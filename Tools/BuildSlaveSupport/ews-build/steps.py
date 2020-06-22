@@ -674,8 +674,7 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 class ValidateCommiterAndReviewer(buildstep.BuildStep):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
-    url = 'https://trac.webkit.org/browser/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json'
-    url_text = '{}?format=txt'.format(url)
+    url = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json'
     contributors = {}
 
     def load_contributors_from_disk(self):
@@ -690,13 +689,13 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
 
     def load_contributors_from_trac(self):
         try:
-            response = requests.get(self.url_text)
+            response = requests.get(self.url)
             if response.status_code != 200:
-                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(self.url_text, response.status_code))
+                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(self.url, response.status_code))
                 return {}
             return response.json()
         except Exception as e:
-            self._addToLog('stdio', 'Failed to access {url}\n'.format(url=self.url_text))
+            self._addToLog('stdio', 'Failed to access {url}\n'.format(url=self.url))
             return {}
 
     def load_contributors(self):
