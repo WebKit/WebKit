@@ -120,7 +120,9 @@ static const char* nameForState(AnimationBase::AnimationState state)
     }
     return "";
 }
+#endif
 
+#if !ERROR_DISABLED
 static const char* nameForStateInput(AnimationBase::AnimationStateInput input)
 {
     switch (input) {
@@ -331,7 +333,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             }
             break;
         case AnimationState::Ending:
-#if !LOG_DISABLED
+#if !ERROR_DISABLED
             if (input != AnimationStateInput::EndTimerFired && input != AnimationStateInput::PlayStatePaused)
                 LOG_ERROR("State is AnimationState::Ending, but input is not AnimationStateInput::EndTimerFired or AnimationStateInput::PlayStatePaused. It is %s.", nameForStateInput(input));
 #endif

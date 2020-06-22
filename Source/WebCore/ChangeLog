@@ -1,3 +1,15 @@
+2020-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build error with release build and "#define LOG_DISABLED 0"
+        https://bugs.webkit.org/show_bug.cgi?id=213420
+
+        Reviewed by Sam Weinig.
+
+        AnimationBase::updateStateMachine() uses LOG_ERROR so needs to test ERROR_DISABLED not LOG_DISABLED.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+
 2020-06-22  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Fix the case of "null type Blob slice" in wpt/FileAPI/blob/Blob-slice.html
