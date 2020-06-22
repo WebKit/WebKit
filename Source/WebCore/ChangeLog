@@ -1,3 +1,30 @@
+2020-06-22  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Fix the case of "null type Blob slice" in wpt/FileAPI/blob/Blob-slice.html
+        https://bugs.webkit.org/show_bug.cgi?id=213370
+
+        Reviewed by Darin Adler.
+
+        * fileapi/Blob.h:
+        (WebCore::Blob::slice const):
+        Remove unnecessary default arguments
+        These default arguments are introduced in r83873
+        but we don't need them because WebIDL binding handles them.
+
+        * fileapi/Blob.idl:
+        - Update the definition of `Blob.slice()` to match the latest spec.
+          https://w3c.github.io/FileAPI/#blob-section
+
+        - We should use empty string as a default value by step 4-a of
+          https://w3c.github.io/FileAPI/#dfn-slice
+
+        - In the previous code, we use `optional DOMString?` for the
+          _contentType_ arguments for `Blob.slice()`.
+          Then, our codegen generates a code which uses `convert<IDLNullable<IDLDOMString>>`
+          and it returns `String()` if the JS value is `null`.
+          This caused the failure case in this change.
+
+
 2020-06-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Code cleanup in WebAccessibilityObjectWrapper updateObjectBackingStore and position.

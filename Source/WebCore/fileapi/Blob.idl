@@ -40,8 +40,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     readonly attribute unsigned long long size;
     readonly attribute DOMString type;
 
-    // slice Blob into byte-ranged chunks
-    Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString? contentType = null);
+    Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString contentType = "");
 
     // FIXME: Implement:
     // readonly attribute boolean isClosed;

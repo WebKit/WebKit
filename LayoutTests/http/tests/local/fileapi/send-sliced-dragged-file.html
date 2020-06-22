@@ -64,12 +64,12 @@ function computeExpectedLength(fileLength, start, length)
     return expectedLength;
 }
 
-function onStableFileDrop(file, filePath, fileLength, start, length, contentType)
+function onStableFileDrop(file, filePath, fileLength, start, length, contentType = "")
 {
     // Slice the file.
     subfile = file.slice(start, start + length, contentType);
     shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
-    shouldBe("subfile.type", (contentType != undefined && contentType != null) ? '"' + contentType + '"' : '""');
+    shouldBe("subfile.type", '"' + contentType + '"');
 
     // Upload the sliced file.
     uploadFile(subfile, filePath, start, length, false);
@@ -83,12 +83,12 @@ function dragAndSliceStableFile(filePath, fileLength, start, length, contentType
     eventSender.mouseUp();
 }
 
-function onUnstableFileDrop(file, filePath, fileLength, start, length, contentType)
+function onUnstableFileDrop(file, filePath, fileLength, start, length, contentType = "")
 {
     // Slice the file.
     subfile = file.slice(start, start + length, contentType);
     shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
-    shouldBe("subfile.type", (contentType != undefined && contentType != null) ? '"' + contentType + '"' : '""');
+    shouldBe("subfile.type", '"' + contentType + '"');
   
     // Upload the sliced file.
     uploadFile(subfile, filePath, start, length, false);
@@ -121,7 +121,7 @@ function runTest()
     dragAndSliceStableFile("../resources/empty.txt", 0, 0, 10);
 
     debug("Test slicing and sending a small file.");
-    dragAndSliceStableFile("../resources/file-for-drag-to-send.txt", 10, 2, 4, null);
+    dragAndSliceStableFile("../resources/file-for-drag-to-send.txt", 10, 2, 4);
     dragAndSliceStableFile("../resources/file-for-drag-to-send.txt", 10, 2, 20, "type/foo");
     dragAndSliceStableFile("../resources/file-for-drag-to-send.txt", 10, 15, 20, "type/bar");
 

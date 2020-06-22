@@ -3,7 +3,7 @@ PASS no-argument Blob slice
 PASS Slices 
 PASS blob1. 
 PASS blob2. 
-FAIL null type Blob slice assert_equals: expected "null" but got ""
+PASS null type Blob slice 
 PASS undefined type Blob slice 
 PASS no type Blob slice 
 PASS Slicing test (0,0). 

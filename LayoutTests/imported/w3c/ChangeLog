@@ -1,3 +1,12 @@
+2020-06-22  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Fix the case of "null type Blob slice" in wpt/FileAPI/blob/Blob-slice.html
+        https://bugs.webkit.org/show_bug.cgi?id=213370
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/FileAPI/blob/Blob-slice-expected.txt:
+
 2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Add a preliminary implementation of XRWebGLLayer
