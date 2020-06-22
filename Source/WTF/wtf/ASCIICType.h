@@ -39,7 +39,7 @@
 
 namespace WTF {
 
-template<typename CharacterType> bool isASCII(CharacterType);
+template<typename CharacterType> constexpr bool isASCII(CharacterType);
 template<typename CharacterType> bool isASCIIAlpha(CharacterType);
 template<typename CharacterType> bool isASCIIAlphanumeric(CharacterType);
 template<typename CharacterType> bool isASCIIBinaryDigit(CharacterType);
@@ -72,7 +72,7 @@ template<typename CharacterType> CharacterType toASCIILowerUnchecked(CharacterTy
 
 extern WTF_EXPORT_PRIVATE const unsigned char asciiCaseFoldTable[256];
 
-template<typename CharacterType> inline bool isASCII(CharacterType character)
+template<typename CharacterType> constexpr bool isASCII(CharacterType character)
 {
     return !(character & ~0x7F);
 }

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ASCIICType.h>
+
 namespace WTF {
 
 class PrintStream;
@@ -55,8 +57,14 @@ private:
 
 inline namespace StringLiterals {
 
-constexpr ASCIILiteral operator"" _s(const char* characters, size_t)
+constexpr ASCIILiteral operator"" _s(const char* characters, size_t n)
 {
+#if ASSERT_ENABLED
+    for (size_t i = 0; i < n; ++i)
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(characters[i]));
+#else
+    UNUSED_PARAM(n);
+#endif
     return ASCIILiteral::fromLiteralUnsafe(characters);
 }
 

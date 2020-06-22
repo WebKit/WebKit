@@ -1,5 +1,25 @@
 2020-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [WTF] Ensure ASCIILiteral is ASCII characters at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=213449
+
+        Reviewed by Ross Kirsling.
+
+        The purpose of ASCIILiteral is ensure that this is compile-time (do not need to consider about ownership) ASCII characters.
+        By using `isASCII` and `ASSERT_UNDER_CONSTEXPR_CONTEXT`, we can make sure that this C string does not include non ASCII characters.
+        For example,
+
+            auto globalVariable = "ラーメン (Ramen in Japanese)"_s;
+
+        becomes compile error.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCII):
+        * wtf/text/ASCIILiteral.h:
+        (WTF::StringLiterals::operator _s):
+
+2020-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WTF] URL should support dataLog
         https://bugs.webkit.org/show_bug.cgi?id=213450
 
