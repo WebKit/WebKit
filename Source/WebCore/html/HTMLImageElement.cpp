@@ -166,8 +166,6 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
     ImageCandidate candidate;
 
     for (RefPtr<Node> child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
-        if (child == this)
-            return { };
         if (!is<HTMLSourceElement>(*child))
             continue;
         auto& source = downcast<HTMLSourceElement>(*child);

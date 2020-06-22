@@ -1,3 +1,16 @@
+2020-06-22  Rob Buis  <rbuis@igalia.com>
+
+        Image `crossorigin` mutations should be considered "relevant mutations"
+        https://bugs.webkit.org/show_bug.cgi?id=213335
+
+        Reviewed by Darin Adler.
+
+        As follow up to r263345, this check is not needed after all since the for loop
+        already does the same check.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+
 2020-06-22  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r263331.
