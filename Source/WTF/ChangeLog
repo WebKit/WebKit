@@ -1,3 +1,10 @@
+2020-06-22  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * wtf/TranslatedProcess.h:
+        (WTF::isX86BinaryRunningOnARM):
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Disable the JS JIT when running in a translated process

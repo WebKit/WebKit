@@ -27,6 +27,9 @@
 
 #if HAVE(CPU_TRANSLATION_CAPABILITY)
 #include <System/i386/cpu_capabilities.h>
+
+// FIXME: Remove this once it is in the SDK.
+#define WKkIsTranslated           0x4000000000000000ULL
 #endif
 
 namespace WTF {
@@ -34,7 +37,7 @@ namespace WTF {
 inline bool isX86BinaryRunningOnARM()
 {
 #if HAVE(CPU_TRANSLATION_CAPABILITY)
-    return (*(uint64_t*)_COMM_PAGE_CPU_CAPABILITIES64) & kIsTranslated;
+    return (*(uint64_t*)_COMM_PAGE_CPU_CAPABILITIES64) & WKkIsTranslated;
 #else
     return false;
 #endif
