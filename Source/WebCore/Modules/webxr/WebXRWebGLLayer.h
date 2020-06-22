@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class IntSize;
 class WebGLFramebuffer;
 class WebGLRenderingContext;
 #if ENABLE(WEBGL2)
@@ -48,7 +49,7 @@ struct XRWebGLLayerInit;
 
 class WebXRWebGLLayer : public RefCounted<WebXRWebGLLayer> {
 public:
-    
+
     using WebXRRenderingContext = WTF::Variant<
         RefPtr<WebGLRenderingContext>
 #if ENABLE(WEBGL2)
@@ -56,13 +57,13 @@ public:
 #endif
     >;
 
-    static ExceptionOr<Ref<WebXRWebGLLayer>> create(const WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    static ExceptionOr<Ref<WebXRWebGLLayer>> create(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
     ~WebXRWebGLLayer();
 
     bool antialias() const;
     bool ignoreDepthValues() const;
 
-    const WebGLFramebuffer& framebuffer() const;
+    WebGLFramebuffer* framebuffer() const;
     unsigned framebufferWidth() const;
     unsigned framebufferHeight() const;
 
@@ -71,11 +72,16 @@ public:
     static double getNativeFramebufferScaleFactor(const WebXRSession&);
 
 private:
-    WebXRWebGLLayer(const WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    WebXRWebGLLayer(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
 
+    static IntSize computeNativeWebGLFramebufferResolution();
+    static IntSize computeRecommendedWebGLFramebufferResolution();
+
+    Ref<WebXRSession> m_session;
     WebXRRenderingContext m_context;
     bool m_antialias { false };
     bool m_ignoreDepthValues { false };
+    bool m_isCompositionDisabled { false };
 
     struct {
         RefPtr<WebGLFramebuffer> object;

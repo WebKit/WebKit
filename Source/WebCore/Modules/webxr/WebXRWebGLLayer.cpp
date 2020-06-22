@@ -28,66 +28,129 @@
 
 #if ENABLE(WEBXR)
 
+#include "IntSize.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
 #if ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
 #endif
+#include "WebGLRenderingContextBase.h"
 #include "WebXRSession.h"
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
-ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(const WebXRSession& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
+// https://immersive-web.github.io/webxr/#dom-xrwebgllayer-xrwebgllayer
+ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(WebXRSession& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
 {
-    // The XRWebGLLayer(session, context, layerInit) constructor MUST perform the following steps when invoked:
-    //   1. Let layer be a new XRWebGLLayer
-
-    //   2. If session’s ended value is true, throw an InvalidStateError and abort these steps.
+    // 1. Let layer be a new XRWebGLLayer
+    // 2. If session’s ended value is true, throw an InvalidStateError and abort these steps.
     if (session.ended())
         return Exception { InvalidStateError };
 
-    //   3. If context is lost, throw an InvalidStateError and abort these steps.
-    //   4. If context’s XR compatible boolean is false, throw an InvalidStateError and abort these steps.
-    // FIXME: TODO
-
-    //   5. Initialize layer’s context to context.
-    //   6. Initialize layer’s antialias to layerInit’s antialias value.
-    //   7. If layerInit’s ignoreDepthValues value is false and the XR Compositor will make use of depth values, Initialize layer’s ignoreDepthValues to false.
-    //   8. Else Initialize layer’s ignoreDepthValues to true
-    //   9. Initialize layer’s framebuffer to a new opaque framebuffer created with context.
-    //   10. Initialize the layer’s swap chain.
-    //   11. If layer’s swap chain was unable to be created for any reason, throw an OperationError and abort these steps.
-    // FIXME: TODO
-
-    //   12. Return layer.
-    return adoptRef(*new WebXRWebGLLayer(session, WTFMove(context), init));
-}
-
-WebXRWebGLLayer::WebXRWebGLLayer(const WebXRSession&, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
-    : m_context(WTFMove(context))
-    , m_antialias(init.antialias)
-    , m_ignoreDepthValues(init.ignoreDepthValues)
-{
-    m_framebuffer.object = WTF::switchOn(m_context,
-        [](const RefPtr<WebGLRenderingContext>& context)
+    // 3. If context is lost, throw an InvalidStateError and abort these steps.
+    // 4. If session is an immersive session and context’s XR compatible boolean is false, throw
+    //    an InvalidStateError and abort these steps.
+    return WTF::switchOn(context,
+        [&](const RefPtr<WebGLRenderingContextBase>& baseContext) -> ExceptionOr<Ref<WebXRWebGLLayer>>
         {
-            RefPtr<WebGLFramebuffer> frameBuffer = WebGLFramebuffer::create(*context);
-            return frameBuffer;
+            if (baseContext->isContextLost())
+                return Exception { InvalidStateError };
+
+            auto mode = session.mode();
+            if ((mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr) && !baseContext->isXRCompatible())
+                return Exception { InvalidStateError };
+
+
+            // 5. Initialize layer’s context to context. (see constructor)
+            // 6. Initialize layer’s session to session. (see constructor)
+            // 7. Initialize layer’s ignoreDepthValues as follows. (see constructor)
+            // 8. Initialize layer’s composition disabled boolean as follows. (see constructor)
+            // 9. (see constructor except for the resources initialization step which is handled in the if block below)
+            auto layer = adoptRef(*new WebXRWebGLLayer(session, WTFMove(context), init));
+
+            if (layer->m_isCompositionDisabled) {
+                // 9.4. Allocate and initialize resources compatible with session’s XR device, including GPU accessible memory buffers,
+                //      as required to support the compositing of layer.
+                // 9.5. If layer’s resources were unable to be created for any reason, throw an OperationError and abort these steps.
+                // TODO: Initialize layer's resources or issue an OperationError.
+            }
+
+            // 10. Return layer.
+            return layer;
         },
-#if ENABLE(WEBGL2)
-        [](const RefPtr<WebGL2RenderingContext>& context)
-        {
-            RefPtr<WebGLFramebuffer> frameBuffer = WebGLFramebuffer::create(*context);
-            return frameBuffer;
-        },
-#endif
         [](WTF::Monostate) {
             ASSERT_NOT_REACHED();
-            return nullptr;
+            return Exception { InvalidStateError };
         }
     );
+}
+
+// https://immersive-web.github.io/webxr/#native-webgl-framebuffer-resolution
+IntSize WebXRWebGLLayer::computeNativeWebGLFramebufferResolution()
+{
+    // FIXME: implement this
+    return { 1, 1 };
+}
+
+// https://immersive-web.github.io/webxr/#recommended-webgl-framebuffer-resolution
+IntSize WebXRWebGLLayer::computeRecommendedWebGLFramebufferResolution()
+{
+    return computeNativeWebGLFramebufferResolution();
+}
+
+WebXRWebGLLayer::WebXRWebGLLayer(WebXRSession& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
+    : m_session(makeRef(session))
+    , m_context(WTFMove(context))
+{
+    // 7. Initialize layer’s ignoreDepthValues as follows:
+    //   7.1 If layerInit’s ignoreDepthValues value is false and the XR Compositor will make use of depth values,
+    //       Initialize layer’s ignoreDepthValues to false.
+    //   7.2. Else Initialize layer’s ignoreDepthValues to true
+    // TODO: ask XR compositor for depth value usages
+    m_ignoreDepthValues = init.ignoreDepthValues;
+
+    // 8. Initialize layer's composition disabled boolean as follows:
+    //  If session is an inline session -> Initialize layer's composition disabled to true
+    //  Otherwise -> Initialize layer's composition disabled boolean to false
+    m_isCompositionDisabled = m_session->mode() == XRSessionMode::Inline;
+
+    // 9. If layer’s composition disabled boolean is false:
+    if (m_isCompositionDisabled) {
+        //  1. Initialize layer’s antialias to layerInit’s antialias value.
+        m_antialias = init.antialias;
+
+        //  2. Let framebufferSize be the recommended WebGL framebuffer resolution multiplied by layerInit's framebufferScaleFactor.
+        IntSize recommendedSize = computeRecommendedWebGLFramebufferResolution();
+        m_framebuffer.width = recommendedSize.width() * init.framebufferScaleFactor;
+        m_framebuffer.height = recommendedSize.height() * init.framebufferScaleFactor;
+
+        //  3. Initialize layer’s framebuffer to a new opaque framebuffer with the dimensions framebufferSize
+        //       created with context, session initialized to session, and layerInit’s depth, stencil, and alpha values.
+        // For steps 4 & 5 see the create() method as resources initialization is handled outside the constructor as it might trigger
+        // an OperationError.
+        // FIXME: create a proper opaque framebuffer.
+        m_framebuffer.object = WTF::switchOn(m_context,
+            [](const RefPtr<WebGLRenderingContextBase>& baseContext)
+            {
+                return WebGLFramebuffer::create(*baseContext);
+            }
+        );
+    } else {
+        // 1. Initialize layer’s antialias to layer’s context's actual context parameters antialias value.
+        m_antialias = WTF::switchOn(m_context,
+            [](const RefPtr<WebGLRenderingContextBase>& context)
+            {
+                if (auto attributes = context->getContextAttributes())
+                    return attributes.value().antialias;
+                return false;
+            }
+        );
+        // 2. Initialize layer’s framebuffer to null.
+        m_framebuffer.object = nullptr;
+    }
 }
 
 WebXRWebGLLayer::~WebXRWebGLLayer() = default;
@@ -102,19 +165,29 @@ bool WebXRWebGLLayer::ignoreDepthValues() const
     return m_ignoreDepthValues;
 }
 
-const WebGLFramebuffer& WebXRWebGLLayer::framebuffer() const
+WebGLFramebuffer* WebXRWebGLLayer::framebuffer() const
 {
-    return *m_framebuffer.object;
+    return m_framebuffer.object.get();
 }
 
 unsigned WebXRWebGLLayer::framebufferWidth() const
 {
-    return m_framebuffer.width;
+    if (m_framebuffer.object)
+        return m_framebuffer.width;
+    return WTF::switchOn(m_context,
+        [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
+            return baseContext->drawingBufferWidth();
+        });
 }
 
 unsigned WebXRWebGLLayer::framebufferHeight() const
 {
-    return m_framebuffer.height;
+    if (m_framebuffer.object)
+        return m_framebuffer.height;
+    return WTF::switchOn(m_context,
+        [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
+            return baseContext->drawingBufferHeight();
+        });
 }
 
 RefPtr<WebXRViewport> WebXRWebGLLayer::getViewport(const WebXRView&)
@@ -122,9 +195,16 @@ RefPtr<WebXRViewport> WebXRWebGLLayer::getViewport(const WebXRView&)
     return { };
 }
 
-double WebXRWebGLLayer::getNativeFramebufferScaleFactor(const WebXRSession&)
+double WebXRWebGLLayer::getNativeFramebufferScaleFactor(const WebXRSession& session)
 {
-    return 1.0;
+    if (session.ended())
+        return 0.0;
+
+    IntSize nativeSize = computeNativeWebGLFramebufferResolution();
+    IntSize recommendedSize = computeRecommendedWebGLFramebufferResolution();
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!recommendedSize.isZero());
+    return (nativeSize / recommendedSize).width();
 }
 
 } // namespace WebCore

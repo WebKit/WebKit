@@ -1,3 +1,29 @@
+2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Add a preliminary implementation of XRWebGLLayer
+        https://bugs.webkit.org/show_bug.cgi?id=213022
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a preliminary implementation of XRWebGLLayer. It does not have any functionality at the moment so
+        it cannot be used to render WebXR stuff. This patch adds all the machinery required to create and properly
+        initialize the layer according to the spec.
+
+        Two new wpt tests are passing now.
+
+        * Modules/webxr/WebXRSession.h: Expose session mode.
+        * Modules/webxr/WebXRWebGLLayer.cpp:
+        (WebCore::WebXRWebGLLayer::create): Implemented spec for XRWebGLLayer creation.
+        (WebCore::WebXRWebGLLayer::computeNativeWebGLFramebufferResolution): Added with mock implementation.
+        (WebCore::WebXRWebGLLayer::computeRecommendedWebGLFramebufferResolution): Added.
+        (WebCore::WebXRWebGLLayer::WebXRWebGLLayer):
+        (WebCore::WebXRWebGLLayer::framebuffer const): Returned type should be a pointer.
+        (WebCore::WebXRWebGLLayer::framebufferWidth const): Return framebuffer width if available, otherwise return
+        the base context width.
+        (WebCore::WebXRWebGLLayer::framebufferHeight const): Ditto but with heights.
+        (WebCore::WebXRWebGLLayer::getNativeFramebufferScaleFactor): Implemented.
+        * Modules/webxr/WebXRWebGLLayer.h: New methods and type adjustments.
+
 2020-06-22  Rob Buis  <rbuis@igalia.com>
 
         Image `crossorigin` mutations should be considered "relevant mutations"

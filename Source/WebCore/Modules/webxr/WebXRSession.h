@@ -80,6 +80,8 @@ public:
 
     bool ended() const { return m_ended; }
 
+    XRSessionMode mode() const { return m_mode; }
+
 private:
     WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&);
 

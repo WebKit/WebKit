@@ -1,3 +1,15 @@
+2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Add a preliminary implementation of XRWebGLLayer
+        https://bugs.webkit.org/show_bug.cgi?id=213022
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added new expectations.
+
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt: Added.
+
 2020-06-22  Rob Buis  <rbuis@igalia.com>
 
         Image `crossorigin` mutations should be considered "relevant mutations"

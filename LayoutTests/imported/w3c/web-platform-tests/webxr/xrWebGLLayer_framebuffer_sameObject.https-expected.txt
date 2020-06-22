@@ -1,0 +1,3 @@
+
+PASS XRWebGLLayer.framebuffer meets [SameObject] requirement 
+

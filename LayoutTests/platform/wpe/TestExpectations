@@ -941,6 +941,8 @@ webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestRefer
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html [ Pass ]
 
 # Passing since r259532.
 imported/w3c/web-platform-tests/css/css-ui/outline-019.html
