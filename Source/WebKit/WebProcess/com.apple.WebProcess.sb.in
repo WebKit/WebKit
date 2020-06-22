@@ -922,7 +922,12 @@
         (global-name "com.apple.cmio.AVCAssistant")
         (global-name "com.apple.cmio.IIDCVideoAssistant")
         ;; QuickTimeIIDCDigitizer assistant
-        (global-name "com.apple.IIDCAssistant"))
+        (global-name "com.apple.IIDCAssistant")
+        ;; applecamerad
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.applecamerad")
+        ))
     (allow iokit-open
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
         (with report) (with telemetry)

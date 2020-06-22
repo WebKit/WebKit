@@ -1,5 +1,22 @@
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
+        WebEx can not share video from Safari on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=213481
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::needsAppleCameraService):
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::revokeSandboxExtensionsIfNeeded):
+        Pass sandbox extension for "com.apple.applecamerad" to the Web Content
+        process after the user allows camera access, when running on hardware which requires it.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Make it possible to dynamically extend the sandbox as above.
+
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
         Cannot play back encrypted media on arm64
         https://bugs.webkit.org/show_bug.cgi?id=213483
 
