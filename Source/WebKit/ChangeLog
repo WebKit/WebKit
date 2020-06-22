@@ -1,3 +1,13 @@
+2020-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Cannot play back encrypted media on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=213483
+
+        Reviewed by Jer Noble and Per Arne Vollan.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Extend the sandbox as necessary for encrypted media support.
+
 2020-06-22  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Public API should not allow trying to register a special URI scheme

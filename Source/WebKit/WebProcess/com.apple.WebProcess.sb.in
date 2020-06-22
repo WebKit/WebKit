@@ -402,6 +402,37 @@
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
 )
 
+;; <rdar://problem/60088861>
+(if (equal? (param "CPU") "arm64")
+    (allow iokit-get-properties
+        (iokit-property "ADSSupported")
+        (iokit-property "IOAVDHEVCDecodeCapabilities")
+    )
+
+    (with-filter (iokit-registry-entry-class "IOService")
+        (allow iokit-get-properties
+            (iokit-property "IORegistryEntryPropertyKeys")))
+
+    (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
+        (allow iokit-get-properties
+            (iokit-property "AppleTV"
+                            "DisplayPipePlaneBaseAlignment"
+                            "DisplayPipeStrideRequirements"
+                            "dfr"
+                            "external"
+                            "hdcp-hoover-protocol")))
+
+    (with-filter (iokit-registry-entry-class "IOPlatformDevice")
+        (allow iokit-get-properties
+            (iokit-property "soc-generation")))
+
+    (with-filter (iokit-registry-entry-class "IOService")
+        (allow iokit-get-properties
+            (iokit-property "chip-id"
+                            "display-rotation"
+                            "display-scale")))
+)
+
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
     (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
@@ -626,6 +657,14 @@
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
     (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
+)
+
+;; <rdar://problem/60088861>
+(if (equal? (param "CPU") "arm64")
+    (allow iokit-open
+        (iokit-user-client-class "AppleAVDUserClient")
+        (iokit-user-client-class "IOMobileFramebufferUserClient")
+    )
 )
 
 ;; cookied.
