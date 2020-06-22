@@ -1,3 +1,18 @@
+2020-06-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: Node: use a `WI.ContextMenu` instead of a `<select>` for listener filtering
+        https://bugs.webkit.org/show_bug.cgi?id=213492
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.initialLayout):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._populateEventListenersFilterContextMenu): Added.
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter > select): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Update macOS version macros

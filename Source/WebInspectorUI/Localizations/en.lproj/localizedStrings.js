@@ -629,8 +629,10 @@ localizedStrings["Graphics Tab Name"] = "Graphics";
 localizedStrings["Group"] = "Group";
 localizedStrings["Group By Resource"] = "Group By Resource";
 localizedStrings["Group Media Requests"] = "Group Media Requests";
-localizedStrings["Group by Event"] = "Group by Event";
-localizedStrings["Group by Target"] = "Group by Target";
+/* Group DOM event listeners by DOM event */
+localizedStrings["Group by Event @ Node Event Listeners"] = "Group by Event";
+/* Group DOM event listeners by DOM node */
+localizedStrings["Group by Target @ Node Event Listeners"] = "Group by Target";
 localizedStrings["Grouping Method"] = "Grouping Method";
 localizedStrings["HAR Export (%s)"] = "HAR Export (%s)";
 localizedStrings["HAR Import"] = "HAR Import";

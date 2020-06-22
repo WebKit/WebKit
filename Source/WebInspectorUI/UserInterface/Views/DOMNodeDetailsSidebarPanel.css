@@ -45,22 +45,6 @@ body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event
     filter: brightness(0.5);
 }
 
-.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter > select {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    color: transparent;
-    background-color: transparent;
-    border: none;
-    border-radius: 50%;
-    opacity: 0;
-    -webkit-appearance: none;
-}
-
 .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners .details-section.event-listener-section > .header > .event-listener-options {
     display: none;
     width: 15px;

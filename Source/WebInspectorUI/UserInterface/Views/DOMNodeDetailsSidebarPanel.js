@@ -79,24 +79,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         }
 
         let eventListenersFilterElement = WI.ImageUtilities.useSVGSymbol("Images/FilterFieldGlyph.svg", "filter", WI.UIString("Grouping Method"));
-
-        let eventListenersGroupMethodSelectElement = eventListenersFilterElement.appendChild(document.createElement("select"));
-        eventListenersGroupMethodSelectElement.addEventListener("change", (event) => {
-            this._eventListenerGroupingMethodSetting.value = eventListenersGroupMethodSelectElement.value;
-
-            this._refreshEventListeners();
-        });
-
-        function createOption(text, value) {
-            let optionElement = eventListenersGroupMethodSelectElement.appendChild(document.createElement("option"));
-            optionElement.value = value;
-            optionElement.textContent = text;
-        }
-
-        createOption(WI.UIString("Group by Event"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
-        createOption(WI.UIString("Group by Target"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Target);
-
-        eventListenersGroupMethodSelectElement.value = this._eventListenerGroupingMethodSetting.value;
+        WI.addMouseDownContextMenuHandlers(eventListenersFilterElement, this._populateEventListenersFilterContextMenu.bind(this));
 
         this._eventListenersSectionGroup = new WI.DetailsSectionGroup;
         let eventListenersSection = new WI.DetailsSection("dom-node-event-listeners", WI.UIString("Event Listeners"), [this._eventListenersSectionGroup], eventListenersFilterElement);
@@ -898,6 +881,20 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         }
 
         domNode.accessibilityProperties(accessibilityPropertiesCallback.bind(this));
+    }
+
+    _populateEventListenersFilterContextMenu(contextMenu)
+    {
+        let addGroupingMethodCheckboxItem = (label, groupingMethod) => {
+            contextMenu.appendCheckboxItem(label, () => {
+                this._eventListenerGroupingMethodSetting.value = groupingMethod;
+
+                this._refreshEventListeners();
+            }, this._eventListenerGroupingMethodSetting.value === groupingMethod);
+        };
+
+        addGroupingMethodCheckboxItem(WI.UIString("Group by Event", "Group by Event @ Node Event Listeners", "Group DOM event listeners by DOM event"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
+        addGroupingMethodCheckboxItem(WI.UIString("Group by Target", "Group by Target @ Node Event Listeners", "Group DOM event listeners by DOM node"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Target);
     }
 
     _eventListenersChanged(event)
