@@ -1,3 +1,15 @@
+2020-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] URL should support dataLog
+        https://bugs.webkit.org/show_bug.cgi?id=213450
+
+        Reviewed by Mark Lam.
+
+        Add test for URL::dump.
+
+        * TestWebKitAPI/Tests/WTF/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-06-21  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Nightly runner fails to extract zip files

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WTFStringUtilities.h"
 #include <wtf/MainThread.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
 
@@ -345,6 +346,15 @@ TEST_F(WTF_URL, HostIsMatchingDomain)
     URL emptyURL;
     EXPECT_FALSE(emptyURL.isMatchingDomain(String { }));
     EXPECT_FALSE(emptyURL.isMatchingDomain(emptyString()));
+}
+
+TEST_F(WTF_URL, PrintStream)
+{
+    String urlString("http://www.webkit.org/");
+    URL url({ }, urlString);
+    StringPrintStream out;
+    out.print(url);
+    EXPECT_EQ(out.toString(), urlString);
 }
 
 } // namespace TestWebKitAPI

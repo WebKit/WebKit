@@ -1,3 +1,16 @@
+2020-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] URL should support dataLog
+        https://bugs.webkit.org/show_bug.cgi?id=213450
+
+        Reviewed by Mark Lam.
+
+        Add URL::dump(PrintStream&) to support `dataLog(url)` which is extremely useful for WTF / JSC developers.
+
+        * wtf/URL.cpp:
+        (WTF::URL::dump const):
+        * wtf/URL.h:
+
 2020-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Check Gigacage usage before launching VM

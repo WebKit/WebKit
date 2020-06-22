@@ -32,6 +32,7 @@
 #include <unicode/uidna.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
@@ -762,6 +763,11 @@ void URL::print() const
 }
 
 #endif
+
+void URL::dump(PrintStream& out) const
+{
+    out.print(m_string);
+}
 
 String URL::strippedForUseAsReferrer() const
 {

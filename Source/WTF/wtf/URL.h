@@ -39,6 +39,7 @@ OBJC_CLASS NSURL;
 
 namespace WTF {
 
+class PrintStream;
 class TextStream;
 
 class URLTextEncoding {
@@ -179,6 +180,7 @@ public:
 #ifndef NDEBUG
     void print() const;
 #endif
+    WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, URL&);
