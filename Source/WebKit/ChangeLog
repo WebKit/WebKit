@@ -1,3 +1,14 @@
+2020-06-22  Antoine Quint  <graouts@webkit.org>
+
+        WebKit fails to leave audio routing arbitration during navigation, closing.
+        https://bugs.webkit.org/show_bug.cgi?id=213426
+        <rdar://problem/64395051>
+
+        Unreviewed build fix for an unannotated switch fall-through between switch labels.
+
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _audioRoutingArbitrationStatus]):
+
 2020-06-21  Jer Noble  <jer.noble@apple.com>
 
         WebKit fails to leave audio routing arbitration during navigation, closing.
