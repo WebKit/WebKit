@@ -1,5 +1,17 @@
 2020-06-21  Lauro Moura  <lmoura@igalia.com>
 
+        WebDriver: several tests in imported/selenium/py/test/selenium/webdriver/common/visibility_tests.py fail
+        https://bugs.webkit.org/show_bug.cgi?id=182334
+
+        Unreviewed test gardening.
+
+        The last two remaining tests from this bug started passing after the
+        imported selenium tests were updated in r263264.
+
+        * TestExpectations.json:
+
+2020-06-21  Lauro Moura  <lmoura@igalia.com>
+
         WebDriver: two selenium alert tests are failing
         https://bugs.webkit.org/show_bug.cgi?id=181727
 

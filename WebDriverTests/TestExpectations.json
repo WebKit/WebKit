@@ -139,16 +139,6 @@
             }
         }
     },
-    "imported/selenium/py/test/selenium/webdriver/common/visibility_tests.py": {
-        "subtests": {
-            "testShouldSayElementsWithNegativeTransformAreNotDisplayed": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
-            },
-            "testShouldSayElementsWithParentWithNegativeTransformAreNotDisplayed": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
-            }
-        }
-    },
     "imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py": {
         "subtests": {
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
