@@ -1,3 +1,16 @@
+2020-06-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Persist sccache auth token across flatpak updates
+        https://bugs.webkit.org/show_bug.cgi?id=213427
+
+        Reviewed by Žan Doberšek.
+
+        After a successful flatpak update check if an sccache auth token exists and reuse it when
+        updating the sccache config file.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.save_config):
+
 2020-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] URL should support dataLog

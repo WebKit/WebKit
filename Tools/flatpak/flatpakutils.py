@@ -876,6 +876,12 @@ class WebkitFlatpak:
             json_config = {'icecc_version': self.icc_version}
             json.dump(json_config, config)
 
+        if os.path.isfile(self.sccache_config_file) and not self.sccache_token:
+            Console.message("Reusing sccache auth token from old configuration file")
+            with open(self.sccache_config_file) as config:
+                sccache_config = toml.load(config)
+                self.sccache_token = sccache_config['dist']['auth']['token']
+
         if not self.sccache_token:
             Console.message("No authentication token provided. Re-run this with the -t option if an sccache token was provided to you. Skipping sccache configuration for now.")
             return
