@@ -1,3 +1,17 @@
+2020-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] WebPageProxy::setPromisedDataForImage should sanitize its filename
+        https://bugs.webkit.org/show_bug.cgi?id=213486
+        <rdar://problem/56522262>
+
+        Reviewed by Megan Gardner.
+
+        Ensure that the filename passed into WebPageProxy::setPromisedDataForImage is sanitized in the UI process prior
+        to being used as a suggested filename when writing a dragged image to the pasteboard.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         WebEx can not share video from Safari on arm64
