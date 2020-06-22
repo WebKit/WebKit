@@ -50,7 +50,19 @@ promise_test((test) => {
         stats.id = "id";
         stats.timestamp = 1;
         stats.trackIdentifier = "trackid";
-        assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"track","detached":false,"ended":false,"framesDecoded":0,"framesDropped":0,"framesReceived":0,"remoteSource":true,"trackIdentifier":"trackid"}');
+        assert_equals(stats.type, "track");
+        assert_false(stats.detached);
+        assert_false(stats.ended);
+        assert_equals(stats.framesDecoded, 0);
+        assert_equals(stats.framesDropped, 0);
+        assert_equals(stats.framesReceived, 0);
+        assert_true(stats.remoteSource);
+        assert_equals(stats.trackIdentifier, "trackid");
+        // non standard stats.
+        assert_equals(stats.freezeCount, 0);
+        assert_equals(stats.pauseCount, 0);
+        assert_equals(stats.totalFreezesDuration, 0);
+        assert_equals(stats.totalPausesDuration, 0);
         return waitFor(1000);
     }).then(() => {
         return getTrackStats(secondConnection);

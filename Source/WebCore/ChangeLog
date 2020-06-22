@@ -1,3 +1,22 @@
+2020-06-22  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add support for freeze/pause receiver stats
+        https://bugs.webkit.org/show_bug.cgi?id=212938
+        <rdar://problem/64141493>
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated tests.
+
+        Receiver stats are useful to check for freezes.
+        Let's introduce it in 'track' stats for now, we will later on move all
+        'receiver' stats to its own object once we fully align with spec.
+
+        * Modules/mediastream/RTCStatsReport.h:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillRTCMediaStreamTrackStats):
+
 2020-06-22  Rob Buis  <rbuis@igalia.com>
 
         Image `crossorigin` mutations should be considered "relevant mutations"

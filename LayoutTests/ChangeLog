@@ -1,3 +1,13 @@
+2020-06-22  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add support for freeze/pause receiver stats
+        https://bugs.webkit.org/show_bug.cgi?id=212938
+        <rdar://problem/64141493>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-mediastreamtrack-stats.html:
+
 2020-06-22  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS iOS ] REGRESSION: fast/mediastream/mediastrea mtrack-video-frameRate-clon e-increasing.html is a flaky failure

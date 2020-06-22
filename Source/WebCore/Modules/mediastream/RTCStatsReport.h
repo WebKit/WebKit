@@ -216,6 +216,15 @@ public:
         Optional<double> audioLevel;
         Optional<double> echoReturnLoss;
         Optional<double> echoReturnLossEnhancement;
+
+        Optional<uint32_t> freezeCount;
+        Optional<uint32_t> pauseCount;
+        Optional<double> totalFreezesDuration;
+        Optional<double> totalPausesDuration;
+        Optional<double> totalFramesDuration;
+        Optional<double> sumOfSquaredFramesDuration;
+
+        Optional<uint64_t> jitterBufferFlushes;
     };
 
     struct DataChannelStats : Stats {

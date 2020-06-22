@@ -218,6 +218,16 @@ dictionary RTCMediaStreamTrackStats : RTCStats {
     double audioLevel;
     double echoReturnLoss;
     double echoReturnLossEnhancement;
+
+    // FIXME: Introduce RTCVideoReceiverStats
+    unsigned long freezeCount;
+    unsigned long pauseCount;
+    double totalFreezesDuration;
+    double totalPausesDuration;
+    double totalFramesDuration;
+    double sumOfSquaredFramesDuration;
+    // FIXME: Introduce RTCAudioReceiverStats
+    unsigned long long jitterBufferFlushes;
 };
 
 [ JSGenerateToJSObject ]

@@ -268,6 +268,22 @@ static inline void fillRTCMediaStreamTrackStats(RTCStatsReport::MediaStreamTrack
         stats.echoReturnLoss = *rtcStats.echo_return_loss;
     if (rtcStats.echo_return_loss_enhancement.is_defined())
         stats.echoReturnLossEnhancement = *rtcStats.echo_return_loss_enhancement;
+
+    // Migrate to RTCVideoReceiverStats and RTCAudioReceiverStats.
+    if (rtcStats.freeze_count.is_defined())
+        stats.freezeCount = *rtcStats.freeze_count;
+    if (rtcStats.pause_count.is_defined())
+        stats.pauseCount = *rtcStats.pause_count;
+    if (rtcStats.total_freezes_duration.is_defined())
+        stats.totalFreezesDuration = *rtcStats.total_freezes_duration;
+    if (rtcStats.total_pauses_duration.is_defined())
+        stats.totalPausesDuration = *rtcStats.total_pauses_duration;
+    if (rtcStats.total_frames_duration.is_defined())
+        stats.totalFramesDuration = *rtcStats.total_frames_duration;
+    if (rtcStats.sum_squared_frame_durations.is_defined())
+        stats.sumOfSquaredFramesDuration = *rtcStats.sum_squared_frame_durations;
+    if (rtcStats.jitter_buffer_flushes.is_defined())
+        stats.jitterBufferFlushes = *rtcStats.jitter_buffer_flushes;
 }
 
 static inline void fillRTCDataChannelStats(RTCStatsReport::DataChannelStats& stats, const webrtc::RTCDataChannelStats& rtcStats)
