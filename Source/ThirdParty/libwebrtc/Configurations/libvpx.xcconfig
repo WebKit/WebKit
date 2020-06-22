@@ -7,9 +7,8 @@ GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 COMBINE_HIDPI_IMAGES = NO;
 ENABLE_STRICT_OBJC_MSGSEND = YES;
 
-HEADER_SEARCH_PATHS[sdk=macos*] = Source/third_party/libvpx/source/config/mac/x64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
-HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = Source/third_party/libvpx/source/config/mac/x64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
-HEADER_SEARCH_PATHS[sdk=iphoneos*] = Source/third_party/libvpx/source/config/ios/arm64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
+HEADER_SEARCH_PATHS[arch=x86_64] = Source/third_party/libvpx/source/config/mac/x64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
+HEADER_SEARCH_PATHS[arch=arm64*] = Source/third_party/libvpx/source/config/ios/arm64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
 
 INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
@@ -20,6 +19,7 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WK_DISABLE_HAR
 ARM_FILES = *_neon.c arm_cpudetect.c *_arm.c
 X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx.c *.asm
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*] = $(ARM_FILES) sad.c
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = $(ARM_FILES) $(X86_FILES)
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*][arch=x86_64] = $(ARM_FILES) sad.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*][arch=arm64*] = $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=arm64*] = $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = $(X86_FILES) $(ARM_FILES)
