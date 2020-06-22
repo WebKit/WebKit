@@ -40,12 +40,12 @@ class RenderImageResource;
 template<typename T> class EventSender;
 typedef EventSender<ImageLoader> ImageEventSender;
 
+enum class RelevantMutation : bool { Yes, No };
+
 class ImageLoader : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ImageLoader();
-
-    enum class RelevantMutation : bool { Yes, No };
 
     // This function should be called when the element is attached to a document; starts
     // loading if a load hasn't already been started.

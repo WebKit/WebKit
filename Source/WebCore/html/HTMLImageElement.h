@@ -43,6 +43,8 @@ class HTMLMapElement;
 
 struct ImageCandidate;
 
+enum class RelevantMutation : bool;
+
 class HTMLImageElement : public HTMLElement, public FormNamedItem {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
     friend class HTMLFormElement;
@@ -183,7 +185,7 @@ private:
 
     bool isInteractiveContent() const final;
 
-    void selectImageSource();
+    void selectImageSource(RelevantMutation);
 
     ImageCandidate bestFitSourceFromPictureElement();
 

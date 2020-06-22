@@ -1,14 +1,14 @@
 
 PASS src set 
-FAIL src changed assert_unreached: update the image data didn't run Reached unreachable code
+PASS src changed 
 PASS src removed 
 PASS srcset set 
-FAIL srcset changed assert_unreached: update the image data didn't run Reached unreachable code
+PASS srcset changed 
 PASS srcset removed 
 PASS sizes set 
 PASS sizes changed 
 PASS sizes removed 
-FAIL src set to same value assert_unreached: update the image data didn't run Reached unreachable code
+PASS src set to same value 
 PASS crossorigin absent to empty, src absent 
 PASS crossorigin absent to anonymous, src absent 
 PASS crossorigin absent to use-credentials, src absent 
@@ -20,17 +20,17 @@ PASS crossorigin use-credentials to absent, src absent
 PASS crossorigin use-credentials to empty, src absent 
 PASS crossorigin use-credentials to anonymous, src absent 
 PASS crossorigin use-credentials to invalid, src absent 
-FAIL crossorigin absent to empty, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin absent to anonymous, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin absent to use-credentials, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin empty to absent, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin empty to use-credentials, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin anonymous to absent, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin anonymous to use-credentials, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin use-credentials to absent, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin use-credentials to empty, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin use-credentials to anonymous, src already set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL crossorigin use-credentials to invalid, src already set assert_unreached: update the image data didn't run Reached unreachable code
+PASS crossorigin absent to empty, src already set 
+PASS crossorigin absent to anonymous, src already set 
+PASS crossorigin absent to use-credentials, src already set 
+PASS crossorigin empty to absent, src already set 
+PASS crossorigin empty to use-credentials, src already set 
+PASS crossorigin anonymous to absent, src already set 
+PASS crossorigin anonymous to use-credentials, src already set 
+PASS crossorigin use-credentials to absent, src already set 
+PASS crossorigin use-credentials to empty, src already set 
+PASS crossorigin use-credentials to anonymous, src already set 
+PASS crossorigin use-credentials to invalid, src already set 
 PASS referrerpolicy absent to no-referrer-when-downgrade, src absent 
 PASS referrerpolicy absent to no-referrer, src absent 
 PASS referrerpolicy empty to no-referrer-when-downgrade, src absent 
@@ -55,24 +55,24 @@ PASS referrerpolicy no-referrer to absent, src already set
 PASS referrerpolicy no-referrer to empty, src already set 
 PASS referrerpolicy no-referrer to no-referrer-when-downgrade, src already set 
 PASS referrerpolicy no-referrer to invalid, src already set 
-FAIL inserted into picture assert_unreached: update the image data didn't run Reached unreachable code
-FAIL removed from picture assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source inserted assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source removed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has srcset set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has srcset changed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has srcset removed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has sizes set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has sizes changed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has sizes removed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has media set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has media changed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has media removed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has type set assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has type changed assert_unreached: update the image data didn't run Reached unreachable code
-FAIL parent is picture, previous source has type removed assert_unreached: update the image data didn't run Reached unreachable code
-PASS srcset is set to same value 
-PASS sizes is set to same value 
+PASS inserted into picture 
+PASS removed from picture 
+PASS parent is picture, previous source inserted 
+PASS parent is picture, previous source removed 
+PASS parent is picture, previous source has srcset set 
+PASS parent is picture, previous source has srcset changed 
+PASS parent is picture, previous source has srcset removed 
+PASS parent is picture, previous source has sizes set 
+PASS parent is picture, previous source has sizes changed 
+PASS parent is picture, previous source has sizes removed 
+PASS parent is picture, previous source has media set 
+PASS parent is picture, previous source has media changed 
+PASS parent is picture, previous source has media removed 
+PASS parent is picture, previous source has type set 
+PASS parent is picture, previous source has type changed 
+PASS parent is picture, previous source has type removed 
+FAIL srcset is set to same value assert_unreached: update the image data was run Reached unreachable code
+FAIL sizes is set to same value assert_unreached: update the image data was run Reached unreachable code
 PASS crossorigin state not changed: absent, removeAttribute 
 PASS crossorigin state not changed: empty to anonymous 
 PASS crossorigin state not changed: anonymous to foobar 

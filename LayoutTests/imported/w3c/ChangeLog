@@ -1,3 +1,15 @@
+2020-06-22  Rob Buis  <rbuis@igalia.com>
+
+        Image `crossorigin` mutations should be considered "relevant mutations"
+        https://bugs.webkit.org/show_bug.cgi?id=213335
+
+        Reviewed by Darin Adler.
+
+        Update improved test result.
+
+        * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/drawimage_crossorigin.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations-expected.txt:
+
 2020-06-19  Clark Wang  <clark_wang@apple.com>
 
         Remove setVelocity() from PannerNode

@@ -166,6 +166,8 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
     ImageCandidate candidate;
 
     for (RefPtr<Node> child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
+        if (child == this)
+            return { };
         if (!is<HTMLSourceElement>(*child))
             continue;
         auto& source = downcast<HTMLSourceElement>(*child);
@@ -211,10 +213,10 @@ void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
     if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
         return;
 
-    selectImageSource();
+    selectImageSource(RelevantMutation::No);
 }
 
-void HTMLImageElement::selectImageSource()
+void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
 {
     m_mediaQueryDynamicResults = { };
     document().removeDynamicMediaQueryDependentImage(*this);
@@ -228,7 +230,7 @@ void HTMLImageElement::selectImageSource()
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);
-    m_imageLoader->updateFromElementIgnoringPreviousError();
+    m_imageLoader->updateFromElementIgnoringPreviousError(relevantMutation);
 
     if (!m_mediaQueryDynamicResults.isEmpty())
         document().addDynamicMediaQueryDependentImage(*this);
@@ -239,16 +241,27 @@ bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attribute
     return equalLettersIgnoringASCIICase(attributeValue, "lazy");
 }
 
+enum CrossOriginState { NotSet, UseCredentials, Anonymous };
+static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue)
+{
+    if (crossoriginValue.isNull())
+        return NotSet;
+    return equalIgnoringASCIICase(crossoriginValue, "use-credentials") ? UseCredentials : Anonymous;
+}
+
 void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
+    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+
     if (name == referrerpolicyAttr && RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled()) {
         auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
         auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
         if (oldReferrerPolicy != newReferrerPolicy)
-            m_imageLoader->updateFromElementIgnoringPreviousError(ImageLoader::RelevantMutation::Yes);
+            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+    } else if (name == crossoriginAttr) {
+        if (parseCrossoriginState(oldValue) != parseCrossoriginState(newValue))
+            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
     }
-
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -257,7 +270,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (is<RenderImage>(renderer()))
             downcast<RenderImage>(*renderer()).updateAltText();
     } else if (name == srcAttr || name == srcsetAttr || name == sizesAttr)
-        selectImageSource();
+        selectImageSource(RelevantMutation::Yes);
     else if (name == usemapAttr) {
         if (isInTreeScope() && !m_parsedUsemap.isNull())
             treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
@@ -405,9 +418,17 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     if (insertionType.treeScopeChanged && !m_parsedUsemap.isNull())
         treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
-    if (is<HTMLPictureElement>(parentNode())) {
-        setPictureElement(&downcast<HTMLPictureElement>(*parentNode()));
-        selectImageSource();
+    if (is<HTMLPictureElement>(&parentOfInsertedTree)) {
+        setPictureElement(&downcast<HTMLPictureElement>(parentOfInsertedTree));
+        if (insertionType.connectedToDocument) {
+            selectImageSource(RelevantMutation::Yes);
+            return insertNotificationRequest;
+        }
+        auto candidate = bestFitSourceFromPictureElement();
+        if (!candidate.isEmpty()) {
+            setBestFitURLAndDPRFromImageCandidate(candidate);
+            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+        }
     }
 
     // If we have been inserted from a renderer-less document,
@@ -432,8 +453,10 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
     if (removalType.treeScopeChanged && !m_parsedUsemap.isNull())
         oldParentOfRemovedTree.treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
-    if (is<HTMLPictureElement>(parentNode()))
+    if (is<HTMLPictureElement>(oldParentOfRemovedTree)) {
         setPictureElement(nullptr);
+        m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+    }
 
     if (removalType.disconnectedFromDocument)
         updateEditableImage();

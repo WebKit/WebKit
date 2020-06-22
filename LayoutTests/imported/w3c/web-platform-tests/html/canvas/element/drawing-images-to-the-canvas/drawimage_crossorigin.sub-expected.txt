@@ -1,5 +1,6 @@
 Blocked access to external URL http://www.localhost:8800/images/green.png?pipe=header(Access-Control-Allow-Origin,*)
 Blocked access to external URL http://www.localhost:8800/images/green.png?pipe=header(Access-Control-Allow-Origin,*)
+Blocked access to external URL http://www.localhost:8800/images/green.png?pipe=header(Access-Control-Allow-Origin,*)
 Blocked access to external URL http://www.localhost:8800/images/green.png
 
 PASS Can get pixels of canvas with same origin image drawn 
