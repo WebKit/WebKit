@@ -3127,7 +3127,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 
     auto* axRoot = axObjectCache->getOrCreate(document.view());
     if (axRoot)
-        tree->generateSubtree(*axRoot, InvalidAXID, true);
+        tree->generateSubtree(*axRoot, nullptr, true);
 
     auto* axFocus = axObjectCache->focusedObject(document);
     if (axFocus)

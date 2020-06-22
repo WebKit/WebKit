@@ -161,18 +161,29 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) c
     return result;
 }
 
-void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXID parentID, bool attachWrapper)
+void AXIsolatedTree::updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_changeLogLock.isLocked());
+
+    m_nodeMap.set(axID, childrenIDs);
+    m_pendingChildrenUpdates.append(std::make_pair(axID, WTFMove(childrenIDs)));
+}
+
+void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axParent, bool attachWrapper)
 {
     AXTRACE("AXIsolatedTree::generateSubtree");
     ASSERT(isMainThread());
-    Vector<NodeChange> nodeChanges;
-    auto object = createSubtree(axObject, parentID, attachWrapper, nodeChanges);
-    LockHolder locker { m_changeLogLock };
-    appendNodeChanges(nodeChanges);
 
-    if (parentID == InvalidAXID)
+    Vector<NodeChange> nodeChanges;
+    auto object = createSubtree(axObject, axParent ? axParent->objectID() : InvalidAXID, attachWrapper, nodeChanges);
+    LockHolder locker { m_changeLogLock };
+    appendNodeChanges(WTFMove(nodeChanges));
+
+    if (!axParent)
         setRootNode(object.ptr());
-    // FIXME: else attach the newly created subtree to its parent.
+    else
+        updateChildrenIDs(axParent->objectID(), axParent->childrenIDs());
 }
 
 Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID parentID, bool attachWrapper, Vector<NodeChange>& nodeChanges)
@@ -202,10 +213,10 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
         auto child = createSubtree(*axChild, axObject.objectID(), attachWrapper, nodeChanges);
         childrenIDs.append(child->objectID());
     }
-    m_nodeMap.set(object->objectID(), childrenIDs);
+
     {
         LockHolder locker { m_changeLogLock };
-        m_pendingChildrenUpdates.append(std::make_pair(object->objectID(), childrenIDs));
+        updateChildrenIDs(object->objectID(), WTFMove(childrenIDs));
     }
 
     return object;
@@ -237,10 +248,9 @@ void AXIsolatedTree::updateSubtree(AXCoreObject& axObject)
     AXTRACE("AXIsolatedTree::updateSubtree");
     AXLOG(&axObject);
     ASSERT(isMainThread());
+
     removeSubtree(axObject.objectID());
-    auto* axParent = axObject.parentObject();
-    AXID parentID = axParent ? axParent->objectID() : InvalidAXID;
-    generateSubtree(axObject, parentID, false);
+    generateSubtree(axObject, axObject.parentObject(), false);
 }
 
 void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
@@ -286,7 +296,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
             // This is a new child, add it to the tree.
             AXLOG("Adding a new child for:");
             AXLOG(axChildren[i]);
-            generateSubtree(*axChildren[i], axAncestor->objectID(), true);
+            generateSubtree(*axChildren[i], axAncestor, true);
         }
     }
 
@@ -296,11 +306,8 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
         removeSubtree(childID);
 
     // Lastly, make the children IDs of the isolated object to be the same as the AXObject's.
-    m_nodeMap.set(axAncestor->objectID(), axChildrenIDs);
-    {
-        LockHolder locker { m_changeLogLock };
-        m_pendingChildrenUpdates.append(std::make_pair(axAncestor->objectID(), axChildrenIDs));
-    }
+    LockHolder locker { m_changeLogLock };
+    updateChildrenIDs(axAncestor->objectID(), WTFMove(axChildrenIDs));
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
@@ -327,6 +334,7 @@ void AXIsolatedTree::setRootNode(AXIsolatedObject* root)
     AXTRACE("AXIsolatedTree::setRootNode");
     ASSERT(isMainThread());
     ASSERT(m_changeLogLock.isLocked());
+    ASSERT(!m_rootNode);
     ASSERT(root);
 
     m_rootNode = root;
@@ -370,11 +378,13 @@ void AXIsolatedTree::removeSubtree(AXID axID)
     m_pendingSubtreeRemovals.append(axID);
 }
 
-void AXIsolatedTree::appendNodeChanges(const Vector<NodeChange>& changes)
+void AXIsolatedTree::appendNodeChanges(Vector<NodeChange>&& changes)
 {
     AXTRACE("AXIsolatedTree::appendNodeChanges");
     ASSERT(isMainThread());
-    m_pendingAppends.appendVector(changes);
+    ASSERT(m_changeLogLock.isLocked());
+
+    m_pendingAppends.appendVector(WTFMove(changes));
 }
 
 void AXIsolatedTree::applyPendingChanges()

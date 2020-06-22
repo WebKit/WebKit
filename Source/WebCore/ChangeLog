@@ -1,3 +1,29 @@
+2020-06-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        AXIsolatedTree::generateSubtree should properly assign the generated subtree to its parent node.
+        https://bugs.webkit.org/show_bug.cgi?id=213435
+
+        Reviewed by Darin Adler.
+
+        AXIsolatedTree::generateSubtree now properly updates the children IDs
+        of the parent node of the subtree being generated.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::generateIsolatedTree):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateChildrenIDs):
+        (WebCore::AXIsolatedTree::generateSubtree): Takes the parent object
+        instead of the parent ID. This allows to retrieve the children IDs of
+        the parent object.
+        (WebCore::AXIsolatedTree::createSubtree):
+        (WebCore::AXIsolatedTree::updateSubtree):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::setRootNode):
+        (WebCore::AXIsolatedTree::removeSubtree):
+        (WebCore::AXIsolatedTree::appendNodeChanges): R-value parameter instead
+        of by reference.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Update macOS version macros
