@@ -1,3 +1,13 @@
+2020-06-22  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r263121): [ Catalina Debug ] media/video-fullscreen-only-playback.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213407
+        <rdar://problem/64545587>
+
+        Unreviewed speculative change as I have not been able to reproduce the reported bug.
+
+        * media/video-fullscreen-only-playback.html: 
+
 2020-06-22  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for <link>

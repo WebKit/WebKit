@@ -43,7 +43,7 @@
             {
                 await testExpectedEventually("video.webkitDisplayingFullscreen", true);
                 consoleWrite("<br>** Entered fullscreen");
-                waitForEvent('webkitpresentationmodechanged', endfullscreen);
+                waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
                 run("video.webkitExitFullScreen()");
             }
 
