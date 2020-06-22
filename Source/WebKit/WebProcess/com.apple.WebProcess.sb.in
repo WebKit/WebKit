@@ -191,6 +191,7 @@
     (sysctl-name-regex #"^hw.optional\.")
     (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
     (sysctl-name-regex #"^net.routetable")
+    (sysctl-name-prefix "sysctl.oidfmt.") ; Remove when <rdar://problem/64208532> is fixed.
 )
 
 (allow sysctl-write
