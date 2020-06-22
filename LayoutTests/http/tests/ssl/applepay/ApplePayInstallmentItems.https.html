@@ -113,6 +113,8 @@ activateThen(() => {
     debug('');
 
     debug('Test platform conversion');
+    const session = new ApplePaySession(apiVersion, validRequest());
+    session.begin();
     shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items.length', '2');
     shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].type', 'expectedItemType');
     shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].amount', 'expectedItemAmount');

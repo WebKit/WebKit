@@ -1,3 +1,14 @@
+2020-06-22  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r263150): http/tests/ssl/applepay/ApplePayInstallmentItems.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=213466
+        <rdar://problem/64537600>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/ssl/applepay/ApplePayInstallmentItems.https.html: Restored two lines of code
+        that were accidentally removed in r263150 and are necessary for the test to pass.
+
 2020-06-22  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Fix the case of "null type Blob slice" in wpt/FileAPI/blob/Blob-slice.html
