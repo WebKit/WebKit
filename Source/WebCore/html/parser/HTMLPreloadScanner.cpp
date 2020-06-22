@@ -284,6 +284,8 @@ private:
                 m_asAttribute = attributeValue;
             else if (match(attributeName, typeAttr))
                 m_typeAttribute = attributeValue;
+            else if (match(attributeName, referrerpolicyAttr))
+                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
             break;
         case TagId::Input:
             if (match(attributeName, srcAttr))

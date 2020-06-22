@@ -36,6 +36,7 @@
 #include "CachedResourceHandle.h"
 #include "LinkLoaderClient.h"
 #include "LinkRelAttribute.h"
+#include "ReferrerPolicy.h"
 
 #include <wtf/WeakPtr.h>
 
@@ -53,6 +54,7 @@ struct LinkLoadParameters {
     String crossOrigin;
     String imageSrcSet;
     String imageSizes;
+    ReferrerPolicy referrerPolicy;
 };
 
 class LinkLoader : private CachedResourceClient, public CanMakeWeakPtr<LinkLoader> {

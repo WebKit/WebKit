@@ -81,6 +81,10 @@ public:
 
     void allowPrefetchLoadAndErrorForTesting() { m_allowPrefetchLoadAndErrorForTesting = true; }
 
+    void setReferrerPolicyForBindings(const AtomString&);
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const;
+
 private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 

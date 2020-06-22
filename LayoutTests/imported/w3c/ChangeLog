@@ -1,3 +1,18 @@
+2020-06-22  Rob Buis  <rbuis@igalia.com>
+
+        Add referrerpolicy attribute support for <link>
+        https://bugs.webkit.org/show_bug.cgi?id=213342
+
+        Reviewed by Darin Adler.
+
+        Fix wrong resource file name usage.
+
+        * web-platform-tests/referrer-policy/generic/multiple-headers-and-values.html:
+        * web-platform-tests/referrer-policy/generic/multiple-headers-combined.html:
+        * web-platform-tests/referrer-policy/generic/multiple-headers-one-invalid.html:
+        * web-platform-tests/referrer-policy/generic/multiple-headers-one-unknown-token.html:
+        * web-platform-tests/referrer-policy/generic/multiple-headers.html:
+
 2020-06-22  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Fix the case of "null type Blob slice" in wpt/FileAPI/blob/Blob-slice.html

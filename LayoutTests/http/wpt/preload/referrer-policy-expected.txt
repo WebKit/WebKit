@@ -1,0 +1,3 @@
+
+PASS Makes sure that preloaded resources take referrer-policy attribute into account. 
+

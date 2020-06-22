@@ -60,7 +60,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
         if (crossOriginMode.isNull())
             crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
     }
-    if (m_resourceType == CachedResource::Type::Script)
+    if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::ImageResource)
         options.referrerPolicy = m_referrerPolicy;
     auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
     request.setInitiator(m_initiator);

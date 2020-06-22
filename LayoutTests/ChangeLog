@@ -1,3 +1,26 @@
+2020-06-22  Rob Buis  <rbuis@igalia.com>
+
+        Add referrerpolicy attribute support for <link>
+        https://bugs.webkit.org/show_bug.cgi?id=213342
+
+        Reviewed by Darin Adler.
+
+        Add a tests for <link rel="stylesheet">, <link rel="preload"> and the
+        referrerpolicy attribute.
+        Unskip the referrer-policy/generic/link-rel-prefetch.html test.
+
+        * TestExpectations:
+        * http/tests/security/referrer-policy-attribute-style-no-referrer-expected.html: Added.
+        * http/tests/security/referrer-policy-attribute-style-no-referrer.html: Added.
+        * http/tests/security/resources/green-background.css: Added.
+        (body):
+        * http/tests/security/resources/green-if-no-referrer-css.php: Added.
+        * http/tests/security/resources/pass-if-no-referrer.php: Added.
+        * http/wpt/preload/refferer-policy-expected.txt: Added.
+        * http/wpt/preload/refferer-policy.html: Added.
+        * http/wpt/preload/resources/referrer-img.py: Added.
+        (main):
+
 2020-06-22  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r263150): http/tests/ssl/applepay/ApplePayInstallmentItems.https.html is failing
