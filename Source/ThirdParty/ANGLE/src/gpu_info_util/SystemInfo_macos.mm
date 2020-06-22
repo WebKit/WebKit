@@ -210,11 +210,6 @@ bool GetSystemInfo(SystemInfo *info)
         return false;
     }
 
-    if (info->gpus.empty())
-    {
-        return false;
-    }
-
     // Call the generic GetDualGPUInfo function to initialize info fields
     // such as isOptimus, isAMDSwitchable, and the activeGPUIndex
     GetDualGPUInfo(info);
