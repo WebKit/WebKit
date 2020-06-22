@@ -78,14 +78,17 @@ StepRange DateTimeLocalInputType::createStepRange(AnyStepHandling anyStepHandlin
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, dateTimeLocalStepDescription);
 }
 
-Optional<DateComponents> DateTimeLocalInputType::parseToDateComponents(const StringView& source) const
+bool DateTimeLocalInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
 {
-    return DateComponents::fromParsingDateTimeLocal(source);
+    ASSERT(out);
+    unsigned end;
+    return out->parseDateTimeLocal(characters, length, 0, end) && end == length;
 }
 
-Optional<DateComponents> DateTimeLocalInputType::setMillisecondToDateComponents(double value) const
+bool DateTimeLocalInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
 {
-    return DateComponents::fromMillisecondsSinceEpochForDateTimeLocal(value);
+    ASSERT(date);
+    return date->setMillisecondsSinceEpochForDateTimeLocal(value);
 }
 
 bool DateTimeLocalInputType::isDateTimeLocalField() const

@@ -282,6 +282,12 @@ public:
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
     virtual Decimal parseToNumber(const String&, const Decimal& defaultValue) const;
 
+    // Parses the specified string for this InputType, and returns true if it
+    // is successfully parsed. An instance pointed by the DateComponents*
+    // parameter will have parsed values and be modified even if the parsing
+    // fails. The DateComponents* parameter may be null.
+    virtual bool parseToDateComponents(const String&, DateComponents*) const;
+
     // Create a string representation of the specified Decimal value for the
     // input type. If NaN or Infinity is specified, this returns an empty
     // string. This should not be called for types without valueAsNumber.
@@ -303,8 +309,9 @@ public:
     virtual bool receiveDroppedFiles(const DragData&);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
     virtual DateComponents::Type dateType() const;
-
+#endif
     virtual String displayString() const;
 
 protected:

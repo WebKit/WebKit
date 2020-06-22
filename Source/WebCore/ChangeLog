@@ -1,3 +1,16 @@
+2020-06-22  Jason Lawrence  <lawrence.j@apple.com>
+
+        Unreviewed, reverting r263331.
+
+        This commit was causing 50+ iOS debug tests to crash.
+
+        Reverted changeset:
+
+        "Convert DateComponents parsing code to use Optional based
+        return values rather than out-parameters"
+        https://bugs.webkit.org/show_bug.cgi?id=213440
+        https://trac.webkit.org/changeset/263331
+
 2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Add a preliminary implementation of XRWebGLLayer

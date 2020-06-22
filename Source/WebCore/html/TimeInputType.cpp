@@ -68,11 +68,9 @@ Decimal TimeInputType::defaultValueForStepUp() const
     int offset = calculateLocalTimeOffset(current).offset / msPerMinute;
     current += offset * msPerMinute;
 
-    auto date = DateComponents::fromMillisecondsSinceMidnight(current);
-    if (!date)
-        return  { };
-
-    double milliseconds = date->millisecondsSinceEpoch();
+    DateComponents date;
+    date.setMillisecondsSinceMidnight(current);
+    double milliseconds = date.millisecondsSinceEpoch();
     ASSERT(std::isfinite(milliseconds));
     return Decimal::fromDouble(milliseconds);
 }
@@ -87,14 +85,17 @@ StepRange TimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, timeStepDescription);
 }
 
-Optional<DateComponents> TimeInputType::parseToDateComponents(const StringView& source) const
+bool TimeInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
 {
-    return DateComponents::fromParsingTime(source);
+    ASSERT(out);
+    unsigned end;
+    return out->parseTime(characters, length, 0, end) && end == length;
 }
 
-Optional<DateComponents> TimeInputType::setMillisecondToDateComponents(double value) const
+bool TimeInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
 {
-    return DateComponents::fromMillisecondsSinceMidnight(value);
+    ASSERT(date);
+    return date->setMillisecondsSinceMidnight(value);
 }
 
 bool TimeInputType::isTimeField() const

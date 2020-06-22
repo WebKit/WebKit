@@ -70,14 +70,17 @@ StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, dateStepDescription);
 }
 
-Optional<DateComponents> DateInputType::parseToDateComponents(const StringView& source) const
+bool DateInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
 {
-    return DateComponents::fromParsingDate(source);
+    ASSERT(out);
+    unsigned end;
+    return out->parseDate(characters, length, 0, end) && end == length;
 }
 
-Optional<DateComponents> DateInputType::setMillisecondToDateComponents(double value) const
+bool DateInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
 {
-    return DateComponents::fromMillisecondsSinceEpochForDate(value);
+    ASSERT(date);
+    return date->setMillisecondsSinceEpochForDate(value);
 }
 
 bool DateInputType::isDateField() const

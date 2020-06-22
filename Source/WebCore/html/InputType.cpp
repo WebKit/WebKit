@@ -522,16 +522,24 @@ Decimal InputType::parseToNumberOrNaN(const String& string) const
     return parseToNumber(string, Decimal::nan());
 }
 
+bool InputType::parseToDateComponents(const String&, DateComponents*) const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 String InputType::serialize(const Decimal&) const
 {
     ASSERT_NOT_REACHED();
     return String();
 }
 
+#if PLATFORM(IOS_FAMILY)
 DateComponents::Type InputType::dateType() const
 {
     return DateComponents::Invalid;
 }
+#endif
 
 void InputType::dispatchSimulatedClickIfActive(KeyboardEvent& event) const
 {
