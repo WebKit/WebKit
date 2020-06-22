@@ -1,5 +1,16 @@
 2020-06-21  Lauro Moura  <lmoura@igalia.com>
 
+        WebDriver: two selenium alert tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=181727
+
+        Unreviewed test gardening.
+
+        These tests also have been passing since r262861.
+
+        * TestExpectations.json:
+
+2020-06-21  Lauro Moura  <lmoura@igalia.com>
+
         [WebDriver][GTK] Gardening failures related to missing selenium files
 
         Unreviewed test gardening.

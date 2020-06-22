@@ -1,12 +1,6 @@
 {
     "imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py": {
         "subtests": {
-            "testShouldAllowUsersToAcceptAnAlertInAFrame": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181727"}}
-            },
-            "testShouldAllowUsersToAcceptAnAlertInANestedFrame": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181727"}}
-            },
             "testShouldHandleAlertOnPageBeforeUnload": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
