@@ -1,3 +1,14 @@
+2020-06-21  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][GTK] Gardening failures related to missing selenium files
+
+        Unreviewed test gardening.
+
+        The relative_by_tests require some JS fragments built by Bazel,
+        Selenium's build tool.
+
+        * TestExpectations.json:
+
 2020-06-19  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][GTK] Some tests fails to click elements because element is outside visible rect

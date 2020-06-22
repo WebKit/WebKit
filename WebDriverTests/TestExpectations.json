@@ -169,6 +169,16 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/support/relative_by_tests.py": {
+        "subtests": {
+            "test_should_be_able_to_find_elements_above_another": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/213451"}}
+            },
+            "test_should_be_able_to_combine_filters": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/213451"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/perform_actions/pointer_contextmenu.py": {
         "subtests": {
             "test_release_control_click": {
