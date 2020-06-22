@@ -95,7 +95,7 @@ inline void vmValidate(void* p, size_t vmSize)
 
 inline size_t vmPageSizePhysical()
 {
-#if BPLATFORM(IOS_FAMILY)
+#if BOS(DARWIN) && (BCPU(ARM64) || BCPU(ARM))
     return vm_kernel_page_size;
 #else
     static size_t cached;

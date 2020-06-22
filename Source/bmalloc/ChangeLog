@@ -1,3 +1,15 @@
+2020-06-22  Saam Barati  <sbarati@apple.com>
+
+        Only use vm_kernel_page_size on arm architectures
+        https://bugs.webkit.org/show_bug.cgi?id=213474
+
+        Reviewed by Sam Weinig.
+
+        We don't want to use this under catalyst.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmPageSizePhysical):
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Update macOS version macros
