@@ -1,3 +1,12 @@
+2020-06-23  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS ] fast/backgrounds/size/backgroundSize-in-background-shorthand.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213511
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Move flaky failures happening in WPE from GTK to GLIB.
