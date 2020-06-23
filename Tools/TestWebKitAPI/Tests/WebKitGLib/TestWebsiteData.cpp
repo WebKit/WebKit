@@ -194,10 +194,15 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(swRegistrationsDirectory.get(), ==, webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager));
     g_assert_true(g_file_test(swRegistrationsDirectory.get(), G_FILE_TEST_IS_DIR));
 
+    GUniquePtr<char> domCacheDirectory(g_build_filename(Test::dataDirectory(), "dom-cache", nullptr));
+    g_assert_cmpstr(domCacheDirectory.get(), ==, webkit_website_data_manager_get_dom_cache_directory(test->m_manager));
+    g_assert_true(g_file_test(domCacheDirectory.get(), G_FILE_TEST_IS_DIR));
+
     // Clear all persistent caches, since the data dir is common to all test cases. Note: not cleaning the HSTS cache here as its data
     // is needed for the HSTS tests, where data cleaning will be tested.
     static const WebKitWebsiteDataTypes persistentCaches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DISK_CACHE | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
-        | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT | WEBKIT_WEBSITE_DATA_ITP);
+        | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT | WEBKIT_WEBSITE_DATA_ITP
+        | WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS | WEBKIT_WEBSITE_DATA_DOM_CACHE);
     test->clear(persistentCaches, 0);
     g_assert_null(test->fetch(persistentCaches));
 
@@ -212,6 +217,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_hsts_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_hsts_cache_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(test->m_manager), !=, webkit_website_data_manager_get_itp_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager), !=, webkit_website_data_manager_get_service_worker_registrations_directory(defaultManager));
+    g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_dom_cache_directory(defaultManager));
 
     // Using Test::dataDirectory() we get the default configuration but for a differrent prefix.
     GRefPtr<WebKitWebsiteDataManager> baseDataManager = adoptGRef(webkit_website_data_manager_new("base-data-directory", Test::dataDirectory(), "base-cache-directory", Test::dataDirectory(), nullptr));
@@ -230,6 +236,9 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(baseDataManager.get()), ==, swRegistrationsDirectory.get());
 
+    domCacheDirectory.reset(g_build_filename(Test::dataDirectory(), "CacheStorage", nullptr));
+    g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(baseDataManager.get()), ==, domCacheDirectory.get());
+
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 
     // Any specific configuration provided takes precedence over base dirs.
@@ -243,6 +252,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(baseDataManager.get()), ==, localStorageDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(baseDataManager.get()), ==, itpDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(baseDataManager.get()), ==, swRegistrationsDirectory.get());
+    g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(baseDataManager.get()), ==, domCacheDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 }
 
@@ -741,6 +751,37 @@ static void testWebsiteDataServiceWorkerRegistrations(WebsiteDataTest* test, gco
     g_assert_null(dataList);
 }
 
+static void testWebsiteDataDOMCache(WebsiteDataTest* test, gconstpointer)
+{
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DOM_CACHE);
+    g_assert_null(dataList);
+
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    test->runJavaScriptAndWaitUntilFinished("async function openDOMCache() { await window.caches.open('TestDOMCache'); } openDOMCache();", nullptr);
+
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_DOM_CACHE);
+    g_assert_nonnull(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    auto* data = static_cast<WebKitWebsiteData*>(dataList->data);
+g_assert_nonnull(data);
+    WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
+    g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
+    webkit_security_origin_unref(origin);
+
+    // Remove the cache.
+    GList removeList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_DOM_CACHE, &removeList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_DOM_CACHE);
+    g_assert_null(dataList);
+
+    // Clear all.
+    static const WebKitWebsiteDataTypes caches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DOM_CACHE | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    test->clear(caches, 0);
+    dataList = test->fetch(caches);
+    g_assert_null(dataList);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -763,6 +804,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "deviceidhashsalt", testWebsiteDataDeviceIdHashSalt);
     WebsiteDataTest::add("WebKitWebsiteData", "itp", testWebsiteDataITP);
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
+    WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
 }
 
 void afterAll()

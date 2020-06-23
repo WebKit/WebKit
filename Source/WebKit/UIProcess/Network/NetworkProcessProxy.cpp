@@ -1287,8 +1287,15 @@ void NetworkProcessProxy::removeSession(PAL::SessionID sessionID)
 
 WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::SessionID sessionID)
 {
-    if (sessionID == PAL::SessionID::defaultSessionID())
+    if (sessionID == PAL::SessionID::defaultSessionID()) {
+        if (!WebsiteDataStore::defaultDataStoreExists()) {
+            auto* websiteDataStore = m_processPool.websiteDataStore();
+            if (websiteDataStore && websiteDataStore->sessionID() == sessionID)
+                return websiteDataStore;
+        }
+
         return WebsiteDataStore::defaultDataStore().ptr();
+    }
     return WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID);
 }
 

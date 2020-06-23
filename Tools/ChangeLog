@@ -1,3 +1,21 @@
+2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to configure and handle DOM cache to WebKitWebsiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=213337
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle new website data in MiniBrowser and add a unit test.
+
+        * MiniBrowser/gtk/main.c:
+        (gotWebsiteDataCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataDOMCache):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+
 2020-06-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [ews] Add JSC-Only builders for MIPS and ARMv7 architectures

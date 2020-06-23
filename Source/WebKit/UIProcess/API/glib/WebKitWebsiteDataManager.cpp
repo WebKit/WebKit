@@ -88,6 +88,7 @@ enum {
     PROP_HSTS_CACHE_DIRECTORY,
     PROP_ITP_DIRECTORY,
     PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY,
+    PROP_DOM_CACHE_DIRECTORY,
     PROP_IS_EPHEMERAL
 };
 
@@ -108,6 +109,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> hstsCacheDirectory;
     GUniquePtr<char> itpDirectory;
     GUniquePtr<char> swRegistrationsDirectory;
+    GUniquePtr<char> domCacheDirectory;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     Vector<WebProcessPool*> processPools;
@@ -152,6 +154,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
     case PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_service_worker_registrations_directory(manager));
         break;
+    case PROP_DOM_CACHE_DIRECTORY:
+        g_value_set_string(value, webkit_website_data_manager_get_dom_cache_directory(manager));
+        break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
         break;
@@ -195,6 +200,9 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY:
         manager->priv->swRegistrationsDirectory.reset(g_value_dup_string(value));
         break;
+    case PROP_DOM_CACHE_DIRECTORY:
+        manager->priv->domCacheDirectory.reset(g_value_dup_string(value));
+        break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = WebKit::WebsiteDataStore::createNonPersistent();
@@ -229,6 +237,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
             priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "applications", nullptr));
         if (!priv->hstsCacheDirectory)
             priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.get()));
+        if (!priv->domCacheDirectory)
+            priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "CacheStorage", nullptr));
     }
 }
 
@@ -415,6 +425,23 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
+     * WebKitWebsiteDataManager:dom-cache-directory:
+     *
+     * The directory where DOM cache will be stored.
+     *
+     * Since: 2.30
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_DOM_CACHE_DIRECTORY,
+        g_param_spec_string(
+            "dom-cache-directory",
+            _("DOM Cache directory"),
+            _("The directory where DOM cache will be stored"),
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
      * WebKitWebsiteDataManager:is-ephemeral:
      *
      * Whether the #WebKitWebsiteDataManager is ephemeral. An ephemeral #WebKitWebsiteDataManager
@@ -456,6 +483,8 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.get()));
         configuration->setServiceWorkerRegistrationDirectory(!priv->swRegistrationsDirectory ?
             WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
+        configuration->setCacheStorageDirectory(!priv->domCacheDirectory ?
+            WebKit::WebsiteDataStore::defaultCacheStorageDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
         configuration->setMediaKeysStorageDirectory(WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory());
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
     }
@@ -764,6 +793,29 @@ const gchar* webkit_website_data_manager_get_service_worker_registrations_direct
 }
 
 /**
+ * webkit_website_data_manager_get_dom_cache_directory:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get the #WebKitWebsiteDataManager:dom-cache-directory property.
+ *
+ * Returns: (allow-none): the directory where DOM cache is stored or %NULL if @manager is ephemeral.
+ *
+ * Since: 2.30
+ */
+const gchar* webkit_website_data_manager_get_dom_cache_directory(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
+    if (!priv->domCacheDirectory)
+        priv->domCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultCacheStorageDirectory().utf8().data()));
+    return priv->domCacheDirectory.get();
+}
+
+/**
  * webkit_website_data_manager_get_cookie_manager:
  * @manager: a #WebKitWebsiteDataManager
  *
@@ -850,6 +902,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::ResourceLoadStatistics);
     if (types & WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS)
         returnValue.add(WebsiteDataType::ServiceWorkerRegistrations);
+    if (types & WEBKIT_WEBSITE_DATA_DOM_CACHE)
+        returnValue.add(WebsiteDataType::DOMCache);
     return returnValue;
 }
 

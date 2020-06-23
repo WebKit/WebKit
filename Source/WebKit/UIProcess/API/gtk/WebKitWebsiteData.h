@@ -48,6 +48,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_HSTS_CACHE: HSTS cache. Since 2.26
  * @WEBKIT_WEBSITE_DATA_ITP: Intelligent Tracking Prevention data. Since 2.30.
  * @WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS: Service worker registrations. Since 2.30
+ * @WEBKIT_WEBSITE_DATA_DOM_CACHE: DOM (CacheStorage) cache. Since 2.30
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
@@ -68,7 +69,8 @@ typedef enum {
     WEBKIT_WEBSITE_DATA_HSTS_CACHE                   = 1 << 10,
     WEBKIT_WEBSITE_DATA_ITP                          = 1 << 11,
     WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS = 1 << 12,
-    WEBKIT_WEBSITE_DATA_ALL                          = (1 << 13) - 1
+    WEBKIT_WEBSITE_DATA_DOM_CACHE                    = 1 << 13,
+    WEBKIT_WEBSITE_DATA_ALL                          = (1 << 14) - 1
 } WebKitWebsiteDataTypes;
 
 WEBKIT_API GType
