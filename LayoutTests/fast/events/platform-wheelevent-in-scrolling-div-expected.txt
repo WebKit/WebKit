@@ -1,6 +1,9 @@
-PASS event.wheelDeltaY is window.expectedScrollTop*-120
-PASS event.wheelDeltaX is window.expectedScrollLeft*-120
-PASS event.wheelDelta is window.expectedScrollTop*-120
-PASS div.scrollTop is window.expectedScrollTop*window.pixelsPerWheelTick
-PASS div.scrollLeft is window.expectedScrollLeft*window.pixelsPerWheelTick
+PASS event.wheelDeltaY is expectedScrollTop * -120
+PASS event.wheelDeltaX is expectedScrollLeft * -120
+PASS event.wheelDelta is expectedScrollTop * -120
+PASS div.scrollTop is expectedScrollTop * pixelsPerWheelTick
+PASS div.scrollLeft is expectedScrollLeft * pixelsPerWheelTick
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -8,53 +8,58 @@
             var event;
             var div;
 
-            if (window.testRunner)
-                testRunner.waitUntilDone();
+            jsTestIsAsync = true;
 
             function dispatchWheelEvent()
             {
+                if (!window.eventSender) {
+                    finishJSTest();
+                    return;
+                }
+
                 var overflowElement = document.getElementById("overflow");
                 if (overflowElement)
                     overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
 
-                if (window.eventSender) {
-                    eventSender.mouseMoveTo(100, 110);
-                    eventSender.mouseScrollBy(-window.expectedScrollLeft, -window.expectedScrollTop);
-                }
-
-                setTimeout('checkOffsets();', 100);
+                eventSender.mouseMoveTo(100, 110);
+                eventSender.monitorWheelEvents();
+                eventSender.mouseScrollBy(-expectedScrollLeft, -expectedScrollTop);
+                eventSender.callAfterScrollingCompletes(checkOffsets);
             }
 
             function checkOffsets()
             {
                 div = document.getElementById("overflow");
-                shouldBe("div.scrollTop", "window.expectedScrollTop*window.pixelsPerWheelTick");
-                shouldBe("div.scrollLeft", "window.expectedScrollLeft*window.pixelsPerWheelTick");
+                shouldBe("div.scrollTop", "expectedScrollTop * pixelsPerWheelTick");
+                shouldBe("div.scrollLeft", "expectedScrollLeft * pixelsPerWheelTick");
 
-                if (window.testRunner)
-                    window.testRunner.notifyDone();
+                finishJSTest();
             }
 
             function mousewheelHandler(e)
             {
                 event = e;
-                shouldBe("event.wheelDeltaY", "window.expectedScrollTop*-120");
-                shouldBe("event.wheelDeltaX", "window.expectedScrollLeft*-120");
+                shouldBe("event.wheelDeltaY", "expectedScrollTop * -120");
+                shouldBe("event.wheelDeltaX", "expectedScrollLeft * -120");
 
                 if (e.wheelDeltaY)
-                    shouldBe("event.wheelDelta", "window.expectedScrollTop*-120");
+                    shouldBe("event.wheelDelta", "expectedScrollTop * -120");
                 else
-                    shouldBe("event.wheelDelta", "window.expectedScrollLeft*-120");
+                    shouldBe("event.wheelDelta", "expectedScrollLeft * -120");
             }
+            
+            window.addEventListener('load', () => {
+                setTimeout(dispatchWheelEvent, 0);
+            }, false);
         </script>
     </head>
-
-    <body style="margin:0" onload="setTimeout('dispatchWheelEvent();', 100)">
+    <body style="margin:0">
         <div id="overflow" style="border:2px solid black;overflow:auto;height:200px;width:200px;">
             <div style="background-color:red;height:200px;width:400px;"></div>
             <div style="background-color:green;height:200px;width:400px;"></div>
             <div style="background-color:red;height:200px;width:400px;"></div>
         </div>
         <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
     </body>
 </html>

@@ -826,7 +826,7 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
 
 void EventSenderProxy::mouseScrollBy(int x, int y)
 {
-    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(0, kCGScrollEventUnitLine, 2, y, x));
+    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(0, kCGScrollEventUnitLine, 2, y, x, 0));
 
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
@@ -853,7 +853,7 @@ void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 
 void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
 {
-    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(0, kCGScrollEventUnitLine, 2, y, x));
+    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(0, kCGScrollEventUnitLine, 2, y, x, 0));
 
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has

@@ -1,3 +1,22 @@
+2020-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        [ Catalina Debug WK2 ] fast/events/platform-wheelevent-in-scrolling-div.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213351
+        <rdar://problem/64502429>
+
+        Reviewed by Tim Horton.
+
+        The variadic CGEventCreateScrollWheelEvent() seems to have an issue that causes the resulting event
+        to rarely put the x value into the deltaY. Change to the non-variadic CGEventCreateScrollWheelEvent2()
+        to avoid this.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:continuously:]):
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
 2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [ews] Rename 'JSCTestsFactory' to 'JSCBuildAndTestsFactory'

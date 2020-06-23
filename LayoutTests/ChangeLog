@@ -1,3 +1,18 @@
+2020-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        [ Catalina Debug WK2 ] fast/events/platform-wheelevent-in-scrolling-div.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213351
+        <rdar://problem/64502429>
+
+        Reviewed by Tim Horton.
+
+        Fix the test to use eventSender.monitorWheelEvents(). Also remove an initial 100ms timeout and
+        some ugly uses of "window.", and make it a proper js-test-pre/js-test-post test.
+
+        * fast/events/platform-wheelevent-in-scrolling-div-expected.txt:
+        * fast/events/platform-wheelevent-in-scrolling-div.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-23  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] fast/backgrounds/size/backgroundSize-in-background-shorthand.html is a flaky failure

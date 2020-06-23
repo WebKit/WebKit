@@ -817,7 +817,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 {
 #if !PLATFORM(IOS_FAMILY)
     CGScrollEventUnit unit = continuously ? kCGScrollEventUnitPixel : kCGScrollEventUnitLine;
-    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, unit, 2, y, x);
+    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent2(NULL, unit, 2, y, x, 0);
     
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
@@ -883,7 +883,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     if (momentum == kCGMomentumScrollPhaseEnd)
         _sentMomentumPhaseEnd = YES;
 
-    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, 2, y, x);
+    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent2(NULL, kCGScrollEventUnitLine, 2, y, x, 0);
 
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has

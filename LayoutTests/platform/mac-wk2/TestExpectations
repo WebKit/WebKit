@@ -1038,8 +1038,6 @@ webkit.org/b/213212 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_
 
 webkit.org/b/213292 [ Catalina Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
 
-webkit.org/b/213351 [ Catalina Debug ] fast/events/platform-wheelevent-in-scrolling-div.html [ Pass Failure ] 
-
 webkit.org/b/213375 [ Debug ] webaudio/biquad-bandpass.html [ Pass Crash ]
 
 webkit.org/b/213461 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
