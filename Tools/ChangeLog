@@ -1,3 +1,17 @@
+2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [ews] Rename 'JSCTestsFactory' to 'JSCBuildAndTestsFactory'
+        https://bugs.webkit.org/show_bug.cgi?id=213503
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCBuildAndTestsFactory):
+        (JSCTestsFactory): Deleted.
+        (JSCTestsFactory.__init__): Deleted.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+
 2020-06-23  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add JSC-Only builders for MIPS and ARMv7 architectures (follow-up fix)
