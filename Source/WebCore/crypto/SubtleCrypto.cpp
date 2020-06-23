@@ -1013,7 +1013,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
     auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer, wrapAlgorithm, wrappingKey = makeRef(wrappingKey), wrapParams = WTFMove(wrapParams), isEncryption, context, workQueue = m_workQueue.copyRef()](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
+    auto callback = [index, subtleCryptoWeakPointer, wrapAlgorithm, wrappingKey = makeRef(wrappingKey), wrapParams = WTFMove(wrapParams), isEncryption, context, workQueue = m_workQueue](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
         if (subtleCryptoWeakPointer) {
             if (auto promise = subtleCryptoWeakPointer->m_pendingPromises.get(index)) {
                 Vector<uint8_t> bytes;

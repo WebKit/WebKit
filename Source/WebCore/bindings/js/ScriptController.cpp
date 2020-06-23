@@ -747,12 +747,12 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
         resolveCompletionHandler = nullptr;
     });
 
-    auto* fulfillHandler = JSC::JSNativeStdFunction::create(world.vm(), &globalObject, 1, String { }, [sharedResolveFunction = sharedResolveFunction.copyRef()] (JSGlobalObject*, CallFrame* callFrame) mutable {
+    auto* fulfillHandler = JSC::JSNativeStdFunction::create(world.vm(), &globalObject, 1, String { }, [sharedResolveFunction] (JSGlobalObject*, CallFrame* callFrame) mutable {
         sharedResolveFunction->run(callFrame->argument(0));
         return JSValue::encode(jsUndefined());
     });
 
-    auto* rejectHandler = JSC::JSNativeStdFunction::create(world.vm(), &globalObject, 1, String { }, [sharedResolveFunction = sharedResolveFunction.copyRef()] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
+    auto* rejectHandler = JSC::JSNativeStdFunction::create(world.vm(), &globalObject, 1, String { }, [sharedResolveFunction] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
         sharedResolveFunction->run(makeUnexpected(ExceptionDetails { callFrame->argument(0).toWTFString(globalObject) }));
         return JSValue::encode(jsUndefined());
     });
@@ -763,10 +763,10 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
             sharedResolveFunction->run(makeUnexpected(ExceptionDetails { "Completion handler for function call is no longer reachable"_s }));
     });
 
-    world.vm().heap.addFinalizer(fulfillHandler, [finalizeGuard = finalizeGuard.copyRef()](JSCell*) {
+    world.vm().heap.addFinalizer(fulfillHandler, [finalizeGuard](JSCell*) {
         finalizeGuard->run();
     });
-    world.vm().heap.addFinalizer(rejectHandler, [finalizeGuard = finalizeGuard.copyRef()](JSCell*) {
+    world.vm().heap.addFinalizer(rejectHandler, [finalizeGuard](JSCell*) {
         finalizeGuard->run();
     });
 

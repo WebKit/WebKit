@@ -1,5 +1,78 @@
 2020-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Remove a lot of unnecessary calls to Ref::copyRef()
+        https://bugs.webkit.org/show_bug.cgi?id=213533
+
+        Reviewed by Darin Adler.
+
+        Remove a lot of unnecessary calls to Ref::copyRef() now that Ref is copyable.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::addAll):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::requestGetAllIndexRecords):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::create):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::scheduleTransactionCallback):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpgradeURL):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeAsynchronousUserAgentScriptInWorld):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::wrapKey):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::create):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::startAsyncDecodingQueue):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::wrapCryptoKey):
+        (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+        * workers/service/WorkerSWClientConnection.cpp:
+        (WebCore::WorkerSWClientConnection::matchRegistration):
+        (WebCore::WorkerSWClientConnection::getRegistrations):
+        (WebCore::WorkerSWClientConnection::whenRegistrationReady):
+        (WebCore::WorkerSWClientConnection::scheduleUnregisterJobInServer):
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFireFetchEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToPostMessage):
+        (WebCore::ServiceWorkerThread::queueTaskToFireInstallEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToFireActivateEvent):
+
+2020-06-23  Chris Dumez  <cdumez@apple.com>
+
         Drop AudioContextBase class
         https://bugs.webkit.org/show_bug.cgi?id=213522
 

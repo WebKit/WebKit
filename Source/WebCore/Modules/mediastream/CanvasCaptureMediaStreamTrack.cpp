@@ -61,7 +61,7 @@ Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source
     auto source = adoptRef(*new Source(canvas, WTFMove(frameRequestRate)));
     source->start();
 
-    callOnMainThread([source = source.copyRef()] {
+    callOnMainThread([source] {
         if (!source->m_canvas)
             return;
         source->captureCanvas();

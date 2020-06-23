@@ -1459,7 +1459,7 @@ void WebProcess::markAllLayersVolatile(CompletionHandler<void()>&& completionHan
     RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile:");
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     for (auto& page : m_pageMap.values()) {
-        page->markLayersVolatile([this, callbackAggregator = callbackAggregator.copyRef(), pageID = page->identifier()] (bool succeeded) {
+        page->markLayersVolatile([this, callbackAggregator, pageID = page->identifier()] (bool succeeded) {
             if (succeeded)
                 RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Successfuly marked layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
             else

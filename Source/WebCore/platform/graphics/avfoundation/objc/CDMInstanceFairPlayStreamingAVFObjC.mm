@@ -1128,7 +1128,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
         auto keyIDs = keyIDsForRequest(request.get());
         RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
         auto contentIdentifier = keyID->createNSData();
-        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator = aggregator.copyRef()] (NSData *contentKeyRequestData, NSError *error) mutable {
+        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *error) mutable {
             UNUSED_PARAM(error);
             callOnMainThread([keyID = WTFMove(keyID), aggregator = WTFMove(aggregator), contentKeyRequestData = retainPtr(contentKeyRequestData)] () mutable {
                 aggregator->requestsData.append({ WTFMove(keyID), WTFMove(contentKeyRequestData) });

@@ -253,7 +253,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
 
     for (auto& request : requests) {
         auto& requestReference = request.get();
-        FetchResponse::fetch(*scriptExecutionContext(), requestReference, [this, request = WTFMove(request), taskHandler = taskHandler.copyRef()](ExceptionOr<FetchResponse&>&& result) mutable {
+        FetchResponse::fetch(*scriptExecutionContext(), requestReference, [this, request = WTFMove(request), taskHandler](ExceptionOr<FetchResponse&>&& result) mutable {
 
             if (taskHandler->isDone())
                 return;

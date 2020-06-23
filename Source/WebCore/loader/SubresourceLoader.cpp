@@ -126,7 +126,7 @@ void SubresourceLoader::create(Frame& frame, CachedResource& resource, ResourceR
         return completionHandler(WTFMove(subloader));
     }
 #endif
-    subloader->init(WTFMove(request), [subloader = subloader.copyRef(), completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
+    subloader->init(WTFMove(request), [subloader, completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
         if (!initialized)
             return completionHandler(nullptr);
         completionHandler(WTFMove(subloader));

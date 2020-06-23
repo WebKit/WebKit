@@ -379,8 +379,8 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
         m_statisticsStore->cancelPendingStatisticsProcessingRequest();
 
         // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
-        m_statisticsStore->updateCookieBlocking([this, protectedThis = protectedThis.copyRef()]() {
-            postTaskReply([this, protectedThis = protectedThis.copyRef()]() {
+        m_statisticsStore->updateCookieBlocking([this, protectedThis]() {
+            postTaskReply([this, protectedThis = protectedThis]() {
                 logTestingEvent("Statistics Updated"_s);
             });
         });
@@ -474,7 +474,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomai
             if (!m_networkSession)
                 return completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
 
-            CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = protectedThis.copyRef(), subFrameDomain, topFrameDomain, frameID, webPageID, scope, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
+            CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis, subFrameDomain, topFrameDomain, frameID, webPageID, scope, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
                 if (userDidGrantAccess)
                     grantStorageAccess(subFrameDomain, topFrameDomain, frameID, webPageID, StorageAccessPromptWasShown::Yes, scope, WTFMove(completionHandler));
                 else
@@ -1186,7 +1186,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
             postTaskReply(WTFMove(completionHandler));
         });
 
-        m_statisticsStore->clear([this, protectedThis = protectedThis.copyRef(), shouldGrandfather, callbackAggregator = callbackAggregator.copyRef()] () mutable {
+        m_statisticsStore->clear([this, protectedThis, shouldGrandfather, callbackAggregator] () mutable {
             if (shouldGrandfather == ShouldGrandfatherStatistics::Yes) {
                 if (m_statisticsStore) {
                     m_statisticsStore->grandfatherExistingWebsiteData([callbackAggregator = WTFMove(callbackAggregator)]() mutable { });

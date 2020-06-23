@@ -2185,7 +2185,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     auto& targetURL = navigation.currentRequest().url();
     auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
 
-    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetRegistrableDomain, dataStore = dataStore.copyRef()] () -> Ref<WebProcessProxy> {
+    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetRegistrableDomain, dataStore] () -> Ref<WebProcessProxy> {
         return processForRegistrableDomain(dataStore, page.ptr(), targetRegistrableDomain);
     };
 
@@ -2362,7 +2362,7 @@ void WebProcessPool::seedResourceLoadStatisticsForTesting(const RegistrableDomai
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& process : processes())
-        process->sendWithAsyncReply(Messages::WebProcess::SeedResourceLoadStatisticsForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification), [callbackAggregator = callbackAggregator.copyRef()] { });
+        process->sendWithAsyncReply(Messages::WebProcess::SeedResourceLoadStatisticsForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification), [callbackAggregator] { });
 }
 #endif
 

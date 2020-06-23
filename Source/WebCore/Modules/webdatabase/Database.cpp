@@ -703,8 +703,8 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), transaction = makeRefPtr(transaction)] {
-        m_document->eventLoop().queueTask(TaskSource::Networking, [transaction = transaction.copyRef()] {
+    callOnMainThread([this, protectedThis = makeRef(*this), transaction = makeRefPtr(transaction)]() mutable {
+        m_document->eventLoop().queueTask(TaskSource::Networking, [transaction = WTFMove(transaction)] {
             transaction->performPendingCallback();
         });
     });

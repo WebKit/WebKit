@@ -185,7 +185,7 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
         auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
         forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
             if (auto* cache = session.cache())
-                cache->clear(modifiedSince, [aggregator = aggregator.copyRef()] () { });
+                cache->clear(modifiedSince, [aggregator] () { });
         });
     }).get());
 }

@@ -171,7 +171,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     init.cancelable = true;
     auto event = FetchEvent::create(eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
 
-    event->onResponse([client = client.copyRef(), mode, redirect, requestURL] (auto&& result) mutable {
+    event->onResponse([client, mode, redirect, requestURL] (auto&& result) mutable {
         processResponse(WTFMove(client), WTFMove(result), mode, redirect, requestURL);
     });
 

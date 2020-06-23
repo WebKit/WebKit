@@ -53,7 +53,7 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
         return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(privateInstance), WTFMove(options)));
     recorder->suspendIfNeeded();
-    recorder->m_private->setErrorCallback([recorder = recorder.copyRef()](auto&& exception) mutable {
+    recorder->m_private->setErrorCallback([recorder](auto&& exception) mutable {
         recorder->dispatchError(WTFMove(*exception));
     });
     return recorder;

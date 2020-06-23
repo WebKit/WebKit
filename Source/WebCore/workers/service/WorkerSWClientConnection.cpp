@@ -64,7 +64,7 @@ void WorkerSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin,
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_matchRegistrationRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.matchRegistration(WTFMove(topOrigin), clientURL, [thread = WTFMove(thread), requestIdentifier](auto&& result) mutable {
             thread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
@@ -80,7 +80,7 @@ void WorkerSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, 
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_getRegistrationsRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.getRegistrations(WTFMove(topOrigin), clientURL, [thread = WTFMove(thread), requestIdentifier](auto&& data) mutable {
             thread->runLoop().postTaskForMode([requestIdentifier, data = crossThreadCopy(WTFMove(data))] (auto& scope) mutable {
@@ -96,7 +96,7 @@ void WorkerSWClientConnection::whenRegistrationReady(const SecurityOriginData& t
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_whenRegistrationReadyRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, topOrigin = topOrigin.isolatedCopy(), clientURL = crossThreadCopy(clientURL)]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = topOrigin.isolatedCopy(), clientURL = crossThreadCopy(clientURL)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.whenRegistrationReady(topOrigin, clientURL, [thread = WTFMove(thread), requestIdentifier](auto&& result) mutable {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
@@ -189,7 +189,7 @@ void WorkerSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegist
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_unregisterRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, registrationIdentifier, contextIdentifier]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, contextIdentifier]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.scheduleUnregisterJobInServer(registrationIdentifier, contextIdentifier, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(result)](auto& scope) mutable {

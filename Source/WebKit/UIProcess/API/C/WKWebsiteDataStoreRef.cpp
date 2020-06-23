@@ -663,16 +663,16 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
     });
 
     auto& store = *WebKit::toImpl(dataStoreRef);
-    store.clearResourceLoadStatisticsInWebProcesses([callbackAggregator = callbackAggregator.copyRef()] { });
-    store.resetCacheMaxAgeCapForPrevalentResources([callbackAggregator = callbackAggregator.copyRef()] { });
-    store.resetCrossSiteLoadsWithLinkDecorationForTesting([callbackAggregator = callbackAggregator.copyRef()] { });
-    store.setResourceLoadStatisticsShouldDowngradeReferrerForTesting(true, [callbackAggregator = callbackAggregator.copyRef()] { });
-    store.setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(false, false, [callbackAggregator = callbackAggregator.copyRef()] { });
-    store.setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforcementForTesting(true, [callbackAggregator = callbackAggregator.copyRef()] { });
-    store.setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(false, [callbackAggregator = callbackAggregator.copyRef()] { });
-    store.resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
-    store.scheduleClearInMemoryAndPersistent(WebKit::ShouldGrandfatherStatistics::No, [callbackAggregator = callbackAggregator.copyRef()] { });
-    store.setUseITPDatabase(false, [callbackAggregator = callbackAggregator.copyRef()] { });
+    store.clearResourceLoadStatisticsInWebProcesses([callbackAggregator] { });
+    store.resetCacheMaxAgeCapForPrevalentResources([callbackAggregator] { });
+    store.resetCrossSiteLoadsWithLinkDecorationForTesting([callbackAggregator] { });
+    store.setResourceLoadStatisticsShouldDowngradeReferrerForTesting(true, [callbackAggregator] { });
+    store.setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(false, false, [callbackAggregator] { });
+    store.setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforcementForTesting(true, [callbackAggregator] { });
+    store.setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(false, [callbackAggregator] { });
+    store.resetParametersToDefaultValues([callbackAggregator] { });
+    store.scheduleClearInMemoryAndPersistent(WebKit::ShouldGrandfatherStatistics::No, [callbackAggregator] { });
+    store.setUseITPDatabase(false, [callbackAggregator] { });
 #else
     UNUSED_PARAM(dataStoreRef);
     completionHandler(context);

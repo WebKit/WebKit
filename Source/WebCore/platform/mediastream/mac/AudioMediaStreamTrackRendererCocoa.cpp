@@ -84,7 +84,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
             return;
         }
 
-        callOnMainThread([this, weakThis = makeWeakPtr(this), oldSource = m_dataSource, newSource = dataSource.copyRef()]() mutable {
+        callOnMainThread([this, weakThis = makeWeakPtr(this), oldSource = m_dataSource, newSource = dataSource]() mutable {
             if (!weakThis)
                 return;
 

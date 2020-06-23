@@ -405,7 +405,7 @@ void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallb
             return;
         }
 
-        caches->initialize([callback = WTFMove(callback), caches = caches.copyRef()](Optional<Error>&& error) mutable {
+        caches->initialize([callback = WTFMove(callback), caches](Optional<Error>&& error) mutable {
             if (error) {
                 callback(makeUnexpected(error.value()));
                 return;
@@ -645,7 +645,7 @@ void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>&
 {
     auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
     for (auto& folderPath : folderPaths) {
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter = taskCounter.copyRef()] (auto&& origin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter] (auto&& origin) mutable {
             ASSERT(RunLoop::isMain());
             if (!origin)
                 return;
@@ -691,7 +691,7 @@ void Engine::clearAllCaches(CompletionHandler<void()>&& completionHandler)
     });
 
     for (auto& caches : m_caches.values())
-        caches->clear([callbackAggregator = callbackAggregator.copyRef()] { });
+        caches->clear([callbackAggregator] { });
 }
 
 void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandler)
@@ -723,7 +723,7 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 
     for (auto& keyValue : m_caches) {
         if (keyValue.key.topOrigin == origin || keyValue.key.clientOrigin == origin)
-            keyValue.value->clear([callbackAggregator = callbackAggregator.copyRef()] { });
+            keyValue.value->clear([callbackAggregator] { });
     }
 }
 
@@ -741,7 +741,7 @@ void Engine::clearCachesForOriginFromDirectories(const Vector<String>& folderPat
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     for (auto& folderPath : folderPaths) {
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator = callbackAggregator.copyRef(), folderPath] (Optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator, folderPath] (Optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
             if (!folderOrigin)
                 return;
             if (folderOrigin->topOrigin != origin && folderOrigin->clientOrigin != origin)

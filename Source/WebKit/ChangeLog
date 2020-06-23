@@ -1,3 +1,132 @@
+2020-06-23  Chris Dumez  <cdumez@apple.com>
+
+        Remove a lot of unnecessary calls to Ref::copyRef()
+        https://bugs.webkit.org/show_bug.cgi?id=213533
+
+        Reviewed by Darin Adler.
+
+        Remove a lot of unnecessary calls to Ref::copyRef() now that Ref is copyable.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::requestResource):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::CompletionHandler<void):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::ResourceLoadStatisticsStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsStore::removeAllStorageAccess):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::Engine::fetchDirectoryEntries):
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDirectories):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::selectOptionElement):
+        (WebKit::WebAutomationSession::setFilesForInputFileUpload):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::takeScreenshot):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleSynchronousMessage):
+        (WebKit::WebPageProxy::clearServiceWorkerEntitlementOverride):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::WebProcessPool::seedResourceLoadStatisticsForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setMaxStatisticsEntries):
+        (WebKit::WebsiteDataStore::setPruneEntriesDownTo):
+        (WebKit::WebsiteDataStore::setGrandfatheringTime):
+        (WebKit::WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setPrevalentResource):
+        (WebKit::WebsiteDataStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebsiteDataStore::setVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setSubframeUnderTopFrameDomain):
+        (WebKit::WebsiteDataStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::clearPrevalentResource):
+        (WebKit::WebsiteDataStore::resetParametersToDefaultValues):
+        (WebKit::WebsiteDataStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+        (WebKit::WebsiteDataStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebsiteDataStore::setLastSeen):
+        (WebKit::WebsiteDataStore::mergeStatisticForTesting):
+        (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebsiteDataStore::setIsRunningResourceLoadStatisticsTest):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::WebsiteDataStore::setTimeToLiveUserInteraction):
+        (WebKit::WebsiteDataStore::logUserInteraction):
+        (WebKit::WebsiteDataStore::clearUserInteraction):
+        (WebKit::WebsiteDataStore::setGrandfathered):
+        (WebKit::WebsiteDataStore::setUseITPDatabase):
+        (WebKit::WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting):
+        (WebKit::WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting):
+        (WebKit::WebsiteDataStore::deleteCookiesForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTesting):
+        (WebKit::WebsiteDataStore::setThirdPartyCookieBlockingMode):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforcementForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsToSameSiteStrictCookiesForTesting):
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebsiteDataStore::resetQuota):
+        (WebKit::WebsiteDataStore::clearAppBoundSession):
+        (WebKit::WebsiteDataStore::renameOriginInWebsiteData):
+        (WebKit::WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized):
+        (WebKit::WebsiteDataStore::setAppBoundDomainsForITP):
+        (WebKit::WebsiteDataStore::updateBundleIdentifierInNetworkProcess):
+        (WebKit::WebsiteDataStore::clearBundleIdentifierInNetworkProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::markAllLayersVolatile):
+
 2020-06-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Unreviewed build fix for r263407

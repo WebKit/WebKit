@@ -730,7 +730,7 @@ public:
         // If the coverRect doesn't contain the calculated visible rectangle we need to request a backingStore
         // update to render more tiles.
         if (!m_coverRect.contains(transformedVisibleRect)) {
-            callOnMainThread([protectedHost = m_host.copyRef()]() {
+            callOnMainThread([protectedHost = m_host]() {
                 protectedHost->requestBackingStoreUpdate();
             });
         }
