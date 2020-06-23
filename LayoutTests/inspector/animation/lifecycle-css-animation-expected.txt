@@ -2,12 +2,46 @@ Tests for the Animation.animationCreated and Animation.animationDestroyed events
 
 
 == Running test suite: Animation.Lifecycle
--- Running test case: Animation.Lifecycle.CSSAnimation
+-- Running test case: Animation.Lifecycle.CSSAnimation.Finite
 PASS: There should not be any animations.
 PASS: Animation created 'fade-in'.
 PASS: Animation type should be CSS Animation.
 startDelay: 100
 iterationCount: 2
+iterationDuration: 400
+timingFunction: "linear"
+playbackDirection: "alternate"
+fillMode: "both"
+keyframes:
+[
+  {
+    "offset": 0,
+    "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+    "style": "color: rgb(255, 0, 0);\nopacity: 0;"
+  },
+  {
+    "offset": 0.5,
+    "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+    "style": "color: rgb(0, 128, 0);\nopacity: 0.5;"
+  },
+  {
+    "offset": 1,
+    "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+    "style": "color: rgb(0, 0, 255);\nopacity: 1;"
+  }
+]
+
+Destroying animations...
+
+PASS: Animation destroyed.
+PASS: Removed animation has expected ID.
+
+-- Running test case: Animation.Lifecycle.CSSAnimation.Infinite
+PASS: There should not be any animations.
+PASS: Animation created 'fade-in'.
+PASS: Animation type should be CSS Animation.
+startDelay: 100
+iterationCount: Infinity
 iterationDuration: 400
 timingFunction: "linear"
 playbackDirection: "alternate"

@@ -245,10 +245,19 @@ WI.Animation = class Animation extends WI.Object
     {
         this._effect = effect || {};
 
-        if (this._effect.timingFunction)
+        if ("iterationCount" in this._effect) {
+            if (this._effect.iterationCount === -1)
+                this._effect.iterationCount = Infinity;
+            else if (this._effect.iterationCount === null) {
+                // COMPATIBILITY (iOS 14): an iteration count of `Infinity` was not properly handled.
+                this._effect.iterationCount = Infinity;
+            }
+        }
+
+        if ("timingFunction" in this._effect)
             this._effect.timingFunction = WI.CubicBezier.fromString(this._effect.timingFunction);
 
-        if (this._effect.keyframes) {
+        if ("keyframes" in this._effect) {
             for (let keyframe of this._effect.keyframes) {
                 if (keyframe.easing)
                     keyframe.easing = WI.CubicBezier.fromString(keyframe.easing);

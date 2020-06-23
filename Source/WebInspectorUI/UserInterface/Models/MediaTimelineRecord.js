@@ -34,8 +34,8 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
 
         this._eventType = eventType;
         this._domNode = domNodeOrInfo;
-        this._domNodeDisplayName = domNodeOrInfo.displayName;
-        this._domNodeCSSPath = domNodeOrInfo instanceof WI.DOMNode ? WI.cssPath(domNodeOrInfo, {full: true}) : domNodeOrInfo.cssPath;
+        this._domNodeDisplayName = domNodeOrInfo?.displayName;
+        this._domNodeCSSPath = domNodeOrInfo instanceof WI.DOMNode ? WI.cssPath(domNodeOrInfo, {full: true}) : domNodeOrInfo?.cssPath;
 
         // Web Animation
         console.assert(trackingAnimationId === undefined || typeof trackingAnimationId === "string");

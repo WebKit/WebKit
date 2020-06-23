@@ -57,6 +57,8 @@ WI.MediaTimelineDataGridNode = class MediaTimelineDataGridNode extends WI.Timeli
 
         case "element":
         case "source": // Timeline Overview
+            if (!value)
+                return emDash;
             if (!(value instanceof WI.DOMNode)) {
                 cell.classList.add(WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName);
                 return value.displayName;
@@ -326,6 +328,7 @@ WI.MediaTimelineDataGridNode = class MediaTimelineDataGridNode extends WI.Timeli
         case "source": // Timeline Overview
             if (this.record.domNode)
                 return this.record.domNode.displayName;
+            break;
         }
 
         return super.filterableDataForColumn(columnIdentifier);

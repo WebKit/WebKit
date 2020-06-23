@@ -84,7 +84,7 @@ TestPage.registerInitializer(() => {
         if (animation.endDelay)
             InspectorTest.log("endDelay: " + JSON.stringify(animation.endDelay));
         if (animation.iterationCount)
-            InspectorTest.log("iterationCount: " + JSON.stringify(animation.iterationCount));
+            InspectorTest.log("iterationCount: " + (animation.iterationCount === Infinity ? "Infinity" : JSON.stringify(animation.iterationCount)));
         if (animation.iterationStart)
             InspectorTest.log("iterationStart: " + JSON.stringify(animation.iterationStart));
         if (animation.iterationDuration)

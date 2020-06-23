@@ -1,3 +1,15 @@
+2020-06-23  Devin Rousso  <drousso@apple.com>
+
+        Keyframe animation doesn't 't show up in the Animations timeline
+        https://bugs.webkit.org/show_bug.cgi?id=213441
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/animation/lifecycle-css-animation.html
+
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        (WebCore::buildObjectForEffect):
+
 2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them

@@ -1,3 +1,24 @@
+2020-06-23  Devin Rousso  <drousso@apple.com>
+
+        Keyframe animation doesn't 't show up in the Animations timeline
+        https://bugs.webkit.org/show_bug.cgi?id=213441
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Animation.js:
+        (WI.Animation):
+        (WI.Animation.prototype._updateEffect):
+        An `interationCount` of `Infinity` is not JSON serializable, so represent it as `-1` instead.
+
+        * UserInterface/Models/MediaTimelineRecord.js:
+        (WI.MediaTimelineRecord):
+        * UserInterface/Views/MediaTimelineDataGridNode.js:
+        (WI.MediaTimelineDataGridNode.prototype.createCellContent):
+        (WI.MediaTimelineDataGridNode.prototype.filterableDataForColumn):
+        The DOM node may not be able to be instrumented if the timeline recording starts before the
+        frontend has had a chance to request the main document, so it's possible for the DOM node
+        to not be set.
+
 2020-06-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: adjust height of undocked title area to match macOS Big Sur

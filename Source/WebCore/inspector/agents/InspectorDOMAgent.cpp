@@ -552,6 +552,8 @@ int InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
     if (!nodeToPush)
         return 0;
 
+    // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
+
     ErrorString ignored;
     return pushNodeToFrontend(ignored, boundNodeId(&nodeToPush->document()), nodeToPush);
 }
@@ -653,6 +655,7 @@ int InspectorDOMAgent::pushNodePathToFrontend(ErrorString errorString, Node* nod
         return 0;
     }
 
+    // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     if (!m_documentNodeToIdMap.contains(m_document)) {
         errorString = "Document must have been requested"_s;
         return 0;
@@ -1128,6 +1131,7 @@ void InspectorDOMAgent::inspect(Node* inspectedNode)
 
 void InspectorDOMAgent::focusNode()
 {
+    // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     if (!m_documentRequested)
         return;
 

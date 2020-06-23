@@ -197,7 +197,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
     if (auto endDelay = protocolValueForSeconds(effect.endDelay()))
         effectPayload->setEndDelay(endDelay.value());
 
-    effectPayload->setIterationCount(effect.iterations());
+    effectPayload->setIterationCount(effect.iterations() == std::numeric_limits<double>::infinity() ? -1 : effect.iterations());
     effectPayload->setIterationStart(effect.iterationStart());
 
     if (auto iterationDuration = protocolValueForSeconds(effect.iterationDuration()))

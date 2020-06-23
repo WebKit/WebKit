@@ -42,7 +42,7 @@
             "properties": [
                 { "name": "startDelay", "type": "number", "optional": true },
                 { "name": "endDelay", "type": "number", "optional": true },
-                { "name": "iterationCount", "type": "number", "optional": true, "description": "Number of iterations in the animation." },
+                { "name": "iterationCount", "type": "number", "optional": true, "description": "Number of iterations in the animation. <code>Infinity</code> is represented as <code>-1</code>." },
                 { "name": "iterationStart", "type": "number", "optional": true, "description": "Index of which iteration to start at." },
                 { "name": "iterationDuration", "type": "number", "optional": true, "description": "Total time of each iteration, measured in milliseconds." },
                 { "name": "timingFunction", "type": "string", "optional": true, "description": "CSS timing function of the overall animation." },

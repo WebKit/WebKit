@@ -217,8 +217,10 @@ int InspectorLayerTreeAgent::idForNode(ErrorString& errorString, Node* node)
     InspectorDOMAgent* domAgent = m_instrumentingAgents.persistentDOMAgent();
     
     int nodeId = domAgent->boundNodeId(node);
-    if (!nodeId)
+    if (!nodeId) {
+        // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
         nodeId = domAgent->pushNodeToFrontend(errorString, domAgent->boundNodeId(&node->document()), node);
+    }
 
     return nodeId;
 }

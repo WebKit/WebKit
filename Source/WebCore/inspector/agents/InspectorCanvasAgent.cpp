@@ -193,6 +193,7 @@ void InspectorCanvasAgent::requestNode(ErrorString& errorString, const String& c
         return;
     }
 
+    // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     int documentNodeId = m_instrumentingAgents.persistentDOMAgent()->boundNodeId(&node->document());
     if (!documentNodeId) {
         errorString = "Document must have been requested"_s;
@@ -225,6 +226,7 @@ void InspectorCanvasAgent::requestClientNodes(ErrorString& errorString, const St
 
     clientNodeIds = JSON::ArrayOf<int>::create();
     for (auto& clientNode : inspectorCanvas->clientNodes()) {
+        // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
         if (auto documentNodeId = domAgent->boundNodeId(&clientNode->document()))
             clientNodeIds->addItem(domAgent->pushNodeToFrontend(errorString, documentNodeId, clientNode));
     }
