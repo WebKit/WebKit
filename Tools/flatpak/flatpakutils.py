@@ -711,7 +711,6 @@ class WebkitFlatpak:
 
             sandbox_environment.update({
                 "TZ": "PST8PDT",
-                "LANG": "en_US.UTF-8",
             })
 
         env_var_prefixes_to_keep = [
@@ -743,7 +742,6 @@ class WebkitFlatpak:
             "CXXFLAGS",
             "DISPLAY",
             "JavaScriptCoreUseJIT",
-            "LANG",
             "LDFLAGS",
             "MAX_CPU_LOAD",
             "Malloc",

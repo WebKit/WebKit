@@ -1,3 +1,26 @@
+2020-06-23  Alicia Boya García  <aboya@igalia.com>
+
+        [flatpak] Ensure en_US.UTF-8 locale
+        https://bugs.webkit.org/show_bug.cgi?id=212459
+
+        Reviewed by Philippe Normand.
+
+        When developing WebKit we want as few system differences as possible
+        to make tests reproducible.
+
+        en_US.UTF-8 is indeed the only locale installed in our development
+        flatpak, but our scripts were not correctly clearing most locale
+        environment variables, which resulted in warnings when running some
+        tools (notably perl) when the user OS has a different locale.
+
+        This patch ensures all locale environment variables are cleared and
+        LANG is set to en_US.UTF-8. It also removes now redundant code from
+        flatpakutils.py.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap:
+
 2020-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         [ Catalina Debug WK2 ] fast/events/platform-wheelevent-in-scrolling-div.html is a flaky failure
