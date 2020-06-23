@@ -639,6 +639,9 @@ class WebkitFlatpak:
                 return True
         return False
 
+    def is_build_webkit(self, command):
+        return command and "build-webkit" in os.path.basename(command)
+
     def host_path_to_sandbox_path(self, host_path):
         # For now this supports only files in the WebKit path
         return host_path.replace(self.source_root, self.sandbox_source_root)
@@ -683,7 +686,7 @@ class WebkitFlatpak:
                            "--talk-name=org.gtk.vfs",
                            "--talk-name=org.gtk.vfs.*"]
 
-        if args and args[0].endswith("build-webkit") and not self.is_branch_build():
+        if args and self.is_build_webkit(args[0]) and not self.is_branch_build():
             # Ensure self.build_path exists.
             try:
                 os.makedirs(self.build_path)
@@ -742,6 +745,7 @@ class WebkitFlatpak:
             "JavaScriptCoreUseJIT",
             "LANG",
             "LDFLAGS",
+            "MAX_CPU_LOAD",
             "Malloc",
             "NUMBER_OF_PROCESSORS",
             "QML2_IMPORT_PATH",
@@ -933,7 +937,7 @@ class WebkitFlatpak:
             return self.run_gdb()
         elif self.user_command:
             program = self.user_command[0]
-            if program.endswith("build-webkit") and self.cmakeargs:
+            if self.is_build_webkit(program) and self.cmakeargs:
                 self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
 
             return self.run_in_sandbox(*self.user_command)

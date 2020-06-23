@@ -1,3 +1,15 @@
+2020-06-23  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] relax restriction on build-webkit script name
+        https://bugs.webkit.org/show_bug.cgi?id=213432
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Match the build-webkit string in the whole command-line
+        argument and thus allow alternative implementations of build-webkit. Also let the
+        MAX_CPU_LOAD env var in the sandbox.
+
 2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: set a base directory for website data and cache
