@@ -453,10 +453,22 @@ HRESULT UIDelegate::webViewFrame(_In_opt_ IWebView* /*sender*/, _Out_ RECT* fram
     return S_OK;
 }
 
+const wchar_t* toMessage(const BSTR message)
+{
+    auto length = SysStringLen(message);
+    if (!length)
+        return message;
+    // Return "(null)" for an invalid UTF-16 sequence to align with WebKitTestRunner.
+    auto utf8 = StringView(ucharFrom(message), length).tryGetUtf8(StrictConversion);
+    if (!utf8)
+        return L"(null)";
+    return message;
+}
+
 HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView* /*sender*/, _In_ BSTR message)
 {
     if (!done) {
-        fprintf(testResult, "ALERT: %S\n", message ? message : L"");
+        fprintf(testResult, "ALERT: %S\n", toMessage(message));
         fflush(testResult);
     }
 
@@ -466,7 +478,7 @@ HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView* /*send
 HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, _Out_ BOOL* result)
 {
     if (!done)
-        fprintf(testResult, "CONFIRM: %S\n", message ? message : L"");
+        fprintf(testResult, "CONFIRM: %S\n", toMessage(message));
 
     *result = TRUE;
 
@@ -476,7 +488,7 @@ HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView* /*se
 HRESULT UIDelegate::runJavaScriptTextInputPanelWithPrompt(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, _In_ BSTR defaultText, __deref_opt_out BSTR* result)
 {
     if (!done)
-        fprintf(testResult, "PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
+        fprintf(testResult, "PROMPT: %S, default text: %S\n", toMessage(message), toMessage(defaultText));
 
     *result = SysAllocString(defaultText);
 
@@ -489,7 +501,7 @@ HRESULT UIDelegate::runBeforeUnloadConfirmPanelWithMessage(_In_opt_ IWebView* /*
         return E_POINTER;
 
     if (!done)
-        fprintf(testResult, "CONFIRM NAVIGATION: %S\n", message ? message : L"");
+        fprintf(testResult, "CONFIRM NAVIGATION: %S\n", toMessage(message));
 
     *result = !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
 
@@ -661,7 +673,7 @@ HRESULT UIDelegate::webViewDidInvalidate(_In_opt_ IWebView* /*sender*/)
 HRESULT UIDelegate::setStatusText(_In_opt_ IWebView*, _In_ BSTR text)
 {
     if (!done && gTestRunner->dumpStatusCallbacks())
-        fprintf(testResult, "UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
+        fprintf(testResult, "UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", toMessage(text));
     return S_OK;
 }
 

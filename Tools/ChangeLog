@@ -1,3 +1,22 @@
+2020-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] fast/dom/Window/alert-with-unmatched-utf16-surrogate-should-not-crash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=213452
+
+        Reviewed by Yusuke Suzuki.
+
+        If window.alert() was given an invalid UTF-16 sequence, Windows
+        DumpRenderTree output it without any conversions. It should output
+        "(null)" to match with WebKitTestRunner behavior.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (toMessage): Added
+        (UIDelegate::runJavaScriptAlertPanelWithMessage):
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage):
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (UIDelegate::runBeforeUnloadConfirmPanelWithMessage):
+        (UIDelegate::setStatusText):
+
 2020-06-22  Jer Noble  <jer.noble@apple.com>
 
         [ macOS iOS ] (r263321): TestWebKitAPI.SleepDisabler.Load & TestWebKitAPI.SleepDisabler.Reload are constant failures
