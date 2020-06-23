@@ -1,5 +1,18 @@
 2020-06-23  Alicia Boya García  <aboya@igalia.com>
 
+        [GStreamer] Add GStreamer patch to fix EWS glupload racy crash
+        https://bugs.webkit.org/show_bug.cgi?id=210498
+
+        Reviewed by Philippe Normand.
+
+        This WebKit patch backports a patch from GStreamer 1.17 that prevents
+        the crashes in the attached bug to our flatpak build.
+
+        * buildstream/elements/sdk/gst-plugins-base.bst:
+        * buildstream/patches/gst-plugins-base-0003-glbasefilter-add-support-for-changing-the-display.patch: Added.
+
+2020-06-23  Alicia Boya García  <aboya@igalia.com>
+
         [flatpak] Ensure en_US.UTF-8 locale
         https://bugs.webkit.org/show_bug.cgi?id=212459
 
