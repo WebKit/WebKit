@@ -65,8 +65,7 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
 }
 
 NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentialsPolicy storedCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation)
-    : m_failureTimer(*this, &NetworkDataTask::failureTimerFired)
-    , m_session(makeWeakPtr(session))
+    : m_session(makeWeakPtr(session))
     , m_client(&client)
     , m_partition(requestWithCredentials.cachePartition())
     , m_storedCredentialsPolicy(storedCredentialsPolicy)
@@ -96,9 +95,22 @@ NetworkDataTask::~NetworkDataTask()
 
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
-    ASSERT(type != NoFailure);
-    m_scheduledFailureType = type;
-    m_failureTimer.startOneShot(0_s);
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), type] {
+        if (!weakThis || !m_client)
+            return;
+
+        switch (type) {
+        case BlockedFailure:
+            m_client->wasBlocked();
+            return;
+        case InvalidURLFailure:
+            m_client->cannotShowURL();
+            return;
+        case RestrictedURLFailure:
+            m_client->wasBlockedByRestrictions();
+            return;
+        }
+    });
 }
 
 void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
@@ -128,33 +140,6 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
 bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const
 {
     return m_client ? m_client->shouldCaptureExtraNetworkLoadMetrics() : false;
-}
-
-void NetworkDataTask::failureTimerFired()
-{
-    RefPtr<NetworkDataTask> protectedThis(this);
-
-    switch (m_scheduledFailureType) {
-    case BlockedFailure:
-        m_scheduledFailureType = NoFailure;
-        if (m_client)
-            m_client->wasBlocked();
-        return;
-    case InvalidURLFailure:
-        m_scheduledFailureType = NoFailure;
-        if (m_client)
-            m_client->cannotShowURL();
-        return;
-    case RestrictedURLFailure:
-        m_scheduledFailureType = NoFailure;
-        if (m_client)
-            m_client->wasBlockedByRestrictions();
-        return;
-    case NoFailure:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    ASSERT_NOT_REACHED();
 }
 
 String NetworkDataTask::description() const

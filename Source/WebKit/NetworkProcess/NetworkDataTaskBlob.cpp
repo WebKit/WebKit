@@ -113,11 +113,6 @@ void NetworkDataTaskBlob::resume()
 
     m_state = State::Running;
 
-    if (m_scheduledFailureType != NoFailure) {
-        ASSERT(m_failureTimer.isActive());
-        return;
-    }
-
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
         if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
             clearStream();

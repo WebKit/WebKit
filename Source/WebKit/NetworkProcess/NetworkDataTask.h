@@ -33,7 +33,6 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/StoredCredentialsPolicy.h>
-#include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -142,19 +141,15 @@ protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 
     enum FailureType {
-        NoFailure,
         BlockedFailure,
         InvalidURLFailure,
         RestrictedURLFailure
     };
-    void failureTimerFired();
     void scheduleFailure(FailureType);
 
     bool isThirdPartyRequest(const WebCore::ResourceRequest&) const;
     void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
 
-    FailureType m_scheduledFailureType { NoFailure };
-    WebCore::Timer m_failureTimer;
     WeakPtr<NetworkSession> m_session;
     NetworkDataTaskClient* m_client { nullptr };
     PendingDownload* m_pendingDownload { nullptr };

@@ -1,3 +1,21 @@
+2020-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary Timer from NetworkDataTask
+        https://bugs.webkit.org/show_bug.cgi?id=213409
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::scheduleFailure):
+        (WebKit::NetworkDataTask::failureTimerFired): Deleted.
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::resume):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::resume):
+
 2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to configure and handle DOM cache to WebKitWebsiteDataManager

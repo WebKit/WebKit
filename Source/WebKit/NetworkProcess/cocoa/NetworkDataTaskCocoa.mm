@@ -208,9 +208,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
     , m_shouldRelaxThirdPartyCookieBlocking(shouldRelaxThirdPartyCookieBlocking)
 {
-    if (m_scheduledFailureType != NoFailure)
-        return;
-
     auto request = requestWithCredentials;
     auto url = request.url();
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && url.protocolIsInHTTPFamily()) {
@@ -515,9 +512,6 @@ void NetworkDataTaskCocoa::cancel()
 void NetworkDataTaskCocoa::resume()
 {
     WTFEmitSignpost(m_task.get(), "DataTask", "resume");
-
-    if (m_scheduledFailureType != NoFailure)
-        m_failureTimer.startOneShot(0_s);
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     if (cocoaSession.deviceManagementRestrictionsEnabled() && m_isForMainResourceNavigationForAnyFrame) {

@@ -59,8 +59,6 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
     m_session->registerNetworkDataTask(*this);
-    if (m_scheduledFailureType != NoFailure)
-        return;
 
     auto request = requestWithCredentials;
     if (request.url().protocolIsInHTTPFamily()) {
@@ -232,11 +230,6 @@ void NetworkDataTaskSoup::resume()
         return;
 
     m_state = State::Running;
-
-    if (m_scheduledFailureType != NoFailure) {
-        ASSERT(m_failureTimer.isActive());
-        return;
-    }
 
     startTimeout();
 

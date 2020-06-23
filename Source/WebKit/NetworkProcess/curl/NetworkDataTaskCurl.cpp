@@ -50,9 +50,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     , m_pageID(pageID)
     , m_shouldRelaxThirdPartyCookieBlocking(shouldRelaxThirdPartyCookieBlocking)
 {
-    if (m_scheduledFailureType != NoFailure)
-        return;
-
     m_startTime = MonotonicTime::now();
 
     auto request = requestWithCredentials;
@@ -97,11 +94,6 @@ void NetworkDataTaskCurl::resume()
         return;
 
     m_state = State::Running;
-
-    if (m_scheduledFailureType != NoFailure) {
-        ASSERT(m_failureTimer.isActive());
-        return;
-    }
 
     if (m_curlRequest)
         m_curlRequest->resume();
