@@ -62,15 +62,15 @@ protected:
 class PannerNode final : public PannerNodeBase {
     WTF_MAKE_ISO_ALLOCATED(PannerNode);
 public:
-    static Ref<PannerNode> create(AudioContext& context, float sampleRate)
+    static Ref<PannerNode> create(BaseAudioContext& context, float sampleRate)
     {
         return adoptRef(*new PannerNode(context, sampleRate));
     }
 
     virtual ~PannerNode();
 
-    AudioContext& context() { return downcast<AudioContext>(AudioNode::context()); }
-    const AudioContext& context() const { return downcast<AudioContext>(AudioNode::context()); }
+    BaseAudioContext& context() { return downcast<BaseAudioContext>(AudioNode::context()); }
+    const BaseAudioContext& context() const { return downcast<BaseAudioContext>(AudioNode::context()); }
 
     // AudioNode
     void process(size_t framesToProcess) override;
@@ -134,7 +134,7 @@ public:
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
 
 private:
-    PannerNode(AudioContext&, float sampleRate);
+    PannerNode(BaseAudioContext&, float sampleRate);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain();

@@ -242,6 +242,7 @@ Modules/webaudio/AudioParamTimeline.cpp
 Modules/webaudio/AudioProcessingEvent.cpp
 Modules/webaudio/AudioScheduledSourceNode.cpp
 Modules/webaudio/AudioSummingJunction.cpp
+Modules/webaudio/BaseAudioContext.cpp
 Modules/webaudio/BiquadDSPKernel.cpp
 Modules/webaudio/BiquadFilterNode.cpp
 Modules/webaudio/BiquadProcessor.cpp
@@ -2762,6 +2763,7 @@ JSAuthenticatorAttestationResponse.cpp
 JSAuthenticatorResponse.cpp
 JSAuthenticatorTransport.cpp
 JSBarProp.cpp
+JSBaseAudioContext.cpp
 JSBasicCredential.cpp
 JSBeforeLoadEvent.cpp
 JSBeforeUnloadEvent.cpp

@@ -28,7 +28,6 @@
 #include "ActiveDOMObject.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBus.h"
-#include "AudioContext.h"
 #include "AudioContextState.h"
 #include "AudioDestinationNode.h"
 #include "EventTarget.h"
@@ -73,31 +72,143 @@ class MediaStream;
 class MediaStreamAudioDestinationNode;
 class MediaStreamAudioSourceNode;
 class OscillatorNode;
+class PannerNode;
 class PeriodicWave;
 class ScriptProcessorNode;
 class SecurityOrigin;
 class WaveShaperNode;
-class WebKitAudioPannerNode;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-// AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
-// For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism.
+// FIXME: We need to rename this now that there is also BaseAudioContext.
+class AudioContextBase
+    : public ActiveDOMObject
+    , public ThreadSafeRefCounted<AudioContextBase>
+    , public EventTargetWithInlineData
+    , public MediaCanStartListener
+    , public MediaProducer
+#if !RELEASE_LOG_DISABLED
+    , public LoggerHelper
+#endif
+{
+    WTF_MAKE_ISO_ALLOCATED(AudioContextBase);
+public:
+    virtual ~AudioContextBase() = default;
 
-class WebKitAudioContext
+    // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
+    using ThreadSafeRefCounted::ref;
+    using ThreadSafeRefCounted::deref;
+
+    Document* document() const;
+
+    virtual bool isInitialized() const = 0;
+
+    virtual size_t currentSampleFrame() const = 0;
+    virtual float sampleRate() const = 0;
+    virtual double currentTime() const = 0;
+    virtual bool isGraphOwner() const = 0;
+
+    virtual void setAudioThread(Thread&) = 0;
+    virtual bool isAudioThread() const = 0;
+    virtual bool isAudioThreadFinished() = 0;
+
+    virtual void isPlayingAudioDidChange() = 0;
+    virtual void nodeWillBeginPlayback() = 0;
+
+    virtual void postTask(WTF::Function<void()>&&) = 0;
+    virtual bool isStopped() const = 0;
+    virtual const SecurityOrigin* origin() const = 0;
+    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message) = 0;
+
+    virtual void markForDeletion(AudioNode&) = 0;
+    virtual void deleteMarkedNodes() = 0;
+
+    virtual void handlePreRenderTasks() = 0;
+    virtual void handlePostRenderTasks() = 0;
+    virtual void processAutomaticPullNodes(size_t framesToProcess) = 0;
+    virtual void addDeferredFinishDeref(AudioNode*) = 0;
+
+    virtual void removeMarkedSummingJunction(AudioSummingJunction*) = 0;
+    virtual void markSummingJunctionDirty(AudioSummingJunction*) = 0;
+    virtual void markAudioNodeOutputDirty(AudioNodeOutput*) = 0;
+
+    enum BehaviorRestrictionFlags {
+        NoRestrictions = 0,
+        RequireUserGestureForAudioStartRestriction = 1 << 0,
+        RequirePageConsentForAudioStartRestriction = 1 << 1,
+    };
+    typedef unsigned BehaviorRestrictions;
+    virtual BehaviorRestrictions behaviorRestrictions() const = 0;
+    virtual void addBehaviorRestriction(BehaviorRestrictions) = 0;
+    virtual void removeBehaviorRestriction(BehaviorRestrictions) = 0;
+
+#if !RELEASE_LOG_DISABLED
+    virtual const void* nextAudioNodeLogIdentifier() = 0;
+    virtual const void* nextAudioParameterLogIdentifier() = 0;
+#endif
+
+    virtual void addAutomaticPullNode(AudioNode&) = 0;
+    virtual void removeAutomaticPullNode(AudioNode&) = 0;
+
+    virtual void notifyNodeFinishedProcessing(AudioNode*) = 0;
+
+    virtual void finishedRendering(bool didRendering) = 0;
+
+    virtual void incrementConnectionCount() = 0;
+    virtual void incrementActiveSourceCount() = 0;
+    virtual void decrementActiveSourceCount() = 0;
+
+    virtual bool isOfflineContext() const = 0;
+    virtual bool isBaseAudioContext() const = 0;
+    virtual bool isWebKitAudioContext() const = 0;
+
+    // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
+    virtual void lock(bool& mustReleaseLock) = 0;
+    virtual bool tryLock(bool& mustReleaseLock) = 0;
+    virtual void unlock() = 0;
+
+    class AutoLocker {
+    public:
+        explicit AutoLocker(AudioContextBase& context)
+            : m_context(context)
+        {
+            m_context.lock(m_mustReleaseLock);
+        }
+
+        ~AutoLocker()
+        {
+            if (m_mustReleaseLock)
+                m_context.unlock();
+        }
+
+    private:
+        AudioContextBase& m_context;
+        bool m_mustReleaseLock;
+    };
+
+    // EventTarget
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
+
+protected:
+    explicit AudioContextBase(Document&);
+};
+
+// AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
+// For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
+
+class BaseAudioContext
     : public AudioContextBase
     , private PlatformMediaSessionClient
     , private VisibilityChangeClient
 {
-    WTF_MAKE_ISO_ALLOCATED(WebKitAudioContext);
+    WTF_MAKE_ISO_ALLOCATED(BaseAudioContext);
 public:
-    // Create an WebKitAudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<WebKitAudioContext>> create(Document&);
-
-    virtual ~WebKitAudioContext();
+    virtual ~BaseAudioContext();
 
     bool isInitialized() const final;
-
+    
     bool isOfflineContext() const final { return m_isOfflineContext; }
 
     DocumentIdentifier hostingDocumentIdentifier() const final;
@@ -110,7 +221,7 @@ public:
 
     void incrementActiveSourceCount() final;
     void decrementActiveSourceCount() final;
-
+    
     ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
     ExceptionOr<Ref<AudioBuffer>> createBuffer(ArrayBuffer&, bool mixToMono);
 
@@ -121,28 +232,20 @@ public:
 
     void suspendRendering(DOMPromiseDeferred<void>&&);
     void resumeRendering(DOMPromiseDeferred<void>&&);
-    void close(DOMPromiseDeferred<void>&&);
 
     using State = AudioContextState;
-    State state() const;
+    State state() const { return m_state; }
     bool isClosed() const { return m_state == State::Closed; }
 
     bool wouldTaintOrigin(const URL&) const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
     ExceptionOr<Ref<AudioBufferSourceNode>> createBufferSource();
-#if ENABLE(VIDEO)
-    ExceptionOr<Ref<MediaElementAudioSourceNode>> createMediaElementSource(HTMLMediaElement&);
-#endif
-#if ENABLE(MEDIA_STREAM)
-    ExceptionOr<Ref<MediaStreamAudioSourceNode>> createMediaStreamSource(MediaStream&);
-    ExceptionOr<Ref<MediaStreamAudioDestinationNode>> createMediaStreamDestination();
-#endif
     ExceptionOr<Ref<GainNode>> createGain();
     ExceptionOr<Ref<BiquadFilterNode>> createBiquadFilter();
     ExceptionOr<Ref<WaveShaperNode>> createWaveShaper();
     ExceptionOr<Ref<DelayNode>> createDelay(double maxDelayTime);
-    ExceptionOr<Ref<WebKitAudioPannerNode>> createPanner();
+    ExceptionOr<Ref<PannerNode>> createPanner();
     ExceptionOr<Ref<ConvolverNode>> createConvolver();
     ExceptionOr<Ref<DynamicsCompressorNode>> createDynamicsCompressor();
     ExceptionOr<Ref<AnalyserNode>> createAnalyser();
@@ -188,14 +291,14 @@ public:
     //
     // Thread Safety and Graph Locking:
     //
-
+    
     void setAudioThread(Thread& thread) final { m_audioThread = &thread; } // FIXME: check either not initialized or the same
     Thread* audioThread() const { return m_audioThread; }
     bool isAudioThread() const final;
 
     // Returns true only after the audio thread has been started and then shutdown.
     bool isAudioThreadFinished() final { return m_isAudioThreadFinished; }
-
+    
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
     void lock(bool& mustReleaseLock) final;
 
@@ -210,7 +313,7 @@ public:
 
     // Returns the maximum number of channels we can support.
     static unsigned maxNumberOfChannels() { return MaxNumberOfChannels; }
-
+    
     // In AudioNode::deref() a tryLock() is used for calling finishDeref(), but if it fails keep track here.
     void addDeferredFinishDeref(AudioNode*) final;
 
@@ -255,26 +358,40 @@ public:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message) final;
 
 protected:
-    explicit WebKitAudioContext(Document&);
-    WebKitAudioContext(Document&, AudioBuffer* renderTarget);
-
+    explicit BaseAudioContext(Document&);
+    BaseAudioContext(Document&, AudioBuffer* renderTarget);
+    
     static bool isSampleRateRangeGood(float sampleRate);
     void clearPendingActivity();
     void makePendingActivity();
 
-private:
-    void constructCommon();
+    AudioDestinationNode* destinationNode() const { return m_destinationNode.get(); }
 
     void lazyInitialize();
     void uninitialize();
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "BaseAudioContext"; }
+#endif
+
+    // The context itself keeps a reference to all source nodes.  The source nodes, then reference all nodes they're connected to.
+    // In turn, these nodes reference all nodes they're connected to.  All nodes are ultimately connected to the AudioDestinationNode.
+    // When the context dereferences a source node, it will be deactivated from the rendering graph along with all other nodes it is
+    // uniquely connected to.  See the AudioNode::ref() and AudioNode::deref() methods for more details.
+    void refNode(AudioNode&);
+    void derefNode(AudioNode&);
+
+    void addReaction(State, DOMPromiseDeferred<void>&&);
+    void setState(State);
+
+private:
+    void constructCommon();
 
     bool willBeginPlayback();
     bool willPausePlayback();
 
     bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
     bool pageConsentRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequirePageConsentForAudioStartRestriction; }
-
-    void setState(State);
 
     void clear();
 
@@ -288,13 +405,6 @@ private:
     // MediaProducer
     MediaProducer::MediaStateFlags mediaState() const override;
     void pageMutedStateDidChange() override;
-
-    // The context itself keeps a reference to all source nodes.  The source nodes, then reference all nodes they're connected to.
-    // In turn, these nodes reference all nodes they're connected to.  All nodes are ultimately connected to the AudioDestinationNode.
-    // When the context dereferences a source node, it will be deactivated from the rendering graph along with all other nodes it is
-    // uniquely connected to.  See the AudioNode::ref() and AudioNode::deref() methods for more details.
-    void refNode(AudioNode&);
-    void derefNode(AudioNode&);
 
     // ActiveDOMObject API.
     void suspend(ReasonForSuspension) final;
@@ -320,18 +430,15 @@ private:
 
     void visibilityStateChanged() final;
 
-    bool isBaseAudioContext() const final { return false; }
-    bool isWebKitAudioContext() const final { return true; }
+    bool isBaseAudioContext() const final { return true; }
+    bool isWebKitAudioContext() const final { return false; }
 
     void handleDirtyAudioSummingJunctions();
     void handleDirtyAudioNodeOutputs();
 
-    void addReaction(State, DOMPromiseDeferred<void>&&);
     void updateAutomaticPullNodes();
 
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "WebKitAudioContext"; }
-
     Ref<Logger> m_logger;
     const void* m_logIdentifier;
     uint64_t m_nextAudioNodeIdentifier { 0 };
@@ -392,7 +499,7 @@ private:
 
     std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
 
-    // This is considering 32 is large enough for multiple channels audio.
+    // This is considering 32 is large enough for multiple channels audio. 
     // It is somewhat arbitrary and could be increased if necessary.
     enum { MaxNumberOfChannels = 32 };
 
@@ -402,16 +509,11 @@ private:
     BehaviorRestrictions m_restrictions { NoRestrictions };
 
     State m_state { State::Suspended };
-    RefPtr<PendingActivity<WebKitAudioContext>> m_pendingActivity;
+    RefPtr<PendingActivity<BaseAudioContext>> m_pendingActivity;
 };
-
-inline AudioContextState WebKitAudioContext::state() const
-{
-    return m_state;
-}
 
 } // WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebKitAudioContext)
-    static bool isType(const WebCore::AudioContextBase& context) { return context.isWebKitAudioContext(); }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BaseAudioContext)
+    static bool isType(const WebCore::AudioContextBase& context) { return context.isBaseAudioContext(); }
 SPECIALIZE_TYPE_TRAITS_END()

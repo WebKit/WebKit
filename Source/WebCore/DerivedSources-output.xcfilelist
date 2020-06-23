@@ -187,6 +187,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorTransport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorTransport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarProp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarProp.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBaseAudioContext.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBaseAudioContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBasicCredential.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBasicCredential.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBeforeLoadEvent.cpp

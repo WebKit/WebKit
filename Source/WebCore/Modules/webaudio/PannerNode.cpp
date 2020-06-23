@@ -53,7 +53,7 @@ PannerNodeBase::PannerNodeBase(AudioContextBase& context, float sampleRate)
 {
 }
 
-PannerNode::PannerNode(AudioContext& context, float sampleRate)
+PannerNode::PannerNode(BaseAudioContext& context, float sampleRate)
     : PannerNodeBase(context, sampleRate)
     , m_panningModel(PanningModelType::HRTF)
     , m_lastGain(-1.0)

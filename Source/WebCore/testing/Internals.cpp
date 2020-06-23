@@ -279,7 +279,7 @@
 #endif
 
 #if ENABLE(WEB_AUDIO)
-#include "AudioContext.h"
+#include "BaseAudioContext.h"
 #include "WebKitAudioContext.h"
 #endif
 
@@ -4299,10 +4299,10 @@ void Internals::sendMediaControlEvent(MediaControlEvent event)
 #endif // ENABLE(MEDIA_SESSION)
 
 #if ENABLE(WEB_AUDIO)
-void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
+void Internals::setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
 {
     RefPtr<AudioContextBase> context;
-    switchOn(contextVariant, [&](RefPtr<AudioContext> entry) {
+    switchOn(contextVariant, [&](RefPtr<BaseAudioContext> entry) {
         context = entry;
     }, [&](RefPtr<WebKitAudioContext> entry) {
         context = entry;

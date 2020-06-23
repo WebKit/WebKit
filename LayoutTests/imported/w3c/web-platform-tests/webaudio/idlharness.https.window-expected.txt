@@ -9,42 +9,42 @@ PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
 PASS Element includes Slottable: member names are unique 
-FAIL BaseAudioContext interface: existence and properties of interface object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface object length assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface object name assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute destination assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute sampleRate assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute currentTime assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute listener assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute state assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute audioWorklet assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: attribute onstatechange assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createAnalyser() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createBiquadFilter() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createBuffer(unsigned long, unsigned long, float) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createBufferSource() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createChannelMerger(optional unsigned long) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createChannelSplitter(optional unsigned long) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createConstantSource() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createConvolver() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createDelay(optional double) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createDynamicsCompressor() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createGain() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createIIRFilter(sequence<double>, sequence<double>) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createOscillator() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createPanner() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createStereoPanner() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation createWaveShaper() assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL BaseAudioContext interface: operation decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
-FAIL AudioContext interface: existence and properties of interface object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
+PASS BaseAudioContext interface: existence and properties of interface object 
+PASS BaseAudioContext interface object length 
+PASS BaseAudioContext interface object name 
+PASS BaseAudioContext interface: existence and properties of interface prototype object 
+PASS BaseAudioContext interface: existence and properties of interface prototype object's "constructor" property 
+PASS BaseAudioContext interface: existence and properties of interface prototype object's @@unscopables property 
+PASS BaseAudioContext interface: attribute destination 
+PASS BaseAudioContext interface: attribute sampleRate 
+PASS BaseAudioContext interface: attribute currentTime 
+PASS BaseAudioContext interface: attribute listener 
+PASS BaseAudioContext interface: attribute state 
+FAIL BaseAudioContext interface: attribute audioWorklet assert_true: The prototype object must have a property "audioWorklet" expected true got false
+PASS BaseAudioContext interface: attribute onstatechange 
+PASS BaseAudioContext interface: operation createAnalyser() 
+PASS BaseAudioContext interface: operation createBiquadFilter() 
+FAIL BaseAudioContext interface: operation createBuffer(unsigned long, unsigned long, float) assert_equals: property has wrong .length expected 3 but got 2
+PASS BaseAudioContext interface: operation createBufferSource() 
+PASS BaseAudioContext interface: operation createChannelMerger(optional unsigned long) 
+PASS BaseAudioContext interface: operation createChannelSplitter(optional unsigned long) 
+FAIL BaseAudioContext interface: operation createConstantSource() assert_own_property: interface prototype object missing non-static operation expected property "createConstantSource" missing
+PASS BaseAudioContext interface: operation createConvolver() 
+PASS BaseAudioContext interface: operation createDelay(optional double) 
+PASS BaseAudioContext interface: operation createDynamicsCompressor() 
+PASS BaseAudioContext interface: operation createGain() 
+FAIL BaseAudioContext interface: operation createIIRFilter(sequence<double>, sequence<double>) assert_own_property: interface prototype object missing non-static operation expected property "createIIRFilter" missing
+PASS BaseAudioContext interface: operation createOscillator() 
+PASS BaseAudioContext interface: operation createPanner() 
+PASS BaseAudioContext interface: operation createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints) 
+PASS BaseAudioContext interface: operation createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long) 
+FAIL BaseAudioContext interface: operation createStereoPanner() assert_own_property: interface prototype object missing non-static operation expected property "createStereoPanner" missing
+PASS BaseAudioContext interface: operation createWaveShaper() 
+FAIL BaseAudioContext interface: operation decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) assert_equals: property has wrong .length expected 1 but got 2
+PASS AudioContext interface: existence and properties of interface object 
 PASS AudioContext interface object length 
 PASS AudioContext interface object name 
-FAIL AudioContext interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
+PASS AudioContext interface: existence and properties of interface prototype object 
 PASS AudioContext interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioContext interface: existence and properties of interface prototype object's @@unscopables property 
 FAIL AudioContext interface: attribute baseLatency assert_true: The prototype object must have a property "baseLatency" expected true got false
@@ -106,17 +106,17 @@ FAIL BaseAudioContext interface: context must inherit property "createStereoPann
 PASS BaseAudioContext interface: context must inherit property "createWaveShaper()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
 FAIL BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError assert_unreached: Throws "TypeError: Not enough arguments" instead of rejecting promise Reached unreachable code
-FAIL OfflineAudioContext interface: existence and properties of interface object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
+PASS OfflineAudioContext interface: existence and properties of interface object 
 FAIL OfflineAudioContext interface object length assert_equals: wrong value for OfflineAudioContext.length expected 1 but got 3
 PASS OfflineAudioContext interface object name 
-FAIL OfflineAudioContext interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BaseAudioContext" expected property "BaseAudioContext" missing
+PASS OfflineAudioContext interface: existence and properties of interface prototype object 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's "constructor" property 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL OfflineAudioContext interface: operation startRendering() assert_own_property: interface prototype object missing non-static operation expected property "startRendering" missing
-FAIL OfflineAudioContext interface: operation resume() assert_own_property: interface prototype object missing non-static operation expected property "resume" missing
-FAIL OfflineAudioContext interface: operation suspend(double) assert_own_property: interface prototype object missing non-static operation expected property "suspend" missing
+FAIL OfflineAudioContext interface: operation startRendering() assert_unreached: Throws "TypeError: Can only call OfflineAudioContext.startRendering on instances of OfflineAudioContext" instead of rejecting promise Reached unreachable code
+PASS OfflineAudioContext interface: operation resume() 
+FAIL OfflineAudioContext interface: operation suspend(double) assert_equals: property has wrong .length expected 1 but got 0
 FAIL OfflineAudioContext interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
-FAIL OfflineAudioContext interface: attribute oncomplete assert_own_property: expected property "oncomplete" missing
+PASS OfflineAudioContext interface: attribute oncomplete 
 PASS OfflineAudioContext must be primary interface of new OfflineAudioContext(1, 1, sample_rate) 
 PASS Stringification of new OfflineAudioContext(1, 1, sample_rate) 
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "startRendering()" with the proper type 

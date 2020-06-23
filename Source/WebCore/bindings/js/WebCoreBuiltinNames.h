@@ -53,6 +53,7 @@ namespace WebCore {
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \
+    macro(BaseAudioContext) \
     macro(BeforeLoadEvent) \
     macro(BlobEvent) \
     macro(Cache) \

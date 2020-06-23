@@ -439,6 +439,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioNode.idl
     Modules/webaudio/AudioParam.idl
     Modules/webaudio/AudioProcessingEvent.idl
+    Modules/webaudio/BaseAudioContext.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/ChannelMergerNode.idl
     Modules/webaudio/ChannelSplitterNode.idl

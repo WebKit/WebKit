@@ -51,8 +51,8 @@
 namespace WebCore {
 
 class AnimationTimeline;
-class AudioContext;
 class AudioTrack;
+class BaseAudioContext;
 class CacheStorageConnection;
 class DOMRect;
 class DOMRectList;
@@ -676,7 +676,7 @@ public:
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    void setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>&, StringView restrictionsString);
+    void setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>>&, StringView restrictionsString);
     void useMockAudioDestinationCocoa();
 #endif
 

@@ -1,3 +1,151 @@
+2020-06-22  Chris Dumez  <cdumez@apple.com>
+
+        Introduce BaseAudioContext interface
+        https://bugs.webkit.org/show_bug.cgi?id=213491
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce BaseAudioContext interface as per W3C WebAudio specification:
+        - https://www.w3.org/TR/webaudio/#BaseAudioContext
+
+        No new tests, rebaselined existing test.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::close):
+        (WebCore::AudioContext::createMediaElementSource):
+        (WebCore::AudioContext::createMediaStreamSource):
+        (WebCore::AudioContext::createMediaStreamDestination):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::contextForBindings const):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/BaseAudioContext.cpp: Copied from Source/WebCore/Modules/webaudio/AudioContext.cpp.
+        (WebCore::BaseAudioContext::isSampleRateRangeGood):
+        (WebCore::AudioContextBase::AudioContextBase):
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        (WebCore::BaseAudioContext::constructCommon):
+        (WebCore::BaseAudioContext::~BaseAudioContext):
+        (WebCore::BaseAudioContext::lazyInitialize):
+        (WebCore::BaseAudioContext::clear):
+        (WebCore::BaseAudioContext::uninitialize):
+        (WebCore::BaseAudioContext::isInitialized const):
+        (WebCore::BaseAudioContext::addReaction):
+        (WebCore::BaseAudioContext::setState):
+        (WebCore::BaseAudioContext::stop):
+        (WebCore::BaseAudioContext::suspend):
+        (WebCore::BaseAudioContext::resume):
+        (WebCore::BaseAudioContext::activeDOMObjectName const):
+        (WebCore::AudioContextBase::document const):
+        (WebCore::BaseAudioContext::hostingDocumentIdentifier const):
+        (WebCore::BaseAudioContext::isSuspended const):
+        (WebCore::BaseAudioContext::visibilityStateChanged):
+        (WebCore::BaseAudioContext::wouldTaintOrigin const):
+        (WebCore::BaseAudioContext::createBuffer):
+        (WebCore::BaseAudioContext::decodeAudioData):
+        (WebCore::BaseAudioContext::createBufferSource):
+        (WebCore::BaseAudioContext::createScriptProcessor):
+        (WebCore::BaseAudioContext::createBiquadFilter):
+        (WebCore::BaseAudioContext::createWaveShaper):
+        (WebCore::BaseAudioContext::createPanner):
+        (WebCore::BaseAudioContext::createConvolver):
+        (WebCore::BaseAudioContext::createDynamicsCompressor):
+        (WebCore::BaseAudioContext::createAnalyser):
+        (WebCore::BaseAudioContext::createGain):
+        (WebCore::BaseAudioContext::createDelay):
+        (WebCore::BaseAudioContext::createChannelSplitter):
+        (WebCore::BaseAudioContext::createChannelMerger):
+        (WebCore::BaseAudioContext::createOscillator):
+        (WebCore::BaseAudioContext::createPeriodicWave):
+        (WebCore::BaseAudioContext::notifyNodeFinishedProcessing):
+        (WebCore::BaseAudioContext::derefFinishedSourceNodes):
+        (WebCore::BaseAudioContext::refNode):
+        (WebCore::BaseAudioContext::derefNode):
+        (WebCore::BaseAudioContext::derefUnfinishedSourceNodes):
+        (WebCore::BaseAudioContext::lock):
+        (WebCore::BaseAudioContext::tryLock):
+        (WebCore::BaseAudioContext::unlock):
+        (WebCore::BaseAudioContext::isAudioThread const):
+        (WebCore::BaseAudioContext::isGraphOwner const):
+        (WebCore::BaseAudioContext::addDeferredFinishDeref):
+        (WebCore::BaseAudioContext::handlePreRenderTasks):
+        (WebCore::BaseAudioContext::handlePostRenderTasks):
+        (WebCore::BaseAudioContext::handleDeferredFinishDerefs):
+        (WebCore::BaseAudioContext::markForDeletion):
+        (WebCore::BaseAudioContext::scheduleNodeDeletion):
+        (WebCore::BaseAudioContext::deleteMarkedNodes):
+        (WebCore::BaseAudioContext::markSummingJunctionDirty):
+        (WebCore::BaseAudioContext::removeMarkedSummingJunction):
+        (WebCore::BaseAudioContext::eventTargetInterface const):
+        (WebCore::BaseAudioContext::markAudioNodeOutputDirty):
+        (WebCore::BaseAudioContext::handleDirtyAudioSummingJunctions):
+        (WebCore::BaseAudioContext::handleDirtyAudioNodeOutputs):
+        (WebCore::BaseAudioContext::addAutomaticPullNode):
+        (WebCore::BaseAudioContext::removeAutomaticPullNode):
+        (WebCore::BaseAudioContext::updateAutomaticPullNodes):
+        (WebCore::BaseAudioContext::processAutomaticPullNodes):
+        (WebCore::AudioContextBase::scriptExecutionContext const):
+        (WebCore::BaseAudioContext::nodeWillBeginPlayback):
+        (WebCore::shouldDocumentAllowWebAudioToAutoPlay):
+        (WebCore::BaseAudioContext::willBeginPlayback):
+        (WebCore::BaseAudioContext::willPausePlayback):
+        (WebCore::BaseAudioContext::startRendering):
+        (WebCore::BaseAudioContext::mediaCanStart):
+        (WebCore::BaseAudioContext::mediaState const):
+        (WebCore::BaseAudioContext::pageMutedStateDidChange):
+        (WebCore::BaseAudioContext::isPlayingAudioDidChange):
+        (WebCore::BaseAudioContext::finishedRendering):
+        (WebCore::BaseAudioContext::dispatchEvent):
+        (WebCore::BaseAudioContext::incrementActiveSourceCount):
+        (WebCore::BaseAudioContext::decrementActiveSourceCount):
+        (WebCore::BaseAudioContext::suspendRendering):
+        (WebCore::BaseAudioContext::resumeRendering):
+        (WebCore::BaseAudioContext::suspendPlayback):
+        (WebCore::BaseAudioContext::mayResumePlayback):
+        (WebCore::BaseAudioContext::postTask):
+        (WebCore::BaseAudioContext::origin const):
+        (WebCore::BaseAudioContext::addConsoleMessage):
+        (WebCore::BaseAudioContext::clearPendingActivity):
+        (WebCore::BaseAudioContext::makePendingActivity):
+        (WebCore::BaseAudioContext::logChannel const):
+        * Modules/webaudio/BaseAudioContext.h: Copied from Source/WebCore/Modules/webaudio/AudioContext.h.
+        (WebCore::AudioContextBase::AutoLocker::AutoLocker):
+        (WebCore::AudioContextBase::AutoLocker::~AutoLocker):
+        (WebCore::BaseAudioContext::destination):
+        (WebCore::BaseAudioContext::activeSourceCount const):
+        (WebCore::BaseAudioContext::listener):
+        (WebCore::BaseAudioContext::state const):
+        (WebCore::BaseAudioContext::isClosed const):
+        (WebCore::BaseAudioContext::connectionCount const):
+        (WebCore::BaseAudioContext::audioThread const):
+        (WebCore::BaseAudioContext::maxNumberOfChannels):
+        (WebCore::BaseAudioContext::destinationNode const):
+        (WebCore::BaseAudioContext::userGestureRequiredForAudioStart const):
+        (WebCore::BaseAudioContext::pageConsentRequiredForAudioStart const):
+        (isType):
+        * Modules/webaudio/BaseAudioContext.idl: Copied from Source/WebCore/Modules/webaudio/AudioContext.idl.
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::OfflineAudioContext):
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::PannerNode):
+        * Modules/webaudio/PannerNode.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventTargetFactory.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAudioContextRestrictions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-22  Andres Gonzalez  <andresg_22@apple.com>
 
         AXIsolatedTree::generateSubtree should properly assign the generated subtree to its parent node.

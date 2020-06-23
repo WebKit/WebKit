@@ -531,11 +531,11 @@ void AudioNode::deref(RefType refType)
         context().deleteMarkedNodes();
 }
 
-Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>> AudioNode::contextForBindings() const
+Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> AudioNode::contextForBindings() const
 {
     if (m_context->isWebKitAudioContext())
         return makeRefPtr(static_cast<WebKitAudioContext&>(m_context.get()));
-    return makeRefPtr(static_cast<AudioContext&>(m_context.get()));
+    return makeRefPtr(static_cast<BaseAudioContext&>(m_context.get()));
 }
 
 void AudioNode::finishDeref(RefType refType)

@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
 inline OfflineAudioContext::OfflineAudioContext(Document& document, AudioBuffer* renderTarget)
-    : AudioContext(document, renderTarget)
+    : BaseAudioContext(document, renderTarget)
 {
 }
 

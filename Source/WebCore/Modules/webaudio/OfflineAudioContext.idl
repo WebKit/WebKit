@@ -26,6 +26,16 @@
     Conditional=WEB_AUDIO,
     EnabledBySetting=ModernUnprefixedWebAudio,
     JSGenerateToJSObject,
-] interface OfflineAudioContext : AudioContext {
+] interface OfflineAudioContext : BaseAudioContext {
     [CallWith=ScriptExecutionContext, MayThrowException] constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+
+    void startRendering();
+
+    [ImplementedAs=resumeRendering] Promise<void> resume();
+    [ImplementedAs=suspendRendering] Promise<void> suspend(); // FIXME: Missing suspendTime parameter.
+
+    // FIXME: Add support.
+    // readonly attribute unsigned long length;
+
+    attribute EventHandler oncomplete;
 };

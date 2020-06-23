@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-class AudioContext;
 class AudioContextBase;
 class AudioNodeInput;
 class AudioNodeOutput;
 class AudioParam;
+class BaseAudioContext;
 class WebKitAudioContext;
 
 // An AudioNode is the basic building block for handling audio within an AudioContext.
@@ -65,7 +65,7 @@ public:
     AudioContextBase& context() { return m_context.get(); }
     const AudioContextBase& context() const { return m_context.get(); }
 
-    Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>> contextForBindings() const;
+    Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings() const;
 
     enum NodeType {
         NodeTypeUnknown,

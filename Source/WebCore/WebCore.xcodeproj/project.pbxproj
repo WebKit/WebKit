@@ -2415,6 +2415,7 @@
 		83102B271F9EADD900E404B9 /* JSExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */; };
 		8311C0031FAA2E9500E3C8E5 /* SWServerJobQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8311C0021FAA2E8900E3C8E5 /* SWServerJobQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
+		83198FBF24A160DD00420B05 /* BaseAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 83198FBE24A160C100420B05 /* BaseAudioContext.h */; };
 		831B61762499A5BB00C07C79 /* WebKitAudioPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 831B61742499A59C00C07C79 /* WebKitAudioPannerNode.h */; };
 		831B61772499A5BF00C07C79 /* WebKitOfflineAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 831B61752499A59D00C07C79 /* WebKitOfflineAudioContext.h */; };
 		8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8321507B1F27EA150095B136 /* NavigatorBeacon.h */; };
@@ -10327,6 +10328,9 @@
 		83102B251F9EADC200E404B9 /* JSExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExtendableMessageEvent.cpp; sourceTree = "<group>"; };
 		8311C0001FAA2E8900E3C8E5 /* SWServerJobQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServerJobQueue.cpp; sourceTree = "<group>"; };
 		8311C0021FAA2E8900E3C8E5 /* SWServerJobQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWServerJobQueue.h; sourceTree = "<group>"; };
+		83198FBB24A160C100420B05 /* BaseAudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseAudioContext.cpp; sourceTree = "<group>"; };
+		83198FBD24A160C100420B05 /* BaseAudioContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BaseAudioContext.idl; sourceTree = "<group>"; };
+		83198FBE24A160C100420B05 /* BaseAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseAudioContext.h; sourceTree = "<group>"; };
 		831B616F2499A59800C07C79 /* WebKitAudioPannerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAudioPannerNode.idl; sourceTree = "<group>"; };
 		831B61712499A59900C07C79 /* WebKitAudioPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAudioPannerNode.cpp; sourceTree = "<group>"; };
 		831B61722499A59A00C07C79 /* WebKitOfflineAudioContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitOfflineAudioContext.idl; sourceTree = "<group>"; };
@@ -29291,6 +29295,9 @@
 				FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */,
 				FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */,
 				FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */,
+				83198FBB24A160C100420B05 /* BaseAudioContext.cpp */,
+				83198FBE24A160C100420B05 /* BaseAudioContext.h */,
+				83198FBD24A160C100420B05 /* BaseAudioContext.idl */,
 				FD315FDA12B0267600C1A359 /* BiquadDSPKernel.cpp */,
 				FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */,
 				FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */,
@@ -29855,6 +29862,7 @@
 				51A1B87D2087C4C000979A75 /* BackForwardItemIdentifier.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarProp.h in Headers */,
 				460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */,
+				83198FBF24A160DD00420B05 /* BaseAudioContext.h in Headers */,
 				412DEF1F23A918A300D840F6 /* BaseAudioSharedUnit.h in Headers */,
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,
 				379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */,
