@@ -1,0 +1,8 @@
+
+EVENT(webkitfullscreenchange)
+EXPECTED (800 == '800') OK
+EVENT(webkitfullscreenchange)
+EXPECTED (300 == '300') OK
+EXPECTED (150 == '150') OK
+END OF TEST
+

@@ -1,3 +1,41 @@
+2020-06-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION (r262124): Twitter videos go blank after exiting fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=213110
+
+        Reviewed by Darin Adler.
+
+        Test: fullscreen/video-inside-flex-item.html
+
+        Setting/unsetting position:absolute on a flex/grid item can potentially create/remove flex/grid items because
+        absolutely positioned children of those containers are out-of-flow and thus, do not generate flex/grid items.
+        Flex/grid items are potentially stretched by their containers so the style recalculation is not enough to get
+        a correct layout because the override size set by flex/grid containers is not reset.
+        In the particular case of this bug we had this hierarchy (highly simplified from twitter page):
+
+        Flexbox container
+        |___DIV (absolutelly positioned)
+            |___<video> (height: 100% width: 100%)
+
+        When the <video> goes fullscreen the FullscreenManager replaces the
+        style of the DIV because it inserts a RenderFullScreen object in between
+        the DIV and the <video> (along with some anonymous blocks). This means
+        that the DIV which was not a flex item (as it was absolutely positioned)
+        became a flex item and thus its size is stretched as the flexbox
+        container mandates. When exiting fullscreen, the original style is
+        restored (and thus the position absolute). The DIV is then no longer a
+        flex item but the stretched size (overrideContentSize) is still set,
+        causing issues with the sizes of the <video>.
+
+        Note that it isn't possible to reproduce this bug with the current trunk because there is a bug in the flexbox
+        implementation (see bug 212264) preventing this to happen. However it becomes 100% reproducible with the patch for bug 212264
+        which is correct and fixes several tests related to wrapping in flexbox. It's also reproducible when the FULLSCREEN_API is
+        enabled, otherwise the codepath for full screen is totally different (there are no placeholders).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange): clear the override sizes for grid/flex when flex/grid items become out-of-flow,
+        for example by changing position to absolute.
+
 2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r258741): [GTK] anchor-file-blob-download-includes-backslash.html is failing

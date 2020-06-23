@@ -1,3 +1,13 @@
+2020-06-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION (r262124): Twitter videos go blank after exiting fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=213110
+
+        Reviewed by Darin Adler.
+
+        * fullscreen/video-inside-flex-item-expected.txt: Added.
+        * fullscreen/video-inside-flex-item.html: Added.
+
 2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r258741): [GTK] anchor-file-blob-download-includes-backslash.html is failing
