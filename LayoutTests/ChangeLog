@@ -1,3 +1,12 @@
+2020-06-23  Karl Rackler  <rackler@apple.com>
+
+        canvas/philip/tests/2d.gradient.interpolate.solid.html is no longer failing - remove expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=213537
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-06-23  Truitt Savell  <tsavell@apple.com>
 
         Remove expectation for animations/missing-values-first-keyframe.html and animations/missing-values-last-keyframe.html as they are passing.
