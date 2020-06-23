@@ -41,6 +41,7 @@ public:
     size_t length() const { return m_next; }
     
     WTF_EXPORT_PRIVATE CString toCString();
+    WTF_EXPORT_PRIVATE Expected<String, UTF8ConversionError> tryToString();
     WTF_EXPORT_PRIVATE String toString();
     WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback();
     WTF_EXPORT_PRIVATE void reset();

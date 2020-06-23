@@ -1,3 +1,14 @@
+2020-06-23  Mark Lam  <mark.lam@apple.com>
+
+        Handle string overflow in DFG graph dump while validating AI.
+        https://bugs.webkit.org/show_bug.cgi?id=213524
+        <rdar://problem/64635620>
+
+        Reviewed by Saam Barati.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+
 2020-06-23  Devin Rousso  <drousso@apple.com>
 
         Keyframe animation doesn't 't show up in the Animations timeline

@@ -1,3 +1,15 @@
+2020-06-23  Mark Lam  <mark.lam@apple.com>
+
+        Handle string overflow in DFG graph dump while validating AI.
+        https://bugs.webkit.org/show_bug.cgi?id=213524
+        <rdar://problem/64635620>
+
+        Reviewed by Saam Barati.
+
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::tryToString):
+        * wtf/StringPrintStream.h:
+
 2020-06-22  Saam Barati  <sbarati@apple.com>
 
         Allow building JavaScriptCore Mac+arm64 in public SDK build
