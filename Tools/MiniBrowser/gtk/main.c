@@ -560,7 +560,17 @@ static void startup(GApplication *application)
 
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
-    WebKitWebsiteDataManager *manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(NULL);
+    WebKitWebsiteDataManager *manager;
+    if (privateMode || automationMode)
+        manager = webkit_website_data_manager_new_ephemeral();
+    else {
+        char *dataDirectory = g_build_filename(g_get_user_data_dir(), "webkitgtk-" WEBKITGTK_API_VERSION_STRING, "MiniBrowser", NULL);
+        char *cacheDirectory = g_build_filename(g_get_user_cache_dir(), "webkitgtk-" WEBKITGTK_API_VERSION_STRING, "MiniBrowser", NULL);
+        manager = webkit_website_data_manager_new("base-data-directory", dataDirectory, "base-cache-directory", cacheDirectory, NULL);
+        g_free(dataDirectory);
+        g_free(cacheDirectory);
+    }
+
     webkit_website_data_manager_set_itp_enabled(manager, enableITP);
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, "process-swap-on-cross-site-navigation-enabled", TRUE,
 #if !GTK_CHECK_VERSION(3, 98, 0)

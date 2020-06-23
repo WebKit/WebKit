@@ -1,5 +1,17 @@
 2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] MiniBrowser: set a base directory for website data and cache
+        https://bugs.webkit.org/show_bug.cgi?id=213368
+
+        Reviewed by Michael Catanzaro.
+
+        Stop using the default ones.
+
+        * MiniBrowser/gtk/main.c:
+        (activate):
+
+2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Add API to configure and handle DOM cache to WebKitWebsiteDataManager
         https://bugs.webkit.org/show_bug.cgi?id=213337
 
