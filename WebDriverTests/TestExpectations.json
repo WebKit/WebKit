@@ -73,11 +73,17 @@
             "testShouldGetCoordinatesOfAnElementInANestedFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
             },
+            "testShouldGetCoordinatesOfAnElementWithFixedPosition": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213139"}}
+            },
             "testShouldGetCoordinatesOfAnElement[hidden]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211492"}}
             },
             "testShouldGetCoordinatesOfAnInvisibleElement": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211492"}}
+            },
+            "testShouldScrollPageAndGetCoordinatesOfAnElementThatIsOutOfViewPort": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213139"}}
             }
         }
     },

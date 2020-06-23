@@ -1,3 +1,20 @@
+2020-06-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][GTK] Mark two scrolling tests as fail
+
+        Unreviewed test gardening.
+
+        They are failing because element.location expects Get_Element_Rect to
+        return page coordinates instead of the browsing context coordinates.
+        There an open issue at https://github.com/w3c/webdriver/issues/1533
+        to clarify the correct behavior. Meanwhile, we should mark them as
+        failure.
+
+        The change that introduced this new behavior was r262997, and its bug
+        is used as the reference bug for these expectations.
+
+        * TestExpectations.json:
+
 2020-06-21  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][GTK] Some executing_async_javascript_tests.py tests are failing with TimeoutExceptions
