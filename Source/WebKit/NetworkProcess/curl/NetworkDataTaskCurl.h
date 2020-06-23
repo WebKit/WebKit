@@ -32,6 +32,7 @@
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 class CurlRequest;

@@ -1,3 +1,11 @@
+2020-06-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Unreviewed build fix for r263407
+        https://bugs.webkit.org/show_bug.cgi?id=213409
+        <rdar://problem/64654646>
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.h: Include <wtf/MonotonicTime.h>.
+
 2020-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Expose already-available WKNavigationAction.request.HTTPBody through the API
