@@ -426,11 +426,13 @@ sub configurationForUpload()
         }
 
         if (!$versionName) {
-            if ($version->{minor} eq 15) {
+            if ($version->{major} eq 11 && $version->{minor} eq 0) {
+                $versionName = "Big Sur";
+            } elsif ($version->{major} eq 10 && $version->{minor} eq 15) {
                 $versionName = "Catalina";
-            } elsif ($version->{minor} eq 14) {
+            } elsif ($version->{major} eq 10 && $version->{minor} eq 14) {
                 $versionName = "Mojave";
-            } elsif ($version->{minor} eq 13) {
+            } elsif ($version->{major} eq 10 && $version->{minor} eq 13) {
                 $versionName = "High Sierra";
             }
         }

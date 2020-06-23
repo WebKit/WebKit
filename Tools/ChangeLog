@@ -1,3 +1,18 @@
+2020-06-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [Big Sur] Add 11.0 version to scripts
+        https://bugs.webkit.org/show_bug.cgi?id=213532
+        <rdar://problem/64663032>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload): Make version checks more explicit, add Big Sur.
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__): Add Big Sur.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser): Ditto.
+
 2020-06-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r244633): Mail flashes when copying text in an email

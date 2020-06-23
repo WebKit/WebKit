@@ -228,7 +228,7 @@ class TestExpectationParser(object):
     # FIXME: Update the original modifiers and remove this once the old syntax is gone.
     _configuration_tokens_list = [
         'SnowLeopard', 'Lion', 'MountainLion', 'Mavericks', 'Yosemite', 'ElCapitan', # Legacy macOS
-        'Mac', 'Sierra', 'HighSierra', 'Mojave', 'Catalina',
+        'Mac', 'Sierra', 'HighSierra', 'Mojave', 'Catalina', 'BigSur',
         'Win', 'XP', 'Vista', 'Win7',
         'Linux',
         'Android',
