@@ -1,3 +1,17 @@
+2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r258741): [GTK] anchor-file-blob-download-includes-backslash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=209329
+
+        Reviewed by Adrian Perez de Castro.
+
+        Sanitize the suggested filename. We replace characters that can be problematic in filenames with '_' to match
+        what Chromium and Firefox do.
+
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::sanitizeFilename):
+        (WebCore::ResourceResponse::platformSuggestedFilename const):
+
 2020-06-22  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add the capability to call the Storage Access API as a quirk, on behalf of websites that should be doing it themselves

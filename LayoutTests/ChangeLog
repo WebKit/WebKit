@@ -1,3 +1,17 @@
+2020-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r258741): [GTK] anchor-file-blob-download-includes-backslash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=209329
+
+        Reviewed by Adrian Perez de Castro.
+
+        Rebaseline tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes-expected.txt:
+
 2020-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] fast/dom/Window/alert-with-unmatched-utf16-surrogate-should-not-crash.html is failing

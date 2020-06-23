@@ -1,5 +1,5 @@
 Download started.
-Downloading URL with suggested filename "test2\\abe.png"
+Downloading URL with suggested filename "test2__abe.png"
 Download completed.
 The suggested filename above should NOT include slashes or backslashes and the download should succeed.
 

@@ -1262,8 +1262,6 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015.xht [ ImageOnlyFailure ]
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015.xht [ ImageOnlyFailure ]
 
-webkit.org/b/209329 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Failure ]
-
 webkit.org/b/209330 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
 
 webkit.org/b/209403 fast/forms/placeholder-content-center.html [ ImageOnlyFailure ]
