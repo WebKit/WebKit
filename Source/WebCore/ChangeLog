@@ -1,3 +1,24 @@
+2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them
+        https://bugs.webkit.org/show_bug.cgi?id=212264
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Implement https://github.com/w3c/csswg-drafts/commit/5b5db39d21f3658ae2f4d7992daaf822aca178d8 which modified
+        the way percentages were resolved in flexible items with indefinite sizes. From now on we can pretend that
+        they're really definite.
+
+        This allows us to mark 3 tests which were testing percentages in flex items as correct.
+
+        Based on Blink's crrev.com/1247184 by <cbiesinger@chromium.org>
+
+        This is a reland of r262124 which got reverted due to the bug fixed in r263389.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainSizeForPercentageResolution): Do only check flex container main size
+        definiteness when computing the main size for percentage resolution, no need to check flex basis at all.
+
 2020-06-18  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION (r262124): Twitter videos go blank after exiting fullscreen

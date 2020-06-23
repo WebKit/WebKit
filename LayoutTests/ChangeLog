@@ -1,3 +1,13 @@
+2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them
+        https://bugs.webkit.org/show_bug.cgi?id=212264
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * css3/flexbox/definite-main-size-expected.txt: Updated expectation.
+        * css3/flexbox/definite-main-size.html: Updated comment.
+
 2020-06-23  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] REGRESSION: perf/htmlcollection-backwards-iteration.html is a flaky failure

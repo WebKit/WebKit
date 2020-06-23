@@ -9,6 +9,6 @@ auto flex-basis. However, as this is a width, we follow regular width rules and 
 
 Simple case of percentage resolution, columns:
 
-auto flex-basis, we should ignore the percentage height here:
+auto flex-basis. This is still definite.
 
 
