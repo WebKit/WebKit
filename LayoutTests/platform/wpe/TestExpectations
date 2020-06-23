@@ -988,9 +988,13 @@ webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_re
 # 6. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
-
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
+
+webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
+
+webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Timeout Pass ]
+
+webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
@@ -1222,9 +1226,6 @@ webkit.org/b/212960 jquery/manipulation.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Slow ]
-
-fast/workers/dedicated-worker-lifecycle.html [ Slow ]
-js/dom/create-lots-of-workers.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS TIMING OUT
@@ -2235,6 +2236,18 @@ webkit.org/b/212210 fast/text/space-width.html [ ImageOnlyFailure ]
 webkit.org/b/212211 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 
 webkit.org/b/213334 fast/events/touch/touch-event-constructor.html [ Failure ]
+
+webkit.org/b/213507 fast/text/text-styles/-webkit-control.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/-webkit-mini-control.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/-webkit-small-control.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/caption.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/icon.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/menu.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/message-box.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/small-caption.html [ ImageOnlyFailure ]
+webkit.org/b/213507 fast/text/text-styles/status-bar.html [ ImageOnlyFailure ]
+
+webkit.org/b/213508 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

@@ -1,3 +1,11 @@
+2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update test expectations after r263390.
+
+        Garden latest failures from test bot.
+
+        * platform/wpe/TestExpectations:
+
 2020-06-18  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION (r262124): Twitter videos go blank after exiting fullscreen
