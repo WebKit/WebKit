@@ -430,6 +430,7 @@ $(PROJECT_DIR)/Modules/webxr/WebXRBoundedReferenceSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSource.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSourceArray.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRLayer.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRPose.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRReferenceSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRenderState.idl

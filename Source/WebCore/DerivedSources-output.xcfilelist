@@ -2124,6 +2124,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSourceArray.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSourceArray.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRLayer.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRLayer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPose.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPose.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRReferenceSpace.cpp

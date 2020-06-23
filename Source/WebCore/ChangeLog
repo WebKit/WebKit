@@ -1,5 +1,12 @@
 2020-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, update xcfilelist files after some recent WebXR changes.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
+2020-06-23  Chris Dumez  <cdumez@apple.com>
+
         Remove a lot of unnecessary calls to Ref::copyRef()
         https://bugs.webkit.org/show_bug.cgi?id=213533
 
