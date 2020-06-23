@@ -559,8 +559,7 @@ private:
         if (!m_graphDump) {
             StringPrintStream out;
             m_graph.dump(out);
-            auto expectedString = out.tryToString();
-            m_graphDump = expectedString ? expectedString.value() : String("<out of memory while dumping graph>"_s);
+            m_graphDump = out.tryToString().value_or("<out of memory while dumping graph>"_s);
         }
 
         switch (node->op()) {
