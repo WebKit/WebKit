@@ -74,8 +74,8 @@ WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProx
 
 WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
 {
-    if (m_state != State::Idle)
-        hidePaymentUI();
+    if (!canBegin())
+        didReachFinalState();
 
     m_client.paymentCoordinatorRemoveMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName());
 }

@@ -1,3 +1,103 @@
+2020-06-23  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] WebPaymentCoordinatorProxy can be destroyed without dismissing its authorization presenter
+        https://bugs.webkit.org/show_bug.cgi?id=213423
+        <rdar://problem/60416221>
+
+        Reviewed by Youenn Fablet.
+
+        When a website completes a payment session, WebPaymentCoordinatorProxy would set its m_state
+        to Idle by calling didReachFinalState, but would wait to call hidePaymentUI until the
+        payment authorization presenter calls its presenterDidFinish callback. This allows the
+        presenter to display a final message to the user before dismissing. As a catch-all,
+        ~WebPaymentCoordinatorProxy would call hidePaymentUI, but only if m_state wasn't Idle. If a
+        WebPaymentCoordinatorProxy was destroyed after a website completed a payment session but
+        before the presenter called presenterDidFinish, hidePaymentUI would never be called.
+
+        This patch addresses this by simplifying the logic for completing or canceling a payment
+        session. It's based on the following observations:
+
+        1. With the exception of the case described above, every caller of didReachFinalState would
+           also call hidePaymentUI immediately beforehand. That means that we can move the calls to
+           hidePaymentUI inside didReachFinalState. For the completePaymentSession case, rather than
+           call didReachFinalState without dismissing the UI, we enter a new Completing state, then
+           call didReachFinalState either in ~WebPaymentCoordinatorProxy or presenterDidFinish.
+
+        2. didCancelPaymentSession is really a special case of didReachFinalState that also sends
+           the DidCancelPaymentSession message to cancel active sessions in the web process. We can
+           teach didReachFinalState to send this message when necessary and remove
+           didCancelPaymentSession.
+
+        3. PaymentAuthorizationPresenter stored a "did reach final state" boolean on payment
+           completion and passed this value back to the client in the presenterDidFinish callback.
+           WebPaymentCoordinatorProxy used this to determine whether to cancel an active session by
+           calling didCancelPaymentSession or clean up a completed session by calling hidePaymentUI.
+           With the addition of the Completing state and the merging of didCancelPaymentSession and
+           hidePaymentUI into didReachFinalState, we can get rid of this final state tracking in
+           PaymentAuthorizationPresenter and unconditionally call didReachFinalState in the
+           presenterDidFinish callback.
+
+        No new tests possible. A manual test case is described in <rdar://problem/60416221>.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.h: Removed the didReachFinalState argument
+        from Client::presenterDidFinish.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::PaymentAuthorizationPresenter::completePaymentSession): Changed to call
+        -[WKPaymentAuthorizationDelegate completePaymentSession:errors:].
+
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm: Removed the _didReachFinalState ivar.
+        (-[WKPaymentAuthorizationDelegate completePaymentSession:errors:]): Renamed from
+        -completePaymentSession:errors:didReachFinalState:. Stopped setting _didReachFinalState.
+        (-[WKPaymentAuthorizationDelegate invalidate]): Changed to call
+        -completePaymentSession:errors:.
+        (-[WKPaymentAuthorizationDelegate _didAuthorizePayment:completion:]): Ditto.
+        (-[WKPaymentAuthorizationDelegate _didFinish]): Stopped passing the value of
+        _didReachFinalState to PaymentAuthorizationPresenter::Client::presenterDidFinish.
+        (-[WKPaymentAuthorizationDelegate completePaymentSession:errors:didReachFinalState:]):
+        Renamed to -completePaymentSession:errors:.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI): Replaced calls to
+        didCancelPaymentSession with didReachFinalState.
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentSession): Set m_state to Completing
+        rather than call didReachFinalState.
+        (WebKit::WebPaymentCoordinatorProxy::abortPaymentSession): Removed call to hidePaymentUI
+        since didReachFinalState was already being called.
+        (WebKit::WebPaymentCoordinatorProxy::cancelPaymentSession): Replaced call to
+        didCancelPaymentSession with didReachFinalState.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidFinish): Called didReachFinalState
+        unconditionally now that the didReachFinalState boolean has been removed.
+        (WebKit::WebPaymentCoordinatorProxy::canBegin const): Returned false for State::Completing.
+        (WebKit::WebPaymentCoordinatorProxy::canCancel const): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::canCompletePayment const): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::canAbort const): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::didReachFinalState): Added an early return if m_state
+        is already Idle. Sent the DidCancelPaymentSession message if canCancel is true. Called
+        platformHidePaymentUI before clearing m_authorizationPresenter and setting m_state to Idle.
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession): Deleted.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        (WebKit::WebPaymentCoordinatorProxy::didReachFinalState): Added a PaymentSessionError&& arg.
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession): Deleted.
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy): Replaced call to
+        hidePaymentUI with didReachFinalState.
+
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformHidePaymentUI): Renamed from hidePaymentUI.
+        Stopped clearing m_authorizationPresenter since didReachFinalState now does that.
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI): Renamed to platformHidePaymentUI.
+
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Removed call to hidePaymentUI
+        since didReachFinalState was already being called.
+        (WebKit::WebPaymentCoordinatorProxy::platformHidePaymentUI): Renamed from hidePaymentUI.
+        Stopped clearing m_authorizationPresenter since didReachFinalState now does that.
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI): Renamed to platformHidePaymentUI.
+
 2020-06-23  Chris Dumez  <cdumez@apple.com>
 
         Remove a lot of unnecessary calls to Ref::copyRef()

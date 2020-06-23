@@ -85,7 +85,6 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
         paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
 
         paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow.get() queue:nil usingBlock:[paymentCoordinatorProxy](NSNotification *) {
-            paymentCoordinatorProxy->hidePaymentUI();
             paymentCoordinatorProxy->didReachFinalState();
         }];
 
@@ -95,7 +94,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
     }).get()];
 }
 
-void WebPaymentCoordinatorProxy::hidePaymentUI()
+void WebPaymentCoordinatorProxy::platformHidePaymentUI()
 {
     if (m_state == State::Activating) {
         ++m_showPaymentUIRequestSeed;
@@ -115,7 +114,6 @@ void WebPaymentCoordinatorProxy::hidePaymentUI()
 
     if (m_authorizationPresenter)
         m_authorizationPresenter->dismiss();
-    m_authorizationPresenter = nullptr;
 
     m_sheetWindow = nullptr;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifi
 void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto& coordinator = activePaymentCoordinatorProxy())
-        coordinator->didCancelPaymentSession();
+        coordinator->didReachFinalState();
     activePaymentCoordinatorProxy() = makeWeakPtr(this);
 
     MESSAGE_CHECK(canBegin());
@@ -106,7 +106,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
 
         ASSERT(m_state == State::Activating);
         if (!result) {
-            didCancelPaymentSession();
+            didReachFinalState();
             return;
         }
 
@@ -179,7 +179,7 @@ void WebPaymentCoordinatorProxy::completePaymentSession(const Optional<WebCore::
         return;
     }
 
-    didReachFinalState();
+    m_state = State::Completing;
 }
 
 void WebPaymentCoordinatorProxy::abortPaymentSession()
@@ -187,8 +187,6 @@ void WebPaymentCoordinatorProxy::abortPaymentSession()
     // It's possible that the payment has been canceled already.
     if (!canAbort())
         return;
-
-    hidePaymentUI();
 
     didReachFinalState();
 }
@@ -198,14 +196,6 @@ void WebPaymentCoordinatorProxy::cancelPaymentSession()
     if (!canCancel())
         return;
 
-    didCancelPaymentSession();
-}
-
-void WebPaymentCoordinatorProxy::didCancelPaymentSession(WebCore::PaymentSessionError&& error)
-{
-    ASSERT(canCancel());
-    send(Messages::WebPaymentCoordinator::DidCancelPaymentSession(WTFMove(error)));
-    hidePaymentUI();
     didReachFinalState();
 }
 
@@ -223,12 +213,9 @@ void WebPaymentCoordinatorProxy::presenterDidAuthorizePayment(PaymentAuthorizati
     send(Messages::WebPaymentCoordinator::DidAuthorizePayment(payment));
 }
 
-void WebPaymentCoordinatorProxy::presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&& error, bool didReachFinalState)
+void WebPaymentCoordinatorProxy::presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&& error)
 {
-    if (!didReachFinalState)
-        didCancelPaymentSession(WTFMove(error));
-    else
-        hidePaymentUI();
+    didReachFinalState(WTFMove(error));
 }
 
 void WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
@@ -264,6 +251,7 @@ bool WebPaymentCoordinatorProxy::canBegin() const
     case State::Activating:
     case State::Active:
     case State::Authorized:
+    case State::Completing:
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
@@ -282,6 +270,7 @@ bool WebPaymentCoordinatorProxy::canCancel() const
     case State::PaymentMethodSelected:
         return true;
 
+    case State::Completing:
     case State::Idle:
         return false;
     }
@@ -296,6 +285,7 @@ bool WebPaymentCoordinatorProxy::canCompletePayment() const
     case State::Idle:
     case State::Activating:
     case State::Active:
+    case State::Completing:
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
@@ -314,16 +304,25 @@ bool WebPaymentCoordinatorProxy::canAbort() const
     case State::PaymentMethodSelected:
         return true;
 
+    case State::Completing:
     case State::Idle:
         return false;
     }
 }
 
-void WebPaymentCoordinatorProxy::didReachFinalState()
+void WebPaymentCoordinatorProxy::didReachFinalState(WebCore::PaymentSessionError&& error)
 {
+    ASSERT(!canBegin());
+
+    if (canCancel())
+        send(Messages::WebPaymentCoordinator::DidCancelPaymentSession(error));
+
+    platformHidePaymentUI();
+
+    m_authorizationPresenter = nullptr;
     m_destinationID = WTF::nullopt;
-    m_state = State::Idle;
     m_merchantValidationState = MerchantValidationState::Idle;
+    m_state = State::Idle;
 
     ASSERT(activePaymentCoordinatorProxy() == this);
     activePaymentCoordinatorProxy() = nullptr;

@@ -58,11 +58,10 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
     m_authorizationPresenter->present(m_client.paymentCoordinatorPresentingViewController(*this), WTFMove(completionHandler));
 }
 
-void WebPaymentCoordinatorProxy::hidePaymentUI()
+void WebPaymentCoordinatorProxy::platformHidePaymentUI()
 {
     if (m_authorizationPresenter)
         m_authorizationPresenter->dismiss();
-    m_authorizationPresenter = nullptr;
 }
 
 }

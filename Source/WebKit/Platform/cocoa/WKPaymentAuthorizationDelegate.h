@@ -54,7 +54,7 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShipping
 
 - (void)completeMerchantValidation:(PKPaymentMerchantSession *)session error:(NSError *)error;
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate;
-- (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors didReachFinalState:(BOOL)didReachFinalState;
+- (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors;
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate;
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate;
 - (void)invalidate;

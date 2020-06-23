@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #import <WebCore/PaymentSessionError.h>
 
 @implementation WKPaymentAuthorizationDelegate {
-    BOOL _didReachFinalState;
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
     RetainPtr<NSArray<PKShippingMethod *>> _shippingMethods;
     RetainPtr<NSError> _sessionError;
@@ -67,9 +66,8 @@
     std::exchange(_didSelectPaymentMethodCompletion, nil)(update);
 }
 
-- (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors didReachFinalState:(BOOL)didReachFinalState
+- (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors
 {
-    _didReachFinalState = didReachFinalState;
     auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:status errors:errors]);
     std::exchange(_didAuthorizePaymentCompletion, nil)(result.get());
 }
@@ -91,7 +89,7 @@
 - (void)invalidate
 {
     if (_didAuthorizePaymentCompletion)
-        [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[] didReachFinalState:YES];
+        [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 }
 
 @end
@@ -117,7 +115,7 @@
 
     auto presenter = _presenter.get();
     if (!presenter)
-        return [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ] didReachFinalState:YES];
+        return [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 
     presenter->client().presenterDidAuthorizePayment(*presenter, WebCore::Payment(payment));
 }
@@ -125,7 +123,7 @@
 - (void)_didFinish
 {
     if (auto presenter = _presenter.get())
-        presenter->client().presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) }, _didReachFinalState);
+        presenter->client().presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) });
 }
 
 - (void)_didRequestMerchantSession:(WebKit::DidRequestMerchantSessionCompletion::BlockType)completion

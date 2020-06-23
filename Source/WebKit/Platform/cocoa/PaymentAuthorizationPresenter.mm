@@ -198,7 +198,7 @@ void PaymentAuthorizationPresenter::completePaymentSession(const Optional<WebCor
     ASSERT(platformDelegate());
     auto status = result ? toPKPaymentAuthorizationStatus(result->status) : PKPaymentAuthorizationStatusSuccess;
     RetainPtr<NSArray> errors = result ? toNSErrors(result->errors) : @[ ];
-    [platformDelegate() completePaymentSession:status errors:errors.get() didReachFinalState:WebCore::isFinalStateResult(result)];
+    [platformDelegate() completePaymentSession:status errors:errors.get()];
 }
 
 void PaymentAuthorizationPresenter::completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>& update)
