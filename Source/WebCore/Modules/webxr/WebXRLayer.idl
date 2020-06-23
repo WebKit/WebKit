@@ -23,34 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
-typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingContext;
-#else
-typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
-#endif
-
 [
     EnabledAtRuntime=WebXR,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-    InterfaceName=XRWebGLLayer
-] interface WebXRWebGLLayer : WebXRLayer {
-    [MayThrowException] constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit);
-
-    // Attributes
-    readonly attribute boolean antialias;
-    readonly attribute boolean ignoreDepthValues;
-
-    [SameObject] readonly attribute WebGLFramebuffer framebuffer;
-    readonly attribute unsigned long framebufferWidth;
-    readonly attribute unsigned long framebufferHeight;
-
-    // Methods
-    WebXRViewport? getViewport(WebXRView view);
-
-    // Static Methods
-    static double getNativeFramebufferScaleFactor(WebXRSession session);
+    InterfaceName=XRLayer,
+] interface WebXRLayer : EventTarget {
 };

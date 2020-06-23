@@ -153,16 +153,16 @@ PASS XRInputSourceArray interface: existence and properties of interface prototy
 PASS XRInputSourceArray interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XRInputSourceArray interface: iterable<XRInputSource> 
 PASS XRInputSourceArray interface: attribute length 
-FAIL XRLayer interface: existence and properties of interface object assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
-FAIL XRLayer interface object length assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
-FAIL XRLayer interface object name assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
-FAIL XRLayer interface: existence and properties of interface prototype object assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
-FAIL XRLayer interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
-FAIL XRLayer interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
-FAIL XRWebGLLayer interface: existence and properties of interface object assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
+PASS XRLayer interface: existence and properties of interface object 
+PASS XRLayer interface object length 
+PASS XRLayer interface object name 
+PASS XRLayer interface: existence and properties of interface prototype object 
+PASS XRLayer interface: existence and properties of interface prototype object's "constructor" property 
+PASS XRLayer interface: existence and properties of interface prototype object's @@unscopables property 
+PASS XRWebGLLayer interface: existence and properties of interface object 
 PASS XRWebGLLayer interface object length 
 PASS XRWebGLLayer interface object name 
-FAIL XRWebGLLayer interface: existence and properties of interface prototype object assert_own_property: self does not have own property "XRLayer" expected property "XRLayer" missing
+PASS XRWebGLLayer interface: existence and properties of interface prototype object 
 PASS XRWebGLLayer interface: existence and properties of interface prototype object's "constructor" property 
 PASS XRWebGLLayer interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XRWebGLLayer interface: attribute antialias 

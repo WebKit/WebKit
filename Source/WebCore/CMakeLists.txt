@@ -1215,6 +1215,7 @@ if (ENABLE_WEBXR)
         Modules/webxr/WebXRFrame.idl
         Modules/webxr/WebXRInputSource.idl
         Modules/webxr/WebXRInputSourceArray.idl
+        Modules/webxr/WebXRLayer.idl
         Modules/webxr/WebXRPose.idl
         Modules/webxr/WebXRReferenceSpace.idl
         Modules/webxr/WebXRRenderState.idl

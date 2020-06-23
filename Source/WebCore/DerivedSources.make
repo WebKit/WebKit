@@ -506,6 +506,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webxr/WebXRFrame.idl \
     $(WebCore)/Modules/webxr/WebXRInputSourceArray.idl \
     $(WebCore)/Modules/webxr/WebXRInputSource.idl \
+    $(WebCore)/Modules/webxr/WebXRLayer.idl \
     $(WebCore)/Modules/webxr/WebXRPose.idl \
     $(WebCore)/Modules/webxr/WebXRReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRRenderState.idl \

@@ -76,6 +76,9 @@ public:
     unsigned requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
     void cancelAnimationFrame(unsigned callbackId);
 
+    // EventTarget.
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+
     void end(EndPromise&&);
 
     bool ended() const { return m_ended; }
@@ -87,7 +90,6 @@ private:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSessionEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 

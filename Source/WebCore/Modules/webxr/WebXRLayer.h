@@ -23,34 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
-typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingContext;
-#else
-typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
-#endif
+#pragma once
 
-[
-    EnabledAtRuntime=WebXR,
-    Conditional=WEBXR,
-    SecureContext,
-    Exposed=Window,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-    InterfaceName=XRWebGLLayer
-] interface WebXRWebGLLayer : WebXRLayer {
-    [MayThrowException] constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit);
+#if ENABLE(WEBXR)
 
-    // Attributes
-    readonly attribute boolean antialias;
-    readonly attribute boolean ignoreDepthValues;
+#include "ContextDestructionObserver.h"
+#include "EventTarget.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/RefCounted.h>
 
-    [SameObject] readonly attribute WebGLFramebuffer framebuffer;
-    readonly attribute unsigned long framebufferWidth;
-    readonly attribute unsigned long framebufferHeight;
+namespace WebCore {
 
-    // Methods
-    WebXRViewport? getViewport(WebXRView view);
+class ScriptExecutionContext;
 
-    // Static Methods
-    static double getNativeFramebufferScaleFactor(WebXRSession session);
+class WebXRLayer : public RefCounted<WebXRLayer>, public EventTargetWithInlineData, public ContextDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED(WebXRLayer);
+public:
+    ~WebXRLayer();
+
+    using RefCounted<WebXRLayer>::ref;
+    using RefCounted<WebXRLayer>::deref;
+
+protected:
+    explicit WebXRLayer(ScriptExecutionContext*);
+
+    // EventTarget
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+
+private:
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const final { return WebXRLayerEventTargetInterfaceType; }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBXR)

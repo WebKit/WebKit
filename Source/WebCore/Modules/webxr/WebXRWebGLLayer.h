@@ -28,9 +28,9 @@
 #if ENABLE(WEBXR)
 
 #include "ExceptionOr.h"
+#include "WebXRLayer.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 
@@ -47,7 +47,8 @@ class WebXRView;
 class WebXRViewport;
 struct XRWebGLLayerInit;
 
-class WebXRWebGLLayer : public RefCounted<WebXRWebGLLayer> {
+class WebXRWebGLLayer : public WebXRLayer {
+    WTF_MAKE_ISO_ALLOCATED(WebXRWebGLLayer);
 public:
 
     using WebXRRenderingContext = WTF::Variant<
@@ -57,7 +58,7 @@ public:
 #endif
     >;
 
-    static ExceptionOr<Ref<WebXRWebGLLayer>> create(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    static ExceptionOr<Ref<WebXRWebGLLayer>> create(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
     ~WebXRWebGLLayer();
 
     bool antialias() const;
@@ -72,7 +73,7 @@ public:
     static double getNativeFramebufferScaleFactor(const WebXRSession&);
 
 private:
-    WebXRWebGLLayer(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
 
     static IntSize computeNativeWebGLFramebufferResolution();
     static IntSize computeRecommendedWebGLFramebufferResolution();

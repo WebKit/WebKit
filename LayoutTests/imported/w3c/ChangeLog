@@ -1,3 +1,13 @@
+2020-06-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Introducing XRLayer
+        https://bugs.webkit.org/show_bug.cgi?id=213462
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/webxr/idlharness.https.window-expected.txt: Replace FAIL by PASS expectations
+        for XRLayer interface.
+
 2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them

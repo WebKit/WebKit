@@ -424,6 +424,7 @@ Modules/webxr/WebXRBoundedReferenceSpace.cpp @no-unify
 Modules/webxr/WebXRFrame.cpp @no-unify
 Modules/webxr/WebXRInputSourceArray.cpp @no-unify
 Modules/webxr/WebXRInputSource.cpp @no-unify
+Modules/webxr/WebXRLayer.cpp @no-unify
 Modules/webxr/WebXRPose.cpp @no-unify
 Modules/webxr/WebXRReferenceSpace.cpp @no-unify
 Modules/webxr/WebXRRenderState.cpp @no-unify
@@ -3640,6 +3641,7 @@ JSWebXRView.cpp
 JSWebXRViewerPose.cpp
 JSWebXRViewport.cpp
 JSXRVisibilityState.cpp
+JSWebXRLayer.cpp
 JSWebXRWebGLLayer.cpp
 JSXRWebGLLayerInit.cpp
 

@@ -252,6 +252,7 @@ namespace WebCore {
     macro(XRInputSourceArray) \
     macro(XRInputSourceEvent) \
     macro(XRInputSourcesChangeEvent) \
+    macro(XRLayer) \
     macro(XRPose) \
     macro(XRReferenceSpace) \
     macro(XRReferenceSpaceEvent) \

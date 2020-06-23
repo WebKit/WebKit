@@ -23,34 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
-typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingContext;
-#else
-typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
-#endif
+#include "config.h"
+#include "WebXRLayer.h"
 
-[
-    EnabledAtRuntime=WebXR,
-    Conditional=WEBXR,
-    SecureContext,
-    Exposed=Window,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-    InterfaceName=XRWebGLLayer
-] interface WebXRWebGLLayer : WebXRLayer {
-    [MayThrowException] constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit);
+#if ENABLE(WEBXR)
 
-    // Attributes
-    readonly attribute boolean antialias;
-    readonly attribute boolean ignoreDepthValues;
+#include <wtf/IsoMallocInlines.h>
 
-    [SameObject] readonly attribute WebGLFramebuffer framebuffer;
-    readonly attribute unsigned long framebufferWidth;
-    readonly attribute unsigned long framebufferHeight;
+namespace WebCore {
 
-    // Methods
-    WebXRViewport? getViewport(WebXRView view);
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRLayer);
 
-    // Static Methods
-    static double getNativeFramebufferScaleFactor(WebXRSession session);
-};
+WebXRLayer::WebXRLayer(ScriptExecutionContext* context)
+    : ContextDestructionObserver(context)
+{
+    ASSERT(context);
+}
+
+WebXRLayer::~WebXRLayer() = default;
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBXR)

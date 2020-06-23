@@ -38,16 +38,19 @@
 #include "WebXRSession.h"
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRWebGLLayer);
+
 // https://immersive-web.github.io/webxr/#dom-xrwebgllayer-xrwebgllayer
-ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(WebXRSession& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
+ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
 {
     // 1. Let layer be a new XRWebGLLayer
     // 2. If session’s ended value is true, throw an InvalidStateError and abort these steps.
-    if (session.ended())
+    if (session->ended())
         return Exception { InvalidStateError };
 
     // 3. If context is lost, throw an InvalidStateError and abort these steps.
@@ -59,7 +62,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(WebXRSession& session,
             if (baseContext->isContextLost())
                 return Exception { InvalidStateError };
 
-            auto mode = session.mode();
+            auto mode = session->mode();
             if ((mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr) && !baseContext->isXRCompatible())
                 return Exception { InvalidStateError };
 
@@ -69,7 +72,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(WebXRSession& session,
             // 7. Initialize layer’s ignoreDepthValues as follows. (see constructor)
             // 8. Initialize layer’s composition disabled boolean as follows. (see constructor)
             // 9. (see constructor except for the resources initialization step which is handled in the if block below)
-            auto layer = adoptRef(*new WebXRWebGLLayer(session, WTFMove(context), init));
+            auto layer = adoptRef(*new WebXRWebGLLayer(WTFMove(session), WTFMove(context), init));
 
             if (layer->m_isCompositionDisabled) {
                 // 9.4. Allocate and initialize resources compatible with session’s XR device, including GPU accessible memory buffers,
@@ -101,8 +104,9 @@ IntSize WebXRWebGLLayer::computeRecommendedWebGLFramebufferResolution()
     return computeNativeWebGLFramebufferResolution();
 }
 
-WebXRWebGLLayer::WebXRWebGLLayer(WebXRSession& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
-    : m_session(makeRef(session))
+WebXRWebGLLayer::WebXRWebGLLayer(Ref<WebXRSession>&& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
+    : WebXRLayer(session->scriptExecutionContext())
+    , m_session(WTFMove(session))
     , m_context(WTFMove(context))
 {
     // 7. Initialize layer’s ignoreDepthValues as follows:
