@@ -222,7 +222,7 @@ body.mac-platform:not(.big-sur):not(.docked) {
 }
 
 body.mac-platform.big-sur:not(.docked) {
-    --undocked-title-area-height: calc(25px / var(--zoom-factor));
+    --undocked-title-area-height: calc(27px / var(--zoom-factor));
 }
 
 @media (prefers-color-scheme: dark) {
