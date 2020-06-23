@@ -1,3 +1,13 @@
+2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [ews] Allow archiving 'jsc' product
+        https://bugs.webkit.org/show_bug.cgi?id=213518
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2020-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Expose already-available WKNavigationAction.request.HTTPBody through the API
