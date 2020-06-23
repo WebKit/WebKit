@@ -458,6 +458,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
 
         m_webPage.updateRendering();
         m_webPage.flushPendingEditorStateUpdate();
+        m_webPage.flushPendingIntrinsicContentSizeUpdate();
 
         if (m_pendingRootLayer) {
             setRootCompositingLayer(m_pendingRootLayer.get());

@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -38,9 +39,12 @@ static bool didEvaluateJavaScript;
 @interface AutoLayoutWKWebView : WKWebView
 @property (nonatomic) BOOL expectingIntrinsicContentSizeChange;
 @property (nonatomic) NSSize expectedIntrinsicContentSize;
+@property (nonatomic) dispatch_block_t invalidatedIntrinsicContentSizeBlock;
 @end
 
-@implementation AutoLayoutWKWebView
+@implementation AutoLayoutWKWebView {
+    BlockPtr<void()> _invalidatedIntrinsicContentSizeBlock;
+}
 
 - (instancetype)initWithFrame:(NSRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
@@ -110,11 +114,24 @@ static bool didEvaluateJavaScript;
 
 - (void)invalidateIntrinsicContentSize
 {
+    if (_invalidatedIntrinsicContentSizeBlock)
+        _invalidatedIntrinsicContentSizeBlock();
+
     if (!_expectingIntrinsicContentSizeChange)
         return;
 
     _expectingIntrinsicContentSizeChange = NO;
     didInvalidateIntrinsicContentSize = true;
+}
+
+- (void)setInvalidatedIntrinsicContentSizeBlock:(dispatch_block_t)block
+{
+    _invalidatedIntrinsicContentSizeBlock = makeBlockPtr(block);
+}
+
+- (dispatch_block_t)invalidatedIntrinsicContentSizeBlock
+{
+    return _invalidatedIntrinsicContentSizeBlock.get();
 }
 
 @end
@@ -207,6 +224,50 @@ TEST(WebKit, AutoLayoutRenderingProgressRelativeOrdering)
     TestWebKitAPI::Util::run(&didFirstLayout);
     TestWebKitAPI::Util::run(&didFinishNavigation);
     [webView setNavigationDelegate:nil];
+}
+
+TEST(WebKit, AutoLayoutBatchesUpdatesWhenInvalidatingIntrinsicContentSize)
+{
+    auto webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
+    [webView _setMinimumLayoutWidth:100];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool didFinishNavigation = false;
+    didInvalidateIntrinsicContentSize = false;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+
+    [webView setExpectingIntrinsicContentSizeChange:YES];
+    [webView loadHTMLString:@"<body style='margin: 0; height: 400px;'></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&didInvalidateIntrinsicContentSize);
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    NSString *script = @"document.body.style.height = '800px';"
+        "document.scrollingElement.scrollTop;"
+        "document.body.style.height = '400px';"
+        "document.scrollingElement.scrollTop;";
+
+    __block int intrinsicSizeInvalidationCount = 0;
+    [webView setInvalidatedIntrinsicContentSizeBlock:^{
+        ++intrinsicSizeInvalidationCount;
+    }];
+
+    __block bool doneEvaluatingScript = false;
+    [webView evaluateJavaScript:script completionHandler:^(id, NSError *) {
+        doneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingScript);
+
+    __block bool doneWaitingForNextPresentationUpdate = false;
+    [webView _doAfterNextPresentationUpdate:^{
+        doneWaitingForNextPresentationUpdate = true;
+    }];
+    TestWebKitAPI::Util::run(&doneWaitingForNextPresentationUpdate);
+
+    EXPECT_EQ(0, intrinsicSizeInvalidationCount);
 }
 
 #endif

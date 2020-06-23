@@ -1,3 +1,49 @@
+2020-06-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r244633): Mail flashes when copying text in an email
+        https://bugs.webkit.org/show_bug.cgi?id=213529
+        <rdar://problem/55025522>
+
+        Reviewed by Tim Horton.
+
+        When copying a text selection in Mail conversation view, Mail uses injected bundle hooks to supply additional
+        metadata before writing to the pasteboard. Grabbing this data involves temporarily expanding any collapsed
+        blockquotes that appear in the mail message, before re-collapsing them after we finish gathering data to be
+        written to the pasteboard.
+
+        Prior to r244633, the size of the document while expanding collapsed content would not be propagated to the
+        WKWebView, since intrinsic content size changes were batched and sent ahead of the next drawing area flush.
+        After r244633, however, updates are now sent every time the layout size changes. This was done to ensure that
+        the intrinsic content size was always up to date before sending the first layout milestone to the UI process.
+
+        To preserve the intent of r244633 (with respect to the first layout milestone) as well as intrinsic content size
+        behavior prior to r244633 after performing layout, we reintroduce the mechanism for batching intrinsic size
+        updates until the next flush, but keep the out-of-band mechanism for immediately sending an up-to-date intrinsic
+        size to the UI process before firing the first layout milestone.
+
+        Test: WebKit.AutoLayoutBatchesUpdatesWhenInvalidatingIntrinsicContentSize
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::intrinsicContentsSizeChanged const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateIntrinsicContentSizeIfNeeded):
+
+        If we have a pending intrinsic content size update, clear it out here so that an out-of-band call to
+        updateIntrinsicContentSizeIfNeeded doesn't get overridden by an older intrinsic content size that was previously
+        scheduled.
+
+        (WebKit::WebPage::flushPendingIntrinsicContentSizeUpdate):
+
+        Add a helper method to send any pending intrinsic content size update.
+
+        (WebKit::WebPage::scheduleIntrinsicContentSizeUpdate):
+
+        Add a helper method to schedule an intrinsic content size update for the next tiled drawing area flush.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+
 2020-06-23  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] WebPaymentCoordinatorProxy can be destroyed without dismissing its authorization presenter

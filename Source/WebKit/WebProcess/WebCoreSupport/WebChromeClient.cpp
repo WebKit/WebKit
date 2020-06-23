@@ -592,7 +592,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::intrinsicContentsSizeChanged(const IntSize& size) const
 {
-    m_page.updateIntrinsicContentSizeIfNeeded(size);
+    m_page.scheduleIntrinsicContentSizeUpdate(size);
 }
 
 void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) const

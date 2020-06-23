@@ -6556,6 +6556,7 @@ void WebPage::removeAllUserContent()
 
 void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
 {
+    m_pendingIntrinsicContentSize = WTF::nullopt;
     if (!minimumSizeForAutoLayout().width() && !sizeToContentAutoSizeMaximumSize().width() && !sizeToContentAutoSizeMaximumSize().height())
         return;
     ASSERT(mainFrameView());
@@ -6565,6 +6566,22 @@ void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
         return;
     m_lastSentIntrinsicContentSize = size;
     send(Messages::WebPageProxy::DidChangeIntrinsicContentSize(size));
+}
+
+void WebPage::flushPendingIntrinsicContentSizeUpdate()
+{
+    if (auto pendingSize = std::exchange(m_pendingIntrinsicContentSize, WTF::nullopt))
+        updateIntrinsicContentSizeIfNeeded(*pendingSize);
+}
+
+void WebPage::scheduleIntrinsicContentSizeUpdate(const IntSize& size)
+{
+    if (!minimumSizeForAutoLayout().width() && !sizeToContentAutoSizeMaximumSize().width() && !sizeToContentAutoSizeMaximumSize().height())
+        return;
+    ASSERT(mainFrameView());
+    ASSERT(mainFrameView()->isFixedWidthAutoSizeEnabled() || mainFrameView()->isSizeToContentAutoSizeEnabled());
+    ASSERT(!mainFrameView()->needsLayout());
+    m_pendingIntrinsicContentSize = size;
 }
 
 void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)

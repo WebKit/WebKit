@@ -1283,7 +1283,10 @@ public:
 
     WebPageProxyIdentifier webPageProxyIdentifier() const { return m_webPageProxyIdentifier; }
 
+    void scheduleIntrinsicContentSizeUpdate(const WebCore::IntSize&);
+    void flushPendingIntrinsicContentSizeUpdate();
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
+
     void scheduleFullEditorStateUpdate();
     bool isThrottleable() const;
 
@@ -2105,6 +2108,7 @@ private:
     WeakPtr<WebRemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
     WebPageProxyIdentifier m_webPageProxyIdentifier;
+    Optional<WebCore::IntSize> m_pendingIntrinsicContentSize;
     WebCore::IntSize m_lastSentIntrinsicContentSize;
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
