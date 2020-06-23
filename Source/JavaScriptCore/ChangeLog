@@ -1,3 +1,54 @@
+2020-06-22  Saam Barati  <sbarati@apple.com>
+
+        Allow building JavaScriptCore Mac+arm64 in public SDK build
+        https://bugs.webkit.org/show_bug.cgi?id=213472
+
+        Reviewed by Sam Weinig.
+
+        We used to only builld code for fast permission switching when using the
+        Apple internal SDK. However, with arm64 on macOS, this is no longer a viable
+        implementation strategy.
+        
+        This patch makes it so we can build JSC on macOS+arm64 using the public Xcode
+        SDK.
+        
+        - ENABLE_FAST_JIT_PERMISSIONS is removed. We now use runtime checks instead.
+        - In the new suite of OS betas, pthreads has added API for fast permissions
+          switching. We now use this API instead of using the non-public SDK found in
+          the kernel headers.
+        - We fall back to the separated W/X heaps when fast permissions checking is
+          not supported. This all happens at runtime.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::fillNops):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::fillNops):
+        * assembler/FastJITPermissions.h: Added.
+        (useFastJITPermissions):
+        (threadSelfRestrictRWXToRW):
+        (threadSelfRestrictRWXToRX):
+        (fastJITPermissionsIsSupported):
+        * assembler/LinkBuffer.cpp:
+        (JSC::memcpyWrapper):
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::fillNops):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::link):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::link):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        (JSC::useFastJITPermissions): Deleted.
+        * runtime/JSCConfig.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Disable the JS JIT when running in a translated process

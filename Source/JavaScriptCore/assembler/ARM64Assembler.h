@@ -1490,7 +1490,7 @@ public:
     using CopyFunction = void*(&)(void*, const void*, size_t);
 
     template <CopyFunction copy>
-    static void fillNops(void* base, size_t size)
+    ALWAYS_INLINE static void fillNops(void* base, size_t size)
     {
         RELEASE_ASSERT(!(size % sizeof(int32_t)));
         size_t n = size / sizeof(int32_t);

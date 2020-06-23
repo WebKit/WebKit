@@ -334,27 +334,21 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         ASSERT(reservation.pageReservation.size() == reservation.size);
         reservation.base = reservation.pageReservation.base();
 
-#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
-        RELEASE_ASSERT(os_thread_self_restrict_rwx_is_supported());
-        os_thread_self_restrict_rwx_to_rx();
+        bool fastJITPermissionsIsSupported = useFastJITPermissions();
+        if (fastJITPermissionsIsSupported)
+            threadSelfRestrictRWXToRX();
 
-#else // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
-#if ENABLE(FAST_JIT_PERMISSIONS)
-        if (os_thread_self_restrict_rwx_is_supported()) {
-            g_jscConfig.useFastPermisionsJITCopy = true;
-            os_thread_self_restrict_rwx_to_rx();
-        } else
-#endif
-        if (Options::useSeparatedWXHeap()) {
+#if ENABLE(SEPARATED_WX_HEAP)
+        if (!fastJITPermissionsIsSupported) {
             // First page of our JIT allocation is reserved.
             ASSERT(reservation.size >= pageSize() * 2);
             reservation.base = (void*)((uintptr_t)(reservation.base) + pageSize());
             reservation.size -= pageSize();
             initializeSeparatedWXHeaps(reservation.pageReservation.base(), pageSize(), reservation.base, reservation.size);
         }
-#endif // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
-        void* reservationEnd = reinterpret_cast<uint8_t*>(reservation.base) + reservation.size;
+#endif
 
+        void* reservationEnd = reinterpret_cast<uint8_t*>(reservation.base) + reservation.size;
         g_jscConfig.startExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservation.base);
         g_jscConfig.endExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
     }

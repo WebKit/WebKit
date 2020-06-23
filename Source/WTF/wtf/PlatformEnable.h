@@ -257,10 +257,6 @@
 #define ENABLE_ENCRYPTED_MEDIA 0
 #endif
 
-#if !defined(ENABLE_FAST_JIT_PERMISSIONS)
-#define ENABLE_FAST_JIT_PERMISSIONS 0
-#endif
-
 #if !defined(ENABLE_FILTERS_LEVEL_2)
 #define ENABLE_FILTERS_LEVEL_2 0
 #endif

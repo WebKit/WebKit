@@ -482,14 +482,6 @@ void Options::recomputeDependentOptions()
         Options::maximumEvalCacheableSourceLength() = 150000;
         Options::useConcurrentJIT() = false;
     }
-#if ENABLE(SEPARATED_WX_HEAP)
-    // Override globally for now. Longer term we'll just make the default
-    // be to have this option enabled, and have platforms that don't support
-    // it just silently use a single mapping.
-    Options::useSeparatedWXHeap() = true;
-#else
-    Options::useSeparatedWXHeap() = false;
-#endif
 
     if (Options::alwaysUseShadowChicken())
         Options::maximumInliningDepth() = 1;

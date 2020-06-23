@@ -159,11 +159,6 @@
 #define ENABLE_DRAG_SUPPORT 0
 #endif
 
-/* FIXME: This should probably be HAVE_FAST_JIT_PERMISSIONS and may be entirely unnecessary due to runtime checking support via os_thread_self_restrict_rwx_is_supported(). */
-#if !defined(ENABLE_FAST_JIT_PERMISSIONS) && CPU(ARM64) && !(OS(TVOS) || OS(WATCHOS)) && USE(APPLE_INTERNAL_SDK)
-#define ENABLE_FAST_JIT_PERMISSIONS 1
-#endif
-
 #if !defined(ENABLE_FILE_REPLACEMENT)
 #define ENABLE_FILE_REPLACEMENT 1
 #endif
@@ -364,7 +359,7 @@
 #define ENABLE_SEC_ITEM_SHIM 1
 #endif
 
-#if !defined(ENABLE_SEPARATED_WX_HEAP) && PLATFORM(IOS_FAMILY) && CPU(ARM64) && (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E))
+#if !defined(ENABLE_SEPARATED_WX_HEAP) && PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
 #define ENABLE_SEPARATED_WX_HEAP 1
 #endif
 

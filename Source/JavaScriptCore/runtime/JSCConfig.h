@@ -79,7 +79,6 @@ struct Config {
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
-    bool useFastPermisionsJITCopy;
 #endif
 
     OptionsStorage options;

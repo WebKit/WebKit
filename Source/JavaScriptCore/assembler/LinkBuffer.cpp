@@ -119,25 +119,11 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 }
 
 #if ENABLE(BRANCH_COMPACTION)
+
 #if CPU(ARM64E)
 #define ENABLE_VERIFY_JIT_HASH 1
 #else
 #define ENABLE_VERIFY_JIT_HASH 0
-#endif
-
-#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
-#   define IF_FAST_JIT_PERMISSIONS(thenStmt) thenStmt
-#   define IF_FAST_JIT_PERMISSIONS_ELSE(thenStmt, elseStmt) thenStmt
-#elif ENABLE(FAST_JIT_PERMISSIONS)
-#   define IF_FAST_JIT_PERMISSIONS(thenStmt) if (useFastJITPermissions()) \
-        thenStmt
-#   define IF_FAST_JIT_PERMISSIONS_ELSE(thenStmt, elseStmt) if (useFastJITPermissions()) \
-            thenStmt; \
-        else \
-            elseStmt
-#else
-#   define IF_FAST_JIT_PERMISSIONS(thenStmt)
-#   define IF_FAST_JIT_PERMISSIONS_ELSE(thenStmt, elseStmt) elseStmt
 #endif
 
 class BranchCompactionLinkBuffer;
@@ -237,6 +223,13 @@ static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_
         offsets[ptr++] = offset;
 }
 
+// We use this to prevent compile errors on some platforms that are unhappy
+// about the signature of the system's memcpy.
+ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
+{
+    return memcpy(dst, src, bytes);
+}
+
 template <typename InstructionType>
 void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
@@ -268,7 +261,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
 
-    IF_FAST_JIT_PERMISSIONS(os_thread_self_restrict_rwx_to_rw());
+    if (useFastJITPermissions())
+        threadSelfRestrictRWXToRW();
 
     if (m_shouldPerformBranchCompaction) {
         for (unsigned i = 0; i < jumpCount; ++i) {
@@ -356,18 +350,24 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     for (unsigned i = 0; i < jumpCount; ++i) {
         uint8_t* location = codeOutData + jumpsToLink[i].from();
         uint8_t* target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
-        IF_FAST_JIT_PERMISSIONS_ELSE(MacroAssembler::link<memcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target), \
-            MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target));
+        if (useFastJITPermissions())
+            MacroAssembler::link<memcpyWrapper>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
+        else
+            MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
     }
 
     size_t compactSize = writePtr + initialSize - readPtr;
     if (!m_executableMemory) {
         size_t nopSizeInBytes = initialSize - compactSize;
-        IF_FAST_JIT_PERMISSIONS_ELSE(Assembler::fillNops<memcpy>(outData + compactSize, nopSizeInBytes), \
-            Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes));
+
+        if (useFastJITPermissions())
+            Assembler::fillNops<memcpyWrapper>(outData + compactSize, nopSizeInBytes);
+        else
+            Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes);
     }
 
-    IF_FAST_JIT_PERMISSIONS(os_thread_self_restrict_rwx_to_rx());
+    if (useFastJITPermissions())
+        threadSelfRestrictRWXToRX();
 
     if (m_executableMemory) {
         m_size = compactSize;

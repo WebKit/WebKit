@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FastJITPermissions.h"
 #include "JITCompilationEffort.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
@@ -46,9 +47,6 @@
 #include <sys/cachectl.h>
 #endif
 
-#if ENABLE(FAST_JIT_PERMISSIONS)
-#include <os/thread_self_restrict.h> 
-#endif
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
 #define EXECUTABLE_POOL_WRITABLE true
@@ -113,17 +111,6 @@ JS_EXPORT_PRIVATE bool isJITPC(void* pc);
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
-static ALWAYS_INLINE bool useFastJITPermissions()
-{
-#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
-    return true;
-#elif ENABLE(FAST_JIT_PERMISSIONS)
-    return g_jscConfig.useFastPermisionsJITCopy;
-#else
-    return false;
-#endif
-}
-
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -132,20 +119,18 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
     RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(src) == src);
 #endif
     if (isJITPC(dst)) {
+        RELEASE_ASSERT(!Gigacage::contains(src));
         RELEASE_ASSERT(reinterpret_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
 
         if (UNLIKELY(Options::dumpJITMemoryPath()))
             dumpJITMemory(dst, src, n);
-#if ENABLE(FAST_JIT_PERMISSIONS)
-        if (useFastJITPermissions())
-        {
-            os_thread_self_restrict_rwx_to_rw();
+
+        if (useFastJITPermissions()) {
+            threadSelfRestrictRWXToRW();
             memcpy(dst, src, n);
-            RELEASE_ASSERT(!Gigacage::contains(src));
-            os_thread_self_restrict_rwx_to_rx();
+            threadSelfRestrictRWXToRX();
             return dst;
         }
-#endif // ENABLE(FAST_JIT_PERMISSIONS)
 
 #if ENABLE(SEPARATED_WX_HEAP)
         if (g_jscConfig.jitWriteSeparateHeaps) {
