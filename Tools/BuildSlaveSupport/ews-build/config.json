@@ -14,11 +14,19 @@
       "platform": "jsc-only"
     },
     {
+      "name": "igalia-jsc32-armv7-ews-03",
+      "platform": "jsc-only"
+    },
+    {
       "name": "igalia-jsc32-mipsel-ews",
       "platform": "jsc-only"
     },
     {
       "name": "igalia-jsc32-mipsel-ews-02",
+      "platform": "jsc-only"
+    },
+    {
+      "name": "igalia-jsc32-mipsel-ews-03",
       "platform": "jsc-only"
     },
     {
@@ -468,6 +476,16 @@
       "workernames": ["ews127", "ews128"]
     },
     {
+      "name": "JSC-MIPSEL-32bits-Build-EWS",
+      "shortname": "jsc-build-mips",
+      "icon": "buildOnly",
+      "factory": "JSCBuildFactory",
+      "platform": "jsc-only",
+      "configuration": "release",
+      "architectures": ["mipsel"],
+      "workernames": ["igalia-jsc32-mipsel-ews-03"]
+    },
+	{
       "name": "JSC-MIPSEL-32bits-EWS",
       "shortname": "jsc-mips",
       "icon": "buildAndTest",
@@ -477,6 +495,16 @@
       "architectures": ["mipsel"],
       "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-02"],
       "remotes": "../../EWS-test-devices.json"
+    },
+    {
+      "name": "JSC-ARMv7-32bits-Build-EWS",
+      "shortname": "jsc-build-armv7",
+      "icon": "buildOnly",
+      "factory": "JSCBuildFactory",
+      "platform": "jsc-only",
+      "configuration": "release",
+      "architectures": ["armv7"],
+      "workernames": ["igalia-jsc32-armv7-ews-03"]
     },
     {
       "name": "JSC-ARMv7-32bits-EWS",
@@ -576,9 +604,9 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
-                       "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-Mojave-Debug-Build-EWS",
-                       "macOS-Mojave-Release-Build-EWS", "Services-EWS", "Style-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS",
-                       "WinCairo-EWS", "Windows-EWS"]
+                       "JSC-ARMv7-32bits-Build-EWS", "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS",
+                       "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
+                       "Services-EWS", "Style-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"]
     },
     {
       "type": "Try_Userpass",

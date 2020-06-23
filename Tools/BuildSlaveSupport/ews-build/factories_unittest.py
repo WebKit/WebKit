@@ -156,6 +156,36 @@ class TestTestsFactory(TestCase):
         ])
 
 
+class TestBuildFactory(TestCase):
+    def test_jsc_mipsel_factory(self):
+        factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["mipsel"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["mipsel"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileJSC),
+        ])
+
+    def test_jsc_armv7_factory(self):
+        factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["armv7"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["armv7"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileJSC),
+        ])
+
+
 class TestBuildAndTestsFactory(TestCase):
     def test_windows_factory(self):
         factory = factories.WindowsFactory(platform='win', configuration='release', architectures=["x86_64"])

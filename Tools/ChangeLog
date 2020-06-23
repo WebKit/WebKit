@@ -1,3 +1,23 @@
+2020-06-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [ews] Add JSC-Only builders for MIPS and ARMv7 architectures
+        https://bugs.webkit.org/show_bug.cgi?id=213366
+
+        Reviewed by Aakash Jain.
+
+        In a follow-up patch the built product of these bots will be consumed
+        by the EWS JSC-Only testing bots.
+
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCBuildFactory):
+        (JSCBuildFactory.__init__):
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestBuildFactory):
+        (TestBuildFactory.test_jsc_mipsel_factory):
+        (TestBuildFactory.test_jsc_armv7_factory):
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+
 2020-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] fast/dom/Window/alert-with-unmatched-utf16-surrogate-should-not-crash.html is failing
