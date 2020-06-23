@@ -1,3 +1,39 @@
+2020-06-22  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Add the capability to call the Storage Access API as a quirk, on behalf of websites that should be doing it themselves
+        https://bugs.webkit.org/show_bug.cgi?id=213418
+        <rdar://problem/64549429>
+
+        Reviewed by Alex Christensen.
+
+        These changes are for forwarding ITP's knowledge of user interaction
+        for specific quirks domains to the WebKit::WebProcessPool where it in
+        turn can be distributed to all existing and new Web Content processes.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::needsUserInteractionQuirk const):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setDomainsWithUserInteraction):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        (WebKit::WebProcessPool::setDomainsWithUserInteraction):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::hasHadUserInteraction const):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        (WebKit::WebProcess::setDomainsWithUserInteraction):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] WebPageProxy::setPromisedDataForImage should sanitize its filename

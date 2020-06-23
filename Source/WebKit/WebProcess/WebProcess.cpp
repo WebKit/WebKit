@@ -508,8 +508,12 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_thirdPartyCookieBlockingMode = parameters.thirdPartyCookieBlockingMode;
-    if (parameters.resourceLoadStatisticsEnabled && !ResourceLoadObserver::sharedIfExists())
-        ResourceLoadObserver::setShared(*new WebResourceLoadObserver(parameters.sessionID.isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
+    if (parameters.resourceLoadStatisticsEnabled) {
+        if (!ResourceLoadObserver::sharedIfExists())
+            ResourceLoadObserver::setShared(*new WebResourceLoadObserver(parameters.sessionID.isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
+        ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(parameters.domainsWithUserInteraction));
+    }
+    
 #endif
 
     resetPlugInAutoStartOriginHashes(WTFMove(parameters.plugInAutoStartOriginHashes));
@@ -1894,6 +1898,11 @@ void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode th
 {
     m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
     completionHandler();
+}
+
+void WebProcess::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
+{
+    ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(domains));
 }
 #endif
 

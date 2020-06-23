@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -461,6 +461,7 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
+    void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
 #endif
 
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
+#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -52,6 +53,11 @@ enum class StorageAccessScope : bool {
     PerPage
 };
 
+enum class StorageAccessQuickResult : bool {
+    Grant,
+    Reject
+};
+
 struct RequestStorageAccessResult {
     StorageAccessWasGranted wasGranted;
     StorageAccessPromptWasShown promptWasShown;
@@ -72,11 +78,23 @@ public:
     ~DocumentStorageAccess();
 
     static void hasStorageAccess(Document&, Ref<DeferredPromise>&&);
+    static bool hasStorageAccessForDocumentQuirk(Document&);
+
     static void requestStorageAccess(Document&, Ref<DeferredPromise>&&);
+    static void requestStorageAccessForDocumentQuirk(Document&, CompletionHandler<void(StorageAccessWasGranted)>&&);
+    static void requestStorageAccessForNonDocumentQuirk(Document& hostingDocument, RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&&);
 
 private:
+    Optional<bool> hasStorageAccessQuickCheck();
     void hasStorageAccess(Ref<DeferredPromise>&&);
+    bool hasStorageAccessQuirk();
+
+    Optional<StorageAccessQuickResult> requestStorageAccessQuickCheck();
     void requestStorageAccess(Ref<DeferredPromise>&&);
+    void requestStorageAccessForDocumentQuirk(CompletionHandler<void(StorageAccessWasGranted)>&&);
+    void requestStorageAccessForNonDocumentQuirk(RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&&);
+    void requestStorageAccessQuirk(RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&&);
+
     static DocumentStorageAccess* from(Document&);
     static const char* supplementName();
     bool hasFrameSpecificStorageAccess() const;

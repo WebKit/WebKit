@@ -1199,6 +1199,11 @@ void NetworkProcessProxy::setToSameSiteStrictCookiesForTesting(PAL::SessionID se
 
     sendWithAsyncReply(Messages::NetworkProcess::SetToSameSiteStrictCookiesForTesting(sessionID, domain), WTFMove(completionHandler));
 }
+
+void NetworkProcessProxy::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
+{
+    processPool().setDomainsWithUserInteraction(WTFMove(domains));
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkProcessProxy::setAdClickAttributionDebugMode(bool debugMode)

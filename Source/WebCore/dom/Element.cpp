@@ -87,6 +87,7 @@
 #include "PointerEvent.h"
 #include "PointerLockController.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "Quirks.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -359,6 +360,9 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     bool didNotSwallowEvent = true;
 
     if (dispatchPointerEventIfNeeded(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent) == ShouldIgnoreMouseEvent::Yes)
+        return false;
+
+    if (hasClass() && Quirks::StorageAccessResult::ShouldCancelEvent == document().quirks().triggerOptionalStorageAccessQuirk(eventType, classNames()))
         return false;
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);

@@ -504,6 +504,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const WebCore::RegistrableDomain& fromDomain, const WebCore::RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier);
+    void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
 #endif
 
@@ -821,6 +822,10 @@ private:
     bool m_isDelayedWebProcessLaunchDisabled { false };
 #endif
     bool m_useSeparateServiceWorkerProcess { false };
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
+#endif
 };
 
 template<typename T>

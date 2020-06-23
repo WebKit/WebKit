@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentStorageAccess.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
@@ -38,8 +39,10 @@
 #include "HTMLObjectElement.h"
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
+#include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "SpaceSplitString.h"
 #include "UserAgent.h"
 
 namespace WebCore {
@@ -837,6 +840,63 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 #else
     return false;
 #endif
+}
+
+Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const AtomString& eventType, const SpaceSplitString& classNames) const
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (!needsQuirks())
+        return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+
+    RegistrableDomain domain { m_document->url() };
+
+    static NeverDestroyed<HashSet<RegistrableDomain>> kinjaQuirks = [] {
+        HashSet<RegistrableDomain> set;
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("avclub.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("gizmodo.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("deadspin.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jalopnik.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jezebel.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kotaku.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("lifehacker.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theroot.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("thetakeout.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theonion.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theinventory.com"_s));
+        return set;
+    }();
+    static NeverDestroyed<RegistrableDomain> kinjaDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kinja.com"_s);
+
+    static NeverDestroyed<RegistrableDomain> youTubeDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_s);
+
+    if (eventType == "click") {
+
+        // Embedded YouTube case.
+        if (domain == youTubeDomain && !m_document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain) && (classNames.contains("ytp-watch-later-icon") || classNames.contains("ytp-watch-later-icon"))) {
+            if (ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
+                DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*m_document, [](StorageAccessWasGranted) {
+                    // FIXME: Add appropriate logging.
+                });
+                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+            }
+        }
+
+        // Kinja burner account login case.
+        if (kinjaQuirks.get().contains(domain) && classNames.contains("js_switch-to-burner-login")) {
+            if (ResourceLoadObserver::shared().hasHadUserInteraction(kinjaDomain)) {
+                DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, kinjaDomain.get().isolatedCopy(), [](StorageAccessWasGranted) {
+                    // FIXME: Add appropriate logging.
+                });
+                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+            }
+            // FIXME: Take the user to kinja.com in the else case.
+        }
+    }
+#else
+    UNUSED_PARAM(eventType);
+    UNUSED_PARAM(classNames);
+#endif
+    return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }
 
 }

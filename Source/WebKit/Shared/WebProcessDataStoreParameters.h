@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ struct WebProcessDataStoreParameters {
     HashMap<unsigned, WallTime> plugInAutoStartOriginHashes;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
+    HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
 #endif
     bool resourceLoadStatisticsEnabled { false };
 
@@ -73,6 +74,7 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << plugInAutoStartOriginHashes;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     encoder << thirdPartyCookieBlockingMode;
+    encoder << domainsWithUserInteraction;
 #endif
     encoder << resourceLoadStatisticsEnabled;
 }
@@ -144,6 +146,11 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     decoder >> thirdPartyCookieBlockingMode;
     if (!thirdPartyCookieBlockingMode)
         return WTF::nullopt;
+
+    Optional<HashSet<WebCore::RegistrableDomain>> domainsWithUserInteraction;
+    decoder >> domainsWithUserInteraction;
+    if (!domainsWithUserInteraction)
+        return WTF::nullopt;
 #endif
 
     bool resourceLoadStatisticsEnabled = false;
@@ -166,6 +173,7 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
         WTFMove(*plugInAutoStartOriginHashes),
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         *thirdPartyCookieBlockingMode,
+        WTFMove(*domainsWithUserInteraction),
 #endif
         resourceLoadStatisticsEnabled
     };

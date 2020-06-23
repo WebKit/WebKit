@@ -1,3 +1,53 @@
+2020-06-22  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Add the capability to call the Storage Access API as a quirk, on behalf of websites that should be doing it themselves
+        https://bugs.webkit.org/show_bug.cgi?id=213418
+        <rdar://problem/64549429>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. This patch adds quirks for specific websites.
+        The general functionality that's touched has tests under
+        LayoutTests/http/tests/storageAccess/.
+
+        * dom/Document.h:
+        (WebCore::Document::isTopDocument const):
+            New convenience function.
+        (WebCore::Document::setUserDidInteractWithPage):
+            Use of the new convenience function.
+        (WebCore::Document::userDidInteractWithPage const):
+            Use of the new convenience function.
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::hasStorageAccessQuickCheck):
+        (WebCore::DocumentStorageAccess::hasStorageAccess):
+        (WebCore::DocumentStorageAccess::hasStorageAccessForDocumentQuirk):
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+        (WebCore::DocumentStorageAccess::requestStorageAccessQuickCheck):
+        (WebCore::DocumentStorageAccess::requestStorageAccessForDocumentQuirk):
+        (WebCore::DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk):
+        (WebCore::DocumentStorageAccess::requestStorageAccessQuirk):
+            These functions are split up to allow quirks to call directly into the
+            implementation of the Storage Access API without the JavaScript
+            promise that goes with the web API. It also allows for quirks to call
+            the API without an iframe document.
+        * dom/DocumentStorageAccess.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+            The two existing quirks are for click events.
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::setDomainsWithUserInteraction):
+        (WebCore::ResourceLoadObserver::hasHadUserInteraction const):
+            These two new functions allow the Storage Access API quirks
+            to synchronously check if it's worth calling the API or not.
+            If there has been no user interaction for the requesting
+            domain, there is no need to call the API.
+        * page/Quirks.cpp:
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+            This is the new quirks function, hiding the specifics of
+            certain elements clicked and for which websites. It also
+            calls the Storage Access API.
+        * page/Quirks.h:
+
 2020-06-22  Chris Dumez  <cdumez@apple.com>
 
         Introduce BaseAudioContext interface

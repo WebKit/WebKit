@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 Apple Inc. All rights reserved.
+* Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -62,6 +62,8 @@ public:
     
     bool hasStatistics() const final { return !m_resourceStatisticsMap.isEmpty(); }
 
+    void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains) final { m_domainsWithUserInteraction = WTFMove(domains); }
+    bool hasHadUserInteraction(const WebCore::RegistrableDomain&) const final;
 private:
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const WebCore::RegistrableDomain&);
     void scheduleNotificationIfNeeded();
@@ -78,6 +80,7 @@ private:
 
     WebCore::Timer m_notificationTimer;
 
+    HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
 #if !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
     static bool shouldLogUserInteraction;

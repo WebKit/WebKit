@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -1033,6 +1033,7 @@ public:
 
     Document* parentDocument() const;
     WEBCORE_EXPORT Document& topDocument() const;
+    bool isTopDocument() const { return &topDocument() == this; }
     
     ScriptRunner& scriptRunner() { return *m_scriptRunner; }
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
@@ -1243,8 +1244,8 @@ public:
     bool processingUserGestureForMedia() const;
     void userActivatedMediaFinishedPlaying() { m_userActivatedMediaFinishedPlayingTimestamp = MonotonicTime::now(); }
 
-    void setUserDidInteractWithPage(bool userDidInteractWithPage) { ASSERT(&topDocument() == this); m_userDidInteractWithPage = userDidInteractWithPage; }
-    bool userDidInteractWithPage() const { ASSERT(&topDocument() == this); return m_userDidInteractWithPage; }
+    void setUserDidInteractWithPage(bool userDidInteractWithPage) { ASSERT(isTopDocument()); m_userDidInteractWithPage = userDidInteractWithPage; }
+    bool userDidInteractWithPage() const { ASSERT(isTopDocument()); return m_userDidInteractWithPage; }
 
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
     WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;

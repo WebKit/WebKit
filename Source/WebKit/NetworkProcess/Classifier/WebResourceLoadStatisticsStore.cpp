@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1281,6 +1281,18 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
     completionHandler();
 }
 
+bool WebResourceLoadStatisticsStore::needsUserInteractionQuirk(const RegistrableDomain& domain) const
+{
+    static NeverDestroyed<HashSet<RegistrableDomain>> quirks = [] {
+        HashSet<RegistrableDomain> set;
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kinja.com"_s));
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_s));
+        return set;
+    }();
+
+    return quirks.get().contains(domain);
+}
+
 void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1290,6 +1302,17 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
             storageSession->setPrevalentDomainsToBlockAndDeleteCookiesFor(domainsToBlock.domainsToBlockAndDeleteCookiesFor);
             storageSession->setPrevalentDomainsToBlockButKeepCookiesFor(domainsToBlock.domainsToBlockButKeepCookiesFor);
             storageSession->setDomainsWithUserInteractionAsFirstParty(domainsToBlock.domainsWithUserInteractionAsFirstParty);
+        }
+
+        HashSet<RegistrableDomain> domainsWithUserInteractionQuirk;
+        for (auto& domain : domainsToBlock.domainsWithUserInteractionAsFirstParty) {
+            if (needsUserInteractionQuirk(domain))
+                domainsWithUserInteractionQuirk.add(domain);
+        }
+
+        if (m_domainsWithUserInteractionQuirk != domainsWithUserInteractionQuirk) {
+            m_domainsWithUserInteractionQuirk = domainsWithUserInteractionQuirk;
+            m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::SetDomainsWithUserInteraction(domainsWithUserInteractionQuirk), 0);
         }
     }
 
