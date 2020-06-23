@@ -113,7 +113,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
 
 - (NSURLRequest *)request
 {
-    return _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
 #if PLATFORM(IOS_FAMILY)

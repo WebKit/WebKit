@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import <WebKit/WKBackForwardListPrivate.h>
@@ -100,6 +101,24 @@ TEST(WKNavigation, LoadRequest)
 
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(WKNavigation, HTTPBody)
+{
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    NSData *testData = [@"testhttpbody" dataUsingEncoding:NSUTF8StringEncoding];
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_TRUE([action.request.HTTPBody isEqualToData:testData]);
+        decisionHandler(WKNavigationActionPolicyCancel);
+        done = true;
+    };
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"test:///willNotActuallyLoad"]];
+    [request setHTTPBody:testData];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
 }
 
 @interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>

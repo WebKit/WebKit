@@ -1,5 +1,20 @@
 2020-06-23  Alex Christensen  <achristensen@webkit.org>
 
+        Expose already-available WKNavigationAction.request.HTTPBody through the API
+        https://bugs.webkit.org/show_bug.cgi?id=179077
+
+        Reviewed by Brady Eidson.
+
+        When this bug was written, we needed to serialize the HTTP body to the UI process to expose it through the API.
+        The controversial part of this was done in r237639, so this just exposes the data that is already available.
+
+        Verified by an API test.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction request]):
+
+2020-06-23  Alex Christensen  <achristensen@webkit.org>
+
         Remove unnecessary Timer from NetworkDataTask
         https://bugs.webkit.org/show_bug.cgi?id=213409
 
