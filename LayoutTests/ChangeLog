@@ -1,3 +1,10 @@
+2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Move flaky failures happening in WPE from GTK to GLIB after r263402.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-06-23  Devin Rousso  <drousso@apple.com>
 
         Keyframe animation doesn't 't show up in the Animations timeline

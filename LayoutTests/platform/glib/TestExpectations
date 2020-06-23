@@ -73,6 +73,7 @@ webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-b
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout ]
 webkit.org/b/79203  fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
@@ -83,6 +84,7 @@ webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
 webkit.org/b/210528 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
 webkit.org/b/210528 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]
 webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
+webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html  [ Failure Crash ]
 
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
@@ -101,6 +103,7 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure ]
+webkit.org/b/209475 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html [ ImageOnlyFailure ]
 
@@ -210,6 +213,8 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-
 # WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash ]
+
 webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
 
 webkit.org/b/212925 webrtc/multi-audio.html [ Failure ]
@@ -267,6 +272,7 @@ webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
 
 webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-load-from-cache-storage.https.html [ Failure Pass ]
+webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
 
 webkit.org/b/211692 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
@@ -475,9 +481,12 @@ inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 Bug(GTK) jquery/offset.html [ Slow Pass ]
 Bug(GTK) jquery/traversing.html [ Slow Pass ]
 
+webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
+
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
+
+webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of NEEDS TRIAGING. Don't put expectations below this section.
 #////////////////////////////////////////////////////////////////////////////////////////
-

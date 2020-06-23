@@ -276,8 +276,6 @@ webkit.org/b/210498 media/media-source/media-source-sequence-timestamps.html [ P
 webkit.org/b/175876 imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass Crash ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
-webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html  [ Failure Crash ]
-
 # There is an oggdemux bug that deadlocks WebKit: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/639
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Failure Crash ]
 
@@ -564,7 +562,6 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disab
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Pass Crash Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Timeout Crash ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
@@ -1452,8 +1449,6 @@ webkit.org/b/84856 media/media-controller-playback.html [ Crash Failure Timeout 
 
 webkit.org/b/83878 webkit.org/b/198830 media/track/track-mode.html [ Failure Pass ]
 
-webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
-
 webkit.org/b/94119 storage/websql/database-lock-after-reload.html [ Failure Pass ]
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
@@ -1536,7 +1531,6 @@ webkit.org/b/132425 fast/multicol/scrolling-overflow.html [ Failure Pass ]
 webkit.org/b/132425 fast/multicol/span/span-as-immediate-child-generated-content.html [ Failure Pass ]
 
 webkit.org/b/171947 transitions/extra-transition.html [ Failure Pass ]
-webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
 
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass Crash ]
 
@@ -1965,7 +1959,6 @@ webkit.org/b/198830 [ Release ] media/track/track-cues-cuechange.html [ Pass Cra
 webkit.org/b/198830 [ Release ] media/video-autoplay.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-canvas-source.html [ Pass Crash ]
 
-webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay2.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay3.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay4.html [ Pass Crash ]
@@ -2194,8 +2187,6 @@ webkit.org/b/209044 http/tests/media/hls/video-controls-live-stream.html [ Failu
 
 webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure Pass ]
 
-webkit.org/b/209475 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/210233 http/tests/media/media-stream/device-change-event-in-iframe.html [ Failure Pass ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
@@ -2214,8 +2205,6 @@ webkit.org/b/210536 fast/forms/color/color-type-change-on-input-crash.html [ Pas
 
 webkit.org/b/210537 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure Pass ]
 webkit.org/b/210538 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
 
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 
