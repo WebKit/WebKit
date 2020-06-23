@@ -233,7 +233,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         case WI.Resource.ResponseSource.ServiceWorker:
             return WI.UIString("Service Worker");
         case WI.Resource.ResponseSource.InspectorOverride:
-            return WI.UIString("Inspector Override");
+            return WI.UIString("Local Override");
         case WI.Resource.ResponseSource.Unknown:
         default:
             return null;

@@ -79,7 +79,7 @@ localizedStrings["(Tail Call)"] = "(Tail Call)";
 localizedStrings["(anonymous function)"] = "(anonymous function)";
 localizedStrings["(async)"] = "(async)";
 localizedStrings["(disk)"] = "(disk)";
-localizedStrings["(inspector override)"] = "(inspector override)";
+localizedStrings["(local override)"] = "(local override)";
 localizedStrings["(many)"] = "(many)";
 localizedStrings["(memory)"] = "(memory)";
 localizedStrings["(multiple)"] = "(multiple)";
@@ -701,7 +701,6 @@ localizedStrings["Input: "] = "Input: ";
 /* Checkbox label for the inset of a CSS box shadow. */
 localizedStrings["Inset @ Box Shadow Editor"] = "Inset";
 localizedStrings["Inspector Bootstrap Script"] = "Inspector Bootstrap Script";
-localizedStrings["Inspector Override"] = "Inspector Override";
 localizedStrings["Inspector Style Sheet"] = "Inspector Style Sheet";
 localizedStrings["Instances"] = "Instances";
 localizedStrings["Invalid"] = "Invalid";
@@ -1254,7 +1253,6 @@ localizedStrings["These tests demonstrate how to use %s to get information about
 localizedStrings["These tests demonstrate how to use %s to get information about loaded resources."] = "These tests demonstrate how to use %s to get information about loaded resources.";
 localizedStrings["These tests demonstrate how to use %s to get information about the accessibility tree."] = "These tests demonstrate how to use %s to get information about the accessibility tree.";
 localizedStrings["These tests serve as a demonstration of the functionality and structure of audits."] = "These tests serve as a demonstration of the functionality and structure of audits.";
-localizedStrings["This Resource came from a Local Resource Override"] = "This Resource came from a Local Resource Override";
 localizedStrings["This action causes no visual change"] = "This action causes no visual change";
 localizedStrings["This action moves the path outside the visible area"] = "This action moves the path outside the visible area";
 localizedStrings["This animation has no duration."] = "This animation has no duration.";
@@ -1271,6 +1269,11 @@ localizedStrings["This is what the result of a warning test with no data looks l
 localizedStrings["This is what the result of an unsupported test with no data looks like."] = "This is what the result of an unsupported test with no data looks like.";
 localizedStrings["This object is a root"] = "This object is a root";
 localizedStrings["This object is referenced by internal objects"] = "This object is referenced by internal objects";
+localizedStrings["This resource came from a local override"] = "This resource came from a local override";
+localizedStrings["This resource was loaded from a local override"] = "This resource was loaded from a local override";
+localizedStrings["This resource was loaded from a service worker"] = "This resource was loaded from a service worker";
+localizedStrings["This resource was loaded from the disk cache"] = "This resource was loaded from the disk cache";
+localizedStrings["This resource was loaded from the memory cache"] = "This resource was loaded from the memory cache";
 localizedStrings["This test will pass with a variety of accessibility information about the <body> element."] = "This test will pass with a variety of accessibility information about the <body> element.";
 localizedStrings["This test will pass with all DOM nodes that have a computed role of \u0022link\u0022."] = "This test will pass with all DOM nodes that have a computed role of \u0022link\u0022.";
 localizedStrings["This test will pass with all child nodes that are selected (\u0022%s\u0022) of the <body> element in the accessibility tree."] = "This test will pass with all child nodes that are selected (\u0022%s\u0022) of the <body> element in the accessibility tree.";

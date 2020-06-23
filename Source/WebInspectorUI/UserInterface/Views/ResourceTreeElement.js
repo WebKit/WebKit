@@ -262,6 +262,8 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
             this.addClassName("override");
         else
             this.removeClassName("override");
+
+        this.iconElement.title = wasOverridden ? WI.UIString("This resource was loaded from a local override") : "";
     }
 
     _urlDidChange(event)

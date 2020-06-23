@@ -1,5 +1,49 @@
 2020-06-23  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add a tooltip to the icon of overridden resources to clarify meaning
+        https://bugs.webkit.org/show_bug.cgi?id=213531
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LocalResourceOverrideWarningView.js:
+        (WI.LocalResourceOverrideWarningView.prototype.initialLayout):
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._responseSourceDisplayString):
+        Rephrase "local resource override" to just "local override" to match the reference page name.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateNameCell.createIconElement):
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._populateTransferSizeCell):
+        Add a `title` for the special transfer size cases, such as for `(local override)`.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype._updateIcon):
+        * UserInterface/Views/ResourceSizesContentView.js:
+        (WI.ResourceSizesContentView.prototype.initialLayout):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WI.TimelineDataGridNode.prototype.createCellContent):
+        (WI.TimelineDataGridNode.prototype.generateIconTitle): Added.
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype.get data):
+        (WI.ResourceTimelineDataGridNode.prototype.generateIconTitle): Added.
+        Add a `title` to the overridden resource icon that clarifies the fact that the resource was
+        overridden by a local override.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WI.LayoutTimelineDataGridNode.prototype.get data):
+        Cache the `initiatorCallFrame` in the `source` column as well as the `initiator` column, as
+        it is used by the general timeline overview table.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.createCell):
+        (WI.DataGridNode.prototype.generateIconTitle): Added.
+        Provide a way to set a `title` on just the icon.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2020-06-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: adjust height of undocked title area to match macOS Big Sur
         https://bugs.webkit.org/show_bug.cgi?id=213490
 

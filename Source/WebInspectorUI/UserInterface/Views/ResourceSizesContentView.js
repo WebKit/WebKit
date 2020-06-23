@@ -130,7 +130,11 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
 
         let resourceComponents = createSizeComponents(resourceSection, WI.UIString("Resource Size"), null, WI.UIString("Compression:"), WI.UIString("MIME Type:"));
         resourceComponents.container.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, ...WI.Resource.classNamesForResource(this._resource));
+
         resourceComponents.imageElement.classList.add("icon");
+        if (this._resource.responseSource === WI.Resource.ResponseSource.InspectorOverride)
+            resourceComponents.imageElement.title = WI.UIString("This resource was loaded from a local override");
+
         this._resourceBytesElement = resourceComponents.bytesElement;
         this._resourceBytesSuffixElement = resourceComponents.suffixElement;
         this._compressionElement = resourceComponents.value1Element;

@@ -48,6 +48,7 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         this._cachedData.startTime = this.record.startTime - (this.graphDataSource ? this.graphDataSource.zeroTime : 0);
         this._cachedData.totalTime = this.record.duration;
         this._cachedData.initiator = this.record.initiatorCallFrame;
+        this._cachedData.source = this.record.initiatorCallFrame; // Timeline Overview
         return this._cachedData;
     }
 

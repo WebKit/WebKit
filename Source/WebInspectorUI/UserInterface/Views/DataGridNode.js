@@ -378,6 +378,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
             if (column["icon"]) {
                 let iconElement = document.createElement("div");
                 iconElement.classList.add("icon");
+                iconElement.title = this.generateIconTitle(columnIdentifier);
                 div.insertBefore(iconElement, div.firstChild);
             }
         }
@@ -402,6 +403,12 @@ WI.DataGridNode = class DataGridNode extends WI.Object
 
         let data = this.data[columnIdentifier];
         return typeof data === "number" ? data.maxDecimals(2).toLocaleString() : data;
+    }
+
+    generateIconTitle(columnIdentifier)
+    {
+        // Overridden by subclasses if needed.
+        return "";
     }
 
     elementWithColumnIdentifier(columnIdentifier)
