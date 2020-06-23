@@ -1758,3 +1758,5 @@ webkit.org/b/212696 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/213461 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
 
 webkit.org/b/213511 fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
