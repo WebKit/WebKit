@@ -1,3 +1,13 @@
+2020-06-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add JSC-Only builders for MIPS and ARMv7 architectures (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=213366
+
+        Unreviewed follow-up fix.
+
+        Remove unused runTests parameter.
+        * BuildSlaveSupport/ews-build/factories.py:
+
 2020-06-23  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] relax restriction on build-webkit script name
