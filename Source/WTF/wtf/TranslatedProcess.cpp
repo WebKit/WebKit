@@ -23,17 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include <wtf/TranslatedProcess.h>
+
+#if HAVE(CPU_TRANSLATION_CAPABILITY)
+
+#include <mutex>
+#include <sys/sysctl.h>
 
 namespace WTF {
 
-#if HAVE(CPU_TRANSLATION_CAPABILITY)
-WTF_EXPORT_PRIVATE bool isX86BinaryRunningOnARM();
-#else
-inline bool isX86BinaryRunningOnARM()
+bool isX86BinaryRunningOnARM()
 {
-    return false;
+    static bool result;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        int value = 0;
+        size_t size = sizeof(value);
+        if (sysctlbyname("sysctl.proc_translated", &value, &size, nullptr, 0) < 0)
+            return;
+        result = !!value;        
+    });
+    return result;
 }
-#endif
 
 }
+
+#endif

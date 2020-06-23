@@ -75,6 +75,7 @@
 		51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175271F3D486000C74950 /* PersistentDecoder.cpp */; };
 		51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175291F3D486000C74950 /* PersistentEncoder.cpp */; };
 		52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BBDB107FA424886178B9E /* SymbolImpl.cpp */; };
+		521CC6B424A27809004377D6 /* TranslatedProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */; };
 		5311BD531EA71CAD00525281 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD511EA71CAD00525281 /* Signals.cpp */; };
 		5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD5B1EA822F900525281 /* ThreadMessage.cpp */; };
 		53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */ = {isa = PBXBuildFile; fileRef = 53534F291EC0E10E00141B2F /* MachExceptions.defs */; settings = {ATTRIBUTES = (Client, Server, ); }; };
@@ -392,6 +393,7 @@
 		51F175281F3D486000C74950 /* PersistentDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentDecoder.h; sourceTree = "<group>"; };
 		51F175291F3D486000C74950 /* PersistentEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentEncoder.cpp; sourceTree = "<group>"; };
 		51F1752A1F3D486000C74950 /* PersistentEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentEncoder.h; sourceTree = "<group>"; };
+		521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatedProcess.cpp; sourceTree = "<group>"; };
 		526AEC911F6B4E5C00695F5D /* NoTailCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTailCalls.h; sourceTree = "<group>"; };
 		52B228C12458DC8200753D91 /* ICUHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICUHelpers.h; sourceTree = "<group>"; };
 		530A63481FA3E3A00026A545 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
@@ -1271,6 +1273,7 @@
 				553071C91C40427200384898 /* TinyLRUCache.h */,
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
 				2D1F2F462498F73300C63A83 /* TranslatedProcess.h */,
+				521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
 				E360C7642127B85B00C90F0E /* UnalignedAccess.h */,
@@ -1742,6 +1745,7 @@
 				A5BA15F51824348000A82E69 /* StringImplCocoa.mm in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
+				521CC6B424A27809004377D6 /* TranslatedProcess.cpp in Sources */,
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewCocoa.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
