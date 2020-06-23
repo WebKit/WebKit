@@ -570,7 +570,6 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Failure Pass ]
-webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Timeout Pass ]
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout Pass ]
@@ -579,12 +578,10 @@ webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-elemen
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/160996 webkit.org/b/176801 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
-webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Pass Failure ]
 webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
 webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 webkit.org/b/209130 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass Timeout ]
 webkit.org/b/210385 fast/mediastream/audio-track-enabled.html [ Crash Pass ]
-webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1228,8 +1225,6 @@ webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Fa
 
 webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
 
-webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure ]
-
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
 
 webkit.org/b/208631 compositing/repaint/fixed-background-scroll.html [ Failure Pass ]
@@ -1375,12 +1370,8 @@ webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
 
-# Bug 211938 is Failure.
-webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Crash ]
-
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
-webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
 
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Crash ]
@@ -1476,7 +1467,6 @@ webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ Imag
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
-webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
 webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass Crash ]
@@ -1685,8 +1675,6 @@ webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass Timeout ]
 
-webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
-
 # Tests that fail on the EWS queue since we enabled tests there
 webkit.org/b/186638 printing/print-close-crash.html [ Crash ]
 webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Crash ]
@@ -1737,8 +1725,6 @@ webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failu
 webkit.org/b/188042 imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure Timeout ]
 
 webkit.org/b/188046 [ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Pass Timeout ]
-
-webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
 
 webkit.org/b/188105 media/track/track-css-all-cues.html [ Failure Pass Crash ]
 
@@ -2017,7 +2003,6 @@ webkit.org/b/202749 http/tests/dom/document-attributes-null-handling.html [ Pass
 
 webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Crash Timeout ]
 
-webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 webkit.org/b/191886 fast/mediastream/apply-constraints-advanced.html [ Pass Crash ]
 
 # Console log lines may appear in a different order so we silence them.
@@ -2028,7 +2013,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offsc
 webkit.org/b/202782 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.destination-atop.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202801 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.destination-in.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202801 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.lighter.html [ DumpJSConsoleLogInStdErr ]
-webkit.org/b/202801 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.uncovered.pattern.destination-in.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.3arg.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.broken.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.floatsource.html [ DumpJSConsoleLogInStdErr ]
@@ -2089,9 +2073,6 @@ webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/status.html
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/vary.html [ Failure Pass ]
 
 webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [ Failure Pass ]
-
-webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html [ Pass Timeout ]
-
 
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Timeout Pass ]
@@ -2218,9 +2199,6 @@ webkit.org/b/209475 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOn
 webkit.org/b/210233 http/tests/media/media-stream/device-change-event-in-iframe.html [ Failure Pass ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
-webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
-
-webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-load-from-cache-storage.https.html [ Failure Pass ]
 
 webkit.org/b/210360 [ Release ] webrtc/video-update-often.html [ Pass Timeout Crash ]
 webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ Pass Crash ]
@@ -2423,8 +2401,6 @@ webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
-
-webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
 
 webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
 
@@ -3644,7 +3620,6 @@ webkit.org/b/197248 fast/events/autoscroll-when-input-is-offscreen.html [ Failur
 webkit.org/b/197248 fast/events/autoscroll-with-software-keyboard.html [ Failure Crash ]
 
 webkit.org/b/203240 css3/shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
-webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/197708 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
@@ -3777,8 +3752,6 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
-
-webkit.org/b/212745 imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ ImageOnlyFailure Pass ]
 
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ DumpJSConsoleLogInStdErr ]
 
