@@ -90,12 +90,12 @@ constexpr bool useFastJITPermissions()
     return false;
 }
 
-NO_RETURN_DUE_TO_CRASH static void threadSelfRestrictRWXToRW()
+NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void threadSelfRestrictRWXToRW()
 {
     CRASH();
 }
 
-NO_RETURN_DUE_TO_CRASH static void threadSelfRestrictRWXToRX()
+NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void threadSelfRestrictRWXToRX()
 {
     CRASH();
 }

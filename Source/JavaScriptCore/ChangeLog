@@ -1,5 +1,13 @@
 2020-06-22  Saam Barati  <sbarati@apple.com>
 
+        Attempt to fix watchOS simulator build.
+
+        * assembler/FastJITPermissions.h:
+        (threadSelfRestrictRWXToRW):
+        (threadSelfRestrictRWXToRX):
+
+2020-06-22  Saam Barati  <sbarati@apple.com>
+
         Allow building JavaScriptCore Mac+arm64 in public SDK build
         https://bugs.webkit.org/show_bug.cgi?id=213472
 
