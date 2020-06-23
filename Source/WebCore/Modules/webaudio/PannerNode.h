@@ -49,7 +49,7 @@ public:
     virtual float dopplerRate() = 0;
 
 protected:
-    PannerNodeBase(AudioContextBase&, float sampleRate);
+    PannerNodeBase(BaseAudioContext&, float sampleRate);
 };
 
 // PannerNode is an AudioNode with one input and one output.
@@ -68,9 +68,6 @@ public:
     }
 
     virtual ~PannerNode();
-
-    BaseAudioContext& context() { return downcast<BaseAudioContext>(AudioNode::context()); }
-    const BaseAudioContext& context() const { return downcast<BaseAudioContext>(AudioNode::context()); }
 
     // AudioNode
     void process(size_t framesToProcess) override;

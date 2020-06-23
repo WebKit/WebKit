@@ -35,7 +35,7 @@ class Reverb;
 class ConvolverNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(ConvolverNode);
 public:
-    static Ref<ConvolverNode> create(AudioContextBase& context, float sampleRate)
+    static Ref<ConvolverNode> create(BaseAudioContext& context, float sampleRate)
     {
         return adoptRef(*new ConvolverNode(context, sampleRate));
     }
@@ -49,7 +49,7 @@ public:
     void setNormalize(bool normalize) { m_normalize = normalize; }
 
 private:
-    ConvolverNode(AudioContextBase&, float sampleRate);
+    ConvolverNode(BaseAudioContext&, float sampleRate);
 
     double tailTime() const final;
     double latencyTime() const final;

@@ -95,7 +95,6 @@ const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContextBase);
 WTF_MAKE_ISO_ALLOCATED_IMPL(BaseAudioContext);
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document() && document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - BaseAudioContext::" fmt, this, ##__VA_ARGS__)
@@ -109,14 +108,9 @@ bool BaseAudioContext::isSampleRateRangeGood(float sampleRate)
 
 unsigned BaseAudioContext::s_hardwareContextCount = 0;
 
-AudioContextBase::AudioContextBase(Document& document)
-    : ActiveDOMObject(document)
-{
-}
-
 // Constructor for rendering to the audio hardware.
 BaseAudioContext::BaseAudioContext(Document& document)
-    : AudioContextBase(document)
+    : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -141,7 +135,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
 
 // Constructor for offline (non-realtime) rendering.
 BaseAudioContext::BaseAudioContext(Document& document, AudioBuffer* renderTarget)
-    : AudioContextBase(document)
+    : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -343,7 +337,7 @@ const char* BaseAudioContext::activeDOMObjectName() const
     return "AudioContext";
 }
 
-Document* AudioContextBase::document() const
+Document* BaseAudioContext::document() const
 {
     return downcast<Document>(m_scriptExecutionContext);
 }
@@ -981,7 +975,7 @@ void BaseAudioContext::processAutomaticPullNodes(size_t framesToProcess)
         node->processIfNecessary(framesToProcess);
 }
 
-ScriptExecutionContext* AudioContextBase::scriptExecutionContext() const
+ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
 }

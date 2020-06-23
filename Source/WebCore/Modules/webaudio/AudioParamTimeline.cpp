@@ -113,7 +113,7 @@ void AudioParamTimeline::cancelScheduledValues(float startTime)
     }
 }
 
-float AudioParamTimeline::valueForContextTime(AudioContextBase& context, float defaultValue, bool& hasValue)
+float AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, bool& hasValue)
 {
     {
         std::unique_lock<Lock> lock(m_eventsMutex, std::try_to_lock);

@@ -36,7 +36,7 @@ class AudioDSPKernel;
 class DelayProcessor final : public AudioDSPKernelProcessor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DelayProcessor(AudioContextBase&, float sampleRate, unsigned numberOfChannels, double maxDelayTime);
+    DelayProcessor(BaseAudioContext&, float sampleRate, unsigned numberOfChannels, double maxDelayTime);
     virtual ~DelayProcessor();
     
     std::unique_ptr<AudioDSPKernel> createKernel() override;

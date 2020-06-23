@@ -33,7 +33,7 @@ class AudioDestination;
 class DefaultAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_ISO_ALLOCATED(DefaultAudioDestinationNode);
 public:
-    static Ref<DefaultAudioDestinationNode> create(AudioContextBase& context)
+    static Ref<DefaultAudioDestinationNode> create(BaseAudioContext& context)
     {
         return adoptRef(*new DefaultAudioDestinationNode(context));     
     }
@@ -41,7 +41,7 @@ public:
     virtual ~DefaultAudioDestinationNode();
     
 private:
-    explicit DefaultAudioDestinationNode(AudioContextBase&);
+    explicit DefaultAudioDestinationNode(BaseAudioContext&);
     void createDestination();
 
     void initialize() final;

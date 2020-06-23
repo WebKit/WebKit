@@ -96,7 +96,7 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-AudioNode::AudioNode(AudioContextBase& context, float sampleRate)
+AudioNode::AudioNode(BaseAudioContext& context, float sampleRate)
     : m_isInitialized(false)
     , m_nodeType(NodeTypeUnknown)
     , m_context(context)
@@ -195,7 +195,7 @@ AudioNodeOutput* AudioNode::output(unsigned i)
 ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
 {
     ASSERT(isMainThread());
-    AudioContextBase::AutoLocker locker(context());
+    BaseAudioContext::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, destination.nodeType(), ", output = ", outputIndex, ", input = ", inputIndex);
     
@@ -221,7 +221,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
 ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 {
-    AudioContextBase::AutoLocker locker(context());
+    BaseAudioContext::AutoLocker locker(context());
 
     ASSERT(isMainThread());
 
@@ -242,7 +242,7 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 ExceptionOr<void> AudioNode::disconnect(unsigned outputIndex)
 {
     ASSERT(isMainThread());
-    AudioContextBase::AutoLocker locker(context());
+    BaseAudioContext::AutoLocker locker(context());
 
     // Sanity check input and output indices.
     if (outputIndex >= numberOfOutputs())
@@ -264,7 +264,7 @@ unsigned AudioNode::channelCount()
 ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
 {
     ASSERT(isMainThread());
-    AudioContextBase::AutoLocker locker(context());
+    BaseAudioContext::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, channelCount);
     
@@ -297,7 +297,7 @@ String AudioNode::channelCountMode()
 ExceptionOr<void> AudioNode::setChannelCountMode(const String& mode)
 {
     ASSERT(isMainThread());
-    AudioContextBase::AutoLocker locker(context());
+    BaseAudioContext::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, mode);
     
@@ -333,7 +333,7 @@ String AudioNode::channelInterpretation()
 ExceptionOr<void> AudioNode::setChannelInterpretation(const String& interpretation)
 {
     ASSERT(isMainThread());
-    AudioContextBase::AutoLocker locker(context());
+    BaseAudioContext::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, interpretation);
     
@@ -438,7 +438,7 @@ void AudioNode::enableOutputsIfNecessary()
 {
     if (m_isDisabled && m_connectionRefCount > 0) {
         ASSERT(isMainThread());
-        AudioContextBase::AutoLocker locker(context());
+        BaseAudioContext::AutoLocker locker(context());
 
         m_isDisabled = false;
         for (auto& output : m_outputs)
@@ -535,7 +535,7 @@ Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> AudioNode::context
 {
     if (m_context->isWebKitAudioContext())
         return makeRefPtr(static_cast<WebKitAudioContext&>(m_context.get()));
-    return makeRefPtr(static_cast<BaseAudioContext&>(m_context.get()));
+    return makeRefPtr(m_context.get());
 }
 
 void AudioNode::finishDeref(RefType refType)

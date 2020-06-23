@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class AudioContextBase;
+class BaseAudioContext;
 class AudioNodeInput;
 class AudioNodeOutput;
 class AudioParam;
@@ -59,11 +59,11 @@ class AudioNode
 public:
     enum { ProcessingSizeInFrames = 128 };
 
-    AudioNode(AudioContextBase&, float sampleRate);
+    AudioNode(BaseAudioContext&, float sampleRate);
     virtual ~AudioNode();
 
-    AudioContextBase& context() { return m_context.get(); }
-    const AudioContextBase& context() const { return m_context.get(); }
+    BaseAudioContext& context() { return m_context.get(); }
+    const BaseAudioContext& context() const { return m_context.get(); }
 
     Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings() const;
 
@@ -214,7 +214,7 @@ private:
 
     volatile bool m_isInitialized;
     NodeType m_nodeType;
-    Ref<AudioContextBase> m_context;
+    Ref<BaseAudioContext> m_context;
     float m_sampleRate;
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;

@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GainNode);
 
-GainNode::GainNode(AudioContextBase& context, float sampleRate)
+GainNode::GainNode(BaseAudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_lastGain(1.0)
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context

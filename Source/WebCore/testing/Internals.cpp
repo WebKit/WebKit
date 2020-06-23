@@ -4301,7 +4301,7 @@ void Internals::sendMediaControlEvent(MediaControlEvent event)
 #if ENABLE(WEB_AUDIO)
 void Internals::setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
 {
-    RefPtr<AudioContextBase> context;
+    RefPtr<BaseAudioContext> context;
     switchOn(contextVariant, [&](RefPtr<BaseAudioContext> entry) {
         context = entry;
     }, [&](RefPtr<WebKitAudioContext> entry) {
@@ -4311,15 +4311,15 @@ void Internals::setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContex
     auto restrictions = context->behaviorRestrictions();
     context->removeBehaviorRestriction(restrictions);
 
-    restrictions = AudioContextBase::NoRestrictions;
+    restrictions = BaseAudioContext::NoRestrictions;
 
     for (StringView restrictionString : restrictionsString.split(',')) {
         if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
-            restrictions |= AudioContextBase::NoRestrictions;
+            restrictions |= BaseAudioContext::NoRestrictions;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudiostart"))
-            restrictions |= AudioContextBase::RequireUserGestureForAudioStartRestriction;
+            restrictions |= BaseAudioContext::RequireUserGestureForAudioStartRestriction;
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"))
-            restrictions |= AudioContextBase::RequirePageConsentForAudioStartRestriction;
+            restrictions |= BaseAudioContext::RequirePageConsentForAudioStartRestriction;
     }
     context->addBehaviorRestriction(restrictions);
 }

@@ -39,12 +39,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamAudioDestinationNode);
 
-Ref<MediaStreamAudioDestinationNode> MediaStreamAudioDestinationNode::create(AudioContextBase& context, size_t numberOfChannels)
+Ref<MediaStreamAudioDestinationNode> MediaStreamAudioDestinationNode::create(BaseAudioContext& context, size_t numberOfChannels)
 {
     return adoptRef(*new MediaStreamAudioDestinationNode(context, numberOfChannels));
 }
 
-MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(AudioContextBase& context, size_t numberOfChannels)
+MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(BaseAudioContext& context, size_t numberOfChannels)
     : AudioBasicInspectorNode(context, context.sampleRate(), numberOfChannels)
     , m_source(MediaStreamAudioSource::create(context.sampleRate()))
     , m_stream(MediaStream::create(*context.document(), MediaStreamPrivate::create(context.document()->logger(), m_source.copyRef())))

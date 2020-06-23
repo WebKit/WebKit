@@ -1,3 +1,160 @@
+2020-06-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop AudioContextBase class
+        https://bugs.webkit.org/show_bug.cgi?id=213522
+
+        Reviewed by Geoffrey Garen.
+
+        Drop AudioContextBase class and have WebKitAudioContext subclass the new BaseAudioContext class instead.
+        We recently introduced BaseAudioContext to match the specification and keeping AudioContextBase is now confusing.
+
+        No new tests, this simplifies our code but there is no Web-facing behavior change.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::AnalyserNode):
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        (WebCore::AudioNode::setChannelCount):
+        (WebCore::AudioNode::setChannelCountMode):
+        (WebCore::AudioNode::setChannelInterpretation):
+        (WebCore::AudioNode::enableOutputsIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::context):
+        (WebCore::AudioNode::context const):
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioNodeOutput.h:
+        (WebCore::AudioNodeOutput::context):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::AudioParam):
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::AudioSummingJunction):
+        * Modules/webaudio/AudioSummingJunction.h:
+        (WebCore::AudioSummingJunction::context):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        (WebCore::BaseAudioContext::document const):
+        (WebCore::BaseAudioContext::scriptExecutionContext const):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::isOfflineContext const):
+        (WebCore::BaseAudioContext::isWebKitAudioContext const):
+        (WebCore::BaseAudioContext::currentSampleFrame const):
+        (WebCore::BaseAudioContext::currentTime const):
+        (WebCore::BaseAudioContext::sampleRate const):
+        (WebCore::BaseAudioContext::incrementConnectionCount):
+        (WebCore::BaseAudioContext::setAudioThread):
+        (WebCore::BaseAudioContext::isAudioThreadFinished):
+        (WebCore::BaseAudioContext::behaviorRestrictions const):
+        (WebCore::BaseAudioContext::addBehaviorRestriction):
+        (WebCore::BaseAudioContext::removeBehaviorRestriction):
+        (WebCore::BaseAudioContext::nextAudioNodeLogIdentifier):
+        (WebCore::BaseAudioContext::nextAudioParameterLogIdentifier):
+        (WebCore::BaseAudioContext::isStopped const):
+        (WebCore::BaseAudioContext::AutoLocker::AutoLocker):
+        (WebCore::BaseAudioContext::AutoLocker::~AutoLocker):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * Modules/webaudio/BiquadFilterNode.h:
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * Modules/webaudio/BiquadProcessor.h:
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        (WebCore::ChannelSplitterNode::ChannelSplitterNode):
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        (WebCore::DelayNode::create):
+        * Modules/webaudio/DelayNode.h:
+        * Modules/webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::DelayProcessor):
+        * Modules/webaudio/DelayProcessor.h:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        * Modules/webaudio/GainNode.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::create):
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::create):
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::create):
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        (WebCore::OscillatorNode::OscillatorNode):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNodeBase::PannerNodeBase):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::create):
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        * Modules/webaudio/WaveShaperNode.h:
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::WebKitAudioContext):
+        (WebCore::WebKitAudioContext::createMediaElementSource):
+        (WebCore::WebKitAudioContext::createMediaStreamSource):
+        (WebCore::WebKitAudioContext::createMediaStreamDestination):
+        (WebCore::WebKitAudioContext::createWebKitPanner):
+        (WebCore::WebKitAudioContext::close):
+        * Modules/webaudio/WebKitAudioContext.h:
+        (isType):
+        * Modules/webaudio/WebKitAudioContext.idl:
+        * dom/EventTargetFactory.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAudioContextRestrictions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Introducing XRLayer

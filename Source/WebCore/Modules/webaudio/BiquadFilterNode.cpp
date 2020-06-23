@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BiquadFilterNode);
 
-BiquadFilterNode::BiquadFilterNode(AudioContextBase& context, float sampleRate)
+BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context, float sampleRate)
     : AudioBasicProcessorNode(context, sampleRate)
 {
     setNodeType(NodeTypeBiquadFilter);

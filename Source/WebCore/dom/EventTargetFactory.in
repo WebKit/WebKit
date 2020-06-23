@@ -53,7 +53,6 @@ VideoTrackList conditional=VIDEO
 VisualViewport
 WebAnimation
 WebGPUDevice conditional=WEBGPU
-WebKitAudioContext conditional=WEB_AUDIO
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket
 Worker

@@ -47,7 +47,7 @@ public:
 
     // Can be called from any thread.
     AudioNode* node() const { return m_node; }
-    AudioContextBase& context() { return m_node->context(); }
+    BaseAudioContext& context() { return m_node->context(); }
     
     // Causes our AudioNode to process if it hasn't already for this render quantum.
     // It returns the bus containing the processed audio for this output, returning inPlaceBus if in-place processing was possible.

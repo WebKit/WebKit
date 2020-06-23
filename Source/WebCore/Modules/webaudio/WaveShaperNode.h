@@ -33,7 +33,7 @@ namespace WebCore {
 class WaveShaperNode final : public AudioBasicProcessorNode {
     WTF_MAKE_ISO_ALLOCATED(WaveShaperNode);
 public:
-    static Ref<WaveShaperNode> create(AudioContextBase& context)
+    static Ref<WaveShaperNode> create(BaseAudioContext& context)
     {
         return adoptRef(*new WaveShaperNode(context));
     }
@@ -49,7 +49,7 @@ public:
     double latency() const { return latencyTime(); }
 
 private:    
-    explicit WaveShaperNode(AudioContextBase&);
+    explicit WaveShaperNode(BaseAudioContext&);
 
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
 };

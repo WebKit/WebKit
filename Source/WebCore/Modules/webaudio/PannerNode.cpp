@@ -48,7 +48,7 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-PannerNodeBase::PannerNodeBase(AudioContextBase& context, float sampleRate)
+PannerNodeBase::PannerNodeBase(BaseAudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
 }

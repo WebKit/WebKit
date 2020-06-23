@@ -36,7 +36,7 @@ class AudioContext;
 class AudioDestinationNode : public AudioNode, public AudioIOCallback {
     WTF_MAKE_ISO_ALLOCATED(AudioDestinationNode);
 public:
-    AudioDestinationNode(AudioContextBase&, float sampleRate);
+    AudioDestinationNode(BaseAudioContext&, float sampleRate);
     virtual ~AudioDestinationNode();
     
     // AudioNode   

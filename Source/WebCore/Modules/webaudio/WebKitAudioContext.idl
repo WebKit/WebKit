@@ -74,7 +74,7 @@
     [MayThrowException] DelayNode createDelay(optional unrestricted double maxDelayTime = 1);
     [MayThrowException] BiquadFilterNode createBiquadFilter();
     [MayThrowException] WaveShaperNode createWaveShaper();
-    [MayThrowException] WebKitAudioPannerNode createPanner();
+    [MayThrowException, ImplementedAs=createWebKitPanner] WebKitAudioPannerNode createPanner();
     [MayThrowException] ConvolverNode createConvolver();
     [MayThrowException] DynamicsCompressorNode createDynamicsCompressor();
     [MayThrowException] AnalyserNode createAnalyser();

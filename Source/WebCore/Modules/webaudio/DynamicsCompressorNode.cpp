@@ -41,7 +41,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicsCompressorNode);
 
-DynamicsCompressorNode::DynamicsCompressorNode(AudioContextBase& context, float sampleRate)
+DynamicsCompressorNode::DynamicsCompressorNode(BaseAudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     setNodeType(NodeTypeDynamicsCompressor);

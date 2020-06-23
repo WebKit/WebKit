@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelSplitterNode);
     
-RefPtr<ChannelSplitterNode> ChannelSplitterNode::create(AudioContextBase& context, float sampleRate, unsigned numberOfOutputs)
+RefPtr<ChannelSplitterNode> ChannelSplitterNode::create(BaseAudioContext& context, float sampleRate, unsigned numberOfOutputs)
 {
     if (!numberOfOutputs || numberOfOutputs > AudioContext::maxNumberOfChannels())
         return nullptr;
@@ -45,7 +45,7 @@ RefPtr<ChannelSplitterNode> ChannelSplitterNode::create(AudioContextBase& contex
     return adoptRef(*new ChannelSplitterNode(context, sampleRate, numberOfOutputs));      
 }
 
-ChannelSplitterNode::ChannelSplitterNode(AudioContextBase& context, float sampleRate, unsigned numberOfOutputs)
+ChannelSplitterNode::ChannelSplitterNode(BaseAudioContext& context, float sampleRate, unsigned numberOfOutputs)
     : AudioNode(context, sampleRate)
 {
     setNodeType(NodeTypeChannelSplitter);

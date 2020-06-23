@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-AudioSummingJunction::AudioSummingJunction(AudioContextBase& context)
+AudioSummingJunction::AudioSummingJunction(BaseAudioContext& context)
     : m_context(context)
     , m_renderingStateNeedUpdating(false)
 {

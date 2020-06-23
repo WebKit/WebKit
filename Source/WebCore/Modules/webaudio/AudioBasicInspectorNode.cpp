@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBasicInspectorNode);
 
-AudioBasicInspectorNode::AudioBasicInspectorNode(AudioContextBase& context, float sampleRate, unsigned outputChannelCount)
+AudioBasicInspectorNode::AudioBasicInspectorNode(BaseAudioContext& context, float sampleRate, unsigned outputChannelCount)
     : AudioNode(context, sampleRate)
 {
     setNodeType(NodeTypeBasicInspector);

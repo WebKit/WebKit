@@ -29,6 +29,7 @@
 
 #include "AudioContext.h"
 #include "JSDOMPromiseDeferred.h"
+#include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"

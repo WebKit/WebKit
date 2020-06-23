@@ -39,7 +39,7 @@ class PannerNodeBase;
 class AudioBufferSourceNode final : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
-    static Ref<AudioBufferSourceNode> create(AudioContextBase&, float sampleRate);
+    static Ref<AudioBufferSourceNode> create(BaseAudioContext&, float sampleRate);
 
     virtual ~AudioBufferSourceNode();
 
@@ -91,7 +91,7 @@ public:
     const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
 
 private:
-    AudioBufferSourceNode(AudioContextBase&, float sampleRate);
+    AudioBufferSourceNode(BaseAudioContext&, float sampleRate);
 
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }

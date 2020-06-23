@@ -53,7 +53,7 @@ public:
     static const double DefaultSmoothingConstant;
     static const double SnapThreshold;
 
-    static Ref<AudioParam> create(AudioContextBase& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
+    static Ref<AudioParam> create(BaseAudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
     {
         return adoptRef(*new AudioParam(context, name, defaultValue, minValue, maxValue, units));
     }
@@ -109,7 +109,7 @@ public:
     void disconnect(AudioNodeOutput*);
 
 protected:
-    AudioParam(AudioContextBase&, const String&, double defaultValue, double minValue, double maxValue, unsigned units = 0);
+    AudioParam(BaseAudioContext&, const String&, double defaultValue, double minValue, double maxValue, unsigned units = 0);
 
 private:
     // sampleAccurate corresponds to a-rate (audio rate) vs. k-rate in the Web Audio specification.

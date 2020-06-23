@@ -40,7 +40,7 @@ class AudioContext;
 class MediaElementAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
     WTF_MAKE_ISO_ALLOCATED(MediaElementAudioSourceNode);
 public:
-    static Ref<MediaElementAudioSourceNode> create(AudioContextBase&, HTMLMediaElement&);
+    static Ref<MediaElementAudioSourceNode> create(BaseAudioContext&, HTMLMediaElement&);
 
     virtual ~MediaElementAudioSourceNode();
 
@@ -57,7 +57,7 @@ public:
     void unlock();
 
 private:
-    MediaElementAudioSourceNode(AudioContextBase&, HTMLMediaElement&);
+    MediaElementAudioSourceNode(BaseAudioContext&, HTMLMediaElement&);
 
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }

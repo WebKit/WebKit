@@ -50,7 +50,7 @@ enum class BiquadFilterType {
 class BiquadProcessor final : public AudioDSPKernelProcessor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BiquadProcessor(AudioContextBase&, float sampleRate, size_t numberOfChannels, bool autoInitialize);
+    BiquadProcessor(BaseAudioContext&, float sampleRate, size_t numberOfChannels, bool autoInitialize);
 
     virtual ~BiquadProcessor();
     
