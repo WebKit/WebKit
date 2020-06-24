@@ -1,3 +1,13 @@
+2020-06-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove now-invalid assertion after r263441
+        https://bugs.webkit.org/show_bug.cgi?id=213527
+
+        The alternative service storage directory is now null when HTTP/3 is disabled, not just in private browsing.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2020-06-24  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r263328): Crash in bool WTF::WeakHashSet<WebKit::AudioSessionRoutingArbitratorProxy, WTF::EmptyCounter>::contains<WebKit::AudioSessionRoutingArbitratorProxy> const

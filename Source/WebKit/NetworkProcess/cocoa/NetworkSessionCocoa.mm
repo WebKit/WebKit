@@ -1200,8 +1200,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     if (!parameters.alternativeServiceDirectory.isEmpty()) {
         SandboxExtension::consumePermanently(parameters.alternativeServiceDirectoryExtensionHandle);
         configuration._alternativeServicesStorage = [[[_NSHTTPAlternativeServicesStorage alloc] initPersistentStoreWithURL:[[NSURL fileURLWithPath:parameters.alternativeServiceDirectory isDirectory:YES] URLByAppendingPathComponent:@"AlternativeService.sqlite"]] autorelease];
-    } else
-        ASSERT(m_sessionID.isEphemeral());
+    }
     if (parameters.http3Enabled)
         configuration._allowsHTTP3 = YES;
 #endif
