@@ -1,3 +1,31 @@
+2020-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove [CallbackNeedsOperatorEqual] extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=213538
+
+        Reviewed by Chris Dumez.
+
+        This change removes now unused [CallbackNeedsOperatorEqual] extended attribute.
+        It was added to accommodate MediaQueryListListener, which was removed in r260243.
+
+        We are safe to remove [CallbackNeedsOperatorEqual] since its implementation
+        expects certain constructor signature, and callback interfaces are considered
+        legacy by spec authors anyway.
+
+        Also, this patch removes 2 resolved FIXMEs:
+        1. OrdinaryDefineOwnProperty() is performed correctly, no dynamic dispatch there.
+        2. Set() is performed correctly, with `false` as last argument.
+           (changed in https://github.com/heycam/webidl/pull/832, covered by WPT)
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefineOwnProperty):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        * bindings/scripts/IDLAttributes.json:
+
 2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Fix PlatformXR initialization/destruction

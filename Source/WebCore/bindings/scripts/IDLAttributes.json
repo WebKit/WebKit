@@ -35,9 +35,6 @@
             "contextsAllowed": ["interface", "attribute", "operation"],
             "values": ["*"]
         },
-        "CallbackNeedsOperatorEqual": {
-            "contextsAllowed": ["callback-function"]
-        },
         "CallbackThisObject": {
             "contextsAllowed": ["callback-function", "operation"]
         },
