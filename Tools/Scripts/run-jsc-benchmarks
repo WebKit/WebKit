@@ -51,6 +51,7 @@ V8_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "v8-v6"
 TAILBENCH_PATH = PERFORMANCETESTS_PATH + "TailBench9000"
 BIGINTBENCH_PATH = PERFORMANCETESTS_PATH + "BigIntBench"
 MICROBENCHMARKS_PATH = OPENSOURCE_PATH + "JSTests" + "microbenchmarks"
+PRIVATEFIELDSBENCH_PATH = MICROBENCHMARKS_PATH + "class-fields-private"
 SLOW_MICROBENCHMARKS_PATH = OPENSOURCE_PATH + "JSTests" + "slowMicrobenchmarks"
 OPENSOURCE_OCTANE_PATH = PERFORMANCETESTS_PATH + "Octane"
 OCTANE_WRAPPER_PATH = OPENSOURCE_OCTANE_PATH + "wrappers"
@@ -235,6 +236,7 @@ $includeCompressionBench = false
 $includeSixSpeed = false
 $includeTailBench = true
 $includeBigIntBench = false
+$includePrivateFieldsBench = false
 $measureGC=false
 $benchmarkPattern=nil
 $verbosity=0
@@ -1767,6 +1769,21 @@ class BigIntBenchBenchmark
   end
 end
 
+class PrivateFieldsBenchmark
+    include Benchmark
+
+    def initialize(name)
+        @name = name
+    end
+
+    def emitRunCode(plan)
+        emitBenchRunCode(fullname, plan, SingleFileTimedBenchmarkParameters.new(ensureFile("PrivateFieldsBench-#{@name}", "#{PRIVATEFIELDSBENCH_PATH}/#{@name}.js")))
+    end
+
+    def environment
+        {"JSC_usePrivateClassFields" => "true"}
+    end
+end
 
 class MicrobenchmarksBenchmark
   include Benchmark
@@ -2866,6 +2883,7 @@ begin
                  ['--six-speed', GetoptLong::NO_ARGUMENT],
                  ['--tail-bench', GetoptLong::NO_ARGUMENT],
                  ['--big-int-bench', GetoptLong::NO_ARGUMENT],
+                 ['--private-fields-bench', GetoptLong::NO_ARGUMENT],
                  ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
                  ['--measure-gc', GetoptLong::OPTIONAL_ARGUMENT],
                  ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
@@ -2984,6 +3002,9 @@ begin
     when '--big-int-bench'
       resetBenchOptionsIfNecessary
       $includeBigIntBench = true
+    when '--private-fields-bench'
+      resetBenchOptionsIfNecessary
+      $includePrivateFieldsBench = true
     when '--benchmarks'
       $benchmarkPattern = Regexp.new(arg)
     when '--measure-gc'
@@ -3221,6 +3242,15 @@ begin
     end
   }
 
+  PRIVATEFIELDSBENCH = BenchmarkSuite.new("PrivateFieldsBench", :geometricMean, 0)
+  Dir.foreach(PRIVATEFIELDSBENCH_PATH) {
+    | filename |
+    if filename =~ /\.js$/
+        name = $~.pre_match
+        PRIVATEFIELDSBENCH.add PrivateFieldsBenchmark.new(name)
+    end
+  }
+
   MICROBENCHMARKS = BenchmarkSuite.new("Microbenchmarks", :geometricMean, 0)
   Dir.foreach(MICROBENCHMARKS_PATH) {
     | filename |
@@ -3390,6 +3420,10 @@ begin
 
   if $includeBigIntBench and not BIGINTBENCH.empty?
     $suites << BIGINTBENCH
+  end
+
+  if $includePrivateFieldsBench and not PRIVATEFIELDSBENCH.empty?
+    $suites << PRIVATEFIELDSBENCH
   end
 
   if $includeAsmBench and not ASMBENCH.empty?
