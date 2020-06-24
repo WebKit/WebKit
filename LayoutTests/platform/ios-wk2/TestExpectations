@@ -1760,3 +1760,5 @@ webkit.org/b/213461 fast/mediastream/mediastreamtrack-video-frameRate-clone-incr
 webkit.org/b/213511 fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
+
+webkit.org/b/213553 http/tests/resourceLoadStatistics/grandfathering-database.html [ Pass Timeout ]

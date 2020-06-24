@@ -1041,3 +1041,5 @@ webkit.org/b/213292 [ Catalina Release ] http/tests/IndexedDB/storage-limit-1.ht
 webkit.org/b/213375 [ Debug ] webaudio/biquad-bandpass.html [ Pass Crash ]
 
 webkit.org/b/213461 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
+
+webkit.org/b/213553 http/tests/resourceLoadStatistics/grandfathering-database.html [ Pass Timeout ]
