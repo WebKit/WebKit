@@ -1,7 +1,6 @@
 
 PASS 2 cursors 
-PASS 10 cursors 
-PASS 100 cursors 
-PASS 1000 cursors 
-PASS 10000 cursors 
+PASS 20 cursors 
+PASS 200 cursors 
+PASS 2000 cursors 
 

@@ -21,12 +21,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-keys-bypass-setters.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-values-bypass-chain.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-values-bypass-setters.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/blob-contenttype.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/blob-delete-objectstore-db.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/close-in-upgradeneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/cursor-overloads.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/delete-request-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/error-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/event-dispatch-active-flag.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/file_support.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/file_to_save.txt
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html
@@ -75,6 +81,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_objectstore3.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_objectstore4.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_objectstore5.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_delete_objectstore.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_index.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_index2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_index3.htm
@@ -219,6 +226,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor3.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor4.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_reverse_cursor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_tombstones.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbkeyrange-includes.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbkeyrange.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbkeyrange_incorrect.htm
@@ -359,6 +368,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/structured-clone-transaction-state.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support-promises.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support.js
@@ -374,6 +384,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-requestqueue.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-across-connections.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-across-databases.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-mixed-scopes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-ordering.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-ro-waits-for-rw.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-rw-scopes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-within-database.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-deactivation-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-backend-aborted.html

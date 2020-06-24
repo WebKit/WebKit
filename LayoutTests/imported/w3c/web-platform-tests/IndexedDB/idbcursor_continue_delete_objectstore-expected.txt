@@ -1,0 +1,3 @@
+
+PASS IDBObjectStore.delete() and IDBCursor.continue() - object store - remove a record from the object store while iterating cursor 
+

@@ -1,4 +1,4 @@
 
-FAIL Detached ArrayBuffer assert_throws: function "() => { store.put('', buffer); }" did not throw
-FAIL Detached TypedArray assert_throws: function "() => { store.put('', array); }" did not throw
+FAIL Detached ArrayBuffer assert_throws_js: function "() => { store.put('', buffer); }" did not throw
+FAIL Detached TypedArray assert_throws_js: function "() => { store.put('', array); }" did not throw
 

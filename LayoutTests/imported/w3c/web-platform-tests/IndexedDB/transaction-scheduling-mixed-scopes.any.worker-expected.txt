@@ -1,0 +1,3 @@
+
+PASS Check that scope restrictions on mixed transactions are enforced. 
+

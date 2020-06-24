@@ -33,4 +33,5 @@ PASS Invalid key - [1,2,3,,]
 PASS Invalid key - array directly contains self 
 PASS Invalid key - array indirectly contains self 
 PASS Invalid key - array member contains self 
+PASS Invalid key - proxy of an array 
 

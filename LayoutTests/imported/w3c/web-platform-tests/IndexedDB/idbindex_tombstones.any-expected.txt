@@ -1,0 +1,6 @@
+
+PASS Forward iteration over an index in a readonly transaction 
+PASS Backward iteration over an index in a readonly transaction 
+PASS Forward iteration over an index in a readwrite transaction 
+PASS Backward iteration over an index in a readwrite transaction 
+

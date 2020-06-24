@@ -1,6 +1,13 @@
-// META: script=support-promises.js
 // META: title=Indexed DB and Structured Serializing/Deserializing
 // META: timeout=long
+// META: script=support-promises.js
+// META: script=/common/subset-tests.js
+// META: variant=?1-20
+// META: variant=?21-40
+// META: variant=?41-60
+// META: variant=?61-80
+// META: variant=?81-100
+// META: variant=?101-last
 
 // Tests Indexed DB coverage of HTML's Safe "passing of structured data"
 // https://html.spec.whatwg.org/multipage/structured-data.html
@@ -20,7 +27,7 @@ function describe(value) {
 }
 
 function cloneTest(value, verifyFunc) {
-  promise_test(async t => {
+  subsetTest(promise_test, async t => {
     const db = await createDatabase(t, db => {
       const store = db.createObjectStore('store');
       // This index is not used, but evaluating key path on each put()
@@ -53,7 +60,7 @@ function cloneObjectTest(value, verifyFunc) {
 }
 
 function cloneFailureTest(value) {
-  promise_test(async t => {
+  subsetTest(promise_test, async t => {
     const db = await createDatabase(t, db => {
       db.createObjectStore('store');
     });
@@ -65,7 +72,7 @@ function cloneFailureTest(value) {
     });
     const tx = db.transaction('store', 'readwrite');
     const store = tx.objectStore('store');
-    assert_throws('DataCloneError', () => store.put(value, 'key'));
+    assert_throws_dom('DataCloneError', () => store.put(value, 'key'));
   }, 'Not serializable: ' + describe(value));
 }
 
@@ -243,7 +250,6 @@ cloneObjectTest({foo: true, bar: false}, (orig, clone) => {
 // TODO: Test these additional interfaces:
 // * DOMQuad
 // * DOMException
-// * DetectedText, DetectedFace, DetectedBarcode
 // * RTCCertificate
 
 // Geometry types
@@ -288,8 +294,6 @@ cloneObjectTest(
     assert_equals(orig.type, clone.type);
     assert_equals(orig.name, clone.name);
     assert_equals(orig.lastModified, clone.lastModified);
-    assert_equals(String(orig.lastModifiedDate),
-                  String(clone.lastModifiedDate));
     assert_equals(await orig.text(), await clone.text());
   });
 

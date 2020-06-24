@@ -1,7 +1,10 @@
 
-PASS Committed data can be read back out: case 0 
-PASS Committed data can be read back out: case 1 
-PASS Committed data can be read back out: case 2 
-PASS Committed data can be read back out: case 3 
-PASS Committed data can be read back out: case 4 
+FAIL Committed data can be read back out: case 0 assert_equals: expected (string) "default" but got (undefined) undefined
+FAIL Committed data can be read back out: case 1 assert_equals: expected (string) "default" but got (undefined) undefined
+FAIL Committed data can be read back out: case 2 assert_equals: expected (string) "default" but got (undefined) undefined
+FAIL Committed data can be read back out: case 3 assert_equals: expected (string) "relaxed" but got (undefined) undefined
+FAIL Committed data can be read back out: case 4 assert_equals: expected (string) "strict" but got (undefined) undefined
+FAIL Invalid durability option throws a TypeError assert_throws_js: function "function () {
+      db.transaction(['books'], 'readwrite', { durability: 'invalid' });
+  }" did not throw
 
