@@ -26,8 +26,10 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
@@ -79,6 +81,28 @@ TEST(WebKit, LoadInvalidURLRequest)
 
         EXPECT_TRUE(didFailProvisionalLoad);
     }
+}
+
+TEST(WebKit, LoadInvalidURLRequestNonASCII)
+{
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().webContentProcessDidTerminate = ^(WKWebView *) {
+        ASSERT_NOT_REACHED();
+    };
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
+        EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
+        EXPECT_WK_STREQ([error.userInfo[@"NSErrorFailingURLKey"] absoluteString], "http://%E2%80%80");
+        done = true;
+    };
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    const UInt8 bytes[10] = { 'h', 't', 't', 'p', ':', '/', '/', 0xE2, 0x80, 0x80 };
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:(NSURL *)adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, 10, kCFStringEncodingUTF8, nullptr, true)).get()];
+    [request _setProperty:request.URL forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
+    [webView loadRequest:request];
+    Util::run(&done);
 }
 
 } // namespace TestWebKitAPI

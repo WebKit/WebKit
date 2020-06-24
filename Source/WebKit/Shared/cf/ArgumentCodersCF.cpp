@@ -640,7 +640,7 @@ bool decode(Decoder& decoder, RetainPtr<CFURLRef>& result)
     }
 #endif
 
-    result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes.data()), urlBytes.size(), kCFStringEncodingASCII, baseURL.get(), true));
+    result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes.data()), urlBytes.size(), kCFStringEncodingUTF8, baseURL.get(), true));
     return result;
 }
 

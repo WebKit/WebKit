@@ -1,3 +1,13 @@
+2020-06-24  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r262341) Use UTF-8 to decode CFURLRefs from IPC
+        https://bugs.webkit.org/show_bug.cgi?id=213565
+
+        Reviewed by Darin Adler.
+
+        * fast/url/navigate-non-ascii-expected.txt: Added.
+        * fast/url/navigate-non-ascii.html: Added.
+
 2020-06-24  Umar Iqbal  <uiqbal@apple.com>
 
         We should resurrect the older patch that collects some statistics of web API calls
