@@ -1,3 +1,12 @@
+2020-06-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Unreviewed gardening. Updated expectations and new passing tests.
+
+        * web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https-expected.txt: Added.
+
 2020-06-23  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/domparsing from upstream

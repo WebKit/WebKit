@@ -1,3 +1,12 @@
+2020-06-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Unreviewed gardening. Updated expectations and new passing tests.
+
+        Several tests are now passing on Debug. We're also adding some missing expectations
+        for skipped tests that were really passing.
+
+        * platform/wpe/TestExpectations:
+
 2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update test expectations after r263437.

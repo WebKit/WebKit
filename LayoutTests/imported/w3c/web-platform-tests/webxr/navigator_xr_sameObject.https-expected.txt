@@ -1,0 +1,3 @@
+
+PASS Navigator.xr meets [SameObject] requirement 
+
