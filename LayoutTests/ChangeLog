@@ -1,3 +1,13 @@
+2020-06-24  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] webrtc/disable-encryption.html is a crashing flaky
+        https://bugs.webkit.org/show_bug.cgi?id=211166
+        <rdar://problem/63223973>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/gtk/TestExpectations: Unflag webrtc/disable-encryption.html.
+
 2020-06-24  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS macOS ] http/tests/resourceLoadStatistics/grandfathering-database.html is a rare flaky timeout

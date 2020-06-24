@@ -2218,8 +2218,6 @@ webkit.org/b/211835 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.ht
 
 webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
-webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
-
 webkit.org/b/212821 scrollbars/scrollbar-selectors.html [ Pass Timeout Missing ]
 
 webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]

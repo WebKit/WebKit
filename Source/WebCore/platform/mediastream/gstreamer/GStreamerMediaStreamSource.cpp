@@ -219,9 +219,10 @@ struct _WebKitMediaStreamSrc {
             self->setEnoughData(true);
         }
 
-        void setSrc(GRefPtr<GstElement>&& src)
+        void ensureAppSrc()
         {
-            m_src = WTFMove(src);
+            ASSERT(!m_src);
+            m_src = gst_element_factory_make("appsrc", nullptr);
             if (!GST_IS_APP_SRC(m_src.get()))
                 return;
 
@@ -588,8 +589,7 @@ static gboolean webkitMediaStreamSrcSetupAppSrc(WebKitMediaStreamSrc* self,
     MediaStreamTrackPrivate* track, WebKitMediaStreamSrc::SourceData* data,
     GstStaticPadTemplate* pad_template, bool onlyTrack)
 {
-    GRefPtr<GstElement> src = gst_element_factory_make("appsrc", nullptr);
-    data->setSrc(WTFMove(src));
+    data->ensureAppSrc();
     if (track->isCaptureTrack())
         g_object_set(data->src(), "do-timestamp", true, nullptr);
 
