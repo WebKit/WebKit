@@ -29,6 +29,7 @@
 #include "ClipboardImageReader.h"
 #include "ClipboardItem.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "JSBlob.h"
 #include "JSClipboardItem.h"
@@ -49,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Clipboard);
 static bool shouldProceedWithClipboardWrite(const Frame& frame)
 {
     auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard())
+    if (settings.javaScriptCanAccessClipboard() || frame.editor().isCopyingFromMenuOrKeyBinding())
         return true;
 
     switch (settings.clipboardAccessPolicy()) {

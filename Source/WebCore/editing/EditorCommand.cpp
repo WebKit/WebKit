@@ -240,9 +240,9 @@ static bool executeBackColor(Frame& frame, Event*, EditorCommandSource source, c
     return executeApplyStyle(frame, source, EditAction::SetBackgroundColor, CSSPropertyBackgroundColor, value);
 }
 
-static bool executeCopy(Frame& frame, Event*, EditorCommandSource, const String&)
+static bool executeCopy(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
-    frame.editor().copy();
+    frame.editor().copy(source == CommandFromMenuOrKeyBinding ? Editor::FromMenuOrKeyBinding::Yes : Editor::FromMenuOrKeyBinding::No);
     return true;
 }
 
@@ -260,7 +260,7 @@ static bool executeCut(Frame& frame, Event*, EditorCommandSource source, const S
 {
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
-        frame.editor().cut();
+        frame.editor().cut(Editor::FromMenuOrKeyBinding::Yes);
     } else
         frame.editor().cut();
     return true;

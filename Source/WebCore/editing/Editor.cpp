@@ -432,7 +432,7 @@ static bool dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind 
 
     target->dispatchEvent(event);
     bool noDefaultProcessing = event->defaultPrevented();
-    if (noDefaultProcessing && (kind == ClipboardEventKind::Copy || kind == ClipboardEventKind::Cut))
+    if (noDefaultProcessing && (kind == ClipboardEventKind::Copy || kind == ClipboardEventKind::Cut) && dataTransfer->pasteboard().hasData())
         dataTransfer->commitToPasteboard(*Pasteboard::createForCopyAndPaste());
 
     dataTransfer->makeInvalidForSecurity();
@@ -1366,8 +1366,9 @@ bool Editor::insertParagraphSeparatorInQuotedContent()
     return true;
 }
 
-void Editor::cut()
+void Editor::cut(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
+    SetForScope<bool> copyScope { m_copyingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
     if (tryDHTMLCut())
         return; // DHTML did the whole operation
     if (!canCut()) {
@@ -1378,8 +1379,9 @@ void Editor::cut()
     performCutOrCopy(CutAction);
 }
 
-void Editor::copy()
+void Editor::copy(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
+    SetForScope<bool> copyScope { m_copyingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
     if (tryDHTMLCopy())
         return; // DHTML did the whole operation
     if (!canCopy()) {

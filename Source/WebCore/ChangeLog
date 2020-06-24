@@ -1,3 +1,41 @@
+2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow the async clipboard API to write data when copying via menu action or key binding
+        https://bugs.webkit.org/show_bug.cgi?id=213568
+        <rdar://problem/64711653>
+
+        Reviewed by Darin Adler.
+
+        Makes a couple of minor adjustments to allow `clipboard.write` and `clipboard.writeText` to work during a user-
+        triggered copy event (that is, from menu or key binding). See below for more details.
+
+        Test: editing/async-clipboard/clipboard-write-in-copy-event-handler.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::shouldProceedWithClipboardWrite):
+
+        Add a mechanism to keep track of when Editor is handling a copy or cut event that is the result of interacting
+        with a key binding or menu action. Use this mechanism to grant write access via the async clipboard API.
+
+        * editing/Editor.cpp:
+        (WebCore::dispatchClipboardEvent):
+
+        Only attempt to commit the static pasteboard to the platform pasteboard during a copy event when preventing
+        default if the StaticPasteboard-backed DataTransfer actually contains data. This fixes a race condition when
+        writing to the pasteboard using the async clipboard API during the "copy" event, where the changeCount when
+        beginning to write is incremented due to the pasteboard getting cleared.
+
+        This change will also make it so that calling `preventDefault()` on the copy event will result in no change to
+        the system pasteboard, instead of clearing out any existing content on the pasteboard.
+
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        * editing/Editor.h:
+        (WebCore::Editor::isCopyingFromMenuOrKeyBinding const):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeCopy):
+        (WebCore::executeCut):
+
 2020-06-24  Umar Iqbal  <uiqbal@apple.com>
 
         We should resurrect the older patch that collects some statistics of web API calls

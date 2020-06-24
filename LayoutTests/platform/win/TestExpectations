@@ -1202,6 +1202,7 @@ webkit.org/b/203100 editing/async-clipboard/clipboard-get-type-with-old-items.ht
 webkit.org/b/203100 editing/async-clipboard/clipboard-change-data-while-writing.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-write-basic.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-write-items-twice.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-write-in-copy-event-handler.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-write-text.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]

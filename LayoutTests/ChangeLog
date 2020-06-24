@@ -1,3 +1,17 @@
+2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow the async clipboard API to write data when copying via menu action or key binding
+        https://bugs.webkit.org/show_bug.cgi?id=213568
+        <rdar://problem/64711653>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test to exercise async clipboard writing API during the copy event.
+
+        * editing/async-clipboard/clipboard-write-in-copy-event-handler-expected.txt: Added.
+        * editing/async-clipboard/clipboard-write-in-copy-event-handler.html: Added.
+        * platform/win/TestExpectations:
+
 2020-06-24  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for editing/spelling/editing-word-with-marker-1.html as they are passing. 
