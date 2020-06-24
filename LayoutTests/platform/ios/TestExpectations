@@ -3405,6 +3405,11 @@ webkit.org/b/207705 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/202003 imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.worker.html [ Pass Failure ]
 
+webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.html [ Pass Failure ]
+webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.worker.html [ Pass Failure ]
+webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.html [ Pass Failure ]
+webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.worker.html [ Pass Failure ]
+
 webkit.org/b/207762 http/wpt/service-workers/check-service-worker-header.https.html [ Pass Failure ]
 
 webkit.org/b/207763 http/wpt/service-workers/file-upload.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2020-06-23  Sam Weinig  <weinig@apple.com>
+
+        [ iOS Release ] imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.html & imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.worker.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=213516
+        <rdar://problem/64642790>
+
+        * platform/ios/TestExpectations:
+        Mark a few WebSocket tests as flakey on iOS test runners.
+
 2020-06-23  Karl Rackler  <rackler@apple.com>
 
         canvas/philip/tests/2d.gradient.interpolate.solid.html is no longer failing - remove expectations.
