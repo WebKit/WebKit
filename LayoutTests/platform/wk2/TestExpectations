@@ -775,6 +775,9 @@ inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass ]
 # Highlighting marked text ranges from layout tests is only supported in WebKit2.
 editing/input/composition-highlights.html [ Pass ]
 
+# Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
+media/video-supports-fullscreen.html [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 
