@@ -54,7 +54,7 @@ struct LinkLoadParameters {
     String crossOrigin;
     String imageSrcSet;
     String imageSizes;
-    ReferrerPolicy referrerPolicy;
+    ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
 };
 
 class LinkLoader : private CachedResourceClient, public CanMakeWeakPtr<LinkLoader> {
