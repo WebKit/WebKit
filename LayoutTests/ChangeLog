@@ -1,3 +1,9 @@
+2020-06-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update test expectations after r263437.
+
+        * platform/gtk/TestExpectations:
+
 2020-06-23  Chris Dumez  <cdumez@apple.com>
 
         Stop using assert_throws() under LayoutTests/http/wpt
