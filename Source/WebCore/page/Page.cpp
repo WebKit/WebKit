@@ -1424,7 +1424,7 @@ void Page::updateRendering()
     });
 
     for (auto& document : initialDocuments) {
-        if (document)
+        if (document && document->domWindow())
             document->domWindow()->unfreezeNowTimestamp();
     }
 
