@@ -1,3 +1,32 @@
+2020-06-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the 50ms rescheduling timeout from callOnMainThread
+        https://bugs.webkit.org/show_bug.cgi?id=213560
+
+        Reviewed by Anders Carlsson.
+
+        This is a step toward making the engine less flaky by unifying
+        callOnMainThread with RunLoop::dispatch.
+
+        The timeout was added in r40888 to avoid a hang under heavy postMessage
+        load. A few reasons this isn’t the right approach anymore:
+
+        (1) postMessage has migrated to EventLoop, which does its own
+        scheduling.
+
+        (2) postMessage does not use the application process RunLoop in Modern
+        WebKit.
+
+        (3) Delay is not a sufficient solution to a messaging hang — because
+        you’ll just OOM crash instead. The original author noted this problem
+        in bug 23705 but never resolved it; and we rediscovered it in r233111.
+
+        I verified manually that the r40888 version of
+        fast/workers/worker-timeout.html does not hang.
+
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+
 2020-06-23  Geoffrey Garen  <ggaren@apple.com>
 
         Remove WTF::setMainThreadCallbacksPaused

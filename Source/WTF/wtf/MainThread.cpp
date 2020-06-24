@@ -66,14 +66,9 @@ bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 }
 #endif
 
-// 0.1 sec delays in UI is approximate threshold when they become noticeable. Have a limit that's half of that.
-static constexpr auto maxRunLoopSuspensionTime = 50_ms;
-
 void dispatchFunctionsFromMainThread()
 {
     ASSERT(isMainThread());
-
-    auto startTime = MonotonicTime::now();
 
     Function<void ()> function;
 
@@ -90,15 +85,6 @@ void dispatchFunctionsFromMainThread()
 
         // Clearing the function can have side effects, so do so outside of the lock above.
         function = nullptr;
-
-        // If we are running accumulated functions for too long so UI may become unresponsive, we need to
-        // yield so the user input can be processed. Otherwise user may not be able to even close the window.
-        // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
-        // allows input events to be processed before we are back here.
-        if (MonotonicTime::now() - startTime > maxRunLoopSuspensionTime) {
-            scheduleDispatchFunctionsOnMainThread();
-            break;
-        }
     }
 }
 
