@@ -1444,10 +1444,6 @@ fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 
-# <rdar://problem/32799624> REGRESSION: LayoutTests css3/font-variant-petite-caps-synthesis-coverage.html and css3/font-variant-small-caps-synthesis-coverage.html are failing
-css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-
 # <rdar://problem/32799596> REGRESSION: LayoutTests canvas/philip/tests/2d.gradient.interpolate.solid.html and imported/w3c/canvas/2d.gradient.interpolate.solid.html failing
 imported/w3c/canvas/2d.gradient.interpolate.solid.html [ Failure ]
 

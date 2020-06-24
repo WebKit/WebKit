@@ -1,3 +1,12 @@
+2020-06-24  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for css3/font-variant-petite-caps-synthesis-coverage.html and css3/font-variant-small-caps-synthesis-coverage.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213569
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-06-24  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r260360): easing curves are broken on JS-originated animations
