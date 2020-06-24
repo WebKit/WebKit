@@ -1,3 +1,14 @@
+2020-06-24  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build once RBSProcessLimitations.h is introduced
+        https://bugs.webkit.org/show_bug.cgi?id=213562
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/RunningBoardServicesSPI.h:
+        We can't forward-declare Objective-C SPI if it actually exists
+        without inspiring duplicate definition errors.
+
 2020-06-24  Alex Christensen  <achristensen@webkit.org>
 
         Remove now-invalid assertion after r263441
