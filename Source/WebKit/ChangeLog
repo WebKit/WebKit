@@ -1,3 +1,23 @@
+2020-06-24  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/62977672
+
+    2020-06-24  Jer Noble  <jer.noble@apple.com>
+
+        [safari-609-branch] PiP button still enabled in fullscreen mode when WKWebViewConfiguration.allowsPictureInPictureMediaPlayback is set to NO
+        https://bugs.webkit.org/show_bug.cgi?id=213579
+
+        In r262508, a check of WebPageProxy::preferences() was added to see if the client had disabled PiP mode. However, due to
+        https://bugs.webkit.org/show_bug.cgi?id=209678, fixed in trunk in r259399, but never merged to the 609 branch, this check
+        fails and the read prefrerence continues to indicate the PiP button should be enabled.
+
+        Work around the behavior fixed in trunk by r259399 and read the value out of page->configuration().preferenceValues() instead.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::preferenceValues const):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+
 2020-06-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r262508. rdar://problem/62977672

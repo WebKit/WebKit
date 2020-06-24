@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 #import "WKFullScreenViewController.h"
 
+#import "APIPageConfiguration.h"
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "UIKitSPI.h"
@@ -36,6 +37,7 @@
 #import "WKWebViewInternal.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
+#import "WebPreferencesKeys.h"
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
@@ -266,8 +268,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
     bool isPiPEnabled = false;
-    if (auto page = [self._webView _page])
-        isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
+    if (auto page = [self._webView _page]) {
+        auto values = page->configuration().preferenceValues();
+        auto valuesIt = values.find(WebKit::WebPreferencesKey::allowsPictureInPictureMediaPlaybackKey());
+        isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && valuesIt != values.end() && WTF::holds_alternative<bool>(valuesIt->value) && WTF::get<bool>(valuesIt->value);
+    }
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 }

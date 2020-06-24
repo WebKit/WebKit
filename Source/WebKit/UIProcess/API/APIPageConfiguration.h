@@ -77,6 +77,7 @@ public:
     void setPreferences(WebKit::WebPreferences*);
 
     WebKit::WebPreferencesStore::ValueMap& preferenceValues() { return m_preferenceValues; }
+    const WebKit::WebPreferencesStore::ValueMap& preferenceValues() const { return m_preferenceValues; }
 
     WebKit::WebPageProxy* relatedPage() const;
     void setRelatedPage(WebKit::WebPageProxy*);
