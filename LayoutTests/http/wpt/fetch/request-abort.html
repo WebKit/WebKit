@@ -11,7 +11,7 @@
 test(() => {
     new Request("/", {signal: null});
     new Request("/", {signal: undefined});
-    assert_throws(new TypeError, () => { new Request("/", {signal: "my signal"}) });
+    assert_throws_js(TypeError, () => { new Request("/", {signal: "my signal"}) });
 }, "Request from URL with signal");
 
 test(() => {
@@ -25,7 +25,7 @@ test(() => {
     const r2 = new Request(request, {signal: null});
     assert_false(r2.signal.aborted, "r2 signal is not aborted");
 
-    assert_throws(new TypeError, () => { new Request(request, {signal: "my signal"}) });
+    assert_throws_js(TypeError, () => { new Request(request, {signal: "my signal"}) });
 }, "Request from request with signal");
         </script>
     </body>

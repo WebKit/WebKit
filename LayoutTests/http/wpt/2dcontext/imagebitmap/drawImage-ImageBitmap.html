@@ -119,7 +119,7 @@
         }).then(function(imageBitmap) {
             imageBitmap.close();
             let [canvas, ctx] = create9x9CanvasWith2dContext();
-            assert_throws("InvalidStateError", function () {
+            assert_throws_dom("InvalidStateError", function () {
                 ctx.drawImage(imageBitmap, 0, 0);
             }, "A closed ImageBitmap can't be drawn.");
         });
@@ -134,7 +134,7 @@
             return createImageBitmap(img);
         }).then(function(imageBitmap) {
             let [canvas, ctx] = create9x9CanvasWith2dContext();
-            assert_throws("IndexSizeError", function () {
+            assert_throws_dom("IndexSizeError", function () {
                 ctx.drawImage(imageBitmap, 0, 0, 0, 0, 0, 0, 9, 9);
             }, "drawImage with an empty source rectangle should fail.");
         });

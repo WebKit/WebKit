@@ -1,3 +1,25 @@
+2020-06-23  Chris Dumez  <cdumez@apple.com>
+
+        Stop using assert_throws() under LayoutTests/http/wpt
+        https://bugs.webkit.org/show_bug.cgi?id=213542
+
+        Reviewed by Sam Weinig.
+
+        Stop using assert_throws() under LayoutTests/http/wpt since it has been dropped
+        from testharness.js upstream, in favor of assert_throws_dom() / assert_throws_js()
+        variants.
+
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap.html:
+        * http/wpt/beacon/beacon-readablestream.html:
+        * http/wpt/fetch/request-abort.html:
+        * http/wpt/geometry/DOMMatrix-from-to-typed-arrays.html:
+        * http/wpt/offscreen-canvas/offscreencanvas.constructor.html:
+        * http/wpt/offscreen-canvas/transferToImageBitmap-empty.html:
+        * http/wpt/webaudio/audiocontext-stopped.html:
+        * http/wpt/webauthn/resources/util.js:
+        * http/wpt/workers/queue-microtask.any.js:
+        (test):
+
 2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [ macOS ] fullscreen/video-inside-flex-item.html is a flaky failure

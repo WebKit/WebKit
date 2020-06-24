@@ -63,31 +63,31 @@ promise_test(() => {
 }, `queueMicrotask and Promise uses the same Microtask queue`);
 
 test(() => {
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask();
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask(null);
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask(undefined);
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask(42);
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask("42");
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask(true);
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask(Symbol("42"));
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask({});
     });
-    assert_throws(new TypeError, () => {
+    assert_throws_js(TypeError, () => {
         self.queueMicrotask({ handleEvent() { } });
     });
 }, `queueMicrotask should reject non-function arguments`);

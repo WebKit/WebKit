@@ -12,12 +12,12 @@
 for (let matrix of ["DOMMatrixReadOnly", "DOMMatrix"]) {
 
     test(function() {
-        assert_throws(new TypeError, () => { window[matrix].fromFloat32Array() }, "No parameter");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat32Array(null) }, "Passing null");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat32Array(new Float64Array()) }, "Bad parameter");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat32Array(new Float32Array()) }, "Empty Float32Array");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat32Array(new Float32Array([1, 2])) }, "Float32Array with too few items");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat32Array(new Float32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])) }, "Float32Array with too many items");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat32Array() }, "No parameter");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat32Array(null) }, "Passing null");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat32Array(new Float64Array()) }, "Bad parameter");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat32Array(new Float32Array()) }, "Empty Float32Array");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat32Array(new Float32Array([1, 2])) }, "Float32Array with too few items");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat32Array(new Float32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])) }, "Float32Array with too many items");
     }, matrix + ".fromFloat32Array (error cases)");
 
     test(function() {
@@ -31,12 +31,12 @@ for (let matrix of ["DOMMatrixReadOnly", "DOMMatrix"]) {
     }, matrix + ".fromFloat32Array");
 
     test(function() {
-        assert_throws(new TypeError, () => { window[matrix].fromFloat64Array() }, "No parameter");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat64Array(null) }, "Passing null");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat64Array(new Float32Array()) }, "Bad parameter");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat64Array(new Float64Array()) }, "Empty Float64Array");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat64Array(new Float64Array([1, 2])) }, "Float64Array with too few items");
-        assert_throws(new TypeError, () => { window[matrix].fromFloat64Array(new Float64Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])) }, "Float64Array with too many items");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat64Array() }, "No parameter");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat64Array(null) }, "Passing null");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat64Array(new Float32Array()) }, "Bad parameter");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat64Array(new Float64Array()) }, "Empty Float64Array");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat64Array(new Float64Array([1, 2])) }, "Float64Array with too few items");
+        assert_throws_js(TypeError, () => { window[matrix].fromFloat64Array(new Float64Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])) }, "Float64Array with too many items");
     }, matrix + ".fromFloat64Array (error cases)");
 
     test(function() {

@@ -319,7 +319,7 @@ function withCrossOriginIframe(resourceFile)
 function promiseRejects(test, expected, promise, description)
 {
     return promise.then(test.unreached_func("Should have rejected: " + description)).catch(function(e) {
-        assert_throws(expected, function() { throw e }, description);
+        assert_throws_dom(expected, function() { throw e }, description);
         assert_equals(e.message, description);
     });
 }
