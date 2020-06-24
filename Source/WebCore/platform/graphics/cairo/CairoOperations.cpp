@@ -288,8 +288,11 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
         CairoUniquePtr<cairo_font_options_t> fontOptionsSmoothing(cairo_font_options_copy(getDefaultCairoFontOptions()));
         switch (fontSmoothingMode) {
         case FontSmoothingMode::Antialiased:
+            // Don't use CAIRO_ANTIALIAS_GRAY in Windows. It is mapped to ANTIALIASED_QUALITY which looks jaggy and faint.
+#if !OS(WINDOWS)
             cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_GRAY);
             break;
+#endif
         case FontSmoothingMode::SubpixelAntialiased:
             cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_SUBPIXEL);
             break;

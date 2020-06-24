@@ -1,3 +1,26 @@
+2020-06-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] -webkit-font-smoothing:antialiased makes fonts blurry
+        https://bugs.webkit.org/show_bug.cgi?id=206573
+
+        Reviewed by Alex Christensen.
+
+        After -webkit-font-smoothing support was added to Cairo port in
+        r254506 (Bug 54763), fonts looks jaggy and faint in WinCairo port
+        in some web sites using -webkit-font-smoothing:antialiased, for
+        example Google News, GMail, https://apple.com.
+
+        'antialiased' of -webkit-font-smoothing was mapped to
+        CAIRO_ANTIALIAS_GRAY. And, CAIRO_ANTIALIAS_GRAY is mapped to
+        ANTIALIASED_QUALITY in cairo-win32-font.c. ANTIALIASED_QUALITY
+        makes fonts jaggy and faint.
+
+        Use CAIRO_ANTIALIAS_SUBPIXEL instead of CAIRO_ANTIALIAS_GRAY for
+        'antialiased' as well as 'subpixel-antialiased' does.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawGlyphsToContext): Don't use CAIRO_ANTIALIAS_GRAY for Win32 Cairo.
+
 2020-06-24  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r260360): easing curves are broken on JS-originated animations
