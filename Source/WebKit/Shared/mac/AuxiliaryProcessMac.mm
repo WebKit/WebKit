@@ -520,7 +520,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
 
 static inline const NSBundle *webKit2Bundle()
 {
-    const static NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
+    const static NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
     return bundle;
 }
 
