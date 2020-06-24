@@ -1,3 +1,18 @@
+2020-06-24  Youenn Fablet  <youenn@apple.com>
+
+        Use signalling thread as worker thread instead of network thread
+        https://bugs.webkit.org/show_bug.cgi?id=213512
+
+        Reviewed by Eric Carlson.
+
+        This is probably better since network thread is always busy
+        while the siganlling thread is mostly busy at negotiation time.
+        This also aligns with Chromium current setup.
+        No change of behavior.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::createPeerConnectionFactory):
+
 2020-06-24  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for <link>
