@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#include "FrameRateMonitor.h"
 #include "SampleBufferDisplayLayer.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -81,6 +82,10 @@ private:
     void requestNotificationWhenReadyForVideoData();
     void enqueueSampleBuffer(MediaSample&);
 
+#if !RELEASE_LOG_DISABLED
+    void onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime);
+#endif
+
 private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
@@ -92,6 +97,10 @@ private:
     // Only accessed through m_processingQueue or if m_processingQueue is null.
     using PendingSampleQueue = Deque<Ref<MediaSample>>;
     PendingSampleQueue m_pendingVideoSampleQueue;
+
+#if !RELEASE_LOG_DISABLED
+    FrameRateMonitor m_frameRateMonitor;
+#endif
 };
 
 inline void LocalSampleBufferDisplayLayer::setRenderPolicy(RenderPolicy renderPolicy)

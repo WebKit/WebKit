@@ -1105,6 +1105,7 @@
 		418938B22429F9B4007FDC41 /* RetrieveRecordsOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 418938AF2429F9AB007FDC41 /* RetrieveRecordsOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 418A06CE133C04D500CD379C /* EventDispatcher.h */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
+		4190F3A524A0B4EE00531C57 /* FrameRateMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4190F3A3249D152800531C57 /* FrameRateMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		419242492127B93E00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 419242472127B7CC00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm */; };
 		419ACF921F97E7DA009F1A83 /* ServiceWorkerFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 419ACF8E1F97E7D5009F1A83 /* ServiceWorkerFetch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BC2DD1685329900D64D6D /* VisitedLinkState.h */; };
@@ -7517,6 +7518,8 @@
 		418C395F1C8F0AAB0051C8A3 /* ReadableStreamDefaultController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamDefaultController.h; sourceTree = "<group>"; };
 		418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorker.cpp; sourceTree = "<group>"; };
 		418F88030FF957AE0080F045 /* JSAbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractWorker.h; sourceTree = "<group>"; };
+		4190F3A1249D152700531C57 /* FrameRateMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameRateMonitor.cpp; sourceTree = "<group>"; };
+		4190F3A3249D152800531C57 /* FrameRateMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameRateMonitor.h; sourceTree = "<group>"; };
 		419242472127B7CC00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RealtimeOutgoingVideoSourceCocoa.mm; sourceTree = "<group>"; };
 		41945694203502A5004BA277 /* ApplicationCacheResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheResourceLoader.cpp; sourceTree = "<group>"; };
 		41945696203502A6004BA277 /* ApplicationCacheResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheResourceLoader.h; sourceTree = "<group>"; };
@@ -26433,6 +26436,8 @@
 				2EF1BFE9121C9F4200C27627 /* FileStream.h */,
 				2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
+				4190F3A1249D152700531C57 /* FrameRateMonitor.cpp */,
+				4190F3A3249D152800531C57 /* FrameRateMonitor.h */,
 				CD4BE5291CE13425009D87DA /* GenericTaskQueue.cpp */,
 				CD62FB941AF018E70012ED7D /* GenericTaskQueue.h */,
 				A8748BDF12CBF2DC001FBA41 /* HashTools.h */,
@@ -30742,6 +30747,7 @@
 				93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */,
 				658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */,
 				628D214E12131EF40055DCFC /* FrameNetworkingContext.h in Headers */,
+				4190F3A524A0B4EE00531C57 /* FrameRateMonitor.h in Headers */,
 				93309E0E099E64920056E581 /* FrameSelection.h in Headers */,
 				C4CD629B18383766007EBAF1 /* FrameSnapshotting.h in Headers */,
 				65A21485097A3F5300B9050A /* FrameTree.h in Headers */,

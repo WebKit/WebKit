@@ -360,6 +360,12 @@ class RtpVideoStreamReceiver : public LossNotificationSender,
 
   rtc::scoped_refptr<RtpVideoStreamReceiverFrameTransformerDelegate>
       frame_transformer_delegate_;
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+  std::deque<int64_t> observedFrameTimeStamps_;
+  double observedFrameRate_ { 0 };
+  uint64_t frameCount_ { 0 };
+#endif
 };
 
 }  // namespace webrtc

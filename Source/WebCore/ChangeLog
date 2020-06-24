@@ -1,3 +1,34 @@
+2020-06-24  Youenn Fablet  <youenn@apple.com>
+
+        Add logging to WebRTC video pipeline to check for frame rate stability
+        https://bugs.webkit.org/show_bug.cgi?id=213369
+
+        Reviewed by Eric Carlson.
+
+        Add a FrameRateMonitor class to compute frame stability.
+        Use this class at end of the video pipeline (LocalSampleBufferDisplayLayer).
+        Log messages in case a frame gets frozen at LocalSampleBufferDisplayLayer time.
+        We compute that a frame takes too long by checking whether it is delayed by more than three expected frames.
+        This logging is complemented with encoded frame reception logging (at the beginning of the video pipeline)
+        and WebRTC stats logging (freezeCount, totalFreezeDuration, shortly after decoding the frames).
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FrameRateMonitor.cpp: Added.
+        (WebCore::FrameRateMonitor::newFrame):
+        * platform/FrameRateMonitor.h: Added.
+        (WebCore::FrameRateMonitor::frameRate const):
+        (WebCore::FrameRateMonitor::frameCount const):
+        (WebCore::FrameRateMonitor::FrameRateMonitor):
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer):
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSampleBuffer):
+        (WebCore::LocalSampleBufferDisplayLayer::onFrameRateNotification):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.h:
+        Unified build fix.
+
 2020-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove [CallbackNeedsOperatorEqual] extended attribute

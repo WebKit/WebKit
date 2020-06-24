@@ -153,6 +153,9 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_sampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer))
     , m_processingQueue(WorkQueue::create("LocalSampleBufferDisplayLayer queue"))
+#if !RELEASE_LOG_DISABLED
+    , m_frameRateMonitor([this](auto info) { onIrregularFrameRateNotification(info.frameTime, info.lastFrameTime); })
+#endif
 {
 }
 
@@ -300,6 +303,7 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
     m_processingQueue->dispatch([this, sample = makeRef(sample)] {
         if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
+            WTFLogAlways("LocalSampleBufferDisplayLayer::enqueueSample not ready for more media data");
             addSampleToPendingQueue(sample);
             requestNotificationWhenReadyForVideoData();
             return;
@@ -324,7 +328,20 @@ void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
     }
 
     [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleToEnqueue];
+
+#if !RELEASE_LOG_DISABLED
+    m_frameRateMonitor.update();
+#endif
 }
+
+#if !RELEASE_LOG_DISABLED
+void LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime)
+{
+    callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount()] {
+        WTFLogAlways("LocalSampleBufferDisplayLayer::enqueueSampleBuffer at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
+    });
+}
+#endif
 
 void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
 {

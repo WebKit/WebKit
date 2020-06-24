@@ -1,3 +1,17 @@
+2020-06-24  Youenn Fablet  <youenn@apple.com>
+
+        Add logging to WebRTC video pipeline to check for frame rate stability
+        https://bugs.webkit.org/show_bug.cgi?id=213369
+
+        Reviewed by Eric Carlson.
+
+        Add logging for encoded frames taking a long time to be received.
+        We log the time take to receive the frame, the time since previous frame, the byte size of the frame.
+        We compute that a frame takes too long by checking whether it is delayed by more than three expected frames.
+
+        * Source/webrtc/video/rtp_video_stream_receiver.cc:
+        * Source/webrtc/video/rtp_video_stream_receiver.h:
+
 2020-06-22  Tim Horton  <timothy_horton@apple.com>
 
         libwebrtc fails to build on arm64

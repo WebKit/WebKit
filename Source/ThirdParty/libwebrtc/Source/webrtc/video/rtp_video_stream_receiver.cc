@@ -47,6 +47,7 @@
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 #include "system_wrappers/include/ntp_time.h"
@@ -739,6 +740,32 @@ void RtpVideoStreamReceiver::OnAssembledFrame(
     std::unique_ptr<video_coding::RtpFrameObject> frame) {
   RTC_DCHECK_RUN_ON(&network_tc_);
   RTC_DCHECK(frame);
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+    static const unsigned MaxFrameDelayCount = 3;
+    static const unsigned TimeStampQueueDurationInMs = 2000;
+    static const unsigned OneSecondInMs = 1000;
+    // FIXME: Consider using MovingAverage instead.
+    ++frameCount_;
+
+    auto frameTime = clock_->TimeInMilliseconds();
+    auto lastFrameTime = observedFrameTimeStamps_.empty() ? frameTime : observedFrameTimeStamps_.back();
+
+    if (observedFrameRate_) {
+      auto delay = frameTime - lastFrameTime;
+      if (delay > (MaxFrameDelayCount * OneSecondInMs / observedFrameRate_)) {
+        RTC_LOG(LS_INFO) << "RtpVideoStreamReceiver::OnAssembledFrame at " << frameTime << ", previous frame was at " << lastFrameTime << ", observed frame rate is " << observedFrameRate_ << ", delay since last frame is " << (frameTime - lastFrameTime) <<  " ms, frame count is " << frameCount_ << ", size is " << frame->EncodedImage().size() << ", frame reception duration is " << (frame->video_timing().receive_finish_ms - frame->video_timing().receive_start_ms) << " ms, " << " observed samples count is " << observedFrameTimeStamps_.size() << ", observed samples duration is " << (observedFrameTimeStamps_.back() - observedFrameTimeStamps_.front());
+      }
+    }
+
+    observedFrameTimeStamps_.push_back(frameTime);
+    while (observedFrameTimeStamps_.front() <= (frameTime - TimeStampQueueDurationInMs))
+        observedFrameTimeStamps_.pop_front();
+
+    auto queueDuration = frameTime - observedFrameTimeStamps_.front();
+    if (queueDuration > OneSecondInMs)
+        observedFrameRate_ = observedFrameTimeStamps_.size() * OneSecondInMs / queueDuration;
+#endif
 
   const absl::optional<RTPVideoHeader::GenericDescriptorInfo>& descriptor =
       frame->GetRtpVideoHeader().generic;
