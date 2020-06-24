@@ -2642,7 +2642,7 @@ static Class tapAndAHalfRecognizerClass()
         break;
     case UIGestureRecognizerStateEnded:
         if (_longPressCanClick && _positionInformation.isElement) {
-            [self _attemptClickAtLocation:gestureRecognizer.startPoint modifierFlags:gestureRecognizerModifierFlags(gestureRecognizer)];
+            [self _attemptSyntheticClickAtLocation:gestureRecognizer.startPoint modifierFlags:gestureRecognizerModifierFlags(gestureRecognizer)];
             [self _finishInteraction];
         } else
             [self _cancelInteraction];
@@ -2844,13 +2844,13 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _smartMagnificationController->handleResetMagnificationGesture(gestureRecognizer.location);
 }
 
-- (void)_attemptClickAtLocation:(CGPoint)location modifierFlags:(UIKeyModifierFlags)modifierFlags
+- (void)_attemptSyntheticClickAtLocation:(CGPoint)location modifierFlags:(UIKeyModifierFlags)modifierFlags
 {
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
     [_inputPeripheral endEditing];
-    _page->handleTap(location, WebKit::webEventModifierFlags(modifierFlags), _layerTreeTransactionIdAtLastInteractionStart);
+    _page->attemptSyntheticClick(location, WebKit::webEventModifierFlags(modifierFlags), _layerTreeTransactionIdAtLastInteractionStart);
 }
 
 - (void)setUpTextSelectionAssistant
@@ -6904,7 +6904,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
 {
-    [self _attemptClickAtLocation:location modifierFlags:0];
+    [self _attemptSyntheticClickAtLocation:location modifierFlags:0];
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
@@ -8788,9 +8788,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
-    RetainPtr<WKContentView> protectedSelf = self;
-    [self doAfterPositionInformationUpdate:[actionType, protectedSelf] (WebKit::InteractionInformationAtPosition info) {
-        _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType assistant:protectedSelf->_actionSheetAssistant.get()];
+    _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+    [self doAfterPositionInformationUpdate:[actionType, self, protectedSelf = retainPtr(self)] (WebKit::InteractionInformationAtPosition info) {
+        _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType assistant:_actionSheetAssistant.get()];
         _WKActivatedElementInfo *elementInfo = [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:info userInfo:nil];
         [action runActionWithElementInfo:elementInfo];
     } forRequest:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(location))];

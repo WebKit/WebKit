@@ -44,6 +44,8 @@ struct InteractionInformationAtPosition;
 @protocol WKActionSheetDelegate;
 @protocol UIContextMenuInteractionDelegate;
 
+typedef NS_ENUM(NSInteger, _WKElementActionType);
+
 @protocol WKActionSheetAssistantDelegate <NSObject>
 @required
 - (Optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
@@ -90,6 +92,7 @@ struct InteractionInformationAtPosition;
 - (BOOL)isShowingSheet;
 - (void)interactionDidStartWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)information;
 - (NSArray *)currentAvailableActionTitles;
+- (void)handleElementActionWithType:(_WKElementActionType)type element:(_WKActivatedElementInfo *)element needsInteraction:(BOOL)needsInteraction;
 #if USE(UICONTEXTMENU)
 - (NSArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation;
 #endif

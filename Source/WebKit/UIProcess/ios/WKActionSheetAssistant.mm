@@ -810,6 +810,35 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
 
 #endif // USE(UICONTEXTMENU)
 
+- (void)handleElementActionWithType:(_WKElementActionType)type element:(_WKActivatedElementInfo *)element needsInteraction:(BOOL)needsInteraction
+{
+    auto delegate = _delegate.get();
+
+    if (needsInteraction && [delegate respondsToSelector:@selector(actionSheetAssistant:willStartInteractionWithElement:)])
+        [delegate actionSheetAssistant:self willStartInteractionWithElement:element];
+
+    switch (type) {
+    case _WKElementActionTypeCopy:
+        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::Copy];
+        break;
+    case _WKElementActionTypeOpen:
+        [delegate actionSheetAssistant:self openElementAtLocation:element._interactionLocation];
+        break;
+    case _WKElementActionTypeSaveImage:
+        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::SaveImage];
+        break;
+    case _WKElementActionTypeShare:
+        [delegate actionSheetAssistant:self shareElementWithURL:element.URL ?: element.imageURL rect:element.boundingRect];
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    if (needsInteraction && [delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
+        [delegate actionSheetAssistantDidStopInteraction:self];
+}
+
 - (void)cleanupSheet
 {
     auto delegate = _delegate.get();

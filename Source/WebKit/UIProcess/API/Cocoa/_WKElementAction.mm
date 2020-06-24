@@ -127,27 +127,19 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeCopy:
         title = WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link or Image action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
-            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistant:willStartInteractionWithElement:)])
-                [assistant.delegate actionSheetAssistant:assistant willStartInteractionWithElement:actionInfo];
-            [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::Copy];
-            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
-                [assistant.delegate actionSheetAssistantDidStopInteraction:assistant];
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
     case _WKElementActionTypeOpen:
         title = WEB_UI_STRING("Open", "Title for Open Link action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
-            [assistant.delegate actionSheetAssistant:assistant openElementAtLocation:actionInfo._interactionLocation];
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
     case _WKElementActionTypeSaveImage:
         title = WEB_UI_STRING("Add to Photos", "Title for Add to Photos action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
-            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistant:willStartInteractionWithElement:)])
-                [assistant.delegate actionSheetAssistant:assistant willStartInteractionWithElement:actionInfo];
-            [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::SaveImage];
-            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
-                [assistant.delegate actionSheetAssistantDidStopInteraction:assistant];
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
@@ -161,7 +153,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeShare:
         title = WEB_UI_STRING("Share…", "Title for Share action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
-            [assistant.delegate actionSheetAssistant:assistant shareElementWithURL:actionInfo.URL ?: actionInfo.imageURL rect:actionInfo.boundingRect];
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:NO];
         };
         break;
     case _WKElementActionToggleShowLinkPreviews:

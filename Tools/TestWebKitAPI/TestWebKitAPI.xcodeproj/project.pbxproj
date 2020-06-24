@@ -839,6 +839,8 @@
 		9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */; };
 		A10F047E1E3AD29C00C95E19 /* NSFileManagerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */; };
 		A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */; };
+		A11E7DA024A169F900026745 /* link-with-hover-menu.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A11E7D9F24A169E200026745 /* link-with-hover-menu.html */; };
+		A11E7DA324A17D2500026745 /* ElementActionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A11E7DA224A17C7D00026745 /* ElementActionTests.mm */; };
 		A125478F1DB18B9400358564 /* LoadDataWithNilMIMEType.mm in Sources */ = {isa = PBXBuildFile; fileRef = A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */; };
 		A12DDBFB1E836F0700CF6CAE /* RenderedImageWithOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */; };
 		A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */; };
@@ -1227,7 +1229,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				5751B28A249D5BC500664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1452,6 +1453,7 @@
 				F46128D4211E40FD00D9FADB /* link-in-iframe-and-input.html in Copy Resources */,
 				8361F1781E610B4E00759B25 /* link-with-download-attribute-with-slashes.html in Copy Resources */,
 				8349D3C41DB9728E004A9F65 /* link-with-download-attribute.html in Copy Resources */,
+				A11E7DA024A169F900026745 /* link-with-hover-menu.html in Copy Resources */,
 				3128A81323763FAC00D90D40 /* link-with-image.html in Copy Resources */,
 				378E64791632707400B6C676 /* link-with-title.html in Copy Resources */,
 				573255A622139BC700396AE8 /* load-web-archive-1.html in Copy Resources */,
@@ -1591,6 +1593,7 @@
 				57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */,
 				578DA44823ECD09B00246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html in Copy Resources */,
 				570D26F423C3CA6A00D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html in Copy Resources */,
+				5751B28A249D5BC500664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html in Copy Resources */,
 				578DA44223ECC7A000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html in Copy Resources */,
 				578DA44623ECCC0A00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html in Copy Resources */,
 				570D26FA23C3F25100D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html in Copy Resources */,
@@ -2393,6 +2396,8 @@
 		9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubePluginReplacement.cpp; sourceTree = "<group>"; };
 		A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSFileManagerExtras.mm; sourceTree = "<group>"; };
 		A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFiltering.mm; sourceTree = "<group>"; };
+		A11E7D9F24A169E200026745 /* link-with-hover-menu.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-hover-menu.html"; sourceTree = "<group>"; };
+		A11E7DA224A17C7D00026745 /* ElementActionTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementActionTests.mm; sourceTree = "<group>"; };
 		A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadDataWithNilMIMEType.mm; sourceTree = "<group>"; };
 		A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptions.mm; sourceTree = "<group>"; };
 		A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptionsPlugIn.mm; sourceTree = "<group>"; };
@@ -3438,6 +3443,7 @@
 				F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */,
 				44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */,
 				F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */,
+				A11E7DA224A17C7D00026745 /* ElementActionTests.mm */,
 				F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */,
 				F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */,
 				CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */,
@@ -3792,6 +3798,7 @@
 				0F16BED72304A1D100B4A167 /* composited.html */,
 				CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */,
 				CE6D0EE22426B8ED002AD901 /* insert-text.html */,
+				A11E7D9F24A169E200026745 /* link-with-hover-menu.html */,
 				0F340777230382540060A1A0 /* overflow-scroll.html */,
 				A1C4FB721BACD1B7003742D0 /* pages.pages */,
 				CE6E81A320A933B800E2C80F /* set-timeout-function.html */,
@@ -4845,6 +4852,7 @@
 				834138C7203261CA00F26960 /* AsyncPolicyForNavigationResponse.mm in Sources */,
 				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
 				3760C4F1211249AF00233ACC /* AttrStyle.mm in Sources */,
+				CDED342F249DDE0E0002AE7A /* AudioRoutingArbitration.mm in Sources */,
 				CDC8E48D1BC5CB4500594FEC /* AudioSessionCategoryIOS.mm in Sources */,
 				F42D634422A1729F00D2FB3A /* AutocorrectionTestsIOS.mm in Sources */,
 				7C83E0B91D0A64F100FEBCF3 /* AutoLayoutIntegration.mm in Sources */,
@@ -4862,7 +4870,6 @@
 				1C2B81801C891E7C00A5529F /* CancelFontSubresource.mm in Sources */,
 				7CCE7EB61A411A7E00447C4C /* CancelLoadFromResourceLoadDelegate.mm in Sources */,
 				7C83E0411D0A63F200FEBCF3 /* CandidateTests.mm in Sources */,
-				CDED342F249DDE0E0002AE7A /* AudioRoutingArbitration.mm in Sources */,
 				7CCE7EE71A411AE600447C4C /* CanHandleRequest.cpp in Sources */,
 				07C046CA1E4262A8007201E7 /* CARingBuffer.cpp in Sources */,
 				57303BCB2008376500355965 /* CBORReaderTest.cpp in Sources */,
@@ -4949,6 +4956,7 @@
 				5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */,
 				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
 				F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */,
+				A11E7DA324A17D2500026745 /* ElementActionTests.mm in Sources */,
 				7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */,
 				C13D82D92416F13200A62793 /* EnableAccessibility.mm in Sources */,
 				F4CF32802366552200D3AD07 /* EnterKeyHintTests.mm in Sources */,

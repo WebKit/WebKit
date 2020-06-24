@@ -1,3 +1,17 @@
+2020-06-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Open element actions sometimes result in a hover instead of a click
+        https://bugs.webkit.org/show_bug.cgi?id=213530
+        <rdar://problem/64176707>
+
+        Reviewed by Darin Adler.
+
+        Added an API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ElementActionTests.mm: Added.
+        * TestWebKitAPI/Tests/ios/link-with-hover-menu.html: Added.
+
 2020-06-24  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] add microbenchmark for op_get_private_name

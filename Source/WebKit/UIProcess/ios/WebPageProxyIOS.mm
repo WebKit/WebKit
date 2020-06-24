@@ -905,9 +905,9 @@ void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, u
     send(Messages::WebPage::TapHighlightAtPosition(requestID, position));
 }
 
-void WebPageProxy::handleTap(const FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
+void WebPageProxy::attemptSyntheticClick(const FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
 {
-    send(Messages::WebPage::HandleTap(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart));
+    send(Messages::WebPage::AttemptSyntheticClick(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart));
 }
 
 void WebPageProxy::didRecognizeLongPress()
