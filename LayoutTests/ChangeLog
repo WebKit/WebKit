@@ -1,3 +1,9 @@
+2020-06-24  Philippe Normand  <philn@igalia.com>
+
+        Unreviewed GTK gardening
+
+        * platform/gtk/TestExpectations: webrtc/disable-encryption.html is still flaky.
+
 2020-06-24  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION: Delayed updating of the parallax images on pacificvoyages.net/posts

@@ -580,6 +580,8 @@ webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 webkit.org/b/209130 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass Timeout ]
 webkit.org/b/210385 fast/mediastream/audio-track-enabled.html [ Crash Pass ]
 
+webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
+
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 
 # Canvas captureStream support is not implemented
