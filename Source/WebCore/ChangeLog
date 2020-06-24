@@ -1,3 +1,18 @@
+2020-06-24  Antti Koivisto  <antti@apple.com>
+
+        Style resolution sometimes fails to create all style resolvers for shadow trees.
+        https://bugs.webkit.org/show_bug.cgi?id=212946
+        <rdar://problem/60916215>>
+
+        Reviewed by Anders Carlsson.
+
+        This can cause problems later.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Scope::Scope):
+
+        Ensure all style resolvers are constructed before traversing.
+
 2020-06-24  Youenn Fablet  <youenn@apple.com>
 
         Add logging to WebRTC video pipeline to check for frame rate stability
