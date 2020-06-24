@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,15 +46,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t nextContextId()
-{
-    static uint64_t contextId = 0;
-    return ++contextId;
-}
-
 #pragma mark - PlaybackSessionInterfaceContext
 
-PlaybackSessionInterfaceContext::PlaybackSessionInterfaceContext(PlaybackSessionManager& manager, uint64_t contextId)
+PlaybackSessionInterfaceContext::PlaybackSessionInterfaceContext(PlaybackSessionManager& manager, PlaybackSessionContextIdentifier contextId)
     : m_manager(&manager)
     , m_contextId(contextId)
 {
@@ -197,7 +191,7 @@ void PlaybackSessionManager::invalidate()
     m_page = nullptr;
 }
 
-PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelAndInterface(uint64_t contextId)
+PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     auto model = PlaybackSessionModelMediaElement::create();
     auto interface = PlaybackSessionInterfaceContext::create(*this, contextId);
@@ -206,7 +200,7 @@ PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelA
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
 
-PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(uint64_t contextId)
+PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     auto addResult = m_contextMap.add(contextId, ModelInterfaceTuple());
     if (addResult.isNewEntry)
@@ -214,17 +208,17 @@ PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModel
     return addResult.iterator->value;
 }
 
-WebCore::PlaybackSessionModelMediaElement& PlaybackSessionManager::ensureModel(uint64_t contextId)
+WebCore::PlaybackSessionModelMediaElement& PlaybackSessionManager::ensureModel(PlaybackSessionContextIdentifier contextId)
 {
     return *std::get<0>(ensureModelAndInterface(contextId));
 }
 
-PlaybackSessionInterfaceContext& PlaybackSessionManager::ensureInterface(uint64_t contextId)
+PlaybackSessionInterfaceContext& PlaybackSessionManager::ensureInterface(PlaybackSessionContextIdentifier contextId)
 {
     return *std::get<1>(ensureModelAndInterface(contextId));
 }
 
-void PlaybackSessionManager::removeContext(uint64_t contextId)
+void PlaybackSessionManager::removeContext(PlaybackSessionContextIdentifier contextId)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
 
@@ -236,12 +230,12 @@ void PlaybackSessionManager::removeContext(uint64_t contextId)
     m_contextMap.remove(contextId);
 }
 
-void PlaybackSessionManager::addClientForContext(uint64_t contextId)
+void PlaybackSessionManager::addClientForContext(PlaybackSessionContextIdentifier contextId)
 {
     m_clientCounts.add(contextId);
 }
 
-void PlaybackSessionManager::removeClientForContext(uint64_t contextId)
+void PlaybackSessionManager::removeClientForContext(PlaybackSessionContextIdentifier contextId)
 {
     ASSERT(m_clientCounts.contains(contextId));
     if (m_clientCounts.remove(contextId))
@@ -252,7 +246,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
 {
     auto foundIterator = m_mediaElements.find(&mediaElement);
     if (foundIterator != m_mediaElements.end()) {
-        uint64_t contextId = foundIterator->value;
+        auto contextId = foundIterator->value;
         if (m_controlsManagerContextId == contextId)
             return;
 
@@ -261,7 +255,9 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
         if (previousContextId)
             removeClientForContext(previousContextId);
     } else {
-        auto contextId = m_mediaElements.ensure(&mediaElement, [&] { return nextContextId(); }).iterator->value;
+        auto contextId = m_mediaElements.ensure(&mediaElement, [&] {
+            return PlaybackSessionContextIdentifier::generate();
+        }).iterator->value;
 
         auto previousContextId = m_controlsManagerContextId;
         m_controlsManagerContextId = contextId;
@@ -283,16 +279,18 @@ void PlaybackSessionManager::clearPlaybackControlsManager()
         return;
 
     removeClientForContext(m_controlsManagerContextId);
-    m_controlsManagerContextId = 0;
+    m_controlsManagerContextId = { };
 
     m_page->videoControlsManagerDidChange();
     m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager());
 }
 
-uint64_t PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
+PlaybackSessionContextIdentifier PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
 {
-    auto addResult = m_mediaElements.ensure(&mediaElement, [&] { return nextContextId(); });
-    uint64_t contextId = addResult.iterator->value;
+    auto addResult = m_mediaElements.ensure(&mediaElement, [&] {
+        return PlaybackSessionContextIdentifier::generate();
+    });
+    auto contextId = addResult.iterator->value;
     ensureModel(contextId).setMediaElement(&mediaElement);
     return contextId;
 }
@@ -311,32 +309,32 @@ WebCore::HTMLMediaElement* PlaybackSessionManager::currentPlaybackControlsElemen
 
 #pragma mark Interface to PlaybackSessionInterfaceContext:
 
-void PlaybackSessionManager::durationChanged(uint64_t contextId, double duration)
+void PlaybackSessionManager::durationChanged(PlaybackSessionContextIdentifier contextId, double duration)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::DurationChanged(contextId, duration));
 }
 
-void PlaybackSessionManager::currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime)
+void PlaybackSessionManager::currentTimeChanged(PlaybackSessionContextIdentifier contextId, double currentTime, double anchorTime)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::CurrentTimeChanged(contextId, currentTime, anchorTime));
 }
 
-void PlaybackSessionManager::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
+void PlaybackSessionManager::bufferedTimeChanged(PlaybackSessionContextIdentifier contextId, double bufferedTime)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::BufferedTimeChanged(contextId, bufferedTime));
 }
 
-void PlaybackSessionManager::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
+void PlaybackSessionManager::playbackStartedTimeChanged(PlaybackSessionContextIdentifier contextId, double playbackStartedTime)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::PlaybackStartedTimeChanged(contextId, playbackStartedTime));
 }
 
-void PlaybackSessionManager::rateChanged(uint64_t contextId, bool isPlaying, float playbackRate)
+void PlaybackSessionManager::rateChanged(PlaybackSessionContextIdentifier contextId, bool isPlaying, float playbackRate)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(contextId, isPlaying, playbackRate));
 }
 
-void PlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
+void PlaybackSessionManager::seekableRangesChanged(PlaybackSessionContextIdentifier contextId, const WebCore::TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
 {
     Vector<std::pair<double, double>> rangesVector;
     for (unsigned i = 0; i < timeRanges.length(); i++) {
@@ -347,162 +345,162 @@ void PlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const Web
     m_page->send(Messages::PlaybackSessionManagerProxy::SeekableRangesVectorChanged(contextId, WTFMove(rangesVector), lastModifiedTime, liveUpdateInterval));
 }
 
-void PlaybackSessionManager::canPlayFastReverseChanged(uint64_t contextId, bool value)
+void PlaybackSessionManager::canPlayFastReverseChanged(PlaybackSessionContextIdentifier contextId, bool value)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::CanPlayFastReverseChanged(contextId, value));
 }
 
-void PlaybackSessionManager::audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionManager::audioMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
-void PlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionManager::legibleMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
-void PlaybackSessionManager::externalPlaybackChanged(uint64_t contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
+void PlaybackSessionManager::externalPlaybackChanged(PlaybackSessionContextIdentifier contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName));
 }
 
-void PlaybackSessionManager::audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
+void PlaybackSessionManager::audioMediaSelectionIndexChanged(PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionIndexChanged(contextId, selectedIndex));
 }
 
-void PlaybackSessionManager::legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
+void PlaybackSessionManager::legibleMediaSelectionIndexChanged(PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionIndexChanged(contextId, selectedIndex));
 }
 
-void PlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)
+void PlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier contextId, bool disabled)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::WirelessVideoPlaybackDisabledChanged(contextId, disabled));
 }
 
-void PlaybackSessionManager::mutedChanged(uint64_t contextId, bool muted)
+void PlaybackSessionManager::mutedChanged(PlaybackSessionContextIdentifier contextId, bool muted)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::MutedChanged(contextId, muted));
 }
 
-void PlaybackSessionManager::volumeChanged(uint64_t contextId, double volume)
+void PlaybackSessionManager::volumeChanged(PlaybackSessionContextIdentifier contextId, double volume)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::VolumeChanged(contextId, volume));
 }
 
-void PlaybackSessionManager::isPictureInPictureSupportedChanged(uint64_t contextId, bool supported)
+void PlaybackSessionManager::isPictureInPictureSupportedChanged(PlaybackSessionContextIdentifier contextId, bool supported)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::PictureInPictureSupportedChanged(contextId, supported));
 }
 
 #pragma mark Messages from PlaybackSessionManagerProxy:
 
-void PlaybackSessionManager::play(uint64_t contextId)
+void PlaybackSessionManager::play(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).play();
 }
 
-void PlaybackSessionManager::pause(uint64_t contextId)
+void PlaybackSessionManager::pause(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).pause();
 }
 
-void PlaybackSessionManager::togglePlayState(uint64_t contextId)
+void PlaybackSessionManager::togglePlayState(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).togglePlayState();
 }
 
-void PlaybackSessionManager::beginScrubbing(uint64_t contextId)
+void PlaybackSessionManager::beginScrubbing(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).beginScrubbing();
 }
 
-void PlaybackSessionManager::endScrubbing(uint64_t contextId)
+void PlaybackSessionManager::endScrubbing(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).endScrubbing();
 }
 
-void PlaybackSessionManager::seekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter)
+void PlaybackSessionManager::seekToTime(PlaybackSessionContextIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).seekToTime(time, toleranceBefore, toleranceAfter);
 }
 
-void PlaybackSessionManager::fastSeek(uint64_t contextId, double time)
+void PlaybackSessionManager::fastSeek(PlaybackSessionContextIdentifier contextId, double time)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).fastSeek(time);
 }
 
-void PlaybackSessionManager::beginScanningForward(uint64_t contextId)
+void PlaybackSessionManager::beginScanningForward(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).beginScanningForward();
 }
 
-void PlaybackSessionManager::beginScanningBackward(uint64_t contextId)
+void PlaybackSessionManager::beginScanningBackward(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).beginScanningBackward();
 }
 
-void PlaybackSessionManager::endScanning(uint64_t contextId)
+void PlaybackSessionManager::endScanning(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).endScanning();
 }
 
-void PlaybackSessionManager::selectAudioMediaOption(uint64_t contextId, uint64_t index)
+void PlaybackSessionManager::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).selectAudioMediaOption(index);
 }
 
-void PlaybackSessionManager::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
+void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).selectLegibleMediaOption(index);
 }
 
-void PlaybackSessionManager::handleControlledElementIDRequest(uint64_t contextId)
+void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
 {
     auto element = ensureModel(contextId).mediaElement();
     if (element)
         m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 
-void PlaybackSessionManager::togglePictureInPicture(uint64_t contextId)
+void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).togglePictureInPicture();
 }
 
-void PlaybackSessionManager::toggleMuted(uint64_t contextId)
+void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).toggleMuted();
 }
 
-void PlaybackSessionManager::setMuted(uint64_t contextId, bool muted)
+void PlaybackSessionManager::setMuted(PlaybackSessionContextIdentifier contextId, bool muted)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).setMuted(muted);
 }
 
-void PlaybackSessionManager::setVolume(uint64_t contextId, double volume)
+void PlaybackSessionManager::setVolume(PlaybackSessionContextIdentifier contextId, double volume)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).setVolume(volume);
 }
 
-void PlaybackSessionManager::setPlayingOnSecondScreen(uint64_t contextId, bool value)
+void PlaybackSessionManager::setPlayingOnSecondScreen(PlaybackSessionContextIdentifier contextId, bool value)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).setPlayingOnSecondScreen(value);

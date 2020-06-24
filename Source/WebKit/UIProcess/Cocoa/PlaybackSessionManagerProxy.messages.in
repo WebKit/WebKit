@@ -22,25 +22,25 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 messages -> PlaybackSessionManagerProxy {
-    CurrentTimeChanged(uint64_t contextId, double currentTime, double hostTime)
-    BufferedTimeChanged(uint64_t contextId, double bufferedTime)
-    SeekableRangesVectorChanged(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
-    CanPlayFastReverseChanged(uint64_t contextId, bool value)
-    AudioMediaSelectionOptionsChanged(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
-    LegibleMediaSelectionOptionsChanged(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
-    AudioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
-    LegibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
-    ExternalPlaybackPropertiesChanged(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
-    WirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)
-    DurationChanged(uint64_t contextId, double duration)
-    PlaybackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
-    RateChanged(uint64_t contextId, bool isPlaying, double rate)
-    MutedChanged(uint64_t contextId, bool muted);
-    VolumeChanged(uint64_t contextId, double volume);
-    PictureInPictureSupportedChanged(uint64_t contextID, bool pictureInPictureSupported)
-    SetUpPlaybackControlsManagerWithID(uint64_t contextId)
+    CurrentTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double currentTime, double hostTime)
+    BufferedTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double bufferedTime)
+    SeekableRangesVectorChanged(WebKit::PlaybackSessionContextIdentifier contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
+    CanPlayFastReverseChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool value)
+    AudioMediaSelectionOptionsChanged(WebKit::PlaybackSessionContextIdentifier contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
+    LegibleMediaSelectionOptionsChanged(WebKit::PlaybackSessionContextIdentifier contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
+    AudioMediaSelectionIndexChanged(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
+    LegibleMediaSelectionIndexChanged(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
+    ExternalPlaybackPropertiesChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
+    WirelessVideoPlaybackDisabledChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool disabled)
+    DurationChanged(WebKit::PlaybackSessionContextIdentifier contextId, double duration)
+    PlaybackStartedTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double playbackStartedTime)
+    RateChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isPlaying, double rate)
+    MutedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool muted);
+    VolumeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double volume);
+    PictureInPictureSupportedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool pictureInPictureSupported)
+    SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId)
     ClearPlaybackControlsManager()
 
-    HandleControlledElementIDResponse(uint64_t contextId, String id)
+    HandleControlledElementIDResponse(WebKit::PlaybackSessionContextIdentifier contextId, String id)
 }
 #endif

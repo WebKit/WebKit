@@ -1,3 +1,186 @@
+2020-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        Use ObjectIdentifier<> instead of uint64_t for context IDs in VideoFullscreenManagerProxy
+        <https://webkit.org/b/212392>
+        <rdar://problem/61799040>
+
+        Reviewed by Youenn Fablet.
+
+        Switch from uint64_t to WebKit::PlaybackSessionContextIdentifier
+        for contextId values.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        - Add WebKit::PlaybackSessionContextIdentifier to list.
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        (WebKit::PlaybackSessionManagerProxy::controlsManagerContextId const):
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::createModelAndInterface):
+        (WebKit::PlaybackSessionManagerProxy::ensureModelAndInterface):
+        (WebKit::PlaybackSessionManagerProxy::ensureModel):
+        (WebKit::PlaybackSessionManagerProxy::ensureInterface):
+        (WebKit::PlaybackSessionManagerProxy::addClientForContext):
+        (WebKit::PlaybackSessionManagerProxy::removeClientForContext):
+        (WebKit::PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID):
+        (WebKit::PlaybackSessionManagerProxy::clearPlaybackControlsManager):
+        (WebKit::PlaybackSessionManagerProxy::currentTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::bufferedTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::seekableRangesVectorChanged):
+        (WebKit::PlaybackSessionManagerProxy::canPlayFastReverseChanged):
+        (WebKit::PlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManagerProxy::audioMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged):
+        (WebKit::PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::PlaybackSessionManagerProxy::mutedChanged):
+        (WebKit::PlaybackSessionManagerProxy::volumeChanged):
+        (WebKit::PlaybackSessionManagerProxy::durationChanged):
+        (WebKit::PlaybackSessionManagerProxy::playbackStartedTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::pictureInPictureSupportedChanged):
+        (WebKit::PlaybackSessionManagerProxy::handleControlledElementIDResponse const):
+        (WebKit::PlaybackSessionManagerProxy::play):
+        (WebKit::PlaybackSessionManagerProxy::pause):
+        (WebKit::PlaybackSessionManagerProxy::togglePlayState):
+        (WebKit::PlaybackSessionManagerProxy::beginScrubbing):
+        (WebKit::PlaybackSessionManagerProxy::endScrubbing):
+        (WebKit::PlaybackSessionManagerProxy::seekToTime):
+        (WebKit::PlaybackSessionManagerProxy::fastSeek):
+        (WebKit::PlaybackSessionManagerProxy::beginScanningForward):
+        (WebKit::PlaybackSessionManagerProxy::beginScanningBackward):
+        (WebKit::PlaybackSessionManagerProxy::endScanning):
+        (WebKit::PlaybackSessionManagerProxy::selectAudioMediaOption):
+        (WebKit::PlaybackSessionManagerProxy::selectLegibleMediaOption):
+        (WebKit::PlaybackSessionManagerProxy::togglePictureInPicture):
+        (WebKit::PlaybackSessionManagerProxy::toggleMuted):
+        (WebKit::PlaybackSessionManagerProxy::setMuted):
+        (WebKit::PlaybackSessionManagerProxy::setVolume):
+        (WebKit::PlaybackSessionManagerProxy::setPlayingOnSecondScreen):
+        - Remove MESSAGE_CHECK_CONTEXTID() since it is now redundant.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::VideoFullscreenModelContext):
+        (WebKit::VideoFullscreenManagerProxy::requestRouteSharingPolicyAndContextUID):
+        (WebKit::VideoFullscreenManagerProxy::createModelAndInterface):
+        (WebKit::VideoFullscreenManagerProxy::ensureModelAndInterface):
+        (WebKit::VideoFullscreenManagerProxy::ensureModel):
+        (WebKit::VideoFullscreenManagerProxy::ensureInterface):
+        (WebKit::VideoFullscreenManagerProxy::findInterface):
+        (WebKit::VideoFullscreenManagerProxy::addClientForContext):
+        (WebKit::VideoFullscreenManagerProxy::removeClientForContext):
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideo):
+        (WebKit::VideoFullscreenManagerProxy::setVideoDimensions):
+        (WebKit::VideoFullscreenManagerProxy::enterFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode):
+        (WebKit::VideoFullscreenManagerProxy::setInlineRect):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideoContentLayer):
+        (WebKit::VideoFullscreenManagerProxy::cleanupFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+        (WebKit::VideoFullscreenManagerProxy::preparedToExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::requestFullscreenMode):
+        (WebKit::VideoFullscreenManagerProxy::requestUpdateInlineRect):
+        (WebKit::VideoFullscreenManagerProxy::requestVideoContentLayer):
+        (WebKit::VideoFullscreenManagerProxy::returnVideoContentLayer):
+        (WebKit::VideoFullscreenManagerProxy::didSetupFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::willExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::didExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::didEnterFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::didCleanupFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::setVideoLayerFrame):
+        (WebKit::VideoFullscreenManagerProxy::setVideoLayerGravity):
+        (WebKit::VideoFullscreenManagerProxy::fullscreenModeChanged):
+        (WebKit::VideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+        - Remove MESSAGE_CHECK_CONTEXTID() since it is now redundant.
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add PlaybackSessionContextIdentifier.h to the project.
+        * WebProcess/cocoa/PlaybackSessionContextIdentifier.h: Add.
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionInterfaceContext::PlaybackSessionInterfaceContext):
+        (WebKit::PlaybackSessionManager::createModelAndInterface):
+        (WebKit::PlaybackSessionManager::ensureModelAndInterface):
+        (WebKit::PlaybackSessionManager::ensureModel):
+        (WebKit::PlaybackSessionManager::ensureInterface):
+        (WebKit::PlaybackSessionManager::removeContext):
+        (WebKit::PlaybackSessionManager::addClientForContext):
+        (WebKit::PlaybackSessionManager::removeClientForContext):
+        (WebKit::PlaybackSessionManager::setUpPlaybackControlsManager):
+        (WebKit::PlaybackSessionManager::clearPlaybackControlsManager):
+        (WebKit::PlaybackSessionManager::contextIdForMediaElement):
+        (WebKit::PlaybackSessionManager::durationChanged):
+        (WebKit::PlaybackSessionManager::currentTimeChanged):
+        (WebKit::PlaybackSessionManager::bufferedTimeChanged):
+        (WebKit::PlaybackSessionManager::playbackStartedTimeChanged):
+        (WebKit::PlaybackSessionManager::rateChanged):
+        (WebKit::PlaybackSessionManager::seekableRangesChanged):
+        (WebKit::PlaybackSessionManager::canPlayFastReverseChanged):
+        (WebKit::PlaybackSessionManager::audioMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManager::legibleMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManager::externalPlaybackChanged):
+        (WebKit::PlaybackSessionManager::audioMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManager::legibleMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManager::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::PlaybackSessionManager::mutedChanged):
+        (WebKit::PlaybackSessionManager::volumeChanged):
+        (WebKit::PlaybackSessionManager::isPictureInPictureSupportedChanged):
+        (WebKit::PlaybackSessionManager::play):
+        (WebKit::PlaybackSessionManager::pause):
+        (WebKit::PlaybackSessionManager::togglePlayState):
+        (WebKit::PlaybackSessionManager::beginScrubbing):
+        (WebKit::PlaybackSessionManager::endScrubbing):
+        (WebKit::PlaybackSessionManager::seekToTime):
+        (WebKit::PlaybackSessionManager::fastSeek):
+        (WebKit::PlaybackSessionManager::beginScanningForward):
+        (WebKit::PlaybackSessionManager::beginScanningBackward):
+        (WebKit::PlaybackSessionManager::endScanning):
+        (WebKit::PlaybackSessionManager::selectAudioMediaOption):
+        (WebKit::PlaybackSessionManager::selectLegibleMediaOption):
+        (WebKit::PlaybackSessionManager::handleControlledElementIDRequest):
+        (WebKit::PlaybackSessionManager::togglePictureInPicture):
+        (WebKit::PlaybackSessionManager::toggleMuted):
+        (WebKit::PlaybackSessionManager::setMuted):
+        (WebKit::PlaybackSessionManager::setVolume):
+        (WebKit::PlaybackSessionManager::setPlayingOnSecondScreen):
+        (WebKit::nextContextId): Delete.
+        - Replace with PlaybackSessionContextIdentifier::generate().
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        (WebKit::VideoFullscreenInterfaceContext::create):
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext):
+        (WebKit::VideoFullscreenManager::createModelAndInterface):
+        (WebKit::VideoFullscreenManager::ensureModelAndInterface):
+        (WebKit::VideoFullscreenManager::ensureModel):
+        (WebKit::VideoFullscreenManager::ensureInterface):
+        (WebKit::VideoFullscreenManager::removeContext):
+        (WebKit::VideoFullscreenManager::addClientForContext):
+        (WebKit::VideoFullscreenManager::removeClientForContext):
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+        (WebKit::VideoFullscreenManager::hasVideoChanged):
+        (WebKit::VideoFullscreenManager::videoDimensionsChanged):
+        (WebKit::VideoFullscreenManager::requestFullscreenMode):
+        (WebKit::VideoFullscreenManager::fullscreenModeChanged):
+        (WebKit::VideoFullscreenManager::requestUpdateInlineRect):
+        (WebKit::VideoFullscreenManager::requestVideoContentLayer):
+        (WebKit::VideoFullscreenManager::returnVideoContentLayer):
+        (WebKit::VideoFullscreenManager::didSetupFullscreen):
+        (WebKit::VideoFullscreenManager::willExitFullscreen):
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didExitFullscreen):
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+        (WebKit::VideoFullscreenManager::setVideoLayerGravityEnum):
+        (WebKit::VideoFullscreenManager::fullscreenMayReturnToInline):
+        (WebKit::VideoFullscreenManager::requestRouteSharingPolicyAndContextUID):
+        (WebKit::VideoFullscreenManager::setVideoLayerFrameFenced):
+
 2020-06-24  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r262341) Use UTF-8 to decode CFURLRefs from IPC

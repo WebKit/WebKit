@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "MessageReceiver.h"
+#include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/PlatformView.h>
@@ -63,7 +64,7 @@ class VideoFullscreenModelContext final
     , public WebCore::VideoFullscreenModel
     , public WebCore::VideoFullscreenChangeObserver  {
 public:
-    static Ref<VideoFullscreenModelContext> create(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, uint64_t contextId)
+    static Ref<VideoFullscreenModelContext> create(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, PlaybackSessionContextIdentifier contextId)
     {
         return adoptRef(*new VideoFullscreenModelContext(manager, playbackSessionModel, contextId));
     }
@@ -75,7 +76,7 @@ public:
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
 private:
-    VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, uint64_t);
+    VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
 
     // VideoFullscreenModel
     void addClient(WebCore::VideoFullscreenModelClient&) override;
@@ -110,7 +111,7 @@ private:
 
     VideoFullscreenManagerProxy* m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
-    uint64_t m_contextId;
+    PlaybackSessionContextIdentifier m_contextId;
     RetainPtr<PlatformView> m_layerHostView;
     HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
     WebCore::FloatSize m_videoDimensions;
@@ -132,7 +133,7 @@ public:
 
     void setMockVideoPresentationModeEnabled(bool enabled) { m_mockVideoPresentationModeEnabled = enabled; }
 
-    void requestRouteSharingPolicyAndContextUID(uint64_t contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
+    void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
 
     bool isPlayingVideoInEnhancedFullscreen() const;
 
@@ -147,51 +148,51 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     typedef std::tuple<RefPtr<VideoFullscreenModelContext>, RefPtr<PlatformVideoFullscreenInterface>> ModelInterfaceTuple;
-    ModelInterfaceTuple createModelAndInterface(uint64_t contextId);
-    ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
-    VideoFullscreenModelContext& ensureModel(uint64_t contextId);
-    PlatformVideoFullscreenInterface& ensureInterface(uint64_t contextId);
-    PlatformVideoFullscreenInterface* findInterface(uint64_t contextId);
-    void addClientForContext(uint64_t contextId);
-    void removeClientForContext(uint64_t contextId);
+    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
+    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    VideoFullscreenModelContext& ensureModel(PlaybackSessionContextIdentifier);
+    PlatformVideoFullscreenInterface& ensureInterface(PlaybackSessionContextIdentifier);
+    PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier);
+    void addClientForContext(PlaybackSessionContextIdentifier);
+    void removeClientForContext(PlaybackSessionContextIdentifier);
 
     void hasVideoInPictureInPictureDidChange(bool);
 
     // Messages from VideoFullscreenManager
-    void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
-    void setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible);
-    void setHasVideoContentLayer(uint64_t contextId, bool value);
-    void setHasVideo(uint64_t contextId, bool);
-    void setVideoDimensions(uint64_t contextId, const WebCore::FloatSize&);
-    void enterFullscreen(uint64_t contextId);
-    void exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect);
-    void cleanupFullscreen(uint64_t contextId);
-    void preparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect);
-    void preparedToExitFullscreen(uint64_t contextId);
-    void exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void setupFullscreenWithID(PlaybackSessionContextIdentifier, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
+    void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::IntRect& inlineRect, bool visible);
+    void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
+    void setHasVideo(PlaybackSessionContextIdentifier, bool);
+    void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
+    void enterFullscreen(PlaybackSessionContextIdentifier);
+    void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::IntRect finalRect);
+    void cleanupFullscreen(PlaybackSessionContextIdentifier);
+    void preparedToReturnToInline(PlaybackSessionContextIdentifier, bool visible, WebCore::IntRect inlineRect);
+    void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
+    void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
     // Messages to VideoFullscreenManager
-    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
-    void requestUpdateInlineRect(uint64_t contextId);
-    void requestVideoContentLayer(uint64_t contextId);
-    void returnVideoContentLayer(uint64_t contextId);
-    void didSetupFullscreen(uint64_t contextId);
-    void willExitFullscreen(uint64_t contextId);
-    void didExitFullscreen(uint64_t contextId);
-    void didEnterFullscreen(uint64_t contextId);
-    void didCleanupFullscreen(uint64_t contextId);
-    void setVideoLayerFrame(uint64_t contextId, WebCore::FloatRect);
-    void setVideoLayerGravity(uint64_t contextId, WebCore::MediaPlayerEnums::VideoGravity);
-    void fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void fullscreenMayReturnToInline(uint64_t contextId);
+    void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
+    void requestUpdateInlineRect(PlaybackSessionContextIdentifier);
+    void requestVideoContentLayer(PlaybackSessionContextIdentifier);
+    void returnVideoContentLayer(PlaybackSessionContextIdentifier);
+    void didSetupFullscreen(PlaybackSessionContextIdentifier);
+    void willExitFullscreen(PlaybackSessionContextIdentifier);
+    void didExitFullscreen(PlaybackSessionContextIdentifier);
+    void didEnterFullscreen(PlaybackSessionContextIdentifier);
+    void didCleanupFullscreen(PlaybackSessionContextIdentifier);
+    void setVideoLayerFrame(PlaybackSessionContextIdentifier, WebCore::FloatRect);
+    void setVideoLayerGravity(PlaybackSessionContextIdentifier, WebCore::MediaPlayerEnums::VideoGravity);
+    void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
 
     bool m_mockVideoPresentationModeEnabled { false };
 
     WebPageProxy* m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
-    HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
-    uint64_t m_controlsManagerContextId { 0 };
-    HashMap<uint64_t, int> m_clientCounts;
+    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    PlaybackSessionContextIdentifier m_controlsManagerContextId;
+    HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
 };
 
 } // namespace WebKit

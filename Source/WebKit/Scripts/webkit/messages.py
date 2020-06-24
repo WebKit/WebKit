@@ -241,6 +241,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::MDNSRegisterIdentifier',
         'WebKit::MediaPlayerPrivateRemoteIdentifier',
         'WebKit::MediaRecorderIdentifier',
+        'WebKit::PlaybackSessionContextIdentifier',
         'WebKit::PluginProcessType',
         'WebKit::RemoteAudioDestinationIdentifier',
         'WebKit::RemoteAudioSessionIdentifier',

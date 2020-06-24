@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
+#include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
@@ -57,7 +58,7 @@ class PlaybackSessionInterfaceContext final
     : public RefCounted<PlaybackSessionInterfaceContext>
     , public WebCore::PlaybackSessionModelClient {
 public:
-    static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, uint64_t contextId)
+    static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, PlaybackSessionContextIdentifier contextId)
     {
         return adoptRef(*new PlaybackSessionInterfaceContext(manager, contextId));
     }
@@ -86,10 +87,10 @@ private:
     void volumeChanged(double) final;
     void isPictureInPictureSupportedChanged(bool) final;
 
-    PlaybackSessionInterfaceContext(PlaybackSessionManager&, uint64_t contextId);
+    PlaybackSessionInterfaceContext(PlaybackSessionManager&, PlaybackSessionContextIdentifier);
 
     PlaybackSessionManager* m_manager;
-    uint64_t m_contextId;
+    PlaybackSessionContextIdentifier m_contextId;
 };
 
 class PlaybackSessionManager : public RefCounted<PlaybackSessionManager>, private IPC::MessageReceiver {
@@ -103,7 +104,7 @@ public:
 
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&);
     void clearPlaybackControlsManager();
-    uint64_t contextIdForMediaElement(WebCore::HTMLMediaElement&);
+    PlaybackSessionContextIdentifier contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
     WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
 
@@ -114,57 +115,57 @@ protected:
     explicit PlaybackSessionManager(WebPage&);
 
     typedef std::tuple<RefPtr<WebCore::PlaybackSessionModelMediaElement>, RefPtr<PlaybackSessionInterfaceContext>> ModelInterfaceTuple;
-    ModelInterfaceTuple createModelAndInterface(uint64_t contextId);
-    ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
-    WebCore::PlaybackSessionModelMediaElement& ensureModel(uint64_t contextId);
-    PlaybackSessionInterfaceContext& ensureInterface(uint64_t contextId);
-    void removeContext(uint64_t contextId);
-    void addClientForContext(uint64_t contextId);
-    void removeClientForContext(uint64_t contextId);
+    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
+    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    WebCore::PlaybackSessionModelMediaElement& ensureModel(PlaybackSessionContextIdentifier);
+    PlaybackSessionInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
+    void removeContext(PlaybackSessionContextIdentifier);
+    void addClientForContext(PlaybackSessionContextIdentifier);
+    void removeClientForContext(PlaybackSessionContextIdentifier);
 
     // Interface to PlaybackSessionInterfaceContext
-    void durationChanged(uint64_t contextId, double);
-    void currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime);
-    void bufferedTimeChanged(uint64_t contextId, double bufferedTime);
-    void playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime);
-    void rateChanged(uint64_t contextId, bool isPlaying, float playbackRate);
-    void seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges&, double lastModifiedTime, double liveUpdateInterval);
-    void canPlayFastReverseChanged(uint64_t contextId, bool value);
-    void audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
-    void legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
-    void audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex);
-    void legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex);
-    void externalPlaybackChanged(uint64_t contextId, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
-    void wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool);
-    void mutedChanged(uint64_t contextId, bool);
-    void volumeChanged(uint64_t contextId, double);
-    void isPictureInPictureSupportedChanged(uint64_t contextId, bool);
+    void durationChanged(PlaybackSessionContextIdentifier, double);
+    void currentTimeChanged(PlaybackSessionContextIdentifier, double currentTime, double anchorTime);
+    void bufferedTimeChanged(PlaybackSessionContextIdentifier, double bufferedTime);
+    void playbackStartedTimeChanged(PlaybackSessionContextIdentifier, double playbackStartedTime);
+    void rateChanged(PlaybackSessionContextIdentifier, bool isPlaying, float playbackRate);
+    void seekableRangesChanged(PlaybackSessionContextIdentifier, const WebCore::TimeRanges&, double lastModifiedTime, double liveUpdateInterval);
+    void canPlayFastReverseChanged(PlaybackSessionContextIdentifier, bool value);
+    void audioMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
+    void legibleMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
+    void audioMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
+    void legibleMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
+    void externalPlaybackChanged(PlaybackSessionContextIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
+    void wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier, bool);
+    void mutedChanged(PlaybackSessionContextIdentifier, bool);
+    void volumeChanged(PlaybackSessionContextIdentifier, double);
+    void isPictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool);
 
     // Messages from PlaybackSessionManagerProxy
-    void play(uint64_t contextId);
-    void pause(uint64_t contextId);
-    void togglePlayState(uint64_t contextId);
-    void beginScrubbing(uint64_t contextId);
-    void endScrubbing(uint64_t contextId);
-    void seekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter);
-    void fastSeek(uint64_t contextId, double time);
-    void beginScanningForward(uint64_t contextId);
-    void beginScanningBackward(uint64_t contextId);
-    void endScanning(uint64_t contextId);
-    void selectAudioMediaOption(uint64_t contextId, uint64_t index);
-    void selectLegibleMediaOption(uint64_t contextId, uint64_t index);
-    void handleControlledElementIDRequest(uint64_t contextId);
-    void togglePictureInPicture(uint64_t contextId);
-    void toggleMuted(uint64_t contextId);
-    void setMuted(uint64_t contextId, bool muted);
-    void setVolume(uint64_t contextId, double volume);
-    void setPlayingOnSecondScreen(uint64_t contextId, bool value);
+    void play(PlaybackSessionContextIdentifier);
+    void pause(PlaybackSessionContextIdentifier);
+    void togglePlayState(PlaybackSessionContextIdentifier);
+    void beginScrubbing(PlaybackSessionContextIdentifier);
+    void endScrubbing(PlaybackSessionContextIdentifier);
+    void seekToTime(PlaybackSessionContextIdentifier, double time, double toleranceBefore, double toleranceAfter);
+    void fastSeek(PlaybackSessionContextIdentifier, double time);
+    void beginScanningForward(PlaybackSessionContextIdentifier);
+    void beginScanningBackward(PlaybackSessionContextIdentifier);
+    void endScanning(PlaybackSessionContextIdentifier);
+    void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
+    void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
+    void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
+    void togglePictureInPicture(PlaybackSessionContextIdentifier);
+    void toggleMuted(PlaybackSessionContextIdentifier);
+    void setMuted(PlaybackSessionContextIdentifier, bool muted);
+    void setVolume(PlaybackSessionContextIdentifier, double volume);
+    void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
 
     WebPage* m_page;
-    HashMap<WebCore::HTMLMediaElement*, uint64_t> m_mediaElements;
-    HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
-    uint64_t m_controlsManagerContextId { 0 };
-    HashCountedSet<uint64_t> m_clientCounts;
+    HashMap<WebCore::HTMLMediaElement*, PlaybackSessionContextIdentifier> m_mediaElements;
+    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    PlaybackSessionContextIdentifier m_controlsManagerContextId;
+    HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
 };
 
 } // namespace WebKit

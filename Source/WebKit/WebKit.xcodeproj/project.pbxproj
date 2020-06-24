@@ -934,6 +934,7 @@
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4459984122833E6000E61373 /* SyntheticEditingCommandType.h */; };
+		446DC64C24A2D8E50061F390 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */; };
 		4482734724528F6000A95493 /* CocoaImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4482734624528F6000A95493 /* CocoaImage.h */; };
 		449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */; };
 		44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */; };
@@ -3536,6 +3537,7 @@
 		41FCD6BF23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSampleBufferDisplayLayerManager.h; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
+		446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		4482734624528F6000A95493 /* CocoaImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaImage.h; sourceTree = "<group>"; };
 		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
 		44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCertificateAuthenticationXPCConstants.cpp; sourceTree = "<group>"; };
@@ -8381,6 +8383,7 @@
 			children = (
 				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
 				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
+				446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
 				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
@@ -11002,6 +11005,7 @@
 				2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */,
 				2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */,
 				BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */,
+				446DC64C24A2D8E50061F390 /* PlaybackSessionContextIdentifier.h in Headers */,
 				CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */,
 				CDA29A291CBEB67A00901CCF /* PlaybackSessionManagerMessages.h in Headers */,
 				CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */,

@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,23 +23,23 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 messages -> PlaybackSessionManager {
-    Play(uint64_t contextId)
-    Pause(uint64_t contextId)
-    TogglePlayState(uint64_t contextId)
-    BeginScrubbing(uint64_t contextId)
-    EndScrubbing(uint64_t contextId)
-    SeekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter)
-    FastSeek(uint64_t contextId, double time)
-    BeginScanningForward(uint64_t contextId)
-    BeginScanningBackward(uint64_t contextId)
-    EndScanning(uint64_t contextId)
-    SelectAudioMediaOption(uint64_t contextId, uint64_t index)
-    SelectLegibleMediaOption(uint64_t contextId, uint64_t index)
-    HandleControlledElementIDRequest(uint64_t contextId)
-    TogglePictureInPicture(uint64_t contextId)
-    ToggleMuted(uint64_t contextId)
-    SetMuted(uint64_t contextId, bool muted)
-    SetVolume(uint64_t contextId, double volume)
-    SetPlayingOnSecondScreen(uint64_t contextId, bool value)
+    Play(WebKit::PlaybackSessionContextIdentifier contextId)
+    Pause(WebKit::PlaybackSessionContextIdentifier contextId)
+    TogglePlayState(WebKit::PlaybackSessionContextIdentifier contextId)
+    BeginScrubbing(WebKit::PlaybackSessionContextIdentifier contextId)
+    EndScrubbing(WebKit::PlaybackSessionContextIdentifier contextId)
+    SeekToTime(WebKit::PlaybackSessionContextIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
+    FastSeek(WebKit::PlaybackSessionContextIdentifier contextId, double time)
+    BeginScanningForward(WebKit::PlaybackSessionContextIdentifier contextId)
+    BeginScanningBackward(WebKit::PlaybackSessionContextIdentifier contextId)
+    EndScanning(WebKit::PlaybackSessionContextIdentifier contextId)
+    SelectAudioMediaOption(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t index)
+    SelectLegibleMediaOption(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t index)
+    HandleControlledElementIDRequest(WebKit::PlaybackSessionContextIdentifier contextId)
+    TogglePictureInPicture(WebKit::PlaybackSessionContextIdentifier contextId)
+    ToggleMuted(WebKit::PlaybackSessionContextIdentifier contextId)
+    SetMuted(WebKit::PlaybackSessionContextIdentifier contextId, bool muted)
+    SetVolume(WebKit::PlaybackSessionContextIdentifier contextId, double volume)
+    SetPlayingOnSecondScreen(WebKit::PlaybackSessionContextIdentifier contextId, bool value)
 }
 #endif
