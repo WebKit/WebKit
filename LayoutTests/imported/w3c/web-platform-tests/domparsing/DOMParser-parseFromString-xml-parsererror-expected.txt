@@ -16,4 +16,8 @@ PASS DOMParser: <parsererror> element added on error, <span data-test=testing>14
 PASS DOMParser: <parsererror> element added on error, 15<span 
 PASS DOMParser: <parsererror> element added on error, <8:test xmlns:8="urn:x-test:test">16</8:test> 
 PASS DOMParser: <parsererror> element added on error, <span xmlns:p1 xmlns:p2="urn:x-test:test"/>17 
+PASS text/xml is preserved in the error document 
+PASS application/xml is preserved in the error document 
+PASS application/xhtml+xml is preserved in the error document 
+PASS image/svg+xml is preserved in the error document 
 

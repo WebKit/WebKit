@@ -1,14 +1,12 @@
 
 PASS Parsing of id attribute 
 PASS contentType 
-PASS characterSet 
-PASS inputEncoding 
-PASS charset 
-PASS URL value 
-PASS baseURI value 
+PASS compatMode 
+PASS compatMode for a proper DOCTYPE 
 PASS Location value 
 PASS DOMParser parses HTML tag soup with no problems 
 PASS DOMParser should handle the content of <noembed> as raw text 
 PASS DOMParser throws on an invalid enum value 
 PASS script is found synchronously even when there is a css import 
+PASS must be parsed with scripting disabled, so noscript works 
 

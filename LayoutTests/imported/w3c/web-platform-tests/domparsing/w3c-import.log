@@ -14,7 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-encoding.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-html.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-base-pushstate.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-base.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-moretests.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-pushstate.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-doctype.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-internal-subset.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-parsererror.html

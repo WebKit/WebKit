@@ -1,5 +1,16 @@
 2020-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/domparsing from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213540
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/domparsing from upstream 1001bb6b2d6b9.
+
+        * web-platform-tests/domparsing/*: Updated.
+
+2020-06-23  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/IndexedDB from upstream
         https://bugs.webkit.org/show_bug.cgi?id=213541
 
