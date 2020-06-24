@@ -1,4 +1,21 @@
 ================
+WebKitGTK 2.29.2
+================
+
+What's new in WebKitGTK 2.29.2?
+
+  - Add Intelligent Tracking Prevention (ITP) support.
+  - Add support for video formats in img elements.
+  - Add API to handle video autoplay policy that now defaults to disallow autoplay videos with audio.
+  - Add API to mute a web view.
+  - Add API to allow applications to handle the HTTP authentication credential storage.
+  - Add a WebKitSetting to set the media content types requiring hardware support.
+  - Fix a crash during drag an drop due to a bug introduced in 2.29.1.
+  - Do not start page load during animation in back/forward gesture.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Ukrainian.
+
+================
 WebKitGTK 2.29.1
 ================
 

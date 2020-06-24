@@ -1,5 +1,11 @@
 2020-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.2 release
+
+        * gtk/NEWS: Add release notes for 2.29.2.
+
+2020-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Add API to allow applications to handle the HTTP authentication credential storage
         https://bugs.webkit.org/show_bug.cgi?id=213177
 

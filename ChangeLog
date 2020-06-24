@@ -1,3 +1,9 @@
+2020-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.2 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2020-06-22  Saam Barati  <sbarati@apple.com>
 
         Allow building JavaScriptCore Mac+arm64 in public SDK build
