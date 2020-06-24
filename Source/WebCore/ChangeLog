@@ -1,3 +1,20 @@
+2020-06-23  Zalan Bujtas  <zalan@apple.com>
+
+        [Multicol] Reset the childrenInline state on the RenderBlockFlow when destroying the multicolumn context
+        https://bugs.webkit.org/show_bug.cgi?id=213535
+        <rdar://problem/64541835>
+
+        Reviewed by Simon Fraser.
+
+        The "childrenInline" flags tells the tree builder whether a newly inserted inline content needs an anonymous block wrapper or not.
+        RenderBlockFlows with multicolumn content have this flag set to false as the RenderMultiColumnFlowThread is a block renderer.
+        As part of the mulicolumn context destruction, we move all the descendants from RenderMultiColumnFlowThread back to
+        the original parent (the parent of the RenderMultiColumnFlowThread renderer).
+        This patch sets this flag back to the initial value of true so that we don't end up constructing redundant wrappers for the incoming inline content.
+
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+
 2020-06-23  Geoffrey Garen  <ggaren@apple.com>
 
         Remove WTF::setMainThreadCallbacksPaused
