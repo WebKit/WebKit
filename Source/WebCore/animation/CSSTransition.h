@@ -27,8 +27,11 @@
 
 #include "CSSPropertyNames.h"
 #include "DeclarativeAnimation.h"
+#include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -46,20 +49,21 @@ public:
     String transitionProperty() const { return getPropertyNameString(m_property); }
     CSSPropertyID property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
+    Optional<Seconds> timelineTimeAtCreation() const { return m_timelineTimeAtCreation; }
     const RenderStyle& targetStyle() const { return *m_targetStyle; }
     const RenderStyle& currentStyle() const { return *m_currentStyle; }
     const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
-    void resolve(RenderStyle&) final;
-
 private:
     CSSTransition(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
+    void resolve(RenderStyle&, Optional<Seconds>) final;
 
     CSSPropertyID m_property;
     MonotonicTime m_generationTime;
+    Markable<Seconds, Seconds::MarkableTraits> m_timelineTimeAtCreation;
     std::unique_ptr<RenderStyle> m_targetStyle;
     std::unique_ptr<RenderStyle> m_currentStyle;
     std::unique_ptr<RenderStyle> m_reversingAdjustedStartStyle;

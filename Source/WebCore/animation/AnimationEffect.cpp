@@ -67,13 +67,13 @@ EffectTiming AnimationEffect::getTiming() const
     return timing;
 }
 
-BasicEffectTiming AnimationEffect::getBasicTiming() const
+BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
     // to return them all as a single BasicEffectTiming.
 
-    auto localTime = [this]() -> Optional<Seconds> {
+    auto localTime = [this, startTime]() -> Optional<Seconds> {
         // 4.5.4. Local time
         // https://drafts.csswg.org/web-animations-1/#local-time-section
 
@@ -81,7 +81,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
         // If the animation effect is associated with an animation, the local time is the current time of the animation.
         // Otherwise, the local time is unresolved.
         if (m_animation)
-            return m_animation->currentTime();
+            return m_animation->currentTime(startTime);
         return WTF::nullopt;
     }();
 
@@ -167,13 +167,13 @@ ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
     return getComputedTiming();
 }
 
-ComputedEffectTiming AnimationEffect::getComputedTiming() const
+ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startTime) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
     // to return them all as a single ComputedEffectTiming.
 
-    auto basicEffectTiming = getBasicTiming();
+    auto basicEffectTiming = getBasicTiming(startTime);
     auto activeTime = basicEffectTiming.activeTime;
     auto phase = basicEffectTiming.phase;
 

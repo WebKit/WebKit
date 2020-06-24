@@ -1200,17 +1200,18 @@ void KeyframeEffect::didChangeTargetElementOrPseudoElement(Element* previousTarg
         m_inTargetEffectStack = newTargetElementOrPseudoElement->ensureKeyframeEffectStack().addEffect(*this);
 }
 
-void KeyframeEffect::apply(RenderStyle& targetStyle)
+void KeyframeEffect::apply(RenderStyle& targetStyle, Optional<Seconds> startTime)
 {
     if (!m_target)
         return;
 
     updateBlendingKeyframes(targetStyle);
 
-    auto computedTiming = getComputedTiming();
-    m_phaseAtLastApplication = computedTiming.phase;
-
-    InspectorInstrumentation::willApplyKeyframeEffect(*targetElementOrPseudoElement(), *this, computedTiming);
+    auto computedTiming = getComputedTiming(startTime);
+    if (!startTime) {
+        m_phaseAtLastApplication = computedTiming.phase;
+        InspectorInstrumentation::willApplyKeyframeEffect(*targetElementOrPseudoElement(), *this, computedTiming);
+    }
 
     if (!computedTiming.progress)
         return;

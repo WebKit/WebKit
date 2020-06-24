@@ -1,3 +1,42 @@
+2020-06-24  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION: Delayed updating of the parallax images on pacificvoyages.net/posts
+        https://bugs.webkit.org/show_bug.cgi?id=212213
+        <rdar://problem/63497946>
+
+        Reviewed by Simon Fraser.
+
+        Test: webanimations/css-transition-retargeting-during-ready-promise.html
+
+        When a transition's ready promise is resolved, its start time is the same as the timeline's current time. This means
+        that retargeting a transition at that moment will yield a progress of zero even though the transition was started before
+        the current animation frame. This means that retargeting a property on each page rendering may start a new transition
+        with the same from value, which can have an undesirable effect such as on the website reported in this bug.
+
+        We now keep track of the timeline time when a transition is created and use this time as a start time override when
+        applying the animation to compute the before-change style in AnimationTimeline::updateCSSTransitionsForElementAndProperty().
+
+        To do so, we pass an optional start time all the way from WebAnimation::resolve() through to WebAnimation::currentTime() and
+        via the animation effect timing computation.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getBasicTiming const):
+        (WebCore::AnimationEffect::getComputedTiming const):
+        * animation/AnimationEffect.h:
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::CSSTransition):
+        (WebCore::CSSTransition::resolve):
+        * animation/CSSTransition.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        * animation/KeyframeEffect.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::currentTime const):
+        (WebCore::WebAnimation::resolve):
+        * animation/WebAnimation.h:
+
 2020-06-24  Eric Carlson  <eric.carlson@apple.com>
 
         Don't claim to support fullscreen mode unless fullScreenEnabled setting is enabled

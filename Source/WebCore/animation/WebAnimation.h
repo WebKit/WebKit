@@ -72,7 +72,7 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
-    Optional<Seconds> currentTime() const;
+    Optional<Seconds> currentTime(Optional<Seconds> = WTF::nullopt) const;
     ExceptionOr<void> setCurrentTime(Optional<Seconds>);
 
     enum class Silently : uint8_t { Yes, No };
@@ -121,7 +121,7 @@ public:
     bool needsTick() const;
     virtual void tick();
     WEBCORE_EXPORT Seconds timeToNextTick() const;
-    virtual void resolve(RenderStyle&);
+    virtual void resolve(RenderStyle&, Optional<Seconds> = WTF::nullopt);
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();
     void applyPendingAcceleratedActions();
@@ -169,7 +169,7 @@ private:
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
-    Optional<Seconds> currentTime(RespectHoldTime) const;
+    Optional<Seconds> currentTime(RespectHoldTime, Optional<Seconds> = WTF::nullopt) const;
     ExceptionOr<void> silentlySetCurrentTime(Optional<Seconds>);
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }

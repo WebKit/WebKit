@@ -55,13 +55,13 @@ public:
 
     EffectTiming getBindingsTiming() const;
     EffectTiming getTiming() const;
-    BasicEffectTiming getBasicTiming() const;
+    BasicEffectTiming getBasicTiming(Optional<Seconds> = WTF::nullopt) const;
     ComputedEffectTiming getBindingsComputedTiming() const;
-    ComputedEffectTiming getComputedTiming() const;
+    ComputedEffectTiming getComputedTiming(Optional<Seconds> = WTF::nullopt) const;
     ExceptionOr<void> bindingsUpdateTiming(Optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Optional<OptionalEffectTiming>);
 
-    virtual void apply(RenderStyle&) = 0;
+    virtual void apply(RenderStyle&, Optional<Seconds> = WTF::nullopt) = 0;
     virtual void invalidate() = 0;
     virtual void animationDidTick() = 0;
     virtual void animationDidPlay() = 0;

@@ -382,12 +382,12 @@ ExceptionOr<void> WebAnimation::setBindingsCurrentTime(Optional<double> currentT
     return setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
 }
 
-Optional<Seconds> WebAnimation::currentTime() const
+Optional<Seconds> WebAnimation::currentTime(Optional<Seconds> startTime) const
 {
-    return currentTime(RespectHoldTime::Yes);
+    return currentTime(RespectHoldTime::Yes, startTime);
 }
 
-Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime) const
+Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, Optional<Seconds> startTime) const
 {
     // 3.4.4. The current time of an animation
     // https://drafts.csswg.org/web-animations-1/#the-current-time-of-an-animation
@@ -407,7 +407,7 @@ Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime) con
         return WTF::nullopt;
 
     // Otherwise, current time = (timeline time - start time) * playback rate
-    return (m_timeline->currentTime().value() - m_startTime.value()) * m_playbackRate;
+    return (*m_timeline->currentTime() - startTime.valueOr(*m_startTime)) * m_playbackRate;
 }
 
 ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTime)
@@ -1241,14 +1241,14 @@ void WebAnimation::tick()
         m_effect->animationDidTick();
 }
 
-void WebAnimation::resolve(RenderStyle& targetStyle)
+void WebAnimation::resolve(RenderStyle& targetStyle, Optional<Seconds> startTime)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
     if (m_effect)
-        m_effect->apply(targetStyle);
+        m_effect->apply(targetStyle, startTime);
 }
 
 void WebAnimation::setSuspended(bool isSuspended)

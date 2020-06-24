@@ -391,7 +391,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
     auto beforeChangeStyle = [&]() -> const RenderStyle {
         if (animation && animation->isRelevant()) {
             auto animatedStyle = RenderStyle::clone(currentStyle);
-            animation->resolve(animatedStyle);
+            animation->resolve(animatedStyle, is<CSSTransition>(animation) ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : WTF::nullopt);
             return animatedStyle;
         }
 

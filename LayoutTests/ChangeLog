@@ -1,3 +1,17 @@
+2020-06-24  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION: Delayed updating of the parallax images on pacificvoyages.net/posts
+        https://bugs.webkit.org/show_bug.cgi?id=212213
+        <rdar://problem/63497946>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that checks that retargeting a transition while its "ready" promise is resolved
+        uses a before-change style that will differ from the from style.
+
+        * webanimations/css-transition-retargeting-during-ready-promise-expected.txt: Added.
+        * webanimations/css-transition-retargeting-during-ready-promise.html: Added.
+
 2020-06-24  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for css3/filters/null-effect-check.html as it is passing.
