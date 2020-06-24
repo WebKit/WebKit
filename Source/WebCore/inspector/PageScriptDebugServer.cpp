@@ -135,8 +135,6 @@ void PageScriptDebugServer::reportException(JSGlobalObject* state, JSC::Exceptio
 
 void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 {
-    setMainThreadCallbacksPaused(paused);
-
     for (auto& page : pageGroup.pages()) {
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             setJavaScriptPaused(*frame, paused);

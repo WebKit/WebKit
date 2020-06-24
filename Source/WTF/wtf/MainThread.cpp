@@ -41,7 +41,6 @@
 
 namespace WTF {
 
-static bool callbacksPaused; // This global variable is only accessed from main thread.
 static Lock mainThreadFunctionQueueMutex;
 
 static Deque<Function<void ()>>& functionQueue()
@@ -73,9 +72,6 @@ static constexpr auto maxRunLoopSuspensionTime = 50_ms;
 void dispatchFunctionsFromMainThread()
 {
     ASSERT(isMainThread());
-
-    if (callbacksPaused)
-        return;
 
     auto startTime = MonotonicTime::now();
 
@@ -129,19 +125,6 @@ void callOnMainThread(Function<void()>&& function)
     }
 
     if (needToSchedule)
-        scheduleDispatchFunctionsOnMainThread();
-}
-
-void setMainThreadCallbacksPaused(bool paused)
-{
-    ASSERT(isMainThread());
-
-    if (callbacksPaused == paused)
-        return;
-
-    callbacksPaused = paused;
-
-    if (!callbacksPaused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
