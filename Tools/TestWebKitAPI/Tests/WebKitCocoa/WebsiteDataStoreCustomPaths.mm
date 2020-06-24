@@ -436,6 +436,37 @@ TEST(WebKit, WebsiteDataStoreEphemeral)
     [[NSFileManager defaultManager] removeItemAtURL:defaultResourceLoadStatisticsPath error:nil];
 }
 
+TEST(WebKit, AlternativeServicesDefaultDirectoryCreation)
+{
+    NSURL *defaultDirectory = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/AlternativeServices" stringByExpandingTildeInPath] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtURL:defaultDirectory error:nil];
+    
+    TestWKWebView *webView1 = [[[TestWKWebView alloc] init] autorelease];
+    [webView1 synchronouslyLoadHTMLString:@"start auxiliary processes" baseURL:nil];
+
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
+    
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+
+#if PLATFORM(MAC)
+    NSString *key = @"ExperimentalHTTP3Enabled";
+#else
+    NSString *key = @"WebKitExperimentalHTTP3Enabled";
+#endif
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:key];
+
+    TestWKWebView *webView2 = [[[TestWKWebView alloc] init] autorelease];
+    [webView2 synchronouslyLoadHTMLString:@"start auxiliary processes" baseURL:nil];
+
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
+
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+    [[NSFileManager defaultManager] removeItemAtURL:defaultDirectory error:nil];
+
+#endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+}
+
 TEST(WebKit, WebsiteDataStoreEphemeralViaConfiguration)
 {
     RetainPtr<WebsiteDataStoreCustomPathsMessageHandler> handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);

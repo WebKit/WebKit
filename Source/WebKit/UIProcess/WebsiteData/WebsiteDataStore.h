@@ -318,7 +318,7 @@ private:
 
     enum class ShouldCreateDirectory { No, Yes };
     static WTF::String tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
-    static WTF::String cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName);
+    static WTF::String cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
     static WTF::String websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName);
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;

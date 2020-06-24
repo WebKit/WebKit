@@ -1202,7 +1202,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
         configuration._alternativeServicesStorage = [[[_NSHTTPAlternativeServicesStorage alloc] initPersistentStoreWithURL:[[NSURL fileURLWithPath:parameters.alternativeServiceDirectory isDirectory:YES] URLByAppendingPathComponent:@"AlternativeService.sqlite"]] autorelease];
     } else
         ASSERT(m_sessionID.isEphemeral());
-    configuration._allowsHTTP3 = parameters.http3Enabled;
+    if (parameters.http3Enabled)
+        configuration._allowsHTTP3 = YES;
 #endif
 
     configuration._preventsSystemHTTPProxyAuthentication = parameters.preventsSystemHTTPProxyAuthentication;

@@ -91,7 +91,7 @@ String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ResourceLoadStatistics");
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
 {
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }

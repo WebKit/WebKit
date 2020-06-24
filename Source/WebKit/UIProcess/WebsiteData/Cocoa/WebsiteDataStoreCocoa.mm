@@ -156,11 +156,14 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
         httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-    String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
-    SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
-    if (!alternativeServiceStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
     bool http3Enabled = WebsiteDataStore::http3Enabled();
+    String alternativeServiceStorageDirectory;
+    SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
+    if (http3Enabled) {
+        alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
+        if (!alternativeServiceStorageDirectory.isEmpty())
+            SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
+    }
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
@@ -202,7 +205,12 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 bool WebsiteDataStore::http3Enabled()
 {
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:@"Experimental%@", (NSString *)WebPreferencesKey::http3EnabledKey()]];
+#if PLATFORM(MAC)
+    NSString *format = @"Experimental%@";
+#else
+    NSString *format = @"WebKitExperimental%@";
+#endif
+    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:format, (NSString *)WebPreferencesKey::http3EnabledKey()]];
 #else
     return false;
 #endif
@@ -261,7 +269,7 @@ WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
 
 WTF::String WebsiteDataStore::defaultAlternativeServicesDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation("AlternativeServices");
+    return cacheDirectoryFileSystemRepresentation("AlternativeServices", ShouldCreateDirectory::No);
 }
 
 WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
@@ -333,7 +341,7 @@ WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::S
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
-WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName)
+WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
     static NSURL *cacheURL;
@@ -354,7 +362,8 @@ WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::
     });
 
     NSURL *url = [cacheURL URLByAppendingPathComponent:directoryName isDirectory:YES];
-    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+    if (shouldCreateDirectory == ShouldCreateDirectory::Yes
+        && ![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", url);
 
     return url.absoluteURL.path.fileSystemRepresentation;

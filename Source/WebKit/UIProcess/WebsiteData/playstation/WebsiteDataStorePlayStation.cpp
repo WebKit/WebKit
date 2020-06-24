@@ -91,7 +91,7 @@ String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
     return { };
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
 {
     return { };
 }

@@ -94,7 +94,7 @@ WTF::String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
     return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "itp");
 }
 
-WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName)
+WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory)
 {
     return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), directoryName);
 }
