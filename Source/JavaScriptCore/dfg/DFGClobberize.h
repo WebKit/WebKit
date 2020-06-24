@@ -721,8 +721,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             def(PureValue(node));
             return;
         case UntypedUse:
-            read(World);
-            write(Heap);
+            clobberTop();
             return;
         default:
             DFG_CRASH(graph, node, "Bad use kind");
@@ -1214,9 +1213,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 read(AbstractHeap(DOMState, effect.reads.rawRepresentation()));
         }
         if (effect.writes) {
-            if (effect.writes == DOMJIT::HeapRange::top())
+            if (effect.writes == DOMJIT::HeapRange::top()) {
+                if (Options::validateDFGClobberize())
+                    clobberTopFunctor();
                 write(Heap);
-            else
+            } else
                 write(AbstractHeap(DOMState, effect.writes.rawRepresentation()));
         }
         if (effect.def != DOMJIT::HeapRange::top()) {
@@ -1242,9 +1243,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 read(AbstractHeap(DOMState, effect.reads.rawRepresentation()));
         }
         if (effect.writes) {
-            if (effect.writes == DOMJIT::HeapRange::top())
+            if (effect.writes == DOMJIT::HeapRange::top()) {
+                if (Options::validateDFGClobberize())
+                    clobberTopFunctor();
                 write(Heap);
-            else
+            } else
                 write(AbstractHeap(DOMState, effect.writes.rawRepresentation()));
         }
         ASSERT_WITH_MESSAGE(effect.def == DOMJIT::HeapRange::top(), "Currently, we do not accept any def for CallDOM.");

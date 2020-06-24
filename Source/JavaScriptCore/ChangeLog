@@ -1,3 +1,17 @@
+2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clobberize misses `write(Heap)` report in some nodes
+        https://bugs.webkit.org/show_bug.cgi?id=213525
+        <rdar://problem/64642067>
+
+        Reviewed by Mark Lam.
+
+        In some DFG nodes, clobberize phase misses `clobberTopFunctor` call while it is `write(Heap)`,
+        which confuses clobberizing validation.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2020-06-23  Mark Lam  <mark.lam@apple.com>
 
         Handle string overflow in DFG graph dump while validating AI.
