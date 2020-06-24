@@ -1,3 +1,20 @@
+2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Fix PlatformXR initialization/destruction
+        https://bugs.webkit.org/show_bug.cgi?id=213509
+
+        Reviewed by Youenn Fablet.
+
+        There were two different issues, one at creation time and the other one at destruction. At creation
+        time we were not calling construct() for the LazyNeverDestroyed object. That was making the WebProcess
+        crash in Debug builds. At destruction time we were calling xrDestroyInstance() without checking that the
+        passed instance was a valid one, although OpenXR implementations deal with it the spec is pretty clear.
+
+        * platform/xr/PlatformXR.h: Mark LazyNeverDestroyed as friend and default constructor&destructor.
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::Instance::Impl::~Impl): Check that instance is not XR_NULL_HANDLE before destroying.
+        (PlatformXR::Instance::singleton): Call construct() on the Lazy instance.
+
 2020-06-24  Youenn Fablet  <youenn@apple.com>
 
         Use signalling thread as worker thread instead of network thread

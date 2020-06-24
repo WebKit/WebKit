@@ -20,6 +20,7 @@
 
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -69,11 +70,12 @@ public:
     void enumerateImmersiveXRDevices();
     const Vector<std::unique_ptr<Device>>& immersiveXRDevices() const { return m_immersiveXRDevices; }
 private:
+    friend LazyNeverDestroyed<Instance>;
     Instance();
-    ~Instance();
+    ~Instance() = default;
 
     struct Impl;
-    std::unique_ptr<Impl> m_impl;
+    UniqueRef<Impl> m_impl;
 
     Vector<std::unique_ptr<Device>> m_immersiveXRDevices;
 };

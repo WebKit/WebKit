@@ -162,7 +162,8 @@ Instance::Impl::Impl()
 
 Instance::Impl::~Impl()
 {
-    xrDestroyInstance(m_instance);
+    if (m_instance != XR_NULL_HANDLE)
+        xrDestroyInstance(m_instance);
 }
 
 #if USE_OPENXR
@@ -213,13 +214,15 @@ Instance& Instance::singleton()
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag,
         [&] {
-            s_instance->m_impl = makeUnique<Impl>();
+            s_instance.construct();
         });
     return s_instance.get();
 }
 
-Instance::Instance() = default;
-Instance::~Instance() = default;
+Instance::Instance()
+    : m_impl(makeUniqueRef<Impl>())
+{
+}
 
 void Instance::enumerateImmersiveXRDevices()
 {
