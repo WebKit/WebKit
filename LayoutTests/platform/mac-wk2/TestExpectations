@@ -182,7 +182,6 @@ webkit.org/b/105616 editing/spelling/context-menu-suggestions-subword-selection.
 webkit.org/b/105616 editing/spelling/copy-paste-crash.html
 webkit.org/b/105616 editing/spelling/delete-into-misspelled-word.html
 webkit.org/b/105616 editing/spelling/editing-multiple-words-with-markers.html
-webkit.org/b/105616 editing/spelling/editing-word-with-marker-1.html [ Failure ]
 webkit.org/b/105616 editing/spelling/editing-word-with-marker-2.html
 webkit.org/b/105616 editing/spelling/move-cursor-around-misspelled-word.html
 webkit.org/b/105616 editing/spelling/spelling-changed-text.html
