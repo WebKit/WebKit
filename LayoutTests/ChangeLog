@@ -1,3 +1,17 @@
+2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [ macOS ] fullscreen/video-inside-flex-item.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213517
+
+        Reviewed by Simon Fraser.
+
+        Video is rendered differently depending on the configuration/platform. Instead of checking the actual
+        size in pixels it's better to verify that the size after cancelling fullscreen is the same as before
+        going to fullscreen.
+
+        * fullscreen/video-inside-flex-item-expected.txt:
+        * fullscreen/video-inside-flex-item.html:
+
 2020-06-23  Sam Weinig  <weinig@apple.com>
 
         [ iOS Release ] imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.html & imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.worker.html are flaky failures

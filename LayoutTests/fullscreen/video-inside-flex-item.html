@@ -25,13 +25,15 @@ if (Element.prototype.webkitRequestFullScreen == undefined) {
     logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
     endTest();
 } else {
+    var oldVideoWidth = video.clientWidth;
+    var oldVideoHeight = video.clientHeight;
     waitForEventOnce(document, 'webkitfullscreenchange', function() {
         // First check that the video went fullscreen.
-        testExpected(video.clientWidth, document.body.clientWidth);
+        test("video.clientWidth == document.body.clientWidth");
         waitForEventOnce(document, 'webkitfullscreenchange', function() {
             // Then check that the original video size is properly restored.
-            testExpected(video.clientWidth, 300);
-            testExpected(video.clientHeight, 150);
+            test("video.clientWidth == oldVideoWidth");
+            test("video.clientHeight == oldVideoHeight");
             endTest();
         });
         document.webkitCancelFullScreen();
