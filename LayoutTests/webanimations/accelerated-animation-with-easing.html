@@ -1,0 +1,84 @@
+<body>
+<style>
+    
+    body {
+        background-color: green;
+    }
+    
+    div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+
+    /* Allow for a 1px error on either side */
+    #easing-on-keyframe {
+        left: -1px;
+        width: 102px;
+        background-color: green;
+    }
+
+</style>
+<div id="easing-on-animation-one-keyframe"></div>
+<div id="easing-on-animation-two-keyframes"></div>
+<div id="easing-on-animation-three-keyframes"></div>
+<div id="easing-on-keyframe"></div>
+<script>
+
+(async function() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const animations = [];
+
+    animations.push(document.getElementById("easing-on-animation-one-keyframe").animate({ transform: "translateX(100px)" }, {
+        duration: 500,
+        easing: "ease",
+        direction: "alternate",
+        iterations: Infinity
+    }));
+
+    animations.push(document.getElementById("easing-on-animation-two-keyframes").animate([
+        { transform: "translateX(0)" },
+        { transform: "translateX(100px)" }
+    ], {
+        duration: 500,
+        easing: "ease",
+        direction: "alternate",
+        iterations: Infinity
+    }));
+
+    animations.push(document.getElementById("easing-on-animation-three-keyframes").animate([
+        { transform: "translateX(0)" },
+        { transform: "translateX(50px)" },
+        { transform: "translateX(100px)" }
+    ], {
+        duration: 500,
+        easing: "ease",
+        direction: "alternate",
+        iterations: Infinity
+    }));
+
+    animations.push(document.getElementById("easing-on-keyframe").animate([
+        { transform: "translateX(0)", easing: "ease" },
+        { transform: "translateX(100px)" }
+    ], {
+        duration: 500,
+        direction: "alternate",
+        iterations: Infinity
+    }));
+
+    await Promise.all(animations.map(animation => animation.ready));
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>
+</body>
