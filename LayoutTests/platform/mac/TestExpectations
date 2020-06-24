@@ -272,9 +272,6 @@ webkit.org/b/102257 fast/dom/Window/open-window-min-size.html
 # Fails because MutationObservers are not notified at end-of-task
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
-# <rdar://problem/11059777>
-webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
-
 webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
 # Spelling tests that are flakey.
