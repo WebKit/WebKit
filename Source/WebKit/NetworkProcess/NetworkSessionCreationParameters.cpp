@@ -60,6 +60,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
+    encoder << persistentCredentialStorageEnabled;
 #endif
 #if USE(CURL)
     encoder << cookiePersistentStorageFile;
@@ -161,6 +162,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<SoupCookiePersistentStorageType> cookiePersistentStorageType;
     decoder >> cookiePersistentStorageType;
     if (!cookiePersistentStorageType)
+        return WTF::nullopt;
+
+    Optional<bool> persistentCredentialStorageEnabled;
+    decoder >> persistentCredentialStorageEnabled;
+    if (!persistentCredentialStorageEnabled)
         return WTF::nullopt;
 #endif
 
@@ -272,6 +278,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
 #if USE(SOUP)
         , WTFMove(*cookiePersistentStoragePath)
         , WTFMove(*cookiePersistentStorageType)
+        , WTFMove(*persistentCredentialStorageEnabled)
 #endif
 #if USE(CURL)
         , WTFMove(*cookiePersistentStorageFile)

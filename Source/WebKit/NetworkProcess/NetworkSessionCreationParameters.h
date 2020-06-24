@@ -72,6 +72,7 @@ struct NetworkSessionCreationParameters {
 #if USE(SOUP)
     String cookiePersistentStoragePath;
     SoupCookiePersistentStorageType cookiePersistentStorageType { SoupCookiePersistentStorageType::Text };
+    bool persistentCredentialStorageEnabled { true };
 #endif
 #if USE(CURL)
     String cookiePersistentStorageFile;

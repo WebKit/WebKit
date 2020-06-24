@@ -113,6 +113,13 @@ WEBKIT_API gboolean
 webkit_website_data_manager_get_itp_enabled                           (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API void
+webkit_website_data_manager_set_persistent_credential_storage_enabled (WebKitWebsiteDataManager *manager,
+                                                                       gboolean                  enabled);
+
+WEBKIT_API gboolean
+webkit_website_data_manager_get_persistent_credential_storage_enabled (WebKitWebsiteDataManager *manager);
+
+WEBKIT_API void
 webkit_website_data_manager_fetch                                     (WebKitWebsiteDataManager *manager,
                                                                        WebKitWebsiteDataTypes    types,
                                                                        GCancellable             *cancellable,

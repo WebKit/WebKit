@@ -2247,13 +2247,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_USER_MESSAGE);
 }
 
-static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
+static void webkitWebViewCompleteAuthenticationRequest(WebKitWebView* webView)
 {
-    if (!webView->priv->authenticationRequest)
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (!priv->authenticationRequest)
         return;
 
-    webkit_authentication_request_cancel(webView->priv->authenticationRequest.get());
-    webView->priv->authenticationRequest.clear();
+    if (priv->mainResource) {
+        if (auto* response = webkit_web_resource_get_response(priv->mainResource.get())) {
+            auto statusCode = webkit_uri_response_get_status_code(response);
+            if (statusCode != SOUP_STATUS_UNAUTHORIZED && statusCode != SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED && statusCode < 500) {
+                webkitAuthenticationRequestDidAuthenticate(priv->authenticationRequest.get());
+                priv->authenticationRequest = nullptr;
+                return;
+            }
+        }
+    }
+
+    webkit_authentication_request_cancel(priv->authenticationRequest.get());
+    priv->authenticationRequest = nullptr;
 }
 
 void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration)
@@ -2301,7 +2313,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webkitWebViewCancelFaviconRequest(webView);
         webkitWebViewWatchForChangesInFavicon(webView);
 #endif
-        webkitWebViewCancelAuthenticationRequest(webView);
+        webkitWebViewCompleteAuthenticationRequest(webView);
         priv->loadingResourcesMap.clear();
         priv->mainResource = nullptr;
         webView->priv->isActiveURIChangeBlocked = false;
@@ -2323,7 +2335,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         break;
     }
     case WEBKIT_LOAD_FINISHED:
-        webkitWebViewCancelAuthenticationRequest(webView);
+        webkitWebViewCompleteAuthenticationRequest(webView);
         break;
     default:
         break;
@@ -2334,7 +2346,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
 {
-    webkitWebViewCancelAuthenticationRequest(webView);
+    webkitWebViewCompleteAuthenticationRequest(webView);
 
     gboolean returnValue;
     g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
@@ -2343,7 +2355,7 @@ void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, 
 
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* failingURI, GError* error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
 {
-    webkitWebViewCancelAuthenticationRequest(webView);
+    webkitWebViewCompleteAuthenticationRequest(webView);
 
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context.get());
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
@@ -2692,7 +2704,9 @@ void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmission
 
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
 {
-    webView->priv->authenticationRequest = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge, webView->priv->isEphemeral));
+    auto* websiteDataManager = webkit_web_view_get_website_data_manager(webView);
+    webView->priv->authenticationRequest = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge,
+        webView->priv->isEphemeral, webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager)));
     gboolean returnValue;
     g_signal_emit(webView, signals[AUTHENTICATE], 0, webView->priv->authenticationRequest.get(), &returnValue);
 }

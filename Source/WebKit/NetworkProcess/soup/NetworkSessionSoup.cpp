@@ -42,6 +42,7 @@ using namespace WebCore;
 NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     : NetworkSession(networkProcess, parameters)
     , m_networkSession(makeUnique<SoupNetworkSession>(m_sessionID))
+    , m_persistentCredentialStorageEnabled(parameters.persistentCredentialStorageEnabled)
 {
     auto* storageSession = networkStorageSession();
     ASSERT(storageSession);

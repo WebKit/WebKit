@@ -71,6 +71,7 @@ private:
     static gboolean tlsConnectionAcceptCertificateCallback(GTlsConnection*, GTlsCertificate*, GTlsCertificateFlags, NetworkDataTaskSoup*);
     bool tlsConnectionAcceptCertificate(GTlsCertificate*, GTlsCertificateFlags);
 
+    bool persistentCredentialStorageEnabled() const;
     void applyAuthenticationToRequest(WebCore::ResourceRequest&);
     static void authenticateCallback(SoupSession*, SoupMessage*, SoupAuth*, gboolean retrying, NetworkDataTaskSoup*);
     void authenticate(WebCore::AuthenticationChallenge&&);

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
+#include "NetworkProcessMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStoreParameters.h"
@@ -36,9 +37,23 @@ namespace WebKit {
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
     auto& networkSessionParameters = parameters.networkSessionParameters;
+    networkSessionParameters.persistentCredentialStorageEnabled = m_persistentCredentialStorageEnabled;
 
     if (auto* processPool = processPoolForCookieStorageOperations())
         processPool->supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(m_sessionID, networkSessionParameters.cookiePersistentStoragePath, networkSessionParameters.cookiePersistentStorageType);
 }
 
+void WebsiteDataStore::setPersistentCredentialStorageEnabled(bool enabled)
+{
+    if (persistentCredentialStorageEnabled() == enabled)
+        return;
+
+    if (enabled && !isPersistent())
+        return;
+
+    m_persistentCredentialStorageEnabled = enabled;
+    for (auto& processPool : processPools())
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetPersistentCredentialStorageEnabled(m_sessionID, m_persistentCredentialStorageEnabled));
 }
+
+} // namespace WebKit

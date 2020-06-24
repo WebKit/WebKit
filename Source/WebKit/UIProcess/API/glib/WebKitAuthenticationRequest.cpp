@@ -56,6 +56,7 @@ using namespace WebCore;
  */
 
 enum {
+    AUTHENTICATED,
     CANCELLED,
 
     LAST_SIGNAL
@@ -64,9 +65,13 @@ enum {
 struct _WebKitAuthenticationRequestPrivate {
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge;
     bool privateBrowsingEnabled;
+    bool persistentCredentialStorageEnabled;
     bool handledRequest;
     CString host;
     CString realm;
+    Optional<WebCore::Credential> proposedCredential;
+    Optional<WebCore::Credential> acceptedCredential;
+    Optional<bool> canSaveCredentials;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -105,8 +110,7 @@ static void webkitAuthenticationRequestDispose(GObject* object)
     WebKitAuthenticationRequest* request = WEBKIT_AUTHENTICATION_REQUEST(object);
 
     // Make sure the request is always handled before finalizing.
-    if (!request->priv->handledRequest)
-        webkit_authentication_request_cancel(request);
+    webkit_authentication_request_cancel(request);
 
     G_OBJECT_CLASS(webkit_authentication_request_parent_class)->dispose(object);
 }
@@ -115,6 +119,27 @@ static void webkit_authentication_request_class_init(WebKitAuthenticationRequest
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
     objectClass->dispose = webkitAuthenticationRequestDispose;
+
+    /**
+     * WebKitAuthenticationRequest::authenticated:
+     * @request: the #WebKitAuthenticationRequest
+     * @credential: the #WebKitCredential accepted
+     *
+     * This signal is emitted when the user authentication request succeeded.
+     * Applications handling their own credential storage should connect to
+     * this signal to save the credentials.
+     *
+     * Since: 2.30
+     */
+    signals[AUTHENTICATED] =
+        g_signal_new(
+            "authenticated",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, nullptr,
+            g_cclosure_marshal_generic,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_CREDENTIAL | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
      * WebKitAuthenticationRequest::cancelled:
@@ -135,11 +160,12 @@ static void webkit_authentication_request_class_init(WebKitAuthenticationRequest
             G_TYPE_NONE, 0);
 }
 
-WebKitAuthenticationRequest* webkitAuthenticationRequestCreate(AuthenticationChallengeProxy* authenticationChallenge, bool privateBrowsingEnabled)
+WebKitAuthenticationRequest* webkitAuthenticationRequestCreate(AuthenticationChallengeProxy* authenticationChallenge, bool privateBrowsingEnabled, bool persistentCredentialStorageEnabled)
 {
     WebKitAuthenticationRequest* request = WEBKIT_AUTHENTICATION_REQUEST(g_object_new(WEBKIT_TYPE_AUTHENTICATION_REQUEST, NULL));
     request->priv->authenticationChallenge = authenticationChallenge;
     request->priv->privateBrowsingEnabled = privateBrowsingEnabled;
+    request->priv->persistentCredentialStorageEnabled = persistentCredentialStorageEnabled;
     return request;
 }
 
@@ -148,14 +174,30 @@ AuthenticationChallengeProxy* webkitAuthenticationRequestGetAuthenticationChalle
     return request->priv->authenticationChallenge.get();
 }
 
+void webkitAuthenticationRequestDidAuthenticate(WebKitAuthenticationRequest* request)
+{
+    auto* credential = webkitCredentialCreate(request->priv->acceptedCredential.valueOr(WebCore::Credential()));
+    g_signal_emit(request, signals[AUTHENTICATED], 0, credential);
+    webkit_credential_free(credential);
+}
+
+const WebCore::Credential& webkitAuthenticationRequestGetProposedCredential(WebKitAuthenticationRequest* request)
+{
+    if (request->priv->proposedCredential)
+        return request->priv->proposedCredential.value();
+    return request->priv->authenticationChallenge->core().proposedCredential();
+}
+
 /**
  * webkit_authentication_request_can_save_credentials:
  * @request: a #WebKitAuthenticationRequest
  *
  * Determine whether the authentication method associated with this
  * #WebKitAuthenticationRequest should allow the storage of credentials.
- * This will return %FALSE if WebKit doesn't support credential storing
- * or if private browsing is enabled.
+ * This will return %FALSE if WebKit doesn't support credential storing,
+ * if private browsing is enabled, or if persistent credential storage has been
+ * disabled in #WebKitWebsiteDataManager, unless credentials saving has been
+ * explicitly enabled with webkit_authentication_request_set_can_save_credentials().
  *
  * Returns: %TRUE if WebKit can store credentials or %FALSE otherwise.
  *
@@ -165,11 +207,39 @@ gboolean webkit_authentication_request_can_save_credentials(WebKitAuthentication
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), FALSE);
 
+    if (request->priv->privateBrowsingEnabled)
+        return FALSE;
+
+    if (request->priv->canSaveCredentials)
+        return request->priv->canSaveCredentials.value();
+
 #if USE(LIBSECRET)
-    return !request->priv->privateBrowsingEnabled;
+    return request->priv->persistentCredentialStorageEnabled;
 #else
     return FALSE;
 #endif
+}
+
+/**
+ * webkit_authentication_request_set_can_save_credentials:
+ * @request: a #WebKitAuthenticationRequest
+ * @enabled: value to set
+ *
+ * Set whether the authentication method associated with @request
+ * should allow the storage of credentials.
+ * This should be used by applications handling their own credentials
+ * storage to indicate that it should be supported even when internal
+ * credential storage is disabled or unsupported.
+ * Note that storing of credentials will not be allowed on ephemeral
+ * sessions in any case.
+ *
+ * Since: 2.30
+ */
+void webkit_authentication_request_set_can_save_credentials(WebKitAuthenticationRequest* request, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
+
+    request->priv->canSaveCredentials = enabled;
 }
 
 /**
@@ -187,13 +257,39 @@ gboolean webkit_authentication_request_can_save_credentials(WebKitAuthentication
  */
 WebKitCredential* webkit_authentication_request_get_proposed_credential(WebKitAuthenticationRequest* request)
 {
-    g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
+    g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), nullptr);
 
-    const auto& credential = request->priv->authenticationChallenge->core().proposedCredential();
+    const auto& credential = webkitAuthenticationRequestGetProposedCredential(request);
     if (credential.isEmpty())
-        return 0;
+        return nullptr;
 
     return webkitCredentialCreate(credential);
+}
+
+/**
+ * webkit_authentication_request_set_proposed_credential:
+ * @request: a #WebKitAuthenticationRequest
+ * @credential: a #WebKitCredential, or %NULL
+ *
+ * Set the #WebKitCredential of the proposed authentication challenge that was
+ * stored from a previous session. This should only be used by applications handling
+ * their own credential storage. (When using the default WebKit credential storage,
+ * webkit_authentication_request_get_proposed_credential() already contains previously-stored
+ * credentials.)
+ * Passing a %NULL @credential will clear the proposed credential.
+ *
+ * Since: 2.30
+ */
+void webkit_authentication_request_set_proposed_credential(WebKitAuthenticationRequest* request, WebKitCredential* credential)
+{
+    g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
+
+    if (!credential) {
+        request->priv->proposedCredential = WTF::nullopt;
+        return;
+    }
+
+    request->priv->proposedCredential = webkitCredentialGetCredential(credential);
 }
 
 /**
@@ -316,8 +412,11 @@ void webkit_authentication_request_authenticate(WebKitAuthenticationRequest* req
 {
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
-    request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, credential ? webkitCredentialGetCredential(credential) : WebCore::Credential());
-
+    if (credential)
+        request->priv->acceptedCredential = webkitCredentialGetCredential(credential);
+    else
+        request->priv->acceptedCredential = WTF::nullopt;
+    request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, request->priv->acceptedCredential.valueOr(WebCore::Credential()));
     request->priv->handledRequest = true;
 }
 
@@ -334,7 +433,12 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
+    if (request->priv->handledRequest)
+        return;
+
     request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel);
+    request->priv->acceptedCredential = WTF::nullopt;
+    request->priv->handledRequest = true;
 
     g_signal_emit(request, signals[CANCELLED], 0);
 }

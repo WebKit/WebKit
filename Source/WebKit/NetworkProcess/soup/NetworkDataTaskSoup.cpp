@@ -454,6 +454,11 @@ bool NetworkDataTaskSoup::tlsConnectionAcceptCertificate(GTlsCertificate* certif
     return false;
 }
 
+bool NetworkDataTaskSoup::persistentCredentialStorageEnabled() const
+{
+    return static_cast<NetworkSessionSoup&>(*m_session).persistentCredentialStorageEnabled();
+}
+
 void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 {
     if (m_user.isEmpty() && m_password.isEmpty())
@@ -524,7 +529,7 @@ void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
     // of all request latency, versus a one-time latency for the small subset of requests that
     // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
     // will become session credentials after the first use.
-    if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
+    if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use && persistentCredentialStorageEnabled()) {
         auto protectionSpace = challenge.protectionSpace();
         m_session->networkStorageSession()->getCredentialFromPersistentStorage(protectionSpace, m_cancellable.get(),
             [this, protectedThis = makeRef(*this), authChallenge = WTFMove(challenge)] (Credential&& credential) mutable {
@@ -563,7 +568,7 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
                 if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
                     m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
-                if (credential.persistence() == CredentialPersistencePermanent) {
+                if (credential.persistence() == CredentialPersistencePermanent && persistentCredentialStorageEnabled()) {
                     m_protectionSpaceForPersistentStorage = challenge.protectionSpace();
                     m_credentialForPersistentStorage = credential;
                 }
@@ -875,7 +880,7 @@ void NetworkDataTaskSoup::didGetHeaders()
     // since we are waiting until we know that this authentication succeeded before actually storing.
     // This is because we want to avoid hitting the disk twice (once to add and once to remove) for
     // incorrect credentials or polluting the keychain with invalid credentials.
-    if (!isAuthenticationFailureStatusCode(m_soupMessage->status_code) && m_soupMessage->status_code < 500) {
+    if (!isAuthenticationFailureStatusCode(m_soupMessage->status_code) && m_soupMessage->status_code < 500 && persistentCredentialStorageEnabled()) {
         m_session->networkStorageSession()->saveCredentialToPersistentStorage(m_protectionSpaceForPersistentStorage, m_credentialForPersistentStorage);
         m_protectionSpaceForPersistentStorage = ProtectionSpace();
         m_credentialForPersistentStorage = Credential();

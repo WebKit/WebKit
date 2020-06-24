@@ -181,6 +181,12 @@ void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& set
     });
 }
 
+void NetworkProcess::setPersistentCredentialStorageEnabled(PAL::SessionID sessionID, bool enabled)
+{
+    if (auto* session = networkSession(sessionID))
+        static_cast<NetworkSessionSoup&>(*session).setPersistentCredentialStorageEnabled(enabled);
+}
+
 void NetworkProcess::platformProcessDidTransitionToForeground()
 {
     notImplemented();

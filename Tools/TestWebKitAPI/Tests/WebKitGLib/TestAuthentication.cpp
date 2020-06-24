@@ -24,6 +24,20 @@
 
 static WebKitTestServer* kServer;
 
+static const char authTestUsername[] = "username";
+static const char authTestPassword[] = "password";
+static const char authExpectedSuccessTitle[] = "WebKit2Gtk+ Authentication test";
+static const char authExpectedFailureTitle[] = "401 Authorization Required";
+static const char authExpectedAuthorization[] = "Basic dXNlcm5hbWU6cGFzc3dvcmQ="; // Base64 encoding of "username:password".
+static const char authSuccessHTMLString[] =
+    "<html>"
+    "<head><title>WebKit2Gtk+ Authentication test</title></head>"
+    "<body></body></html>";
+static const char authFailureHTMLString[] =
+    "<html>"
+    "<head><title>401 Authorization Required</title></head>"
+    "<body></body></html>";
+
 class AuthenticationTest: public LoadTrackingTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(AuthenticationTest);
@@ -39,26 +53,39 @@ public:
     }
 
     static int authenticationRetries;
-    static bool authenticationCancelledReceived;
 
     void loadURI(const char* uri)
     {
         // Reset the retry count of the fake server when a page is loaded.
         authenticationRetries = 0;
-        authenticationCancelledReceived = false;
+        m_authenticationCancelledReceived = false;
         LoadTrackingTest::loadURI(uri);
     }
 
     static gboolean runAuthenticationCallback(WebKitWebView*, WebKitAuthenticationRequest* request, AuthenticationTest* test)
     {
+        g_signal_connect(request, "authenticated", G_CALLBACK(authenticationSucceededCallback), test);
         g_signal_connect(request, "cancelled", G_CALLBACK(authenticationCancelledCallback), test);
         test->runAuthentication(request);
         return TRUE;
     }
 
-    static void authenticationCancelledCallback(WebKitAuthenticationRequest*, AuthenticationTest*)
+    static void authenticationSucceededCallback(WebKitAuthenticationRequest*, WebKitCredential* credential, AuthenticationTest* test)
     {
-        authenticationCancelledReceived = true;
+        g_assert_nonnull(credential);
+        g_assert_cmpstr(webkit_credential_get_username(credential), ==, authTestUsername);
+        g_assert_cmpstr(webkit_credential_get_password(credential), ==, authTestPassword);
+        g_assert_cmpuint(webkit_credential_get_persistence(credential), ==, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
+        g_assert_false(test->m_authenticationCancelledReceived);
+        g_assert_false(test->m_authenticationSucceededReceived);
+        test->m_authenticationSucceededReceived = true;
+    }
+
+    static void authenticationCancelledCallback(WebKitAuthenticationRequest*, AuthenticationTest* test)
+    {
+        g_assert_false(test->m_authenticationSucceededReceived);
+        g_assert_false(test->m_authenticationCancelledReceived);
+        test->m_authenticationCancelledReceived = true;
     }
 
     void runAuthentication(WebKitAuthenticationRequest* request)
@@ -74,8 +101,9 @@ public:
         return m_authenticationRequest.get();
     }
 
-private:
     GRefPtr<WebKitAuthenticationRequest> m_authenticationRequest;
+    bool m_authenticationSucceededReceived { false };
+    bool m_authenticationCancelledReceived { false };
 };
 
 class EphemeralAuthenticationTest : public AuthenticationTest {
@@ -94,21 +122,6 @@ public:
 };
 
 int AuthenticationTest::authenticationRetries = 0;
-bool AuthenticationTest::authenticationCancelledReceived = false;
-
-static const char authTestUsername[] = "username";
-static const char authTestPassword[] = "password";
-static const char authExpectedSuccessTitle[] = "WebKit2Gtk+ Authentication test";
-static const char authExpectedFailureTitle[] = "401 Authorization Required";
-static const char authExpectedAuthorization[] = "Basic dXNlcm5hbWU6cGFzc3dvcmQ="; // Base64 encoding of "username:password".
-static const char authSuccessHTMLString[] =
-    "<html>"
-    "<head><title>WebKit2Gtk+ Authentication test</title></head>"
-    "<body></body></html>";
-static const char authFailureHTMLString[] =
-    "<html>"
-    "<head><title>401 Authorization Required</title></head>"
-    "<body></body></html>";
 
 static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpointer)
 {
@@ -138,6 +151,8 @@ static void testWebViewAuthenticationCancel(AuthenticationTest* test, gconstpoin
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
 
     g_assert_error(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED);
+    g_assert_true(test->m_authenticationCancelledReceived);
+    g_assert_false(test->m_authenticationSucceededReceived);
 }
 
 static void testWebViewAuthenticationLoadCancelled(AuthenticationTest* test, gconstpointer)
@@ -147,7 +162,6 @@ static void testWebViewAuthenticationLoadCancelled(AuthenticationTest* test, gco
     webkit_web_view_stop_loading(test->m_webView);
     // Expect empty page.
     test->waitUntilLoadFinished();
-    g_assert_true(test->authenticationCancelledReceived);
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -155,6 +169,8 @@ static void testWebViewAuthenticationLoadCancelled(AuthenticationTest* test, gco
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
 
     g_assert_error(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED);
+    g_assert_true(test->m_authenticationCancelledReceived);
+    g_assert_false(test->m_authenticationSucceededReceived);
 }
 
 static void testWebViewAuthenticationFailure(AuthenticationTest* test, gconstpointer)
@@ -181,6 +197,8 @@ static void testWebViewAuthenticationFailure(AuthenticationTest* test, gconstpoi
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedFailureTitle);
+    g_assert_false(test->m_authenticationCancelledReceived);
+    g_assert_false(test->m_authenticationSucceededReceived);
 }
 
 static void testWebViewAuthenticationNoCredential(AuthenticationTest* test, gconstpointer)
@@ -197,6 +215,8 @@ static void testWebViewAuthenticationNoCredential(AuthenticationTest* test, gcon
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedFailureTitle);
+    g_assert_false(test->m_authenticationCancelledReceived);
+    g_assert_false(test->m_authenticationSucceededReceived);
 }
 
 static void testWebViewAuthenticationEphemeral(EphemeralAuthenticationTest* test, gconstpointer)
@@ -205,19 +225,56 @@ static void testWebViewAuthenticationEphemeral(EphemeralAuthenticationTest* test
     auto* request = test->waitForAuthenticationRequest();
     g_assert_null(webkit_authentication_request_get_proposed_credential(request));
     g_assert_false(webkit_authentication_request_can_save_credentials(request));
+    webkit_authentication_request_set_can_save_credentials(request, TRUE);
+    g_assert_false(webkit_authentication_request_can_save_credentials(request));
 }
 
-#if USE(LIBSECRET)
 static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpointer)
 {
+    WebKitAuthenticationRequest* request = nullptr;
+#if USE(LIBSECRET)
     // If WebKit has been compiled with libsecret, and private browsing is disabled
     // then check that credentials can be saved.
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
-    auto* request = test->waitForAuthenticationRequest();
+    request = test->waitForAuthenticationRequest();
     g_assert_null(webkit_authentication_request_get_proposed_credential(request));
     g_assert_true(webkit_authentication_request_can_save_credentials(request));
-}
+    webkit_authentication_request_set_can_save_credentials(request, FALSE);
+    g_assert_false(webkit_authentication_request_can_save_credentials(request));
+    webkit_authentication_request_cancel(request);
+    test->waitUntilLoadFinished();
+    g_assert_true(test->m_authenticationCancelledReceived);
+    g_assert_false(test->m_authenticationSucceededReceived);
 #endif
+
+    auto* websiteDataManager = webkit_web_view_get_website_data_manager(test->m_webView);
+    g_assert_true(webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager));
+    webkit_website_data_manager_set_persistent_credential_storage_enabled(websiteDataManager, FALSE);
+    g_assert_false(webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager));
+
+    test->loadURI(kServer->getURIForPath("/auth-test.html").data());
+    request = test->waitForAuthenticationRequest();
+    g_assert_null(webkit_authentication_request_get_proposed_credential(request));
+    webkit_authentication_request_set_proposed_credential(request, nullptr);
+    g_assert_null(webkit_authentication_request_get_proposed_credential(request));
+    auto* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
+    webkit_authentication_request_set_proposed_credential(request, credential);
+    auto* proposedCredential = webkit_authentication_request_get_proposed_credential(request);
+    g_assert_nonnull(proposedCredential);
+    g_assert_cmpstr(webkit_credential_get_username(credential), ==, webkit_credential_get_username(proposedCredential));
+    g_assert_cmpstr(webkit_credential_get_password(credential), ==, webkit_credential_get_password(proposedCredential));
+    g_assert_cmpuint(webkit_credential_get_persistence(credential), ==, webkit_credential_get_persistence(proposedCredential));
+    webkit_credential_free(proposedCredential);
+    g_assert_false(webkit_authentication_request_can_save_credentials(request));
+    webkit_authentication_request_set_can_save_credentials(request, TRUE);
+    g_assert_true(webkit_authentication_request_can_save_credentials(request));
+    webkit_authentication_request_authenticate(request, credential);
+    webkit_credential_free(credential);
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_authenticationCancelledReceived);
+    g_assert_true(test->m_authenticationSucceededReceived);
+    webkit_website_data_manager_set_persistent_credential_storage_enabled(websiteDataManager, TRUE);
+}
 
 static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpointer)
 {
@@ -234,6 +291,8 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedSuccessTitle);
+    g_assert_false(test->m_authenticationCancelledReceived);
+    g_assert_true(test->m_authenticationSucceededReceived);
 
     // Test loading the same (authorized) page again.
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
@@ -245,6 +304,8 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedSuccessTitle);
+    g_assert_false(test->m_authenticationCancelledReceived);
+    g_assert_true(test->m_authenticationSucceededReceived);
 }
 
 static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconstpointer)
@@ -261,6 +322,8 @@ static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconst
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedSuccessTitle);
+    g_assert_false(test->m_authenticationCancelledReceived);
+    g_assert_true(test->m_authenticationSucceededReceived);
 }
 
 class Tunnel {
@@ -350,7 +413,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
             soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
         } else {
             // Authentication not successful, display a "401 Authorization Required" page.
-            soup_message_set_status(message, SOUP_STATUS_OK);
+            soup_message_set_status(message, isProxy ? SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED : SOUP_STATUS_UNAUTHORIZED);
             soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
         }
     } else
@@ -429,9 +492,7 @@ void beforeAll()
     AuthenticationTest::add("Authentication", "authentication-failure", testWebViewAuthenticationFailure);
     AuthenticationTest::add("Authentication", "authentication-no-credential", testWebViewAuthenticationNoCredential);
     EphemeralAuthenticationTest::add("Authentication", "authentication-ephemeral", testWebViewAuthenticationEphemeral);
-#if USE(LIBSECRET)
     AuthenticationTest::add("Authentication", "authentication-storage", testWebViewAuthenticationStorage);
-#endif
     AuthenticationTest::add("Authentication", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
     ProxyAuthenticationTest::add("Authentication", "authentication-proxy", testWebViewAuthenticationProxy);
     ProxyAuthenticationTest::add("Authentication", "authentication-proxy-https", testWebViewAuthenticationProxyHTTPS);

@@ -32,6 +32,7 @@ messages -> NetworkProcess LegacyReceiver {
     UserPreferredLanguagesChanged(Vector<String> languages)
     SetNetworkProxySettings(struct WebCore::SoupNetworkProxySettings settings)
     PrefetchDNS(String hostname)
+    SetPersistentCredentialStorageEnabled(PAL::SessionID sessionID, bool enabled)
 #endif
 
 #if USE(CURL)

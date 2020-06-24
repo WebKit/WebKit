@@ -39,6 +39,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 {
     NetworkSessionCreationParameters& defaultSessionParameters = parameters.defaultDataStoreParameters.networkSessionParameters;
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(defaultSessionParameters.sessionID, defaultSessionParameters.cookiePersistentStoragePath, defaultSessionParameters.cookiePersistentStorageType);
+    if (m_websiteDataStore)
+        defaultSessionParameters.persistentCredentialStorageEnabled = m_websiteDataStore->persistentCredentialStorageEnabled();
 
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;

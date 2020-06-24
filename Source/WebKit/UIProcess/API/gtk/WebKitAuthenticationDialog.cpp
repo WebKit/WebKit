@@ -226,7 +226,7 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_entry_set_visibility(GTK_ENTRY(priv->passwordEntry), FALSE);
     gtk_widget_set_visible(priv->rememberCheckButton, priv->credentialStorageMode != DisallowPersistentStorage && !realm.isEmpty());
 
-    const WebCore::Credential& credentialFromPersistentStorage = challenge.proposedCredential();
+    const auto& credentialFromPersistentStorage = webkitAuthenticationRequestGetProposedCredential(priv->request.get());
     if (!credentialFromPersistentStorage.isEmpty()) {
         gtk_entry_set_text(GTK_ENTRY(priv->loginEntry), credentialFromPersistentStorage.user().utf8().data());
         gtk_entry_set_text(GTK_ENTRY(priv->passwordEntry), credentialFromPersistentStorage.password().utf8().data());

@@ -870,6 +870,42 @@ gboolean webkit_website_data_manager_get_itp_enabled(WebKitWebsiteDataManager* m
     return webkitWebsiteDataManagerGetDataStore(manager).resourceLoadStatisticsEnabled();
 }
 
+/**
+ * webkit_website_data_manager_set_persistent_credential_storage_enabled:
+ * @manager: a #WebKitWebsiteDataManager
+ * @enabled: value to set
+ *
+ * Enable or disable persistent credential storage. When enabled, which is the default for
+ * non-ephemeral sessions, the network process will try to read and write HTTP authentiacation
+ * credentials from persistent storage.
+ *
+ * Since: 2.30
+ */
+void webkit_website_data_manager_set_persistent_credential_storage_enabled(WebKitWebsiteDataManager* manager, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+
+    webkitWebsiteDataManagerGetDataStore(manager).setPersistentCredentialStorageEnabled(enabled);
+}
+
+/**
+ * webkit_website_data_manager_get_persistent_credential_storage_enabled:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get whether persistent credential storage is enabled or not.
+ * See also webkit_website_data_manager_set_persistent_credential_storage_enabled().
+ *
+ * Returns: %TRUE if persistent credential storage is enabled, or %FALSE otherwise.
+ *
+ * Since: 2.30
+ */
+gboolean webkit_website_data_manager_get_persistent_credential_storage_enabled(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
+
+    return webkitWebsiteDataManagerGetDataStore(manager).persistentCredentialStorageEnabled();
+}
+
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
 {
     OptionSet<WebsiteDataType> returnValue;

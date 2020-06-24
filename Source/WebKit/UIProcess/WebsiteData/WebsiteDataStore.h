@@ -242,6 +242,11 @@ public:
     const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
 #endif
 
+#if USE(SOUP)
+    void setPersistentCredentialStorageEnabled(bool);
+    bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled && isPersistent(); }
+#endif
+
     static void allowWebsiteDataRecordsForAllOrigins();
 
 #if HAVE(SEC_KEY_PROXY)
@@ -366,6 +371,10 @@ private:
 
 #if USE(CURL)
     WebCore::CurlProxySettings m_proxySettings;
+#endif
+
+#if USE(SOUP)
+    bool m_persistentCredentialStorageEnabled { true };
 #endif
 
     HashSet<WebCore::Cookie> m_pendingCookies;
