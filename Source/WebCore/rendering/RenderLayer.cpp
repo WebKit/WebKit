@@ -2590,7 +2590,7 @@ bool RenderLayer::requestScrollPositionUpdate(const ScrollPosition& position, Sc
 #if ENABLE(ASYNC_SCROLLING)
     LOG_WITH_STREAM(Scrolling, stream << *this << " requestScrollPositionUpdate " << position);
 
-    if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
+    if (auto* scrollingCoordinator = page().scrollingCoordinator())
         return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
 #endif
     return false;
@@ -3570,12 +3570,18 @@ bool RenderLayer::isScrollSnapInProgress() const
 {
     if (!scrollsOverflow())
         return false;
-    
-    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+
+    if (auto* scrollingCoordinator = page().scrollingCoordinator()) {
+        if (scrollingCoordinator->isScrollSnapInProgress(scrollingNodeID()))
+            return true;
+    }
+
+    if (auto* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isScrollSnapInProgress();
-    
+
     return false;
 }
+
 #endif
 
 bool RenderLayer::usesMockScrollAnimator() const
@@ -4375,7 +4381,7 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext& context, bool& 
 
     bool scrollingOnMainThread = true;
 #if ENABLE(ASYNC_SCROLLING)
-    if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
+    if (auto* scrollingCoordinator = page().scrollingCoordinator())
         scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(renderer().view().frameView());
 #endif
 

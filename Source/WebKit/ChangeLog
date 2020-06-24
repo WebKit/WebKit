@@ -1,3 +1,28 @@
+2020-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r260276): Scrolling through shelves on music.apple.com is not smooth
+        https://bugs.webkit.org/show_bug.cgi?id=213572
+        <rdar://problem/64306590>
+
+        Reviewed by Wenson Hsieh.
+
+        The scroll position for an overflow:scroll element with scroll-snap could jump around
+        during scrolling, if layout triggered a call to ScrollableArea::updateScrollSnapState().
+        The crux of the issue is that isScrollSnapInProgress() returned false for overflow:scrollers
+        which are scrolling asynchronously.
+
+        Fix by extending the existing ScrollingTree::isScrollSnapInProgress() to track all scrolling
+        nodes by storing a HashSet<ScrollingNodeID> rather than just a flag for the main frame.
+
+        RenderLayer::isScrollSnapInProgress() then consults the ScrollingCoordinator, which consults
+        the scrolling tree for this state.
+
+        Add the ability to test via internals.isScrollSnapInProgress().
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::isScrollSnapInProgress const):
+
 2020-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263295.

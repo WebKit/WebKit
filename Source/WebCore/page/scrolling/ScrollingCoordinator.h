@@ -171,7 +171,7 @@ public:
     virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
     virtual String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
     virtual bool isRubberBandInProgress() const { return false; }
-    virtual bool isScrollSnapInProgress() const { return false; }
+    virtual bool isScrollSnapInProgress(ScrollingNodeID) const { return false; }
     virtual void updateScrollSnapPropertiesWithFrameView(const FrameView&) { }
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) { }
 

@@ -2841,12 +2841,21 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
             return Exception { InvalidAccessError };
 
         scrollableArea = frameView;
+    } else if (node == nodeRef->document().scrollingElement()) {
+        auto* frameView = nodeRef->document().view();
+        if (!frameView)
+            return Exception { InvalidAccessError };
+
+        scrollableArea = frameView;
     } else if (is<Element>(nodeRef)) {
         auto& element = downcast<Element>(nodeRef.get());
         if (!element.renderBox())
             return Exception { InvalidAccessError };
 
         auto& renderBox = *element.renderBox();
+        if (!renderBox.canBeScrolledAndHasScrollableArea())
+            return Exception { InvalidAccessError };
+
         if (is<RenderListBox>(renderBox))
             scrollableArea = &downcast<RenderListBox>(renderBox);
         else
@@ -4643,31 +4652,15 @@ void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
 
 ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
 {
-    element.document().updateLayoutIgnorePendingStylesheets();
+    auto areaOrException = scrollableAreaForNode(&element);
+    if (areaOrException.hasException())
+        return areaOrException.releaseException();
 
-    if (!element.renderBox())
-        return String();
-
-    RenderBox& box = *element.renderBox();
-    ScrollableArea* scrollableArea;
-
-    if (box.isBody()) {
-        FrameView* frameView = box.frame().mainFrame().view();
-        if (!frameView || !frameView->isScrollable())
-            return Exception { InvalidAccessError };
-        scrollableArea = frameView;
-
-    } else {
-        if (!box.canBeScrolledAndHasScrollableArea())
-            return Exception { InvalidAccessError };
-        scrollableArea = box.layer();
-    }
-
+    auto* scrollableArea = areaOrException.releaseReturnValue();
     if (!scrollableArea)
-        return String();
+        return Exception { InvalidAccessError };
 
     StringBuilder result;
-
     if (auto* offsets = scrollableArea->horizontalSnapOffsets()) {
         if (offsets->size()) {
             result.appendLiteral("horizontal = ");
@@ -4688,6 +4681,18 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     return result.toString();
 }
 
+ExceptionOr<bool> Internals::isScrollSnapInProgress(Element& element)
+{
+    auto areaOrException = scrollableAreaForNode(&element);
+    if (areaOrException.hasException())
+        return areaOrException.releaseException();
+
+    auto* scrollableArea = areaOrException.releaseReturnValue();
+    if (!scrollableArea)
+        return Exception { InvalidAccessError };
+
+    return scrollableArea->isScrollSnapInProgress();
+}
 #endif
 
 bool Internals::testPreloaderSettingViewport()

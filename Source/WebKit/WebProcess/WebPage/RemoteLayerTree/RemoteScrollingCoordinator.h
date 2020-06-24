@@ -64,7 +64,7 @@ private:
 
     bool isRubberBandInProgress() const override;
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
-    bool isScrollSnapInProgress() const override;
+    bool isScrollSnapInProgress(WebCore::ScrollingNodeID) const override;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

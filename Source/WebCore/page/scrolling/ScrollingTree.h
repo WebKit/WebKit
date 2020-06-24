@@ -94,8 +94,9 @@ public:
 
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();
-    void setMainFrameIsScrollSnapping(bool);
-    bool isScrollSnapInProgress();
+
+    void setNodeScrollSnapInProgress(ScrollingNodeID, bool);
+    bool isScrollSnapInProgressForNode(ScrollingNodeID);
 
     virtual void invalidate() { }
     WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>&&);
@@ -244,8 +245,8 @@ private:
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
         Optional<unsigned> nominalFramesPerSecond;
+        HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;
         bool mainFrameIsRubberBanding { false };
-        bool mainFrameIsScrollSnapping { false };
     };
     
     Lock m_treeStateMutex;

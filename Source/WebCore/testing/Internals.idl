@@ -716,6 +716,7 @@ enum CompositingPolicy {
     [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
 
     [Conditional=CSS_SCROLL_SNAP, MayThrowException] DOMString scrollSnapOffsets(Element element);
+    [Conditional=CSS_SCROLL_SNAP, MayThrowException] boolean isScrollSnapInProgress(Element element);
     [Conditional=CSS_SCROLL_SNAP] void setPlatformMomentumScrollingPredictionEnabled(boolean enabled);
 
     [MayThrowException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);

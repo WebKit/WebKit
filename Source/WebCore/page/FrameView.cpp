@@ -933,19 +933,19 @@ bool FrameView::isScrollSnapInProgress() const
 {
     if (scrollbarsSuppressed())
         return false;
-    
+
     // If the scrolling thread updates the scroll position for this FrameView, then we should return
     // ScrollingCoordinator::isScrollSnapInProgress().
     if (auto scrollingCoordinator = this->scrollingCoordinator()) {
-        if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
-            return scrollingCoordinator->isScrollSnapInProgress();
+        if (scrollingCoordinator->isScrollSnapInProgress(scrollingNodeID()))
+            return true;
     }
-    
+
     // If the main thread updates the scroll position for this FrameView, we should return
     // ScrollAnimator::isScrollSnapInProgress().
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isScrollSnapInProgress();
-    
+
     return false;
 }
 

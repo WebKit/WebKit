@@ -705,6 +705,7 @@ public:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     ExceptionOr<String> scrollSnapOffsets(Element&);
+    ExceptionOr<bool> isScrollSnapInProgress(Element&);
     void setPlatformMomentumScrollingPredictionEnabled(bool);
 #endif
 

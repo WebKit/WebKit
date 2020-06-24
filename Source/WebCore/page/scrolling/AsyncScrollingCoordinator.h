@@ -132,7 +132,7 @@ private:
     void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    bool isScrollSnapInProgress() const override;
+    bool isScrollSnapInProgress(ScrollingNodeID) const override;
 #endif
 
     WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;

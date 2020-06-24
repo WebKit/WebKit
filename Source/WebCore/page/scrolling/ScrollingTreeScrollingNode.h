@@ -68,6 +68,9 @@ public:
     RectEdges<bool> edgePinnedState() const;
     bool isRubberBanding() const;
 
+    void setScrollSnapInProgress(bool);
+    bool isScrollSnapInProgress() const;
+
     // These are imperative; they adjust the scrolling layers.
     void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);
     void scrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped);

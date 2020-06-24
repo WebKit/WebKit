@@ -904,9 +904,9 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-bool AsyncScrollingCoordinator::isScrollSnapInProgress() const
+bool AsyncScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID nodeID) const
 {
-    return scrollingTree()->isScrollSnapInProgress();
+    return scrollingTree()->isScrollSnapInProgressForNode(nodeID);
 }
 
 void AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView)

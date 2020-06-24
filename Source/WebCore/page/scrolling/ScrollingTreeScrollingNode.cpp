@@ -219,6 +219,16 @@ bool ScrollingTreeScrollingNode::isRubberBanding() const
         || scrollPosition.y() > maxScrollPosition.y();
 }
 
+void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
+{
+    scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
+}
+
+bool ScrollingTreeScrollingNode::isScrollSnapInProgress() const
+{
+    return scrollingTree().isScrollSnapInProgressForNode(scrollingNodeID());
+}
+
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
 {
     if (clamping == ScrollClamping::Clamped)

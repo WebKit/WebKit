@@ -76,7 +76,7 @@ bool RemoteScrollingCoordinator::isRubberBandInProgress() const
     return false;
 }
 
-bool RemoteScrollingCoordinator::isScrollSnapInProgress() const
+bool RemoteScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID) const
 {
     // FIXME: need to maintain state in the web process?
     return false;

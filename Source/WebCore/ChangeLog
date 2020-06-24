@@ -1,3 +1,60 @@
+2020-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r260276): Scrolling through shelves on music.apple.com is not smooth
+        https://bugs.webkit.org/show_bug.cgi?id=213572
+
+        Reviewed by Wenson Hsieh.
+
+        The scroll position for an overflow:scroll element with scroll-snap could jump around
+        during scrolling, if layout triggered a call to ScrollableArea::updateScrollSnapState().
+        The crux of the issue is that isScrollSnapInProgress() returned false for overflow:scrollers
+        which are scrolling asynchronously.
+
+        Fix by extending the existing ScrollingTree::isScrollSnapInProgress() to track all scrolling
+        nodes by storing a HashSet<ScrollingNodeID> rather than just a flag for the main frame.
+
+        RenderLayer::isScrollSnapInProgress() then consults the ScrollingCoordinator, which consults
+        the scrolling tree for this state.
+
+        Add the ability to test via internals.isScrollSnapInProgress().
+
+        Test: fast/scrolling/mac/scroll-snapping-in-progress.html
+
+        * dom/Document.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollSnapInProgress const): The main thread can run snapping logic
+        even for async-scrollable frames, so consult the ScrollingCoordinator and FrameView's ScrollAnimator.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::isScrollSnapInProgress const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::isScrollSnapInProgress const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::isScrollSnapInProgressForNode):
+        (WebCore::ScrollingTree::setNodeScrollSnapInProgress):
+        (WebCore::ScrollingTree::isScrollSnapInProgress): Deleted.
+        (WebCore::ScrollingTree::setMainFrameIsScrollSnapping): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::setScrollSnapInProgress):
+        (WebCore::ScrollingTreeScrollingNode::isScrollSnapInProgress const):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::willStartScrollSnapAnimation):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::didStopScrollSnapAnimation):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::requestScrollPositionUpdate):
+        (WebCore::RenderLayer::isScrollSnapInProgress const):
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+        * testing/Internals.cpp:
+        (WebCore:: const):
+        (WebCore::Internals::scrollSnapOffsets):
+        (WebCore::Internals::isScrollSnapInProgress):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-24  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r263466.

@@ -1,3 +1,13 @@
+2020-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r260276): Scrolling through shelves on music.apple.com is not smooth
+        https://bugs.webkit.org/show_bug.cgi?id=213572
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/scrolling/mac/scroll-snapping-in-progress-expected.txt: Added.
+        * fast/scrolling/mac/scroll-snapping-in-progress.html: Added.
+
 2020-06-24  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r263466.

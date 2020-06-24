@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container {
+            width: 150px;
+            height: 400px;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 20px;
+            overflow-x: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        .box {
+            margin: 20px;
+            width: 100px;
+            height: 100px;
+            scroll-snap-align: start;
+            background-color: blue;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        let container = undefined;
+        async function runTest()
+        {
+            let firstScroll = true;
+            container = document.getElementById('container');
+            container.addEventListener('scroll', () => {
+                if (firstScroll) {
+                    shouldBeTrue('container.scrollTop > 0');
+                    shouldBeTrue('window.internals.isScrollSnapInProgress(container)');
+                }
+                firstScroll = false;
+            });
+            
+            debug('Scroll-snap offsets for \'container\': ' + window.internals.scrollSnapOffsets(container));
+
+            debug('Initial state:');
+            shouldBeFalse('window.internals.isScrollSnapInProgress(container)');
+
+            debug('');
+            debug('Sending wheel events');
+            await UIHelper.mouseWheelScrollAt(100, 100);
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            if (window.testRunner)
+                setTimeout(runTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="container" class="container">
+        <div class="contents">
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>
