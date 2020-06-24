@@ -1,3 +1,37 @@
+2020-06-24  Umar Iqbal  <uiqbal@apple.com>
+
+        We should resurrect the older patch that collects some statistics of web API calls
+        https://bugs.webkit.org/show_bug.cgi?id=213319
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Enabled existing tests.
+        Enabled http/tests/webAPIStatistics that test the functionality behind WEB_API_STATISTICS flag.
+        
+        + Brought back WebCore::encodeHashSet(KeyedEncoder& encoder, const String& label,
+        const String& key, const HashSet<String>& hashSet) because it was needed by
+         WebCore::encodeFontHashSet(KeyedEncoder& encoder, const String& label, const HashSet<String>& hashSet)
+        + Changed the type of HashCountedSet to HashSet because of earlier patch
+         (https://bugs.webkit.org/attachment.cgi?id=363033) updated other HashCountedSet to HashSet,
+         stating that the counted statistics were never used (see change log in the mentioned patch).
+        + Also changed the type of topFrameRegistrableDomainsWhichAccessedWebAPIs HashSet
+        from String to RegistrableDomain. See the earlier bug (https://bugs.webkit.org/show_bug.cgi?id=194791)
+        that explains the switch from String to RegistrableDomain for eTLD+1's
+        + Enabled WEB_API_STATISTICS flag in FeatureDefines.xcconfig and PlatformEnableCocoa.h
+        + Added WTF::EnumTraits<> for OptionSet<> enum in ResourceLoadStatistics.h due to an earlier change.
+        
+        * loader/ResourceLoadStatistics.h:
+        * Configurations/FeatureDefines.xcconfig:
+        * loader/CanvasActivityRecord.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::encodeHashSet):
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::decodeHashSet):
+        (WebCore::decodeCanvasActivityRecord):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::appendHashSet):
+        (WebCore::ResourceLoadStatistics::toString const):
+
 2020-06-24  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Null Ptr Deref READ @ WTF::Optional<WTF::Seconds>::clear

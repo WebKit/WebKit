@@ -1,3 +1,33 @@
+2020-06-24  Umar Iqbal  <uiqbal@apple.com>
+
+        We should resurrect the older patch that collects some statistics of web API calls
+        https://bugs.webkit.org/show_bug.cgi?id=213319
+
+        Reviewed by Brent Fulgham.
+
+        We should resurrect the older patch that collects some statistics of web API calls
+        
+        + Enabled web API statistics tests in ios-wk2 and mac-wk2
+        + Updated expectations for web API statistics and resrource load statistics tests.
+
+        * http/tests/webAPIStatistics/canvas-read-and-write-data-collection-expected.txt:
+        * http/tests/webAPIStatistics/font-load-data-collection-expected.txt:
+        * http/tests/webAPIStatistics/navigator-functions-accessed-data-collection-expected.txt:
+        * http/tests/webAPIStatistics/screen-functions-accessed-data-collection-expected.txt:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-expected.txt:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-expected.txt:
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-expected.txt:
+        * http/tests/resourceLoadStatistics/log-delayed-client-side-redirects-expected.txt:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-expected.txt:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-expected.txt:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-expected.txt:
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-expected.txt:
+
 2020-06-24  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Null Ptr Deref READ @ WTF::Optional<WTF::Seconds>::clear

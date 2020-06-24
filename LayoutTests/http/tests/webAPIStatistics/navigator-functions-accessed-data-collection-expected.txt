@@ -1,18 +1,18 @@
 Tests for navigator functions accessed data collection in ResourceLoadStatistics plist by querying for all the navigator properties and dumping the entire resource load statistics map.
 Resource load statistics:
 
-High level domain: 127.0.0.1
-    lastSeen: 0
+Registrable domain: 127.0.0.1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
+    gotLinkDecorationFromPrevalentResource: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
     fontsSuccessfullyLoaded:
         Times
     topFrameRegistrableDomainsWhichAccessedWebAPIs:
-        127.0.0.1: 8
+        127.0.0.1
     navigatorFunctionsAccessed:
         appVersion
         userAgent

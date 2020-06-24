@@ -69,7 +69,7 @@ http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 applicationmanifest/ [ Pass ]
 
 # Skipped because of <rdar://problem/45388584>.
-http/tests/webAPIStatistics [ Skip ]
+http/tests/webAPIStatistics [ Pass ]
 
 # Non-fast scrollable region doesn't apply to iOS.
 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Skip ]

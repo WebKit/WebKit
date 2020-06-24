@@ -1,3 +1,22 @@
+2020-06-24  Umar Iqbal  <uiqbal@apple.com>
+
+        We should resurrect the older patch that collects some statistics of web API calls
+        https://bugs.webkit.org/show_bug.cgi?id=213319
+
+        Reviewed by Brent Fulgham.
+
+        + Enabled ENABLE_WEB_API_STATISTICS flag
+        + Removed .string() from mainFrameRegistrableDomain to append it to topFrameRegistrableDomainsWhichAccessedWebAPIs
+         because topFrameRegistrableDomainsWhichAccessedWebAPIs is a HashSet of WebCore::RegistrableDomain
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::logFontLoad):
+        (WebKit::WebResourceLoadObserver::logCanvasRead):
+        (WebKit::WebResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebKit::WebResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logScreenAPIAccessed):
+
 2020-06-24  Andy Estes  <aestes@apple.com>
 
         [iOS] Open element actions sometimes result in a hover instead of a click

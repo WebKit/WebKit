@@ -12,6 +12,8 @@ Registrable domain: 127.0.0.1
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
+    canvasReadData: No
+
 Registrable domain: localhost
     hadUserInteraction: No
     mostRecentUserInteraction: -1
@@ -24,3 +26,5 @@ Registrable domain: localhost
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
+    canvasReadData: No
+

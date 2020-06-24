@@ -70,7 +70,7 @@ fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
 fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
 # Skipped because of <rdar://problem/45388584>.
-http/tests/webAPIStatistics [ Skip ]
+http/tests/webAPIStatistics [ Pass ]
 
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 

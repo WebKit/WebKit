@@ -1,11 +1,11 @@
 Tests for canvas read and write data collection in ResourceLoadStatistics plist by rendering and reading text on the canvas and dumping the entire resource load statistics map.
 Resource load statistics:
 
-High level domain: 127.0.0.1
-    lastSeen: 0
+Registrable domain: 127.0.0.1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
+    gotLinkDecorationFromPrevalentResource: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -13,7 +13,7 @@ High level domain: 127.0.0.1
         Helvetica
         Times
     topFrameRegistrableDomainsWhichAccessedWebAPIs:
-        127.0.0.1: 4
+        127.0.0.1
     canvasTextWritten:
         suspicious invisible text
     canvasReadData: Yes

@@ -14,3 +14,5 @@ Registrable domain: localhost
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
+    canvasReadData: No
+

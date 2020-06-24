@@ -33,7 +33,7 @@ struct CanvasActivityRecord {
     HashSet<String> textWritten;
     bool wasDataRead { false };
     
-    bool recordWrittenOrMeasuredText(const String&);
+    WEBCORE_EXPORT bool recordWrittenOrMeasuredText(const String&);
     void mergeWith(const CanvasActivityRecord&);
     
     template <class Encoder> void encode(Encoder&) const;
