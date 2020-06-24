@@ -1,3 +1,16 @@
+2020-06-24  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r263328): Crash in bool WTF::WeakHashSet<WebKit::AudioSessionRoutingArbitratorProxy, WTF::EmptyCounter>::contains<WebKit::AudioSessionRoutingArbitratorProxy> const
+        https://bugs.webkit.org/show_bug.cgi?id=213526
+        <rdar://problem/64591777>
+
+        Reviewed by Eric Carlson.
+
+        Clear the m_routingArbitrator before WebProcessPool::disconnectProcess(), not after.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+
 2020-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.2 release
