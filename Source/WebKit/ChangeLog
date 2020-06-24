@@ -1,3 +1,16 @@
+2020-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Do not set the default configuration again when creating the WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=213340
+
+        Reviewed by Michael Catanzaro.
+
+        WebsiteDataStoreConfiguration already initializes on construction with the default paths, so we only need to
+        override the ones set by the user.
+
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerGetDataStore):
+
 2020-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Make HTTP/3 experimental feature work on iOS and only create storage directory if enabled

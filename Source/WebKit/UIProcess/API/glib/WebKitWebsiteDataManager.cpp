@@ -467,25 +467,24 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
         auto configuration = WebsiteDataStoreConfiguration::create(IsPersistent::Yes);
-        configuration->setLocalStorageDirectory(!priv->localStorageDirectory ?
-            WebKit::WebsiteDataStore::defaultLocalStorageDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
-        configuration->setNetworkCacheDirectory(!priv->diskCacheDirectory ?
-            WebKit::WebsiteDataStore::defaultNetworkCacheDirectory() : FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory));
-        configuration->setApplicationCacheDirectory(!priv->applicationCacheDirectory ?
-            WebKit::WebsiteDataStore::defaultApplicationCacheDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get()));
-        configuration->setIndexedDBDatabaseDirectory(!priv->indexedDBDirectory ?
-            WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->indexedDBDirectory.get()));
-        configuration->setWebSQLDatabaseDirectory(!priv->webSQLDirectory ?
-            WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get()));
-        configuration->setHSTSStorageDirectory(!priv->hstsCacheDirectory ?
-            WebKit::WebsiteDataStore::defaultHSTSDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
-        configuration->setResourceLoadStatisticsDirectory(!priv->itpDirectory ?
-            WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.get()));
-        configuration->setServiceWorkerRegistrationDirectory(!priv->swRegistrationsDirectory ?
-            WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
-        configuration->setCacheStorageDirectory(!priv->domCacheDirectory ?
-            WebKit::WebsiteDataStore::defaultCacheStorageDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
-        configuration->setMediaKeysStorageDirectory(WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory());
+        if (priv->localStorageDirectory)
+            configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
+        if (priv->diskCacheDirectory)
+            configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory));
+        if (priv->applicationCacheDirectory)
+            configuration->setApplicationCacheDirectory(FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get()));
+        if (priv->indexedDBDirectory)
+            configuration->setIndexedDBDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->indexedDBDirectory.get()));
+        if (priv->webSQLDirectory)
+            configuration->setWebSQLDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get()));
+        if (priv->hstsCacheDirectory)
+            configuration->setHSTSStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->hstsCacheDirectory.get()));
+        if (priv->itpDirectory)
+            configuration->setResourceLoadStatisticsDirectory(FileSystem::stringFromFileSystemRepresentation(priv->itpDirectory.get()));
+        if (priv->swRegistrationsDirectory)
+            configuration->setServiceWorkerRegistrationDirectory(FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
+        if (priv->domCacheDirectory)
+            configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
     }
 
