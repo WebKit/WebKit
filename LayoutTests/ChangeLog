@@ -1,3 +1,16 @@
+2020-06-24  Jason Lawrence  <lawrence.j@apple.com>
+
+        Unreviewed, reverting r263466.
+
+        This commit caused 50+ crashes on multiple queues internally.
+
+        Reverted changeset:
+
+        "REGRESSION (r260360): easing curves are broken on JS-
+        originated animations"
+        https://bugs.webkit.org/show_bug.cgi?id=213495
+        https://trac.webkit.org/changeset/263466
+
 2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow the async clipboard API to write data when copying via menu action or key binding
