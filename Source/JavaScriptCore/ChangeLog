@@ -1,3 +1,21 @@
+2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] llintTrue / jitTrue can encounter native functions
+        https://bugs.webkit.org/show_bug.cgi?id=213442
+        <rdar://problem/64257914>
+
+        Reviewed by Mark Lam.
+
+        If the CallFrame is for native function, associated CodeBlock is nullptr.
+        This patch fixes this case to handle it gracefully.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::CallerFrameJITTypeFunctor::CallerFrameJITTypeFunctor):
+        (JSC::CallerFrameJITTypeFunctor::operator() const):
+        (JSC::functionBaselineJITTrue):
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::functionJITTrue): Deleted.
+
 2020-06-24  Umar Iqbal  <uiqbal@apple.com>
 
         We should resurrect the older patch that collects some statistics of web API calls

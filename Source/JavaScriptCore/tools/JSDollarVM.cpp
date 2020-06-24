@@ -1783,16 +1783,17 @@ static EncodedJSValue JSC_HOST_CALL functionCpuClflush(JSGlobalObject* globalObj
 class CallerFrameJITTypeFunctor {
 public:
     CallerFrameJITTypeFunctor()
-        : m_currentFrame(0)
-        , m_jitType(JITType::None)
     {
         DollarVMAssertScope assertScope;
     }
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        if (m_currentFrame++ > 1) {
-            m_jitType = visitor->codeBlock()->jitType();
+        unsigned index = m_currentFrame++;
+        // First frame (index 0) is `llintTrue` etc. function itself.
+        if (index == 1) {
+            if (visitor->codeBlock())
+                m_jitType = visitor->codeBlock()->jitType();
             return StackVisitor::Done;
         }
         return StackVisitor::Continue;
@@ -1801,8 +1802,8 @@ public:
     JITType jitType() { return m_jitType; }
 
 private:
-    mutable unsigned m_currentFrame;
-    mutable JITType m_jitType;
+    mutable unsigned m_currentFrame { 0 };
+    mutable JITType m_jitType { JITType::None };
 };
 
 static FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
@@ -1836,8 +1837,8 @@ static EncodedJSValue JSC_HOST_CALL functionLLintTrue(JSGlobalObject* globalObje
 }
 
 // Returns true if the current frame is a baseline JIT frame.
-// Usage: isBaselineJIT = $vm.jitTrue()
-static EncodedJSValue JSC_HOST_CALL functionJITTrue(JSGlobalObject* globalObject, CallFrame* callFrame)
+// Usage: isBaselineJIT = $vm.baselineJITTrue()
+static EncodedJSValue JSC_HOST_CALL functionBaselineJITTrue(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
@@ -3131,7 +3132,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "cpuClflush", functionCpuClflush, 2);
 
     addFunction(vm, "llintTrue", functionLLintTrue, 0);
-    addFunction(vm, "jitTrue", functionJITTrue, 0);
+    addFunction(vm, "baselineJITTrue", functionBaselineJITTrue, 0);
 
     addFunction(vm, "noInline", functionNoInline, 1);
 
