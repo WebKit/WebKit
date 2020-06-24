@@ -1,3 +1,16 @@
+2020-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add DFG/FTL fast path for GetPrototypeOf based on OverridesGetPrototype flag
+        https://bugs.webkit.org/show_bug.cgi?id=213191
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/object-get-prototype-of-object-rare.js: Added.
+        * stress/dfg-object-prototype-of.js: Removed.
+        * stress/dfg-reflect-get-prototype-of.js: Removed.
+        * stress/ftl-object-get-prototype-of.js: Added.
+        * stress/ftl-reflect-get-prototype-of.js: Added.
+
 2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clobberize misses `write(Heap)` report in some nodes

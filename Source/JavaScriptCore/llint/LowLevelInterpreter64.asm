@@ -1386,6 +1386,12 @@ llintOpWithReturn(op_is_object, OpIsObject, macro (size, get, dispatch, return)
 end)
 
 
+macro loadInlineOffset(propertyOffsetAsInt, objectAndStorage, value)
+    addp sizeof JSObject - (firstOutOfLineOffset - 2) * 8, objectAndStorage
+    loadq (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8], value
+end
+
+
 macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
@@ -1515,7 +1521,7 @@ llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, disp
 
 .opGetPrototypeOfPolyProto:
     move knownPolyProtoOffset, t1
-    loadPropertyAtVariableOffset(t1, t0, t3)
+    loadInlineOffset(t1, t0, t3)
     return(t3)
 end)
 

@@ -1,3 +1,44 @@
+2020-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add DFG/FTL fast path for GetPrototypeOf based on OverridesGetPrototype flag
+        https://bugs.webkit.org/show_bug.cgi?id=213191
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch:
+
+        1. Introduces `loadInlineOffset` LLInt macro (64-bit only) and utilizes it in
+           `get_prototype_of` since we assert that `knownPolyProtoOffset` is an inline offset.
+
+        2. Brings baseline JIT fast path to 32-bit builds, progressing `super-getter.js`
+           microbenchmark by a factor of 10 (w/o DFG).
+
+        3. Adds GetPrototypeOf DFG/FTL fast paths that leverage OverridesGetPrototype type
+           info flag, advancing provided rare objects microbenchmark by ~46% (~37% w/o FTL).
+           Also, cleans up existing DFG fast path by using AssemblyHelpers::loadValue().
+
+        4. Extracts AssemblyHelpers::emitLoadPrototype() and uses it in baseline JIT, DFG, and
+           InstanceOfGeneric access case. With this change, `instanceof` access case handles all
+           [[GetPrototypeOf]] overrides (before: only Proxy objects), which is more correct, yet
+           not observable enough to provide a test case. `instanceof` microbenchmarks are neutral.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetPrototypeOf):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPrototypeOf):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadPrototype):
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_prototype_of):
+        * llint/LowLevelInterpreter64.asm:
+
 2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clobberize misses `write(Heap)` report in some nodes

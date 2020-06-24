@@ -13876,17 +13876,24 @@ void SpeculativeJIT::compileWeakMapSet(Node* node)
 
 void SpeculativeJIT::compileGetPrototypeOf(Node* node)
 {
+    GPRTemporary temp(this);
+    GPRTemporary temp2(this);
+
+    GPRReg tempGPR = temp.gpr();
+    GPRReg temp2GPR = temp2.gpr();
+
+#if USE(JSVALUE64)
+    JSValueRegs resultRegs(tempGPR);
+#else
+    JSValueRegs resultRegs(temp2GPR, tempGPR);
+#endif
+
     switch (node->child1().useKind()) {
     case ArrayUse:
     case FunctionUse:
     case FinalObjectUse: {
         SpeculateCellOperand object(this, node->child1());
-        GPRTemporary temp(this);
-        GPRTemporary temp2(this);
-
         GPRReg objectGPR = object.gpr();
-        GPRReg tempGPR = temp.gpr();
-        GPRReg temp2GPR = temp2.gpr();
 
         switch (node->child1().useKind()) {
         case ArrayUse:
@@ -13917,74 +13924,52 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
             });
 
             if (hasMonoProto && !hasPolyProto) {
-#if USE(JSVALUE64)
-                m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
-                jsValueResult(tempGPR, node);
-#else
-                m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + TagOffset), temp2GPR);
-                m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
-                jsValueResult(temp2GPR, tempGPR, node);
-#endif
+                m_jit.loadValue(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), resultRegs);
+                jsValueResult(resultRegs, node);
                 return;
             }
 
             if (hasPolyProto && !hasMonoProto) {
-#if USE(JSVALUE64)
-                m_jit.load64(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), tempGPR);
-                jsValueResult(tempGPR, node);
-#else
-                m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + TagOffset), temp2GPR);
-                m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), tempGPR);
-                jsValueResult(temp2GPR, tempGPR, node);
-#endif
+                m_jit.loadValue(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), resultRegs);
+                jsValueResult(resultRegs, node);
                 return;
             }
         }
 
-#if USE(JSVALUE64)
-        m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
-        auto hasMonoProto = m_jit.branchIfNotEmpty(tempGPR);
-        m_jit.load64(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), tempGPR);
+        m_jit.loadValue(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), resultRegs);
+        auto hasMonoProto = m_jit.branchIfNotEmpty(resultRegs);
+        m_jit.loadValue(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), resultRegs);
         hasMonoProto.link(&m_jit);
-        jsValueResult(tempGPR, node);
-#else
-        m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + TagOffset), temp2GPR);
-        m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
-        auto hasMonoProto = m_jit.branchIfNotEmpty(temp2GPR);
-        m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + TagOffset), temp2GPR);
-        m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), tempGPR);
-        hasMonoProto.link(&m_jit);
-        jsValueResult(temp2GPR, tempGPR, node);
-#endif
+        jsValueResult(resultRegs, node);
         return;
     }
     case ObjectUse: {
-        // FIXME: Add fast path based on OverridesGetPrototype type info flag
-        // https://bugs.webkit.org/show_bug.cgi?id=213191
-        SpeculateCellOperand value(this, node->child1());
-        JSValueRegsTemporary result(this);
+        SpeculateCellOperand object(this, node->child1());
+        GPRReg objectGPR = object.gpr();
+        speculateObject(node->child1(), objectGPR);
 
-        GPRReg valueGPR = value.gpr();
-        JSValueRegs resultRegs = result.regs();
+        JITCompiler::JumpList slowCases;
+        m_jit.emitLoadPrototype(vm(), objectGPR, resultRegs, temp2GPR, slowCases);
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationGetPrototypeOfObject,
+            resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), objectGPR));
 
-        speculateObject(node->child1(), valueGPR);
-
-        flushRegisters();
-        callOperation(operationGetPrototypeOfObject, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), valueGPR);
-        m_jit.exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
     default: {
         JSValueOperand value(this, node->child1());
-        JSValueRegsTemporary result(this);
-
         JSValueRegs valueRegs = value.jsValueRegs();
-        JSValueRegs resultRegs = result.regs();
 
-        flushRegisters();
-        callOperation(operationGetPrototypeOf, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), valueRegs);
-        m_jit.exceptionCheck();
+        JITCompiler::JumpList slowCases;
+        slowCases.append(m_jit.branchIfNotCell(valueRegs));
+
+        GPRReg valueGPR = valueRegs.payloadGPR();
+        slowCases.append(m_jit.branchIfNotObject(valueGPR));
+
+        m_jit.emitLoadPrototype(vm(), valueGPR, resultRegs, temp2GPR, slowCases);
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationGetPrototypeOf,
+            resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), valueRegs));
+
         jsValueResult(resultRegs, node);
         return;
     }

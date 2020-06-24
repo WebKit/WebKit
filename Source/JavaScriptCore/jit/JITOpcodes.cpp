@@ -1525,26 +1525,6 @@ void JIT::emit_op_get_direct_pname(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, regT0);
 }
 
-void JIT::emit_op_get_prototype_of(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpGetPrototypeOf>();
-    emitGetVirtualRegister(bytecode.m_value, regT0);
-
-    addSlowCase(branchIfNotCell(regT0));
-    addSlowCase(branchIfNotObject(regT0));
-
-    emitLoadStructure(vm(), regT0, regT2, regT1);
-    addSlowCase(branchTest32(NonZero, Address(regT2, Structure::outOfLineTypeFlagsOffset()), TrustedImm32(OverridesGetPrototypeOutOfLine)));
-
-    load64(Address(regT2, Structure::prototypeOffset()), regT2);
-    Jump hasMonoProto = branchTest64(NonZero, regT2);
-    load64(Address(regT0, offsetRelativeToBase(knownPolyProtoOffset)), regT2);
-    hasMonoProto.link(this);
-
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitStoreCell(bytecode.m_dst, regT2);
-}
-
 void JIT::emit_op_enumerator_structure_pname(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnumeratorStructurePname>();
@@ -1763,6 +1743,32 @@ void JIT::emit_op_get_argument(const Instruction* currentInstruction)
     done.link(this);
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
     emitPutVirtualRegister(dst, resultRegs);
+}
+
+void JIT::emit_op_get_prototype_of(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetPrototypeOf>();
+#if USE(JSVALUE64)
+    JSValueRegs valueRegs(regT0);
+    JSValueRegs resultRegs(regT2);
+    GPRReg scratchGPR = regT3;
+#else
+    JSValueRegs valueRegs(regT1, regT0);
+    JSValueRegs resultRegs(regT3, regT2);
+    GPRReg scratchGPR = regT1;
+    ASSERT(valueRegs.tagGPR() == scratchGPR);
+#endif
+    emitGetVirtualRegister(bytecode.m_value, valueRegs);
+
+    JumpList slowCases;
+    slowCases.append(branchIfNotCell(valueRegs));
+    slowCases.append(branchIfNotObject(valueRegs.payloadGPR()));
+
+    emitLoadPrototype(vm(), valueRegs.payloadGPR(), resultRegs, scratchGPR, slowCases);
+    addSlowCase(slowCases);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitPutVirtualRegister(bytecode.m_dst, resultRegs);
 }
 
 } // namespace JSC

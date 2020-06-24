@@ -1278,36 +1278,19 @@ void AccessCase::generateWithGuard(
             allocator.preserveReusedRegistersByPushing(
                 jit,
                 ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
-        CCallHelpers::Jump failAndIgnore;
+        CCallHelpers::JumpList failAndIgnore;
 
         jit.move(baseGPR, valueGPR);
         
         CCallHelpers::Label loop(&jit);
-        failAndIgnore = jit.branchIfType(valueGPR, ProxyObjectType);
-        
-        jit.emitLoadStructure(vm, valueGPR, scratch2GPR, scratchGPR);
+
 #if USE(JSVALUE64)
-        jit.load64(CCallHelpers::Address(scratch2GPR, Structure::prototypeOffset()), scratch2GPR);
-        CCallHelpers::Jump hasMonoProto = jit.branchTest64(CCallHelpers::NonZero, scratch2GPR);
-        jit.load64(
-            CCallHelpers::Address(valueGPR, offsetRelativeToBase(knownPolyProtoOffset)),
-            scratch2GPR);
-        hasMonoProto.link(&jit);
+        JSValueRegs resultRegs(scratch2GPR);
 #else
-        jit.load32(
-            CCallHelpers::Address(scratch2GPR, Structure::prototypeOffset() + TagOffset),
-            scratchGPR);
-        jit.load32(
-            CCallHelpers::Address(scratch2GPR, Structure::prototypeOffset() + PayloadOffset),
-            scratch2GPR);
-        CCallHelpers::Jump hasMonoProto = jit.branch32(
-            CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(JSValue::EmptyValueTag));
-        jit.load32(
-            CCallHelpers::Address(
-                valueGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset),
-            scratch2GPR);
-        hasMonoProto.link(&jit);
+        JSValueRegs resultRegs(scratchGPR, scratch2GPR);
 #endif
+
+        jit.emitLoadPrototype(vm, valueGPR, resultRegs, scratchGPR, failAndIgnore);
         jit.move(scratch2GPR, valueGPR);
         
         CCallHelpers::Jump isInstance = jit.branchPtr(CCallHelpers::Equal, valueGPR, prototypeGPR);
