@@ -302,9 +302,6 @@ webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ Imag
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg  [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
 
-# Color space issues from switching to tiled drawing.
-webkit.org/b/122234 css3/filters/null-effect-check.html [ ImageOnlyFailure ]
-
 webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html [ Pass Failure ]
 
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
