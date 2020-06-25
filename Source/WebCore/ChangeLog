@@ -1,3 +1,14 @@
+2020-06-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Unreviewed. Fixing misspellings of 'position'.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::smartDeleteParagraphSpacers):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scrollToOffsetWithoutAnimation):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2020-06-25  Daniel Bates  <dabates@apple.com>
 
         [iOS] -_requestTextInputContextsInRect cannot find empty Quip spreadsheet title

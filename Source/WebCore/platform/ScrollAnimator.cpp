@@ -100,9 +100,9 @@ void ScrollAnimator::scrollToOffset(const FloatPoint& offset)
 
 void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping)
 {
-    FloatPoint newPositon = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
-    FloatSize delta = newPositon - currentPosition();
-    m_currentPosition = newPositon;
+    FloatPoint newPosition = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
+    FloatSize delta = newPosition - currentPosition();
+    m_currentPosition = newPosition;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();
 }

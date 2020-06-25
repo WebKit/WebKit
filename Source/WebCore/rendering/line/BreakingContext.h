@@ -892,26 +892,26 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     }
                     // Check if the last breaking position is a soft-hyphen.
                     if (!hyphenated && style.hyphens() != Hyphens::None) {
-                        Optional<unsigned> lastBreakingPositon;
+                        Optional<unsigned> lastBreakingPosition;
                         const RenderObject* rendererAtBreakingPosition = nullptr;
                         if (m_lineBreak.offset() || m_lineBreak.nextBreakablePosition()) {
-                            lastBreakingPositon = m_lineBreak.offset();
+                            lastBreakingPosition = m_lineBreak.offset();
                             rendererAtBreakingPosition = m_lineBreak.renderer();
                         } else if (m_current.nextBreakablePosition() && m_current.nextBreakablePosition().value() <= m_current.offset()) {
                             // We might just be right after the soft-hyphen
-                            lastBreakingPositon = m_current.nextBreakablePosition().value();
+                            lastBreakingPosition = m_current.nextBreakablePosition().value();
                             rendererAtBreakingPosition = m_current.renderer();
                         }
-                        if (lastBreakingPositon) {
+                        if (lastBreakingPosition) {
                             Optional<UChar> characterBeforeBreakingPosition;
                             // When last breaking position points to the start of the current context, we need to look at the last character from
                             // the previous non-empty text renderer.
-                            if (!lastBreakingPositon.value())
+                            if (!lastBreakingPosition.value())
                                 characterBeforeBreakingPosition = lastCharacterFromPreviousRenderText;
                             else if (is<RenderText>(rendererAtBreakingPosition)) {
                                 const auto& textRenderer = downcast<RenderText>(*rendererAtBreakingPosition);
-                                ASSERT(lastBreakingPositon.value() >= 1 && textRenderer.text().length() > (lastBreakingPositon.value() - 1));
-                                characterBeforeBreakingPosition = textRenderer.characterAt(lastBreakingPositon.value() - 1);
+                                ASSERT(lastBreakingPosition.value() >= 1 && textRenderer.text().length() > (lastBreakingPosition.value() - 1));
+                                characterBeforeBreakingPosition = textRenderer.characterAt(lastBreakingPosition.value() - 1);
                             }
                             if (characterBeforeBreakingPosition)
                                 hyphenated = characterBeforeBreakingPosition.value() == softHyphen;

@@ -188,12 +188,12 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
     visibleEnd = visibleEnd.next(CannotCrossEditingBoundary);
     bool previousPositionIsStartOfContent = startOfEditableContent(visibleStart) == visibleStart;
     bool previousPositionIsBlankParagraph = isBlankParagraph(visibleStart);
-    bool endPositonIsBlankParagraph = isBlankParagraph(visibleEnd);
-    bool hasBlankParagraphAfterEndOrIsEndOfContent = !selectionEndIsEndOfContent && (endPositonIsBlankParagraph || selectionEndsInParagraphSeperator);
+    bool endPositionIsBlankParagraph = isBlankParagraph(visibleEnd);
+    bool hasBlankParagraphAfterEndOrIsEndOfContent = !selectionEndIsEndOfContent && (endPositionIsBlankParagraph || selectionEndsInParagraphSeperator);
     if (startAndEndInSameUnsplittableElement && previousPositionIsBlankParagraph && hasBlankParagraphAfterEndOrIsEndOfContent) {
         m_needPlaceholder = false;
         Position position;
-        if (endPositonIsBlankParagraph)
+        if (endPositionIsBlankParagraph)
             position = startOfNextParagraph(startOfNextParagraph(m_downstreamEnd)).deepEquivalent();
         else
             position = VisiblePosition(m_downstreamEnd).next().deepEquivalent();
