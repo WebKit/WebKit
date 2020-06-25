@@ -1,3 +1,14 @@
+2020-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Use the flexing value as the base for the available horizontal space distribution
+        https://bugs.webkit.org/show_bug.cgi?id=213599
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html:
+        * fast/layoutformattingcontext/table-min-max-flex-distribution-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html: Added.
+
 2020-06-25  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/canvas/canvas-blending-fill-style.html as they are passing. 
