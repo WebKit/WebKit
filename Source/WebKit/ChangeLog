@@ -1,3 +1,14 @@
+2020-06-24  Tim Horton  <timothy_horton@apple.com>
+
+        Cannot play back any video on Apple Silicon devices
+        https://bugs.webkit.org/show_bug.cgi?id=213584
+        <rdar://problem/64714596>
+
+        Reviewed by Per Arne Vollan.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        An unfortunate and incorrect refactoring caused some of the sandbox exceptions to get dropped on the floor.
+
 2020-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r260276): Scrolling through shelves on music.apple.com is not smooth
