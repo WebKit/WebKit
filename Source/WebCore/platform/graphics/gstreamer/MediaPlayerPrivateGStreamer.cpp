@@ -269,8 +269,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 #endif
 
-    m_notifier->invalidate();
-
     if (m_videoSink)
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
@@ -294,6 +292,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 
     m_player = nullptr;
+    m_notifier->invalidate();
 }
 
 bool MediaPlayerPrivateGStreamer::isAvailable()

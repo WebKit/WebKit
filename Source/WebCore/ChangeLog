@@ -1,3 +1,32 @@
+2020-06-25  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Don't invalidate MainThreadNotifier until the streaming threads are joined
+        https://bugs.webkit.org/show_bug.cgi?id=213197
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        ~MediaPlayerPrivateGStreamer() used to call m_notifier->invalidate()
+        before setting the pipeline to NULL state. This caused a race where
+        the streaming threads could post a task to the MainThreadNotifier
+        between these two events and cause a crash in
+        ASSERT(m_isValid.load()) -- that is, the notifier was used while
+        invalidated.
+
+        Fixing this is actually easy. ~MediaPlayerPrivateGStreamer() is always
+        run from the main thread, so no MainThreadNotifier tasks will be run
+        before the destructor is complete. By moving the
+        m_notifier->invalidate() call to after the pipeline has been set to
+        NULL (and therefore all streaming threads torn down) we are ensuring
+        no more taks will be posted, and since the MainThreadNotifier is
+        invalidated by that point, already posted tasks will not be run.
+
+        The race fixed by this patch is rare and wide-arching, so this patch
+        doesn't introduce TestExpectations changes, but it should avoid
+        further crashes like the ones reported in the Bugzilla issue attached.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+
 2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Check device orientation support when requesting a reference space
