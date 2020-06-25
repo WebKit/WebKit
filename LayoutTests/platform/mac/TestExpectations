@@ -1670,7 +1670,6 @@ webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailu
 [ Catalina+ ] fast/text/woff2.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/45056204>
-[ Catalina+ ] http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 [ Catalina+ ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 [ Catalina+ ] http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
 
