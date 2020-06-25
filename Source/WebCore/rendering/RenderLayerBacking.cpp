@@ -3001,7 +3001,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
     if (eventRegionContext)
-        paintFlags.add(RenderLayer::PaintLayerCollectingEventRegion);
+        paintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(renderer());
 
@@ -3021,7 +3021,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
             layer.paintLayerContents(context, paintingInfo, paintFlags);
 
             if (layer.containsDirtyOverlayScrollbars() && !eventRegionContext)
-                layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
+                layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);
         } else
             layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
 
@@ -3042,13 +3042,13 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     if (graphicsLayer == destinationForSharingLayers) {
         OptionSet<RenderLayer::PaintLayerFlag> sharingLayerPaintFlags = {
-            RenderLayer::PaintLayerPaintingCompositingBackgroundPhase,
-            RenderLayer::PaintLayerPaintingCompositingForegroundPhase };
+            RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase,
+            RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase };
 
         if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
-            sharingLayerPaintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
+            sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
         if (eventRegionContext)
-            sharingLayerPaintFlags.add(RenderLayer::PaintLayerCollectingEventRegion);
+            sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
         for (auto& layerWeakPtr : m_backingSharingLayers)
             paintOneLayer(*layerWeakPtr, sharingLayerPaintFlags);
@@ -3069,24 +3069,24 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
 
     auto paintingPhase = graphicsLayer.paintingPhase();
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::Background))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingBackgroundPhase);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::Foreground))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingForegroundPhase);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::Mask))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingMaskPhase);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingMaskPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::ClipPath))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingClipPathPhase);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingClipPathPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::ChildClippingMask))
-        paintFlags.add(RenderLayer::PaintLayerPaintingChildClippingMaskPhase);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingChildClippingMaskPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
-        paintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll))
-        paintFlags.add(RenderLayer::PaintLayerPaintingCompositingScrollingPhase);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingScrollingPhase);
 
     if (&graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
-        paintFlags.add({ RenderLayer::PaintLayerPaintingRootBackgroundOnly, RenderLayer::PaintLayerPaintingCompositingForegroundPhase }); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
+        paintFlags.add({ RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly, RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase }); // Need PaintLayerFlag::PaintingCompositingForegroundPhase to walk child layers.
     else if (compositor().fixedRootBackgroundLayer())
-        paintFlags.add(RenderLayer::PaintLayerPaintingSkipRootBackground);
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipRootBackground);
 
     return paintFlags;
 }

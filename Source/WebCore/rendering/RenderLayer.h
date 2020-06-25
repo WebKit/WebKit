@@ -669,24 +669,24 @@ public:
 
     int zIndex() const { return renderer().style().usedZIndex(); }
 
-    enum PaintLayerFlag {
-        PaintLayerHaveTransparency                      = 1 << 0,
-        PaintLayerAppliedTransform                      = 1 << 1,
-        PaintLayerTemporaryClipRects                    = 1 << 2,
-        PaintLayerPaintingReflection                    = 1 << 3,
-        PaintLayerPaintingOverlayScrollbars             = 1 << 4,
-        PaintLayerPaintingCompositingBackgroundPhase    = 1 << 5,
-        PaintLayerPaintingCompositingForegroundPhase    = 1 << 6,
-        PaintLayerPaintingCompositingMaskPhase          = 1 << 7,
-        PaintLayerPaintingCompositingClipPathPhase      = 1 << 8,
-        PaintLayerPaintingCompositingScrollingPhase     = 1 << 9,
-        PaintLayerPaintingOverflowContents              = 1 << 10,
-        PaintLayerPaintingRootBackgroundOnly            = 1 << 11,
-        PaintLayerPaintingSkipRootBackground            = 1 << 12,
-        PaintLayerPaintingChildClippingMaskPhase        = 1 << 13,
-        PaintLayerCollectingEventRegion                 = 1 << 14,
+    enum class PaintLayerFlag : uint16_t {
+        HaveTransparency                      = 1 << 0,
+        AppliedTransform                      = 1 << 1,
+        TemporaryClipRects                    = 1 << 2,
+        PaintingReflection                    = 1 << 3,
+        PaintingOverlayScrollbars             = 1 << 4,
+        PaintingCompositingBackgroundPhase    = 1 << 5,
+        PaintingCompositingForegroundPhase    = 1 << 6,
+        PaintingCompositingMaskPhase          = 1 << 7,
+        PaintingCompositingClipPathPhase      = 1 << 8,
+        PaintingCompositingScrollingPhase     = 1 << 9,
+        PaintingOverflowContents              = 1 << 10,
+        PaintingRootBackgroundOnly            = 1 << 11,
+        PaintingSkipRootBackground            = 1 << 12,
+        PaintingChildClippingMaskPhase        = 1 << 13,
+        CollectingEventRegion                 = 1 << 14,
     };
-    static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerPaintingCompositingBackgroundPhase, PaintLayerPaintingCompositingForegroundPhase }; }
+    static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerFlag::PaintingCompositingBackgroundPhase, PaintLayerFlag::PaintingCompositingForegroundPhase }; }
 
     enum class SecurityOriginPaintPolicy { AnyOrigin, AccessibleOriginOnly };
 

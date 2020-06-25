@@ -1,3 +1,33 @@
+2020-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert the PaintLayerFlag enum to an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=213624
+
+        Reviewed by Zalan Bujtas.
+
+        Convert enum PaintLayerFlag to an enum class.
+
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintOverlayScrollbars):
+        (WebCore::paintForFixedRootBackground):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerWithEffects):
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+        (WebCore::RenderLayer::filtersForPainting const):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintFlagsForLayer const):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+
 2020-06-25  Daniel Bates  <dabates@apple.com>
 
         [iOS] Event region briefly missing editable element after typing second character in question field on discussions.apple.com

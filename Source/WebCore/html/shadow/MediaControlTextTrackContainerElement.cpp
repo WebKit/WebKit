@@ -422,7 +422,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
         return nullptr;
 
     auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags();
-    paintFlags.add(RenderLayer::PaintLayerTemporaryClipRects);
+    paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
     layer->paint(buffer->context(), paintingRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, paintFlags);
 
     return ImageBuffer::sinkIntoImage(WTFMove(buffer));
