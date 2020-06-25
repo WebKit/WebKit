@@ -83,9 +83,9 @@ private:
 #endif // USE_OPENXR
 };
 
+#if USE_OPENXR
 void Instance::Impl::enumerateApiLayerProperties() const
 {
-#if USE_OPENXR
     uint32_t propertyCountOutput { 0 };
     XrResult result = xrEnumerateApiLayerProperties(0, &propertyCountOutput, nullptr);
     RETURN_IF_FAILED(result, "xrEnumerateApiLayerProperties()", m_instance);
@@ -99,12 +99,10 @@ void Instance::Impl::enumerateApiLayerProperties() const
     result = xrEnumerateApiLayerProperties(propertyCountOutput, nullptr, properties.data());
     RETURN_IF_FAILED(result, "xrEnumerateApiLayerProperties()", m_instance);
     LOG(XR, "xrEnumerateApiLayerProperties(): %zu properties\n", properties.size());
-#endif
 }
 
 void Instance::Impl::enumerateInstanceExtensionProperties() const
 {
-#if USE_OPENXR
     uint32_t propertyCountOutput { 0 };
     XrResult result = xrEnumerateInstanceExtensionProperties(nullptr, 0, &propertyCountOutput, nullptr);
     RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties()", m_instance);
@@ -129,11 +127,12 @@ void Instance::Impl::enumerateInstanceExtensionProperties() const
         LOG(XR, "  extension '%s', version %u\n",
             property.extensionName, property.extensionVersion);
     }
-#endif
 }
+#endif // USE_OPENXR
 
 Instance::Impl::Impl()
 {
+#if USE_OPENXR
     LOG(XR, "OpenXR: initializing\n");
 
     enumerateApiLayerProperties();
@@ -142,7 +141,6 @@ Instance::Impl::Impl()
     static const char* s_applicationName = "WebXR (WebKit)";
     static const uint32_t s_applicationVersion = 1;
 
-#if USE_OPENXR
     auto createInfo = createStructure<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO>();
     createInfo.createFlags = 0;
     std::memcpy(createInfo.applicationInfo.applicationName, s_applicationName, XR_MAX_APPLICATION_NAME_SIZE);
@@ -156,19 +154,16 @@ Instance::Impl::Impl()
     RETURN_IF_FAILED(result, "xrCreateInstance()", m_instance);
     m_instance = instance;
     LOG(XR, "xrCreateInstance(): using instance %p\n", m_instance);
-
 #endif // USE_OPENXR
 }
 
 Instance::Impl::~Impl()
 {
+#if USE_OPENXR
     if (m_instance != XR_NULL_HANDLE)
         xrDestroyInstance(m_instance);
+#endif
 }
-
-#if USE_OPENXR
-
-#endif // USE_OPENXR
 
 Instance& Instance::singleton()
 {
@@ -205,6 +200,7 @@ void Instance::enumerateImmersiveXRDevices()
 #endif // USE_OPENXR
 }
 
+#if USE_OPENXR
 OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance)
     : m_systemId(id)
     , m_instance(instance)
@@ -248,6 +244,7 @@ void OpenXRDevice::collectSupportedSessionModes()
         };
     }
 }
+#endif // USE_OPENXR
 
 } // namespace PlatformXR
 

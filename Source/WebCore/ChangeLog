@@ -1,3 +1,13 @@
+2020-06-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix for WebXR enabled non-OpenXR builds.
+
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::Instance::Impl::enumerateApiLayerProperties const): Guard method with USE_OPENXR.
+        (PlatformXR::Instance::Impl::enumerateInstanceExtensionProperties const): Ditto.
+        (PlatformXR::Instance::Impl::Impl): Guard method body with USE_OPENXR.
+        (PlatformXR::Instance::Impl::~Impl): Ditto.
+
 2020-06-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r263511.
