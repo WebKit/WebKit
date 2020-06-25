@@ -1,4 +1,4 @@
-:wq2020-06-25  Karl Rackler  <rackler@apple.com>
+2020-06-25  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/dynamic/window-resize-scrollbars-test.html as they are passing. 
         https://bugs.webkit.org/show_bug.cgi?id=213602
