@@ -1,3 +1,9 @@
+2020-06-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r263511.
+
+        * platform/mediastream/MediaStreamPrivate.h:
+
 2020-06-25  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder stopRecorder() returns empty Blob after first use
