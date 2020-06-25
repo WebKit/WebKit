@@ -1,3 +1,13 @@
+2020-06-24  Alexey Proskuryakov  <ap@apple.com>
+
+        macOS Big Sur build fix.
+
+        Remove long obsolete checks for Mac OS X 10.6 that didn't respect the major version.
+
+        * MiniBrowser/Makefile:
+        * TestWebKitAPI/Makefile:
+        * WebKitTestRunner/Makefile:
+
 2020-06-24  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r262341) Use UTF-8 to decode CFURLRefs from IPC
