@@ -1118,9 +1118,6 @@ void VideoFullscreenInterfaceAVKit::willStopPictureInPicture()
     if (m_currentMode.hasFullscreen() || m_restoringFullscreenForPictureInPictureStop)
         return;
 
-    [m_window setHidden:NO];
-    [[m_playerViewController view] setHidden:NO];
-
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->willExitPictureInPicture();
 }

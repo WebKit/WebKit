@@ -1,3 +1,14 @@
+2020-06-24  Peng Liu  <peng.liu6@apple.com>
+
+        Black rectangle appears when closing PIP on iPhone
+        https://bugs.webkit.org/show_bug.cgi?id=213570
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+        Don't unhide the window and view of WebAVPlayerViewController before exiting Picture-in-Picture.
+
 2020-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r260276): Scrolling through shelves on music.apple.com is not smooth
