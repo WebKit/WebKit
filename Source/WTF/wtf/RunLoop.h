@@ -67,6 +67,7 @@ public:
 
     WTF_EXPORT_PRIVATE static RunLoop& current();
     WTF_EXPORT_PRIVATE static RunLoop& main();
+    WTF_EXPORT_PRIVATE static RunLoop* mainIfExists();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& web();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
