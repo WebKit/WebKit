@@ -220,8 +220,6 @@ webkit.org/b/105616 editing/mac/spelling/accept-unseen-candidate-records-accepta
 webkit.org/b/105616 editing/spelling/spelling-marker-includes-hyphen.html [ Pass ImageOnlyFailure ]
 webkit.org/b/105616 editing/spelling/spelling-markers-in-overlapping-lines.html [ Pass ImageOnlyFailure ]
 webkit.org/b/105616 editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ Pass ImageOnlyFailure ]
-webkit.org/b/105616 fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
-webkit.org/b/105616 fast/writing-mode/english-rl-text-with-spelling-marker.html [ ImageOnlyFailure ]
 
 # [WK2] [Mac] Support drag in mouse events for WebKit2 EventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=68552>
