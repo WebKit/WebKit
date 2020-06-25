@@ -64,7 +64,6 @@ void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifi
 
 void RemoteMediaRecorderManager::releaseRecorder(MediaRecorderIdentifier identifier)
 {
-    ASSERT(m_recorders.contains(identifier));
     m_recorders.remove(identifier);
 }
 

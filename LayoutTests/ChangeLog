@@ -1,3 +1,14 @@
+2020-06-25  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder stopRecorder() returns empty Blob after first use
+        https://bugs.webkit.org/show_bug.cgi?id=212274
+        <rdar://problem/63601298>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/MediaRecorder-multiple-start-stop-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html: Added.
+
 2020-06-25  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/history/page-cache-indexed-closed-db.html as they are passing. 
