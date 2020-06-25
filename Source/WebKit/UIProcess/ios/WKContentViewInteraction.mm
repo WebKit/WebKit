@@ -5198,13 +5198,15 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler
 {
+    WebCore::FloatRect searchRect { rect };
 #if ENABLE(EDITABLE_REGION)
-    if (!self.webView._editable && !WebKit::mayContainEditableElementsInRect(self, rect)) {
+    bool hitInteractionRect = self._hasFocusedElement && searchRect.inclusivelyIntersects(_focusedElementInformation.interactionRect);
+    if (!self.webView._editable && !hitInteractionRect && !WebKit::mayContainEditableElementsInRect(self, rect)) {
         completionHandler(@[ ]);
         return;
     }
 #endif
-    _page->textInputContextsInRect(rect, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::ElementContext>& contexts) {
+    _page->textInputContextsInRect(searchRect, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::ElementContext>& contexts) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || contexts.isEmpty()) {
             completionHandler(@[ ]);

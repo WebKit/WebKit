@@ -1,3 +1,20 @@
+2020-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] -_requestTextInputContextsInRect cannot find empty Quip spreadsheet title
+        https://bugs.webkit.org/show_bug.cgi?id=213564
+        <rdar://problem/59355847>
+
+        Reviewed by Simon Fraser.
+
+        Check if the search rect intersects the interaction rect, even if it's empty, so long as
+        there is an assisted element. If there isn't an assisted element just do what we do now.
+        Otherwise, if the interaction rect is empty then this means the focused element is an
+        empty inline and it's not tracked in the editable region (see WebCore ChangeLog entry for
+        more details). In this case, just ask the web process directly to find the contexts.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requestTextInputContextsInRect:completionHandler:]):
+
 2020-06-25  Kate Cheney  <katherine_cheney@apple.com>
 
         Allow service workers for web browsers

@@ -949,8 +949,20 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     auto& nodeSet = hitTestResult.listBasedTestResult();
     for (auto& node : nodeSet) {
         if (auto* editableElement = rootEditableElement(node)) {
-            ASSERT(searchRectInRootViewCoordinates.intersects(editableElement->clientRect()));
+            ASSERT(searchRectInRootViewCoordinates.inclusivelyIntersects(editableElement->clientRect()));
             rootEditableElements.add(*editableElement);
+        }
+    }
+
+    // Fix up for a now empty focused inline element, e.g. <span contenteditable='true'>Hello</span> became
+    // <span contenteditable='true'></span>. Hit testing will likely not find this element because the engine
+    // tries to avoid creating line boxes, which are things it hit tests, for them to reduce memory. If the
+    // focused element is inside the search rect it's the most likely target for future editing operations,
+    // even if it's empty. So, we special case it here.
+    if (auto* focusedElement = focusController().focusedOrMainFrame().document()->focusedElement()) {
+        if (searchRectInRootViewCoordinates.inclusivelyIntersects(focusedElement->clientRect())) {
+            if (auto* editableElement = rootEditableElement(*focusedElement))
+                rootEditableElements.add(*editableElement);
         }
     }
     return WTF::map(rootEditableElements, [](const auto& element) { return element.copyRef(); });

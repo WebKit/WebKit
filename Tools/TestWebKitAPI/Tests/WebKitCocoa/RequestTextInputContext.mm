@@ -330,6 +330,40 @@ TEST(RequestTextInputContext, DisabledField)
     EXPECT_EQ(0UL, [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]].count);
 }
 
+TEST(RequestTextInputContext, FocusedEditableEmptyLine)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    webViewLoadHTMLStringAndWaitForAllFramesToPaint(webView.get(), applyStyle(@"<span id='span' contenteditable='true'></span>"));
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"span.focus()"];
+    EXPECT_WK_STREQ("SPAN", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 0, 0, 0), contexts[0].boundingRect);
+}
+
+TEST(RequestTextInputContext, FocusedEditableLineWithOnlyLineBreak)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    webViewLoadHTMLStringAndWaitForAllFramesToPaint(webView.get(), applyStyle(@"<span id='span' contenteditable='true'><br></span>"));
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"span.focus()"];
+    EXPECT_WK_STREQ("SPAN", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 0, 0, 19), contexts[0].boundingRect);
+}
+
 TEST(RequestTextInputContext, FocusAfterNavigation)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

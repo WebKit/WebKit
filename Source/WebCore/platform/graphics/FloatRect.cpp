@@ -54,9 +54,15 @@ bool FloatRect::isExpressibleAsIntRect() const
         && isWithinIntRange(maxX()) && isWithinIntRange(maxY());
 }
 
+bool FloatRect::inclusivelyIntersects(const FloatRect& other) const
+{
+    return width() >= 0 && height() >= 0 && other.width() >= 0 && other.height() >= 0
+        && x() <= other.maxX() && other.x() <= maxX() && y() <= other.maxY() && other.y() <= maxY();
+}
+
 bool FloatRect::intersects(const FloatRect& other) const
 {
-    // Checking emptiness handles negative widths as well as zero.
+    // Checking emptiness handles negative widths and heights as well as zero.
     return !isEmpty() && !other.isEmpty()
         && x() < other.maxX() && other.x() < maxX()
         && y() < other.maxY() && other.y() < maxY();

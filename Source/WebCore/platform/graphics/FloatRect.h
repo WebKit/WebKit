@@ -162,6 +162,7 @@ public:
     FloatPoint maxXMaxYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
 
     WEBCORE_EXPORT bool intersects(const FloatRect&) const;
+    WEBCORE_EXPORT bool inclusivelyIntersects(const FloatRect&) const;
     WEBCORE_EXPORT bool contains(const FloatRect&) const;
     WEBCORE_EXPORT bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
 

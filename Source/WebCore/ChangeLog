@@ -1,3 +1,30 @@
+2020-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] -_requestTextInputContextsInRect cannot find empty Quip spreadsheet title
+        https://bugs.webkit.org/show_bug.cgi?id=213564
+        <rdar://problem/59355847>
+
+        Reviewed by Simon Fraser.
+
+        Special case for a focused editable inline element that has no line box, which is
+        what the Quip spreadsheet title can become if its contents are deleted. The engine
+        optimizes to avoid creating lines and line boxes for empty inlines, hit testing,
+        and painting them. It's complicated to patch all this up with a 100% correct
+        solution without forcing more line box creation. So, just add a special case.
+
+        * page/Page.cpp:
+        (WebCore::Page::editableElementsInRect const): Add the root editable element of
+        the focused element to the result set if its rect intersects the search rect. Note
+        that its rect can be empty e.g. <span contenteditable="true"></span>. So, I use
+        a new function on FloatRect to perform the intersection test. I also updated the
+        ASSERT() to also use this new function. This was not necessary, but I did it to
+        future the proof this code should hit testing one day return empty inlines.
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::inclusivelyIntersects const): Added.
+        (WebCore::FloatRect::intersects const): While I was in this file I fixed up a comment
+        in this function to be more precise.
+        * platform/graphics/FloatRect.h:
+
 2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the macOS 11 build after r263519

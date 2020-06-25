@@ -1,3 +1,16 @@
+2020-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] -_requestTextInputContextsInRect cannot find empty Quip spreadsheet title
+        https://bugs.webkit.org/show_bug.cgi?id=213564
+        <rdar://problem/59355847>
+
+        Reviewed by Simon Fraser.
+
+        Add some tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-25  Sam Weinig  <weinig@apple.com>
 
         Add a new templated string type to help write more idiomatic parsing code
