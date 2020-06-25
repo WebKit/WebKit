@@ -1,3 +1,64 @@
+2020-06-25  Mark Lam  <mark.lam@apple.com>
+
+        JSCell constructor needs to ensure that the passed in structure is still alive.
+        https://bugs.webkit.org/show_bug.cgi?id=213593
+        <rdar://problem/64597573>
+
+        Reviewed by Yusuke Suzuki.
+
+        Note that in the initializer list of the `JSCell(VM&, Structure*)` constructor,
+        we are only using values inside the passed in structure but not necessarily the
+        structure pointer itself.  All these values are contained inside Structure::m_blob.
+        Note also that this constructor is an inline function.  Hence, the compiler may
+        choose to pre-compute the address of structure->m_blob and discard the structure
+        pointer itself.
+
+        Here's an example:
+
+            0x10317a21e <+1054>: movq   0x18(%rsp), %rdx  // rdx:vm = &vm
+            0x10317a223 <+1059>: addq   $0x8, %r13        // r13 = &structure.m_blob  <== pre-compute address of m_blob !!!
+                                                          // r13 previously contained the structure pointer.
+                                                          // Now, there's no more references to the structure base address.
+
+            0x10317a227 <+1063>: leaq   0x48(%rdx), %rdi  // arg0:heap = &vm.heap
+            0x10317a22b <+1067>: movl   $0x10, %edx       // arg2:size = 16.
+            0x10317a230 <+1072>: movq   %rdi, 0x28(%rsp)
+            0x10317a235 <+1077>: xorl   %esi, %esi        // arg1:deferralContext = 0
+            0x10317a237 <+1079>: callq  0x10317ae60       // call JSC::allocateCell<JSC::JSArray>  <== Can GC here !!!
+
+            0x10317a23c <+1084>: movq   %rax, %rbx        // rbx:cell = rax:allocation result.
+            ...
+            0x10317a253 <+1107>: movl   (%r13), %eax      // eax = m_blob.structureID  <== Use pre-computed m_blob address here.
+
+        There's a chance that the GC may run while allocating this cell.  In the event
+        that the structure is newly instantiated just before calling this constructor, 
+        there may not be any other references to it.  As a result, the structure may get
+        collected before the cell is even constructed.  To avoid this possibility, we need
+        to ensure that the structure pointer is still alive by the time this constructor
+        is called.
+
+        I am not committing any tests for this issue because the test cases relies on:
+
+        1. Manually forcing an O3 ASan Release build.
+
+        2. Not running jsc with --useDollarVM=1.  Note: the JSC test harness automatically
+           adds --useDollarVM=1 for all test runs.
+
+        3. Memory being allocated in a specific order.  The recent Bitmap FreeList change
+           enabled this issue to manifest.  The old linked list FreeList implementation
+           would have hidden the issue.
+
+        4. Adding some logging code can also make the issue stop manifesting.
+
+        In short, the test cases will not detect any regression even if we commit them
+        because the existing automatic regression test runs will not have the necessary
+        conditions for reproducing the issue.  The tests are also somewhat fragile where
+        any changes in memory layout may stop the issue from manifesting in an observable
+        way.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+
 2020-06-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Intl] Disprefer using ICU enums directly as instance variables
