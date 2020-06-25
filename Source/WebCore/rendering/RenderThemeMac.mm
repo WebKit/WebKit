@@ -2744,7 +2744,7 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
         NSImageHintSymbolFont : [NSFont systemFontOfSize:32],
         NSImageHintSymbolScale : @(NSImageSymbolScaleMedium)
     }];
-    return { BitmapImage::create(cgImage.get()), deviceScaleFactor };
+    return { BitmapImage::create(cgImage), deviceScaleFactor };
 #else
     UNUSED_PARAM(layout);
     if (deviceScaleFactor >= 2)

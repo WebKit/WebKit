@@ -1,3 +1,10 @@
+2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the macOS 11 build after r263519
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::createAttachmentPlaceholderImage):
+
 2020-06-25  Megan Gardner  <megan_gardner@apple.com>
 
         Cannot delete last line of Mail Message
