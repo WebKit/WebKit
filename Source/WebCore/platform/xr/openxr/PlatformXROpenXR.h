@@ -41,10 +41,13 @@ namespace PlatformXR {
 // the XRSystem is basically the entry point for the WebXR API available via the Navigator object.
 class OpenXRDevice final : public Device {
 public:
-    void setXrSystemId(XrSystemId id) { m_systemId = id; }
+    OpenXRDevice(XrSystemId, XrInstance);
     XrSystemId xrSystemId() const { return m_systemId; }
 private:
+    void collectSupportedSessionModes();
+
     XrSystemId m_systemId;
+    XrInstance m_instance;
 };
 
 } // namespace PlatformXR

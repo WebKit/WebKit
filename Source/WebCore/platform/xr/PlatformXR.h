@@ -53,6 +53,8 @@ public:
     void setEnabledFeatures(SessionMode mode, const ListOfEnabledFeatures& features) { m_enabledFeaturesMap.set(mode, features); }
     ListOfEnabledFeatures enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
+    bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
+
 protected:
     Device() = default;
 
@@ -61,6 +63,8 @@ protected:
     // which is a list of feature descriptors which MUST be initially an empty list.
     using EnabledFeaturesPerModeMap = WTF::HashMap<SessionMode, ListOfEnabledFeatures, WTF::IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
     EnabledFeaturesPerModeMap m_enabledFeaturesMap;
+
+    bool m_supportsOrientationTracking { false };
 };
 
 class Instance {

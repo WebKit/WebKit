@@ -108,10 +108,9 @@ bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
             return true;
 
         // 4. If type is local or local-floor, and the XR device supports reporting orientation data, return true.
-        // TODO: add API to PlatformXR::Device
-        return true;
+        if (m_device->supportsOrientationTracking())
+            return true;
     }
-
 
     // 5. If type is bounded-floor and session is an immersive session, return the result of whether bounded
     //    reference spaces are supported by the XR device.

@@ -168,44 +168,6 @@ Instance::Impl::~Impl()
 
 #if USE_OPENXR
 
-Optional<Vector<SessionMode>> Instance::Impl::collectSupportedSessionModes(OpenXRDevice& device)
-{
-    uint32_t viewConfigurationCount;
-    auto result = xrEnumerateViewConfigurations(m_instance, device.xrSystemId(), 0, &viewConfigurationCount, nullptr);
-    if (result != XR_SUCCESS) {
-        LOG(XR, "xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
-        return WTF::nullopt;
-    }
-
-    XrViewConfigurationType viewConfigurations[viewConfigurationCount];
-    result = xrEnumerateViewConfigurations(m_instance, device.xrSystemId(), viewConfigurationCount, &viewConfigurationCount, viewConfigurations);
-    if (result != XR_SUCCESS) {
-        LOG(XR, "xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
-        return WTF::nullopt;
-    }
-
-    Vector<SessionMode> supportedModes;
-    for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
-        auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
-        result = xrGetViewConfigurationProperties(m_instance, device.xrSystemId(), viewConfigurations[i], &viewConfigurationProperties);
-        if (result != XR_SUCCESS) {
-            LOG(XR, "xrGetViewConfigurationProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
-            return WTF::nullopt;
-        }
-        switch (viewConfigurationProperties.viewConfigurationType) {
-            case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO:
-                supportedModes.append(SessionMode::ImmersiveAr);
-                break;
-            case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO:
-                supportedModes.append(SessionMode::ImmersiveVr);
-                break;
-            default:
-                break;
-        };
-    }
-    return supportedModes;
-}
-
 #endif // USE_OPENXR
 
 Instance& Instance::singleton()
@@ -237,23 +199,54 @@ void Instance::enumerateImmersiveXRDevices()
 
     XrSystemId systemId;
     XrResult result = xrGetSystem(m_impl->xrInstance(), &systemGetInfo, &systemId);
-    if (result != XR_SUCCESS) {
-        LOG(XR, "xrGetSystem(): error %s\n", resultToString(result, m_impl->xrInstance()).utf8().data());
-        return;
-    }
+    RETURN_IF_FAILED(result, "xrGetSystem", m_impl->xrInstance());
 
-    auto device = makeUnique<OpenXRDevice>();
-    device->setXrSystemId(systemId);
-    auto sessionModes = m_impl->collectSupportedSessionModes(*device);
-    if (sessionModes) {
-        for (auto& mode : sessionModes.value()) {
-            // TODO: fill in features
-            device->setEnabledFeatures(mode, { });
-        }
-    }
-
-    m_immersiveXRDevices.append(WTFMove(device));
+    m_immersiveXRDevices.append(makeUnique<OpenXRDevice>(systemId, m_impl->xrInstance()));
 #endif // USE_OPENXR
+}
+
+OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance)
+    : m_systemId(id)
+    , m_instance(instance)
+{
+    auto systemProperties = createStructure<XrSystemProperties, XR_TYPE_SYSTEM_PROPERTIES>();
+    XrResult result = xrGetSystemProperties(instance, m_systemId, &systemProperties);
+    if (result == XR_SUCCESS)
+        m_supportsOrientationTracking = systemProperties.trackingProperties.orientationTracking == XR_TRUE;
+    else
+        LOG(XR, "xrGetSystemProperties(): error %s\n", resultToString(result, m_impl->xrInstance()).utf8().data());
+
+    collectSupportedSessionModes();
+}
+
+void OpenXRDevice::collectSupportedSessionModes()
+{
+    uint32_t viewConfigurationCount;
+    auto result = xrEnumerateViewConfigurations(m_instance, m_systemId, 0, &viewConfigurationCount, nullptr);
+    RETURN_IF_FAILED(result, "xrEnumerateViewConfigurations", m_instance);
+
+    XrViewConfigurationType viewConfigurations[viewConfigurationCount];
+    result = xrEnumerateViewConfigurations(m_instance, m_systemId, viewConfigurationCount, &viewConfigurationCount, viewConfigurations);
+    RETURN_IF_FAILED(result, "xrEnumerateViewConfigurations", m_instance);
+
+    for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
+        auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
+        result = xrGetViewConfigurationProperties(m_instance, m_systemId, viewConfigurations[i], &viewConfigurationProperties);
+        if (result != XR_SUCCESS) {
+            LOG(XR, "xrGetViewConfigurationProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
+            continue;
+        }
+        switch (viewConfigurationProperties.viewConfigurationType) {
+        case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO:
+            setEnabledFeatures(SessionMode::ImmersiveAr, { });
+            break;
+        case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO:
+            setEnabledFeatures(SessionMode::ImmersiveVr, { });
+            break;
+        default:
+            break;
+        };
+    }
 }
 
 } // namespace PlatformXR

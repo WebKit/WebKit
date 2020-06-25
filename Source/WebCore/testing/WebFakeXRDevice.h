@@ -63,6 +63,7 @@ private:
 class SimulatedXRDevice final : public PlatformXR::Device {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    SimulatedXRDevice() { m_supportsOrientationTracking = true; }
     void setNativeBoundsGeometry(Vector<FakeXRBoundsPoint> geometry) { m_nativeBoundsGeometry = geometry; }
     void setViewerOrigin(RefPtr<WebXRRigidTransform>&& origin) { m_viewerOrigin = WTFMove(origin); }
     void setFloorOrigin(RefPtr<WebXRRigidTransform>&& origin) { m_floorOrigin = WTFMove(origin); }

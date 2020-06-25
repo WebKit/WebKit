@@ -1,3 +1,32 @@
+2020-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Check device orientation support when requesting a reference space
+        https://bugs.webkit.org/show_bug.cgi?id=213519
+
+        Reviewed by Carlos Garcia Campos.
+
+        When requesting a local reference space the specs mandate us to check whether or not the device
+        supports orientation tracking. This was not implemented in the OpenXR backend, so we were unconditionally
+        returning true.
+
+        The OpenXR devices now properly check whether or not orientation tracking is initialized. We took the chance
+        to refactor a bit the OpenXR backend moving all the device initialization code to the OpenXRDevice class.
+
+        The current tests already check this functionality.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::referenceSpaceIsSupported const): Call supportsOrientationTracking() on device.
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::supportsOrientationTracking const): Added.
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::Instance::enumerateImmersiveXRDevices): Just create the OpenXR device, it will automatically
+        initialize itself.
+        (PlatformXR::OpenXRDevice::OpenXRDevice): Get XrSystem and XrInstance as parametters.
+        (PlatformXR::OpenXRDevice::collectSupportedSessionModes): Moved from Instance::Impl.
+        (PlatformXR::Instance::Impl::collectSupportedSessionModes): Deleted.
+        * platform/xr/openxr/PlatformXROpenXR.h:
+        * testing/WebFakeXRDevice.h: Mark the SimulatedXRDevice as supporting orientation tracking.
+
 2020-06-24  James Savage  <james.savage@apple.com>
 
         Upstream iPadOS 13.0 multi-window support
