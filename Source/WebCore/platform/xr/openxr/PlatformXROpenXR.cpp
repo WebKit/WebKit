@@ -214,7 +214,7 @@ OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance)
     if (result == XR_SUCCESS)
         m_supportsOrientationTracking = systemProperties.trackingProperties.orientationTracking == XR_TRUE;
     else
-        LOG(XR, "xrGetSystemProperties(): error %s\n", resultToString(result, m_impl->xrInstance()).utf8().data());
+        LOG(XR, "xrGetSystemProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
 
     collectSupportedSessionModes();
 }

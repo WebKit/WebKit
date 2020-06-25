@@ -1,3 +1,10 @@
+2020-06-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, WPE Debug build fix after r263503.
+
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::OpenXRDevice::OpenXRDevice): Use m_instance instead of m_impl->xrInstance().
+
 2020-06-25  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Don't invalidate MainThreadNotifier until the streaming threads are joined
