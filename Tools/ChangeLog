@@ -1,5 +1,14 @@
 2020-06-25  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Share more bots between EWS builder and testers
+        https://bugs.webkit.org/show_bug.cgi?id=213521
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
+2020-06-25  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Improve handling of invalid changelog
         https://bugs.webkit.org/show_bug.cgi?id=213609
 

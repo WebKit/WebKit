@@ -123,7 +123,7 @@
     },
     {
       "name": "ews109",
-      "platform": "ios-13"
+      "platform": "*"
     },
     {
       "name": "ews112",
@@ -371,7 +371,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-13-sim-wk2-tests-ews"],
-      "workernames": ["ews152", "ews154", "ews156", "ews157"]
+      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews109"]
     },
     {
       "name": "iOS-13-Simulator-WK2-Tests-EWS",
@@ -423,7 +423,7 @@
       "configuration": "debug",
       "architectures": ["x86_64"],
       "triggers": ["macos-mojave-debug-wk1-tests-ews"],
-      "workernames": ["ews112", "ews113", "ews115", "ews117"]
+      "workernames": ["ews112", "ews113", "ews115", "ews117", "ews153"]
     },
     {
       "name": "macOS-Mojave-Debug-WK1-Tests-EWS",
