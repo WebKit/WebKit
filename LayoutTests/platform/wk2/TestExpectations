@@ -358,9 +358,6 @@ http/tests/navigation/timerredirect-subframeload.html
 # Unexpected output from scrolling. Might be EFL port specific issue.
 http/tests/navigation/relativeanchor-frames.html
 
-# Scrollbars appear, even though they should not.
-fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
-
 # Machinery for updating view size has a race condition, a problem when moving between
 # SVG tests that have a special view size and all the other tests that use a 800x600 view.
 # This test is not the cause of the problem, just the one that happens to currently be the victim.
