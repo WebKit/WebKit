@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -2669,17 +2669,17 @@ void Page::setSessionID(PAL::SessionID sessionID)
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void Page::addPlaybackTargetPickerClient(uint64_t contextId)
+void Page::addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)
 {
     chrome().client().addPlaybackTargetPickerClient(contextId);
 }
 
-void Page::removePlaybackTargetPickerClient(uint64_t contextId)
+void Page::removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)
 {
     chrome().client().removePlaybackTargetPickerClient(contextId);
 }
 
-void Page::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint& location, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
+void Page::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::IntPoint& location, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
 {
 #if PLATFORM(IOS_FAMILY)
     // FIXME: refactor iOS implementation.
@@ -2693,7 +2693,7 @@ void Page::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint&
 #endif
 }
 
-void Page::playbackTargetPickerClientStateDidChange(uint64_t contextId, MediaProducer::MediaStateFlags state)
+void Page::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags state)
 {
     chrome().client().playbackTargetPickerClientStateDidChange(contextId, state);
 }
@@ -2713,31 +2713,31 @@ void Page::mockMediaPlaybackTargetPickerDismissPopup()
     chrome().client().mockMediaPlaybackTargetPickerDismissPopup();
 }
 
-void Page::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget>&& target)
+void Page::setPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, Ref<MediaPlaybackTarget>&& target)
 {
     forEachDocument([&] (Document& document) {
         document.setPlaybackTarget(contextId, target.copyRef());
     });
 }
 
-void Page::playbackTargetAvailabilityDidChange(uint64_t contextId, bool available)
+void Page::playbackTargetAvailabilityDidChange(PlaybackTargetClientContextIdentifier contextId, bool available)
 {
     forEachDocument([&] (Document& document) {
         document.playbackTargetAvailabilityDidChange(contextId, available);
     });
 }
 
-void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
+void Page::setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, bool shouldPlay)
 {
     forEachDocument([&] (Document& document) {
-        document.setShouldPlayToPlaybackTarget(clientId, shouldPlay);
+        document.setShouldPlayToPlaybackTarget(contextId, shouldPlay);
     });
 }
 
-void Page::playbackTargetPickerWasDismissed(uint64_t clientId)
+void Page::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier contextId)
 {
     forEachDocument([&] (Document& document) {
-        document.playbackTargetPickerWasDismissed(clientId);
+        document.playbackTargetPickerWasDismissed(contextId);
     });
 }
 

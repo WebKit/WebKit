@@ -42,6 +42,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/HTMLMediaElementEnums.h>
 #import <WebCore/LayoutMilestone.h>
+#import <WebCore/PlaybackTargetClientContextIdentifier.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
@@ -320,10 +321,10 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY) && defined(__cplusplus)
 - (WebMediaPlaybackTargetPicker *) _devicePicker;
-- (void)_addPlaybackTargetPickerClient:(uint64_t)clientId;
-- (void)_removePlaybackTargetPickerClient:(uint64_t)contextId;
-- (void)_showPlaybackTargetPicker:(uint64_t)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
-- (void)_playbackTargetPickerClientStateDidChange:(uint64_t)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
+- (void)_addPlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
+- (void)_removePlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
+- (void)_showPlaybackTargetPicker:(WebCore::PlaybackTargetClientContextIdentifier)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
+- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
 - (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled;
 - (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state;
 - (void)_mockMediaPlaybackTargetPickerDismissPopup;

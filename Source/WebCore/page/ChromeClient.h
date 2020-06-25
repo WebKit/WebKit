@@ -481,10 +481,10 @@ public:
     virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual void addPlaybackTargetPickerClient(uint64_t /*contextId*/) { }
-    virtual void removePlaybackTargetPickerClient(uint64_t /*contextId*/) { }
-    virtual void showPlaybackTargetPicker(uint64_t /*contextId*/, const IntPoint&, bool /*isVideo*/) { }
-    virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, MediaProducer::MediaStateFlags) { }
+    virtual void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
+    virtual void removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
+    virtual void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint&, bool /*isVideo*/) { }
+    virtual void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducer::MediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
     virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State) { }
     virtual void mockMediaPlaybackTargetPickerDismissPopup() { }

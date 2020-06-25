@@ -1194,6 +1194,7 @@
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		445775E520472F73008DCE5D /* LocalDefaultSystemAppearance.h in Headers */ = {isa = PBXBuildFile; fileRef = 445775E420472F73008DCE5D /* LocalDefaultSystemAppearance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4463CF682212FA68001A8577 /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
+		446DC64824A29DAB0061F390 /* PlaybackTargetClientContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 446DC64624A29D9B0061F390 /* PlaybackTargetClientContextIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4471710C205AF945000A116E /* MediaQueryParserContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7756,6 +7757,7 @@
 		444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponseIOS.mm; sourceTree = "<group>"; };
 		445775E420472F73008DCE5D /* LocalDefaultSystemAppearance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalDefaultSystemAppearance.h; sourceTree = "<group>"; };
 		445775E92047303B008DCE5D /* LocalDefaultSystemAppearance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalDefaultSystemAppearance.mm; sourceTree = "<group>"; };
+		446DC64624A29D9B0061F390 /* PlaybackTargetClientContextIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaybackTargetClientContextIdentifier.h; sourceTree = "<group>"; };
 		4471710B205AF945000A116E /* MediaQueryParserContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryParserContext.cpp; sourceTree = "<group>"; };
 		4471710C205AF945000A116E /* MediaQueryParserContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaQueryParserContext.h; sourceTree = "<group>"; };
 		447958021643B47B001E0A7F /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
@@ -16384,6 +16386,7 @@
 				C90F65531B225396002163A1 /* MediaSessionManager.cpp */,
 				C90F65541B225396002163A1 /* MediaSessionManager.h */,
 				C9D851EE1B39DC780085062E /* MediaSessionMetadata.h */,
+				446DC64624A29D9B0061F390 /* PlaybackTargetClientContextIdentifier.h */,
 				0709D78C1AE55554004E42F8 /* WebMediaSessionManager.cpp */,
 				0709D78D1AE55554004E42F8 /* WebMediaSessionManager.h */,
 				0709D7941AE55A29004E42F8 /* WebMediaSessionManagerClient.h */,
@@ -32583,6 +32586,7 @@
 				CDA29A171CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h in Headers */,
 				CDA29A0B1CBD9A7400901CCF /* PlaybackSessionModel.h in Headers */,
 				CDA29A0F1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h in Headers */,
+				446DC64824A29DAB0061F390 /* PlaybackTargetClientContextIdentifier.h in Headers */,
 				1AFFC4591D5E866100267A66 /* PluginBlocklist.h in Headers */,
 				31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */,
 				A9C6E4F40D745E48006442E9 /* PluginData.h in Headers */,

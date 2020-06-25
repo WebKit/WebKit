@@ -1,5 +1,44 @@
 2020-06-24  David Kilzer  <ddkilzer@apple.com>
 
+        Use ObjectIdentifier<>instead of WebCore::nextPlaybackTargetClientContextId() in Document.cpp
+        <https://webkit.org/b/213546>
+        <rdar://problem/61803576>
+
+        Reviewed by Youenn Fablet.
+
+        Switch from uint64_t to WebCore::PlaybackTargetClientContextIdentifier
+        for contextId values.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        - Add WebCore::PlaybackTargetClientContextIdentifier to list.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::addPlaybackTargetPickerClient):
+        (WebKit::WebPageProxy::removePlaybackTargetPickerClient):
+        (WebKit::WebPageProxy::showPlaybackTargetPicker):
+        (WebKit::WebPageProxy::playbackTargetPickerClientStateDidChange):
+        (WebKit::WebPageProxy::setPlaybackTarget):
+        (WebKit::WebPageProxy::externalOutputDeviceAvailableDidChange):
+        (WebKit::WebPageProxy::setShouldPlayToPlaybackTarget):
+        (WebKit::WebPageProxy::playbackTargetPickerWasDismissed):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::addPlaybackTargetPickerClient):
+        (WebKit::WebChromeClient::removePlaybackTargetPickerClient):
+        (WebKit::WebChromeClient::showPlaybackTargetPicker):
+        (WebKit::WebChromeClient::playbackTargetPickerClientStateDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected const):
+        (WebKit::WebPage::playbackTargetAvailabilityDidChange):
+        (WebKit::WebPage::setShouldPlayToPlaybackTarget):
+        (WebKit::WebPage::playbackTargetPickerWasDismissed):
+
+2020-06-24  David Kilzer  <ddkilzer@apple.com>
+
         [IPC] Use WebKit::LayerHostingContextID instead of uint32_t for videoLayerID
         <https://webkit.org/b/213576>
         <rdar://problem/61806253>

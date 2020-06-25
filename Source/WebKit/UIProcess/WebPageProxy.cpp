@@ -9144,22 +9144,22 @@ void WebPageProxy::didResignInputElementStrongPasswordAppearance(const UserData&
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-void WebPageProxy::addPlaybackTargetPickerClient(uint64_t contextId)
+void WebPageProxy::addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)
 {
     pageClient().mediaSessionManager().addPlaybackTargetPickerClient(*this, contextId);
 }
 
-void WebPageProxy::removePlaybackTargetPickerClient(uint64_t contextId)
+void WebPageProxy::removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)
 {
     pageClient().mediaSessionManager().removePlaybackTargetPickerClient(*this, contextId);
 }
 
-void WebPageProxy::showPlaybackTargetPicker(uint64_t contextId, const WebCore::FloatRect& rect, bool hasVideo)
+void WebPageProxy::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
     pageClient().mediaSessionManager().showPlaybackTargetPicker(*this, contextId, pageClient().rootViewToScreen(IntRect(rect)), hasVideo, useDarkAppearance());
 }
 
-void WebPageProxy::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)
+void WebPageProxy::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducer::MediaStateFlags state)
 {
     pageClient().mediaSessionManager().clientStateDidChange(*this, contextId, state);
 }
@@ -9179,7 +9179,7 @@ void WebPageProxy::mockMediaPlaybackTargetPickerDismissPopup()
     pageClient().mediaSessionManager().mockMediaPlaybackTargetPickerDismissPopup();
 }
 
-void WebPageProxy::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget>&& target)
+void WebPageProxy::setPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, Ref<MediaPlaybackTarget>&& target)
 {
     if (!hasRunningProcess())
         return;
@@ -9187,7 +9187,7 @@ void WebPageProxy::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget
     send(Messages::WebPage::PlaybackTargetSelected(contextId, target->targetContext()));
 }
 
-void WebPageProxy::externalOutputDeviceAvailableDidChange(uint64_t contextId, bool available)
+void WebPageProxy::externalOutputDeviceAvailableDidChange(PlaybackTargetClientContextIdentifier contextId, bool available)
 {
     if (!hasRunningProcess())
         return;
@@ -9195,7 +9195,7 @@ void WebPageProxy::externalOutputDeviceAvailableDidChange(uint64_t contextId, bo
     send(Messages::WebPage::PlaybackTargetAvailabilityDidChange(contextId, available));
 }
 
-void WebPageProxy::setShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
+void WebPageProxy::setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, bool shouldPlay)
 {
     if (!hasRunningProcess())
         return;
@@ -9203,7 +9203,7 @@ void WebPageProxy::setShouldPlayToPlaybackTarget(uint64_t contextId, bool should
     send(Messages::WebPage::SetShouldPlayToPlaybackTarget(contextId, shouldPlay));
 }
 
-void WebPageProxy::playbackTargetPickerWasDismissed(uint64_t contextId)
+void WebPageProxy::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier contextId)
 {
     if (!hasRunningProcess())
         return;

@@ -9722,28 +9722,28 @@ bool LayerFlushController::flushLayers()
     return _private->m_playbackTargetPicker.get();
 }
 
-- (void)_addPlaybackTargetPickerClient:(uint64_t)clientId
+- (void)_addPlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId
 {
-    [self _devicePicker]->addPlaybackTargetPickerClient(clientId);
+    [self _devicePicker]->addPlaybackTargetPickerClient(contextId);
 }
 
-- (void)_removePlaybackTargetPickerClient:(uint64_t)clientId
+- (void)_removePlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId
 {
-    [self _devicePicker]->removePlaybackTargetPickerClient(clientId);
+    [self _devicePicker]->removePlaybackTargetPickerClient(contextId);
 }
 
-- (void)_showPlaybackTargetPicker:(uint64_t)clientId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo
+- (void)_showPlaybackTargetPicker:(WebCore::PlaybackTargetClientContextIdentifier)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo
 {
     if (!_private->page)
         return;
 
     NSRect rectInScreenCoordinates = [self.window convertRectToScreen:NSMakeRect(location.x(), location.y(), 0, 0)];
-    [self _devicePicker]->showPlaybackTargetPicker(clientId, rectInScreenCoordinates, hasVideo);
+    [self _devicePicker]->showPlaybackTargetPicker(contextId, rectInScreenCoordinates, hasVideo);
 }
 
-- (void)_playbackTargetPickerClientStateDidChange:(uint64_t)clientId state:(WebCore::MediaProducer::MediaStateFlags)state
+- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducer::MediaStateFlags)state
 {
-    [self _devicePicker]->playbackTargetPickerClientStateDidChange(clientId, state);
+    [self _devicePicker]->playbackTargetPickerClientStateDidChange(contextId, state);
 }
 
 - (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled

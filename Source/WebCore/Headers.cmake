@@ -89,6 +89,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/mediasession/MediaSessionEvents.h
     Modules/mediasession/MediaSessionMetadata.h
+    Modules/mediasession/PlaybackTargetClientContextIdentifier.h
     Modules/mediasession/WebMediaSessionManager.h
     Modules/mediasession/WebMediaSessionManagerClient.h
 

@@ -520,10 +520,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-    PlaybackTargetSelected(uint64_t contextId, WebCore::MediaPlaybackTargetContext target)
-    PlaybackTargetAvailabilityDidChange(uint64_t contextId, bool available)
-    SetShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
-    PlaybackTargetPickerWasDismissed(uint64_t contextId);
+    PlaybackTargetSelected(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::MediaPlaybackTargetContext target)
+    PlaybackTargetAvailabilityDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, bool available)
+    SetShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier contextId, bool shouldPlay)
+    PlaybackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier contextId);
 #endif
 
 #if ENABLE(POINTER_LOCK)

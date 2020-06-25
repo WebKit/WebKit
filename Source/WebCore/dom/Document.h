@@ -48,6 +48,7 @@
 #include "OrientationNotifier.h"
 #include "PageIdentifier.h"
 #include "PlatformEvent.h"
+#include "PlaybackTargetClientContextIdentifier.h"
 #include "ReferrerPolicy.h"
 #include "Region.h"
 #include "RegistrableDomain.h"
@@ -1397,10 +1398,10 @@ public:
     void showPlaybackTargetPicker(MediaPlaybackTargetClient&, bool, RouteSharingPolicy, const String&);
     void playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient&, MediaProducer::MediaStateFlags);
 
-    void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&);
-    void playbackTargetAvailabilityDidChange(uint64_t, bool);
-    void setShouldPlayToPlaybackTarget(uint64_t, bool);
-    void playbackTargetPickerWasDismissed(uint64_t);
+    void setPlaybackTarget(PlaybackTargetClientContextIdentifier, Ref<MediaPlaybackTarget>&&);
+    void playbackTargetAvailabilityDidChange(PlaybackTargetClientContextIdentifier, bool);
+    void setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier, bool);
+    void playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier);
 #endif
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
@@ -1949,9 +1950,9 @@ private:
     HashSet<ShadowRoot*> m_inDocumentShadowRoots;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    typedef HashMap<uint64_t, WebCore::MediaPlaybackTargetClient*> TargetIdToClientMap;
+    using TargetIdToClientMap = HashMap<PlaybackTargetClientContextIdentifier, WebCore::MediaPlaybackTargetClient*>;
     TargetIdToClientMap m_idToClientMap;
-    typedef HashMap<WebCore::MediaPlaybackTargetClient*, uint64_t> TargetClientToIdMap;
+    using TargetClientToIdMap = HashMap<WebCore::MediaPlaybackTargetClient*, PlaybackTargetClientContextIdentifier>;
     TargetClientToIdMap m_clientToIDMap;
 #endif
 

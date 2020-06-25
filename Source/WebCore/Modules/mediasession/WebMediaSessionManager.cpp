@@ -45,7 +45,7 @@ static const Seconds taskDelayInterval { 100_ms };
 struct ClientState {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    explicit ClientState(WebMediaSessionManagerClient& client, uint64_t contextId)
+    explicit ClientState(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId)
         : client(client)
         , contextId(contextId)
     {
@@ -57,7 +57,7 @@ struct ClientState {
     }
 
     WebMediaSessionManagerClient& client;
-    uint64_t contextId { 0 };
+    PlaybackTargetClientContextIdentifier contextId;
     WebCore::MediaProducer::MediaStateFlags flags { WebCore::MediaProducer::IsNotPlaying };
     bool requestedPicker { false };
     bool previouslyRequestedPicker { false };
@@ -113,7 +113,7 @@ public:
         if (!state->client.alwaysOnLoggingAllowed())
             return;
 
-        m_logger->logAlways(LogMedia, makeString("WebMediaSessionManager::", methodName, ' '), state->contextId, state->flags, arguments...);
+        m_logger->logAlways(LogMedia, makeString("WebMediaSessionManager::", methodName, ' '), state->contextId.toUInt64(), state->flags, arguments...);
     }
 
     template<typename... Arguments>
@@ -197,14 +197,14 @@ WebMediaSessionManager::WebMediaSessionManager()
 
 WebMediaSessionManager::~WebMediaSessionManager() = default;
 
-uint64_t WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionManagerClient& client, uint64_t contextId)
+PlaybackTargetClientContextIdentifier WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId)
 {
     size_t index = find(&client, contextId);
     ASSERT(index == notFound);
     if (index != notFound)
-        return 0;
+        return { };
 
-    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, contextId);
+    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, contextId.toUInt64());
     m_clientState.append(makeUnique<ClientState>(client, contextId));
 
     if (m_externalOutputDeviceAvailable || m_playbackTarget)
@@ -213,7 +213,7 @@ uint64_t WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionMa
     return contextId;
 }
 
-void WebMediaSessionManager::removePlaybackTargetPickerClient(WebMediaSessionManagerClient& client, uint64_t contextId)
+void WebMediaSessionManager::removePlaybackTargetPickerClient(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId)
 {
     size_t index = find(&client, contextId);
     ASSERT(index != notFound);
@@ -240,7 +240,7 @@ void WebMediaSessionManager::removeAllPlaybackTargetPickerClients(WebMediaSessio
     scheduleDelayedTask(TargetMonitoringConfigurationTask | TargetClientsConfigurationTask);
 }
 
-void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClient& client, uint64_t contextId, const IntRect& rect, bool, bool useDarkAppearance)
+void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId, const IntRect& rect, bool, bool useDarkAppearance)
 {
     size_t index = find(&client, contextId);
     ASSERT(index != notFound);
@@ -259,7 +259,7 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
     targetPicker().showPlaybackTargetPicker(FloatRect(rect), hasActiveRoute, useDarkAppearance);
 }
 
-void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& client, uint64_t contextId, MediaProducer::MediaStateFlags newFlags)
+void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags newFlags)
 {
     size_t index = find(&client, contextId);
     ASSERT(index != notFound);
@@ -469,7 +469,7 @@ void WebMediaSessionManager::taskTimerFired()
     m_taskFlags = NoTask;
 }
 
-size_t WebMediaSessionManager::find(WebMediaSessionManagerClient* client, uint64_t contextId)
+size_t WebMediaSessionManager::find(WebMediaSessionManagerClient* client, PlaybackTargetClientContextIdentifier contextId)
 {
     for (size_t i = 0; i < m_clientState.size(); ++i) {
         if (m_clientState[i]->contextId == contextId && &m_clientState[i]->client == client)

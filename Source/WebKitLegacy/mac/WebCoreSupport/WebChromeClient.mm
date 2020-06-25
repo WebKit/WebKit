@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1113,22 +1113,22 @@ bool WebChromeClient::hasRelevantSelectionServices(bool isTextOnly) const
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-void WebChromeClient::addPlaybackTargetPickerClient(uint64_t contextId)
+void WebChromeClient::addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)
 {
     [m_webView _addPlaybackTargetPickerClient:contextId];
 }
 
-void WebChromeClient::removePlaybackTargetPickerClient(uint64_t contextId)
+void WebChromeClient::removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)
 {
     [m_webView _removePlaybackTargetPickerClient:contextId];
 }
 
-void WebChromeClient::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint& location, bool hasVideo)
+void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::IntPoint& location, bool hasVideo)
 {
     [m_webView _showPlaybackTargetPicker:contextId location:location hasVideo:hasVideo];
 }
 
-void WebChromeClient::playbackTargetPickerClientStateDidChange(uint64_t contextId, MediaProducer::MediaStateFlags state)
+void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags state)
 {
     [m_webView _playbackTargetPickerClientStateDidChange:contextId state:state];
 }

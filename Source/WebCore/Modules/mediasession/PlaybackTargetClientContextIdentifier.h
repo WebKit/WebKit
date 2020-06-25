@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,15 @@
 
 #pragma once
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include <wtf/ObjectIdentifier.h>
 
-#include "MediaPlaybackTarget.h"
-#include "MediaProducer.h"
-#include "PlaybackTargetClientContextIdentifier.h"
-#include <wtf/Ref.h>
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 namespace WebCore {
 
-class WebMediaSessionManagerClient {
-public:
-    virtual ~WebMediaSessionManagerClient() = default;
+enum PlaybackTargetClientContextIdentifierType { };
+using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
 
-    virtual void setPlaybackTarget(PlaybackTargetClientContextIdentifier, Ref<MediaPlaybackTarget>&&) = 0;
-    virtual void externalOutputDeviceAvailableDidChange(PlaybackTargetClientContextIdentifier, bool) = 0;
-    virtual void setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier, bool) = 0;
-    virtual void playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier) = 0;
-    virtual bool alwaysOnLoggingAllowed() { return false; }
-};
-
-} // namespace WebCore
+}
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

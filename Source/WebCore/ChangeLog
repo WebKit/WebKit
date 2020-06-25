@@ -1,3 +1,55 @@
+2020-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        Use ObjectIdentifier<>instead of WebCore::nextPlaybackTargetClientContextId() in Document.cpp
+        <https://webkit.org/b/213546>
+        <rdar://problem/61803576>
+
+        Reviewed by Youenn Fablet.
+
+        Switch from uint64_t to WebCore::PlaybackTargetClientContextIdentifier
+        for contextId values.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add PlaybackTargetClientContextIdentifier.h to the project.
+
+        * Modules/mediasession/PlaybackTargetClientContextIdentifier.h: Add.
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::ClientState::ClientState):
+        (WebCore::WebMediaSessionLogger::logAlways const):
+        (WebCore::WebMediaSessionManager::addPlaybackTargetPickerClient):
+        (WebCore::WebMediaSessionManager::removePlaybackTargetPickerClient):
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        (WebCore::WebMediaSessionManager::clientStateDidChange):
+        (WebCore::WebMediaSessionManager::find):
+        * Modules/mediasession/WebMediaSessionManager.h:
+        * Modules/mediasession/WebMediaSessionManagerClient.h:
+        * dom/Document.cpp:
+        (WebCore::Document::addPlaybackTargetPickerClient):
+        (WebCore::Document::removePlaybackTargetPickerClient):
+        (WebCore::Document::playbackTargetAvailabilityDidChange):
+        (WebCore::Document::setPlaybackTarget):
+        (WebCore::Document::setShouldPlayToPlaybackTarget):
+        (WebCore::Document::playbackTargetPickerWasDismissed):
+        (WebCore::nextPlaybackTargetClientContextId): Delete.
+        - Replace with PlaybackTargetClientContextIdentifier::generate().
+        * dom/Document.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::addPlaybackTargetPickerClient):
+        (WebCore::ChromeClient::removePlaybackTargetPickerClient):
+        (WebCore::ChromeClient::showPlaybackTargetPicker):
+        (WebCore::ChromeClient::playbackTargetPickerClientStateDidChange):
+        * page/Page.cpp:
+        (WebCore::Page::addPlaybackTargetPickerClient):
+        (WebCore::Page::removePlaybackTargetPickerClient):
+        (WebCore::Page::showPlaybackTargetPicker):
+        (WebCore::Page::playbackTargetPickerClientStateDidChange):
+        (WebCore::Page::setPlaybackTarget):
+        (WebCore::Page::playbackTargetAvailabilityDidChange):
+        (WebCore::Page::setShouldPlayToPlaybackTarget):
+        (WebCore::Page::playbackTargetPickerWasDismissed):
+        * page/Page.h:
+
 2020-06-24  Clark Wang  <clark_wang@apple.com>
 
         Removed unrestricted keyword from attributes in PannerNode

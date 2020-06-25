@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -7336,12 +7336,6 @@ bool Document::hasFocus() const
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-static uint64_t nextPlaybackTargetClientContextId()
-{
-    static uint64_t contextId = 0;
-    return ++contextId;
-}
-
 void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 {
     Page* page = this->page();
@@ -7352,7 +7346,7 @@ void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
     if (m_clientToIDMap.contains(&client))
         return;
 
-    uint64_t contextId = nextPlaybackTargetClientContextId();
+    auto contextId = PlaybackTargetClientContextIdentifier::generate();
     m_clientToIDMap.add(&client, contextId);
     m_idToClientMap.add(contextId, &client);
     page->addPlaybackTargetPickerClient(contextId);
@@ -7364,7 +7358,7 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
     if (it == m_clientToIDMap.end())
         return;
 
-    uint64_t clientId = it->value;
+    auto clientId = it->value;
     m_idToClientMap.remove(clientId);
     m_clientToIDMap.remove(it);
 
@@ -7405,36 +7399,36 @@ void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClien
     page->playbackTargetPickerClientStateDidChange(it->value, state);
 }
 
-void Document::playbackTargetAvailabilityDidChange(uint64_t clientId, bool available)
+void Document::playbackTargetAvailabilityDidChange(PlaybackTargetClientContextIdentifier contextId, bool available)
 {
-    auto it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(contextId);
     if (it == m_idToClientMap.end())
         return;
 
     it->value->externalOutputDeviceAvailableDidChange(available);
 }
 
-void Document::setPlaybackTarget(uint64_t clientId, Ref<MediaPlaybackTarget>&& target)
+void Document::setPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, Ref<MediaPlaybackTarget>&& target)
 {
-    auto it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(contextId);
     if (it == m_idToClientMap.end())
         return;
 
     it->value->setPlaybackTarget(target.copyRef());
 }
 
-void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
+void Document::setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, bool shouldPlay)
 {
-    auto it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(contextId);
     if (it == m_idToClientMap.end())
         return;
 
     it->value->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
-void Document::playbackTargetPickerWasDismissed(uint64_t clientId)
+void Document::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier contextId)
 {
-    auto it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(contextId);
     if (it == m_idToClientMap.end())
         return;
 

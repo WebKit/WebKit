@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "MediaPlaybackTargetPicker.h"
 #include "MediaPlaybackTargetPickerMock.h"
 #include "MediaProducer.h"
+#include "PlaybackTargetClientContextIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -52,11 +53,11 @@ public:
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State);
     WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
 
-    WEBCORE_EXPORT uint64_t addPlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
-    WEBCORE_EXPORT void removePlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
+    WEBCORE_EXPORT PlaybackTargetClientContextIdentifier addPlaybackTargetPickerClient(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier);
+    WEBCORE_EXPORT void removePlaybackTargetPickerClient(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier);
     WEBCORE_EXPORT void removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient&);
-    WEBCORE_EXPORT void showPlaybackTargetPicker(WebMediaSessionManagerClient&, uint64_t, const IntRect&, bool, bool);
-    WEBCORE_EXPORT void clientStateDidChange(WebMediaSessionManagerClient&, uint64_t, WebCore::MediaProducer::MediaStateFlags);
+    WEBCORE_EXPORT void showPlaybackTargetPicker(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier, const IntRect&, bool, bool);
+    WEBCORE_EXPORT void clientStateDidChange(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags);
 
     bool alwaysOnLoggingAllowed() const;
 
@@ -77,7 +78,7 @@ private:
     void externalOutputDeviceAvailableDidChange(bool) override;
     void playbackTargetPickerWasDismissed() override;
 
-    size_t find(WebMediaSessionManagerClient*, uint64_t);
+    size_t find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
 
     void configurePlaybackTargetClients();
     void configureNewClients();

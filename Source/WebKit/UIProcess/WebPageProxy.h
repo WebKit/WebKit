@@ -1521,19 +1521,19 @@ public:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-    void addPlaybackTargetPickerClient(uint64_t);
-    void removePlaybackTargetPickerClient(uint64_t);
-    void showPlaybackTargetPicker(uint64_t, const WebCore::FloatRect&, bool hasVideo);
-    void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags);
+    void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier);
+    void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier);
+    void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::FloatRect&, bool hasVideo);
+    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State);
     void mockMediaPlaybackTargetPickerDismissPopup();
 
     // WebMediaSessionManagerClient
-    void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) final;
-    void externalOutputDeviceAvailableDidChange(uint64_t, bool) final;
-    void setShouldPlayToPlaybackTarget(uint64_t, bool) final;
-    void playbackTargetPickerWasDismissed(uint64_t) final;
+    void setPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, Ref<WebCore::MediaPlaybackTarget>&&) final;
+    void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
+    void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
+    void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
     bool alwaysOnLoggingAllowed() final { return isAlwaysOnLoggingAllowed(); }
 #endif
 
