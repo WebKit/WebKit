@@ -1,3 +1,36 @@
+2020-06-25  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r260360): easing curves are broken on JS-originated animations
+        https://bugs.webkit.org/show_bug.cgi?id=213495
+        <rdar://problem/64649747>
+
+        Reviewed by Darin Adler.
+
+        Prior to Web Animations, there was no way for an animation to set an animation-wide timing function while
+        also setting a per-keyframe timing function. As such GraphicsLayerCA would sometimes decide to set the
+        timing function on keyframes or on the entire CAAnimation. However, we can no longer do this with Web
+        Animations where an animation can set an animation-wide timing function and also keyframe-specific
+        timing functions.
+
+        In this patch we create CAKeyframeAnimation objects for any animation that has at least two keyframes
+        if Web Animations are enabled, whereas the legacy code path requires at least three keyframes. We allow
+        PlatformCAAnimation::setTimingFunction() to be called in the Web Animations code path only under
+        GraphicsLayerCA::setupAnimation() while leaving the only call sites in place only for the legacy code
+        path.
+
+        Finally, we modify GraphicsLayerCA::timingFunctionForAnimationValue() to only ever return a keyframe-
+        specific timing function or fall back to a default linear timing function in the Web Animations code
+        path, leaving the function to behave the same way as it used to in the legacy code path. 
+
+        Test: webanimations/accelerated-animation-with-easing.html
+
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::isKeyframe):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+
 2020-06-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, WPE Debug build fix after r263503.

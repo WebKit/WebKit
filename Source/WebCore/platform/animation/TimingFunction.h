@@ -80,6 +80,12 @@ public:
         return is<LinearTimingFunction>(other);
     }
 
+    static const LinearTimingFunction& sharedLinearTimingFunction()
+    {
+        static const LinearTimingFunction& function = create().leakRef();
+        return function;
+    }
+
 private:
     LinearTimingFunction()
         : TimingFunction(LinearFunction)
