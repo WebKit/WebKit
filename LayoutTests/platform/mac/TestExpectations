@@ -1571,7 +1571,7 @@ fast/dom/HTMLMeterElement/meter-optimums.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
 
 # <rdar://problem/41103260> REGRESSION (Mojave): Three text tests failing with small antialiasing(?) diffs
-fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
+[ Mojave ] fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
 imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
 
