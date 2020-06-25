@@ -1,3 +1,21 @@
+2020-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Use WebKit::LayerHostingContextID instead of uint32_t for videoLayerID
+        <https://webkit.org/b/213576>
+        <rdar://problem/61806253>
+
+        Reviewed by Darin Adler.
+
+        Use WebKit::LayerHostingContextID instead of uint32_t as type
+        for videoLayerID since the value comes from
+        LayerHostingContext::contextID() in
+        VideoFullscreenManager::enterVideoFullscreenForVideoElement().
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+
 2020-06-24  Tim Horton  <timothy_horton@apple.com>
 
         Cannot play back any video on Apple Silicon devices

@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+#include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/AudioSession.h>
@@ -159,7 +160,7 @@ private:
     void hasVideoInPictureInPictureDidChange(bool);
 
     // Messages from VideoFullscreenManager
-    void setupFullscreenWithID(PlaybackSessionContextIdentifier, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
+    void setupFullscreenWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
     void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::IntRect& inlineRect, bool visible);
     void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
     void setHasVideo(PlaybackSessionContextIdentifier, bool);
