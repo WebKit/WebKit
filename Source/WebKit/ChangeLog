@@ -1,3 +1,21 @@
+2020-06-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow service workers for web browsers
+        https://bugs.webkit.org/show_bug.cgi?id=213573
+        <rdar://problem/64712630>
+
+        Reviewed by Brent Fulgham.
+
+        Allows applications with the full web-browser entitlement to use
+        service workers.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::parentProcessHasServiceWorkerEntitlement const):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::parentProcessHasServiceWorkerEntitlement const):
+
 2020-06-25  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder stopRecorder() returns empty Blob after first use

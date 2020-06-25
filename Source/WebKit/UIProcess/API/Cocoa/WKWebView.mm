@@ -521,7 +521,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(SERVICE_WORKER)
-    if ((!WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers") || !![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting) && ![_configuration limitsNavigationsToAppBoundDomains])
+    bool hasServiceWorkerEntitlement = (WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers") || WTF::processHasEntitlement("com.apple.developer.web-browser")) && ![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting;
+    if (!hasServiceWorkerEntitlement && ![_configuration limitsNavigationsToAppBoundDomains])
         pageConfiguration->preferences()->setServiceWorkersEnabled(false);
     pageConfiguration->preferences()->setServiceWorkerEntitlementDisabledForTesting(!![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting);
 #endif

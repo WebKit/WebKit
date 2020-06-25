@@ -510,7 +510,7 @@ bool WebPage::parentProcessHasServiceWorkerEntitlement() const
     if (disableServiceWorkerEntitlementTestingOverride)
         return false;
     
-    static bool hasEntitlement = WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
+    static bool hasEntitlement = WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers") || WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.web-browser");
     return hasEntitlement;
 }
 
