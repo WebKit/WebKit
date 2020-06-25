@@ -89,6 +89,7 @@ set(TestWTF_SOURCES
     Tests/WTF/StringHasher.cpp
     Tests/WTF/StringImpl.cpp
     Tests/WTF/StringOperators.cpp
+    Tests/WTF/StringParsingBuffer.cpp
     Tests/WTF/StringView.cpp
     Tests/WTF/SynchronizedFixedQueue.cpp
     Tests/WTF/TextBreakIterator.cpp

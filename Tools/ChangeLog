@@ -1,3 +1,16 @@
+2020-06-25  Sam Weinig  <weinig@apple.com>
+
+        Add a new templated string type to help write more idiomatic parsing code
+        https://bugs.webkit.org/show_bug.cgi?id=213588
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/StringParsingBuffer.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Added new tests for new class.
+
 2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should exclude text rendered using icon-only fonts

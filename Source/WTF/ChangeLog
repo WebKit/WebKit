@@ -1,3 +1,44 @@
+2020-06-25  Sam Weinig  <weinig@apple.com>
+
+        Add a new templated string type to help write more idiomatic parsing code
+        https://bugs.webkit.org/show_bug.cgi?id=213588
+
+        Reviewed by Darin Adler.
+        
+        Introduce StringParsingBuffer<CharType>, a new class in the String class family
+        designed to be used by parsing code. It's designed to be used with the helper
+        function, readCharactersForParsing, and for the user to write the parsing code
+        in a way that will work for both latin1 and UTF-16 inputs. Most usage will likely
+        follow something like the following form
+        
+        {
+            ...
+            auto parsedResult = readCharactersForParsing(stringishObjectToParse, [](auto parsingBuffer) {
+                while (parsingBuffer.hasCharactersRemaining()) {
+                    if (*parsingBuffer == foo) {
+                        ...
+                    }
+                }
+
+                ...
+
+                return parsedResult
+            });
+            ...
+        }
+
+        API tests added.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        Add StringParsingBuffer.h
+
+        * wtf/Forward.h:
+        Forward declare StringParsingBuffer.
+
+        * wtf/text/StringParsingBuffer.h: 
+        Added.
+
 2020-06-25  Tadeu Zagallo  <tzagallo@apple.com>
 
         WTF::callOnMainThread should not require the main runloop to be initialized
