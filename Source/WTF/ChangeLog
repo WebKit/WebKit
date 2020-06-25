@@ -1,3 +1,24 @@
+2020-06-25  Tadeu Zagallo  <tzagallo@apple.com>
+
+        WTF::callOnMainThread should not require the main runloop to be initialized
+        https://bugs.webkit.org/show_bug.cgi?id=213612
+        <rdar://problem/64446028>
+
+        Reviewed by Yusuke Suzuki.
+
+        When using JavaScriptCore as a framework, the WTF main runloop is never initialized. However,
+        the inspector uses CFString wrappers, which use `callOnMainThread` when deallocating the
+        underlying string. For now, we bring back the old `JSWTFMainThreadCaller` to ensure we have
+        a way of dispatching to the main thread, even when the main runloop hasn't been initialized.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::mainIfExists):
+        * wtf/RunLoop.h:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (-[JSWTFMainThreadCaller call]):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2020-06-24  Umar Iqbal  <uiqbal@apple.com>
 
         We should resurrect the older patch that collects some statistics of web API calls
