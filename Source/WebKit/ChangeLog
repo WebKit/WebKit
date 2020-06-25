@@ -1,5 +1,32 @@
 2020-06-24  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r263488. rdar://problem/64735026
+
+    Cannot play back any video on Apple Silicon devices
+    https://bugs.webkit.org/show_bug.cgi?id=213584
+    <rdar://problem/64714596>
+    
+    Reviewed by Per Arne Vollan.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    An unfortunate and incorrect refactoring caused some of the sandbox exceptions to get dropped on the floor.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@263488 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-24  Tim Horton  <timothy_horton@apple.com>
+
+            Cannot play back any video on Apple Silicon devices
+            https://bugs.webkit.org/show_bug.cgi?id=213584
+            <rdar://problem/64714596>
+
+            Reviewed by Per Arne Vollan.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+            An unfortunate and incorrect refactoring caused some of the sandbox exceptions to get dropped on the floor.
+
+2020-06-24  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r263456. rdar://problem/64728416
 
     REGRESSION (r263328): Crash in bool WTF::WeakHashSet<WebKit::AudioSessionRoutingArbitratorProxy, WTF::EmptyCounter>::contains<WebKit::AudioSessionRoutingArbitratorProxy> const

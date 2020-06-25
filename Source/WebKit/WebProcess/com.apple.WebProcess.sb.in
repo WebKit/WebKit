@@ -407,12 +407,14 @@
     (allow iokit-get-properties
         (iokit-property "ADSSupported")
         (iokit-property "IOAVDHEVCDecodeCapabilities")
-    )
+    ))
 
+(if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOService")
         (allow iokit-get-properties
-            (iokit-property "IORegistryEntryPropertyKeys")))
+            (iokit-property "IORegistryEntryPropertyKeys"))))
 
+(if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
         (allow iokit-get-properties
             (iokit-property "AppleTV"
@@ -420,18 +422,19 @@
                             "DisplayPipeStrideRequirements"
                             "dfr"
                             "external"
-                            "hdcp-hoover-protocol")))
+                            "hdcp-hoover-protocol"))))
 
+(if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOPlatformDevice")
         (allow iokit-get-properties
-            (iokit-property "soc-generation")))
+            (iokit-property "soc-generation"))))
 
+(if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOService")
         (allow iokit-get-properties
             (iokit-property "chip-id"
                             "display-rotation"
-                            "display-scale")))
-)
+                            "display-scale"))))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
