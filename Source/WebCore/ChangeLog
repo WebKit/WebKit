@@ -1,3 +1,21 @@
+2020-06-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domain service worker registrations should be limited
+        https://bugs.webkit.org/show_bug.cgi?id=213601
+        <rdar://problem/64717589>
+
+        Reviewed by Brent Fulgham.
+
+        Limit number of service worker registrations for app-bound domains.
+        The current proposal is 3, but this could be changed in the future.
+
+        No new tests, currently TestWebKitAPI is unable to test failed
+        service worker registration (test will timeout). Confirmed behavior
+        manually.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::validateRegistrationDomain):
+
 2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream macOS 11 additions to RenderThemeMac.mm and ThemeMac.mm
