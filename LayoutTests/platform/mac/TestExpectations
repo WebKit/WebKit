@@ -1400,7 +1400,6 @@ imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
-fast/canvas/canvas-blending-fill-style.html [ Failure ]
 fast/canvas/canvas-currentColor.html [ Failure ]
 fast/canvas/set-colors.html [ Failure ]
 
