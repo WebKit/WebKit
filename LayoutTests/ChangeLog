@@ -1,3 +1,18 @@
+2020-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Event region briefly missing editable element after typing second character in question field on discussions.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=213618
+        <rdar://problem/62656131>
+
+        Reviewed by Simon Fraser.
+
+        Add some tests.
+
+        * editing/editable-region/text-field-inside-composited-negative-z-index-layer-expected.txt: Added.
+        * editing/editable-region/text-field-inside-composited-negative-z-index-layer.html: Added.
+        * pointerevents/ios/touch-action-none-relative-inside-composited-negative-z-index-layer-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-relative-inside-composited-negative-z-index-layer.html: Added.
+
 2020-06-25  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Debug ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html is flaky failing.

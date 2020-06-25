@@ -1,3 +1,24 @@
+2020-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Event region briefly missing editable element after typing second character in question field on discussions.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=213618
+        <rdar://problem/62656131>
+
+        Reviewed by Simon Fraser.
+
+        Ensure the event region is updated for the foreground layer, if there is one. The foreground layer paints
+        into a different backing and so will not be included in normal layer paint (i.e. RenderLayer::paintLayer()
+        will bail out).  A "z-index: -1" can create such a layer. An element with "z-index: -1" is above the
+        background, but below other content. Although the original reported bug was only concerned about the
+        editable region the fix is applicable to all regions tracked by EventRegion. I included a test for touch-action
+        region too.
+
+        Tests: editing/editable-region/text-field-inside-composited-negative-z-index-layer.html
+               pointerevents/ios/touch-action-none-relative-inside-composited-negative-z-index-layer.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+
 2020-06-25  Jer Noble  <jer.noble@apple.com>
 
         iOS Safari incorrectly reports "AppleCoreMedia" as UA string

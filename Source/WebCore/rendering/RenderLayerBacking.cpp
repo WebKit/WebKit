@@ -1768,6 +1768,9 @@ void RenderLayerBacking::updateEventRegion()
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
 
+    if (m_foregroundLayer)
+        updateEventRegionForLayer(*m_foregroundLayer);
+
     renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
 }
 #endif
