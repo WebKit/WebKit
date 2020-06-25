@@ -1,3 +1,13 @@
+2020-06-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve handling of invalid changelog
+        https://bugs.webkit.org/show_bug.cgi?id=213609
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        (ValidateReviewer.run):
+
 2020-06-24  Alexey Proskuryakov  <ap@apple.com>
 
         macOS Big Sur build fix.
