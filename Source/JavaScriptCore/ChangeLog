@@ -1,3 +1,21 @@
+2020-06-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Intl] Disprefer using ICU enums directly as instance variables
+        https://bugs.webkit.org/show_bug.cgi?id=213587
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        (JSC::IntlPluralRules::resolvedOptions const):
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        (JSC::IntlRelativeTimeFormat::styleString): Renamed from JSC::styleString.
+        (JSC::IntlRelativeTimeFormat::resolvedOptions const):
+        (JSC::numericString): Deleted.
+        * runtime/IntlRelativeTimeFormat.h:
+
 2020-06-24  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] handle Put/DefinePrivateField in resetPutByID

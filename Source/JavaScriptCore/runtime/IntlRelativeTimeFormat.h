@@ -66,6 +66,8 @@ private:
 
     String formatInternal(JSGlobalObject*, double, StringView unit) const;
 
+    enum class Style : uint8_t { Long, Short, Narrow };
+
     struct URelativeDateTimeFormatterDeleter {
         void operator()(URelativeDateTimeFormatter*) const;
     };
@@ -73,12 +75,14 @@ private:
         void operator()(UNumberFormat*) const;
     };
 
+    static ASCIILiteral styleString(Style);
+
     std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter> m_relativeDateTimeFormatter;
     std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
 
     String m_locale;
     String m_numberingSystem;
-    UDateRelativeDateTimeFormatterStyle m_style { UDAT_STYLE_LONG };
+    Style m_style { Style::Long };
     bool m_numeric { true };
 };
 

@@ -135,14 +135,18 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
 
     String style = intlStringOption(globalObject, options, vm.propertyNames->style, { "long", "short", "narrow" }, "style must be either \"long\", \"short\", or \"narrow\"", "long");
     RETURN_IF_EXCEPTION(scope, void());
-    if (style == "long")
-        m_style = UDAT_STYLE_LONG;
-    else if (style == "short")
-        m_style = UDAT_STYLE_SHORT;
-    else if (style == "narrow")
-        m_style = UDAT_STYLE_NARROW;
-    else
-        ASSERT_NOT_REACHED();
+    UDateRelativeDateTimeFormatterStyle icuStyle;
+    if (style == "long") {
+        icuStyle = UDAT_STYLE_LONG;
+        m_style = Style::Long;
+    } else if (style == "short") {
+        icuStyle = UDAT_STYLE_SHORT;
+        m_style = Style::Short;
+    } else {
+        ASSERT(style == "narrow");
+        icuStyle = UDAT_STYLE_NARROW;
+        m_style = Style::Narrow;
+    }
 
     String numeric = intlStringOption(globalObject, options, vm.propertyNames->numeric, { "always", "auto" }, "numeric must be either \"always\" or \"auto\"", "always");
     RETURN_IF_EXCEPTION(scope, void());
@@ -155,30 +159,25 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
         return;
     }
 
-    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), nullptr, m_style, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
+    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), nullptr, icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
     if (UNLIKELY(U_FAILURE(status))) {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
     }
 }
 
-static ASCIILiteral styleString(UDateRelativeDateTimeFormatterStyle style)
+ASCIILiteral IntlRelativeTimeFormat::styleString(Style style)
 {
     switch (style) {
-    case UDAT_STYLE_LONG:
+    case Style::Long:
         return "long"_s;
-    case UDAT_STYLE_SHORT:
+    case Style::Short:
         return "short"_s;
-    case UDAT_STYLE_NARROW:
+    case Style::Narrow:
         return "narrow"_s;
     }
     ASSERT_NOT_REACHED();
     return ASCIILiteral::null();
-}
-
-static ASCIILiteral numericString(bool numeric)
-{
-    return numeric ? "always"_s : "auto"_s;
 }
 
 // https://tc39.es/ecma402/#sec-intl.relativetimeformat.prototype.resolvedoptions
@@ -188,7 +187,7 @@ JSObject* IntlRelativeTimeFormat::resolvedOptions(JSGlobalObject* globalObject) 
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->style, jsNontrivialString(vm, styleString(m_style)));
-    options->putDirect(vm, vm.propertyNames->numeric, jsNontrivialString(vm, numericString(m_numeric)));
+    options->putDirect(vm, vm.propertyNames->numeric, jsNontrivialString(vm, m_numeric ? "always"_s : "auto"_s));
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsNontrivialString(vm, m_numberingSystem));
     return options;
 }

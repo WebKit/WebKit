@@ -64,6 +64,8 @@ private:
 
     static Vector<String> localeData(const String&, size_t);
 
+    enum class Type : bool { Cardinal, Ordinal };
+
     struct UPluralRulesDeleter {
         void operator()(UPluralRules*) const;
     };
@@ -75,12 +77,12 @@ private:
     std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
 
     String m_locale;
-    UPluralType m_type { UPLURAL_TYPE_CARDINAL };
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };
     Optional<unsigned> m_minimumSignificantDigits;
     Optional<unsigned> m_maximumSignificantDigits;
+    Type m_type { Type::Cardinal };
 };
 
 } // namespace JSC

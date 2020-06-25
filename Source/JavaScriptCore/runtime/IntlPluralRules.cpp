@@ -123,7 +123,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
 
     String typeString = intlStringOption(globalObject, options, vm.propertyNames->type, { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
     RETURN_IF_EXCEPTION(scope, void());
-    m_type = typeString == "ordinal" ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL;
+    m_type = typeString == "ordinal" ? Type::Ordinal : Type::Cardinal;
 
     unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
@@ -172,7 +172,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     }
 
     status = U_ZERO_ERROR;
-    m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(m_locale.utf8().data(), m_type, &status));
+    m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(m_locale.utf8().data(), m_type == Type::Ordinal ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
@@ -189,7 +189,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
 
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
-    options->putDirect(vm, vm.propertyNames->type, jsNontrivialString(vm, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
+    options->putDirect(vm, vm.propertyNames->type, jsNontrivialString(vm, m_type == Type::Ordinal ? "ordinal"_s : "cardinal"_s));
     options->putDirect(vm, Identifier::fromString(vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
     options->putDirect(vm, Identifier::fromString(vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
     options->putDirect(vm, Identifier::fromString(vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));
