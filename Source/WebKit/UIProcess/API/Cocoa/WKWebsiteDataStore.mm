@@ -30,6 +30,7 @@
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ShouldGrandfatherStatistics.h"
+#import "VersionChecks.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLAuthenticationChallenge.h"
@@ -113,6 +114,17 @@ private:
 + (WKWebsiteDataStore *)nonPersistentDataStore
 {
     return wrapper(WebKit::WebsiteDataStore::createNonPersistent());
+}
+
+- (instancetype)init
+{
+    // This is a workaround for apps that were managing to call [WKWebsiteDataStore init].
+    // FIXME: We should eventually drop this and always return nil.
+    if (!WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil)) {
+        RELEASE_LOG_ERROR(Process, "Application is calling [WKWebsiteDataStore init], which is not supported");
+        return [WKWebsiteDataStore defaultDataStore];
+    }
+    return nil;
 }
 
 - (void)dealloc

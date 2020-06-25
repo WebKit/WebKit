@@ -1,3 +1,38 @@
+2020-06-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Network process is crashing when launching TJMaxx app due to invalid NetworkProcess::DestroySession IPC message
+        https://bugs.webkit.org/show_bug.cgi?id=213625
+        <rdar://problem/64737890>
+
+        Reviewed by Geoffrey Garen.
+
+        The app is calling [WKWebsiteDataStore init] despite the method being marked as unavailable in
+        WKWebsiteDataStore.h. As a result, they end up with a WKWebsiteDataStore object whose internal
+        _websiteDataStore is bad because its constructor was never called. When [WKWebsiteDataStore dealloc]
+        gets called later own, it calls the ~WebsiteDataStore() destructor for _websiteDataStore but its
+        m_sessionID is 0 because we never called the constructor. This causes us to send a
+        NetworkProcess::DestroySession IPC with a sessionID that is 0, which is not valid so the
+        NetworkProcess crashes.
+
+        To address the issue, we now provide an implementation of [WKWebsiteDataStore init] which returns nil
+        behind a linked-on-after check (since this crashes the app). To keep the app working,
+        [WKWebsiteDataStore init] returns the default data store until rebuilt with the new SDK. Note that
+        I tried returning a new ephemeral data store instead but this was getting the app in a bad state.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        Mark "new" as unavailable, otherwise [WKWebsiteDataStore new] builds.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore init]):
+        Return nil with latest SDK, the default data store otherwise.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        Add linked-on-after check.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        Add a release assertion to make sure that m_sessionID is always valid when the destructor is called.
+
 2020-06-25  Daniel Bates  <dabates@apple.com>
 
         [iOS] -_requestTextInputContextsInRect cannot find empty Quip spreadsheet title
