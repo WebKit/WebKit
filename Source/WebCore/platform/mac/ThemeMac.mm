@@ -120,10 +120,6 @@ static BOOL themeWindowHasKeyAppearance;
 
 namespace WebCore {
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/ThemeMacAdditions.mm>
-#endif
-
 enum {
     topMargin,
     rightMargin,
@@ -985,6 +981,16 @@ bool ThemeMac::userPrefersReducedMotion() const
 {
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];
 }
+
+#if HAVE(LARGE_CONTROL_SIZE)
+
+bool ThemeMac::supportsLargeFormControls()
+{
+    static bool hasSupport = [[NSAppearance currentAppearance] _usesMetricsAppearance];
+    return hasSupport;
+}
+
+#endif // HAVE(LARGE_CONTROL_SIZE)
 
 }
 

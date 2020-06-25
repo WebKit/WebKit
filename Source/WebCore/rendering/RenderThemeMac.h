@@ -103,8 +103,6 @@ public:
 private:
     RenderThemeMac();
 
-    String extraDefaultStyleSheet() final;
-
 #if ENABLE(VIDEO)
     // Media controls
     String mediaControlsStyleSheet() final;

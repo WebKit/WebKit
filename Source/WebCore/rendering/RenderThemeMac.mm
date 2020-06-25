@@ -2732,24 +2732,27 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     icon->paint(context, layout.iconRect);
 }
 
-#if HAVE(ALTERNATE_ICONS) && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/RenderThemeMacAdditions.mm>
-#else
-
-static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout&)
+static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
 {
+#if HAVE(ALTERNATE_ICONS)
+    auto image = [NSImage _imageWithSystemSymbolName:@"arrow.down.circle"];
+    auto imageSize = FloatSize([image size]);
+    auto imageSizeScales = deviceScaleFactor * layout.iconRect.size() / imageSize;
+    imageSize.scale(std::min(imageSizeScales.width(), imageSizeScales.height()));
+    auto imageRect = NSMakeRect(0, 0, imageSize.width(), imageSize.height());
+    auto cgImage = [image CGImageForProposedRect:&imageRect context:nil hints:@{
+        NSImageHintSymbolFont : [NSFont systemFontOfSize:32],
+        NSImageHintSymbolScale : @(NSImageSymbolScaleMedium)
+    }];
+    return { BitmapImage::create(cgImage.get()), deviceScaleFactor };
+#else
+    UNUSED_PARAM(layout);
     if (deviceScaleFactor >= 2)
         return { Image::loadPlatformResource("AttachmentPlaceholder@2x"), 2 };
 
     return { Image::loadPlatformResource("AttachmentPlaceholder"), 1 };
-}
-
-String RenderThemeMac::extraDefaultStyleSheet()
-{
-    return { };
-}
-
 #endif
+}
 
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {

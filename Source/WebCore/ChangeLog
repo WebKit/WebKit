@@ -1,3 +1,25 @@
+2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream macOS 11 additions to RenderThemeMac.mm and ThemeMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=213608
+        <rdar://problem/64758299>
+
+        Reviewed by Darin Adler.
+
+        Replace WebKitAdditions imports with the imported code. No change in behavior.
+
+        * css/html.css:
+        (input::-webkit-contacts-auto-fill-button):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::supportsLargeFormControls):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::createAttachmentPlaceholderImage):
+        (WebCore::RenderThemeMac::extraDefaultStyleSheet): Deleted.
+
+        Remove the override for extraDefaultStyleSheet altogether, since this was only used to temporarily hide the new
+        contact AutoFill button appearance from open source WebKit.
+
 2020-06-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed build fix for WebXR enabled non-OpenXR builds.
