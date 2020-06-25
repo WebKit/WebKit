@@ -1483,6 +1483,10 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdNonStrictOptimize;
     else if (unoptimizedFunction == operationPutByIdDirectStrict || unoptimizedFunction == operationPutByIdDirectStrictOptimize)
         optimizedFunction = operationPutByIdDirectStrictOptimize;
+    else if (unoptimizedFunction == operationPutByIdPutPrivateFieldStrict || unoptimizedFunction == operationPutByIdPutPrivateFieldStrictOptimize)
+        optimizedFunction = operationPutByIdPutPrivateFieldStrictOptimize;
+    else if (unoptimizedFunction == operationPutByIdDefinePrivateFieldStrict || unoptimizedFunction == operationPutByIdDefinePrivateFieldStrictOptimize)
+        optimizedFunction = operationPutByIdDefinePrivateFieldStrictOptimize;
     else {
         ASSERT(unoptimizedFunction == operationPutByIdDirectNonStrict || unoptimizedFunction == operationPutByIdDirectNonStrictOptimize);
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;

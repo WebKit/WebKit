@@ -1,3 +1,16 @@
+2020-06-24  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] handle Put/DefinePrivateField in resetPutByID
+        https://bugs.webkit.org/show_bug.cgi?id=213583
+
+        Reviewed by Yusuke Suzuki.
+
+        r262613 extends and uses PutByValDirect to support updating and defining private fields, in order to reuse
+        the IC machinery. The necessary resetPutByID change was erroneously omitted, and is presented here.
+
+        * jit/Repatch.cpp:
+        (JSC::resetPutByID):
+
 2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] llintTrue / jitTrue can encounter native functions
