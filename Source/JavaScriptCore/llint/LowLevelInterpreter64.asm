@@ -1509,7 +1509,8 @@ llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, disp
     bbb JSCell::m_type[t0], ObjectType, .opGetPrototypeOfSlow
 
     loadStructureWithScratch(t0, t2, t1, t3)
-    btinz Structure::m_outOfLineTypeFlags[t2], OverridesGetPrototypeOutOfLine, .opGetPrototypeOfSlow
+    loadh Structure::m_outOfLineTypeFlags[t2], t3
+    btinz t3, OverridesGetPrototypeOutOfLine, .opGetPrototypeOfSlow
 
     loadq Structure::m_prototype[t2], t2
     btqz t2, .opGetPrototypeOfPolyProto

@@ -400,9 +400,8 @@ void AssemblyHelpers::emitLoadPrototype(VM& vm, GPRReg objectGPR, JSValueRegs re
 
     emitLoadStructure(vm, objectGPR, resultRegs.payloadGPR(), scratchGPR);
 
-    auto overridesGetPrototype = branchTest32(MacroAssembler::NonZero,
-        MacroAssembler::Address(resultRegs.payloadGPR(), Structure::outOfLineTypeFlagsOffset()),
-        TrustedImm32(OverridesGetPrototypeOutOfLine));
+    load16(MacroAssembler::Address(resultRegs.payloadGPR(), Structure::outOfLineTypeFlagsOffset()), scratchGPR);
+    auto overridesGetPrototype = branchTest32(MacroAssembler::NonZero, scratchGPR, TrustedImm32(OverridesGetPrototypeOutOfLine));
     slowPath.append(overridesGetPrototype);
 
     loadValue(MacroAssembler::Address(resultRegs.payloadGPR(), Structure::prototypeOffset()), resultRegs);

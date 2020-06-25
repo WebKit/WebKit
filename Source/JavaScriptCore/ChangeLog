@@ -1,3 +1,18 @@
+2020-06-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r263035): stress/get-prototype-of.js broken on s390x
+        https://bugs.webkit.org/show_bug.cgi?id=213307
+
+        Reviewed by Ross Kirsling.
+
+        Structure::m_outOfLineTypeFlags is uint16_t. If we access this field as 32bit field, we have different value in big endian architectures.
+        Since we do not have half-size-load branch instructions, we should load this uint16_t value via `loadh` (which zero-extends the loaded value)
+        and perform branch onto that value.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadPrototype):
+        * llint/LowLevelInterpreter64.asm:
+
 2020-06-25  Mark Lam  <mark.lam@apple.com>
 
         JSCell constructor needs to ensure that the passed in structure is still alive.
