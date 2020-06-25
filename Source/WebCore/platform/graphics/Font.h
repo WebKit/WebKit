@@ -106,6 +106,8 @@ public:
     const Font* emphasisMarkFont(const FontDescription&) const;
     const Font& brokenIdeographFont() const;
 
+    bool isProbablyOnlyUsedToRenderIcons() const;
+
     const Font* variantFont(const FontDescription& description, FontVariant variant) const
     {
 #if PLATFORM(COCOA)

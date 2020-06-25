@@ -1,3 +1,19 @@
+2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should exclude text rendered using icon-only fonts
+        https://bugs.webkit.org/show_bug.cgi?id=213446
+        <rdar://problem/63734298>
+
+        Reviewed by Myles Maxfield.
+
+        Add a new API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Ahem.ttf: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/SpaceOnly.otf: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Share more bots between EWS builder and testers

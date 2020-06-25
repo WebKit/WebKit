@@ -159,6 +159,8 @@ private:
     ManipulationUnit createUnit(const Vector<String>&, Node&);
     void parse(ManipulationUnit&, const String&, Node&);
 
+    bool shouldExcludeNodeBasedOnStyle(const Node&);
+
     void addItem(ManipulationItemData&&);
     void addItemIfPossible(Vector<ManipulationUnit>&&);
     void flushPendingItemsForCallback();
@@ -177,6 +179,8 @@ private:
     WeakPtr<Document> m_document;
     WeakHashSet<Element> m_elementsWithNewRenderer;
     WeakHashSet<Element> m_manipulatedElements;
+
+    HashMap<String, bool> m_cachedFontFamilyExclusionResults;
 
     ManipulationItemCallback m_callback;
     Vector<ManipulationItem> m_pendingItemsForCallback;

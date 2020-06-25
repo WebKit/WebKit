@@ -1002,6 +1002,52 @@ TEST(TextManipulation, StartTextManipulationExtractsValuesByNode)
     EXPECT_STREQ("five", items[1].tokens[1].content.UTF8String);
 }
 
+TEST(TextManipulation, StartTextManipulationExcludesTextRenderedAsIcons)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head>"
+        "<style>"
+        "@font-face {"
+        "    font-family: Ahem;"
+        "    src: url(Ahem.ttf);"
+        "}"
+        "@font-face {"
+        "    font-family: SpaceOnly;"
+        "    src: url(SpaceOnly.otf);"
+        "}"
+        ".Ahem { font-family: Ahem; }"
+        ".SpaceOnly { font-family: SpaceOnly; }"
+        ".Missing { font-family: Missing; }"
+        ".SystemUI { font-family: system-ui; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<span class='Ahem'>one</span><span class='SpaceOnly'>two</span><span class='Missing'>three</span><span class='SystemUI'>four</span>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    auto item = items.firstObject;
+    EXPECT_EQ(item.tokens.count, 4UL);
+    EXPECT_WK_STREQ(item.tokens[0].content, "one");
+    EXPECT_FALSE(item.tokens[0].isExcluded);
+    EXPECT_WK_STREQ(item.tokens[1].content, "two");
+    EXPECT_TRUE(item.tokens[1].isExcluded);
+    EXPECT_WK_STREQ(item.tokens[2].content, "three");
+    EXPECT_FALSE(item.tokens[2].isExcluded);
+    EXPECT_WK_STREQ(item.tokens[3].content, "four");
+    EXPECT_FALSE(item.tokens[3].isExcluded);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;

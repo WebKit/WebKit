@@ -181,4 +181,11 @@ String FontPlatformData::description() const
 
 #endif
 
+String FontPlatformData::familyName() const
+{
+    if (auto platformFont = font())
+        return adoptCF(CTFontCopyFamilyName(platformFont)).get();
+    return { };
+}
+
 } // namespace WebCore

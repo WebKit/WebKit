@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
+#include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -330,10 +331,33 @@ TextManipulationController::ManipulationUnit TextManipulationController::createU
     return unit;
 }
 
+bool TextManipulationController::shouldExcludeNodeBasedOnStyle(const Node& node)
+{
+    auto* style = node.renderStyle();
+    if (!style)
+        return false;
+
+    auto& font = style->fontCascade().primaryFont();
+    auto familyName = font.platformData().familyName();
+    if (familyName.isEmpty())
+        return false;
+
+    auto iter = m_cachedFontFamilyExclusionResults.find(familyName);
+    if (iter != m_cachedFontFamilyExclusionResults.end())
+        return iter->value;
+
+    // FIXME: We should reconsider whether a node should be excluded if the primary font
+    // used to render the node changes, since this "icon font" heuristic may return a
+    // different result.
+    bool result = font.isProbablyOnlyUsedToRenderIcons();
+    m_cachedFontFamilyExclusionResults.set(familyName, result);
+    return result;
+}
+
 void TextManipulationController::parse(ManipulationUnit& unit, const String& text, Node& textNode)
 {
     ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
-    bool isNodeExcluded = exclusionRuleMatcher.isExcluded(&textNode);
+    bool isNodeExcluded = exclusionRuleMatcher.isExcluded(&textNode) || shouldExcludeNodeBasedOnStyle(textNode);
     size_t positionOfLastNonHTMLSpace = WTF::notFound;
     size_t startPositionOfCurrentToken = 0;
     size_t index = 0;

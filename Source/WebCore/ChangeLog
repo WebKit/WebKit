@@ -1,3 +1,51 @@
+2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should exclude text rendered using icon-only fonts
+        https://bugs.webkit.org/show_bug.cgi?id=213446
+        <rdar://problem/63734298>
+
+        Reviewed by Myles Maxfield.
+
+        See below for more details.
+
+        Test: TextManipulation.StartTextManipulationExcludesTextRenderedAsIcons
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::shouldExcludeNodeBasedOnStyle):
+        (WebCore::TextManipulationController::parse):
+
+        Augment token exclusion rules so that we're able to exclude certain text nodes from text manipulation, based on
+        their style (more specifically, based on their font family). Ask the text node's primary font if it is likely to
+        be used only for rendering icons, and cache the result in TextManipulationController to avoid running the
+        heuristic an excessive number of times for each font that appears in the document. We currently only run this
+        for the node's primary font when initiating translation, though we may want to change this in the future so that
+        node exclusion is recomputed when the primary font of a node changes.
+
+        Note that in the case where an icon font fails to load, we won't exclude the text node from translation,
+        since the primary font will be a fallback. This is intentional, since the node would appear in the document as
+        normally rendered text (rather than icons), which should be translated.
+
+        * editing/TextManipulationController.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::isProbablyOnlyUsedToRenderIcons const):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::familyName const):
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::isProbablyOnlyUsedToRenderIcons const):
+
+        Add a heuristic to detect whether a platform font should be excluded from text manipulation. For now, we only
+        return true if we suspect that this font is an "icon-only" font (for instance, the "Material Icons" font). We
+        guess that a font is *probably* an icon-only font if the font supports only characters from the basic or PUA
+        unicode planes, and the glyph bounds for the set of supported non-control basic latin characters are all empty.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::familyName const):
+
+        Add a platform `familyName()` helper method on `FontPlatformData`. On Cocoa platforms, this wraps a call to
+        `CTFontCopyFamilyName`.
+
 2020-06-25  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound domain service worker registrations should be limited

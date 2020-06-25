@@ -475,6 +475,16 @@ const Font& Font::brokenIdeographFont() const
     return *derivedFontData.brokenIdeographFont;
 }
 
+#if !PLATFORM(COCOA)
+
+bool Font::isProbablyOnlyUsedToRenderIcons() const
+{
+    // FIXME: Not implemented yet.
+    return false;
+}
+
+#endif
+
 #if !LOG_DISABLED
 String Font::description() const
 {

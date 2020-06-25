@@ -659,4 +659,43 @@ bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variat
     return CTFontGetGlyphsForCharacters(platformData().ctFont(), codeUnits, glyphs, count);
 }
 
+bool Font::isProbablyOnlyUsedToRenderIcons() const
+{
+    auto platformFont = platformData().font();
+    if (!platformFont)
+        return false;
+
+    // Allow most non-icon fonts to bail early here by testing a single character 'a', without iterating over all basic latin characters.
+    UniChar lowercaseACharacter = 'a';
+    CGGlyph lowercaseAGlyph;
+    if (CTFontGetGlyphsForCharacters(platformFont, &lowercaseACharacter, &lowercaseAGlyph, 1)) {
+        if (!CGRectIsEmpty(CTFontGetBoundingRectsForGlyphs(platformFont, kCTFontOrientationDefault, &lowercaseAGlyph, nullptr, 1)))
+            return false;
+    }
+
+    auto supportedCharacters = adoptCF(CTFontCopyCharacterSet(platformFont));
+    if (CFCharacterSetHasMemberInPlane(supportedCharacters.get(), 1) || CFCharacterSetHasMemberInPlane(supportedCharacters.get(), 2))
+        return false;
+
+    // This encompasses all basic Latin non-control characters.
+    constexpr UniChar firstCharacterToTest = ' ';
+    constexpr UniChar lastCharacterToTest = '~';
+    constexpr auto numberOfCharactersToTest = lastCharacterToTest - firstCharacterToTest + 1;
+
+    Vector<CGGlyph> glyphs;
+    glyphs.fill(0, numberOfCharactersToTest);
+    CTFontGetGlyphsForCharacterRange(platformFont, glyphs.begin(), CFRangeMake(firstCharacterToTest, numberOfCharactersToTest));
+    glyphs.removeAll(0);
+
+    if (glyphs.isEmpty())
+        return false;
+
+    Vector<CGRect> boundingRects;
+    boundingRects.fill(CGRectZero, glyphs.size());
+    CTFontGetBoundingRectsForGlyphs(platformFont, kCTFontOrientationDefault, glyphs.begin(), boundingRects.begin(), glyphs.size());
+    return notFound == boundingRects.findMatching([](auto& rect) {
+        return !CGRectIsEmpty(rect);
+    });
+}
+
 } // namespace WebCore

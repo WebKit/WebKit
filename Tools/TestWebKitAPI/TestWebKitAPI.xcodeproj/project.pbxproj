@@ -1130,6 +1130,8 @@
 		F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CD74C520FDACF500DE3794 /* text-with-async-script.html */; };
 		F4CD74C920FDB49600DE3794 /* TestURLSchemeHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */; };
 		F4CF32802366552200D3AD07 /* EnterKeyHintTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */; };
+		F4CFCDDA249FC9E400527482 /* SpaceOnly.otf in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */; };
+		F4CFCDDB249FC9E900527482 /* Ahem.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CFCDD9249FC9D900527482 /* Ahem.ttf */; };
 		F4D2986E20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */; };
 		F4D4F3B61E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */; };
 		F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */; };
@@ -1234,6 +1236,7 @@
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */,
+				F4CFCDDB249FC9E900527482 /* Ahem.ttf in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
 				1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */,
 				C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */,
@@ -1547,6 +1550,7 @@
 				46AE5A3720F9066D00E0873E /* SimpleServiceWorkerRegistrations-4.sqlite3 in Copy Resources */,
 				F4F405BD1D4C0D1C007A9707 /* skinny-autoplaying-video-with-audio.html in Copy Resources */,
 				C01A23F21266156700C9ED55 /* spacebar-scrolling.html in Copy Resources */,
+				F4CFCDDA249FC9E400527482 /* SpaceOnly.otf in Copy Resources */,
 				E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */,
 				515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */,
 				9BD6D3A21F7B218300BD4962 /* sunset-in-cupertino-100px.tiff in Copy Resources */,
@@ -2815,6 +2819,8 @@
 		F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestURLSchemeHandler.mm; sourceTree = "<group>"; };
 		F4CDAB3322489FE10057A2D9 /* UserInterfaceSwizzler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserInterfaceSwizzler.h; sourceTree = "<group>"; };
 		F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnterKeyHintTests.mm; sourceTree = "<group>"; };
+		F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SpaceOnly.otf; sourceTree = "<group>"; };
+		F4CFCDD9249FC9D900527482 /* Ahem.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ahem.ttf; sourceTree = "<group>"; };
 		F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunScriptAfterDocumentLoad.mm; sourceTree = "<group>"; };
 		F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorIOS.mm; sourceTree = "<group>"; };
 		F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsIOS.mm; sourceTree = "<group>"; };
@@ -3533,6 +3539,7 @@
 			children = (
 				55A817FE218101DF0004A39A /* 100x100-red.tga */,
 				55A817FD218101DF0004A39A /* 400x400-green.png */,
+				F4CFCDD9249FC9D900527482 /* Ahem.ttf */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
 				A1798B8A2243611A000764BD /* apple-pay-active-session.html */,
@@ -3723,6 +3730,7 @@
 				C9B4AD291ECA6EA500F5FEA0 /* silence-long.m4a */,
 				4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-4.sqlite3 */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
+				F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */,
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				9BD6D3A11F7B202100BD4962 /* sunset-in-cupertino-100px.tiff */,
 				9BD6D3A01F7B202000BD4962 /* sunset-in-cupertino-200px.png */,

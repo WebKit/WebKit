@@ -155,6 +155,8 @@ public:
     TextRenderingMode textRenderingMode() const { return m_textRenderingMode; }
     bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 
+    String familyName() const;
+
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }
 #endif
