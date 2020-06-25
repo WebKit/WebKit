@@ -1,3 +1,12 @@
+2020-06-25  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for fast/history/page-cache-indexed-closed-db.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213606
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2020-06-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Use the flexing value as the base for the available horizontal space distribution

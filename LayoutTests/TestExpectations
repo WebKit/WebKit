@@ -2037,9 +2037,6 @@ webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/database-quota-private.html [ Skip ]
 
-# Modern IDB page cache interaction not yet sorted out
-fast/history/page-cache-indexed-closed-db.html [ Failure ]
-
 # IDB is currently disabled in private browsing.
 # With Modern IDB and the in-memory backing store, that should change.
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
