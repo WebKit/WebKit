@@ -649,7 +649,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     if (!newRequest.url().host().isEmpty() && SecurityOrigin::shouldIgnoreHost(newRequest.url())) {
         auto url = newRequest.url();
-        url.removeHostAndPort();
+        url.setHostAndPort({ });
         newRequest.setURL(WTFMove(url));
     }
 
