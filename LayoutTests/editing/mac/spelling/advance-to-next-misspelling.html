@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+<script src="../../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<br>
+<div contenteditable id="editor"><p id="start"><br>mispelled</p></div>
+<script>
+Markup.description("Advancing to the next misspelling (cmd+; on macOS) should select the word 'mispelled'.");
+getSelection().setPosition(start);
+internals.advanceToNextMisspelling();
+Markup.dump(editor);
+</script>
+</body>

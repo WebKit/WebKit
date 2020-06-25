@@ -1,3 +1,16 @@
+2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Running spellcheck on https://developer.apple.com/forums/thread/650317 hangs the web process
+        https://bugs.webkit.org/show_bug.cgi?id=213585
+        <rdar://problem/64681632>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that attempts to advance to the next misspelling, and verifies that the misspelled word is selected.
+
+        * editing/mac/spelling/advance-to-next-misspelling-expected.txt: Added.
+        * editing/mac/spelling/advance-to-next-misspelling.html: Added.
+
 2020-06-24  Clark Wang  <clark_wang@apple.com>
 
         Removed unrestricted keyword from attributes in PannerNode

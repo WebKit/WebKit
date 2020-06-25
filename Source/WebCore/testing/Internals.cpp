@@ -2187,6 +2187,14 @@ ExceptionOr<uint64_t> Internals::lastSpellCheckProcessedSequence()
     return document->editor().spellChecker().lastProcessedIdentifier().toUInt64();
 }
 
+void Internals::advanceToNextMisspelling()
+{
+#if !PLATFORM(IOS_FAMILY)
+    if (auto* document = contextDocument())
+        document->editor().advanceToNextMisspelling();
+#endif
+}
+
 Vector<String> Internals::userPreferredLanguages() const
 {
     return WTF::userPreferredLanguages();

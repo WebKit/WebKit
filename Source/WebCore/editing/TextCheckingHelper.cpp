@@ -407,9 +407,14 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
         }
         if (lastIteration || totalLengthProcessed + currentLength >= totalRangeLength)
             break;
+
         VisiblePosition newParagraphStart = startOfNextParagraph(paragraphRange->endPosition());
-        setStart(paragraphRange.ptr(), newParagraphStart);
-        setEnd(paragraphRange.ptr(), endOfParagraph(newParagraphStart));
+        if (!setStart(paragraphRange.ptr(), newParagraphStart))
+            break;
+
+        if (!setEnd(paragraphRange.ptr(), endOfParagraph(newParagraphStart)))
+            break;
+
         firstIteration = false;
         totalLengthProcessed += currentLength;
     }

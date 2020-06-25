@@ -326,6 +326,7 @@ public:
 
     ExceptionOr<uint64_t> lastSpellCheckRequestSequence();
     ExceptionOr<uint64_t> lastSpellCheckProcessedSequence();
+    void advanceToNextMisspelling();
 
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);

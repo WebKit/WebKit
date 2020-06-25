@@ -380,6 +380,7 @@ enum CompositingPolicy {
 
     [MayThrowException] unsigned long long lastSpellCheckRequestSequence();
     [MayThrowException] unsigned long long lastSpellCheckProcessedSequence();
+    void advanceToNextMisspelling();
 
     sequence<DOMString> userPreferredLanguages();
     void setUserPreferredLanguages(sequence<DOMString> languages);

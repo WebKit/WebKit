@@ -1,3 +1,37 @@
+2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Running spellcheck on https://developer.apple.com/forums/thread/650317 hangs the web process
+        https://bugs.webkit.org/show_bug.cgi?id=213585
+        <rdar://problem/64681632>
+
+        Reviewed by Simon Fraser.
+
+        In `TextCheckingHelper::findFirstMisspellingOrBadGrammar`, we attempt to find the first misspelled piece of text
+        by iterating over the current paragraph range; when we exhaust the current paragraph range, we try to move on to
+        the next paragraph range by setting the current paragraph range to the start and end of the next paragraph,
+        using `startOfNextParagraph`.
+
+        However, `startOfNextParagraph` may return the null position in some cases (as seen in this bug, and the
+        associated layout test). This logic isn't robust against this possibility, and will end up looping infinitely in
+        the while loop, since `setStart` and `setEnd` are no-ops when given a null position, and so the current
+        paragraph remains the same.
+
+        Make this logic for finding the next misspelled word more robust by allowing us to bail out of the while loop in
+        the case where setStart or setEnd failed to advance the paragraph range (e.g. due to a null position, or DOM
+        exception).
+
+        Test: editing/mac/spelling/advance-to-next-misspelling.html
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        * testing/Internals.cpp:
+        (WebCore::Internals::advanceToNextMisspelling):
+
+        Add an internal testing hook to advance to the next misspelling.
+
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-24  David Kilzer  <ddkilzer@apple.com>
 
         Use ObjectIdentifier<>instead of WebCore::nextPlaybackTargetClientContextId() in Document.cpp
