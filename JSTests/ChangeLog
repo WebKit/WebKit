@@ -1,5 +1,12 @@
 2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, included copy of stress/llinttrue.js accidentally.
+        https://bugs.webkit.org/show_bug.cgi?id=213442
+
+        * stress/baselintjittrue.js: Removed.
+
+2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] llintTrue / jitTrue can encounter native functions
         https://bugs.webkit.org/show_bug.cgi?id=213442
         <rdar://problem/64257914>
