@@ -2,7 +2,7 @@
 EVENT(webkitfullscreenchange)
 TEST(video.clientWidth == document.body.clientWidth) OK
 EVENT(webkitfullscreenchange)
-TEST(video.clientWidth == oldVideoWidth) OK
-TEST(video.clientHeight == oldVideoHeight) OK
+EXPECTED (320 == '320') OK
+EXPECTED (240 == '240') OK
 END OF TEST
 

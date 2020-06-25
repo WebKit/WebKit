@@ -18,30 +18,30 @@ body {
 </div>
 
 <script>
-setSrcById("video", findMediaFile("video", "../media/content/test"));
-var video = document.getElementById('video');
 // Bail out early if the full screen API is not enabled or is missing:
 if (Element.prototype.webkitRequestFullScreen == undefined) {
     logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
     endTest();
 } else {
-    var oldVideoWidth = video.clientWidth;
-    var oldVideoHeight = video.clientHeight;
-    waitForEventOnce(document, 'webkitfullscreenchange', function() {
-        // First check that the video went fullscreen.
-        test("video.clientWidth == document.body.clientWidth");
+    var video = document.getElementById('video');
+    video.addEventListener("loadeddata", function(ev) {
         waitForEventOnce(document, 'webkitfullscreenchange', function() {
-            // Then check that the original video size is properly restored.
-            test("video.clientWidth == oldVideoWidth");
-            test("video.clientHeight == oldVideoHeight");
-            endTest();
+            // First check that the video went fullscreen.
+            test("video.clientWidth == document.body.clientWidth");
+            waitForEventOnce(document, 'webkitfullscreenchange', function() {
+                // Then check that the original video size is properly restored.
+                testExpected(video.clientWidth, 320);
+                testExpected(video.clientHeight, 240);
+                endTest();
+            });
+            document.webkitCancelFullScreen();
         });
-        document.webkitCancelFullScreen();
-    });
 
-    runWithKeyDown(function() {
-        video.webkitRequestFullScreen();
+        runWithKeyDown(function() {
+            video.webkitRequestFullScreen();
+        });
     });
+    setSrcById("video", findMediaFile("video", "../media/content/test"));
 }
 </script>
 

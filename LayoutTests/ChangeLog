@@ -1,3 +1,22 @@
+2020-06-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        Make video-inside-flex-item.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=213549
+
+        Reviewed by Simon Fraser.
+
+        The tests initially landed in r263389 and was later modified in r263436 because it was flaky
+        in some configurations. The latter fixed most of the flakiness but in the debug bots which
+        were consistently showing test failures. The problem was that the slowness of debug bots
+        was causing different layout behaviours and thus retrieving different measurements.
+
+        Fix the flackiness by adding an additional layer of robustness. The test now waits for the "loadeddata"
+        video event before entering into fullscreen mode. Video is properly sized now and we can
+        bring exact size comparisons back.
+
+        * fullscreen/video-inside-flex-item-expected.txt:
+        * fullscreen/video-inside-flex-item.html:
+
 2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Running spellcheck on https://developer.apple.com/forums/thread/650317 hangs the web process
