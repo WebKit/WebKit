@@ -186,6 +186,7 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
     bool startAndEndInSameUnsplittableElement = unsplittableElementForPosition(visibleStart.deepEquivalent()) == unsplittableElementForPosition(visibleEnd.deepEquivalent());
     visibleStart = visibleStart.previous(CannotCrossEditingBoundary);
     visibleEnd = visibleEnd.next(CannotCrossEditingBoundary);
+    bool previousPositionIsStartOfContent = startOfEditableContent(visibleStart) == visibleStart;
     bool previousPositionIsBlankParagraph = isBlankParagraph(visibleStart);
     bool endPositonIsBlankParagraph = isBlankParagraph(visibleEnd);
     bool hasBlankParagraphAfterEndOrIsEndOfContent = !selectionEndIsEndOfContent && (endPositonIsBlankParagraph || selectionEndsInParagraphSeperator);
@@ -203,8 +204,12 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
     }
     if (startAndEndInSameUnsplittableElement && selectionEndIsEndOfContent && previousPositionIsBlankParagraph && selectionEndsInParagraphSeperator) {
         m_needPlaceholder = false;
-        VisiblePosition endOfParagraphBeforeStart = endOfParagraph(VisiblePosition { m_upstreamStart }.previous().previous());
-        Position position = endOfParagraphBeforeStart.deepEquivalent();
+        VisiblePosition endOfParagraphBeforeStart;
+        if (previousPositionIsStartOfContent)
+            endOfParagraphBeforeStart = endOfParagraph(VisiblePosition { m_upstreamStart }.previous());
+        else
+            endOfParagraphBeforeStart = endOfParagraph(VisiblePosition { m_upstreamStart }.previous().previous());
+        auto position = endOfParagraphBeforeStart.deepEquivalent();
         m_upstreamStart = position.upstream();
         m_downstreamStart = position.downstream();
         m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(DOWNSTREAM);

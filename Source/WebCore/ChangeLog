@@ -1,3 +1,24 @@
+2020-06-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Cannot delete last line of Mail Message
+        https://bugs.webkit.org/show_bug.cgi?id=213536
+        <rdar://problem/63420928>
+
+        Reviewed by Wenson Hsieh.
+
+        LayoutTests/editing/deleting/smart-delete-paragraph-005.html
+
+        The smart paragraph deletion code did not take into account that
+        the previous blank line could be the start of editable content without
+        a paragraph before it. If this was the case, the deletion code backed up
+        too far, and the delete command failed. This case should be handled
+        in the same way that the deleting the last paragraph in editable content is
+        handled, by checking if we are already at the beginning of the editable
+        content when expanding the selection for smart paragraph deletion.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::smartDeleteParagraphSpacers):
+
 2020-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should exclude text rendered using icon-only fonts
