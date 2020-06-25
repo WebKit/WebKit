@@ -1,3 +1,14 @@
+2020-06-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r260800): Null Ptr Deref READ @ WTF::Optional<WTF::Seconds>::clear
+        https://bugs.webkit.org/show_bug.cgi?id=213543
+
+        Reviewed by Darin Adler.
+
+        Make the test asynchronous since it involves a rAF callback.
+
+        * fast/rendering/iframe-window-animation-modifies-iframe-srcdoc-crash.html:
+
 2020-06-25  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/writing-mode/english-bt-text-with-spelling-marker.html and fast/writing-mode/english-rl-text-with-spelling-marker.html as they are passing. 

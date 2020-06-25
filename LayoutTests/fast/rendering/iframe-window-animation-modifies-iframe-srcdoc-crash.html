@@ -2,11 +2,15 @@
 <html>
 
 <script>
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
+}
 
 function srcDocModify() {
     iframe.srcdoc = "";
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 function runTest() {
     document = iframe.contentDocument;
@@ -18,7 +22,7 @@ function runTest() {
 <body>
 <p>This test passes if there is no crash.</p>
 <iframe id="iframe" src="data:text/html,foo"></iframe>
-<video  onloadstart="runTest()">
+<video onloadstart="runTest()">
 <source>
 </body>
 </html>
