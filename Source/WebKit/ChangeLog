@@ -1,3 +1,34 @@
+2020-06-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r263456. rdar://problem/64728416
+
+    REGRESSION (r263328): Crash in bool WTF::WeakHashSet<WebKit::AudioSessionRoutingArbitratorProxy, WTF::EmptyCounter>::contains<WebKit::AudioSessionRoutingArbitratorProxy> const
+    https://bugs.webkit.org/show_bug.cgi?id=213526
+    <rdar://problem/64591777>
+    
+    Reviewed by Eric Carlson.
+    
+    Clear the m_routingArbitrator before WebProcessPool::disconnectProcess(), not after.
+    
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::shutDown):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@263456 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-24  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION (r263328): Crash in bool WTF::WeakHashSet<WebKit::AudioSessionRoutingArbitratorProxy, WTF::EmptyCounter>::contains<WebKit::AudioSessionRoutingArbitratorProxy> const
+            https://bugs.webkit.org/show_bug.cgi?id=213526
+            <rdar://problem/64591777>
+
+            Reviewed by Eric Carlson.
+
+            Clear the m_routingArbitrator before WebProcessPool::disconnectProcess(), not after.
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::shutDown):
+
 2020-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] WebPageProxy::setPromisedDataForImage should sanitize its filename

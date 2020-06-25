@@ -434,11 +434,11 @@ void WebProcessProxy::shutDown()
     m_userInitiatedActionMap.clear();
     m_sleepDisablers.clear();
 
-    m_processPool->disconnectProcess(this);
-
 #if ENABLE(ROUTING_ARBITRATION)
     m_routingArbitrator->processDidTerminate();
 #endif
+
+    m_processPool->disconnectProcess(this);
 }
 
 WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
