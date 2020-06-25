@@ -1,3 +1,12 @@
+2020-06-25  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 Debug ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=213621
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r260800): Null Ptr Deref READ @ WTF::Optional<WTF::Seconds>::clear
