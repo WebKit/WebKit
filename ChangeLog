@@ -1,3 +1,12 @@
+2020-06-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Enable WEB_API_STATISTICS
+        https://bugs.webkit.org/show_bug.cgi?id=213592
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2020-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.2 release
