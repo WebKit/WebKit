@@ -1,4 +1,4 @@
-Basic tests for PannerNode.
+Basic tests for WebKit Prefixed PannerNode.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -6,25 +6,16 @@ PASS PannerNode has one input.
 PASS PannerNode has one output.
 PASS refDistance default value is 1.
 PASS refDistance value is set to 270.52.
-PASS Exception has been thrown correctly when refDistance is set to negative value.
 PASS maxDistance default value is 10000.
 PASS maxDistance value is set to 100.55.
-PASS Exception has been thrown correctly when maxDistance is set to non-positive value (set to 0).
-PASS Exception has been thrown correctly when maxDistance is set to non-positive value (set to -1).
 PASS rolloffFactor default value is 1.
 PASS rolloffFactor value is set to 0.83.
-PASS Exception has been thrown correctly when rolloffFactor is set to negative value.
 PASS coneInnerAngle default value is 360.
-PASS coneInnerAngle value is set to 0
 PASS coneInnerAngle value is set to 240.45.
 PASS coneOuterAngle default value is 360.
-PASS coneOuterAngle value is set to 0.
 PASS coneOuterAngle value is set to 166.66.
 PASS coneOuterGain default value is 0.
-PASS coneOuterGain value is set to 1.
 PASS coneOuterGain value is set to 0.35.
-PASS Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to -1).
-PASS Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to 2).
 PASS PannerNode defaults to 'HRTF' panningModel.
 PASS PannerNode defaults to 'inverse' distanceModel.
 PASS panningModel: 'equalpower' is settable.
@@ -32,13 +23,6 @@ PASS panningModel: 'HRTF' is settable.
 PASS distanceModel: 'linear' is settable.
 PASS distanceModel: 'inverse' is settable.
 PASS distanceModel: 'exponential' is settable.
-PASS With linear distanceModel, rolloffFactor is set to 0.
-PASS With linear distanceModel, rolloffFactor is set to 0.5.
-PASS With linear distanceModel, rolloffFactor is set to 1.
-PASS With inverse distanceModel, rolloffFactor is set to 0.
-PASS With inverse distanceModel, rolloffFactor is set to 10000.
-PASS With exponential distanceModel, rolloffFactor is set to 0.
-PASS With exponential distanceModel, rolloffFactor is set to 10000.
 PASS Setting .distanceModel to illegal string value did not throw an exception.
 PASS Setting .distanceModel to illegal type did not throw an exception.
 PASS successfullyParsed is true

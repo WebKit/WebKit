@@ -37,14 +37,14 @@
     // Default distance model is inverse
     attribute DistanceModelType distanceModel;
 
-    attribute unrestricted double refDistance;
-    attribute unrestricted double maxDistance;
-    attribute unrestricted double rolloffFactor;
+    attribute double refDistance;
+    attribute double maxDistance;
+    attribute double rolloffFactor;
 
     // Directional sound cone
-    attribute unrestricted double coneInnerAngle;
-    attribute unrestricted double coneOuterAngle;
-    attribute unrestricted double coneOuterGain;
+    attribute double coneInnerAngle;
+    attribute double coneOuterAngle;
+    attribute double coneOuterGain;
     
     // Position of audio source in 3D Cartesian system
     readonly attribute AudioParam positionX;

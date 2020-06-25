@@ -101,14 +101,14 @@ public:
     DistanceModelType distanceModel() const;
     void setDistanceModel(DistanceModelType);
 
-    double refDistance() { return m_distanceEffect.refDistance(); }
-    void setRefDistance(double refDistance) { m_distanceEffect.setRefDistance(refDistance); }
+    double refDistance() const { return m_distanceEffect.refDistance(); }
+    ExceptionOr<void> setRefDistance(double);
 
-    double maxDistance() { return m_distanceEffect.maxDistance(); }
-    void setMaxDistance(double maxDistance) { m_distanceEffect.setMaxDistance(maxDistance); }
+    double maxDistance() const { return m_distanceEffect.maxDistance(); }
+    ExceptionOr<void> setMaxDistance(double);
 
-    double rolloffFactor() { return m_distanceEffect.rolloffFactor(); }
-    void setRolloffFactor(double rolloffFactor) { m_distanceEffect.setRolloffFactor(rolloffFactor); }
+    double rolloffFactor() const { return m_distanceEffect.rolloffFactor(); }
+    ExceptionOr<void> setRolloffFactor(double);
 
     // Sound cones - angles in degrees
     double coneInnerAngle() const { return m_coneEffect.innerAngle(); }
@@ -118,7 +118,7 @@ public:
     void setConeOuterAngle(double angle) { m_coneEffect.setOuterAngle(angle); }
 
     double coneOuterGain() const { return m_coneEffect.outerGain(); }
-    void setConeOuterGain(double angle) { m_coneEffect.setOuterGain(angle); }
+    ExceptionOr<void> setConeOuterGain(double);
 
     void getAzimuthElevation(double* outAzimuth, double* outElevation);
     float dopplerRate() final;

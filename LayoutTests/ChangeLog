@@ -1,3 +1,17 @@
+2020-06-24  Clark Wang  <clark_wang@apple.com>
+
+        Removed unrestricted keyword from attributes in PannerNode
+        https://bugs.webkit.org/show_bug.cgi?id=213523
+
+        Reviewed by Darin Adler.
+
+        Separated prefixed pannernode and unprefixed pannernode tests. Added test cases for refDistance, maxDistance, rolloffFactor, coneOuterGain, coneInnerAngle, coneOuterAngle.
+
+        * webaudio/pannernode-basic-expected.txt:
+        * webaudio/pannernode-basic.html:
+        * webaudio/prefixed-pannernode-basic-expected.txt: Copied from LayoutTests/webaudio/pannernode-basic-expected.txt.
+        * webaudio/prefixed-pannernode-basic.html: Copied from LayoutTests/webaudio/pannernode-basic.html.
+
 2020-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r260276): Scrolling through shelves on music.apple.com is not smooth

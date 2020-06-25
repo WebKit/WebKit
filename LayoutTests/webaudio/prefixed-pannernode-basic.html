@@ -10,14 +10,14 @@
 <div id="console"></div>
 
 <script>
-description("Basic tests for PannerNode.");
+description("Basic tests for WebKit Prefixed PannerNode.");
 
 var context = 0;
 
 function runTest() {
     window.jsTestIsAsync = true;
 
-    context = new AudioContext();
+    context = new webkitAudioContext();
     var panner = context.createPanner();
    
     if (panner.numberOfInputs === 1) 
@@ -40,13 +40,6 @@ function runTest() {
         testPassed("refDistance value is set to 270.52.");
     else
         testFailed("refDistance value should be set to 270.52.");
-
-    try {
-        panner.refDistance = -1
-        testFailed("Exception should be thrown when refDistance is set to negative value.");
-    } catch(e) {
-        testPassed("Exception has been thrown correctly when refDistance is set to negative value.");
-    }
     
     if (panner.maxDistance === 10000)
         testPassed("maxDistance default value is 10000.");
@@ -58,20 +51,6 @@ function runTest() {
         testPassed("maxDistance value is set to 100.55.");
     else
         testFailed("maxDistance value should be set to 100.55.");
-
-    try {
-        panner.maxDistance = 0
-        testFailed("Exception should be thrown when maxDistance is set to non-positive value (set to 0).");
-    } catch(e) {
-        testPassed("Exception has been thrown correctly when maxDistance is set to non-positive value (set to 0).");
-    }
-
-    try {
-        panner.maxDistance = -1
-        testFailed("Exception should be thrown when maxDistance is set to non-positive value (set to -1).");
-    } catch(e) {
-        testPassed("Exception has been thrown correctly when maxDistance is set to non-positive value (set to -1).");
-    }
     
     if (panner.rolloffFactor === 1)
         testPassed("rolloffFactor default value is 1.");
@@ -83,24 +62,11 @@ function runTest() {
         testPassed("rolloffFactor value is set to 0.83.");
     else
         testFailed("rolloffFactor value should be set to 0.83.");
-
-    try {
-        panner.rolloffFactor = -1
-        testFailed("Exception should be thrown when rolloffFactor is set to ngative value.");
-    } catch(e) {
-        testPassed("Exception has been thrown correctly when rolloffFactor is set to negative value.");
-    }
     
     if (panner.coneInnerAngle === 360)
         testPassed("coneInnerAngle default value is 360.");
     else
         testFailed("coneInnerAngle default value should be 360.");
-
-    panner.coneInnerAngle = 0
-    if (panner.coneInnerAngle === 0)
-        testPassed("coneInnerAngle value is set to 0");
-    else
-        testFailed("coneInnerAngle value should be set to 0.");
     
     panner.coneInnerAngle = 240.45
     if (panner.coneInnerAngle === 240.45)
@@ -112,12 +78,6 @@ function runTest() {
         testPassed("coneOuterAngle default value is 360.");
     else
         testFailed("coneOuterAngle default value should be 360.");
-
-    panner.coneOuterAngle = 0
-    if (panner.coneOuterAngle === 0)
-        testPassed("coneOuterAngle value is set to 0.");
-    else
-        testFailed("coneOuterAngle value should be set to 0.");
     
     panner.coneOuterAngle = 166.66
     if (panner.coneOuterAngle === 166.66)
@@ -130,31 +90,11 @@ function runTest() {
     else
         testFailed("coneOuterGain default value should be 0.");
 
-    panner.coneOuterGain = 1
-    if (panner.coneOuterGain === 1)
-        testPassed("coneOuterGain value is set to 1.");
-    else
-        testFailed("coneOuterGain value should be set to 1.");
-
     panner.coneOuterGain = 0.35
     if (panner.coneOuterGain === 0.35)
         testPassed("coneOuterGain value is set to 0.35.");
     else
         testFailed("coneOuterGain value should be set to 0.35.");
-
-    try {
-        panner.coneOuterGain = -1
-        testFailed("Exception should be thrown when coneOuterGain is set outside [0, 1] (was set to -1).");
-    } catch(e) {
-        testPassed("Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to -1).");
-    }
-
-    try {
-        panner.coneOuterGain = 2
-        testFailed("Exception should be thrown when coneOuterGain is set outside [0, 1] (was set to 2).");
-    } catch(e) {
-        testPassed("Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to 2).");
-    }
 
     if (panner.panningModel === "HRTF")
         testPassed("PannerNode defaults to 'HRTF' panningModel.");
@@ -207,58 +147,6 @@ function runTest() {
             testFailed(message);
         }
     }
-
-    // Testing rolloffFactor when distanceModel is linear
-    panner.distanceModel = distanceModels[0].value
-
-    panner.rolloffFactor = 0
-    if (panner.rolloffFactor === 0)
-        testPassed("With linear distanceModel, rolloffFactor is set to 0.");
-    else
-        testFailed("With linear distanceModel, rolloffFactor should be set to 0.");
-
-    panner.rolloffFactor = 0.5
-    if (panner.rolloffFactor === 0.5)
-        testPassed("With linear distanceModel, rolloffFactor is set to 0.5.");
-    else
-        testFailed("With linear distanceModel, rolloffFactor should be set to 0.5.");
-
-    panner.rolloffFactor = 1
-    if (panner.rolloffFactor === 1)
-        testPassed("With linear distanceModel, rolloffFactor is set to 1.");
-    else
-        testFailed("With linear distanceModel, rolloffFactor should be set to 1.");
-
-    // FIXME: Implement clamping test for linear model once feedback is received
-
-    panner.distanceModel = distanceModels[1].value
-
-    panner.rolloffFactor = 0
-    if (panner.rolloffFactor === 0)
-        testPassed("With inverse distanceModel, rolloffFactor is set to 0.");
-    else
-        testFailed("With inverse distanceModel, rolloffFactor should be set to 0.");
-
-    panner.rolloffFactor = 10000
-    if (panner.rolloffFactor === 10000)
-        testPassed("With inverse distanceModel, rolloffFactor is set to 10000.");
-    else
-        testFailed("With inverse distanceModel, rolloffFactor should be set to 10000.");
-
-    // Testing rollOffFactor when distanceModel is exponential
-    panner.distanceModel = distanceModels[2].value
-
-    panner.rolloffFactor = 0
-    if (panner.rolloffFactor === 0)
-        testPassed("With exponential distanceModel, rolloffFactor is set to 0.");
-    else
-        testFailed("With exponential distanceModel, rolloffFactor should be set to 0.");
-
-    panner.rolloffFactor = 10000
-    if (panner.rolloffFactor === 10000)
-        testPassed("With exponential distanceModel, rolloffFactor is set to 10000.");
-    else
-        testFailed("With exponential distanceModel, rolloffFactor should be set to 10000.");
 
     // Check that we don't throw an exception for illegal .distanceModel values as per WebIDL.
     shouldNotThrowException(function() { panner.distanceModel = "xyz12349jfksd"; }, "Setting .distanceModel to illegal string value");

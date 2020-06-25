@@ -1,3 +1,23 @@
+2020-06-24  Clark Wang  <clark_wang@apple.com>
+
+        Removed unrestricted keyword from attributes in PannerNode
+        https://bugs.webkit.org/show_bug.cgi?id=213523
+
+        Updated refDistance, maxDistance, rolloffFactor, coneOuterGain, coneInnerAngle, coneOuterAngle attributes according to spec:
+        https://www.w3.org/TR/webaudio/#PannerNode-attributes.
+
+        Reviewed by Darin Adler.
+
+        Test: webaudio/prefixed-pannernode-basic.html
+
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::setRefDistance):
+        (WebCore::PannerNode::setMaxDistance):
+        (WebCore::PannerNode::setRolloffFactor):
+        (WebCore::PannerNode::setConeOuterGain):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/PannerNode.idl:
+
 2020-06-24  Peng Liu  <peng.liu6@apple.com>
 
         Black rectangle appears when closing PIP on iPhone
