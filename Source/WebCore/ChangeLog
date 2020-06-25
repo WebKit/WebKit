@@ -1,3 +1,15 @@
+2020-06-24  James Savage  <james.savage@apple.com>
+
+        Upstream iPadOS 13.0 multi-window support
+        https://bugs.webkit.org/show_bug.cgi?id=213590
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::doSetup): Always construct a UIWindow
+        using the expected UIWindowScene.
+        (makeWindowFromView): Deleted.
+
 2020-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Running spellcheck on https://developer.apple.com/forums/thread/650317 hangs the web process

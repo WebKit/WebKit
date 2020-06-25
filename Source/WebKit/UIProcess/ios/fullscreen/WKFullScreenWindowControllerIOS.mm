@@ -490,15 +490,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark External Interface
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKFullScreenWindowControllerIOSAdditions.mm>
-#else
-static RetainPtr<UIWindow> makeWindowFromView(UIView *)
-{
-    return adoptNS([[UIWindow alloc] init]);
-}
-#endif
-
 - (void)enterFullScreen
 {
     if ([self isFullScreen])
@@ -514,7 +505,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 
     _fullScreenState = WebKit::WaitingToEnterFullScreen;
 
-    _window = makeWindowFromView(webView.get());
+    _window = adoptNS([[UIWindow alloc] initWithWindowScene:[[webView window] windowScene]]);
     [_window setBackgroundColor:[UIColor clearColor]];
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
