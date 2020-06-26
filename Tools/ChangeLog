@@ -1,3 +1,16 @@
+2020-06-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r263537.
+        https://bugs.webkit.org/show_bug.cgi?id=213640
+
+        Broke watchOS and tvOS builds
+
+        Reverted changeset:
+
+        "iOS Safari incorrectly reports "AppleCoreMedia" as UA string"
+        https://bugs.webkit.org/show_bug.cgi?id=213245
+        https://trac.webkit.org/changeset/263537
+
 2020-06-25  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r256166, r260596) WKNavigationAction.request.allHTTPHeaderFields needs to contain User-Agent and Accept
