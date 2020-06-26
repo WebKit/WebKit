@@ -834,7 +834,6 @@ webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
 webkit.org/b/163231 media/controls/airplay-picker.html [ Pass Failure ]
 
 # --- End media tests ---
-webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass Timeout ]
 
