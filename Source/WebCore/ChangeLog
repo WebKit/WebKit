@@ -1,3 +1,18 @@
+2020-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some PaintBehavior-related code in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=213634
+
+        Reviewed by Sam Weinig.
+
+        Move the computation of paintBehavior into a lambda, and share the flags between
+        normal painting and mask painting.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+
 2020-06-26  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Initialize m_currentState and m_oldState

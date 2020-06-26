@@ -4534,14 +4534,17 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         return;
 
     auto localPaintFlags = paintFlags - PaintLayerFlag::AppliedTransform;
+
     bool haveTransparency = localPaintFlags.contains(PaintLayerFlag::HaveTransparency);
+    bool isPaintingOverlayScrollbars = localPaintFlags.contains(PaintLayerFlag::PaintingOverlayScrollbars);
+    bool isPaintingScrollingContent = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingScrollingPhase);
+    bool isPaintingCompositedForeground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingForegroundPhase);
+    bool isPaintingCompositedBackground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingBackgroundPhase);
+    bool isPaintingOverflowContents = localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents);
+    bool isCollectingEventRegion = localPaintFlags.contains(PaintLayerFlag::CollectingEventRegion);
+
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
-    bool isPaintingOverlayScrollbars = paintFlags.contains(PaintLayerFlag::PaintingOverlayScrollbars);
-    bool isPaintingScrollingContent = paintFlags.contains(PaintLayerFlag::PaintingCompositingScrollingPhase);
-    bool isPaintingCompositedForeground = paintFlags.contains(PaintLayerFlag::PaintingCompositingForegroundPhase);
-    bool isPaintingCompositedBackground = paintFlags.contains(PaintLayerFlag::PaintingCompositingBackgroundPhase);
-    bool isPaintingOverflowContents = paintFlags.contains(PaintLayerFlag::PaintingOverflowContents);
-    bool isCollectingEventRegion = paintFlags.contains(PaintLayerFlag::CollectingEventRegion);
+
     // Outline always needs to be painted even if we have no visible content. Also,
     // the outline is painted in the background phase during composited scrolling.
     // If it were painted in the foreground phase, it would move with the scrolled
@@ -4554,7 +4557,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion;
 
-    if (localPaintFlags & PaintLayerFlag::PaintingRootBackgroundOnly && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
+    if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly) && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
         // If beginTransparencyLayers was called prior to this, ensure the transparency state is cleaned up before returning.
         if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
             context.endTransparencyLayer();
@@ -4592,6 +4595,25 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     LayerFragments layerFragments;
     RenderObject* subtreePaintRootForRenderer = nullptr;
 
+    auto paintBehavior = [&]() {
+        constexpr OptionSet<PaintBehavior> flagsToCopy = { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::ExcludeSelection };
+        OptionSet<PaintBehavior> paintBehavior = paintingInfo.paintBehavior & flagsToCopy;
+
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingSkipRootBackground))
+            paintBehavior.add(PaintBehavior::SkipRootBackground);
+        else if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly))
+            paintBehavior.add(PaintBehavior::RootBackgroundOnly);
+
+        // FIXME: This seems wrong. We should retain the TileFirstPaint flag for all RenderLayers painted into the root tile cache.
+        if ((paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint) && isRenderViewLayer())
+            paintBehavior.add(PaintBehavior::TileFirstPaint);
+
+        if (isPaintingScrollingContent && isPaintingOverflowContents)
+            paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
+
+        return paintBehavior;
+    }();
+
     { // Scope for filter-related state changes.
         LayerPaintingInfo localPaintingInfo(paintingInfo);
         GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds);
@@ -4610,27 +4632,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (localPaintingInfo.overlapTestRequests && isSelfPaintingLayer)
             performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
-
-        OptionSet<PaintBehavior> paintBehavior = PaintBehavior::Normal;
-        if (localPaintFlags & PaintLayerFlag::PaintingSkipRootBackground)
-            paintBehavior.add(PaintBehavior::SkipRootBackground);
-        else if (localPaintFlags & PaintLayerFlag::PaintingRootBackgroundOnly)
-            paintBehavior.add(PaintBehavior::RootBackgroundOnly);
-
-        if (paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers)
-            paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
-        
-        if (paintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-            paintBehavior.add(PaintBehavior::Snapshotting);
-        
-        if ((paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint) && isRenderViewLayer())
-            paintBehavior.add(PaintBehavior::TileFirstPaint);
-
-        if (paintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
-            paintBehavior.add(PaintBehavior::ExcludeSelection);
-
-        if (isPaintingScrollingContent && isPaintingOverflowContents)
-            paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
         if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion) {
@@ -4699,19 +4700,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     }
     
     if (shouldPaintContent && !(selectionOnly || selectionAndBackgroundsOnly)) {
-        OptionSet<PaintBehavior> paintBehavior = PaintBehavior::Normal;
-        if (paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers)
-            paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
-        
-        if (paintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-            paintBehavior.add(PaintBehavior::Snapshotting);
-        
-        if (paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
-            paintBehavior.add(PaintBehavior::TileFirstPaint);
-
-        if (isPaintingScrollingContent && isPaintingOverflowContents)
-            paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
-
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
             paintMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
@@ -7063,6 +7051,29 @@ TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
     case IndirectCompositingReason::GraphicalEffect: ts << "graphical effect"; break;
     case IndirectCompositingReason::Perspective: ts << "perspective"; break;
     case IndirectCompositingReason::Preserve3D: ts << "preserve-3d"; break;
+    }
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
+{
+    switch (behavior) {
+    case PaintBehavior::Normal: ts << "Normal"; break;
+    case PaintBehavior::SelectionOnly: ts << "SelectionOnly"; break;
+    case PaintBehavior::SkipSelectionHighlight: ts << "SkipSelectionHighlight"; break;
+    case PaintBehavior::ForceBlackText: ts << "ForceBlackText"; break;
+    case PaintBehavior::ForceWhiteText: ts << "ForceWhiteText"; break;
+    case PaintBehavior::RenderingSVGMask: ts << "RenderingSVGMask"; break;
+    case PaintBehavior::SkipRootBackground: ts << "SkipRootBackground"; break;
+    case PaintBehavior::RootBackgroundOnly: ts << "RootBackgroundOnly"; break;
+    case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"; break;
+    case PaintBehavior::ExcludeSelection: ts << "ExcludeSelection"; break;
+    case PaintBehavior::FlattenCompositingLayers: ts << "FlattenCompositingLayers"; break;
+    case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
+    case PaintBehavior::TileFirstPaint: ts << "TileFirstPaint"; break;
+    case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"; break;
+    case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
     }
 
     return ts;

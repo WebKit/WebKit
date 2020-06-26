@@ -1431,6 +1431,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, ClipRectsType);
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer&);
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer::ClipRectsContext&);
 WTF::TextStream& operator<<(WTF::TextStream&, IndirectCompositingReason);
+WTF::TextStream& operator<<(WTF::TextStream&, PaintBehavior);
 
 } // namespace WebCore
 
