@@ -1,3 +1,11 @@
+2020-06-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines after r263550.
+
+        * platform/gtk/editing/deleting/smart-delete-paragraph-005-expected.txt: Added.
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.png:
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.txt:
+
 2020-06-25  Zalan Bujtas  <zalan@apple.com>
 
         [Inline] Overlapping content when margin-right is present
