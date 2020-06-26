@@ -44,19 +44,6 @@
 #import <wtf/ios/WebCoreThread.h>
 #endif
 
-@interface JSWTFMainThreadCaller : NSObject
-- (void)call;
-@end
-
-@implementation JSWTFMainThreadCaller
-
-- (void)call
-{
-    WTF::dispatchFunctionsFromMainThread();
-}
-
-@end
-
 #define LOG_CHANNEL_PREFIX Log
 
 namespace WTF {
@@ -66,8 +53,6 @@ WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel:
 #else
 WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
 #endif
-
-static JSWTFMainThreadCaller* staticMainThreadCaller;
 
 #if USE(WEB_THREAD)
 // When the Web thread is enabled, we consider it to be the main thread, not pthread main.
@@ -82,9 +67,6 @@ void initializeMainThreadPlatform()
     if (!pthread_main_np())
         RELEASE_LOG_FAULT(Threading, "WebKit Threading Violation - initial use of WebKit from a secondary thread.");
     ASSERT(pthread_main_np());
-
-    ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 }
 
 void scheduleDispatchFunctionsOnMainThread()
@@ -96,12 +78,7 @@ void scheduleDispatchFunctionsOnMainThread()
     }
 #endif
 
-    if (RunLoop::mainIfExists()) {
-        RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
-        return;
-    }
-
-    [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+    RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
 }
 
 void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)())

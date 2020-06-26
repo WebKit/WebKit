@@ -1,5 +1,19 @@
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Re-land r262863
+        https://bugs.webkit.org/show_bug.cgi?id=213654
+
+        Reviewed by Tadeu Zagallo.
+
+        r263575 should fix the crash we saw.
+
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (-[JSWTFMainThreadCaller call]): Deleted.
+
+2020-06-26  Geoffrey Garen  <ggaren@apple.com>
+
         Initializing the main thread should initialize the main run loop
         https://bugs.webkit.org/show_bug.cgi?id=213637
 

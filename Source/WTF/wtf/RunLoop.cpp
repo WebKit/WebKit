@@ -70,11 +70,6 @@ RunLoop& RunLoop::main()
     return *s_mainRunLoop;
 }
 
-RunLoop* RunLoop::mainIfExists()
-{
-    return s_mainRunLoop;
-}
-
 #if USE(WEB_THREAD)
 void RunLoop::initializeWeb()
 {
