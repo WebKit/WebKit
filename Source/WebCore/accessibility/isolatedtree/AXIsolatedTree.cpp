@@ -140,10 +140,10 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 {
-    // FIXME: The following ASSERT should be met but it is commented out at the
-    // moment because of <rdar://problem/63985646> After calling _AXUIElementUseSecondaryAXThread(true),
-    // still receives client request on main thread.
-    // ASSERT(axObjectCache()->canUseSecondaryAXThread() ? !isMainThread() : isMainThread());
+    // In isolated tree mode 2, only access m_readerThreadNodeMap on the AX thread.
+    if (axObjectCache()->canUseSecondaryAXThread() && isMainThread())
+        return nullptr;
+
     return axID != InvalidAXID ? m_readerThreadNodeMap.get(axID) : nullptr;
 }
 
@@ -393,6 +393,11 @@ void AXIsolatedTree::appendNodeChanges(Vector<NodeChange>&& changes)
 void AXIsolatedTree::applyPendingChanges()
 {
     AXTRACE("AXIsolatedTree::applyPendingChanges");
+
+    // In isolated tree mode 2, only apply pending changes on the AX thread.
+    if (axObjectCache()->canUseSecondaryAXThread() && isMainThread())
+        return;
+
     LockHolder locker { m_changeLogLock };
 
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));

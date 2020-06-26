@@ -1,5 +1,26 @@
 2020-06-26  Andres Gonzalez  <andresg_22@apple.com>
 
+        Access to AXIsolatedTree:m_readerThreadNodeMap should happen only on the secondary AX thread.
+        https://bugs.webkit.org/show_bug.cgi?id=213575
+
+        Reviewed by Chris Fleizach.
+
+        After calling AXObjectCache::initializeSecondaryAXThread, there may
+        still be some client requests coming in on the main thread. Thus
+        AXIsolatedTree::applyPendingchanges and nodeForID can be called on the
+        main thread. Since these two methods access the member variable
+        m_readerThreadNodeMap which should be accessed only on the secondary AX
+        thread, we now check for this condition and bail out if needed.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/isolatedtree/AXIsolatedTree.h: Reordered private methods
+        above member variables to comply with WebKit coding conventions,
+        pointed out by Darin Adler in review for https://bugs.webkit.org/show_bug.cgi?id=213435.
+
+2020-06-26  Andres Gonzalez  <andresg_22@apple.com>
+
         Fix for crash in accessibility/roles-exposed.html in isolated tree mode.
         https://bugs.webkit.org/show_bug.cgi?id=213648
 

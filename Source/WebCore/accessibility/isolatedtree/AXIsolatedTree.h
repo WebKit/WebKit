@@ -98,7 +98,6 @@ private:
     AXIsolatedTree();
     void clear();
 
-    AXIsolatedTreeID m_treeID;
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache();
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
 
@@ -106,7 +105,10 @@ private:
     Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&);
     // Queues all pending additions to the tree as the result of a subtree generation.
     void appendNodeChanges(Vector<NodeChange>&&);
+    // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
+    void updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs);
 
+    AXIsolatedTreeID m_treeID;
     AXObjectCache* m_axObjectCache { nullptr };
 
     // Only accessed on main thread.
@@ -123,9 +125,6 @@ private:
     AXID m_pendingFocusedNodeID { InvalidAXID };
     AXID m_focusedNodeID { InvalidAXID };
     Lock m_changeLogLock;
-
-    // Called on main thread to updates both m_nodeMap and m_pendingChildrenUpdates.
-    void updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs);
 };
 
 } // namespace WebCore
