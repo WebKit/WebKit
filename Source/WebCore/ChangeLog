@@ -1,3 +1,21 @@
+2020-06-26  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: (it != m_map.end()) in TreeScopeOrderedMap::remove
+        https://bugs.webkit.org/show_bug.cgi?id=213611
+        <rdar://problem/64493506>
+
+        Reviewed by Geoffrey Garen.
+
+        In function HTMLImageElement::parseAttribute(), empty name attribute is considered valid
+        which makes the function skip handling of subsequent name changes. Modified the check of 
+        name attribute so only non-empty name is considered valid. This code change is to match
+        <https://trac.webkit.org/changeset/262360>.
+
+        Test: fast/images/img-change-name-assert.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+
 2020-06-26  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation should observe adjacent elements with new renderer together

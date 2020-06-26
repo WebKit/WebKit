@@ -295,7 +295,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
             loadDeferredImage();
     } else {
         if (name == nameAttr) {
-            bool willHaveName = !value.isNull();
+            bool willHaveName = !value.isEmpty();
             if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
                 HTMLDocument& document = downcast<HTMLDocument>(this->document());
                 const AtomString& id = getIdAttribute();
