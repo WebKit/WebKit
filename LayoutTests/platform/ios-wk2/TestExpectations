@@ -1760,3 +1760,5 @@ webkit.org/b/213511 fast/backgrounds/size/backgroundSize-in-background-shorthand
 webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
 
 webkit.org/b/213553 http/tests/resourceLoadStatistics/grandfathering-database.html [ Pass Timeout ]
+
+webkit.org/b/21365 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
