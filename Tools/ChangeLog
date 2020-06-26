@@ -1,3 +1,11 @@
+2020-06-26  Takashi Komori  <takashi.komori@sony.com>
+
+        Add myself to contributors.json
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-06-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Big Sur] Regression tests fail to run due to failed assert: self._os_version.major == 10
