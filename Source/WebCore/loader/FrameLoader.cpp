@@ -2938,6 +2938,11 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, IsMainResour
     // Make sure we send the Origin header.
     addHTTPOriginIfNeeded(request, String());
 
+    applyUserAgentIfNeeded(request);
+
+    if (isMainResource)
+        request.setHTTPHeaderField(HTTPHeaderName::Accept, CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type::MainResource));
+
     // Only set fallback array if it's still empty (later attempts may be incorrect, see bug 117818).
     if (request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.

@@ -135,7 +135,7 @@ static inline constexpr ASCIILiteral acceptHeaderValueForImageResource(bool supp
     #undef WEBP_HEADER_PART
 }
 
-static inline String acceptHeaderValueFromType(CachedResource::Type type)
+String CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type type)
 {
     switch (type) {
     case CachedResource::Type::MainResource:

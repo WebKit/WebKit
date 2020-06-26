@@ -121,6 +121,27 @@ TEST(WKNavigation, HTTPBody)
     TestWebKitAPI::Util::run(&done);
 }
 
+#if HAVE(NETWORK_FRAMEWORK)
+TEST(WKNavigation, UserAgentAndAccept)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server([](Connection) { });
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"User-Agent"], "testUserAgent");
+        EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"Accept"], "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        decisionHandler(WKNavigationActionPolicyCancel);
+        done = true;
+    };
+    auto webView = adoptNS([WKWebView new]);
+    webView.get().customUserAgent = @"testUserAgent";
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+}
+#endif
+
 @interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForNavigations:(size_t)count;
 @property (nonatomic, readonly) NSArray<NSURLRequest *> *requests;

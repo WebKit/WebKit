@@ -1,3 +1,21 @@
+2020-06-25  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r256166, r260596) WKNavigationAction.request.allHTTPHeaderFields needs to contain User-Agent and Accept
+        https://bugs.webkit.org/show_bug.cgi?id=213626
+        <rdar://problem/62374208>
+
+        Reviewed by Darin Adler.
+
+        Those two revisions seemed to just subtly move things around, but they caused API-breaking changes that caused real problems.
+        This effectively reverts the parts of those changes that caused the breakages.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::acceptHeaderValueFromType):
+        (WebCore::acceptHeaderValueFromType): Deleted.
+        * loader/cache/CachedResourceRequest.h:
+
 2020-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         Convert the PaintLayerFlag enum to an enum class

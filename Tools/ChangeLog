@@ -1,3 +1,14 @@
+2020-06-25  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r256166, r260596) WKNavigationAction.request.allHTTPHeaderFields needs to contain User-Agent and Accept
+        https://bugs.webkit.org/show_bug.cgi?id=213626
+        <rdar://problem/62374208>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+
 2020-06-25  Jer Noble  <jer.noble@apple.com>
 
         iOS Safari incorrectly reports "AppleCoreMedia" as UA string
