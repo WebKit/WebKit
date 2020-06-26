@@ -1,5 +1,16 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Update web-platform-tests/WebCryptoAPI from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213662
+
+        Reviewed by Darin Adler.
+
+        Update web-platform-tests/WebCryptoAPI from upstream b076c305a256e7.
+
+        * web-platform-tests/WebCryptoAPI/*: Updated.
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Update web-platform-tests/beacon from upstream
         https://bugs.webkit.org/show_bug.cgi?id=213663
 

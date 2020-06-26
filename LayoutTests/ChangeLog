@@ -1,3 +1,17 @@
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests/WebCryptoAPI from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213662
+
+        Reviewed by Darin Adler.
+
+        Update web-platform-tests/WebCryptoAPI from upstream b076c305a256e7.
+
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt:
+
 2020-06-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for <center>

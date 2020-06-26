@@ -1,4 +1,0 @@
-
-FAIL Non-secure context window does not have access to crypto.subtle assert_true: expected true got false
-FAIL Non-secure context worker does not have access to crypto.subtle assert_equals: expected false but got true
-
