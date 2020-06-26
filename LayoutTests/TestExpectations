@@ -1486,7 +1486,6 @@ webkit.org/b/138676 imported/w3c/canvas/2d.drawImage.animated.poster.html [ Fail
 webkit.org/b/138676 imported/w3c/canvas/2d.imageData.put.null.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/security.pattern.image.strokeStyle.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.imageData.get.nonfinite.html [ Failure ]
-webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.gradient.object.invalidoffset.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/security.pattern.canvas.strokeStyle.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.gradient.radial.nonfinite.html [ Failure ]

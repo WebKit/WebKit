@@ -1,5 +1,14 @@
 2020-06-26  Karl Rackler  <rackler@apple.com>
 
+        Remove expectation for imported/w3c/canvas/2d.line.cap.round.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=138676
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2020-06-26  Karl Rackler  <rackler@apple.com>
+
         Remove expectations for imported/w3c/canvas/2d.gradient.linear.transform.1.html and imported/w3c/canvas/2d.gradient.linear.transform.2.html and imported/w3c/canvas/2d.gradient.linear.transform.3.html as they are passing. 
         https://bugs.webkit.org/show_bug.cgi?id=170757
 
