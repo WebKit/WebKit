@@ -46,6 +46,7 @@ class MacPort(DarwinPort):
     port_name = "mac"
 
     CURRENT_VERSION = Version(10, 15)
+    LAST_MACOSX = Version(10, 16)  # FIXME: Once we don't need to support the seed, deprecate in favor of Catalina
 
     SDK = 'macosx'
 
@@ -79,9 +80,15 @@ class MacPort(DarwinPort):
             while temp_version != self.CURRENT_VERSION:
                 versions_to_fallback.append(Version.from_iterable(temp_version))
                 if temp_version < self.CURRENT_VERSION:
-                    temp_version.minor += 1
+                    if temp_version.minor < self.LAST_MACOSX.minor:
+                        temp_version.minor += 1
+                    else:
+                        temp_version = Version(11, 0)
                 else:
-                    temp_version.minor -= 1
+                    if temp_version.minor > 0:
+                        temp_version.minor -= 1
+                    else:
+                        temp_version = self.LAST_MACOSX
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'

@@ -1,3 +1,17 @@
+2020-06-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [Big Sur] Handle baseline search path
+        https://bugs.webkit.org/show_bug.cgi?id=213639
+        <rdar://problem/64789480>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        (MacPort.default_baseline_search_path): Break infinite loop for major version bump.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_big_sur_baseline_search_path): Test Big Sur baseline search path.
+
 2020-06-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         generate-jsc-bundle should fail if passed an invalid remote-config-file parameter
