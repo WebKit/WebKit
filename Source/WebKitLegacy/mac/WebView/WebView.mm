@@ -4580,10 +4580,8 @@ IGNORE_WARNINGS_END
 
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value
 {
-    auto* coreFrame = [self _mainCoreFrame];
-    if (!coreFrame)
-        return;
-    coreFrame->editor().command(name).execute(value);
+    if (auto* page = _private->page)
+        page->focusController().focusedOrMainFrame().editor().command(name).execute(value);
 }
 
 - (void)_clearMainFrameName

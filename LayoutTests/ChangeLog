@@ -1,3 +1,16 @@
+2020-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a test to verify that async clipboard API write access is granted when copying in subframes
+        https://bugs.webkit.org/show_bug.cgi?id=213581
+
+        Reviewed by Darin Adler.
+
+        Add a new test to verify that clipboard write access is granted when copying in a subframe.
+
+        * editing/async-clipboard/clipboard-write-in-copy-event-handler-in-subframe-expected.txt: Added.
+        * editing/async-clipboard/clipboard-write-in-copy-event-handler-in-subframe.html: Added.
+        * platform/win/TestExpectations:
+
 2020-06-26  Karl Rackler  <rackler@apple.com>
 
         Change expectations to http/tests/webarchive/test-css-url-encoding-shift-jis.html and 

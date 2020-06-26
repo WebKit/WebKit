@@ -1,3 +1,17 @@
+2020-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a test to verify that async clipboard API write access is granted when copying in subframes
+        https://bugs.webkit.org/show_bug.cgi?id=213581
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _executeCoreCommandByName:value:]):
+
+        Adjust the behavior of this SPI to trigger the editing command in the focused frame, rather than always the
+        mainframe. This matches the behavior of `WKBundlePageExecuteEditingCommand`, and is also consistent with
+        user-triggered editing commands.
+
 2020-06-24  David Kilzer  <ddkilzer@apple.com>
 
         Use ObjectIdentifier<>instead of WebCore::nextPlaybackTargetClientContextId() in Document.cpp

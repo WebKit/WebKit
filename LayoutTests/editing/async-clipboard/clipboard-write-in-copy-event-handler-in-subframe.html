@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true  ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <style>
+            button {
+                width: 100px;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        successfullyWrote = false;
+
+        if (window.testRunner)
+            testRunner.setJavaScriptCanAccessClipboard(false);
+
+        description("This test verifies that clipboard items can be written while dispatching the 'copy' event. To manually run the test, copy the 'Copy me' text below.");
+
+        addEventListener("load", function() {
+            addEventListener("message", event => {
+                if (event.data === "finished") {
+                    shouldBeTrue("successfullyWrote");
+                    finishJSTest();
+                }
+            });
+
+            const frame = document.querySelector("iframe");
+            frame.focus();
+
+            const frameDocument = frame.contentDocument;
+            frameDocument.getSelection().selectAllChildren(frameDocument.getElementById("target"));
+
+            if (window.testRunner)
+                testRunner.execCommand("Copy");
+        });
+    </script>
+    <body>
+        <iframe srcdoc="<span id='target'>Copy me</span>
+            <script>
+            const target = document.getElementById('target');
+            const textBlob = new Blob([ (new TextEncoder()).encode('Hello world') ], { type : 'text/plain' });
+            target.addEventListener('copy', async event => {
+                try {
+                    event.preventDefault();
+                    await navigator.clipboard.write([ new ClipboardItem({ 'text/plain' : textBlob })]);
+                    parent.successfullyWrote = true;
+                } catch (e) {
+                    console.log(e);
+                } finally {
+                    parent.postMessage('finished', '*');
+                }
+            });
+            </script>
+            "></iframe>
+    </body>
+</html>
