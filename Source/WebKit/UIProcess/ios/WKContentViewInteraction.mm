@@ -5661,7 +5661,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (BOOL)hasContent
 {
-    return _page->editorState().postLayoutData().hasContent;
+    auto& editorState = _page->editorState();
+    return !editorState.selectionIsNone && editorState.postLayoutData().hasContent;
 }
 
 - (void)selectAll
