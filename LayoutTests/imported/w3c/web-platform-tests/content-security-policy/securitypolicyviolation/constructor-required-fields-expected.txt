@@ -1,7 +1,7 @@
 
 PASS SecurityPolicyViolationEvent constructor should throw with no parameters 
 PASS SecurityPolicyViolationEvent constructor works with an init dict 
-FAIL SecurityPolicyViolationEvent constructor requires documentURI assert_throws: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
+FAIL SecurityPolicyViolationEvent constructor requires documentURI assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           // documentURI: "http://example.com",
           referrer: "http://example.com",
           blockedURI: "http://example.com",
@@ -15,7 +15,7 @@ FAIL SecurityPolicyViolationEvent constructor requires documentURI assert_throws
           lineNumber: 1,
           columnNumber: 1,
       })}" did not throw
-FAIL SecurityPolicyViolationEvent constructor requires violatedDirective assert_throws: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
+FAIL SecurityPolicyViolationEvent constructor requires violatedDirective assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           documentURI: "http://example.com",
           referrer: "http://example.com",
           blockedURI: "http://example.com",
@@ -29,7 +29,7 @@ FAIL SecurityPolicyViolationEvent constructor requires violatedDirective assert_
           lineNumber: 1,
           columnNumber: 1,
       })}" did not throw
-FAIL SecurityPolicyViolationEvent constructor requires effectiveDirective assert_throws: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
+FAIL SecurityPolicyViolationEvent constructor requires effectiveDirective assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           documentURI: "http://example.com",
           referrer: "http://example.com",
           blockedURI: "http://example.com",
@@ -43,7 +43,7 @@ FAIL SecurityPolicyViolationEvent constructor requires effectiveDirective assert
           lineNumber: 1,
           columnNumber: 1,
       })}" did not throw
-FAIL SecurityPolicyViolationEvent constructor requires originalPolicy assert_throws: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
+FAIL SecurityPolicyViolationEvent constructor requires originalPolicy assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           documentURI: "http://example.com",
           referrer: "http://example.com",
           blockedURI: "http://example.com",
@@ -57,7 +57,7 @@ FAIL SecurityPolicyViolationEvent constructor requires originalPolicy assert_thr
           lineNumber: 1,
           columnNumber: 1,
       })}" did not throw
-FAIL SecurityPolicyViolationEvent constructor requires disposition assert_throws: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
+FAIL SecurityPolicyViolationEvent constructor requires disposition assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           documentURI: "http://example.com",
           referrer: "http://example.com",
           blockedURI: "http://example.com",
@@ -71,7 +71,7 @@ FAIL SecurityPolicyViolationEvent constructor requires disposition assert_throws
           lineNumber: 1,
           columnNumber: 1,
       })}" did not throw
-FAIL SecurityPolicyViolationEvent constructor requires statusCode assert_throws: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
+FAIL SecurityPolicyViolationEvent constructor requires statusCode assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           documentURI: "http://example.com",
           referrer: "http://example.com",
           blockedURI: "http://example.com",

@@ -1,8 +1,8 @@
 
-FAIL Same-origin dedicated worker blocked by host-source expression. assert_throws: function "function () {
+FAIL Same-origin dedicated worker blocked by host-source expression. assert_throws_dom: function "function () {
       var w = new Worker(url);
     }" did not throw
-FAIL blob: dedicated worker blocked by 'blob:'. assert_throws: function "function () {
+FAIL blob: dedicated worker blocked by 'blob:'. assert_throws_dom: function "function () {
       var w = new Worker(url);
     }" did not throw
 

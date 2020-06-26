@@ -749,9 +749,7 @@ imported/w3c/web-platform-tests/content-security-policy/script-src-attr-elem/str
 imported/w3c/web-platform-tests/content-security-policy/script-src-attr-elem/strict-dynamic-elem-blocked-src-allowed.sub.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_eval.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_new_function.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_discard_whitelist.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_different_nonce.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_whitelist.sub.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_report_only.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_eval.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_hashes.html
@@ -780,6 +778,9 @@ imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker
 imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker-src-default-fallback.sub.html
 imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker-src-script-fallback.sub.html
 imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker-src-self-fallback.sub.html
+
+# Sometimes logs a line about trying to connect to an external URL.
+imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document.sub.html [ Pass Failure ]
 
 # Web platform test infrastructure unable to support insecure connection
 imported/w3c/web-platform-tests/web-share/canShare-insecure.http.html

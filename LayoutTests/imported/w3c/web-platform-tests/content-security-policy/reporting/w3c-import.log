@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-and-enforce.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-and-enforce.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-data-uri.html
@@ -24,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri-cross-origin.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-clips-sample.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html
@@ -34,6 +37,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html

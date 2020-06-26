@@ -1,4 +1,3 @@
-async_test(t => { requestAnimationFrame(t.step_func_done(_ => { var script = document.querySelector('#cssTest'); var style = getComputedStyle(script); assert_equals(style['display'], 'block'); assert_equals(style['background-image'], 'none'); })); }, "Nonces don't leak via CSS side-channels.");
 
 FAIL Reading 'nonce' content attribute and IDL attribute. assert_equals: expected Element node <script nonce="abc" id="testScript" executed="yay">
   doc... but got null
@@ -11,6 +10,6 @@ FAIL Document-written script's nonce value. assert_equals: expected "" but got "
 FAIL createElement.nonce. assert_equals: expected (object) null but got (string) "abc"
 FAIL setAttribute('nonce') overwrites '.nonce' upon insertion. assert_equals: expected "" but got "abc"
 FAIL createElement.setAttribute. assert_equals: Post-insertion content expected "" but got "abc"
-FAIL Custom elements expose the correct events. assert_equals: expected 3 but got 2
+FAIL Custom elements expose the correct events. assert_object_equals: AttributeChanged 2 value is undefined, expected object
 FAIL Nonces don't leak via CSS side-channels. assert_equals: expected "none" but got "url(\"http://localhost:8800/security/resources/abe.png\")"
 

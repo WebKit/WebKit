@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden-meta.tentative.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden.tentative.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden-meta.tentative.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden-meta.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/script-nonces-hidden.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden-meta.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.html.headers

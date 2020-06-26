@@ -73,6 +73,8 @@
       var s = document.createElement('script');
       s.innerText = script.innerText;
       s.nonce = 'abc';
+      assert_equals(s.nonce, 'abc');
+      assert_equals(s.getAttribute('nonce'), null);
       document.head.appendChild(s);
       assert_equals(s.nonce, 'abc');
       assert_equals(s.getAttribute('nonce'), null);
@@ -147,10 +149,10 @@
 <nonce-element nonce="abc"></nonce-element>
 <script nonce="abc">
   test(t => {
+    assert_object_equals(eventList[0], { type: "AttributeChanged", name: "nonce", oldValue: null, newValue: "abc" }, "AttributeChanged 1");
+    assert_object_equals(eventList[1], { type: "Connected" }, "Connected");
+    assert_object_equals(eventList[2], { type: "AttributeChanged", name: "nonce", oldValue: "abc", newValue: "" }, "AttributeChanged 2");
     assert_equals(eventList.length, 3);
-    assert_object_equals(eventList[0], { type: "AttributeChanged", name: "nonce", oldValue: null, newValue: "abc" });
-    assert_object_equals(eventList[1], { type: "Connected" });
-    assert_object_equals(eventList[2], { type: "AttributeChanged", name: "nonce", oldValue: "abc", newValue: "" });
   }, "Custom elements expose the correct events.");
 </script>
 
@@ -160,12 +162,11 @@
     #cssTest[nonce=abc] { background: url(/security/resources/abe.png); }
 </style>
 <script nonce="abc" id="cssTest">
-    async_test(t => {
-      requestAnimationFrame(t.step_func_done(_ => {
-        var script = document.querySelector('#cssTest');
-        var style = getComputedStyle(script);
-        assert_equals(style['display'], 'block');
-        assert_equals(style['background-image'], 'none');
-      }));
+    test(t => {
+      const script = document.querySelector('#cssTest');
+      t.add_cleanup(() => script.remove());
+      var style = getComputedStyle(script);
+      assert_equals(style['display'], 'block');
+      assert_equals(style['background-image'], 'none');
     }, "Nonces don't leak via CSS side-channels.");
 </script>

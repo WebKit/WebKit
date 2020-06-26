@@ -3,11 +3,10 @@
 FAIL Reading 'nonce' content attribute and IDL attribute. assert_equals: expected (string) "abc" but got (undefined) undefined
 FAIL Cloned node retains nonce. assert_equals: IDL attribute expected (string) "abc" but got (undefined) undefined
 FAIL Cloned node retains nonce when inserted. assert_equals: expected (string) "abc" but got (undefined) undefined
-FAIL Writing 'nonce' content attribute. assert_equals: expected (string) "abc" but got (undefined) undefined
+FAIL Writing 'nonce' content attribute. assert_equals: expected (string) "foo" but got (undefined) undefined
 PASS Writing 'nonce' IDL attribute. 
 PASS Document-written script executes. 
 FAIL Document-written script's nonce value. assert_equals: expected (string) "abc" but got (undefined) undefined
 PASS createElement.nonce. 
 PASS createElement.setAttribute. 
-PASS Nonces don't leak via CSS side-channels. 
 

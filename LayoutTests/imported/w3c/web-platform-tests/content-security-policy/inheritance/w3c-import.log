@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-child-frame-self-navigate-inherits.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/document-write-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/frame-src-javascript-url.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes-inherit-self.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-srcdoc-inheritance.html

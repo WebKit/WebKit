@@ -1,5 +1,17 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Update web-platform-tests/content-security-policy from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213664
+
+        Reviewed by Darin Adler.
+
+        Update web-platform-tests/content-security-policy from upstream b076c305a256e7fb7.
+
+        * resources/resource-files.json:
+        * web-platform-tests/content-security-policy/*: Updated.
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Update web-platform-tests/WebCryptoAPI from upstream
         https://bugs.webkit.org/show_bug.cgi?id=213662
 

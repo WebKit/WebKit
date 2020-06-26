@@ -1,3 +1,14 @@
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests/content-security-policy from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213664
+
+        Reviewed by Darin Adler.
+
+        Update web-platform-tests/content-security-policy from upstream b076c305a256e7fb7.
+
+        * tests-options.json:
+
 2020-06-26  Jer Noble  <jer.noble@apple.com>
 
         CRASH: incompatible downcast<> operation in SourceBufferPrivateAVFObjC::setCDMInstance()

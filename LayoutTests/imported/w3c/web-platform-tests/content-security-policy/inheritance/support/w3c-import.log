@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/empty.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-blob.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-blob.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/srcdoc-child-frame.html

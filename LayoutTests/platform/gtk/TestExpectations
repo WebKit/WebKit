@@ -1171,7 +1171,6 @@ webkit.org/b/206585 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/206585 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-rl.html [ Failure ]
 
 webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Failure ]
-webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.html [ Failure ]
 
 webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
 

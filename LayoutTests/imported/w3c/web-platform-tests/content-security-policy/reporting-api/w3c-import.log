@@ -18,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-doesnt-send-reports-without-violation.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-only-sends-reports-on-violation.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-only-sends-reports-on-violation.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-overrides-report-uri-1.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-overrides-report-uri-1.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-overrides-report-uri-2.https.sub.html

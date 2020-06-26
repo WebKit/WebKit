@@ -17,4 +17,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/echo-allow-csp-from.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/echo-policy-multiple.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/echo-required-csp.py
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/testharness-helper.sub.js

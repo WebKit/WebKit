@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/allow_csp_from-header.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/blocked-iframe-are-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/iframe-csp-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required-csp-header-cascade.html

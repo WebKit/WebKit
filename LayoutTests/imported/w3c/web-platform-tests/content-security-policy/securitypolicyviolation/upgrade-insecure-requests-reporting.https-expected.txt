@@ -1,5 +1,8 @@
 
-FAIL Upgraded image is reported Can't find variable: generateURL
-FAIL Upgraded iframe is reported Can't find variable: generateURL
-FAIL Navigated iframe is upgraded and reported Can't find variable: generateURL
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Upgraded image is reported Test timed out
+TIMEOUT Upgraded iframe is reported Test timed out
+TIMEOUT Navigated iframe is upgraded and reported Test timed out
 

@@ -56,12 +56,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_eval.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_new_function.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_new_function.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_discard_whitelist.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_discard_whitelist.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_discard_source_expressions.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_discard_source_expressions.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_different_nonce.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_different_nonce.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_whitelist.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_whitelist.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_report_only.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_report_only.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_eval.html

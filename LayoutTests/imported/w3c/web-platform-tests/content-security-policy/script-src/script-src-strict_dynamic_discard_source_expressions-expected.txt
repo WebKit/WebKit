@@ -1,0 +1,5 @@
+Source expressions are discarded with `strict-dynamic` in the script-src directive.
+
+
+FAIL Allowed scripts without a correct nonce are not permitted with `strict-dynamic`. assert_unreached: Allowed scripts without a correct nonce are not permitted with `strict-dynamic`. Reached unreachable code
+

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js" nonce="abc"></script>
+<script src="/resources/testharnessreport.js" nonce="abc"></script>
 
-<meta http-equiv="content-security-policy" content="script-src 'nonce-abc'; img-src 'none'">
+<!-- `Content-Security-Policy: script-src 'nonce-abc'; img-src 'none'` delivered via headers -->
 
 <body>
 <!-- Basics -->
@@ -17,11 +17,11 @@
 
     test(t => {
       // Query Selector
-      assert_equals(document.querySelector('[nonce]'), script);
-      assert_equals(document.querySelector('[nonce=""]'), null);
-      assert_equals(document.querySelector('[nonce=abc]'), script);
+      assert_equals(document.querySelector('body [nonce]'), script);
+      assert_equals(document.querySelector('body [nonce=""]'), script);
+      assert_equals(document.querySelector('body [nonce=abc]'), null);
 
-      assert_equals(script.getAttribute('nonce'), 'abc');
+      assert_equals(script.getAttribute('nonce'), '');
       assert_equals(script.nonce, 'abc');
     }, "Reading 'nonce' content attribute and IDL attribute.");
 
@@ -30,14 +30,14 @@
       script.setAttribute('executed', 'boo');
       var s2 = script.cloneNode();
       assert_equals(s2.nonce, 'abc', 'IDL attribute');
-      assert_equals(s2.getAttribute('nonce'), 'abc');
+      assert_equals(s2.getAttribute('nonce'), '');
     }, "Cloned node retains nonce.");
 
     async_test(t => {
       var s2 = script.cloneNode();
       document.head.appendChild(s2);
       assert_equals(s2.nonce, 'abc');
-      assert_equals(s2.getAttribute('nonce'), 'abc');
+      assert_equals(s2.getAttribute('nonce'), '');
 
       window.addEventListener('load', t.step_func_done(_ => {
         // The cloned script won't execute, as its 'already started' flag is set.
@@ -49,7 +49,7 @@
     test(t => {
       script.setAttribute('nonce', 'foo');
       assert_equals(script.getAttribute('nonce'), 'foo');
-      assert_equals(script.nonce, 'abc');
+      assert_equals(script.nonce, 'foo');
     }, "Writing 'nonce' content attribute.");
 
     // Set the IDL attribute to 'bar'
@@ -65,7 +65,7 @@
       documentWriteTest.done();
       test(t => {
         var script = document.currentScript;
-        assert_equals(script.getAttribute('nonce'), 'abc');
+        assert_equals(script.getAttribute('nonce'), '');
         assert_equals(script.nonce, 'abc');
       }, "Document-written script's nonce value.");
     </scr` + `ipt></svg>`);
@@ -73,13 +73,13 @@
     // Create node.
     test(t => {
       var s = document.createElement('svg');
-      var innerScript = document.createElement('innerScript');
+      var innerScript = document.createElement('script');
       innerScript.innerText = script.innerText;
       innerScript.nonce = 'abc';
       s.appendChild(innerScript);
       document.body.appendChild(s);
       assert_equals(innerScript.nonce, 'abc');
-      assert_equals(innerScript.getAttribute('nonce'), null, 'innerScript.getAttribute nonce');
+      assert_equals(innerScript.getAttribute('nonce'), null);
     }, "createElement.nonce.");
 
     // Create node.
@@ -93,24 +93,6 @@
       s.appendChild(innerScript);
       document.body.appendChild(s);
       assert_equals(innerScript.nonce, 'abc', "Post-insertion IDL");
-      assert_equals(innerScript.getAttribute('nonce'), 'abc', "Post-insertion content");
+      assert_equals(innerScript.getAttribute('nonce'), '', "Post-insertion content");
     }, "createElement.setAttribute.");
 </script>
-
-<!-- CSS Leakage -->
-<style>
-    #cssTest { display: block; }
-    #cssTest[nonce=abc] { background: url(/security/resources/abe.png); }
-</style>
-<svg xmlns="http://www.w3.org/2000/svg">
-  <script nonce="abc" id="cssTest">
-      async_test(t => {
-        requestAnimationFrame(t.step_func_done(_ => {
-          var script = document.querySelector('#cssTest');
-          var style = getComputedStyle(script);
-          assert_equals(style['display'], 'block');
-          assert_equals(style['background-image'], "url(\"http://{{domains[]}}:{{ports[http][0]}}/security/resources/abe.png\")");
-        }));
-      }, "Nonces don't leak via CSS side-channels.");
-  </script>
-</svg>

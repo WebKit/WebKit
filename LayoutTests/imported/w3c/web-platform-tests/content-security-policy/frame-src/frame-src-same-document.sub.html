@@ -4,7 +4,7 @@
 <body></body>
 <script>
     let crossOriginUrl =
-      "http://www1.{{host}}/content-security-policy/support/frame.html";
+      "http://www1.{{host}}:{{ports[http][0]}}/content-security-policy/support/frame.html";
 
     async_test(async test => {
       test.done();
