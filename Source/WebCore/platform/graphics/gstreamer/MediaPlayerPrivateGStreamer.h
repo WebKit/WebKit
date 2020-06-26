@@ -341,8 +341,8 @@ protected:
     mutable bool m_isLiveStream { false };
     bool m_isPaused { true };
     float m_playbackRate { 1 };
-    GstState m_currentState;
-    GstState m_oldState;
+    GstState m_currentState { GST_STATE_NULL };
+    GstState m_oldState { GST_STATE_NULL };
     GstState m_requestedState { GST_STATE_VOID_PENDING };
     bool m_shouldResetPipeline { false };
     bool m_isSeeking { false };

@@ -1,3 +1,25 @@
+2020-06-26  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Initialize m_currentState and m_oldState
+        https://bugs.webkit.org/show_bug.cgi?id=213604
+
+        Reviewed by Eric Carlson.
+
+        MediaPlayerPrivateGStreamer was not initializing m_currentState and
+        m_oldState, causing them to be checked e.g. updateStates() while they
+        still contain garbage.
+
+        Because the biggest uninitialized usage is a != comparison, in
+        practice things still worked, but that's still a bug. I detected the
+        bug after seeing this in the logs:
+
+        playbin3SendSelectStreamsIfAppropriate:<media-player-0> Checking if to send SELECT_STREAMS, m_waitingForStreamsSelectedEvent = false, haveDifferentStreamIds = false, m_currentState = UNKNOWN!(-8421505)...  shouldSendSelectStreams = false
+
+        This patch fixes a slight memory error which doesn't alter
+        TestExpectations.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2020-06-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263537.
