@@ -1,3 +1,12 @@
+2020-06-26  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk2 ] REGRESSION: webrtc/video-autoplay1.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213652
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a test to verify that async clipboard API write access is granted when copying in subframes
