@@ -60,6 +60,7 @@ static const char* s_procZoneinfo = "/proc/zoneinfo";
 static const char* s_procSelfCgroup = "/proc/self/cgroup";
 static const unsigned maxCgroupPath = 4096; // PATH_MAX = 4096 from (Linux) include/uapi/linux/limits.h
 
+#define CGROUP_V2_HIERARCHY 0
 #define CGROUP_NAME_BUFFER_SIZE 40
 #define MEMINFO_TOKEN_BUFFER_SIZE 50
 #define STRINGIFY_EXPANDED(val) #val
@@ -174,6 +175,7 @@ FILE* getCgroupFile(CString cgroupControllerName, CString cgroupControllerPath, 
 {
     char cgroupPath[maxCgroupPath];
     snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, cgroupControllerName.data(), cgroupControllerPath.data(), cgroupFileName.data());
+    LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath);
     FILE* file = fopen(cgroupPath, "r");
     if (file)
         setbuf(file, nullptr);
@@ -202,23 +204,44 @@ FILE* getCgroupFile(CString cgroupControllerName, CString cgroupControllerPath, 
 // 0::/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
 static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* controllerName)
 {
-    CString cgroupMemoryControllerPath;
     if (!cgroupControllerFile || fseek(cgroupControllerFile, 0, SEEK_SET))
         return CString();
 
+    CString cgroupMemoryControllerPath;
     while (!feof(cgroupControllerFile)) {
+        unsigned hierarchyId;
         char name[CGROUP_NAME_BUFFER_SIZE + 1];
         char path[maxCgroupPath + 1];
-        int scanResult = fscanf(cgroupControllerFile, "%*u:%" STRINGIFY(CGROUP_NAME_BUFFER_SIZE) "[^:]:%" STRINGIFY(PATH_MAX) "[^\n]", name, path);
-        if (scanResult != 2)
+        name[0] = path[0] = '\0';
+        int scanResult = fscanf(cgroupControllerFile, "%u:", &hierarchyId);
+        if (scanResult != 1)
             return CString();
-        if (!strcmp(name, controllerName)) {
-            return CString(path);
+        if (hierarchyId == CGROUP_V2_HIERARCHY) {
+            scanResult = fscanf(cgroupControllerFile, ":%" STRINGIFY(PATH_MAX) "[^\n]", path);
+            if (scanResult != 1)
+                return CString();
+        } else {
+            scanResult = fscanf(cgroupControllerFile, "%" STRINGIFY(CGROUP_NAME_BUFFER_SIZE) "[^:]:%" STRINGIFY(PATH_MAX) "[^\n]", name, path);
+            if (scanResult != 2)
+                return CString();
         }
-        if (!strcmp(name, "name=systemd"))
+        if (!strcmp(name, controllerName)) {
             cgroupMemoryControllerPath = CString(path);
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath.data());
+            return cgroupMemoryControllerPath;
+        }
+        if (!strcmp(name, "name=systemd")) {
+            cgroupMemoryControllerPath = CString(path);
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.data());
+            return cgroupMemoryControllerPath;
+        }
+        if (!strcmp(name, "")) {
+            cgroupMemoryControllerPath = CString(path);
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.data());
+            return cgroupMemoryControllerPath;
+        }
     }
-    return cgroupMemoryControllerPath;
+    return CString();
 }
 
 
@@ -265,15 +288,18 @@ static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, C
         return -1;
 
     int memoryUsagePercentage = ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
+    LOG_VERBOSE(MemoryPressure, "MemoryPressureMonitor::memory: real (memory total=%zu MB) (memory available=%zu MB) (memory usage percentage=%d MB)", memoryTotal, memoryAvailable, memoryUsagePercentage);
     if (memoryController->isActive()) {
         memoryTotal = memoryController->getMemoryTotalWithCgroup();
         size_t memoryUsage = memoryController->getMemoryUsageWithCgroup();
         if (memoryTotal != notSet && memoryUsage != notSet) {
             int memoryUsagePercentageWithCgroup = 100 * ((float) memoryUsage / (float) memoryTotal);
+            LOG_VERBOSE(MemoryPressure, "MemoryPressureMonitor::memory: cgroup (memory total=%zu bytes) (memory usage=%zu bytes) (memory usage percentage=%d bytes)", memoryTotal, memoryUsage, memoryUsagePercentageWithCgroup);
             if (memoryUsagePercentageWithCgroup > memoryUsagePercentage)
                 memoryUsagePercentage = memoryUsagePercentageWithCgroup;
         }
     }
+    LOG_VERBOSE(MemoryPressure, "MemoryPressureMonitor::memory: memoryUsagePercentage (%d)", memoryUsagePercentage);
     return memoryUsagePercentage;
 }
 

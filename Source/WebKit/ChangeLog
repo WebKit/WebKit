@@ -1,3 +1,15 @@
+2020-06-26  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Fix the matching of an empty value in getCgroupControllerPath() when only cgroupsV2 hierarchy is found
+        https://bugs.webkit.org/show_bug.cgi?id=213646
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::getCgroupFile):
+        (WebKit::getCgroupControllerPath):
+        (WebKit::systemMemoryUsedAsPercentage):
+
 2020-06-26  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r263511, r263514, and r263565.
