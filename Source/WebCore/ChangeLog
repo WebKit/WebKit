@@ -1,3 +1,24 @@
+2020-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Content sometimes missing in nested scrollers with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=213580
+        <rdar://problem/64460373>
+
+        Reviewed by Zalan Bujtas.
+        
+        RenderLayer::clipToRect() has a special case for clips involving border-radius,
+        involving an ancestor tree walk which applies the rounded clips.
+
+        When inside composited overflow, don't include the border-radius from the scroller since
+        that does its own clipping.
+
+        Test: compositing/clipping/nested-overflow-with-border-radius.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Initializing the main thread should initialize the main run loop

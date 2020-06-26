@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #container {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            overflow-y: scroll;
+            border-radius: 10px;
+            border: 1px solid black;
+        }
+        
+        .filler {
+            height: 100%;
+            width: 10px;
+            background-color: silver;
+        }
+
+        .last {
+            width: 100%;
+            height: 100px;
+            overflow: scroll;
+            border-radius: 2px;
+        }
+        
+        .box {
+            width: 80%;
+            height: 80px;
+            background-color: green;
+        }
+
+        .obscurer {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: gray;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                container.scrollTo(0, 1000);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id=container>
+        <div class="filler"></div>
+        <div class=last>
+            <div class="box"></div>
+        </div>
+        <div class="obscurer" style="left: 25px; top: 118px;"></div>
+        <div class="obscurer" style="left: 160px; top: 118px;"></div>
+        <div class="obscurer" style="left: 25px; top: 196px;"></div>
+        <div class="obscurer" style="left: 160px; top: 196px;"></div>
+    </div>
+    <p>You should see a green box in the scroller.</p>
+</body>
+</html>

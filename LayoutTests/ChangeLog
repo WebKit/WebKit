@@ -1,3 +1,16 @@
+2020-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Content sometimes missing in nested scrollers with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=213580
+        <rdar://problem/64460373>
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/clipping/nested-overflow-with-border-radius-expected.html: Added.
+        * compositing/clipping/nested-overflow-with-border-radius.html: Added.
+        * compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position-expected.html:
+        * compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html: Tweak the colors and radii to make failures on this test more obvious.
+
 2020-06-26  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] REGRESSION: webrtc/video-autoplay1.html is a flaky failure
