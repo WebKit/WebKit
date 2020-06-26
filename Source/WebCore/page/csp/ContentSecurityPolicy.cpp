@@ -58,6 +58,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/TextPosition.h>
 
 
@@ -212,22 +213,23 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma
     // separated chunk as a separate header.
-    auto characters = StringView(header).upconvertedCharacters();
-    const UChar* begin = characters;
-    const UChar* position = begin;
-    const UChar* end = begin + header.length();
-    while (position < end) {
-        skipUntil<UChar>(position, end, ',');
+    readCharactersForParsing(header, [&](auto buffer) {
+        auto begin = buffer.position();
+    
+        while (buffer.hasCharactersRemaining()) {
+            skipUntil(buffer, ',');
 
-        // header1,header2 OR header1
-        //        ^                  ^
-        m_policies.append(ContentSecurityPolicyDirectiveList::create(*this, String(begin, position - begin), type, policyFrom));
+            // header1,header2 OR header1
+            //        ^                  ^
+            m_policies.append(ContentSecurityPolicyDirectiveList::create(*this, String(begin, buffer.position() - begin), type, policyFrom));
 
-        // Skip the comma, and begin the next header from the current position.
-        ASSERT(position == end || *position == ',');
-        skipExactly<UChar>(position, end, ',');
-        begin = position;
-    }
+            // Skip the comma, and begin the next header from the current position.
+            ASSERT(buffer.atEnd() || *buffer == ',');
+            skipExactly(buffer, ',');
+            begin = buffer.position();
+        }
+    });
+    
 
     if (m_scriptExecutionContext)
         applyPolicyToScriptExecutionContext();

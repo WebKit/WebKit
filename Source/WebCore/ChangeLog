@@ -1,3 +1,88 @@
+2020-06-26  Sam Weinig  <weinig@apple.com>
+
+        Convert ContentSecurityPolicy related parsers over to using StringParsingBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=213631
+
+        Reviewed by Darin Adler.
+
+        - Adopt StringParsingBuffer across CSP code.
+        - Remove UTF-16 upconversions in ContentSecurityPolicy, ContentSecurityPolicyDirectiveList,
+          ContentSecurityPolicyMediaListDirective and ContentSecurityPolicySourceList.
+
+        * html/parser/ParsingUtilities.h:
+        (WebCore::isNotASCIISpace):
+        (WebCore::skipExactly):
+        (WebCore::characterPredicate):
+        (WebCore::skipUntil):
+        (WebCore::skipExactlyIgnoringASCIICase):
+        Add overloads for each helper that take a StringParsingBuffer.
+
+        * loader/ResourceCryptographicDigest.cpp:
+        (WebCore::parseHashAlgorithmAdvancingPosition):
+        Convert to use an Optional return value rather than outparameter + bool.
+
+        (WebCore::parseCryptographicDigestImpl):
+        (WebCore::parseCryptographicDigest):
+        (WebCore::parseEncodedCryptographicDigestImpl):
+        (WebCore::parseEncodedCryptographicDigest):
+        * loader/ResourceCryptographicDigest.h:
+        Use StringParsingBuffer rather than raw pointers for parsing.
+ 
+        * loader/SubresourceIntegrity.cpp:
+        (WebCore::splitOnSpaces):
+        (WebCore::parseIntegrityMetadata):
+        Use StringParsingBuffer and readCharactersForParsing rather than raw pointers for parsing.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        Use StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters().
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::isDirectiveNameCharacter):
+        (WebCore::isDirectiveValueCharacter):
+        (WebCore::ContentSecurityPolicyDirectiveList::parse):
+        (WebCore::ContentSecurityPolicyDirectiveList::parseDirective):
+        (WebCore::ContentSecurityPolicyDirectiveList::parseReportURI):
+        (WebCore::ContentSecurityPolicyDirectiveList::setCSPDirective):
+        (WebCore::ContentSecurityPolicyDirectiveList::applySandboxPolicy):
+        (WebCore::ContentSecurityPolicyDirectiveList::setUpgradeInsecureRequests):
+        (WebCore::ContentSecurityPolicyDirectiveList::setBlockAllMixedContentEnabled):
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective):
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        Use StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Also switch to using Optional for return values
+        rather than outparameter + bool. To make things read more cleanly, package up name
+        and value pair into a new ParsedDirective struct that can be passed around more easily.
+
+        * page/csp/ContentSecurityPolicyMediaListDirective.cpp:
+        (WebCore::isMediaTypeCharacter): 
+        (WebCore::ContentSecurityPolicyMediaListDirective::parse):
+        Use StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters().
+
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::isSourceCharacter):
+        (WebCore::isHostCharacter):
+        (WebCore::isPathComponentCharacter):
+        (WebCore::isSchemeContinuationCharacter):
+        (WebCore::isNotColonOrSlash):
+        (WebCore::isSourceListNone):
+        (WebCore::ContentSecurityPolicySourceList::parse):
+        (WebCore::ContentSecurityPolicySourceList::parseSource):
+        (WebCore::ContentSecurityPolicySourceList::parseScheme):
+        (WebCore::ContentSecurityPolicySourceList::parseHost):
+        (WebCore::ContentSecurityPolicySourceList::parsePath):
+        (WebCore::ContentSecurityPolicySourceList::parsePort):
+        (WebCore::isNonceCharacter):
+        (WebCore::ContentSecurityPolicySourceList::parseNonceSource):
+        (WebCore::ContentSecurityPolicySourceList::parseHashSource):
+        * page/csp/ContentSecurityPolicySourceList.h:
+        Use StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Also switch to using Optional for return values
+        rather than outparameter + bool. To make things read more cleanly, package up source
+        return values into structs that can be more easily returned / passed around.
+
 2020-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         Content sometimes missing in nested scrollers with border-radius

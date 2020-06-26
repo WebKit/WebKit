@@ -30,104 +30,96 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-template<typename CharacterType>
-static bool parseHashAlgorithmAdvancingPosition(const CharacterType*& position, const CharacterType* end, ResourceCryptographicDigest::Algorithm& algorithm)
+template<typename CharacterType> static Optional<ResourceCryptographicDigest::Algorithm> parseHashAlgorithmAdvancingPosition(StringParsingBuffer<CharacterType>& buffer)
 {
     // FIXME: This would be much cleaner with a lookup table of pairs of label / algorithm enum values, but I can't
     // figure out how to keep the labels compiletime strings for skipExactlyIgnoringASCIICase.
 
-    if (skipExactlyIgnoringASCIICase(position, end, "sha256")) {
-        algorithm = ResourceCryptographicDigest::Algorithm::SHA256;
-        return true;
-    }
-    if (skipExactlyIgnoringASCIICase(position, end, "sha384")) {
-        algorithm = ResourceCryptographicDigest::Algorithm::SHA384;
-        return true;
-    }
-    if (skipExactlyIgnoringASCIICase(position, end, "sha512")) {
-        algorithm = ResourceCryptographicDigest::Algorithm::SHA512;
-        return true;
-    }
+    if (skipExactlyIgnoringASCIICase(buffer, "sha256"))
+        return ResourceCryptographicDigest::Algorithm::SHA256;
+    if (skipExactlyIgnoringASCIICase(buffer, "sha384"))
+        return ResourceCryptographicDigest::Algorithm::SHA384;
+    if (skipExactlyIgnoringASCIICase(buffer, "sha512"))
+        return ResourceCryptographicDigest::Algorithm::SHA512;
 
-    return false;
+    return WTF::nullopt;
 }
 
-template<typename CharacterType>
-static Optional<ResourceCryptographicDigest> parseCryptographicDigestImpl(const CharacterType*& position, const CharacterType* end)
+template<typename CharacterType> static Optional<ResourceCryptographicDigest> parseCryptographicDigestImpl(StringParsingBuffer<CharacterType>& buffer)
 {
-    if (position == end)
+    if (buffer.atEnd())
         return WTF::nullopt;
 
-    ResourceCryptographicDigest::Algorithm algorithm;
-    if (!parseHashAlgorithmAdvancingPosition(position, end, algorithm))
+    auto algorithm = parseHashAlgorithmAdvancingPosition(buffer);
+    if (!algorithm)
         return WTF::nullopt;
 
-    if (!skipExactly<CharacterType>(position, end, '-'))
+    if (!skipExactly(buffer, '-'))
         return WTF::nullopt;
 
-    const CharacterType* beginHashValue = position;
-    skipWhile<CharacterType, isBase64OrBase64URLCharacter>(position, end);
-    skipExactly<CharacterType>(position, end, '=');
-    skipExactly<CharacterType>(position, end, '=');
+    auto beginHashValue = buffer.position();
+    skipWhile<CharacterType, isBase64OrBase64URLCharacter>(buffer);
+    skipExactly(buffer, '=');
+    skipExactly(buffer, '=');
 
-    if (position == beginHashValue)
+    if (buffer.position() == beginHashValue)
         return WTF::nullopt;
 
     Vector<uint8_t> digest;
-    StringView hashValue(beginHashValue, position - beginHashValue);
+    StringView hashValue(beginHashValue, buffer.position() - beginHashValue);
     if (!base64Decode(hashValue, digest, Base64ValidatePadding)) {
         if (!base64URLDecode(hashValue, digest))
             return WTF::nullopt;
     }
 
-    return ResourceCryptographicDigest { algorithm, WTFMove(digest) };
+    return ResourceCryptographicDigest { *algorithm, WTFMove(digest) };
 }
 
-Optional<ResourceCryptographicDigest> parseCryptographicDigest(const UChar*& begin, const UChar* end)
+Optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<UChar>& buffer)
 {
-    return parseCryptographicDigestImpl(begin, end);
+    return parseCryptographicDigestImpl(buffer);
 }
 
-Optional<ResourceCryptographicDigest> parseCryptographicDigest(const LChar*& begin, const LChar* end)
+Optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<LChar>& buffer)
 {
-    return parseCryptographicDigestImpl(begin, end);
+    return parseCryptographicDigestImpl(buffer);
 }
 
-template<typename CharacterType>
-static Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigestImpl(const CharacterType*& position, const CharacterType* end)
+template<typename CharacterType> static Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigestImpl(StringParsingBuffer<CharacterType>& buffer)
 {
-    if (position == end)
+    if (buffer.atEnd())
         return WTF::nullopt;
 
-    EncodedResourceCryptographicDigest::Algorithm algorithm;
-    if (!parseHashAlgorithmAdvancingPosition(position, end, algorithm))
+    auto algorithm = parseHashAlgorithmAdvancingPosition(buffer);
+    if (!algorithm)
         return WTF::nullopt;
 
-    if (!skipExactly<CharacterType>(position, end, '-'))
+    if (!skipExactly(buffer, '-'))
         return WTF::nullopt;
 
-    const CharacterType* beginHashValue = position;
-    skipWhile<CharacterType, isBase64OrBase64URLCharacter>(position, end);
-    skipExactly<CharacterType>(position, end, '=');
-    skipExactly<CharacterType>(position, end, '=');
+    auto beginHashValue = buffer.position();
+    skipWhile<CharacterType, isBase64OrBase64URLCharacter>(buffer);
+    skipExactly(buffer, '=');
+    skipExactly(buffer, '=');
 
-    if (position == beginHashValue)
+    if (buffer.position() == beginHashValue)
         return WTF::nullopt;
 
-    return EncodedResourceCryptographicDigest { algorithm, String(beginHashValue, position - beginHashValue) };
+    return EncodedResourceCryptographicDigest { *algorithm, String(beginHashValue, buffer.position() - beginHashValue) };
 }
 
-Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(const UChar*& begin, const UChar* end)
+Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<UChar>& buffer)
 {
-    return parseEncodedCryptographicDigestImpl(begin, end);
+    return parseEncodedCryptographicDigestImpl(buffer);
 }
 
-Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(const LChar*& begin, const LChar* end)
+Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<LChar>& buffer)
 {
-    return parseEncodedCryptographicDigestImpl(begin, end);
+    return parseEncodedCryptographicDigestImpl(buffer);
 }
 
 Optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest& encodedDigest)

@@ -66,11 +66,11 @@ struct EncodedResourceCryptographicDigest {
     String digest;
 };
 
-Optional<ResourceCryptographicDigest> parseCryptographicDigest(const UChar*& begin, const UChar* end);
-Optional<ResourceCryptographicDigest> parseCryptographicDigest(const LChar*& begin, const LChar* end);
+Optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<UChar>&);
+Optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<LChar>&);
 
-Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(const UChar*& begin, const UChar* end);
-Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(const LChar*& begin, const LChar* end);
+Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<UChar>&);
+Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<LChar>&);
 
 Optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest&);
 

@@ -31,10 +31,11 @@
 #include "ContentSecurityPolicyDirectiveList.h"
 #include "ParsingUtilities.h"
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-static bool isMediaTypeCharacter(UChar c)
+template<typename CharacterType> static bool isMediaTypeCharacter(CharacterType c)
 {
     return !isASCIISpace(c) && c != '/';
 }
@@ -52,62 +53,61 @@ bool ContentSecurityPolicyMediaListDirective::allows(const String& type) const
 
 void ContentSecurityPolicyMediaListDirective::parse(const String& value)
 {
-    auto characters = StringView(value).upconvertedCharacters();
-    const UChar* begin = characters;
-    const UChar* position = begin;
-    const UChar* end = begin + value.length();
-
     // 'plugin-types ____;' OR 'plugin-types;'
     if (value.isEmpty()) {
         directiveList().policy().reportInvalidPluginTypes(value);
         return;
     }
 
-    while (position < end) {
-        // _____ OR _____mime1/mime1
-        // ^        ^
-        skipWhile<UChar, isASCIISpace>(position, end);
-        if (position == end)
-            return;
+    readCharactersForParsing(value, [&](auto buffer) {
+        using CharacterType = typename decltype(buffer)::CharacterType;
 
-        // mime1/mime1 mime2/mime2
-        // ^
-        begin = position;
-        if (!skipExactly<UChar, isMediaTypeCharacter>(position, end)) {
-            skipWhile<UChar, isNotASCIISpace>(position, end);
-            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
-            continue;
+        while (buffer.hasCharactersRemaining()) {
+            // _____ OR _____mime1/mime1
+            // ^        ^
+            skipWhile<CharacterType, isASCIISpace>(buffer);
+            if (buffer.atEnd())
+                return;
+
+            // mime1/mime1 mime2/mime2
+            // ^
+            auto begin = buffer.position();
+            if (!skipExactly<CharacterType, isMediaTypeCharacter>(buffer)) {
+                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+                directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
+                continue;
+            }
+            skipWhile<CharacterType, isMediaTypeCharacter>(buffer);
+
+            // mime1/mime1 mime2/mime2
+            //      ^
+            if (!skipExactly(buffer, '/')) {
+                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+                directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
+                continue;
+            }
+
+            // mime1/mime1 mime2/mime2
+            //       ^
+            if (!skipExactly<CharacterType, isMediaTypeCharacter>(buffer)) {
+                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+                directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
+                continue;
+            }
+            skipWhile<CharacterType, isMediaTypeCharacter>(buffer);
+
+            // mime1/mime1 mime2/mime2 OR mime1/mime1  OR mime1/mime1/error
+            //            ^                          ^               ^
+            if (buffer.hasCharactersRemaining() && isNotASCIISpace(*buffer)) {
+                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+                directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
+                continue;
+            }
+            m_pluginTypes.add(String(begin, buffer.position() - begin));
+
+            ASSERT(buffer.atEnd() || isASCIISpace(*buffer));
         }
-        skipWhile<UChar, isMediaTypeCharacter>(position, end);
-
-        // mime1/mime1 mime2/mime2
-        //      ^
-        if (!skipExactly<UChar>(position, end, '/')) {
-            skipWhile<UChar, isNotASCIISpace>(position, end);
-            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
-            continue;
-        }
-
-        // mime1/mime1 mime2/mime2
-        //       ^
-        if (!skipExactly<UChar, isMediaTypeCharacter>(position, end)) {
-            skipWhile<UChar, isNotASCIISpace>(position, end);
-            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
-            continue;
-        }
-        skipWhile<UChar, isMediaTypeCharacter>(position, end);
-
-        // mime1/mime1 mime2/mime2 OR mime1/mime1  OR mime1/mime1/error
-        //            ^                          ^               ^
-        if (position < end && isNotASCIISpace(*position)) {
-            skipWhile<UChar, isNotASCIISpace>(position, end);
-            directiveList().policy().reportInvalidPluginTypes(String(begin, position - begin));
-            continue;
-        }
-        m_pluginTypes.add(String(begin, position - begin));
-
-        ASSERT(position == end || isASCIISpace(*position));
-    }
+    });
 }
 
 } // namespace WebCore
