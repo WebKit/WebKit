@@ -1,3 +1,16 @@
+2020-06-26  Jer Noble  <jer.noble@apple.com>
+
+        CRASH: incompatible downcast<> operation in SourceBufferPrivateAVFObjC::setCDMInstance()
+        https://bugs.webkit.org/show_bug.cgi?id=213660
+        <rdar://problem/63831593>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/encrypted-media/fps-clearkey-crash.html
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::setCDMInstance):
+
 2020-06-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for <center>

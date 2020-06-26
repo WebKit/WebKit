@@ -964,7 +964,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
 void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto* fpsInstance = downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
+    auto* fpsInstance = is<CDMInstanceFairPlayStreamingAVFObjC>(instance) ? downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance) : nullptr;
     if (fpsInstance == m_cdmInstance)
         return;
 

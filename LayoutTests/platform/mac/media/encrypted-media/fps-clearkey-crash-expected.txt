@@ -1,0 +1,8 @@
+
+Tests that creating an incompatible MediaKeys object with MediaSource does not crash.
+EVENT(sourceopen)
+EVENT(update)
+requestMediaKeySystemAccess promise resolved
+createMediaKeys promise resolved
+END OF TEST
+
