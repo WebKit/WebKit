@@ -1384,9 +1384,6 @@ security/block-test-no-port.html
 
 # <rdar://problem/31177990> REGRESSION: canvas/2d.gradient.* LayoutTests failing
 # These are imported tests, so we'll have to push changes back to W3C.
-imported/w3c/canvas/2d.gradient.linear.transform.1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.linear.transform.2.html [ Failure ]
-imported/w3c/canvas/2d.gradient.linear.transform.3.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
