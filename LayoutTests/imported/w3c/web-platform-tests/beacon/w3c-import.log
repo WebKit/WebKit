@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-error.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-preflight-failure.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-readablestream.window.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/idlharness.any.js
