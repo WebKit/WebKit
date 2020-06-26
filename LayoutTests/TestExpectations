@@ -1664,7 +1664,6 @@ webkit.org/b/139119 imported/mozilla/svg/text/multiple-chunks-bidi.svg [ ImageOn
 webkit.org/b/139132 imported/mozilla/svg/dynamic-switch-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139154 imported/mozilla/svg/dynamic-marker-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-textPath-01.svg [ ImageOnlyFailure ]
-webkit.org/b/139155 imported/mozilla/svg/dynamic-textPath-02.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-textPath-03.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-pattern-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-use-01.svg [ ImageOnlyFailure ]
