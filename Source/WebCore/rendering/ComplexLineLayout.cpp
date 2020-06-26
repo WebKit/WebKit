@@ -852,8 +852,8 @@ static bool isLastInFlowRun(BidiRun& runToCheck)
     }
     return true;
 }
-    
-BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, TextAlignMode textAlign, float& logicalLeft,
+
+BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, TextAlignMode textAlign, float& lineLogicalLeft,
     float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache,
     WordMeasurements& wordMeasurements)
 {
@@ -861,10 +861,48 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
     bool canHangPunctuationAtStart = style().hangingPunctuation().contains(HangingPunctuation::First);
     bool canHangPunctuationAtEnd = style().hangingPunctuation().contains(HangingPunctuation::Last);
     bool isLTR = style().isLeftToRightDirection();
-    float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
+    float contentWidth = 0;
     unsigned expansionOpportunityCount = 0;
     bool isAfterExpansion = is<RenderRubyBase>(m_flow) ? downcast<RenderRubyBase>(m_flow).isAfterExpansion() : true;
     Vector<unsigned, 16> expansionOpportunities;
+
+    HashMap<InlineTextBox*, LayoutUnit> logicalSpacingForInlineTextBoxes;
+    auto collectSpacingLogicalWidths = [&] () {
+        auto totalSpacingWidth = LayoutUnit { };
+        // Collect the spacing positions (margin, border padding) for the textboxes by traversing the inline tree of the current line.
+        Vector<InlineBox*> queue;
+        queue.append(lineBox);
+        // 1. Visit each inline box in a preorder fashion
+        // 2. Accumulate the spacing when we find an InlineFlowBox (inline container e.g. span)
+        // 3. Add the InlineTextBoxes to the hashmap
+        while (!queue.isEmpty()) {
+            while (true) {
+                auto* inlineBox = queue.last();
+                if (is<InlineFlowBox>(inlineBox)) {
+                    auto& inlineFlowBox = downcast<InlineFlowBox>(*inlineBox);
+                    totalSpacingWidth += inlineFlowBox.marginBorderPaddingLogicalLeft();
+                    if (auto* child = inlineFlowBox.firstChild()) {
+                        queue.append(child);
+                        continue;
+                    }
+                    break;
+                }
+                if (is<InlineTextBox>(inlineBox))
+                    logicalSpacingForInlineTextBoxes.add(downcast<InlineTextBox>(inlineBox), totalSpacingWidth);
+                break;
+            }
+            while (!queue.isEmpty()) {
+                auto& inlineBox = *queue.takeLast();
+                if (is<InlineFlowBox>(inlineBox))
+                    totalSpacingWidth += downcast<InlineFlowBox>(inlineBox).marginBorderPaddingLogicalRight();
+                if (auto* nextSibling = inlineBox.nextOnLine()) {
+                    queue.append(nextSibling);
+                    break;
+                }
+            }
+        }
+    };
+    collectSpacingLogicalWidths();
 
     BidiRun* run = firstRun;
     BidiRun* previousRun = nullptr;
@@ -897,7 +935,7 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
                 float hangStartWidth = renderText.hangablePunctuationStartWidth(run->m_start);
                 availableLogicalWidth += hangStartWidth;
                 if (style().isLeftToRightDirection())
-                    logicalLeft -= hangStartWidth;
+                    lineLogicalLeft -= hangStartWidth;
                 canHangPunctuationAtStart = false;
             }
             
@@ -906,7 +944,7 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
                 float hangEndWidth = renderText.hangablePunctuationEndWidth(run->m_stop - 1);
                 availableLogicalWidth += hangEndWidth;
                 if (!style().isLeftToRightDirection())
-                    logicalLeft -= hangEndWidth;
+                    lineLogicalLeft -= hangEndWidth;
                 canHangPunctuationAtEnd = false;
             }
             
@@ -915,13 +953,13 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
 
             if (unsigned length = renderText.text().length()) {
                 if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
-                    totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
+                    contentWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
                 // run->m_start == run->m_stop should only be true iff the run is a replaced run for bidi: isolate.
                 ASSERT(run->m_stop > 0 || run->m_start == run->m_stop);
                 needsWordSpacing = run->m_stop == length && !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1));
             }
-
-            setLogicalWidthForTextRun(lineBox, run, renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
+            auto currentLogicalLeftPosition = logicalSpacingForInlineTextBoxes.get(&textBox) + contentWidth;
+            setLogicalWidthForTextRun(lineBox, run, renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
             canHangPunctuationAtStart = false;
             bool encounteredJustifiedRuby = false;
@@ -947,11 +985,11 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
                 if (is<RenderRubyRun>(renderBox))
                     setMarginsForRubyRun(run, downcast<RenderRubyRun>(renderBox), previousRun ? &previousRun->renderer() : nullptr, lineInfo);
                 run->box()->setLogicalWidth(m_flow.logicalWidthForChild(renderBox));
-                totalLogicalWidth += m_flow.marginStartForChild(renderBox) + m_flow.marginEndForChild(renderBox);
+                contentWidth += m_flow.marginStartForChild(renderBox) + m_flow.marginEndForChild(renderBox);
             }
         }
 
-        totalLogicalWidth += run->box()->logicalWidth();
+        contentWidth += run->box()->logicalWidth();
         previousRun = run;
     }
 
@@ -970,10 +1008,9 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
     if (is<RenderRubyBase>(m_flow) && !expansionOpportunityCount)
         textAlign = TextAlignMode::Center;
 
-    updateLogicalWidthForAlignment(m_flow, textAlign, lineBox, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
-
+    auto totalLogicalWidth = contentWidth + lineBox->getFlowSpacingLogicalWidth();
+    updateLogicalWidthForAlignment(m_flow, textAlign, lineBox, trailingSpaceRun, lineLogicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
     computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
-
     return run;
 }
 

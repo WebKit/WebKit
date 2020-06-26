@@ -1,3 +1,29 @@
+2020-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        [Inline] Overlapping content when margin-right is present
+        https://bugs.webkit.org/show_bug.cgi?id=213629
+        <rdar://problem/64391403>
+
+        Reviewed by Simon Fraser.
+
+        1. computeInlineDirectionPositionsForSegment loops through the Bidi runs and computes their logical widths.
+        2. Text measuring needs the current logical left position in order to compute the run width properly (e.g tab size)
+        3. The current logical left includes margins, boders and paddings (e.g <span style="margin: 100px;">text content</span> 'text content' starts at 100px -ignore the line offset for now)
+        4. The BiDi loop jumps over empty inline containers (e.g. text<span style="border: 10px solid green"></span>content) and it lacks the information to be able to resolve nested inline containers.
+
+        This patch pre-computes the spacing offset for each InlineTextBox so that we could use it later to compute the logical left position for the text measuring.
+
+        <span style="margin-right: 1px">[1]<span style="margin: 2px">[2]</span>[3]</span>[4]
+        [1] -> 0px offset
+        [2] -> 2px offset
+        [3] -> 4px offset
+        [4] -> 5px offset
+
+        Test: fast/inline/incorrect-tab-position.html
+
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::computeInlineDirectionPositionsForSegment):
+
 2020-06-25  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r256166, r260596) WKNavigationAction.request.allHTTPHeaderFields needs to contain User-Agent and Accept

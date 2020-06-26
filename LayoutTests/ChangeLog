@@ -1,3 +1,14 @@
+2020-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        [Inline] Overlapping content when margin-right is present
+        https://bugs.webkit.org/show_bug.cgi?id=213629
+        <rdar://problem/64391403>
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline/incorrect-tab-position-expected.html: Added.
+        * fast/inline/incorrect-tab-position.html: Added.
+
 2020-06-25  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for http/tests/cookies/third-party-cookie-relaxing.html as they are passing. 
