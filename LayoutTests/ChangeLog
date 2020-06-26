@@ -1,5 +1,14 @@
 2020-06-26  Karl Rackler  <rackler@apple.com>
 
+        Remove expectation for imported/w3c/canvas/2d.gradient.interpolate.solid.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=174015
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-06-26  Karl Rackler  <rackler@apple.com>
+
         Remove expectation for https://results.webkit.org/?suite=layout-tests&test=imported%2Fmozilla%2Fsvg%2Fdynamic-textPath-02.svg as they are passing. 
         https://bugs.webkit.org/show_bug.cgi?id=213655
 

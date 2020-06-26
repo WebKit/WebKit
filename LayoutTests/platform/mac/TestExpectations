@@ -1442,9 +1442,6 @@ fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 
-# <rdar://problem/32799596> REGRESSION: LayoutTests canvas/philip/tests/2d.gradient.interpolate.solid.html and imported/w3c/canvas/2d.gradient.interpolate.solid.html failing
-imported/w3c/canvas/2d.gradient.interpolate.solid.html [ Failure ]
-
 # <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
 imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
