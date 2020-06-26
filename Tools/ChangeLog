@@ -1,3 +1,23 @@
+2020-06-26  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Support Apple Silicon running x86 processes
+        https://bugs.webkit.org/show_bug.cgi?id=213487
+        <rdar://problem/64606667>
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload): Add --architecture flag.
+        (runTest): Run test suite with specific architecture.
+        (runJSCStressTests): Pass architecture to run-jsc-stress-tests.
+        * Scripts/run-jsc-stress-tests: Add --force-architecture flag.
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture): Add function to determine machine's native architecture.
+        (determineArchitecture): Leverage the nativeArchitecture instead of hard-coding simulator
+        architectures.
+        (architecturesForProducts): Determine the architectures supported by a given build.
+        (nativeArchitecture): Return nativeArchitecture.
+
 2020-06-26  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation should observe adjacent elements with new renderer together

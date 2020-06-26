@@ -114,6 +114,7 @@ $testRunnerType = nil
 $testWriter = "default"
 $remoteHosts = []
 $architecture = nil
+$forceArchitecture = nil
 $hostOS = nil
 $model = nil
 $filter = nil
@@ -139,6 +140,7 @@ def usage
     puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
     puts "--tarball [fileName]        Creates a tarball of the final bundle.  Use name if supplied for tar file."
     puts "--arch                      Specify architecture instead of determining from JavaScriptCore build."
+    puts "--force-architecture        Override the architecture to run tests with."
     puts "                            e.g. x86, x86_64, arm."
     puts "--os                        Specify os instead of determining from JavaScriptCore build."
     puts "                            e.g. darwin, linux & windows."
@@ -180,6 +182,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--tarball', GetoptLong::OPTIONAL_ARGUMENT],
                ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
                ['--arch', GetoptLong::REQUIRED_ARGUMENT],
+               ['--force-architecture', GetoptLong::REQUIRED_ARGUMENT],
                ['--os', GetoptLong::REQUIRED_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
@@ -247,6 +250,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $filter = Regexp.new(arg)
     when '--arch'
         $architecture = arg
+    when '--force-architecture'
+        $architecture = arg unless $architecture
+        $forceArchitecture = arg
     when '--os'
         $hostOS = arg
     when '--model'
@@ -557,6 +563,14 @@ def pathToVM
     pathToBundleResourceFromBenchmarkDirectory($jscPath)
 end
 
+def vmCommand
+    if ($forceArchitecture)
+        ["/usr/bin/arch", "-" + $forceArchitecture,  pathToVM.to_s]
+    else
+        [pathToVM.to_s]
+    end
+end
+
 def pathToHelpers
     pathToBundleResourceFromBenchmarkDirectory(".helpers")
 end
@@ -643,11 +657,11 @@ def requireOptions(*options)
 end
 
 def runWithOutputHandler(kind, outputHandler, *options)
-    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    addRunCommand(kind, vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
 end
 
 def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
-    addRunCommand(kind, [pathToVM.to_s] + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    addRunCommand(kind, vmCommand + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
 end
 
 def run(kind, *options)
@@ -973,12 +987,12 @@ def runProfiler
 end
 
 def runExceptionFuzz
-    subCommand = escapeAll([pathToVM.to_s, "--useDollarVM=true", "--useExceptionFuzz=true", $benchmark.to_s])
+    subCommand = escapeAll(vmCommand + ["--useDollarVM=true", "--useExceptionFuzz=true", $benchmark.to_s])
     addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
 def runExecutableAllocationFuzz(name, *options)
-    subCommand = escapeAll([pathToVM.to_s, "--useDollarVM=true", $benchmark.to_s] + options)
+    subCommand = escapeAll(vmCommand + ["--useDollarVM=true", $benchmark.to_s] + options)
     addRunCommand("executable-allocation-fuzz-" + name, ["perl", (pathToHelpers + "js-executable-allocation-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
@@ -1027,7 +1041,7 @@ def runTest262(mode, exception, includeFiles, flags)
 
     prepareExtraRelativeFiles(includeFiles.map { |f| "../" + f }, $collection)
 
-    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions
+    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions
     args << "--exception=" + exception if failsWithException
     args << "--test262-async" if isAsync
     args += includeFiles
@@ -1069,7 +1083,7 @@ def prepareTest262Fixture
 end
 
 def runES6(mode)
-    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + [$benchmark.to_s]
+    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = simpleErrorHandler
@@ -1267,7 +1281,7 @@ def runChakra(mode, exception, baselineFile, extraFiles)
     prepareExtraAbsoluteFiles(CHAKRATESTS_PATH, ["jsc-lib.js"])
     prepareExtraRelativeFiles(extraFiles.map { |f| "../" + f }, $collection)
 
-    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions
+    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions
     args += FTL_OPTIONS if $isFTLPlatform
     args += EAGER_OPTIONS
     args << "--exception=" + exception if failsWithException
@@ -1308,7 +1322,7 @@ def runLayoutTest(kind, *options)
     prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)
     prepareExtraAbsoluteFiles(LAYOUTTESTS_PATH, ["resources/standalone-pre.js", "resources/standalone-post.js"])
 
-    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options +
+    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options +
         [(Pathname.new("resources") + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (Pathname.new("resources") + "standalone-post.js").to_s]
@@ -1448,7 +1462,7 @@ end
 def runComplexTest(before, after, additionalEnv, *options)
     prepareExtraRelativeFiles(before.map{|v| (Pathname("..") + v).to_s}, $collection)
     prepareExtraRelativeFiles(after.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
+    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
     addRunCommand("complex", args, noisyOutputHandler, simpleErrorHandler, *additionalEnv)
 end
 
@@ -1459,7 +1473,7 @@ def runMozillaTest(kind, mode, extraFiles, *options)
         kind = "mozilla"
     end
     prepareExtraRelativeFiles(extraFiles.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
+    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = mozillaErrorHandler
@@ -1529,7 +1543,7 @@ def defaultRunMozillaTest(mode, *extraFiles)
 end
 
 def runNoisyTestImpl(kind, options, additionalEnv)
-    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
+    addRunCommand(kind, vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
 end
 
 def runNoisyTest(kind, *options)

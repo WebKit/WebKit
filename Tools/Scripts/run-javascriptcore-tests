@@ -104,6 +104,7 @@ my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
 my $createTarball = 0;
 my $remoteHost = 0;
 my $model = 0;
+my $archs = undef;
 my $version;
 my $versionName;
 my $sdk;
@@ -231,6 +232,7 @@ my $filter;
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
+  --architecture                Attempt to override the native architecture of a machine.
   --root=                       Path to pre-built root containing jsc
   --[no-]ftl-jit                Turn the FTL JIT on or off
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
@@ -327,6 +329,7 @@ GetOptions(
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
     'model=s' => \$model,
+    'architecture=s' => \$archs,
     'version=s' => \$version,
     'version-name=s' => \$versionName,
     'sdk=s' => \$sdk,
@@ -349,7 +352,6 @@ GetOptions(
     'build-number=s' => \$buildNumber,
     'buildbot-worker=s' => \$buildbotWorker,
 );
-
 
 my $specificTestsSpecified = 0;
 if ($runTestMasm == DO_RUN
@@ -449,7 +451,7 @@ sub configurationForUpload()
 
     my $result = {
         platform => $platform,
-        architecture => architecture(),
+        architecture => $archs,
         is_simulator => $simulator,
         style => lc(configuration()),
         version => "$version->{major}.$version->{minor}.$version->{subminor}",
@@ -483,6 +485,21 @@ if ($showHelp) {
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+my $archsInBuild = architecturesForProducts();
+if (defined $archs) {
+    die "$archs not supported by the provided binary, which supports '$archsInBuild'" if index($archsInBuild, $archs) == -1;
+} else {
+    # Fallback is x86_64, which we replace with the native architecture if the native architecture is in the provided build
+    $archs = "x86_64";
+    $archs = nativeArchitecture() if index($archsInBuild, nativeArchitecture()) != -1;
+}
+
+# For running tests, arm64e should map to arm64
+$archs = "arm64" if $archs eq "arm64e";
+if ($archs ne nativeArchitecture() && (nativeArchitecture() ne "arm64" || !isAppleMacWebKit())) {
+    die "Cannot run tests with $archs on this machine";
+}
+
 configurationForUpload() if (defined($report));
 
 if (defined($jsonFileName)) {
@@ -551,6 +568,7 @@ sub runTest {
     chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
     my @command = (testPath($productDir, $testName));
     unshift @command, ("xcrun", "-sdk", xcodeSDK(), "sim") if willUseIOSSimulatorSDK();
+    unshift @command, ("/usr/bin/arch", "-$archs") if $archs ne nativeArchitecture();
     unshift @command, wrapperPrefixIfNeeded() if isGtk() or isWPE();
 
     if ($envVars ne "") {
@@ -712,7 +730,12 @@ sub runJSCStressTests
     $ENV{LANG}="en_US.UTF-8";
     my @jscStressDriverCmd = (
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
-        "-j", jscPath($productDir), "-o", $jscStressResultsDir);
+        "-j", jscPath($productDir), "-o", $jscStressResultsDir, "--arch", $archs);
+
+    if (nativeArchitecture() != $archs) {
+        push(@jscStressDriverCmd, "--force-architecture");
+        push(@jscStressDriverCmd, $archs);
+    }
 
     push(@jscStressDriverCmd, @testList);
 
