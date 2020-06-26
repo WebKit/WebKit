@@ -50,7 +50,7 @@ class MacPort(DarwinPort):
 
     SDK = 'macosx'
 
-    ARCHITECTURES = ['x86_64', 'x86']
+    ARCHITECTURES = ['x86_64', 'x86', 'arm64']
 
     DEFAULT_ARCHITECTURE = 'x86_64'
 
@@ -66,8 +66,14 @@ class MacPort(DarwinPort):
         if not self._os_version:
             self._os_version = MacPort.CURRENT_VERSION
 
+    def architecture(self):
+        result = self.get_option('architecture') or self.host.platform.architecture()
+        if result == 'arm64e':
+            return 'arm64'
+        return result
+
     def _build_driver_flags(self):
-        return ['ARCHS=i386'] if self.architecture() == 'x86' else []
+        return ['ARCHS=i386'] if self.architecture() == 'x86' else ['ARCHS={}'.format(self.architecture())]
 
     def default_baseline_search_path(self, **kwargs):
         versions_to_fallback = []

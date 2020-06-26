@@ -32,11 +32,15 @@ from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, Versi
 
 
 class MockPlatformInfo(object):
-    def __init__(self, os_name='mac', os_version=Version.from_name('High Sierra')):
+    def __init__(self, os_name='mac', os_version=Version.from_name('High Sierra'), architecture=None):
         assert isinstance(os_version, Version)
         self.os_name = os_name
         self.os_version = os_version
         self.expected_xcode_simctl_list = None
+        self._architecture = architecture or dict(
+            mac='x86_64',
+            ios='arm64',
+        ).get(self.os_name, 'x86')
 
     def is_mac(self):
         return self.os_name == 'mac'
@@ -58,6 +62,9 @@ class MockPlatformInfo(object):
 
     def is_freebsd(self):
         return self.os_name == 'freebsd'
+
+    def architecture(self):
+        return self._architecture
 
     def display_name(self):
         return "MockPlatform 1.0"

@@ -102,18 +102,10 @@ class Port(object):
         # These are default values that should be overridden in a subclasses.
         self._os_version = None
 
-        # FIXME: This can be removed once default architectures for GTK and EFL EWS bots are set.
-        self.did_override_architecture = False
-
         # FIXME: Ideally we'd have a package-wide way to get a
         # well-formed options object that had all of the necessary
         # options defined on it.
         self._options = options or optparse.Values()
-
-        if self.get_option('architecture'):
-            self.did_override_architecture = True
-        else:
-            self.set_option('architecture', self.DEFAULT_ARCHITECTURE)
 
         if self._name and '-wk2' in self._name:
             self._options.webkit_test_runner = True
@@ -149,10 +141,9 @@ class Port(object):
         return self.host
 
     def architecture(self):
-        return self.get_option('architecture')
+        return self.get_option('architecture') or self.DEFAULT_ARCHITECTURE
 
     def set_architecture(self, arch):
-        self.did_override_architecture = True
         self.set_option('architecture', arch)
 
     def additional_drt_flag(self):

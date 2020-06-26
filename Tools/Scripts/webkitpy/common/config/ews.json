@@ -14,8 +14,7 @@
     },
     "iOS EWS": {
         "port": "ios-device",
-        "name": "ios-ews",
-        "architecture": "arm64"
+        "name": "ios-ews"
     },
     "iOS Simulator EWS": {
         "port": "ios-simulator-wk2",

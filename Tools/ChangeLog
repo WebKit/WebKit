@@ -1,5 +1,38 @@
 2020-06-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Automatically detect hw architecture for supporting Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=213653
+        <rdar://problem/64817656>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/common/config/ews.json: iOS has the correct defaults, no need to override them.
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo):
+        (PlatformInfo.architecture): Retrieve the current system's architecture.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.__init__):
+        (MockPlatformInfo.architecture):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Remove 'did_override_architecture', should be implied by architecture compared with DEFAULT_ARCHITECTURE.
+        (Port.architecture): Return the architecture specified by the user, if it exists.
+        (Port.set_architecture): Remove 'did_override_architecture'.
+        * Scripts/webkitpy/port/factory.py:
+        (configuration_options): Add --arm and --architecture flags.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort): Add arm64 to supported architectures.
+        (MacPort.architecture): Convert arm64e to arm64, check the host's architecture.
+        (MacPort._build_driver_flags): Always specify the build architecture since it may be x86_64 or arm64.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_64bit):
+        (MacTest):
+        (MacTest.test_arm):
+        (MacTest.test_default):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.run_command): Remove did_override_architecture.
+
+2020-06-26  Jonathan Bedard  <jbedard@apple.com>
+
         [Big Sur] Handle baseline search path (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=213639
         <rdar://problem/64789480>

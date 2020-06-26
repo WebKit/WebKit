@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import logging
 import re
 import sys
@@ -34,7 +35,7 @@ import sys
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
-from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.executive import Executive, ScriptError
 
 
 _log = logging.getLogger(__name__)
@@ -104,6 +105,19 @@ class PlatformInfo(object):
 
     def is_netbsd(self):
         return self.os_name == 'netbsd'
+
+    @memoized
+    def architecture(self):
+        try:
+            # os.uname() won't work on embedded devices, we may support multiple architectures for a single embedded platform
+            output = self._executive.run_command(['uname', '-m']).rstrip()
+            if output:
+                if self.is_mac() and output != 'x86_64':
+                    output = 'arm64'
+                return output
+        except ScriptError:
+            pass
+        return os.uname()[4]
 
     def display_name(self):
         # platform.platform() returns Darwin information for Mac, which is just confusing.
