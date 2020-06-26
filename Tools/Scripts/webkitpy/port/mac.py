@@ -64,7 +64,6 @@ class MacPort(DarwinPort):
             self._os_version = self.host.platform.os_version
         if not self._os_version:
             self._os_version = MacPort.CURRENT_VERSION
-        assert self._os_version.major == 10
 
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
