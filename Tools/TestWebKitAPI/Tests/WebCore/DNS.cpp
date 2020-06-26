@@ -41,7 +41,7 @@ bool done = false;
 
 TEST(DNSTest, cancelResolveDNS)
 {
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
 
     const String hostname = String("www.webkit.org");
     uint64_t identifier = 1;
@@ -63,7 +63,7 @@ TEST(DNSTest, cancelResolveDNS)
 
 TEST(DNSTest, cannotResolveDNS)
 {
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
 
     const String hostname = String("notavaliddomain.notavaliddomain");
     uint64_t identifier = 1;
@@ -84,7 +84,7 @@ TEST(DNSTest, cannotResolveDNS)
 
 TEST(DNSTest, resolveDNS)
 {
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
 
     const String hostname = String("www.webkit.org");
     uint64_t identifier = 1;

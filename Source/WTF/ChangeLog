@@ -1,3 +1,33 @@
+2020-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Initializing the main thread should initialize the main run loop
+        https://bugs.webkit.org/show_bug.cgi?id=213637
+
+        Reviewed by Anders Carlsson.
+
+        Previously, some code initialized one, some the other, and some both;
+        and some code tried to initialize more than once; and some code tried
+        to initialize in ways that would crash but luckily got pre-empted by
+        other code that had already initialized.
+
+        In addition to general confusion, this setup made it subtly high stakes
+        to call certain functions, like callOnMainThread or
+        RunLoop::main().dispatch(), because they might crash if the right
+        initialization had not been performed.
+
+        Let's fix that.
+
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread): Removed defunct comment about
+        initializeMainThreadToProcessMainThread. Shrank scope of initializeKey.
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::initializeMain): Don't call initializeMainThread anymore
+        because it calls us now. No need for a store fence since we run on the
+        main thread and we don't store anything.
+        (WTF::RunLoop::initializeWeb): Upgrade to RELEASE_ASSERT.
+        * wtf/RunLoop.h: Removed incorrect comment. (Fascinating to wonder when
+        it became incorrect.)
+
 2020-06-25  Sam Weinig  <weinig@apple.com>
 
         Add a new templated string type to help write more idiomatic parsing code

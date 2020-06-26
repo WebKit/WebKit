@@ -54,10 +54,7 @@ private:
 
 void RunLoop::initializeMain()
 {
-    if (s_mainRunLoop)
-        return;
-    initializeMainThread();
-    WTF::storeStoreFence();
+    RELEASE_ASSERT(!s_mainRunLoop);
     s_mainRunLoop = &RunLoop::current();
 }
 
@@ -81,6 +78,7 @@ RunLoop* RunLoop::mainIfExists()
 #if USE(WEB_THREAD)
 void RunLoop::initializeWeb()
 {
+    RELEASE_ASSERT(!s_webRunLoop);
     s_webRunLoop = &RunLoop::current();
 }
 

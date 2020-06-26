@@ -74,7 +74,6 @@ TestsController::TestsController()
     // the ThreadRestrictionVerifier - https://bugs.webkit.org/show_bug.cgi?id=66112
     // We should make sure that all objects tested either initialize threading or inherit from
     // ThreadSafeRefCounted so that we don't have to initialize threading at all here.
-    WTF::initializeThreading();
     WTF::initializeMainThread();
     WTF::setProcessPrivileges(allPrivileges());
     AtomString::init();

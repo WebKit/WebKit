@@ -445,7 +445,7 @@ void TestController::initialize(int argc, const char* argv[])
     AutodrainedPool pool;
 
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
     WTF::setProcessPrivileges(allPrivileges());
 
     platformInitialize();

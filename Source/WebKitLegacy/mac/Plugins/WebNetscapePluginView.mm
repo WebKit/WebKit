@@ -163,7 +163,7 @@ typedef struct {
 + (void)initialize
 {
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
     sendUserChangeNotifications();
 }
 

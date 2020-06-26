@@ -388,7 +388,7 @@ public:
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
     bool attachmentElementEnabled = MacApplication::isAppleMail();
     bool webSQLEnabled = false;
 #else

@@ -1,3 +1,17 @@
+2020-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Initializing the main thread should initialize the main run loop
+        https://bugs.webkit.org/show_bug.cgi?id=213637
+
+        Reviewed by Anders Carlsson.
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (RunWebThread): Removed call to initializeMainThread() because the main
+        thread calls it before starting the web thread, so it's a no-op. (And if
+        it were an op, it would be broken.)
+        (StartWebThread): Merged RunLoop::initializeMain and initializeThreading
+        into initializeMainThread.
+
 2020-06-26  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crash in AXIsolatedObject::relativeFrame.

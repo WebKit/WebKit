@@ -58,8 +58,7 @@ using RunLoopMode = unsigned;
 class RunLoop final : public FunctionDispatcher {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
-    // Must be called from the main thread (except for the Mac platform, where it
-    // can be called from any thread).
+    // Must be called from the main thread.
     WTF_EXPORT_PRIVATE static void initializeMain();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static void initializeWeb();

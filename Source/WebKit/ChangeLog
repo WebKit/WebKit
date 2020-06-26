@@ -1,3 +1,16 @@
+2020-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Initializing the main thread should initialize the main run loop
+        https://bugs.webkit.org/show_bug.cgi?id=213637
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::runInitializationCode):
+        (WebKit::InitializeWebKit2):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Network process is crashing when launching TJMaxx app due to invalid NetworkProcess::DestroySession IPC message

@@ -40,7 +40,7 @@ namespace WebKit {
 void InitializeWebKit2()
 {
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
     AtomString::init();
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();

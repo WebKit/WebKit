@@ -49,13 +49,13 @@ static Deque<Function<void ()>>& functionQueue()
     return functionQueue;
 }
 
-// Share this initializeKey with initializeMainThread and initializeMainThreadToProcessMainThread.
-static std::once_flag initializeKey;
 void initializeMainThread()
 {
+    static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
         initializeThreading();
         initializeMainThreadPlatform();
+        RunLoop::initializeMain();
     });
 }
 

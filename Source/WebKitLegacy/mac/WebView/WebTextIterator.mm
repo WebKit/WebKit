@@ -48,7 +48,7 @@
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
 #endif
 }
 

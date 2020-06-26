@@ -1032,7 +1032,7 @@ static NSControlStateValue kit(TriState state)
     // And some of this work is likely redundant since +[WebHTMLView initialize] is guaranteed to run first.
 
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
 
     if (!oldSetCursorForMouseLocationIMP) {
         Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
@@ -2566,7 +2566,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] returnTypes:[[self class] _insertablePasteboardTypes]];
 
     JSC::initializeThreading();
-    RunLoop::initializeMain();
+    WTF::initializeMainThread();
 }
 
 #endif

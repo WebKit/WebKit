@@ -1,3 +1,15 @@
+2020-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Initializing the main thread should initialize the main run loop
+        https://bugs.webkit.org/show_bug.cgi?id=213637
+
+        Reviewed by Anders Carlsson.
+
+        * JavaScriptCore.order: Removed some defunct stuff.
+        * shell/playstation/TestShell.cpp:
+        (setupTestRun): Merged initializeThreading call with
+        initializeMainThread call because initializeMainThread is a superset.
+
 2020-06-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION(r263035): stress/get-prototype-of.js broken on s390x

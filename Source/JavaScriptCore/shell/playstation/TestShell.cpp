@@ -30,13 +30,11 @@ extern "C" void setupTestRun()
     // Need to initialize WTF threading before we start any threads. Cannot initialize JSC
     // threading yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
-    WTF::initializeThreading();
+    WTF::initializeMainThread();
 
     // Need to override and enable restricted options before we start parsing options below.
     Config::enableRestrictedOptions();
 
-    // Initialize JSC before getting VM.
-    WTF::initializeMainThread();
     JSC::initializeThreading();
 
 #if ENABLE(WEBASSEMBLY)
