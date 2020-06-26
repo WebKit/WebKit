@@ -124,7 +124,6 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
 WebsiteDataStore::~WebsiteDataStore()
 {
     ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(m_sessionID.isValid());
 
     platformDestroy();
 

@@ -1,5 +1,18 @@
 2020-06-25  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r263545.
+
+        Patch will need refining
+
+        Reverted changeset:
+
+        "[iOS] Network process is crashing when launching TJMaxx app
+        due to invalid NetworkProcess::DestroySession IPC message"
+        https://bugs.webkit.org/show_bug.cgi?id=213625
+        https://trac.webkit.org/changeset/263545
+
+2020-06-25  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Network process is crashing when launching TJMaxx app due to invalid NetworkProcess::DestroySession IPC message
         https://bugs.webkit.org/show_bug.cgi?id=213625
         <rdar://problem/64737890>
