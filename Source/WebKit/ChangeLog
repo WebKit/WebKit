@@ -1,3 +1,13 @@
+2020-06-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Upstream date/time picker style
+        https://bugs.webkit.org/show_bug.cgi?id=213630
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker datePickerStyle]):
+
 2020-06-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r263545.

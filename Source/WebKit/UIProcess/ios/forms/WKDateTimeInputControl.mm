@@ -70,11 +70,6 @@ using namespace WebKit;
 - (void)setHour:(NSInteger)hour minute:(NSInteger)minute;
 @end
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKFormInputControlAdditions.mm>
-#endif
-
-
 @implementation WKDateTimeContextMenuViewController
 
 - (CGSize)preferredContentSize
@@ -100,10 +95,12 @@ static NSString * const kMonthFormatString = @"yyyy-MM"; // "2011-01".
 static NSString * const kTimeFormatString = @"HH:mm"; // "13:45".
 static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
-#if !USE(APPLE_INTERNAL_SDK) && HAVE(UIDATEPICKER_STYLE)
+#if HAVE(UIDATEPICKER_STYLE)
 - (UIDatePickerStyle)datePickerStyle
 {
-    return UIDatePickerStyleAutomatic;
+    if ([_view focusedElementInformation].elementType == WebKit::InputType::Month)
+        return UIDatePickerStyleWheels;
+    return UIDatePickerStyleInline;
 }
 #endif
 
