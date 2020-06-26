@@ -1,0 +1,3 @@
+
+PASS Make sure that MediaRecorder timeSlice triggers regular ondataavailable events 
+

@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder start timeSlice option</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="200" height="200">
+</canvas>
+<script>
+    promise_test(async t => {
+        const video = await navigator.mediaDevices.getUserMedia({ audio : true, video : true });
+        const recorder = new MediaRecorder(video);
+
+        assert_equals(recorder.stream, video);
+
+        let promise = new Promise(resolve => recorder.ondataavailable = resolve);
+        recorder.start(100);
+        await promise;
+
+        promise = new Promise(resolve => recorder.ondataavailable = resolve);
+        await promise;
+    }, 'Make sure that MediaRecorder timeSlice triggers regular ondataavailable events');
+</script>
+</body>
+</html>

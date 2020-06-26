@@ -83,6 +83,7 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     : ActiveDOMObject(document)
     , m_options(WTFMove(option))
     , m_stream(WTFMove(stream))
+    , m_timeSliceTimer([this] { requestData(); })
 {
     m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
         return track->privateTrack();
@@ -125,9 +126,8 @@ const char* MediaRecorder::activeDOMObjectName() const
     return "MediaRecorder";
 }
 
-ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeslice)
+ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeSlice)
 {
-    UNUSED_PARAM(timeslice);
     if (!m_isActive)
         return Exception { InvalidStateError, "The MediaRecorder is not active"_s };
 
@@ -152,6 +152,9 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeslice)
         track->addObserver(*this);
 
     m_state = RecordingState::Recording;
+    m_timeSlice = timeSlice;
+    if (m_timeSlice)
+        m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
     return { };
 }
 
@@ -181,12 +184,17 @@ ExceptionOr<void> MediaRecorder::requestData()
     if (state() == RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
+    if (m_timeSliceTimer.isActive())
+        m_timeSliceTimer.stop();
     m_private->fetchData([this, pendingActivity = makePendingActivity(*this)](auto&& buffer, auto& mimeType) {
         queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, buffer = WTFMove(buffer), mimeType]() mutable {
             if (!m_isActive)
                 return;
 
             dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+
+            if (m_timeSlice)
+                m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
         });
     });
     return { };

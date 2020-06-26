@@ -30,6 +30,7 @@
 #include "EventTarget.h"
 #include "MediaStream.h"
 #include "MediaStreamTrackPrivate.h"
+#include "Timer.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -116,6 +117,8 @@ private:
     std::unique_ptr<MediaRecorderPrivate> m_private;
     RecordingState m_state { RecordingState::Inactive };
     Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
+    Optional<int> m_timeSlice;
+    Timer m_timeSliceTimer;
     
     bool m_isActive { true };
 };
