@@ -88,7 +88,7 @@ class MacPort(DarwinPort):
                     if temp_version.minor > 0:
                         temp_version.minor -= 1
                     else:
-                        temp_version = self.LAST_MACOSX
+                        temp_version = Version(self.LAST_MACOSX.major, self.LAST_MACOSX.minor)
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'
