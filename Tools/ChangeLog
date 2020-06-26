@@ -1,3 +1,15 @@
+2020-06-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        generate-jsc-bundle should fail if passed an invalid remote-config-file parameter
+        https://bugs.webkit.org/show_bug.cgi?id=213615
+
+        Reviewed by Žan Doberšek.
+
+        Raise an exception if the parameter passed as remote-config-file is not a file.
+
+        * Scripts/generate-jsc-bundle:
+        (main):
+
 2020-06-26  Takashi Komori  <takashi.komori@sony.com>
 
         Add myself to contributors.json

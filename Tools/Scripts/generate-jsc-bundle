@@ -239,7 +239,9 @@ def main():
 
     bundleFilePath = createJSCBundle(configuration, options.revision, options.buildername, platform)
     print('Bundle file created at: %s' % bundleFilePath)
-    if options.remoteConfigFile is not None and os.path.isfile(options.remoteConfigFile):
+    if options.remoteConfigFile is not None:
+        if not os.path.isfile(options.remoteConfigFile):
+            raise ValueError("Can't find remote config file for upload at path %s" % options.remoteConfigFile)
         return uploadJSCBundle(bundleFilePath, options.remoteConfigFile, options.configuration, options.revision)
     return 0
 
