@@ -84,7 +84,7 @@ private:
     AXCoreObject* associatedAXObject() const
     {
         ASSERT(isMainThread());
-        return axObjectCache()->objectFromAXID(objectID());
+        return m_id != InvalidAXID ? axObjectCache()->objectFromAXID(m_id) : nullptr;
     }
 
     enum class AXPropertyName : uint16_t {

@@ -1,5 +1,21 @@
 2020-06-26  Andres Gonzalez  <andresg_22@apple.com>
 
+        Fix for crash in AXIsolatedObject::relativeFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=213363
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing testss.
+
+        Between the time an isolated object dispatches the method to the main
+        thread and the time the lambda is executed, the isolated object is
+        detached and hence its object ID becomes invalid. Thus, trying to get
+        the associated AX object results in an assert/crash.
+
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
+2020-06-26  Andres Gonzalez  <andresg_22@apple.com>
+
         Access to AXIsolatedTree:m_readerThreadNodeMap should happen only on the secondary AX thread.
         https://bugs.webkit.org/show_bug.cgi?id=213575
 
