@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+center {
+    width: 100px;
+    background-color: blue;
+}
+
+div {
+    width: 50px;
+    height: 50px;
+    background-color: green;
+}
+</style>
+<center><div></div></center>
+<center><div style="margin-left: 50px;"></div></center>
+<center><div style="margin-right: 50px;"></div></center>
+<center><div style="display: table;"></div></center>

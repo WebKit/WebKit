@@ -140,6 +140,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
         //    edges of the containing block.
 
         auto containingBlockWidth = horizontalConstraints.logicalWidth;
+        auto& containingBlockStyle = layoutBox.containingBlock().style();
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
@@ -159,7 +160,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
 
         // #2
         if (width && computedHorizontalMargin.start && computedHorizontalMargin.end) {
-            if (layoutBox.containingBlock().style().isLeftToRightDirection()) {
+            if (containingBlockStyle.isLeftToRightDirection()) {
                 usedHorizontalMargin.start = *computedHorizontalMargin.start;
                 usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight);
             } else {
@@ -192,6 +193,15 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
             usedHorizontalMargin = { horizontalSpaceForMargin / 2, horizontalSpaceForMargin / 2 };
         }
 
+        auto shouldApplyCenterAlignForBlockContent = containingBlockStyle.textAlign() == TextAlignMode::WebKitCenter && (computedHorizontalMargin.start || computedHorizontalMargin.end);
+        if (shouldApplyCenterAlignForBlockContent) {
+            auto borderBoxWidth = (borderLeft + paddingLeft  + *width + paddingRight + borderRight);
+            auto marginStart = computedHorizontalMargin.start.valueOr(0);
+            auto marginEnd = computedHorizontalMargin.end.valueOr(0);
+            auto centeredLogicalLeftForMarginBox = std::max((containingBlockWidth - borderBoxWidth - marginStart - marginEnd) / 2, 0_lu);
+            usedHorizontalMargin.start = centeredLogicalLeftForMarginBox + marginStart;
+            usedHorizontalMargin.end = containingBlockWidth - borderBoxWidth - marginStart + marginEnd;
+        }
         ASSERT(width);
 
         return ContentWidthAndMargin { *width, usedHorizontalMargin, computedHorizontalMargin };
