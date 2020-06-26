@@ -117,17 +117,22 @@ void HTTPCookieStore::cookiesForURL(WTF::URL&& url, CompletionHandler<void(Vecto
 void HTTPCookieStore::setCookies(const Vector<WebCore::Cookie>& cookies, CompletionHandler<void()>&& completionHandler)
 {
     filterAppBoundCookies(cookies, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (auto&& appBoundCookies) mutable {
+        bool needsFlush = false;
         auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
         if (!pool) {
             for (auto& cookie : appBoundCookies) {
                 // FIXME: pendingCookies used for defaultSession because session cookies cannot be propagated to Network Process with uiProcessCookieStorageIdentifier.
-                if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID() && !cookie.session)
+                if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID() && !cookie.session) {
+                    needsFlush = true;
                     setCookieInDefaultUIProcessCookieStore(cookie);
-                else
+                } else
                     m_owningDataStore->addPendingCookie(cookie);
             }
 
-            RunLoop::main().dispatch(WTFMove(completionHandler));
+            if (needsFlush)
+                flushDefaultUIProcessCookieStore(WTFMove(completionHandler));
+            else
+                RunLoop::main().dispatch(WTFMove(completionHandler));
             return;
         }
 
@@ -294,7 +299,7 @@ void HTTPCookieStore::registerForNewProcessPoolNotifications()
 
         // Now that an associated process pool exists, we need to flush the UI process cookie store
         // to make sure any changes are reflected within the new process pool.
-        flushDefaultUIProcessCookieStore();
+        flushDefaultUIProcessCookieStore([] { });
         newProcessPool.ensureNetworkProcess();
 
         if (m_cookieManagerProxyObserver) {
@@ -314,7 +319,7 @@ void HTTPCookieStore::unregisterForNewProcessPoolNotifications()
 }
 
 #if !PLATFORM(COCOA)
-void HTTPCookieStore::flushDefaultUIProcessCookieStore() { }
+void HTTPCookieStore::flushDefaultUIProcessCookieStore(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 Vector<WebCore::Cookie> HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies() { return { }; }
 void HTTPCookieStore::setCookieInDefaultUIProcessCookieStore(const WebCore::Cookie&) { }
 void HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore(const WebCore::Cookie&) { }

@@ -30,12 +30,23 @@
 #import <WebCore/CookieStorageObserver.h>
 #import <WebCore/HTTPCookieAcceptPolicy.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/RunLoop.h>
 
 namespace API {
 
-void HTTPCookieStore::flushDefaultUIProcessCookieStore()
+void HTTPCookieStore::flushDefaultUIProcessCookieStore(CompletionHandler<void()>&& completionHandler)
 {
+#if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
+    ASSERT(RunLoop::isMain());
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
+        // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    }).get()];
+#else
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
+    RunLoop::main().dispatch(WTFMove(completionHandler));
+#endif
 }
 
 Vector<WebCore::Cookie> HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies()

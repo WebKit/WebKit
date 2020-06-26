@@ -1,3 +1,22 @@
+2020-06-25  Alex Christensen  <achristensen@webkit.org>
+
+        WKHTTPCookieStore.setCookie should flush the cookies to disk before calling completion handler when we are using the UIProcess's default cookie storage
+        https://bugs.webkit.org/show_bug.cgi?id=213636
+
+        Reviewed by Brady Eidson.
+
+        This fixes a race condition that many, many third party developers run into, causing them to not be logged in when they thought they did.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::saveCookies):
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::setCookies):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications):
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+
 2020-06-25  Megan Gardner  <megan_gardner@apple.com>
 
         Upstream date/time picker style
