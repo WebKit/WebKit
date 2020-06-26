@@ -58,16 +58,14 @@ private:
     void videoSampleAvailable(WebCore::MediaSample&) final;
     void fetchData(CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& mimeType)>&&) final;
     void stopRecording() final;
-    void startRecording(ErrorCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
 
     // SharedRingBufferStorage::Client
     void storageChanged(SharedMemory*);
 
     MediaRecorderIdentifier m_identifier;
-    Ref<MediaStreamPrivate> m_stream;
-    Ref<IPC::Connection> m_connection;
 
+    Ref<IPC::Connection> m_connection;
     String m_recordedAudioTrackID;
     String m_recordedVideoTrackID;
 

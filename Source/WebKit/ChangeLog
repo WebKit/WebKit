@@ -1,3 +1,24 @@
+2020-06-26  Jason Lawrence  <lawrence.j@apple.com>
+
+        Unreviewed, reverting r263511, r263514, and r263565.
+
+        r263511 caused MediaRecorder test crashes on internal testers.
+
+        Reverted changesets:
+
+        "MediaRecorder stopRecorder() returns empty Blob after first
+        use"
+        https://bugs.webkit.org/show_bug.cgi?id=212274
+        https://trac.webkit.org/changeset/263511
+
+        "Unreviewed iOS build fix after r263511."
+        https://trac.webkit.org/changeset/263514
+
+        "MediaRecorder.start() Method is Ignoring the "timeslice"
+        Parameter"
+        https://bugs.webkit.org/show_bug.cgi?id=202233
+        https://trac.webkit.org/changeset/263565
+
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Initializing the main thread should initialize the main run loop
