@@ -335,31 +335,27 @@ TEST(TextManipulation, StartTextManipulationFindNewlyDisplayedParagraph)
 
     done = false;
     delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
-        if (items.count == 3)
-            done = true;
+        done = true;
     };
     [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('span.hidden').forEach((span) => span.classList.remove('hidden'));"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_EQ(items.count, 3UL);
-    EXPECT_EQ(items[1].tokens.count, 1UL);
-    EXPECT_EQ(items[2].tokens.count, 1UL);
-    RetainPtr<NSSet> tokens = adoptNS([[NSSet alloc] initWithObjects:items[1].tokens[0].content, items[2].tokens[0].content, nil]);
-    EXPECT_TRUE([tokens.get() containsObject:@"Web"]);
-    EXPECT_TRUE([tokens.get() containsObject:@"Kit"]);
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[1].tokens.count, 2UL);
+    EXPECT_STREQ("Web", items[1].tokens[0].content.UTF8String);
+    EXPECT_STREQ("Kit", items[1].tokens[1].content.UTF8String);
 
     // This has to happen separately in order to have a deterministic ordering.
     done = false;
     delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
-        if (items.count == 4)
-            done = true;
+        done = true;
     };
     [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('div.hidden').forEach((div) => div.classList.remove('hidden'));"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_EQ(items.count, 4UL);
-    EXPECT_EQ(items[3].tokens.count, 1UL);
-    EXPECT_STREQ("hey", items[3].tokens[0].content.UTF8String);
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_STREQ("hey", items[2].tokens[0].content.UTF8String);
 }
 
 TEST(TextManipulation, StartTextManipulationFindSameParagraphWithNewContent)
@@ -2633,7 +2629,7 @@ TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAft
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView _setTextManipulationDelegate:delegate.get()];
 
-    [webView synchronouslyLoadHTMLString:@"<p>foo</p>"];
+    [webView synchronouslyLoadHTMLString:@"<p>foo<br>bar</p>"];
 
     done = false;
     [webView _startTextManipulationsWithConfiguration:nil completion:^{
@@ -2642,21 +2638,23 @@ TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAft
     TestWebKitAPI::Util::run(&done);
 
     auto items = [delegate items];
-    auto item = items[0];
-    EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(item.tokens.count, 1UL);
-    EXPECT_WK_STREQ("foo", item.tokens[0].content);
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("foo", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("bar", items[1].tokens[0].content);
 
     done = false;
     [webView _completeTextManipulationForItems:@[
-        createItem(item.identifier, {{ item.tokens[0].identifier, @"bar" }}).get()
+        createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"FOO" }}).get(),
+        createItem(items[1].identifier, {{ items[1].tokens[0].identifier, @"BAR" }}).get()
     ] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors, nil);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_WK_STREQ("<p>bar</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("<p>FOO<br>BAR</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 
     __block bool itemCallbackFired = false;
     [delegate setItemCallback:^(_WKTextManipulationItem *) {
@@ -2664,12 +2662,20 @@ TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAft
     }];
 
     [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = 'none'"];
-    [webView waitForNextPresentationUpdate];
-
     [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = ''"];
-    [webView waitForNextPresentationUpdate];
+    [webView stringByEvaluatingJavaScript:@"var element = document.createElement('span');"
+        "element.innerHTML='end';"
+        "document.querySelector('p').after(element)"];
 
-    EXPECT_FALSE(itemCallbackFired);
+    done = false;
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        done = true;
+    };
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("end", items[2].tokens[0].content);
 }
 
 TEST(TextManipulation, TextManipulationTokenDebugDescription)

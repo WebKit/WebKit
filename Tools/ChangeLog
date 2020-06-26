@@ -1,3 +1,13 @@
+2020-06-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation should observe adjacent elements with new renderer together
+        https://bugs.webkit.org/show_bug.cgi?id=213333
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-26  Jonathan Bedard  <jbedard@apple.com>
 
         [Big Sur] Handle baseline search path

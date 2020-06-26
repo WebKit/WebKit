@@ -1,3 +1,40 @@
+2020-06-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation should observe adjacent elements with new renderer together
+        https://bugs.webkit.org/show_bug.cgi?id=213333
+
+        Reviewed by Geoffrey Garen.
+
+        TextManipulationController only keeps track of manipulated Elements. For other types of Node, like Text, 
+        TextManipulationController does not mark them as manipulated and may manipulate it again. r263132 tried to solve
+        the problem by marking Element with only manipulated children as manipulated, but it did not iterate all 
+        children of Element. So, if one Element has children in different paragraphs, it may fail to mark the Element 
+        manipulated. See updated test.
+        To fix this issue completely, TextManipulationController now tracks all manipulated Nodes, so it can skip the 
+        manipulated Nodes during observation.
+
+        For elements with new renderer, TextManipulationController observes them one by one. However, adjacent elements
+        can be in the same paragraph, if there is no delimiter in their text, and should be observed together. To solve 
+        this problem, TextManipulationController now starts observing from the common ancestor of these elements. If a
+        Node in range is manipulated, split the paragrph there. This makes sure content in paragraph is not manipulated.
+        Relevant test is updated for this new behavior.
+
+        Tests: TextManipulation.StartTextManipulationFindNewlyDisplayedParagraph
+               TextManipulation.CompleteTextManipulationAvoidExtractingManipulatedTextAfterManipulation
+
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::TextManipulationController::didCreateRendererForElement):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        (WebCore::TextManipulationController::updateInsertions):
+        (WebCore::TextManipulationController::replace):
+        (WebCore::TextManipulationController::removeNode):
+        (WebCore::makePositionTuple): Deleted.
+        (WebCore::makeHashablePositionRange): Deleted.
+        * editing/TextManipulationController.h:
+
 2020-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up some PaintBehavior-related code in RenderLayer
