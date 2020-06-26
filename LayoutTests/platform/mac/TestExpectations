@@ -277,9 +277,9 @@ webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 # Spelling tests that are flakey.
 webkit.org/b/82555 editing/spelling/spellcheck-async-mutation.html [ Pass Failure ]
 
-webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Failure ]
-webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Failure ]
-webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Failure ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Pass ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Pass ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Pass ]
 webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 
