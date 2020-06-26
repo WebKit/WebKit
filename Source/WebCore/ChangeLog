@@ -1,3 +1,31 @@
+2020-06-26  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crash in accessibility/roles-exposed.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=213648
+
+        Reviewed by Chris Fleizach.
+
+        LayoutTest: accessibility/roles-exposed.html.
+
+        - In layout tests, when AXObjectCache::notificationPostTimerFired is
+        triggered, and we try to update the isolated tree, some of the
+        underlying objects may already be gone. So this change ensure we don't
+        try to update an isolated object that corresponds to an already detached
+        live object.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::cacheAndInitializeWrapper): Sanity check.
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren): m_renderer can be null
+        when trying to update the isolated tree.
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::computeAccessibilityIsIgnored const):
+        Parent object may be gone when trying to update the isolated tree.
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateChildrenIDs):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::updateChildren):
+
 2020-06-26  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder.start() Method is Ignoring the "timeslice" Parameter

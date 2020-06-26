@@ -587,12 +587,15 @@ void AXObjectCache::cacheAndInitializeWrapper(AccessibilityObject* newObject, DO
 {
     ASSERT(newObject);
     AXID axID = getAXID(newObject);
+    ASSERT(axID != InvalidAXID);
+
     WTF::switchOn(domObject,
         [&axID, this] (RenderObject* typedValue) { m_renderObjectMapping.set(typedValue, axID); },
         [&axID, this] (Node* typedValue) { m_nodeObjectMapping.set(typedValue, axID); },
         [&axID, this] (Widget* typedValue) { m_widgetObjectMapping.set(typedValue, axID); },
         [] (auto&) { }
     );
+
     m_objects.set(axID, newObject);
     newObject->init();
     attachWrapper(newObject);

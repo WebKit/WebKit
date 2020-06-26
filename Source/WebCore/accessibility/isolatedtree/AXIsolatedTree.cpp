@@ -166,8 +166,10 @@ void AXIsolatedTree::updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs)
     ASSERT(isMainThread());
     ASSERT(m_changeLogLock.isLocked());
 
-    m_nodeMap.set(axID, childrenIDs);
-    m_pendingChildrenUpdates.append(std::make_pair(axID, WTFMove(childrenIDs)));
+    if (axID != InvalidAXID) {
+        m_nodeMap.set(axID, childrenIDs);
+        m_pendingChildrenUpdates.append(std::make_pair(axID, WTFMove(childrenIDs)));
+    }
 }
 
 void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axParent, bool attachWrapper)
@@ -182,7 +184,7 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axPar
 
     if (!axParent)
         setRootNode(object.ptr());
-    else
+    else if (axParent->objectID() != InvalidAXID) // Need to check for the objectID of axParent again because it may have been detached while traversing the tree.
         updateChildrenIDs(axParent->objectID(), axParent->childrenIDs());
 }
 
@@ -278,7 +280,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
         return false;
     });
     ASSERT(axAncestor && iterator != m_nodeMap.end());
-    if (!axAncestor || iterator == m_nodeMap.end())
+    if (!axAncestor || axAncestor->objectID() == InvalidAXID || iterator == m_nodeMap.end())
         return; // nothing to update.
 
     // iterator is pointing to the m_nodeMap entry corresponding to axAncestor->objectID().
@@ -288,11 +290,12 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     const auto& axChildren = axAncestor->children();
     auto axChildrenIDs = axAncestor->childrenIDs();
 
-    for (size_t i = 0; i < axChildrenIDs.size(); ++i) {
+    for (size_t i = 0; i < axChildren.size() && i < axChildrenIDs.size(); ++i) {
         size_t index = removals.find(axChildrenIDs[i]);
         if (index != notFound)
             removals.remove(index);
         else {
+            ASSERT(axChildren[i]->objectID() == axChildrenIDs[i]);
             // This is a new child, add it to the tree.
             AXLOG("Adding a new child for:");
             AXLOG(axChildren[i]);

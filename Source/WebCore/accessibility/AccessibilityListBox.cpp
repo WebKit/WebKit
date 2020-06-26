@@ -64,12 +64,15 @@ bool AccessibilityListBox::canSetSelectedChildrenAttribute() const
 
 void AccessibilityListBox::addChildren()
 {
+    if (!m_renderer)
+        return;
+
     Node* selectNode = m_renderer->node();
     if (!selectNode)
         return;
-    
+
     m_haveChildren = true;
-    
+
     for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems()) {
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
