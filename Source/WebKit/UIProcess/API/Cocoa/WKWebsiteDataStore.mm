@@ -30,6 +30,7 @@
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ShouldGrandfatherStatistics.h"
+#import "VersionChecks.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLAuthenticationChallenge.h"
@@ -113,6 +114,20 @@ private:
 + (WKWebsiteDataStore *)nonPersistentDataStore
 {
     return wrapper(WebKit::WebsiteDataStore::createNonPersistent());
+}
+
+- (instancetype)init
+{
+    if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil))
+        [NSException raise:NSGenericException format:@"Calling [WKWebsiteDataStore init] is not supported."];
+    
+    if (!(self = [super init]))
+        return nil;
+
+    RELEASE_LOG_ERROR(Storage, "Application is calling [WKWebsiteDataStore init], which is not supported");
+    API::Object::constructInWrapper<WebKit::WebsiteDataStore>(self, WebKit::WebsiteDataStoreConfiguration::create(WebKit::IsPersistent::No), PAL::SessionID::generateEphemeralSessionID());
+
+    return self;
 }
 
 - (void)dealloc

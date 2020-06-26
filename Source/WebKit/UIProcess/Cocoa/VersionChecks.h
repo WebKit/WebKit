@@ -94,6 +94,7 @@ enum class SDKVersion : uint32_t {
     FirstWithSessionCleanupByDefault = DYLD_IOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT,
     FirstThatSendsNativeMouseEvents = DYLD_IOS_VERSION_13_4,
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_IOS_VERSION_14_0,
+    FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_IOS_VERSION_14_0,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
@@ -107,6 +108,7 @@ enum class SDKVersion : uint32_t {
     FirstThatRestrictsBaseURLSchemes = DYLD_MACOSX_VERSION_10_15_4,
     FirstWithSessionCleanupByDefault = DYLD_MACOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT,
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_MACOSX_VERSION_10_16,
+    FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_MACOSX_VERSION_10_16,
 #endif
 };
 
