@@ -1010,8 +1010,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                     cookieHostNames.append(hostName);
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
                     HSTSCacheHostNames.append(hostName);
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
                 for (auto& registrableDomain : dataRecord.resourceLoadStatisticsRegistrableDomains)
                     registrableDomains.append(registrableDomain);
+#endif
             }
 
             callbackAggregator->addPendingCallback();

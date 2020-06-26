@@ -70,6 +70,7 @@ WKWebsiteDataStoreRef WKWebsiteDataStoreCreateWithConfiguration(WKWebsiteDataSto
 
 void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreRemoveITPDataForDomainFunction callback)
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebKit::WebsiteDataRecord dataRecord;
     dataRecord.types.add(WebKit::WebsiteDataType::ResourceLoadStatistics);
     dataRecord.addResourceLoadStatisticsRegistrableDomain(WebCore::RegistrableDomain::uncheckedCreateFromHost(WebKit::toImpl(host)->string()));
@@ -79,6 +80,9 @@ void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef
     WebKit::toImpl(dataStoreRef)->removeData(dataTypes, dataRecords, [context, callback] {
         callback(context);
     });
+#else
+    callback(context);
+#endif
 }
 
 void WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase(WKWebsiteDataStoreRef dataStoreRef, int domainID, void* context, WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabaseFunction callback)

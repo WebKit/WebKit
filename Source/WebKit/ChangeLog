@@ -1,3 +1,15 @@
+2020-06-26  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Cannot build without resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=213534
+
+        Reviewed by Don Olmstead.
+
+        Build fix for !ENABLE(RESOURCE_LOAD_STATISTICS)
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
 2020-06-25  Alex Christensen  <achristensen@webkit.org>
 
         WKHTTPCookieStore.setCookie should flush the cookies to disk before calling completion handler when we are using the UIProcess's default cookie storage
