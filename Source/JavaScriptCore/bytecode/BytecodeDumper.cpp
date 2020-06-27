@@ -28,6 +28,7 @@
 #include "BytecodeDumper.h"
 
 #include "BytecodeGenerator.h"
+#include "BytecodeGraph.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "JSCJSValueInlines.h"
@@ -211,8 +212,8 @@ void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
     }
 }
 
-template<class Block>
-void CodeBlockBytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& instructions, PrintStream& out, const ICStatusMap& statusMap)
+template <typename Block>
+static void dumpHeader(Block* block, const InstructionStream& instructions, PrintStream& out)
 {
     size_t instructionCount = 0;
     size_t wide16InstructionCount = 0;
@@ -241,16 +242,62 @@ void CodeBlockBytecodeDumper<Block>::dumpBlock(Block* block, const InstructionSt
         block->numParameters(), block->numCalleeLocals(), block->numVars());
     out.print("; scope at ", block->scopeRegister());
     out.printf("\n");
+}
 
-    CodeBlockBytecodeDumper<Block> dumper(block, out);
-    for (const auto& it : instructions)
-        dumper.dumpBytecode(it, statusMap);
-
+template <typename Dumper>
+static void dumpFooter(Dumper& dumper)
+{
     dumper.dumpIdentifiers();
     dumper.dumpConstants();
     dumper.dumpExceptionHandlers();
     dumper.dumpSwitchJumpTables();
     dumper.dumpStringSwitchJumpTables();
+}
+
+template<class Block>
+void CodeBlockBytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& instructions, PrintStream& out, const ICStatusMap& statusMap)
+{
+    dumpHeader(block, instructions, out);
+
+    CodeBlockBytecodeDumper<Block> dumper(block, out);
+    for (const auto& it : instructions)
+        dumper.dumpBytecode(it, statusMap);
+
+    dumpFooter(dumper);
+
+    out.printf("\n");
+}
+
+template<class Block>
+void CodeBlockBytecodeDumper<Block>::dumpGraph(Block* block, const InstructionStream& instructions, BytecodeGraph& graph, PrintStream& out, const ICStatusMap& icStatusMap)
+{
+    dumpHeader(block, instructions, out);
+
+    CodeBlockBytecodeDumper<Block> dumper(block, out);
+
+    out.printf("\n");
+
+    for (BytecodeBasicBlock& block : graph) {
+        if (block.isEntryBlock() || block.isExitBlock())
+            continue;
+
+        out.print("bb#", block.index(), "\n");
+
+        for (unsigned i = 0; i < block.totalLength(); ) {
+            auto& currentInstruction = instructions.at(i + block.leaderOffset());
+            dumper.dumpBytecode(currentInstruction, icStatusMap);
+            i += currentInstruction.ptr()->size();
+        }
+
+        out.print("Successors: [");
+        for (unsigned successor : block.successors()) {
+            if (!graph[successor].isExitBlock())
+                out.print(" #", successor);
+        }
+        out.print(" ]\n\n");
+    }
+
+    dumpFooter(dumper);
 
     out.printf("\n");
 }

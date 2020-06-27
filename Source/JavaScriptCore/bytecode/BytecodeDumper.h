@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+class BytecodeGraph;
+
 struct Instruction;
 
 class BytecodeDumperBase {
@@ -104,6 +106,13 @@ template<class Block>
 class CodeBlockBytecodeDumper final : public BytecodeDumper<Block> {
 public:
     static void dumpBlock(Block*, const InstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
+    static void dumpGraph(Block*, const InstructionStream&, BytecodeGraph&, PrintStream& out = WTF::dataFile(), const ICStatusMap& = ICStatusMap());
+
+    void dumpIdentifiers();
+    void dumpConstants();
+    void dumpExceptionHandlers();
+    void dumpSwitchJumpTables();
+    void dumpStringSwitchJumpTables();
 
 private:
     using BytecodeDumper<Block>::BytecodeDumper;
@@ -111,12 +120,6 @@ private:
     ALWAYS_INLINE VM& vm() const;
 
     const Identifier& identifier(int index) const;
-
-    void dumpIdentifiers();
-    void dumpConstants();
-    void dumpExceptionHandlers();
-    void dumpSwitchJumpTables();
-    void dumpStringSwitchJumpTables();
 };
 
 #if ENABLE(WEBASSEMBLY)

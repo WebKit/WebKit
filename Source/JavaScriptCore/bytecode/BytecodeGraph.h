@@ -27,6 +27,7 @@
 #pragma once
 
 #include "BytecodeBasicBlock.h"
+#include "BytecodeDumper.h"
 #include <wtf/IndexedContainerIterator.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
@@ -98,6 +99,13 @@ public:
     iterator end() { return iterator(*this, size()); }
     BytecodeBasicBlock& first() { return at(0); }
     BytecodeBasicBlock& last() { return at(size() - 1); }
+
+
+    template <typename CodeBlockType>
+    void dump(CodeBlockType* codeBlock, const InstructionStream& instructions, Optional<Vector<Operands<SpeculatedType>>> speculationAtHead, PrintStream& printer = WTF::dataFile())
+    {
+        CodeBlockBytecodeDumper<CodeBlockType>::dumpGraph(codeBlock, instructions, *this, speculationAtHead, printer);
+    }
 
 private:
     BasicBlocksVector m_basicBlocks;

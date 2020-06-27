@@ -1,3 +1,54 @@
+2020-06-27  Saam Barati  <sbarati@apple.com>
+
+        Change bytecode dumping to dump the bytecode control flow graph
+        https://bugs.webkit.org/show_bug.cgi?id=213669
+
+        Reviewed by Yusuke Suzuki.
+
+        This makes the bytecode control flow graphs much easier to understand, and
+        puts bytecode dumping in more in line with how we dump other IRs.
+        
+        The new dumps look like this:
+        ```
+        foo#Ahf63N:[0x1035bc120->0x1035e5100, NoneFunctionCall, 36]: 13 instructions (0 16-bit instructions, 0 32-bit instructions, 1 instructions with metadata); 156 bytes (120 metadata bytes); 2 parameter(s); 8 callee register(s); 6 variable(s); scope at loc4
+        
+        bb#1
+        [   0] enter              
+        [   1] get_scope          loc4
+        [   3] mov                loc5, loc4
+        [   6] check_traps        
+        [   7] mov                loc6, <JSValue()>(const0)
+        [  10] mov                loc6, Undefined(const1)
+        [  13] mod                loc7, arg1, Int32: 2(const2)
+        [  17] jfalse             loc7, 8(->25)
+        Successors: [ #3 #2 ]
+        
+        bb#2
+        [  20] mov                loc6, Int32: 42(const3)
+        [  23] jmp                5(->28)
+        Successors: [ #4 ]
+        
+        bb#3
+        [  25] mov                loc6, Int32: 77(const4)
+        Successors: [ #4 ]
+        
+        bb#4
+        [  28] add                loc7, arg1, loc6, OperandTypes(126, 126)
+        [  34] ret                loc7
+        Successors: [ ]
+        ```
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::dumpHeader):
+        (JSC::dumpFooter):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpBlock):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpGraph):
+        * bytecode/BytecodeDumper.h:
+        * bytecode/BytecodeGraph.h:
+        (JSC::BytecodeGraph::dump):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+
 2020-06-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Update test runner for changes to Options and signing
