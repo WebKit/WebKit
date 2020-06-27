@@ -1,3 +1,12 @@
+2020-06-27  Daniel Bates  <dabates@apple.com>
+
+        Revert r262654 because it caused <rdar://problem/64664156>.
+        Moreover it is no longer necessary as the embedding client
+        changes selection through a different SPI after focusing.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-27  Keith Miller  <keith_miller@apple.com>
 
         compare-results should be able to parse multiple JSONs at once by merging them

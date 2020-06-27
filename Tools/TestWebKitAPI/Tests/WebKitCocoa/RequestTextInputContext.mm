@@ -382,7 +382,7 @@ TEST(RequestTextInputContext, FocusAfterNavigation)
     EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
 }
 
-TEST(RequestTextInputContext, CaretShouldMoveInAlreadyFocusedField)
+TEST(RequestTextInputContext, CaretShouldNotMoveInAlreadyFocusedField)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -395,7 +395,7 @@ TEST(RequestTextInputContext, CaretShouldMoveInAlreadyFocusedField)
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
 
-    // Place the caret the end of the field.
+    // Place the caret the end of the field; should succeed becausse field is not already focused.
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
     CGRect boundingRect = [inputElement boundingRect];
     CGPoint endPosition = CGPointMake(boundingRect.origin.x + boundingRect.size.width, boundingRect.origin.y + boundingRect.size.height / 2);
@@ -404,14 +404,14 @@ TEST(RequestTextInputContext, CaretShouldMoveInAlreadyFocusedField)
     EXPECT_EQ(static_cast<int>(exampleTextLength), [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
     EXPECT_EQ(static_cast<int>(exampleTextLength), [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
 
-    // Try to place the caret at the start of the field.
+    // Try to place the caret at the start of the field; should fail since field is already focused.
     EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:boundingRect.origin]);
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
+    EXPECT_EQ(static_cast<int>(exampleTextLength), [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
+    EXPECT_EQ(static_cast<int>(exampleTextLength), [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
 }
 
-TEST(RequestTextInputContext, CaretShouldMoveInAlreadyFocusedField2)
+TEST(RequestTextInputContext, CaretShouldNotMoveInAlreadyFocusedField2)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -428,14 +428,14 @@ TEST(RequestTextInputContext, CaretShouldMoveInAlreadyFocusedField2)
     EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
     EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
 
-    // Use -focusTextInputContext: to place the caret at the beginning of the field.
+    // Use -focusTextInputContext: to place the caret at the beginning of the field; no change because the field is already focused.
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
     EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
 }
 
 TEST(RequestTextInputContext, PlaceCaretInNonAssistedFocusedField)
@@ -846,7 +846,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldScroll
     EXPECT_TRUE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldScrollToReveal)
+TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldNotScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -868,14 +868,14 @@ TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldScrol
     auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
     [webView scrollView].delegate = scrollDelegate.get();
 
-    // Focus the field using -focusTextInputContext; scroll view should scroll to reveal new caret position in the focused element.
+    // Focus the field using -focusTextInputContext; scroll view should not scroll to reveal focused element.
     {
         TextInteractionForScope scope { webView, inputElement };
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
     }
 
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_TRUE(didScroll);
+    EXPECT_FALSE(didScroll);
 }
 
 TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementScrollsToReveal)

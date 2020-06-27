@@ -1,3 +1,15 @@
+2020-06-27  Daniel Bates  <dabates@apple.com>
+
+        Revert r262654 because it caused <rdar://problem/64664156>.
+        Moreover it is no longer necessary as the embedding client
+        changes selection through a different SPI after focusing.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]):
+
 2020-06-26  David Kilzer  <ddkilzer@apple.com>
 
         Crash at WebKit: __62-[WKContentView(WKInteraction) resignFirstResponderForWebView]_block_invoke
