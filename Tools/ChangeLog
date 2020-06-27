@@ -1,3 +1,42 @@
+2020-06-27  Keith Miller  <keith_miller@apple.com>
+
+        compare-results should be able to parse multiple JSONs at once by merging them
+        https://bugs.webkit.org/show_bug.cgi?id=213685
+
+        Reviewed by Saam Barati.
+
+        This patch improves the compare-results script to enable it to
+        merge JSON output files. This is handy when running scripts by
+        hand where you'll get many a and b JSONs.  To do the merging this
+        patch moves the logic of merge-result-jsons into a shared library.
+
+        compare-results can take multiple files sequentally or by passing
+        the '-a'/'-b' flags multiple times. e.g. `/compare-results -a
+        OG-1.json -a OG-2.json -a OG-3.json -a OG-4.json -b MC-1.json
+        MC-2.json MC-3.json MC-4.json` will behave as you'd expect;
+        combining all the OG JSONs and the MC JSONs before computing the
+        result.
+
+        Lastly, the benchmark_results script now can handle duplicates of
+        an aggregator in the aggregator list. This is useful because
+        otherwise the logic of merging JSONs is significantly more
+        complicated.
+
+        * Scripts/compare-results:
+        (getOptions):
+        (main):
+        * Scripts/merge-result-jsons:
+        (readJSONFile):
+        (deepAppend): Deleted.
+        (mergeJSONs): Deleted.
+        * Scripts/webkitpy/benchmark_runner/benchmark_json_merge.py: Copied from Tools/Scripts/merge-result-jsons.
+        (deepAppend):
+        (mergeJSONs):
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults._aggregate_results_for_test):
+        (BenchmarkResults._lint_subtest_results):
+        * Scripts/webkitpy/benchmark_runner/benchmark_results_unittest.py:
+
 2020-06-27  Jer Noble  <jer.noble@apple.com>
 
         iOS Safari incorrectly reports "AppleCoreMedia" as UA string

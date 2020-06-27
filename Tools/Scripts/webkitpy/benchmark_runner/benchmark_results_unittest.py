@@ -283,6 +283,9 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
 
         self.assertTrue(BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': {'current': [1, 2]}}}}))
 
+        self.assertTrue(BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['Total', 'Total']}, 'tests': {
+            'SubTest1': {'metrics': {'Time': {'current': []}}}}}}))
+
         with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" was not an aggregator list or a dictionary of configurations: 1'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': 1}}})
 
@@ -297,10 +300,6 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
 
         with self.assertRaisesRegexp(TypeError, r'"OtherTest" requires aggregation but it has no subtests'):
             BenchmarkResults._lint_results({'OtherTest': {'metrics': {'Time': ['Total']}}})
-
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" had invalid aggregator list: \["Total", "Total"\]'):
-            BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['Total', 'Total']}, 'tests': {
-                'SubTest1': {'metrics': {'Time': {'current': []}}}}}})
 
         with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" uses unknown aggregator: KittenMean'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['KittenMean']}, 'tests': {

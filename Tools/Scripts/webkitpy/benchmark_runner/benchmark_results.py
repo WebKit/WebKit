@@ -153,7 +153,8 @@ class BenchmarkResults(object):
                     results[metric_name][None][config_name] = cls._flatten_list(values)
                 continue
 
-            aggregator_list = metric
+            # Filter duplicate aggregators that could have arisen from merging JSONs.
+            aggregator_list = list(set(metric))
             results[metric_name] = {}
             for aggregator in aggregator_list:
                 values_by_config_iteration = cls._subtest_values_by_config_iteration(subtest_results, metric_name, aggregator)
@@ -216,8 +217,9 @@ class BenchmarkResults(object):
                     raise TypeError('The metrics in "%s" is not a dictionary' % test_name)
                 for metric_name, metric in iteritems(metrics):
                     if isinstance(metric, list):
-                        cls._lint_aggregator_list(test_name, metric_name, metric, parent_test, parent_aggregator_list)
-                        aggregator_list = metric
+                        # Filter duplicate aggregators that could have arisen from merging JSONs.
+                        aggregator_list = list(set(metric))
+                        cls._lint_aggregator_list(test_name, metric_name, aggregator_list, parent_test, parent_aggregator_list)
                     elif isinstance(metric, dict):
                         cls._lint_configuration(test_name, metric_name, metric, parent_test, parent_aggregator_list, iteration_groups_by_config)
                     else:

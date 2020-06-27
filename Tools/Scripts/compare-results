@@ -29,7 +29,9 @@
 import sys
 import argparse
 import json
+import itertools
 from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
+from webkitpy.benchmark_runner.benchmark_json_merge import mergeJSONs
 
 try:
     from scipy import stats
@@ -395,17 +397,21 @@ def ttest(benchmarkType, a, b):
         print "Results ARE NOT significant"
 
 def getOptions():
-    parser = argparse.ArgumentParser(description="Compare two WebKit benchmark results. Pass in two JSON result files to compare them. This script prints the pValue along with the magnitude of the change.")
+    parser = argparse.ArgumentParser(description="Compare two WebKit benchmark results. Pass in at least two JSON result files to compare them. This script prints the pValue along with the magnitude of the change. If more than one JSON is passed as a/b they will be merged when computing the breakdown.")
 
     parser.add_argument("-a",
         type=str,
         required=True,
-        help="a of a/b. Path to JSON results file.")
+        nargs='+',
+        action="append",
+        help="a JSONs of a/b. Path to JSON results file. Takes multiple values and can be passed multiple times.")
 
     parser.add_argument("-b",
         type=str,
         required=True,
-        help="b of a/b. Path to JSON results file.")
+        nargs='+',
+        action="append",
+        help="b JSONs of a/b. Path to JSON results file. Takes multiple values and can be passed multiple times.")
 
     parser.add_argument("--csv",
         type=str,
@@ -421,8 +427,12 @@ def getOptions():
 def main():
     args = getOptions()
 
-    a = readJSONFile(args.a)
-    b = readJSONFile(args.b)
+    # Flatten the list of lists of JSON files.
+    a = itertools.chain.from_iterable(args.a)
+    b = itertools.chain.from_iterable(args.b)
+
+    a = mergeJSONs(list(map(readJSONFile, a)))
+    b = mergeJSONs(list(map(readJSONFile, b)))
 
     typeA = detectBenchmark(a)
     typeB = detectBenchmark(b)

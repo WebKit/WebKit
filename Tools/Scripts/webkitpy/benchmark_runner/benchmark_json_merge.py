@@ -1,5 +1,3 @@
-#!/usr/bin/env python -u
-
 # Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,37 +24,26 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import argparse
 import json
-from webkitpy.benchmark_runner.benchmark_json_merge import mergeJSONs
-
-def readJSONFile(path):
-    with open(path, 'r') as contents:
-        return json.load(contents)
-
-def main():
-    parser = argparse.ArgumentParser(description="Merge the resulting json files from multiple invocations of the run_benchmark script.")
-
-    parser.add_argument("-o",
-        type=str,
-        required=False,
-        help="File to put the merged json into prints to standard out if nothing is passed")
-    parser.add_argument("jsons",
-        type=str,
-        nargs='+',
-        help="The json files to be merged.")
-
-    # parse_args will error on our list of incomming JSON files...
-    args = parser.parse_args()
-
-    result = mergeJSONs(list(map(readJSONFile, args.jsons)))
-
-    if args.o:
-        with open(args.o, 'w') as f:
-            json.dump(result, f)
-    else:
-        print(json.dumps(result))
+from webkitpy.common.iteration_compatibility import iteritems
 
 
-if __name__ == "__main__":
-    main()
+def deepAppend(value1, value2, currentKey=None):
+    if type(value1) != type(value2):
+        raise TypeError("values have different types for key: {}, {} and {}".format(currentKey, type(value1), type(value2)))
+    if isinstance(value1, list):
+        return value1 + value2
+
+    result = {}
+    for key in (value1.keys() + value2.keys()):
+        if key not in result:
+            result[key] = deepAppend(value1[key], value2[key], key)
+    return result
+
+
+def mergeJSONs(jsons):
+    if len(jsons) == 0:
+        raise TypeError("no jsons to merge")
+
+    last = jsons.pop()
+    return reduce(deepAppend, jsons, last)
