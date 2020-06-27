@@ -1,5 +1,20 @@
 2020-06-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Allow callers to override the reported model (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=213677
+        <rdar://problem/64834043>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.configuration_for_upload): Set the model based on --model.
+        * Scripts/webkitpy/port/factory.py:
+        (configuration_options): Add --model option, drive-by fix for --architecture.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.configuration_for_upload): --model overrides detected model.
+
+2020-06-26  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitpy] Automatically detect hw architecture for supporting Apple Silicon
         https://bugs.webkit.org/show_bug.cgi?id=213653
         <rdar://problem/64817656>

@@ -1578,6 +1578,7 @@ class Port(object):
             style=style,
             sdk=host.platform.build_version(),
             flavor=self.get_option('result_report_flavor'),
+            model=self.get_option('model'),
         )
 
     @memoized

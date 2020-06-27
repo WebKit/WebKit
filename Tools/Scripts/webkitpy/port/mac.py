@@ -292,10 +292,12 @@ class MacPort(DarwinPort):
         host = host or self.host
         configuration = super(MacPort, self).configuration_for_upload(host=host)
 
-        output = host.executive.run_command(['/usr/sbin/sysctl', 'hw.model']).rstrip()
-        match = re.match(r'hw.model: (?P<model>.*)', output)
-        if match:
-            configuration['model'] = match.group('model')
+        # --model should override the detected model
+        if not configuration.get('model'):
+            output = host.executive.run_command(['/usr/sbin/sysctl', 'hw.model']).rstrip()
+            match = re.match(r'hw.model: (?P<model>.*)', output)
+            if match:
+                configuration['model'] = match.group('model')
 
         return configuration
 
