@@ -1,3 +1,38 @@
+2020-06-27  Philippe Normand  <pnormand@igalia.com>
+
+        Migrate run-minibrowser to webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=213431
+
+        Reviewed by Jonathan Bedard.
+
+        The perl version was renamed to old-run-minibrowser and remains used by the Mac ports.
+        run-minibrowser is now a Python script hooking into webkitpy and the Port infrastructure.
+        Both WPE and GTK ports will now use the pure python implementation.
+
+        * Scripts/old-run-minibrowser: Copied from Tools/Scripts/run-minibrowser.
+        * Scripts/run-minibrowser:
+        * Scripts/webkitpy/minibrowser/run_minibrowser.py: Added.
+        (main):
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port.run_minibrowser_arguments):
+        (Port):
+        (Port.run_minibrowser):
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.environment_for_api_tests):
+        (DarwinPort):
+        (DarwinPort.run_minibrowser_arguments):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.show_results_html_file):
+        (GtkPort.configuration_for_upload):
+        (GtkPort):
+        (GtkPort.run_minibrowser):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.show_results_html_file):
+        (WPEPort.configuration_for_upload):
+        (WPEPort):
+        (WPEPort.run_minibrowser):
+
 2020-06-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Update test runner for changes to Options and signing

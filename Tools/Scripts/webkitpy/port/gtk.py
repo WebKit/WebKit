@@ -231,7 +231,7 @@ class GtkPort(Port):
         self._leakdetector.parse_and_print_leaks_detail(leaks_files)
 
     def show_results_html_file(self, results_filename):
-        self._run_script("run-minibrowser", [path.abspath_to_uri(self.host.platform, results_filename)])
+        self.run_minibrowser([path.abspath_to_uri(self.host.platform, results_filename)])
 
     def check_sys_deps(self):
         return super(GtkPort, self).check_sys_deps() and self._driver_class().check_driver(self)
@@ -260,3 +260,13 @@ class GtkPort(Port):
         configuration['platform'] = 'GTK'
         configuration['version_name'] = self._display_server.capitalize() if self._display_server else 'Xvfb'
         return configuration
+
+    def run_minibrowser(self, args):
+        miniBrowser = self._build_path('bin', 'MiniBrowser')
+        if not self._filesystem.isfile(miniBrowser):
+            print("%s not found... Did you run build-webkit?" % miniBrowser)
+            return 1
+        command = [miniBrowser]
+        if self._should_use_jhbuild():
+            command = self._jhbuild_wrapper + command
+        return self._executive.run_command(command + args, cwd=self.webkit_base())

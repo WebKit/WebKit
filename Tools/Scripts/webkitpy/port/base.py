@@ -30,6 +30,7 @@
 """Abstract base class of Port-specific entry points for the layout tests
 test infrastructure (the Port and Driver classes)."""
 
+import argparse
 import difflib
 import json
 import logging
@@ -789,7 +790,12 @@ class Port(object):
         return self.get_option(name) == value
 
     def set_option_default(self, name, default_value):
-        return self._options.ensure_value(name, default_value)
+        if isinstance(self._options, argparse.Namespace):
+            if not hasattr(self._options, name):
+                setattr(self._options, name, default_value)
+                return True
+        else:
+            return self._options.ensure_value(name, default_value)
 
     @memoized
     def path_to_generic_test_expectations_file(self):
@@ -1360,6 +1366,10 @@ class Port(object):
     def _path_to_default_image_diff(self):
         """Returns the full path to the default ImageDiff binary, or None if it is not available."""
         return self._build_path('ImageDiff')
+
+    def run_minibrowser(self, args):
+        # FIXME: Migrate to webkitpy based run-minibrowser. https://bugs.webkit.org/show_bug.cgi?id=213464
+        return self._run_script(["old-run-minibrowser", ] + args)
 
     @memoized
     def _path_to_image_diff(self):
