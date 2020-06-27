@@ -58,13 +58,14 @@ enum class SVGLengthNegativeValuesMode : uint8_t {
 class SVGLengthValue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGLengthValue(SVGLengthMode = SVGLengthMode::Other, const String& valueAsString = String());
+    SVGLengthValue(SVGLengthMode = SVGLengthMode::Other, const String& valueAsString = { });
     SVGLengthValue(float valueInSpecifiedUnits, SVGLengthType, SVGLengthMode = SVGLengthMode::Other);
     SVGLengthValue(const SVGLengthContext&, float, SVGLengthType = SVGLengthType::Number, SVGLengthMode = SVGLengthMode::Other);
 
-    static SVGLengthValue construct(SVGLengthMode, const String&, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow);
+    static Optional<SVGLengthValue> construct(SVGLengthMode, StringView);
+    static SVGLengthValue construct(SVGLengthMode, StringView, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow);
     static SVGLengthValue blend(const SVGLengthValue& from, const SVGLengthValue& to, float progress);
-    
+
     static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&);
     static Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const SVGLengthValue&);
 
@@ -85,8 +86,8 @@ public:
     ExceptionOr<void> setValue(const SVGLengthContext&, float);
     ExceptionOr<void> setValue(const SVGLengthContext&, float, SVGLengthType, SVGLengthMode);
 
-    ExceptionOr<void> setValueAsString(const String&);
-    ExceptionOr<void> setValueAsString(const String&, SVGLengthMode);
+    ExceptionOr<void> setValueAsString(StringView);
+    ExceptionOr<void> setValueAsString(StringView, SVGLengthMode);
 
     ExceptionOr<void> convertToSpecifiedUnits(const SVGLengthContext&, SVGLengthType);
 

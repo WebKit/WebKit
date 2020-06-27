@@ -1,3 +1,176 @@
+2020-06-27  Sam Weinig  <weinig@apple.com>
+
+        Convert SVG related parsers over to using StringParsingBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=213635
+
+        Reviewed by Darin Adler.
+
+        - Adopt StringParsingBuffer across SVG code.
+        - Remove UTF-16 upconversions in SVGAnimationElement, SVGFitToViewBox, SVGLengthList, 
+          SVGLengthValue, SVGNumberList, SVGParserUtilities, SVGPointList, SVGPreserveAspectRatioValue, 
+          SVGStringList, SVGTransformList, SVGTransformable and SVGViewSpec.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Export ParsingUtilities.h, which is now included by SVGParserUtilities.h
+        
+        * Sources.txt:
+        Add implementation files for SVGLengthList, SVGNumberList, SVGPointList, SVGStringList
+        and SVGTransformList to hold large functions are unlikely to benefit from inlining.
+        
+        * html/parser/ParsingUtilities.h:
+        (WebCore::skipCharactersExactly):
+        Add new skipCharactersExactly, which takes a c-array (NOT null-terminated) of characters
+        to compare against.
+
+        * svg/SVGAngleValue.cpp:
+        (WebCore::parseAngleType):
+        (WebCore::SVGAngleValue::setValueAsString):
+        Adopt StringParsingBuffer.
+
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::parseAttribute):
+        Adapt to new shared parseTransformType, which now returns an Optional and default to
+        SVG_TRANSFORM_UNKNOWN on parse failure as the old parseTransformType did.
+        
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines):
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters()
+        
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::parseViewBoxGeneric):
+        * svg/SVGFitToViewBox.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters()
+
+        * svg/SVGLengthList.cpp: Added.
+        (WebCore::SVGLengthList::parse):
+        (WebCore::SVGLengthList::valueAsString const):
+        * svg/SVGLengthList.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Move parse and valueAsString out of line.
+
+        * svg/SVGLengthValue.cpp:
+        (WebCore::parseLengthType):
+        (WebCore::SVGLengthValue::construct):
+        (WebCore::SVGLengthValue::setValueAsString):
+        * svg/SVGLengthValue.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters()
+
+        * svg/SVGNumberList.cpp: Added.
+        (WebCore::SVGNumberList::parse):
+        (WebCore::SVGNumberList::valueAsString const):
+        * svg/SVGNumberList.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Move parse and valueAsString out of line.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber):
+        (WebCore::parseNumber):
+        (WebCore::genericParseArcFlag):
+        (WebCore::parseArcFlag):
+        (WebCore::parseNumberOptionalNumber):
+        (WebCore::parsePoint):
+        (WebCore::parseRect):
+        (WebCore::parseGlyphName):
+        (WebCore::parseUnicodeRange):
+        (WebCore::parseKerningUnicodeString):
+        (WebCore::genericParseFloatPoint):
+        (WebCore::parseFloatPoint):
+        * svg/SVGParserUtilities.h:
+        (WebCore::isSVGSpaceOrComma):
+        (WebCore::skipOptionalSVGSpaces):
+        (WebCore::skipOptionalSVGSpacesOrDelimiter):
+        (WebCore::skipString): Deleted.
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Move parse and valueAsString out of line.
+
+        * svg/SVGPathSource.h:
+        Add missing include, which is now needed do to removing unncessary includes in other files.
+
+        * svg/SVGPathStringSource.cpp:
+        (WebCore::SVGPathStringSource::SVGPathStringSource):
+        (WebCore::SVGPathStringSource::hasMoreData const):
+        (WebCore::SVGPathStringSource::moveToNextToken):
+        (WebCore::nextCommandHelper):
+        (WebCore::SVGPathStringSource::nextCommand):
+        (WebCore::SVGPathStringSource::parse):
+        (WebCore::SVGPathStringSource::parseSVGSegmentType):
+        (WebCore::SVGPathStringSource::parseMoveToSegment):
+        (WebCore::SVGPathStringSource::parseLineToSegment):
+        (WebCore::SVGPathStringSource::parseLineToHorizontalSegment):
+        (WebCore::SVGPathStringSource::parseLineToVerticalSegment):
+        (WebCore::SVGPathStringSource::parseCurveToCubicSegment):
+        (WebCore::SVGPathStringSource::parseCurveToCubicSmoothSegment):
+        (WebCore::SVGPathStringSource::parseCurveToQuadraticSegment):
+        (WebCore::SVGPathStringSource::parseCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathStringSource::parseArcToSegment):
+        (WebCore::parseSVGSegmentTypeHelper): Deleted.
+        * svg/SVGPathStringSource.h:
+        Adopt StringParsingBuffer. Replace existing set of unions with a single
+        union of StringParsingBuffers.
+    
+        * svg/SVGPointList.cpp: Added.
+        (WebCore::SVGPointList::parse):
+        (WebCore::SVGPointList::valueAsString const):
+        * svg/SVGPointList.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Move parse and valueAsString out of line.
+
+        * svg/SVGPreserveAspectRatioValue.cpp:
+        (WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue):
+        (WebCore::SVGPreserveAspectRatioValue::parse):
+        (WebCore::SVGPreserveAspectRatioValue::parseInternal):
+        (WebCore::SVGPreserveAspectRatioValue::valueAsString const):
+        * svg/SVGPreserveAspectRatioValue.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). 
+
+        * svg/SVGStringList.cpp: Added.
+        (WebCore::SVGStringList::parse):
+        (WebCore::SVGStringList::valueAsString const):
+        * svg/SVGStringList.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Move parse and valueAsString out of line.
+
+        * svg/SVGTransformList.cpp: Added.
+        (WebCore::SVGTransformList::consolidate):
+        (WebCore::SVGTransformList::concatenate const):
+        (WebCore::SVGTransformList::parseGeneric):
+        (WebCore::SVGTransformList::parse):
+        (WebCore::SVGTransformList::valueAsString const):
+        * svg/SVGTransformList.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Move parse, valueAsString, consolidate and 
+        concatenate out of line.
+
+        * svg/SVGTransformable.cpp:
+        (WebCore::parseTransformParamList):
+        (WebCore::parseTransformValueGeneric):
+        (WebCore::SVGTransformable::parseTransformValue):
+        (WebCore::parseTransformTypeGeneric):
+        (WebCore::SVGTransformable::parseTransformType):
+        (WebCore::SVGTransformable::parseAndSkipType): Deleted.
+        * svg/SVGTransformable.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters(). Unify parseTransformType implementations to all
+        use a single implementation and return an Optional<SVGTransformType>.
+
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * svg/SVGViewSpec.h:
+        Adopt StringParsingBuffer and readCharactersForParsing to replace unnecessary call to
+        StringView::upconvertedCharacters().
+
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::parseZoomAndPanGeneric):
+        (WebCore::SVGZoomAndPan::parseZoomAndPan):
+        * svg/SVGZoomAndPan.h:
+        Adopt StringParsingBuffer.
+
 2020-06-26  Jer Noble  <jer.noble@apple.com>
 
         CRASH: incompatible downcast<> operation in SourceBufferPrivateAVFObjC::setCDMInstance()

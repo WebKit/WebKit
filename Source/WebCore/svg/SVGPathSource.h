@@ -19,11 +19,11 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "SVGPathSeg.h"
 
 namespace WebCore {
 
-class FloatPoint;
 
 class SVGPathSource {
     WTF_MAKE_NONCOPYABLE(SVGPathSource); WTF_MAKE_FAST_ALLOCATED;

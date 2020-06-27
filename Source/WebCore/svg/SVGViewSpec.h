@@ -36,7 +36,7 @@ public:
         return adoptRef(*new SVGViewSpec(contextElement));
     }
 
-    bool parseViewSpec(const String&);
+    bool parseViewSpec(const StringView&);
     void reset();
     void resetContextElement() { m_contextElement = nullptr; }
 

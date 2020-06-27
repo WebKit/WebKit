@@ -27,6 +27,7 @@
 #include "SVGLengthContext.h"
 #include "SVGParserUtilities.h"
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -61,19 +62,19 @@ static inline const char* lengthTypeToString(SVGLengthType lengthType)
     return "";
 }
 
-static inline SVGLengthType parseLengthType(const UChar* ptr, const UChar* end)
+template<typename CharacterType> static inline SVGLengthType parseLengthType(StringParsingBuffer<CharacterType>& buffer)
 {
-    if (ptr == end)
+    if (buffer.atEnd())
         return SVGLengthType::Number;
 
-    const UChar firstChar = *ptr;
+    auto firstChar = *buffer++;
 
-    if (++ptr == end)
+    if (buffer.atEnd())
         return firstChar == '%' ? SVGLengthType::Percentage : SVGLengthType::Unknown;
 
-    const UChar secondChar = *ptr;
+    auto secondChar = *buffer++;
 
-    if (++ptr != end)
+    if (!buffer.atEnd())
         return SVGLengthType::Unknown;
 
     if (firstChar == 'e' && secondChar == 'm')
@@ -180,7 +181,15 @@ SVGLengthValue::SVGLengthValue(const SVGLengthContext& context, float value, SVG
     setValue(context, value);
 }
 
-SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, const String& valueAsString, SVGParsingError& parseError, SVGLengthNegativeValuesMode negativeValuesMode)
+Optional<SVGLengthValue> SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString)
+{
+    SVGLengthValue length { lengthMode };
+    if (length.setValueAsString(valueAsString).hasException())
+        return WTF::nullopt;
+    return length;
+}
+
+SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString, SVGParsingError& parseError, SVGLengthNegativeValuesMode negativeValuesMode)
 {
     SVGLengthValue length(lengthMode);
 
@@ -239,7 +248,7 @@ Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const SVGLengthValue&
     return CSSPrimitiveValue::create(length.valueInSpecifiedUnits(), lengthTypeToPrimitiveType(length.lengthType()));
 }
 
-ExceptionOr<void> SVGLengthValue::setValueAsString(const String& valueAsString, SVGLengthMode lengthMode)
+ExceptionOr<void> SVGLengthValue::setValueAsString(StringView valueAsString, SVGLengthMode lengthMode)
 {
     m_valueInSpecifiedUnits = 0;
     m_lengthMode = lengthMode;
@@ -286,26 +295,24 @@ ExceptionOr<void> SVGLengthValue::setValue(const SVGLengthContext& context, floa
     return setValue(context, value);
 }
 
-ExceptionOr<void> SVGLengthValue::setValueAsString(const String& string)
+ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
 {
     if (string.isEmpty())
         return { };
 
-    auto upconvertedCharacters = StringView(string).upconvertedCharacters();
-    const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + string.length();
+    return readCharactersForParsing(string, [&](auto buffer) -> ExceptionOr<void> {
+        auto convertedNumber = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
+        if (!convertedNumber)
+            return Exception { SyntaxError };
 
-    auto convertedNumber = parseNumber(ptr, end, SuffixSkippingPolicy::DontSkip);
-    if (!convertedNumber)
-        return Exception { SyntaxError };
+        auto lengthType = parseLengthType(buffer);
+        if (lengthType == SVGLengthType::Unknown)
+            return Exception { SyntaxError };
 
-    auto lengthType = parseLengthType(ptr, end);
-    if (lengthType == SVGLengthType::Unknown)
-        return Exception { SyntaxError };
-
-    m_lengthType = lengthType;
-    m_valueInSpecifiedUnits = *convertedNumber;
-    return { };
+        m_lengthType = lengthType;
+        m_valueInSpecifiedUnits = *convertedNumber;
+        return { };
+    });
 }
 
 ExceptionOr<void> SVGLengthValue::convertToSpecifiedUnits(const SVGLengthContext& context, SVGLengthType lengthType)

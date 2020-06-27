@@ -1590,7 +1590,7 @@
 		532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */; };
 		5351D4B11DF916B4008010CD /* FileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5351D4AF1DF916AC008010CD /* FileHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
-		536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */; };
+		536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		538EC8021F96AF81004D22A8 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7FA1F96AA70004D22A8 /* UnifiedSource1.cpp */; };
 		538EC8031F96AF81004D22A8 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7F31F96AA5B004D22A8 /* UnifiedSource1-mm.mm */; };
 		538EC8041F96AF81004D22A8 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7EE1F96AA56004D22A8 /* UnifiedSource2.cpp */; };
@@ -10196,6 +10196,11 @@
 		7CD344121F3108E2000DCD49 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
 		7CD494CA1A86EB1D000A87EC /* RenderAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderAttachment.cpp; sourceTree = "<group>"; };
 		7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderAttachment.h; sourceTree = "<group>"; };
+		7CD70C3D24A28A3A00E61040 /* SVGLengthList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLengthList.cpp; sourceTree = "<group>"; };
+		7CD70C4024A28AC900E61040 /* SVGNumberList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGNumberList.cpp; sourceTree = "<group>"; };
+		7CD70C4224A28B7000E61040 /* SVGPointList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPointList.cpp; sourceTree = "<group>"; };
+		7CD70C4324A28BEC00E61040 /* SVGStringList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStringList.cpp; sourceTree = "<group>"; };
+		7CD70C4624A28CD700E61040 /* SVGTransformList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformList.cpp; sourceTree = "<group>"; };
 		7CDE73961F9BD59500390312 /* Settings.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Settings.yaml; sourceTree = "<group>"; };
 		7CDE8EBC1F193BC500168FE7 /* CSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleDeclaration.cpp; sourceTree = "<group>"; };
 		7CE191471F2A98AF00272F78 /* FetchRequestInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchRequestInit.h; sourceTree = "<group>"; };
@@ -25145,6 +25150,7 @@
 				B222789E0D00BF200071B782 /* SVGLength.idl */,
 				7134496B146941B300720312 /* SVGLengthContext.cpp */,
 				7134496C146941B300720312 /* SVGLengthContext.h */,
+				7CD70C3D24A28A3A00E61040 /* SVGLengthList.cpp */,
 				B22278A00D00BF200071B782 /* SVGLengthList.h */,
 				B22278A10D00BF200071B782 /* SVGLengthList.idl */,
 				7CE58D521DD7B09300128552 /* SVGLengthValue.cpp */,
@@ -25177,6 +25183,7 @@
 				44D8DA98139545BE00337B75 /* SVGMPathElement.idl */,
 				7CE58D4F1DD69A1E00128552 /* SVGNumber.h */,
 				B22278B90D00BF200071B782 /* SVGNumber.idl */,
+				7CD70C4024A28AC900E61040 /* SVGNumberList.cpp */,
 				B22278BB0D00BF200071B782 /* SVGNumberList.h */,
 				B22278BC0D00BF200071B782 /* SVGNumberList.idl */,
 				B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */,
@@ -25240,6 +25247,7 @@
 				B22278F30D00BF210071B782 /* SVGPatternElement.idl */,
 				7CE58D491DD64A5B00128552 /* SVGPoint.h */,
 				B22278F40D00BF210071B782 /* SVGPoint.idl */,
+				7CD70C4224A28B7000E61040 /* SVGPointList.cpp */,
 				B22278F60D00BF210071B782 /* SVGPointList.h */,
 				B22278F70D00BF210071B782 /* SVGPointList.idl */,
 				B22278F80D00BF210071B782 /* SVGPolyElement.cpp */,
@@ -25273,6 +25281,7 @@
 				B22279120D00BF210071B782 /* SVGStopElement.cpp */,
 				B22279130D00BF210071B782 /* SVGStopElement.h */,
 				B22279140D00BF210071B782 /* SVGStopElement.idl */,
+				7CD70C4324A28BEC00E61040 /* SVGStringList.cpp */,
 				B22279160D00BF210071B782 /* SVGStringList.h */,
 				B22279170D00BF210071B782 /* SVGStringList.idl */,
 				B22279210D00BF210071B782 /* SVGStyleElement.cpp */,
@@ -25314,6 +25323,7 @@
 				B22279440D00BF210071B782 /* SVGTransformable.h */,
 				B22279460D00BF210071B782 /* SVGTransformDistance.cpp */,
 				B22279470D00BF210071B782 /* SVGTransformDistance.h */,
+				7CD70C4624A28CD700E61040 /* SVGTransformList.cpp */,
 				B22279490D00BF210071B782 /* SVGTransformList.h */,
 				B222794A0D00BF210071B782 /* SVGTransformList.idl */,
 				7CE58D561DD7D96D00128552 /* SVGTransformValue.h */,

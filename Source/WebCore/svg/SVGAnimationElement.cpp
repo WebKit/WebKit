@@ -41,6 +41,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -77,54 +78,50 @@ fail:
     result.clear();
 }
 
-static Optional<Vector<UnitBezier>> parseKeySplines(const StringView& parse)
+static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 {
-    if (parse.isEmpty())
+    if (string.isEmpty())
         return WTF::nullopt;
 
-    auto upconvertedCharacters = parse.upconvertedCharacters();
-    const UChar* cur = upconvertedCharacters;
-    const UChar* end = cur + parse.length();
+    return readCharactersForParsing(string, [&](auto buffer) -> Optional<Vector<UnitBezier>> {
+        skipOptionalSVGSpaces(buffer);
 
-    skipOptionalSVGSpaces(cur, end);
+        Vector<UnitBezier> result;
 
-    Vector<UnitBezier> result;
+        bool delimParsed = false;
+        while (buffer.hasCharactersRemaining()) {
+            delimParsed = false;
+            auto posA = parseNumber(buffer);
+            if (!posA)
+                return WTF::nullopt;
 
-    bool delimParsed = false;
-    while (cur < end) {
-        delimParsed = false;
-        auto posA = parseNumber(cur, end);
-        if (!posA)
-            return WTF::nullopt;
+            auto posB = parseNumber(buffer);
+            if (!posB)
+                return WTF::nullopt;
 
-        auto posB = parseNumber(cur, end);
-        if (!posB)
-            return WTF::nullopt;
+            auto posC = parseNumber(buffer);
+            if (!posC)
+                return WTF::nullopt;
 
-        auto posC = parseNumber(cur, end);
-        if (!posC)
-            return WTF::nullopt;
+            auto posD = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
+            if (!posD)
+                return WTF::nullopt;
 
-        auto posD = parseNumber(cur, end, SuffixSkippingPolicy::DontSkip);
-        if (!posD)
-            return WTF::nullopt;
+            skipOptionalSVGSpaces(buffer);
 
-        skipOptionalSVGSpaces(cur, end);
+            if (skipExactly(buffer, ';'))
+                delimParsed = true;
 
-        if (cur < end && *cur == ';') {
-            delimParsed = true;
-            cur++;
+            skipOptionalSVGSpaces(buffer);
+
+            result.append(UnitBezier { *posA, *posB, *posC, *posD });
         }
 
-        skipOptionalSVGSpaces(cur, end);
+        if (!(buffer.atEnd() && !delimParsed))
+            return WTF::nullopt;
 
-        result.append(UnitBezier { *posA, *posB, *posC, *posD });
-    }
-
-    if (!(cur == end && !delimParsed))
-        return WTF::nullopt;
-
-    return result;
+        return result;
+    });
 }
 
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)

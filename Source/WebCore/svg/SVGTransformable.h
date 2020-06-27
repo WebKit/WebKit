@@ -22,7 +22,6 @@
 
 #include "SVGLocatable.h"
 #include "SVGTransformValue.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     
@@ -32,9 +31,12 @@ class SVGTransformable : public SVGLocatable {
 public:
     virtual ~SVGTransformable();
 
-    static Optional<SVGTransformValue> parseTransformValue(SVGTransformValue::SVGTransformType, const UChar*& ptr, const UChar* end);
-    static SVGTransformValue::SVGTransformType parseTransformType(const String&);
-    static Optional<SVGTransformValue::SVGTransformType> parseAndSkipType(const UChar*& currTransform, const UChar* end);
+    static Optional<SVGTransformValue> parseTransformValue(SVGTransformValue::SVGTransformType, StringParsingBuffer<LChar>&);
+    static Optional<SVGTransformValue> parseTransformValue(SVGTransformValue::SVGTransformType, StringParsingBuffer<UChar>&);
+
+    static Optional<SVGTransformValue::SVGTransformType> parseTransformType(StringView);
+    static Optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<LChar>&);
+    static Optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<UChar>&);
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;

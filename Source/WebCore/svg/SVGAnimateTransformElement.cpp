@@ -57,7 +57,7 @@ bool SVGAnimateTransformElement::hasValidAttributeType() const
 void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::typeAttr) {
-        m_type = SVGTransformable::parseTransformType(value);
+        m_type = SVGTransformable::parseTransformType(value).valueOr(SVGTransformValue::SVG_TRANSFORM_UNKNOWN);
         if (m_type == SVGTransformValue::SVG_TRANSFORM_MATRIX)
             m_type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
         return;

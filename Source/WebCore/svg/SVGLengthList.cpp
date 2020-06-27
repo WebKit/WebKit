@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SVGLengthList.h"
 
-#include "SVGNumber.h"
-#include "SVGValuePropertyList.h"
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-class SVGNumberList final : public SVGValuePropertyList<SVGNumber> {
-    using Base = SVGValuePropertyList<SVGNumber>;
-    using Base::Base;
+bool SVGLengthList::parse(StringView value)
+{
+    clearItems();
 
-public:
-    static Ref<SVGNumberList> create()
-    {
-        return adoptRef(*new SVGNumberList());
+    return readCharactersForParsing(value, [&](auto buffer) {
+        using CharacterType = typename decltype(buffer)::CharacterType;
+
+        while (buffer.hasCharactersRemaining()) {
+            auto start = buffer.position();
+
+            skipUntil<CharacterType, isSVGSpaceOrComma>(buffer);
+
+            if (buffer.position() == start)
+                break;
+
+            auto value = SVGLengthValue::construct(m_lengthMode, StringView(start, buffer.position() - start));
+            if (!value)
+                break;
+
+            append(SVGLength::create(WTFMove(*value)));
+            skipOptionalSVGSpacesOrDelimiter(buffer);
+        }
+
+        // FIXME: Should this clearItems() on failure like SVGTransformList does?
+
+        return buffer.atEnd();
+    });
+}
+
+String SVGLengthList::valueAsString() const
+{
+    StringBuilder builder;
+
+    for (const auto& length : m_items) {
+        if (builder.length())
+            builder.append(' ');
+
+        builder.append(length->value().valueAsString());
     }
 
-    static Ref<SVGNumberList> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
-    {
-        return adoptRef(*new SVGNumberList(owner, access));
-    }
+    return builder.toString();
+}
 
-    static Ref<SVGNumberList> create(const SVGNumberList& other, SVGPropertyAccess access)
-    {
-        return adoptRef(*new SVGNumberList(other, access));
-    }
-
-    bool parse(StringView);
-    String valueAsString() const override;
-};
-
-} // namespace WebCore
+}

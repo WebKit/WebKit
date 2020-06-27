@@ -142,4 +142,24 @@ template<typename CharacterType, unsigned lowercaseLettersArraySize> bool skipEx
     return true;
 }
 
+template<typename CharacterType, unsigned characterCount> constexpr bool skipCharactersExactly(const CharacterType*& ptr, const CharacterType* end, const CharacterType(&str)[characterCount])
+{
+    if (end - ptr < characterCount)
+        return false;
+    if (memcmp(str, ptr, sizeof(CharacterType) * characterCount))
+        return false;
+    ptr += characterCount;
+    return true;
+}
+
+template<typename CharacterType, unsigned characterCount> constexpr bool skipCharactersExactly(StringParsingBuffer<CharacterType>& buffer, const CharacterType(&str)[characterCount])
+{
+    if (buffer.lengthRemaining() < characterCount)
+        return false;
+    if (memcmp(str, buffer.position(), sizeof(CharacterType) * characterCount))
+        return false;
+    buffer += characterCount;
+    return true;
+}
+
 } // namespace WebCore

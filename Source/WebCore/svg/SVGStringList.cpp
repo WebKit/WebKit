@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SVGStringList.h"
 
-#include "SVGParserUtilities.h"
-#include "SVGPrimitiveList.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-class SVGStringList final : public SVGPrimitiveList<String> {
-    using Base = SVGPrimitiveList<String>;
-    using Base::Base;
-    using Base::m_items;
+bool SVGStringList::parse(StringView data, UChar delimiter)
+{
+    clearItems();
 
-public:
-    static Ref<SVGStringList> create(SVGPropertyOwner* owner)
-    {
-        return adoptRef(*new SVGStringList(owner));
+    auto isSVGSpaceOrDelimiter = [delimiter](auto c) {
+        return isSVGSpace(c) || c == delimiter;
+    };
+
+    return readCharactersForParsing(data, [&](auto buffer) {
+        while (buffer.hasCharactersRemaining()) {
+            auto start = buffer.position();
+            
+            // FIXME: It would be a nice improvement to add a variant of skipUntil which worked
+            // with lambda predicates.
+            while (buffer.hasCharactersRemaining() && !isSVGSpaceOrDelimiter(*buffer))
+                ++buffer;
+
+            if (buffer.position() == start)
+                break;
+
+            m_items.append(String(start, buffer.position() - start));
+            skipOptionalSVGSpacesOrDelimiter(buffer, delimiter);
+        }
+
+        // FIXME: Should this clearItems() on failure like SVGTransformList does?
+
+        return buffer.atEnd();
+    });
+}
+
+String SVGStringList::valueAsString() const
+{
+    StringBuilder builder;
+
+    for (const auto& string : m_items) {
+        if (builder.length())
+            builder.append(' ');
+
+        builder.append(string);
     }
 
-    void reset(const String& string)
-    {
-        parse(string, ' ');
+    return builder.toString();
+}
 
-        // Add empty string, if list is empty.
-        if (m_items.isEmpty())
-            m_items.append(emptyString());
-    }
-
-    bool parse(StringView, UChar delimiter);
-    String valueAsString() const override;
-};
-
-} // namespace WebCore
+}

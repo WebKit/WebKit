@@ -665,6 +665,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     html/forms/FileIconLoader.h
 
+    html/parser/ParsingUtilities.h
     html/parser/HTMLParserIdioms.h
 
     html/track/AudioTrack.h

@@ -56,86 +56,16 @@ public:
         return svgTransform;
     }
 
-    ExceptionOr<RefPtr<SVGTransform>> consolidate()
-    {
-        auto result = canAlterList();
-        if (result.hasException())
-            return result.releaseException();
-        ASSERT(result.releaseReturnValue());
+    ExceptionOr<RefPtr<SVGTransform>> consolidate();
+    AffineTransform concatenate() const;
 
-        // Spec: If the list was empty, then a value of null is returned.
-        if (m_items.isEmpty())
-            return nullptr;
-
-        if (m_items.size() == 1)
-            return makeRefPtr(at(0).get());
-
-        auto newItem = SVGTransform::create(concatenate());
-        clearItems();
-
-        auto item = append(WTFMove(newItem));
-        commitChange();
-        return makeRefPtr(item.get());
-    }
-
-    void parse(const String& value)
-    {
-        clearItems();
-
-        auto upconvertedCharacters = StringView(value).upconvertedCharacters();
-        const UChar* start = upconvertedCharacters;
-        if (!parse(start, start + value.length()))
-            clearItems();
-    }
-
-    AffineTransform concatenate() const
-    {
-        AffineTransform result;
-        for (const auto& transform : m_items)
-            result *= transform->matrix()->value();
-        return result;
-    }
-
-    String valueAsString() const override
-    {
-        StringBuilder builder;
-        for (const auto& transfrom : m_items) {
-            if (builder.length())
-                builder.append(' ');
-
-            builder.append(transfrom->value().valueAsString());
-        }
-        return builder.toString();
-    }
+    void parse(StringView);
+    String valueAsString() const override;
 
 private:
-    bool parse(const UChar*& start, const UChar* end)
-    {
-        bool delimParsed = false;
-        while (start < end) {
-            delimParsed = false;
-            skipOptionalSVGSpaces(start, end);
-            
-            auto type = SVGTransformable::parseAndSkipType(start, end);
-            if (!type)
-                return false;
-
-            auto parsedTransformValue = SVGTransformable::parseTransformValue(*type, start, end);
-            if (!parsedTransformValue)
-                return false;
-
-            append(SVGTransform::create(*parsedTransformValue));
-
-            skipOptionalSVGSpaces(start, end);
-            if (start < end && *start == ',') {
-                delimParsed = true;
-                ++start;
-            }
-
-            skipOptionalSVGSpaces(start, end);
-        }
-        return !delimParsed;
-    }
+    template<typename CharacterType> bool parseGeneric(StringParsingBuffer<CharacterType>&);
+    bool parse(StringParsingBuffer<LChar>&);
+    bool parse(StringParsingBuffer<UChar>&);
 };
 
 } // namespace WebCore

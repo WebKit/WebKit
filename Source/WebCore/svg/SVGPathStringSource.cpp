@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGPathStringSource.h"
 
-#include "FloatPoint.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
@@ -32,33 +31,30 @@ SVGPathStringSource::SVGPathStringSource(const String& string)
 {
     ASSERT(!string.isEmpty());
 
-    if (m_is8BitSource) {
-        m_current.m_character8 = string.characters8();
-        m_end.m_character8 = m_current.m_character8 + string.length();
-    } else {
-        m_current.m_character16 = string.characters16();
-        m_end.m_character16 = m_current.m_character16 + string.length();
-    }
+    if (m_is8BitSource)
+        m_buffer8 = { string.characters8(), string.length() };
+    else
+        m_buffer16 = { string.characters16(), string.length() };
 }
 
 bool SVGPathStringSource::hasMoreData() const
 {
     if (m_is8BitSource)
-        return m_current.m_character8 < m_end.m_character8;
-    return m_current.m_character16 < m_end.m_character16;
+        return m_buffer8.hasCharactersRemaining();
+    return m_buffer16.hasCharactersRemaining();
 }
 
 bool SVGPathStringSource::moveToNextToken()
 {
     if (m_is8BitSource)
-        return skipOptionalSVGSpaces(m_current.m_character8, m_end.m_character8);
-    return skipOptionalSVGSpaces(m_current.m_character16, m_end.m_character16);
+        return skipOptionalSVGSpaces(m_buffer8);
+    return skipOptionalSVGSpaces(m_buffer16);
 }
 
-template <typename CharacterType> static Optional<SVGPathSegType> nextCommandHelper(const CharacterType*& current, SVGPathSegType previousCommand)
+template <typename CharacterType> static Optional<SVGPathSegType> nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
 {
     // Check for remaining coordinates in the current command.
-    if ((*current == '+' || *current == '-' || *current == '.' || isASCIIDigit(*current))
+    if ((*buffer == '+' || *buffer == '-' || *buffer == '.' || isASCIIDigit(*buffer))
         && previousCommand != PathSegClosePath) {
         if (previousCommand == PathSegMoveToAbs)
             return PathSegLineToAbs;
@@ -73,150 +69,138 @@ template <typename CharacterType> static Optional<SVGPathSegType> nextCommandHel
 SVGPathSegType SVGPathStringSource::nextCommand(SVGPathSegType previousCommand)
 {
     if (m_is8BitSource) {
-        if (auto nextCommand = nextCommandHelper(m_current.m_character8, previousCommand))
+        if (auto nextCommand = nextCommandHelper(m_buffer8, previousCommand))
             return *nextCommand;
     } else {
-        if (auto nextCommand = nextCommandHelper(m_current.m_character16, previousCommand))
+        if (auto nextCommand = nextCommandHelper(m_buffer16, previousCommand))
             return *nextCommand;
     }
 
     return *parseSVGSegmentType();
 }
 
-template <typename CharacterType> static SVGPathSegType parseSVGSegmentTypeHelper(const CharacterType*& current)
+template<typename F> decltype(auto) SVGPathStringSource::parse(F&& functor)
 {
-    switch (*(current++)) {
-    case 'Z':
-    case 'z':
-        return PathSegClosePath;
-    case 'M':
-        return PathSegMoveToAbs;
-    case 'm':
-        return PathSegMoveToRel;
-    case 'L':
-        return PathSegLineToAbs;
-    case 'l':
-        return PathSegLineToRel;
-    case 'C':
-        return PathSegCurveToCubicAbs;
-    case 'c':
-        return PathSegCurveToCubicRel;
-    case 'Q':
-        return PathSegCurveToQuadraticAbs;
-    case 'q':
-        return PathSegCurveToQuadraticRel;
-    case 'A':
-        return PathSegArcAbs;
-    case 'a':
-        return PathSegArcRel;
-    case 'H':
-        return PathSegLineToHorizontalAbs;
-    case 'h':
-        return PathSegLineToHorizontalRel;
-    case 'V':
-        return PathSegLineToVerticalAbs;
-    case 'v':
-        return PathSegLineToVerticalRel;
-    case 'S':
-        return PathSegCurveToCubicSmoothAbs;
-    case 's':
-        return PathSegCurveToCubicSmoothRel;
-    case 'T':
-        return PathSegCurveToQuadraticSmoothAbs;
-    case 't':
-        return PathSegCurveToQuadraticSmoothRel;
-    default:
-        return PathSegUnknown;
-    }
+    if (m_is8BitSource)
+        return functor(m_buffer8);
+    return functor(m_buffer16);
 }
 
 Optional<SVGPathSegType> SVGPathStringSource::parseSVGSegmentType()
 {
-    if (m_is8BitSource)
-        return parseSVGSegmentTypeHelper(m_current.m_character8);
-    return parseSVGSegmentTypeHelper(m_current.m_character16);
+    return parse([](auto& buffer) -> SVGPathSegType {
+        auto character = *buffer;
+        buffer++;
+        switch (character) {
+        case 'Z':
+        case 'z':
+            return PathSegClosePath;
+        case 'M':
+            return PathSegMoveToAbs;
+        case 'm':
+            return PathSegMoveToRel;
+        case 'L':
+            return PathSegLineToAbs;
+        case 'l':
+            return PathSegLineToRel;
+        case 'C':
+            return PathSegCurveToCubicAbs;
+        case 'c':
+            return PathSegCurveToCubicRel;
+        case 'Q':
+            return PathSegCurveToQuadraticAbs;
+        case 'q':
+            return PathSegCurveToQuadraticRel;
+        case 'A':
+            return PathSegArcAbs;
+        case 'a':
+            return PathSegArcRel;
+        case 'H':
+            return PathSegLineToHorizontalAbs;
+        case 'h':
+            return PathSegLineToHorizontalRel;
+        case 'V':
+            return PathSegLineToVerticalAbs;
+        case 'v':
+            return PathSegLineToVerticalRel;
+        case 'S':
+            return PathSegCurveToCubicSmoothAbs;
+        case 's':
+            return PathSegCurveToCubicSmoothRel;
+        case 'T':
+            return PathSegCurveToQuadraticSmoothAbs;
+        case 't':
+            return PathSegCurveToQuadraticSmoothRel;
+        default:
+            return PathSegUnknown;
+        }
+    });
 }
 
 Optional<SVGPathSource::MoveToSegment> SVGPathStringSource::parseMoveToSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<MoveToSegment> {
-        auto targetPoint = parseFloatPoint(current, end);
+    return parse([](auto& buffer) -> Optional<MoveToSegment> {
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
         
         MoveToSegment segment;
         segment.targetPoint = WTFMove(*targetPoint);
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::LineToSegment> SVGPathStringSource::parseLineToSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<LineToSegment> {
-        auto targetPoint = parseFloatPoint(current, end);
+    return parse([](auto& buffer) -> Optional<LineToSegment> {
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
         
         LineToSegment segment;
         segment.targetPoint = WTFMove(*targetPoint);
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringSource::parseLineToHorizontalSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<LineToHorizontalSegment> {
-        auto x = parseNumber(current, end);
+    return parse([](auto& buffer) -> Optional<LineToHorizontalSegment> {
+        auto x = parseNumber(buffer);
         if (!x)
             return WTF::nullopt;
         
         LineToHorizontalSegment segment;
         segment.x = *x;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::LineToVerticalSegment> SVGPathStringSource::parseLineToVerticalSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<LineToVerticalSegment> {
-        auto y = parseNumber(current, end);
+    return parse([](auto& buffer) -> Optional<LineToVerticalSegment> {
+        auto y = parseNumber(buffer);
         if (!y)
             return WTF::nullopt;
         
         LineToVerticalSegment segment;
         segment.y = *y;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::CurveToCubicSegment> SVGPathStringSource::parseCurveToCubicSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<CurveToCubicSegment> {
-        auto point1 = parseFloatPoint(current, end);
+    return parse([](auto& buffer) -> Optional<CurveToCubicSegment> {
+        auto point1 = parseFloatPoint(buffer);
         if (!point1)
             return WTF::nullopt;
 
-        auto point2 = parseFloatPoint(current, end);
+        auto point2 = parseFloatPoint(buffer);
         if (!point2)
             return WTF::nullopt;
 
-        auto targetPoint = parseFloatPoint(current, end);
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
 
@@ -225,21 +209,17 @@ Optional<SVGPathSource::CurveToCubicSegment> SVGPathStringSource::parseCurveToCu
         segment.point2 = *point2;
         segment.targetPoint = *targetPoint;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringSource::parseCurveToCubicSmoothSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<CurveToCubicSmoothSegment> {
-        auto point2 = parseFloatPoint(current, end);
+    return parse([](auto& buffer) -> Optional<CurveToCubicSmoothSegment> {
+        auto point2 = parseFloatPoint(buffer);
         if (!point2)
             return WTF::nullopt;
 
-        auto targetPoint = parseFloatPoint(current, end);
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
 
@@ -247,21 +227,17 @@ Optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringSource::parseCur
         segment.point2 = *point2;
         segment.targetPoint = *targetPoint;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringSource::parseCurveToQuadraticSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<CurveToQuadraticSegment> {
-        auto point1 = parseFloatPoint(current, end);
+    return parse([](auto& buffer) -> Optional<CurveToQuadraticSegment> {
+        auto point1 = parseFloatPoint(buffer);
         if (!point1)
             return WTF::nullopt;
 
-        auto targetPoint = parseFloatPoint(current, end);
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
 
@@ -269,49 +245,41 @@ Optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringSource::parseCurve
         segment.point1 = *point1;
         segment.targetPoint = *targetPoint;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringSource::parseCurveToQuadraticSmoothSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<CurveToQuadraticSmoothSegment> {
-        auto targetPoint = parseFloatPoint(current, end);
+    return parse([](auto& buffer) -> Optional<CurveToQuadraticSmoothSegment> {
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
 
         CurveToQuadraticSmoothSegment segment;
         segment.targetPoint = *targetPoint;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 Optional<SVGPathSource::ArcToSegment> SVGPathStringSource::parseArcToSegment()
 {
-    auto helper = [](const auto*& current, const auto* end) -> Optional<ArcToSegment> {
-        auto rx = parseNumber(current, end);
+    return parse([](auto& buffer) -> Optional<ArcToSegment> {
+        auto rx = parseNumber(buffer);
         if (!rx)
             return WTF::nullopt;
-        auto ry = parseNumber(current, end);
+        auto ry = parseNumber(buffer);
         if (!ry)
             return WTF::nullopt;
-        auto angle = parseNumber(current, end);
+        auto angle = parseNumber(buffer);
         if (!angle)
             return WTF::nullopt;
-        auto largeArc = parseArcFlag(current, end);
+        auto largeArc = parseArcFlag(buffer);
         if (!largeArc)
             return WTF::nullopt;
-        auto sweep = parseArcFlag(current, end);
+        auto sweep = parseArcFlag(buffer);
         if (!sweep)
             return WTF::nullopt;
-        auto targetPoint = parseFloatPoint(current, end);
+        auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return WTF::nullopt;
 
@@ -323,11 +291,7 @@ Optional<SVGPathSource::ArcToSegment> SVGPathStringSource::parseArcToSegment()
         segment.sweep = *sweep;
         segment.targetPoint = *targetPoint;
         return segment;
-    };
-
-    if (m_is8BitSource)
-        return helper(m_current.m_character8, m_end.m_character8);
-    return helper(m_current.m_character16, m_end.m_character16);
+    });
 }
 
 } // namespace WebKit

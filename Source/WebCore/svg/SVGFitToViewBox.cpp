@@ -30,6 +30,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPreserveAspectRatioValue.h"
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -84,29 +85,39 @@ bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString
     return false;
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(const StringView& value)
+Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value)
 {
-    auto upconvertedCharacters = value.upconvertedCharacters();
-    const UChar* characters = upconvertedCharacters;
-    return parseViewBox(characters, characters + value.length());
+    return readCharactersForParsing(value, [&](auto buffer) {
+        return parseViewBoxGeneric(buffer);
+    });
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, bool validate)
+Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar>& buffer, bool validate)
 {
-    StringView str(c, end - c);
+    return parseViewBoxGeneric(buffer, validate);
+}
 
-    skipOptionalSVGSpaces(c, end);
+Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
+{
+    return parseViewBoxGeneric(buffer, validate);
+}
 
-    auto x = parseNumber(c, end);
-    auto y = parseNumber(c, end);
-    auto width = parseNumber(c, end);
-    auto height = parseNumber(c, end, SuffixSkippingPolicy::DontSkip);
+template<typename CharacterType> Optional<FloatRect> SVGFitToViewBox::parseViewBoxGeneric(StringParsingBuffer<CharacterType>& buffer, bool validate)
+{
+    StringView stringToParse = buffer.stringViewOfCharactersRemaining();
+
+    skipOptionalSVGSpaces(buffer);
+
+    auto x = parseNumber(buffer);
+    auto y = parseNumber(buffer);
+    auto width = parseNumber(buffer);
+    auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
 
     if (validate) {
         Document& document = m_viewBox->contextElement()->document();
 
         if (!x || !y || !width || !height) {
-            document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", str, "\""));
+            document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", stringToParse, "\""));
             return WTF::nullopt;
         }
 
@@ -123,9 +134,9 @@ Optional<FloatRect> SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* 
         }
 
         // Nothing should come after the last, fourth number.
-        skipOptionalSVGSpaces(c, end);
-        if (c < end) {
-            document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", str, "\""));
+        skipOptionalSVGSpaces(buffer);
+        if (buffer.hasCharactersRemaining()) {
+            document.accessSVGExtensions().reportWarning(makeString("Problem parsing viewBox=\"", stringToParse, "\""));
             return WTF::nullopt;
         }
     }

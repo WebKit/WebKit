@@ -2540,6 +2540,7 @@ svg/SVGHKernElement.cpp
 svg/SVGImageElement.cpp
 svg/SVGImageLoader.cpp
 svg/SVGLengthContext.cpp
+svg/SVGLengthList.cpp
 svg/SVGLengthValue.cpp
 svg/SVGLineElement.cpp
 svg/SVGLinearGradientElement.cpp
@@ -2549,6 +2550,7 @@ svg/SVGMarkerElement.cpp
 svg/SVGMaskElement.cpp
 svg/SVGMetadataElement.cpp
 svg/SVGMissingGlyphElement.cpp
+svg/SVGNumberList.cpp
 svg/SVGParserUtilities.cpp
 svg/SVGPathBlender.cpp
 svg/SVGPathBuilder.cpp
@@ -2563,6 +2565,7 @@ svg/SVGPathStringSource.cpp
 svg/SVGPathTraversalStateBuilder.cpp
 svg/SVGPathUtilities.cpp
 svg/SVGPatternElement.cpp
+svg/SVGPointList.cpp
 svg/SVGPolyElement.cpp
 svg/SVGPolygonElement.cpp
 svg/SVGPolylineElement.cpp
@@ -2573,6 +2576,7 @@ svg/SVGSVGElement.cpp
 svg/SVGScriptElement.cpp
 svg/SVGSetElement.cpp
 svg/SVGStopElement.cpp
+svg/SVGStringList.cpp
 svg/SVGStyleElement.cpp
 svg/SVGSwitchElement.cpp
 svg/SVGSymbolElement.cpp
@@ -2586,6 +2590,7 @@ svg/SVGTextPositioningElement.cpp
 svg/SVGTitleElement.cpp
 svg/SVGToOTFFontConversion.cpp
 svg/SVGTransformDistance.cpp
+svg/SVGTransformList.cpp
 svg/SVGTransformable.cpp
 svg/SVGURIReference.cpp
 svg/SVGUnknownElement.cpp

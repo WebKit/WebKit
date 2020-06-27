@@ -27,6 +27,7 @@
 #include "FloatRect.h"
 #include <limits>
 #include <wtf/ASCIICType.h>
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ template <typename FloatType> static inline bool isValidRange(const FloatType& x
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
 // FIXME: Can this be shared/replaced with number parsing in WTF?
-template <typename CharacterType, typename FloatType = float> static Optional<FloatType> genericParseNumber(const CharacterType*& ptr, const CharacterType* end, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
+template <typename CharacterType, typename FloatType = float> static Optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
 {
     FloatType number = 0;
     FloatType integer = 0;
@@ -50,26 +51,27 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
     FloatType exponent = 0;
     int sign = 1;
     int expsign = 1;
-    const CharacterType* start = ptr;
+    auto start = buffer.position();
 
     // read the sign
-    if (ptr < end && *ptr == '+')
-        ptr++;
-    else if (ptr < end && *ptr == '-') {
-        ptr++;
+    if (buffer.hasCharactersRemaining() && *buffer == '+')
+        ++buffer;
+    else if (buffer.hasCharactersRemaining() && *buffer == '-') {
+        ++buffer;
         sign = -1;
     } 
     
-    if (ptr == end || (!isASCIIDigit(*ptr) && *ptr != '.'))
+    if (buffer.atEnd() || (!isASCIIDigit(*buffer) && *buffer != '.'))
         return WTF::nullopt;
 
     // read the integer part, build right-to-left
-    const CharacterType* ptrStartIntPart = ptr;
-    while (ptr < end && isASCIIDigit(*ptr))
-        ++ptr; // Advance to first non-digit.
+    auto ptrStartIntPart = buffer.position();
+    
+    // Advance to first non-digit.
+    skipWhile<CharacterType, isASCIIDigit>(buffer);
 
-    if (ptr != ptrStartIntPart) {
-        const CharacterType* ptrScanIntPart = ptr - 1;
+    if (buffer.position() != ptrStartIntPart) {
+        auto ptrScanIntPart = buffer.position() - 1;
         FloatType multiplier = 1;
         while (ptrScanIntPart >= ptrStartIntPart) {
             integer += multiplier * static_cast<FloatType>(*(ptrScanIntPart--) - '0');
@@ -80,38 +82,38 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
             return WTF::nullopt;
     }
 
-    if (ptr < end && *ptr == '.') { // read the decimals
-        ptr++;
+    // read the decimals
+    if (buffer.hasCharactersRemaining() && *buffer == '.') {
+        ++buffer;
         
         // There must be a least one digit following the .
-        if (ptr >= end || !isASCIIDigit(*ptr))
+        if (buffer.atEnd() || !isASCIIDigit(*buffer))
             return WTF::nullopt;
         
-        while (ptr < end && isASCIIDigit(*ptr))
-            decimal += (*(ptr++) - '0') * (frac *= static_cast<FloatType>(0.1));
+        while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer))
+            decimal += (*(buffer++) - '0') * (frac *= static_cast<FloatType>(0.1));
     }
 
     // read the exponent part
-    if (ptr != start && ptr + 1 < end && (*ptr == 'e' || *ptr == 'E') 
-        && (ptr[1] != 'x' && ptr[1] != 'm')) { 
-        ptr++;
+    if (buffer.position() != start && buffer.position() + 1 < buffer.end() && (*buffer == 'e' || *buffer == 'E')
+        && (buffer[1] != 'x' && buffer[1] != 'm')) {
+        ++buffer;
 
         // read the sign of the exponent
-        if (*ptr == '+')
-            ptr++;
-        else if (*ptr == '-') {
-            ptr++;
+        if (*buffer == '+')
+            ++buffer;
+        else if (*buffer == '-') {
+            ++buffer;
             expsign = -1;
         }
         
         // There must be an exponent
-        if (ptr >= end || !isASCIIDigit(*ptr))
+        if (buffer.atEnd() || !isASCIIDigit(*buffer))
             return WTF::nullopt;
 
-        while (ptr < end && isASCIIDigit(*ptr)) {
+        while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer)) {
             exponent *= static_cast<FloatType>(10);
-            exponent += *ptr - '0';
-            ptr++;
+            exponent += *buffer++ - '0';
         }
         // Make sure exponent is valid.
         if (!isValidRange(exponent) || exponent > std::numeric_limits<FloatType>::max_exponent)
@@ -128,44 +130,44 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
     if (!isValidRange(number))
         return WTF::nullopt;
 
-    if (start == ptr)
+    if (start == buffer.position())
         return WTF::nullopt;
 
     if (skip == SuffixSkippingPolicy::Skip)
-        skipOptionalSVGSpacesOrDelimiter(ptr, end);
+        skipOptionalSVGSpacesOrDelimiter(buffer);
 
     return number;
 }
 
-Optional<float> parseNumber(const LChar*& ptr, const LChar* end, SuffixSkippingPolicy skip)
+Optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkippingPolicy skip)
 {
-    return genericParseNumber(ptr, end, skip);
+    return genericParseNumber(buffer, skip);
 }
 
-Optional<float> parseNumber(const UChar*& ptr, const UChar* end, SuffixSkippingPolicy skip)
+Optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
 {
-    return genericParseNumber(ptr, end, skip);
+    return genericParseNumber(buffer, skip);
 }
 
 Optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
 {
-    auto upconvertedCharacters = string.upconvertedCharacters();
-    const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + string.length();
-    auto result = genericParseNumber(ptr, end, skip);
-    if (ptr != end)
-        return WTF::nullopt;
-    return result;
+    return readCharactersForParsing(string, [skip](auto buffer) -> Optional<float> {
+        auto result = genericParseNumber(buffer, skip);
+        if (!buffer.atEnd())
+            return WTF::nullopt;
+        return result;
+    });
 }
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
-template <typename CharacterType> Optional<bool> genericParseArcFlag(const CharacterType*& ptr, const CharacterType* end)
+template <typename CharacterType> Optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
 {
-    if (ptr >= end)
+    if (buffer.atEnd())
         return WTF::nullopt;
 
-    const CharacterType flagChar = *ptr++;
+    const CharacterType flagChar = *buffer;
+    ++buffer;
 
     bool flag;
     if (flagChar == '0')
@@ -175,19 +177,19 @@ template <typename CharacterType> Optional<bool> genericParseArcFlag(const Chara
     else
         return WTF::nullopt;
 
-    skipOptionalSVGSpacesOrDelimiter(ptr, end);
+    skipOptionalSVGSpacesOrDelimiter(buffer);
     
     return flag;
 }
 
-Optional<bool> parseArcFlag(const LChar*& ptr, const LChar* end)
+Optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
 {
-    return genericParseArcFlag(ptr, end);
+    return genericParseArcFlag(buffer);
 }
 
-Optional<bool> parseArcFlag(const UChar*& ptr, const UChar* end)
+Optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
 {
-    return genericParseArcFlag(ptr, end);
+    return genericParseArcFlag(buffer);
 }
 
 Optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& string)
@@ -195,25 +197,23 @@ Optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& st
     if (string.isEmpty())
         return WTF::nullopt;
 
-    auto upconvertedCharacters = string.upconvertedCharacters();
-    const UChar* cur = upconvertedCharacters;
-    const UChar* end = cur + string.length();
+    return readCharactersForParsing(string, [](auto buffer) -> Optional<std::pair<float, float>> {
+        auto x = parseNumber(buffer);
+        if (!x)
+            return WTF::nullopt;
 
-    auto x = parseNumber(cur, end);
-    if (!x)
-        return WTF::nullopt;
+        if (buffer.atEnd())
+            return std::make_pair(*x, *x);
 
-    if (cur == end)
-        return std::make_pair(*x, *x);
+        auto y = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
+        if (!y)
+            return WTF::nullopt;
 
-    auto y = parseNumber(cur, end, SuffixSkippingPolicy::DontSkip);
-    if (!y)
-        return WTF::nullopt;
+        if (!buffer.atEnd())
+            return WTF::nullopt;
 
-    if (cur != end)
-        return WTF::nullopt;
-
-    return std::make_pair(*x, *y);
+        return std::make_pair(*x, *y);
+    });
 }
 
 Optional<FloatPoint> parsePoint(const StringView& string)
@@ -221,117 +221,113 @@ Optional<FloatPoint> parsePoint(const StringView& string)
     if (string.isEmpty())
         return WTF::nullopt;
 
-    auto upconvertedCharacters = string.upconvertedCharacters();
-    const UChar* cur = upconvertedCharacters;
-    const UChar* end = cur + string.length();
+    return readCharactersForParsing(string, [](auto buffer) -> Optional<FloatPoint> {
+        if (!skipOptionalSVGSpaces(buffer))
+            return WTF::nullopt;
 
-    if (!skipOptionalSVGSpaces(cur, end))
-        return WTF::nullopt;
+        auto point = parseFloatPoint(buffer);
+        if (!point)
+            return WTF::nullopt;
 
-    auto point = parseFloatPoint(cur, end);
-    if (!point)
-        return WTF::nullopt;
-
-    // Disallow anything except spaces at the end.
-    skipOptionalSVGSpaces(cur, end);
-    
-    return point;
+        // Disallow anything except spaces at the end.
+        skipOptionalSVGSpaces(buffer);
+        
+        return point;
+    });
 }
 
 Optional<FloatRect> parseRect(const StringView& string)
 {
-    auto upconvertedCharacters = string.upconvertedCharacters();
-    const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + string.length();
-    
-    skipOptionalSVGSpaces(ptr, end);
-    
-    auto x = parseNumber(ptr, end);
-    if (!x)
-        return WTF::nullopt;
-    auto y = parseNumber(ptr, end);
-    if (!y)
-        return WTF::nullopt;
-    auto width = parseNumber(ptr, end);
-    if (!width)
-        return WTF::nullopt;
-    auto height = parseNumber(ptr, end, SuffixSkippingPolicy::DontSkip);
-    if (!height)
-        return WTF::nullopt;
+    return readCharactersForParsing(string, [](auto buffer) -> Optional<FloatRect> {
+        skipOptionalSVGSpaces(buffer);
+        
+        auto x = parseNumber(buffer);
+        if (!x)
+            return WTF::nullopt;
+        auto y = parseNumber(buffer);
+        if (!y)
+            return WTF::nullopt;
+        auto width = parseNumber(buffer);
+        if (!width)
+            return WTF::nullopt;
+        auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
+        if (!height)
+            return WTF::nullopt;
 
-    return FloatRect { *x, *y, *width, *height };
+        return FloatRect { *x, *y, *width, *height };
+    });
 }
 
 Optional<HashSet<String>> parseGlyphName(const StringView& string)
 {
     // FIXME: Parsing error detection is missing.
 
-    auto upconvertedCharacters = string.upconvertedCharacters();
-    const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + string.length();
-    skipOptionalSVGSpaces(ptr, end);
+    return readCharactersForParsing(string, [](auto buffer) -> HashSet<String> {
+        skipOptionalSVGSpaces(buffer);
 
-    HashSet<String> values;
+        HashSet<String> values;
 
-    while (ptr < end) {
-        // Leading and trailing white space, and white space before and after separators, will be ignored.
-        const UChar* inputStart = ptr;
-        while (ptr < end && *ptr != ',')
-            ++ptr;
+        while (buffer.hasCharactersRemaining()) {
+            // Leading and trailing white space, and white space before and after separators, will be ignored.
+            auto inputStart = buffer.position();
 
-        if (ptr == inputStart)
-            break;
+            skipUntil(buffer, ',');
 
-        // walk backwards from the ; to ignore any whitespace
-        const UChar* inputEnd = ptr - 1;
-        while (inputStart < inputEnd && isSVGSpace(*inputEnd))
-            --inputEnd;
+            if (buffer.position() == inputStart)
+                break;
 
-        values.add(String(inputStart, inputEnd - inputStart + 1));
-        skipOptionalSVGSpacesOrDelimiter(ptr, end, ',');
-    }
+            // walk backwards from the ; to ignore any whitespace
+            auto inputEnd = buffer.position() - 1;
+            while (inputStart < inputEnd && isSVGSpace(*inputEnd))
+                --inputEnd;
 
-    return values;
+            values.add(String(inputStart, inputEnd - inputStart + 1));
+            skipOptionalSVGSpacesOrDelimiter(buffer, ',');
+        }
+        return values;
+    });
+
 }
 
-static Optional<UnicodeRange> parseUnicodeRange(const UChar* characters, unsigned length)
+template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange(StringParsingBuffer<CharacterType> buffer)
 {
-    if (length < 2 || characters[0] != 'U' || characters[1] != '+')
+    unsigned length = buffer.lengthRemaining();
+    if (length < 2 || buffer[0] != 'U' || buffer[1] != '+')
         return WTF::nullopt;
-    
+
+    buffer += 2;
+
     // Parse the starting hex number (or its prefix).
     unsigned startRange = 0;
     unsigned startLength = 0;
 
-    const UChar* ptr = characters + 2;
-    const UChar* end = characters + length;
-    while (ptr < end) {
-        if (!isASCIIHexDigit(*ptr))
+    while (buffer.hasCharactersRemaining()) {
+        if (!isASCIIHexDigit(*buffer))
             break;
         ++startLength;
         if (startLength > 6)
             return WTF::nullopt;
-        startRange = (startRange << 4) | toASCIIHexValue(*ptr);
-        ++ptr;
+        startRange = (startRange << 4) | toASCIIHexValue(*buffer);
+        ++buffer;
     }
 
     // Handle the case of ranges separated by "-" sign.
-    if (2 + startLength < length && *ptr == '-') {
+    if (2 + startLength < length && *buffer == '-') {
         if (!startLength)
             return WTF::nullopt;
         
         // Parse the ending hex number (or its prefix).
         unsigned endRange = 0;
         unsigned endLength = 0;
-        ++ptr;
-        while (ptr < end) {
-            if (!isASCIIHexDigit(*ptr))
+        ++buffer;
+        while (buffer.hasCharactersRemaining()) {
+            if (!isASCIIHexDigit(*buffer))
                 break;
             ++endLength;
             if (endLength > 6)
                 return WTF::nullopt;
-            endRange = (endRange << 4) | toASCIIHexValue(*ptr);
-            ++ptr;
+            endRange = (endRange << 4) | toASCIIHexValue(*buffer);
+            ++buffer;
         }
         
         if (!endLength)
@@ -345,15 +341,15 @@ static Optional<UnicodeRange> parseUnicodeRange(const UChar* characters, unsigne
     
     // Handle the case of a number with some optional trailing question marks.
     unsigned endRange = startRange;
-    while (ptr < end) {
-        if (*ptr != '?')
+    while (buffer.hasCharactersRemaining()) {
+        if (*buffer != '?')
             break;
         ++startLength;
         if (startLength > 6)
             return WTF::nullopt;
         startRange <<= 4;
         endRange = (endRange << 4) | 0xF;
-        ++ptr;
+        ++buffer;
     }
     
     if (!startLength)
@@ -369,53 +365,55 @@ Optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(co
 {
     // FIXME: Parsing error detection is missing.
 
-    auto upconvertedCharacters = string.upconvertedCharacters();
-    const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + string.length();
+    return readCharactersForParsing(string, [](auto buffer) -> std::pair<UnicodeRanges, HashSet<String>> {
+        UnicodeRanges rangeList;
+        HashSet<String> stringList;
 
-    UnicodeRanges rangeList;
-    HashSet<String> stringList;
+        while (1) {
+            auto inputStart = buffer.position();
 
-    while (ptr < end) {
-        const UChar* inputStart = ptr;
-        while (ptr < end && *ptr != ',')
-            ++ptr;
+            skipUntil(buffer, ',');
 
-        if (ptr == inputStart)
-            break;
+            if (buffer.position() == inputStart)
+                break;
 
-        // Try to parse unicode range first
-        if (auto range = parseUnicodeRange(inputStart, ptr - inputStart))
-            rangeList.append(WTFMove(*range));
-        else
-            stringList.add(String(inputStart, ptr - inputStart));
-        ++ptr;
-    }
+            // Try to parse unicode range first
+            if (auto range = parseUnicodeRange(StringParsingBuffer { inputStart, buffer.position() }))
+                rangeList.append(WTFMove(*range));
+            else
+                stringList.add(String(inputStart, buffer.position() - inputStart));
 
-    return std::make_pair(rangeList, stringList);
+            if (buffer.atEnd())
+                break;
+
+            ++buffer;
+        }
+
+        return std::make_pair(WTFMove(rangeList), WTFMove(stringList));
+    });
 }
 
-template <typename CharacterType> static Optional<FloatPoint> genericParseFloatPoint(const CharacterType*& current, const CharacterType* end)
+template <typename CharacterType> static Optional<FloatPoint> genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
 {
-    auto x = parseNumber(current, end);
+    auto x = parseNumber(buffer);
     if (!x)
         return WTF::nullopt;
 
-    auto y = parseNumber(current, end);
+    auto y = parseNumber(buffer);
     if (!y)
         return WTF::nullopt;
 
     return FloatPoint { *x, *y };
 }
 
-Optional<FloatPoint> parseFloatPoint(const LChar*& current, const LChar* end)
+Optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
 {
-    return genericParseFloatPoint(current, end);
+    return genericParseFloatPoint(buffer);
 }
 
-Optional<FloatPoint> parseFloatPoint(const UChar*& current, const UChar* end)
+Optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
 {
-    return genericParseFloatPoint(current, end);
+    return genericParseFloatPoint(buffer);
 }
 
 }
