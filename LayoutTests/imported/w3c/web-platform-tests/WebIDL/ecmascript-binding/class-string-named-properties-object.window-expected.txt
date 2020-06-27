@@ -2,5 +2,4 @@
 PASS @@toStringTag exists with the appropriate descriptor 
 PASS Object.prototype.toString 
 PASS Object.prototype.toString applied after modifying @@toStringTag 
-PASS Object.prototype.toString applied after deleting @@toStringTag 
 

@@ -2,6 +2,7 @@
 PASS @@toStringTag exists with the appropriate descriptor 
 PASS Object.prototype.toString 
 PASS Object.prototype.toString applied after modifying @@toStringTag 
-FAIL Object.prototype.toString applied after nulling the prototype assert_equals: expected "[object Object]" but got "[object URLSearchParams Iterator]"
+PASS Object.prototype.toString applied to a null-prototype instance 
+PASS Object.prototype.toString applied after nulling the prototype 
 PASS Object.prototype.toString applied after deleting @@toStringTag 
 

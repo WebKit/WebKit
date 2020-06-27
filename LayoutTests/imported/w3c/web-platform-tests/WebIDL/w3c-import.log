@@ -16,6 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/current-realm.html
-/LayoutTests/imported/w3c/web-platform-tests/WebIDL/interfaces.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/readme.txt
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/testable_assertions.txt
