@@ -77,7 +77,11 @@ private:
     template<typename Block> static BasicBlockVector computeImpl(Block* codeBlock, const InstructionStream& instructions);
     void shrinkToFit();
 
-    void addSuccessor(BytecodeBasicBlock& block) { m_successors.append(block.index()); }
+    void addSuccessor(BytecodeBasicBlock& block)
+    {
+        if (!m_successors.contains(block.index()))
+            m_successors.append(block.index());
+    }
 
     inline void addLength(unsigned);
 

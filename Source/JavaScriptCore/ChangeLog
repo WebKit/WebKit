@@ -1,5 +1,20 @@
 2020-06-27  Saam Barati  <sbarati@apple.com>
 
+        BytecodeBasicBlock::addSuccessor should check if the  successor already exists
+        https://bugs.webkit.org/show_bug.cgi?id=213670
+
+        Reviewed by Yusuke Suzuki.
+
+        It makes it nicer for algorithms using BytecodeGraph to not have to consider
+        whether or not there are duplicates in the successor list. Also, because of
+        this, bytecode liveness was doing extra work since it walked the successor list,
+        including any duplicates in it.
+
+        * bytecode/BytecodeBasicBlock.h:
+        (JSC::BytecodeBasicBlock::addSuccessor):
+
+2020-06-27  Saam Barati  <sbarati@apple.com>
+
         Change bytecode dumping to dump the bytecode control flow graph
         https://bugs.webkit.org/show_bug.cgi?id=213669
 
