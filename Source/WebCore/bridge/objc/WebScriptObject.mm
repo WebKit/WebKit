@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -275,10 +275,17 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     // It's not actually correct to call shouldAllowAccessToFrame in this way because
     // JSDOMWindowBase* isn't the right object to represent the currently executing
     // JavaScript. Instead, we should use JSGlobalObject, like we do elsewhere.
-    auto* target = JSC::jsDynamicCast<JSDOMWindowBase*>(root->globalObject()->vm(), root->globalObject());
+    JSC::JSGlobalObject* globalObject = root->globalObject();
+    JSC::VM& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto* target = JSC::jsDynamicCast<JSDOMWindowBase*>(vm, globalObject);
     if (!target)
         return false;
-    return BindingSecurity::shouldAllowAccessToDOMWindow(_private->originRootObject->globalObject(), target->wrapped());
+    
+    bool isSafe = BindingSecurity::shouldAllowAccessToDOMWindow(_private->originRootObject->globalObject(), target->wrapped());
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
+    return isSafe;
 }
 
 - (JSGlobalContextRef)_globalContextRef

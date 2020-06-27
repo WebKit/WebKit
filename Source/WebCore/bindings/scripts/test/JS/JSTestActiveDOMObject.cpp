@@ -218,7 +218,9 @@ static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(JSGlobalObject& le
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(lexicalGlobalObject);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError))
+    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError);
+    EXCEPTION_ASSERT(!throwScope.exception() || !shouldAllowAccess);
+    if (!shouldAllowAccess)
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.excitingAttr());
@@ -235,7 +237,9 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError))
+    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError);
+    EXCEPTION_ASSERT(!throwScope.exception() || !shouldAllowAccess);
+    if (!shouldAllowAccess)
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
@@ -307,7 +311,9 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionOverload
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError))
+    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError);
+    EXCEPTION_ASSERT(!throwScope.exception() || !shouldAllowAccess);
+    if (!shouldAllowAccess)
         return JSValue::encode(jsUndefined());
     VM& vm = JSC::getVM(lexicalGlobalObject);
     UNUSED_PARAM(vm);

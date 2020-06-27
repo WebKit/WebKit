@@ -264,8 +264,11 @@ void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
 {
     auto& world = windowProxy.world();
+    JSC::VM& vm = world.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     jsCast<JSDOMWindow*>(windowProxy.window())->updateDocument();
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
 
     if (Document* document = m_frame.document())
         document->contentSecurityPolicy()->didCreateWindowProxy(windowProxy);

@@ -1,3 +1,40 @@
+2020-06-27  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception check in createIDBKeyFromValue().
+        https://bugs.webkit.org/show_bug.cgi?id=213681
+        <rdar://problem/64804893>
+
+        Reviewed by Chris Dumez.
+
+        Test: storage/indexeddb/missing-exception-check-in-IDBKey.html
+
+        Also fixed up miscellaneous other exception check related code to enable the
+        new test to run with exception check validation.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::BindingSecurity::shouldAllowAccessToDOMWindow):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScriptForWindowProxy):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectExcitingAttrGetter):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionBody):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionOverloadedMethodOverloadDispatcher):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject _isSafeScript]):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+
 2020-06-27  Jer Noble  <jer.noble@apple.com>
 
         iOS Safari incorrectly reports "AppleCoreMedia" as UA string
