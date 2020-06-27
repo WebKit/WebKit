@@ -75,6 +75,8 @@ public:
         return true;
     }
 
+    void log() const;
+
 protected:
     MediaConstraint(const String& name, MediaConstraintType constraintType, DataType dataType)
         : m_name(name)
@@ -415,6 +417,8 @@ public:
         ASSERT(other.isInt());
         NumericConstraint::innerMerge(downcast<const IntConstraint>(other));
     }
+
+    void logAsInt() const;
 };
 
 class DoubleConstraint final : public NumericConstraint<double> {
@@ -431,6 +435,8 @@ public:
         ASSERT(other.isDouble());
         NumericConstraint::innerMerge(downcast<DoubleConstraint>(other));
     }
+
+    void logAsDouble() const;
 };
 
 class BooleanConstraint final : public MediaConstraint {
@@ -526,6 +532,8 @@ public:
 
         return true;
     }
+
+    void logAsBoolean() const;
 
 private:
     Optional<bool> m_exact;

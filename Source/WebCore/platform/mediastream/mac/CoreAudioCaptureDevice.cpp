@@ -45,7 +45,7 @@ static bool getDeviceInfo(uint32_t deviceID, String& persistentID, String& label
     UInt32 dataSize = sizeof(uniqueID);
     auto err = AudioObjectGetPropertyData(static_cast<UInt32>(deviceID), &address, 0, nullptr, &dataSize, &uniqueID);
     if (err) {
-        LOG(Media, "CoreAudioCaptureDevice::getDeviceInfo failed to get device unique id with error %d (%.4s)", (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioCaptureDevice::getDeviceInfo failed to get device unique id with error %d (%.4s)", (int)err, (char*)&err);
         return false;
     }
     persistentID = uniqueID;
@@ -56,7 +56,7 @@ static bool getDeviceInfo(uint32_t deviceID, String& persistentID, String& label
     dataSize = sizeof(localizedName);
     err = AudioObjectGetPropertyData(static_cast<UInt32>(deviceID), &address, 0, nullptr, &dataSize, &localizedName);
     if (err) {
-        LOG(Media, "CoreAudioCaptureDevice::getDeviceInfo failed to get device name with error %d (%.4s)", (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioCaptureDevice::getDeviceInfo failed to get device name with error %d (%.4s)", (int)err, (char*)&err);
         return false;
     }
     label = localizedName;
@@ -89,7 +89,7 @@ RetainPtr<CMClockRef> CoreAudioCaptureDevice::deviceClock()
     CMClockRef clock;
     auto err = CMAudioDeviceClockCreate(kCFAllocatorDefault, persistentId().createCFString().get(), &clock);
     if (err) {
-        LOG(Media, "CoreAudioCaptureDevice::CMAudioDeviceClockCreate(%p) CMAudioDeviceClockCreate failed with error %d (%.4s)", this, (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioCaptureDevice::CMAudioDeviceClockCreate(%p) CMAudioDeviceClockCreate failed with error %d (%.4s)", this, (int)err, (char*)&err);
         return nullptr;
     }
 

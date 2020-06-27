@@ -329,8 +329,13 @@ Optional<RealtimeVideoCaptureSource::CaptureSizeAndFrameRate> RealtimeVideoCaptu
         }
     }
 
-    if (!exactSizePreset && !aspectRatioPreset && !resizePreset)
+    if (!exactSizePreset && !aspectRatioPreset && !resizePreset) {
+        WTFLogAlways("RealtimeVideoCaptureSource::bestSupportedSizeAndFrameRate failed supporting constraints %d %d %f", requestedWidth ? *requestedWidth : -1, requestedHeight ? *requestedHeight : -1, requestedFrameRate ? *requestedFrameRate : -1);
+        for (const auto& preset : presets())
+            preset->log();
+
         return { };
+    }
 
     result.requestedFrameRate = requestedFrameRate.value();
     if (exactSizePreset) {

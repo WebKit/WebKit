@@ -246,7 +246,18 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
     else
         getUserMediaDevices(request, String { deviceIdentifierHashSalt }, audioDeviceInfo, videoDeviceInfo, firstInvalidConstraint);
 
-    if ((request.audioConstraints.isValid && audioDeviceInfo.isEmpty()) || (request.videoConstraints.isValid && videoDeviceInfo.isEmpty())) {
+    if (request.audioConstraints.isValid && audioDeviceInfo.isEmpty()) {
+        WTFLogAlways("Audio capture was requested but no device was found amongst %zu devices", audioCaptureFactory().audioCaptureDeviceManager().captureDevices().size());
+        request.audioConstraints.mandatoryConstraints.forEach([](auto& constraint) { constraint.log(); });
+
+        invalidHandler(firstInvalidConstraint);
+        return;
+    }
+
+    if (request.videoConstraints.isValid && videoDeviceInfo.isEmpty()) {
+        WTFLogAlways("Video capture was requested but no device was found amongst %zu devices", videoCaptureFactory().videoCaptureDeviceManager().captureDevices().size());
+        request.videoConstraints.mandatoryConstraints.forEach([](auto& constraint) { constraint.log(); });
+
         invalidHandler(firstInvalidConstraint);
         return;
     }

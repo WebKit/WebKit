@@ -84,8 +84,10 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
 {
     // Ignore output devices that have input only for echo cancellation.
     AudioObjectPropertyAddress address = { kAudioDevicePropertyTapEnabled, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
-    if (AudioObjectHasProperty(device.deviceID(), &address))
+    if (AudioObjectHasProperty(device.deviceID(), &address)) {
+        RELEASE_LOG(WebRTC, "Ignoring output device that have input only for echo cancellation");
         return false;
+    }
 
     // Ignore non-aggregable devices.
     UInt32 dataSize = 0;
@@ -96,11 +98,23 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
     bool isNonAggregable = !name || !String(name).startsWith("com.apple.audio.CoreAudio");
     if (name)
         CFRelease(name);
-    if (isNonAggregable)
+    if (isNonAggregable) {
+        RELEASE_LOG(WebRTC, "Ignoring output device that is non aggregable");
         return false;
+    }
 
     // Ignore unnamed devices and aggregate devices created by VPIO.
-    return !device.label().isEmpty() && !device.label().startsWith("VPAUAggregateAudioDevice");
+    if (device.label().isEmpty()) {
+        RELEASE_LOG(WebRTC, "Ignoring output device that is unnamed");
+        return false;
+    }
+
+    if (device.label().startsWith("VPAUAggregateAudioDevice")) {
+        RELEASE_LOG(WebRTC, "Ignoring output VPAUAggregateAudioDevice device");
+        return false;
+    }
+
+    return true;
 }
 
 static inline Optional<CoreAudioCaptureDevice> getDefaultCaptureInputDevice()

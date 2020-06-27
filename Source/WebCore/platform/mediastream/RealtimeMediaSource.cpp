@@ -311,6 +311,8 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(Optional<IntConstraint> width
     if (widthConstraint && capabilities.supportsWidth()) {
         double constraintDistance = fitnessDistance(*widthConstraint);
         if (std::isinf(constraintDistance)) {
+            auto range = capabilities.width();
+            WTFLogAlways("RealtimeMediaSource::supportsSizeAndFrameRate failed width constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = widthConstraint->name();
             return false;
         }
@@ -326,6 +328,8 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(Optional<IntConstraint> width
     if (heightConstraint && capabilities.supportsHeight()) {
         double constraintDistance = fitnessDistance(*heightConstraint);
         if (std::isinf(constraintDistance)) {
+            auto range = capabilities.height();
+            WTFLogAlways("RealtimeMediaSource::supportsSizeAndFrameRate failed height constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = heightConstraint->name();
             return false;
         }
@@ -341,6 +345,8 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(Optional<IntConstraint> width
     if (frameRateConstraint && capabilities.supportsFrameRate()) {
         double constraintDistance = fitnessDistance(*frameRateConstraint);
         if (std::isinf(constraintDistance)) {
+            auto range = capabilities.frameRate();
+            WTFLogAlways("RealtimeMediaSource::supportsSizeAndFrameRate failed frame rate constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = frameRateConstraint->name();
             return false;
         }
@@ -661,7 +667,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     if (!supportsSizeAndFrameRate(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), failedConstraint, minimumDistance))
         return false;
 
-    constraints.mandatoryConstraints.filter([&](const MediaConstraint& constraint) {
+    constraints.mandatoryConstraints.filter([&](auto& constraint) {
         if (!supportsConstraint(constraint))
             return false;
 
@@ -672,6 +678,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
         double constraintDistance = fitnessDistance(constraint);
         if (std::isinf(constraintDistance)) {
+            WTFLogAlways("RealtimeMediaSource::selectSettings failed constraint %d", constraint.constraintType());
             failedConstraint = constraint.name();
             return true;
         }
