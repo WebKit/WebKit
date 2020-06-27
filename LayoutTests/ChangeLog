@@ -1,5 +1,17 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop tests that got renamed in r263598 when re-syncing WebCryptAPI tests.
+
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.worker-expected.txt: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Removed.
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land iOS-specific baselines after WebCryptoAPI WPT tests resync in r263598.
 
         * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt:

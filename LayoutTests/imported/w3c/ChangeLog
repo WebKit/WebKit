@@ -1,5 +1,14 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop tests that got renamed in r263598 when re-syncing WebCryptAPI tests.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html: Removed.
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop test that got renamed in r263595.
 
         This test is now called beacon-redirect.sub.window.html.
