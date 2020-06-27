@@ -1,3 +1,16 @@
+2020-06-26  David Kilzer  <ddkilzer@apple.com>
+
+        Crash at WebKit: __62-[WKContentView(WKInteraction) resignFirstResponderForWebView]_block_invoke
+        <https://webkit.org/b/213666>
+        <rdar://problem/64238661>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+        - Speculative fix to return early if there are no queued key
+          events available by the time the block runs.
+
 2020-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Layout tests sometimes assert under -[WKContentView hasContent]

@@ -1421,7 +1421,8 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
                 auto page = strongSelf->_page;
                 if (!page)
                     return;
-                ASSERT(page->hasQueuedKeyEvent());
+                if (!page->hasQueuedKeyEvent())
+                    return;
                 keyEventHandler(page->firstQueuedKeyEvent().nativeEvent(), YES);
             });
         }
