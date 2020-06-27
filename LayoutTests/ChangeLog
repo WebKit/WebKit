@@ -1,5 +1,13 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rename beacon-redirect.window.html to beacon-redirect.sub.window.html in TestExpectations
+
+        This needed updating since the test got renamed upstream and we resync'd it recently in r263595.
+
+        * TestExpectations:
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop tests that got renamed in r263598 when re-syncing WebCryptAPI tests.
 
         * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
