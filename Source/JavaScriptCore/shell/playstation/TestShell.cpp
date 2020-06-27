@@ -25,8 +25,21 @@
 
 #include "../jsc.cpp"
 
+#include <wtf/Language.h>
+
+#define STATIC_OPTION(type_, name_, defaultValue_, availability_, description_) \
+    static OptionsStorage::type_ orig##name_;
+    FOR_EACH_JSC_OPTION(STATIC_OPTION)
+#undef STATIC_OPTION
+
 extern "C" void setupTestRun()
 {
+    CommandLine options(0, nullptr);
+#define STATIC_OPTION(type_, name_, defaultValue_, availability_, description_) \
+    orig##name_ = JSC::Options::name_();
+    FOR_EACH_JSC_OPTION(STATIC_OPTION)
+#undef STATIC_OPTION
+
     // Need to initialize WTF threading before we start any threads. Cannot initialize JSC
     // threading yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
@@ -46,9 +59,10 @@ extern "C" void setupTestRun()
 extern "C" void preTest()
 {
 #define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) \
-    JSC::Options::name_() = JSC::Options::name_##Default();
+    JSC::Options::name_() = orig##name_;
     FOR_EACH_JSC_OPTION(INIT_OPTION)
 #undef INIT_OPTION
+    overrideUserPreferredLanguages(platformUserPreferredLanguages());
 }
 
 extern "C" int runTest(int argc, char* argv[])

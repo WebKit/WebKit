@@ -1,3 +1,12 @@
+2020-06-27  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Update test runner for changes to Options and signing
+        https://bugs.webkit.org/show_bug.cgi?id=213650
+
+        Reviewed by Don Olmstead.
+
+        * Scripts/webkitdirs.pm: Update extension for PlayStation binary
+
 2020-06-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Allow callers to override the reported model (Part 1)

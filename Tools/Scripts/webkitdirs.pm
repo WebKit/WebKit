@@ -502,7 +502,7 @@ sub jscPath($)
     my $jscName = "jsc";
     $jscName .= "_debug"  if configuration() eq "Debug_All";
     if (isPlayStation()) {
-        $jscName .= ".elf";
+        $jscName .= ".self";
     } elsif (isAnyWindows()) {
         $jscName .= ".exe";
     }

@@ -44,4 +44,5 @@ static void initializer(void)
     loadLibraryOrExit("Perf");
     loadLibraryOrExit("PosixWebKit");
     loadLibraryOrExit("libJavaScriptCore");
+    loadLibraryOrExit("libicu");
 }
