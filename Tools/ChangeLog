@@ -1,3 +1,16 @@
+2020-06-27  Jer Noble  <jer.noble@apple.com>
+
+        iOS Safari incorrectly reports "AppleCoreMedia" as UA string
+        https://bugs.webkit.org/show_bug.cgi?id=213245
+        <rdar://problem/64471582>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm: Added.
+        (TestWebKitAPI::parseUserAgent):
+        (TestWebKitAPI::TEST):
+
 2020-06-27  Philippe Normand  <pnormand@igalia.com>
 
         Migrate run-minibrowser to webkitpy

@@ -957,6 +957,7 @@
 		CAB0FF5222332407006CA5B0 /* IndexedDBFileName-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CAB0FF51223323F6006CA5B0 /* IndexedDBFileName-1.html */; };
 		CAB0FF5322332407006CA5B0 /* IndexedDBFileName-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CAB0FF50223323F6006CA5B0 /* IndexedDBFileName-2.html */; };
 		CAB0FF5522332C57006CA5B0 /* IndexedDBFileName.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */; };
+		CD0370E324A44D9600BA3CAE /* MediaLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD0370E224A44B7A00BA3CAE /* MediaLoading.mm */; };
 		CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */; };
 		CD0BD0A81F79982D001AB2CF /* ContextMenuImgWithVideo.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */; };
 		CD227E44211A4D5D00D285AF /* PreferredAudioBufferSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD227E43211A4D5D00D285AF /* PreferredAudioBufferSize.mm */; };
@@ -2604,6 +2605,7 @@
 		CAB0FF50223323F6006CA5B0 /* IndexedDBFileName-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBFileName-2.html"; sourceTree = "<group>"; };
 		CAB0FF51223323F6006CA5B0 /* IndexedDBFileName-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBFileName-1.html"; sourceTree = "<group>"; };
 		CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBFileName.mm; sourceTree = "<group>"; };
+		CD0370E224A44B7A00BA3CAE /* MediaLoading.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaLoading.mm; sourceTree = "<group>"; };
 		CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuImgWithVideo.mm; sourceTree = "<group>"; };
 		CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = ContextMenuImgWithVideo.html; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
@@ -3175,6 +3177,7 @@
 				8C10AF96206467770018FD90 /* LocalStoragePersistence.mm */,
 				7A6A2C6F1DCCF87B00C0D085 /* LocalStorageQuirkTest.mm */,
 				07CC7DFD2266330800E39181 /* MediaBufferingPolicy.mm */,
+				CD0370E224A44B7A00BA3CAE /* MediaLoading.mm */,
 				51BE9E652376089500B4E117 /* MediaType.mm */,
 				5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */,
 				51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */,
@@ -4872,6 +4875,7 @@
 				0711DF52226A95FC003DD2F7 /* AVFoundationSoftLinkTest.mm in Sources */,
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
 				1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */,
+				CD0370E324A44D9600BA3CAE /* MediaLoading.mm in Sources */,
 				C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */,
 				C1692DCA23D10DAE006E88F7 /* Battery.mm in Sources */,
 				374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */,
