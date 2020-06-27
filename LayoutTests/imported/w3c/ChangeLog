@@ -1,5 +1,14 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop test that got renamed in r263595.
+
+        This test is now called beacon-redirect.sub.window.html.
+
+        * web-platform-tests/beacon/beacon-redirect.window-expected.txt: Removed.
+        * web-platform-tests/beacon/beacon-redirect.window.html: Removed.
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/WebIDL from upstream
         https://bugs.webkit.org/show_bug.cgi?id=213539
 
