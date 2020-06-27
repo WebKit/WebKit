@@ -1,5 +1,20 @@
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
+        WebSecurityOrigin needs to initialize the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=213675
+
+        Reviewed by Tim Horton.
+
+        Safari uses WebSecurityOrigin stand-alone in unit tests.
+
+        (And any client can use WebSecurityOrigin without first using other
+        WebKit data types.)
+
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin initWithURL:]):
+
+2020-06-26  Geoffrey Garen  <ggaren@apple.com>
+
         Initializing the main thread should initialize the main run loop
         https://bugs.webkit.org/show_bug.cgi?id=213637
 

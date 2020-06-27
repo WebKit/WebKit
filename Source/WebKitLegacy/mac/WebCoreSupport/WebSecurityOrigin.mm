@@ -42,6 +42,8 @@ using namespace WebCore;
 
 + (id)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier
 {
+    WTF::initializeMainThread();
+
     auto origin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier);
     if (!origin)
         return nil;
@@ -51,6 +53,8 @@ using namespace WebCore;
 
 - (id)initWithURL:(NSURL *)url
 {
+    WTF::initializeMainThread();
+
     self = [super init];
     if (!self)
         return nil;
