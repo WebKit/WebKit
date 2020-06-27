@@ -1,3 +1,18 @@
+2020-06-27  Youenn Fablet  <youenn@apple.com>
+
+        Protect SWServer::claim from a registration without active worker
+        https://bugs.webkit.org/show_bug.cgi?id=213597
+
+        Reviewed by Chris Dumez.
+
+        SWServerWorker might be active while being terminated.
+        If terminated as part of SWServerRegistration::clear, the registration no longer has a service worker.
+        SWServer::claim should therefore check for registration active worker.
+        This is difficult to test as one needs to claim at the time the service worker is being terminated but not yet terminated.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::claim):
+
 2020-06-27  Sam Weinig  <weinig@apple.com>
 
         Convert SVG related parsers over to using StringParsingBuffer

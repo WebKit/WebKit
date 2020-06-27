@@ -581,13 +581,13 @@ void SWServer::forEachClientForOrigin(const ClientOrigin& origin, const WTF::Fun
 
 Optional<ExceptionData> SWServer::claim(SWServerWorker& worker)
 {
-    if (!worker.isActive())
+    auto* registration = worker.registration();
+    if (!registration || &worker != registration->activeWorker())
         return ExceptionData { InvalidStateError, "Service worker is not active"_s };
 
     auto& origin = worker.origin();
     forEachClientForOrigin(origin, [&](auto& clientData) {
-        auto* registration = this->doRegistrationMatching(origin.topOrigin, clientData.url);
-        if (!(registration && registration->key() == worker.registrationKey()))
+        if (doRegistrationMatching(origin.topOrigin, clientData.url) != registration)
             return;
 
         auto result = m_clientToControllingRegistration.add(clientData.identifier, registration->identifier());
