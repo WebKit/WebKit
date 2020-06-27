@@ -1,3 +1,13 @@
+2020-06-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update test expectations after r263609.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.worker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt:
+
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rename beacon-redirect.window.html to beacon-redirect.sub.window.html in TestExpectations

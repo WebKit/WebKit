@@ -1719,8 +1719,6 @@ webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failu
 
 webkit.org/b/188042 imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure Timeout ]
 
-webkit.org/b/188046 [ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Pass Timeout ]
-
 webkit.org/b/188105 media/track/track-css-all-cues.html [ Failure Pass Crash ]
 
 webkit.org/b/188437 media/W3C/audio/events/event_playing_manual.html [ Crash Pass ]
@@ -2523,7 +2521,6 @@ webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb
 webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass Slow ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ]
 webkit.org/b/207711 [ Release ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ImageOnlyFailure ]
-webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Timeout ]
 webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass Timeout ]
 
 # Web inspector related tests are very slow or timeout in debug.
