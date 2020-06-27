@@ -33,16 +33,19 @@ sequence.push(1);
 
 p1.catch(function() {
   sequence.push(3);
+  assert.sameValue(sequence.length, 3);
   checkSequence(sequence, 'Expected to be called first.');
 }).catch($DONE);
 
 Promise.allSettled([p1, p2]).then(function() {
   sequence.push(5);
+  assert.sameValue(sequence.length, 5);
   checkSequence(sequence, 'Expected to be called third.');
 }).then($DONE, $DONE);
 
 p2.catch(function() {
   sequence.push(4);
+  assert.sameValue(sequence.length, 4);
   checkSequence(sequence, 'Expected to be called second.');
 }).catch($DONE);
 

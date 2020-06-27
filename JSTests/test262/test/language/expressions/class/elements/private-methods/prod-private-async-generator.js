@@ -131,4 +131,4 @@ ctorPromise.then(() => {
         assert.sameValue(value, 42, 'return from generator method');
         assert.sameValue(done, true, 'iterator is done');
     });
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);

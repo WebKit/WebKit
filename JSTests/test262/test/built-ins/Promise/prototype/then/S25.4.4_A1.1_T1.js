@@ -34,6 +34,7 @@ p.then(function() {
 }).then(function() {
   sequence.push(8);
 }).then(function() {
+  assert.sameValue(sequence.length, 8);
   checkSequence(sequence, "Sequence should be as expected");
 }).then($DONE, $DONE);
 

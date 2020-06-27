@@ -5,9 +5,6 @@ test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
   default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-test/annexB/built-ins/Function/createdynfn-no-line-terminator-html-close-comment-body.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:
@@ -621,6 +618,9 @@ test/annexB/language/statements/const/dstr/object-pattern-emulates-undefined.js:
 test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+test/built-ins/Array/prototype/indexOf/length-zero-returns-minus-one.js:
+  default: 'Test262Error: Length should be checked before ToInteger(fromIndex).'
+  strict mode: 'Test262Error: Length should be checked before ToInteger(fromIndex).'
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -921,33 +921,6 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/NativeErrors/AggregateError/prototype/errors/invoked-as-accessor.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/NativeErrors/AggregateError/prototype/errors/invoked-as-func.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
-test/built-ins/NativeErrors/AggregateError/prototype/errors/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'desc.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'desc.get')"
-test/built-ins/NativeErrors/AggregateError/prototype/errors/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'desc.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'desc.get')"
-test/built-ins/NativeErrors/AggregateError/prototype/errors/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'desc.set')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'desc.set')"
-test/built-ins/NativeErrors/AggregateError/prototype/errors/return-from-iterable-errors.js:
-  default: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«3,6», «3,6») to be false'
-  strict mode: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«3,6», «3,6») to be false'
-test/built-ins/NativeErrors/AggregateError/prototype/errors/return-new-array-from-list.js:
-  default: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«», «») to be false'
-  strict mode: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«», «») to be false'
-test/built-ins/NativeErrors/AggregateError/prototype/errors/this-has-no-typedarrayname-internal.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
-test/built-ins/NativeErrors/AggregateError/prototype/errors/this-is-not-object.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
 test/built-ins/Object/assign/strings-and-symbol-order-proxy.js:
   default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
@@ -1503,9 +1476,6 @@ test/built-ins/TypedArray/prototype/toLocaleString/calls-tostring-from-each-valu
 test/built-ins/TypedArray/prototype/toLocaleString/calls-valueof-from-each-value.js:
   default: 'Test262Error: returns expected value Expected SameValue(«hacks2,hacks1», «hacks1,hacks2») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: returns expected value Expected SameValue(«hacks2,hacks1», «hacks1,hacks2») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/buffer-arg/bufferbyteoffset-throws-from-modulo-element-size.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/byteoffset-to-number-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
@@ -1734,6 +1704,9 @@ test/intl402/Locale/likely-subtags.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+test/intl402/NumberFormat/prototype/format/numbering-systems.js:
+  default: 'Test262Error: numberingSystem: adlm, digit: 0 Expected SameValue(«0», «𞥐») to be true'
+  strict mode: 'Test262Error: numberingSystem: adlm, digit: 0 Expected SameValue(«0», «𞥐») to be true'
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
   default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
@@ -2904,6 +2877,9 @@ test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/object/scope-setter-body-lex-distinc.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
+test/language/expressions/optional-chaining/eval-optional-call.js:
+  default: 'Test262Error: Expected SameValue(«local», «global») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«local», «global») to be true'
 test/language/expressions/postfix-decrement/S11.3.2_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-decrement/S11.3.2_A5_T2.js:

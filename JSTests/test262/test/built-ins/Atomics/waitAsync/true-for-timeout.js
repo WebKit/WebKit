@@ -44,4 +44,4 @@ Promise.all([
     assert.sameValue(outcomes[0], 'timed-out');
     assert.sameValue(outcomes[1], 'timed-out');
     assert.sameValue(outcomes[2], 'timed-out');
-  }, $DONE).then($DONE, $DONE);
+  }).then($DONE, $DONE);

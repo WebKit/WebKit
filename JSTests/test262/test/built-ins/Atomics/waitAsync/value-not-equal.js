@@ -46,4 +46,4 @@ Promise.all([
   ]).then(outcomes => {
     assert.sameValue(outcomes[0], 42);
     assert.sameValue(outcomes[1], 'not-equal');
-  }, $DONE).then($DONE, $DONE);
+  }).then($DONE, $DONE);

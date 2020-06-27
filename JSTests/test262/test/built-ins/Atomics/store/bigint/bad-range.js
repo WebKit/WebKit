@@ -9,7 +9,7 @@ features: [ArrayBuffer, Atomics, BigInt, DataView, SharedArrayBuffer, Symbol, Ty
 ---*/
 const buffer = new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 2);
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(TA => {
   const view = new TA(buffer);
 
   testWithAtomicsOutOfBoundsIndices(function(IdxGen) {

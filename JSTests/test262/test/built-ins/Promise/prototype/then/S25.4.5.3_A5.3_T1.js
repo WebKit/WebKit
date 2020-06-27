@@ -26,6 +26,7 @@ p.then(function() {
   $ERROR("Should not be called -- Promise rejected.");
 }, function() {
   sequence.push(3);
+  assert.sameValue(sequence.length, 3);
   checkSequence(sequence, "Should be first");
 }).catch($DONE);
 
@@ -35,10 +36,12 @@ Promise.resolve().then(function() {
     $ERROR("Should not be called (2) -- Promise rejected.");
   }, function() {
     sequence.push(5);
-    checkSequence(sequence, "Should be third");
+    assert.sameValue(sequence.length, 5);
+  checkSequence(sequence, "Should be third");
   }).then($DONE, $DONE);
 
   sequence.push(4);
+  assert.sameValue(sequence.length, 4);
   checkSequence(sequence, "Should be second");
 }).catch($DONE);
 

@@ -127,5 +127,5 @@ Promise.all([
   assert.sameValue(results[4].value, 1);
   assert.sameValue(results[5].value, 1);
 
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);
 

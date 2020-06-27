@@ -1,3 +1,1059 @@
+2020-06-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=213676
+
+        Reviewed by Ross Kirsling.
+
+        Update and rebaseline expectations.
+
+        * test262/expectations.yaml:
+        * test262/harness/testBigIntTypedArray.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/harness/testIntl.js:
+        * test262/harness/testTypedArray.js:
+        (testWithNonAtomicsFriendlyTypedArrayConstructors):
+        (testWithAtomicsFriendlyTypedArrayConstructors):
+        * test262/latest-changes-summary.txt:
+        * test262/test/annexB/built-ins/Function/createdynfn-no-line-terminator-html-close-comment-body.js:
+        * test262/test/built-ins/Array/prototype/indexOf/length-zero-returns-minus-one.js: Added.
+        (fromIndex.valueOf):
+        * test262/test/built-ins/Array/prototype/lastIndexOf/length-zero-returns-minus-one.js: Added.
+        (fromIndex.valueOf):
+        * test262/test/built-ins/Atomics/add/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/add/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/add/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/add/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/add/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/and/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/and/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/and/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/and/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/and/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/compareExchange/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/compareExchange/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/compareExchange/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/compareExchange/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/compareExchange/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/exchange/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/exchange/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/exchange/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/exchange/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/load/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/load/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/load/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/load/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/load/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/notify/bigint/non-shared-bufferdata-count-evaluation-throws.js: Added.
+        (const.poisoned.valueOf):
+        * test262/test/built-ins/Atomics/notify/bigint/non-shared-bufferdata-index-evaluation-throws.js: Added.
+        (const.poisoned.valueOf):
+        * test262/test/built-ins/Atomics/notify/bigint/non-shared-bufferdata-non-shared-int-views-throws.js: Added.
+        (const.poisoned.valueOf):
+        * test262/test/built-ins/Atomics/notify/bigint/non-shared-bufferdata-returns-0.js: Added.
+        * test262/test/built-ins/Atomics/notify/bigint/non-shared-bufferdata-throws.js: Removed.
+        * test262/test/built-ins/Atomics/notify/non-shared-bufferdata-count-evaluation-throws.js: Added.
+        (const.poisoned.valueOf):
+        * test262/test/built-ins/Atomics/notify/non-shared-bufferdata-index-evaluation-throws.js: Added.
+        (const.poisoned.valueOf):
+        * test262/test/built-ins/Atomics/notify/non-shared-bufferdata-non-shared-int-views-throws.js: Renamed from JSTests/test262/test/built-ins/Atomics/notify/non-shared-bufferdatate-non-shared-int-views.js.
+        * test262/test/built-ins/Atomics/notify/non-shared-bufferdata-returns-0.js: Added.
+        * test262/test/built-ins/Atomics/notify/non-shared-bufferdata-throws.js: Removed.
+        * test262/test/built-ins/Atomics/or/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/or/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/or/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/or/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/or/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/store/bigint/bad-range.js:
+        (testWithBigIntTypedArrayConstructors): Deleted.
+        * test262/test/built-ins/Atomics/store/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/store/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/store/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/store/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/store/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/sub/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/sub/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/sub/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/sub/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/sub/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/wait/bigint/non-shared-bufferdata-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/false-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/good-views.js:
+        (async const):
+        * test262/test/built-ins/Atomics/waitAsync/bigint/negative-timeout.js:
+        (1.value.then):
+        * test262/test/built-ins/Atomics/waitAsync/bigint/null-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/object-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/true-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/undefined-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/value-not-equal.js:
+        * test262/test/built-ins/Atomics/waitAsync/false-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/good-views.js:
+        (async const):
+        * test262/test/built-ins/Atomics/waitAsync/negative-timeout.js:
+        (then):
+        * test262/test/built-ins/Atomics/waitAsync/null-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/object-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/true-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/undefined-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/value-not-equal.js:
+        * test262/test/built-ins/Atomics/xor/bigint/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/xor/bigint/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/Atomics/xor/non-shared-bufferdata.js: Added.
+        * test262/test/built-ins/Atomics/xor/non-shared-int-views-throws.js: Added.
+        * test262/test/built-ins/Atomics/xor/nonshared-int-views.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors-absent-on-prototype.js: Added.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/invoked-as-accessor.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/invoked-as-func.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/length.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/name.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/prop-desc.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/return-from-iterable-errors.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/return-new-array-from-list.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/this-has-no-typedarrayname-internal.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/prototype/errors/this-is-not-object.js: Removed.
+        * test262/test/built-ins/Object/defineProperties/15.2.3.7-2-18.js:
+        (catch):
+        * test262/test/built-ins/Promise/all/S25.4.4.1_A2.2_T1.js:
+        (then):
+        * test262/test/built-ins/Promise/all/S25.4.4.1_A7.2_T1.js:
+        (Promise.all.p1.then):
+        (p1.then):
+        (then):
+        * test262/test/built-ins/Promise/all/S25.4.4.1_A8.1_T1.js:
+        (p1.then):
+        (p2.then):
+        * test262/test/built-ins/Promise/all/invoke-resolve-on-promises-every-iteration-of-custom.js:
+        (values.then):
+        * test262/test/built-ins/Promise/all/invoke-resolve-on-promises-every-iteration-of-promise.js:
+        (Promise.all.values.then):
+        * test262/test/built-ins/Promise/all/invoke-resolve-on-values-every-iteration-of-promise.js:
+        (Promise.all.values.then):
+        * test262/test/built-ins/Promise/allSettled/invoke-resolve-on-promises-every-iteration-of-custom.js:
+        (values.then):
+        * test262/test/built-ins/Promise/allSettled/invoke-resolve-on-promises-every-iteration-of-promise.js:
+        (Promise.allSettled.values.then):
+        * test262/test/built-ins/Promise/allSettled/invoke-resolve-on-values-every-iteration-of-promise.js:
+        (Promise.allSettled.values.then):
+        * test262/test/built-ins/Promise/allSettled/resolved-immed.js:
+        (then):
+        * test262/test/built-ins/Promise/allSettled/resolved-sequence-extra-ticks.js:
+        (Promise.allSettled.p1.then):
+        (p1.then):
+        (then):
+        * test262/test/built-ins/Promise/allSettled/resolved-sequence-mixed.js:
+        (p1.catch):
+        (p3.then):
+        (p2.then):
+        (p3.catch):
+        * test262/test/built-ins/Promise/allSettled/resolved-sequence-with-rejections.js:
+        (p1.catch):
+        (p2.then):
+        (p2.catch):
+        * test262/test/built-ins/Promise/allSettled/resolved-sequence.js:
+        (p1.then):
+        (p2.then):
+        * test262/test/built-ins/Promise/any/invoke-resolve-on-promises-every-iteration-of-custom.js:
+        (values.then):
+        * test262/test/built-ins/Promise/any/invoke-resolve-on-promises-every-iteration-of-promise.js:
+        (Promise.any.values.then):
+        * test262/test/built-ins/Promise/any/invoke-resolve-on-values-every-iteration-of-custom.js:
+        (values.then):
+        * test262/test/built-ins/Promise/any/invoke-resolve-on-values-every-iteration-of-promise.js:
+        (Promise.any.values.then):
+        * test262/test/built-ins/Promise/any/invoke-then-on-promises-every-iteration.js:
+        (Promise.any.promises.then):
+        * test262/test/built-ins/Promise/any/resolved-sequence-extra-ticks.js:
+        (Promise.any.p1.then):
+        (p1.then):
+        (then):
+        * test262/test/built-ins/Promise/any/resolved-sequence-mixed.js:
+        (p1.catch):
+        (p3.then):
+        (p2.then):
+        (p3.catch):
+        * test262/test/built-ins/Promise/any/resolved-sequence-with-rejections.js:
+        (p1.catch):
+        (p2.then):
+        (p2.catch):
+        * test262/test/built-ins/Promise/any/resolved-sequence.js:
+        (p1.then):
+        (p2.then):
+        * test262/test/built-ins/Promise/prototype/finally/rejected-observable-then-calls.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/finally/rejection-reason-no-fulfill.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/finally/rejection-reason-override-with-throw.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/finally/resolution-value-no-override.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/finally/resolved-observable-then-calls.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.4_A1.1_T1.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.4_A2.1_T1.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.4_A2.1_T2.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.4_A2.1_T3.js:
+        (Promise.resolve.then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.5.3_A5.1_T1.js:
+        (p.then):
+        (Promise.resolve.then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.5.3_A5.2_T1.js:
+        (p.then):
+        (Promise.resolve.then):
+        * test262/test/built-ins/Promise/prototype/then/S25.4.5.3_A5.3_T1.js:
+        (Promise.resolve.then):
+        * test262/test/built-ins/Promise/race/S25.4.4.3_A6.1_T1.js:
+        (p.then):
+        (Promise.resolve.then):
+        (then):
+        * test262/test/built-ins/Promise/race/S25.4.4.3_A6.2_T1.js:
+        (Promise.resolve.then):
+        (then):
+        * test262/test/built-ins/Promise/race/S25.4.4.3_A7.1_T1.js:
+        (p.then):
+        (Promise.resolve.then):
+        (then):
+        * test262/test/built-ins/Promise/race/S25.4.4.3_A7.1_T2.js:
+        (p.then):
+        (Promise.resolve.then):
+        (then):
+        * test262/test/built-ins/Promise/race/S25.4.4.3_A7.1_T3.js:
+        (p.then):
+        (Promise.resolve.then):
+        (then):
+        * test262/test/built-ins/Promise/race/S25.4.4.3_A7.2_T1.js:
+        (Promise.resolve.then):
+        (then):
+        * test262/test/built-ins/Promise/race/invoke-resolve-on-promises-every-iteration-of-custom.js: Copied from JSTests/test262/test/built-ins/Promise/all/invoke-resolve-on-promises-every-iteration-of-custom.js.
+        (Custom):
+        (Custom.resolve):
+        (Promise.resolve):
+        (values.then):
+        * test262/test/built-ins/Promise/race/invoke-resolve-on-promises-every-iteration-of-promise.js: Copied from JSTests/test262/test/built-ins/Promise/all/invoke-resolve-on-promises-every-iteration-of-promise.js.
+        (Promise.resolve):
+        (Promise.race.values.then):
+        * test262/test/built-ins/Promise/race/invoke-resolve-on-values-every-iteration-of-promise.js: Copied from JSTests/test262/test/built-ins/Promise/all/invoke-resolve-on-values-every-iteration-of-promise.js.
+        (Promise.resolve):
+        (Promise.race.values.then):
+        * test262/test/built-ins/Promise/race/reject-from-same-thenable.js: Added.
+        (Constructor.reject):
+        (Constructor.resolve):
+        (let.a.then):
+        * test262/test/built-ins/Promise/race/resolve-element-function-extensible.js: Added.
+        (let.thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/race/resolve-element-function-name.js: Added.
+        (let.thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/race/resolve-element-function-nonconstructor.js: Added.
+        (let.thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/race/resolve-element-function-prototype.js: Added.
+        (let.thenable.then):
+        (NotPromise):
+        (NotPromise.resolve):
+        * test262/test/built-ins/Promise/race/resolve-from-same-thenable.js: Added.
+        (Constructor.resolve):
+        (let.a.then):
+        * test262/test/built-ins/Promise/race/resolve-ignores-late-rejection-deferred.js: Added.
+        (let.lateRejector.then):
+        * test262/test/built-ins/Promise/race/resolve-ignores-late-rejection.js: Added.
+        (let.resolver.then):
+        (let.lateRejector.then):
+        * test262/test/built-ins/Promise/race/resolved-sequence-extra-ticks.js: Added.
+        (a.then):
+        (then):
+        * test262/test/built-ins/Promise/race/resolved-sequence-mixed.js: Added.
+        (Promise.all.a.catch):
+        (c.then):
+        (b.then):
+        (catch):
+        * test262/test/built-ins/Promise/race/resolved-sequence-with-rejections.js: Added.
+        (Promise.all.a.catch):
+        (b.catch):
+        * test262/test/built-ins/Promise/race/resolved-sequence.js: Added.
+        (Promise.all.a.then):
+        (b.then):
+        * test262/test/built-ins/Promise/race/resolved-then-catch-finally.js: Added.
+        (let.b.Promise.resolve.string_appeared_here.then):
+        (let.c.Promise.reject.string_appeared_here.then):
+        (let.f.Promise.resolve.string_appeared_here.finally):
+        (let.g.Promise.reject.string_appeared_here.finally):
+        * test262/test/built-ins/Promise/resolve/S25.4.4.5_A3.1_T1.js:
+        (thenable.then):
+        (p1.then):
+        * test262/test/built-ins/Promise/resolve/S25.Promise_resolve_foreign_thenable_2.js:
+        (thenable.then):
+        (p.then):
+        * test262/test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-valid.js:
+        (valueOf):
+        * test262/test/intl402/NumberFormat/constructor-order.js:
+        * test262/test/intl402/NumberFormat/constructor-unit.js:
+        (string_appeared_here.new.Intl.NumberFormat):
+        * test262/test/intl402/NumberFormat/prototype/format/numbering-systems.js:
+        (digitList.of.Object.entries):
+        * test262/test/language/expressions/class/elements/after-same-line-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-computed-names.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-computed-symbol-names.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-grammar-privatename-identifier-semantics-stringvalue.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-literal-names-asi.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-literal-names.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-private-field-usage.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-private-method-getter-usage.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-private-method-usage.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-private-names.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-field-identifier-initializer.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-field-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-private-getter-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-private-getter.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-private-method-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-private-method.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-private-setter-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-private-setter.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-privatename-identifier-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-privatename-identifier-initializer-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-privatename-identifier-initializer.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (C.get return):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-async-generator-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-async-method-privatename-identifier-alt.js:
+        (C.async return):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-async-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-generator-method-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-method-privatename-identifier-alt.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-method-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-alt-by-classname.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-by-classname.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-initializer-alt.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-initializer.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-static-private-fields.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-static-private-methods-with-fields.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-static-private-methods.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-gen-string-literal-names.js:
+        (prototype.C.m.next.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-computed-names.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-computed-symbol-names.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-grammar-privatename-identifier-semantics-stringvalue.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-literal-names-asi.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-literal-names.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-private-field-usage.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-private-method-getter-usage.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-private-method-usage.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-private-names.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-field-identifier-initializer.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-field-identifier.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-private-getter-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-private-getter.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-private-method-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-private-method.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-private-setter-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-private-setter.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-privatename-identifier-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-privatename-identifier-initializer-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-privatename-identifier-initializer.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (C.get return):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-async-generator-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-async-method-privatename-identifier-alt.js:
+        (C.async return):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-async-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-generator-method-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-method-privatename-identifier-alt.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-method-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-alt-by-classname.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-by-classname.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-initializer-alt.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-initializer.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-static-private-fields.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-static-private-methods-with-fields.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-static-private-methods.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-async-method-string-literal-names.js:
+        (prototype.C.m.then):
+        * test262/test/language/expressions/class/elements/after-same-line-static-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/after-same-line-static-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/multiple-definitions-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/multiple-definitions-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/multiple-definitions-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/multiple-definitions-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/multiple-stacked-definitions-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/multiple-stacked-definitions-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/multiple-stacked-definitions-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/multiple-stacked-definitions-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/new-no-sc-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/new-no-sc-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/new-no-sc-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/new-no-sc-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/new-sc-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/private-methods/prod-private-async-generator.js:
+        (ctorPromise.then):
+        * test262/test/language/expressions/class/elements/private-methods/prod-private-async-method.js:
+        (ctorPromise.then):
+        * test262/test/language/expressions/class/elements/regular-definitions-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/regular-definitions-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/regular-definitions-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/regular-definitions-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/same-line-async-gen-computed-names.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-computed-symbol-names.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-grammar-privatename-identifier-semantics-stringvalue.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-literal-names-asi.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-literal-names.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-private-field-usage.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-private-method-getter-usage.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-private-method-usage.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-private-names.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-field-identifier-initializer.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-field-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-private-getter-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-private-getter.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-private-method-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-private-method.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-private-setter-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-private-setter.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-privatename-identifier-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-privatename-identifier-initializer-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-privatename-identifier-initializer.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (assertions):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-async-generator-method-privatename-identifier.js:
+        (c.m.next.then.assertions):
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-async-method-privatename-identifier-alt.js:
+        (c.m.next.then.assertions):
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-async-method-privatename-identifier.js:
+        (c.m.next.then.assertions):
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-generator-method-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-method-privatename-identifier-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-method-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier-alt-by-classname.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier-by-classname.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier-initializer-alt.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier-initializer.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-rs-static-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-static-private-fields.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-static-private-methods-with-fields.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-static-private-methods.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-gen-string-literal-names.js:
+        (c.m.next.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-computed-names.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-computed-symbol-names.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-grammar-privatename-identifier-semantics-stringvalue.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-literal-names-asi.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-literal-names.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-private-field-usage.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-private-method-getter-usage.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-private-method-usage.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-private-names.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-field-identifier-initializer.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-field-identifier.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-private-getter-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-private-getter.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-private-method-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-private-method.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-private-setter-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-private-setter.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-privatename-identifier-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-privatename-identifier-initializer-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-privatename-identifier-initializer.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (assertions):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-async-generator-method-privatename-identifier.js:
+        (c.m.then.assertions):
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-async-method-privatename-identifier-alt.js:
+        (c.m.then.assertions):
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-async-method-privatename-identifier.js:
+        (c.m.then.assertions):
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-generator-method-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-method-privatename-identifier-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-method-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier-alt-by-classname.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier-by-classname.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier-initializer-alt.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier-initializer.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-rs-static-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-static-private-fields.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-static-private-methods-with-fields.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-static-private-methods.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-async-method-string-literal-names.js:
+        (c.m.then):
+        * test262/test/language/expressions/class/elements/same-line-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/same-line-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/same-line-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/same-line-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/same-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/same-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/same-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/same-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/wrapped-in-sc-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/wrapped-in-sc-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/expressions/class/elements/wrapped-in-sc-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/expressions/class/elements/wrapped-in-sc-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/expressions/optional-chaining/eval-optional-call.js: Added.
+        * test262/test/language/statements/class/elements/after-same-line-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-computed-names.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-computed-symbol-names.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-grammar-privatename-identifier-semantics-stringvalue.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-literal-names-asi.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-literal-names.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-private-field-usage.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-private-method-getter-usage.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-private-method-usage.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-private-names.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-field-identifier-initializer.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-field-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-private-getter-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-private-getter.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-private-method-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-private-method.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-private-setter-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-private-setter.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-privatename-identifier-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-privatename-identifier-initializer-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-privatename-identifier-initializer.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (C.get return):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-async-generator-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-async-method-privatename-identifier-alt.js:
+        (C.async return):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-async-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-generator-method-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-method-privatename-identifier-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-method-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-alt-by-classname.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-by-classname.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-initializer-alt.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier-initializer.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-rs-static-privatename-identifier.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-static-private-fields.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-static-private-methods-with-fields.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-static-private-methods.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-gen-string-literal-names.js:
+        (C.m.next.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-computed-names.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-computed-symbol-names.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-grammar-privatename-identifier-semantics-stringvalue.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-literal-names-asi.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-literal-names.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-private-field-usage.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-private-method-getter-usage.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-private-method-usage.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-private-names.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-field-identifier-initializer.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-field-identifier.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-private-getter-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-private-getter.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-private-method-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-private-method.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-private-setter-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-private-setter.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-privatename-identifier-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-privatename-identifier-initializer-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-privatename-identifier-initializer.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (C.get return):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-async-generator-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-async-method-privatename-identifier-alt.js:
+        (C.async return):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-async-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-generator-method-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-method-privatename-identifier-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-method-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-alt-by-classname.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-by-classname.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-initializer-alt.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier-initializer.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-rs-static-privatename-identifier.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-static-private-fields.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-static-private-methods-with-fields.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-static-private-methods.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-async-method-string-literal-names.js:
+        (C.m.then):
+        * test262/test/language/statements/class/elements/after-same-line-static-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/after-same-line-static-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/multiple-definitions-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/multiple-definitions-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/multiple-definitions-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/multiple-definitions-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/multiple-stacked-definitions-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/multiple-stacked-definitions-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/multiple-stacked-definitions-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/multiple-stacked-definitions-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/new-no-sc-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/new-no-sc-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/new-no-sc-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/new-no-sc-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/new-sc-line-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/new-sc-line-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/new-sc-line-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/new-sc-line-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/new-sc-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/new-sc-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/new-sc-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/new-sc-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/private-methods/prod-private-async-generator.js:
+        (ctorPromise.then):
+        * test262/test/language/statements/class/elements/private-methods/prod-private-async-method.js:
+        (ctorPromise.then):
+        * test262/test/language/statements/class/elements/regular-definitions-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/regular-definitions-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/regular-definitions-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/regular-definitions-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/same-line-async-gen-computed-names.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-computed-symbol-names.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-grammar-privatename-identifier-semantics-stringvalue.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-literal-names-asi.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-literal-names.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-private-field-usage.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-private-method-getter-usage.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-private-method-usage.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-private-names.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-field-identifier-initializer.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-field-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-private-getter-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-private-getter.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-private-method-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-private-method.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-private-setter-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-private-setter.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-privatename-identifier-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-privatename-identifier-initializer-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-privatename-identifier-initializer.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (C.get return):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-async-generator-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-async-method-privatename-identifier-alt.js:
+        (C.async return):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-async-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-generator-method-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-method-privatename-identifier-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-method-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier-alt-by-classname.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier-by-classname.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier-initializer-alt.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier-initializer.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-rs-static-privatename-identifier.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-static-private-fields.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-static-private-methods-with-fields.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-static-private-methods.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-gen-string-literal-names.js:
+        (c.m.next.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-computed-names.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-computed-symbol-names.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-grammar-privatename-identifier-semantics-stringvalue.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-literal-names-asi.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-literal-names.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-private-field-usage.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-private-method-getter-usage.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-private-method-usage.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-private-names.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-field-identifier-initializer.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-field-identifier.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-private-getter-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-private-getter.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-private-method-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-private-method.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-private-setter-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-private-setter.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-privatename-identifier-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-privatename-identifier-initializer-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-privatename-identifier-initializer.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        (C.get return):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-async-generator-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-async-method-privatename-identifier-alt.js:
+        (C.async return):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-async-method-privatename-identifier.js:
+        (C):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-generator-method-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-method-privatename-identifier-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-method-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier-alt-by-classname.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier-by-classname.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier-initializer-alt-by-classname.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier-initializer-alt.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier-initializer.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-rs-static-privatename-identifier.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-static-private-fields.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-static-private-methods-with-fields.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-static-private-methods.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-async-method-string-literal-names.js:
+        (c.m.then):
+        * test262/test/language/statements/class/elements/same-line-gen-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/same-line-gen-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/same-line-gen-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/same-line-gen-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/same-line-method-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/same-line-method-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/same-line-method-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/same-line-method-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/wrapped-in-sc-rs-static-async-generator-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/wrapped-in-sc-rs-static-async-generator-method-privatename-identifier.js:
+        * test262/test/language/statements/class/elements/wrapped-in-sc-rs-static-async-method-privatename-identifier-alt.js:
+        * test262/test/language/statements/class/elements/wrapped-in-sc-rs-static-async-method-privatename-identifier.js:
+        * test262/test/language/statements/for-await-of/async-gen-decl-dstr-array-elem-init-yield-expr.js:
+        * test262/test/language/statements/for-await-of/async-gen-decl-dstr-array-elem-nested-array-yield-expr.js:
+        * test262/test/language/statements/for-await-of/async-gen-decl-dstr-array-elem-nested-obj-yield-expr.js:
+        * test262/test262-Revision.txt:
+
 2020-06-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, included copy of stress/llinttrue.js accidentally.

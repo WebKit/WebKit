@@ -40,4 +40,4 @@ const toPrimitive = {
 Promise.all([Atomics.store(i64a, 0, 42n), Atomics.waitAsync(i64a, 0, 0n).value]).then(outcomes => {
   assert.sameValue(outcomes[0], 42n);
   assert.sameValue(outcomes[1], 'not-equal');
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);

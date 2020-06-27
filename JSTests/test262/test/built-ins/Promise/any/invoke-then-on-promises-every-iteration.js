@@ -38,4 +38,4 @@ promises.forEach(promise => {
 Promise.any(promises)
   .then(() => {
       assert.sameValue(callCount, 3, '`then` invoked once for every iterated value');
-    }, $DONE).then($DONE, $DONE);
+    }).then($DONE, $DONE);

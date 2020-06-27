@@ -44,16 +44,19 @@ sequence.push(1);
 
 p1.catch(() => {
   sequence.push(3);
+  assert.sameValue(sequence.length, 3);
   checkSequence(sequence, 'Expected to be called first.');
 }).catch($DONE);
 
 Promise.any([p1, p2, p3]).then(() => {
   sequence.push(6);
+  assert.sameValue(sequence.length, 6);
   checkSequence(sequence, 'Expected to be called fourth.');
 }).then($DONE, $DONE);
 
 p2.then(() => {
   sequence.push(4);
+  assert.sameValue(sequence.length, 4);
   checkSequence(sequence, 'Expected to be called second.');
 }).catch($DONE);
 
@@ -61,5 +64,6 @@ sequence.push(2);
 
 p3.catch(() => {
   sequence.push(5);
+  assert.sameValue(sequence.length, 5);
   checkSequence(sequence, 'Expected to be called third.');
 }).catch($DONE);

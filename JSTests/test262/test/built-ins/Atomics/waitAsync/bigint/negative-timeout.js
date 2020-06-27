@@ -25,4 +25,4 @@ Promise.all([Atomics.waitAsync(i64a, 0, 0n, -1).value]).then(([outcome]) => {
     'timed-out',
     'Atomics.waitAsync(i64a, 0, 0n, -1).value resolves to "timed-out"'
   );
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);

@@ -34,6 +34,6 @@ no.catch(function(e) {
   sequence.push(5);
   assert.sameValue(e, noReason);
 }).then(function() {
+  assert.sameValue(sequence.length, 5);
   checkSequence(sequence, "All expected callbacks called in correct order");
-  $DONE();
-}).catch($ERROR);
+}).then($DONE, $DONE);

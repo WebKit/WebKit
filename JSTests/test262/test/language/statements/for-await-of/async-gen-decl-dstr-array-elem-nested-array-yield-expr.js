@@ -47,5 +47,5 @@ iter.next().then(result => {
     assert.sameValue(result.value, undefined);
     assert.sameValue(result.done, true);
     assert.sameValue(x.prop, 22);
-  }, $DONE).then($DONE, $DONE);
+  }).then($DONE, $DONE);
 }, $DONE).catch($DONE);

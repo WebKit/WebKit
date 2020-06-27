@@ -34,6 +34,7 @@ Promise.resolve().then(function() {
   p2.catch(function(msg) {
     sequence.push(msg);
   }).then(function() {
+    assert.sameValue(sequence.length, 3);
     checkSequence(sequence, "Expected 1,2,3");
   }).then($DONE, $DONE);
 });

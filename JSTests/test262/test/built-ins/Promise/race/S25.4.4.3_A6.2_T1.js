@@ -20,14 +20,17 @@ p.then(function() {
   $ERROR("Should not fulfill.");
 }, function() {
   sequence.push(4);
-  checkSequence(sequence, "This happens second");
+  assert.sameValue(sequence.length, 4);
+checkSequence(sequence, "This happens second");
 }).catch($DONE);
 
 Promise.resolve().then(function() {
   sequence.push(3);
+  assert.sameValue(sequence.length, 3);
   checkSequence(sequence, "This happens first");
 }).then(function() {
   sequence.push(5);
+  assert.sameValue(sequence.length, 5);
   checkSequence(sequence, "This happens third");
 }).then($DONE, $DONE);
 

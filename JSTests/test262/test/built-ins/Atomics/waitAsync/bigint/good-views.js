@@ -11,7 +11,6 @@ features: [Atomics.waitAsync, Atomics, BigInt]
 ---*/
 assert.sameValue(typeof Atomics.waitAsync, 'function');
 
-
 $262.agent.start(`
   (async () => {
     var sab = new SharedArrayBuffer(2048);
@@ -45,11 +44,12 @@ $262.agent.start(`
 `);
 
 
-Promise.all([
-  $262.agent.getReportAsync(),
-  $262.agent.getReportAsync(),
-  $262.agent.getReportAsync(),
-]).then(outcomes => {
+(async () => {
+  const outcomes = [];
+
+  for (let i = 0; i < 3; i++) {
+    outcomes.push(await $262.agent.getReportAsync());
+  }
 
   assert.sameValue(
     outcomes[0],
@@ -67,6 +67,4 @@ Promise.all([
     'C not-equal,not-equal,not-equal,not-equal,not-equal',
     'All C values are not equal'
   );
-}, $DONE).then($DONE, $DONE);
-
-
+})().then($DONE, $DONE);

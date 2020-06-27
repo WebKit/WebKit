@@ -40,11 +40,13 @@ sequence.push(1);
 
 p1.catch(() => {
   sequence.push(3);
+  assert.sameValue(sequence.length, 3);
   checkSequence(sequence, 'Expected to be called first.');
 }).catch($DONE);
 
 Promise.any([p1, p2]).then(() => {
   sequence.push(5);
+  assert.sameValue(sequence.length, 5);
   checkSequence(sequence, 'Expected to be called third.');
 }).then($DONE, outcome => {
   assert(outcome instanceof AggregateError);
@@ -55,6 +57,7 @@ Promise.any([p1, p2]).then(() => {
 
 p2.catch(() => {
   sequence.push(4);
+  assert.sameValue(sequence.length, 4);
   checkSequence(sequence, 'Expected to be called second.');
 }).catch($DONE);
 

@@ -125,4 +125,4 @@ ctorPromise.then(() => {
     return c.ref().then(value => {
         assert.sameValue(value, 42, 'function return');
     });
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);

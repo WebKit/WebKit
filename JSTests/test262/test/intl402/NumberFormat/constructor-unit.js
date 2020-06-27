@@ -14,11 +14,24 @@ assert.throws(TypeError, () => {
 });
 
 for (const unit of ["test", "MILE", "kB"]) {
-  for (const style of [undefined, "decimal", "currency", "unit"]) {
+  // Throws RangeError for invalid unit identifier.
+  for (const style of [undefined, "decimal", "unit"]) {
     assert.throws(RangeError, () => {
       new Intl.NumberFormat([], { style, unit })
     }, `{ style: ${style}, unit: ${unit} }`);
   }
+
+  const style = "currency";
+
+  // Throws TypeError because "currency" option is missing.
+  assert.throws(TypeError, () => {
+    new Intl.NumberFormat([], { style, unit })
+  }, `{ style: ${style}, unit: ${unit} }`);
+
+  // Throws RangeError for invalid unit identifier.
+  assert.throws(RangeError, () => {
+    new Intl.NumberFormat([], { style, unit, currency: "USD" })
+  }, `{ style: ${style}, unit: ${unit} }`);
 }
 
 const nf = new Intl.NumberFormat([], {

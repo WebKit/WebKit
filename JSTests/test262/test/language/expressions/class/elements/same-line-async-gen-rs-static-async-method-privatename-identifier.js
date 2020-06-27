@@ -137,9 +137,9 @@ c.m().next().then(function(v) {
       assert.sameValue(results[4], 1);
       assert.sameValue(results[5], 1);
 
-    }, $DONE).then($DONE, $DONE);
+    }).then($DONE, $DONE);
 
   }
 
   return Promise.resolve(assertions());
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);

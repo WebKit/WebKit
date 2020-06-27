@@ -57,4 +57,4 @@ Promise.all([
   assert.sameValue(outcomes[1], 'ok');
   assert.sameValue(outcomes[2], 'ok');
   assert.sameValue(outcomes[3], 'ok');
-}, $DONE).then($DONE, $DONE);
+}).then($DONE, $DONE);
