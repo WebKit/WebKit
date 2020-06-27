@@ -1,5 +1,13 @@
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, land iOS-specific baselines after WebCryptoAPI WPT tests resync in r263598.
+
+        * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.worker-expected.txt: Added.
+
+2020-06-26  Chris Dumez  <cdumez@apple.com>
+
         Update web-platform-tests/content-security-policy from upstream
         https://bugs.webkit.org/show_bug.cgi?id=213664
 
