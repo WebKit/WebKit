@@ -1,3 +1,14 @@
+2020-06-27  Sam Weinig  <weinig@apple.com>
+
+        Improve assertions in StringParsingBuffer 
+        https://bugs.webkit.org/show_bug.cgi?id=213633
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringParsingBuffer.h:
+        Address additional feedback and improve the assertions by making them more
+        clear and avoid potential overflows.
+
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Re-land r262863

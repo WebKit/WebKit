@@ -50,8 +50,9 @@ public:
         : m_position { characters }
         , m_end { end }
     {
-        ASSERT(m_end >= m_position);
+        ASSERT(characters <= end);
         ASSERT(!characters == !end);
+        ASSERT(end - characters <= std::numeric_limits<unsigned>::max());
     }
 
     constexpr auto position() const { return m_position; }
@@ -66,26 +67,25 @@ public:
 
     CharacterType operator[](unsigned i)
     {
-        ASSERT(m_position + i < m_end);
+        ASSERT(i < lengthRemaining());
         return m_position[i];
     }
 
     constexpr CharacterType operator*() const
     {
-        ASSERT(m_position < m_end);
+        ASSERT(hasCharactersRemaining());
         return *m_position;
     }
 
     constexpr void advance()
     {
-        ASSERT(m_position < m_end);
+        ASSERT(hasCharactersRemaining());
         ++m_position;
     }
 
     constexpr void advanceBy(unsigned places)
     {
-        ASSERT(m_position <= m_end);
-        ASSERT(m_position + places <= m_end);
+        ASSERT(places <= lengthRemaining());
         m_position += places;
     }
 
