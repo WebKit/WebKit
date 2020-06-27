@@ -334,6 +334,11 @@ StringPairVector HTMLFormElement::textFieldValues() const
 
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger formSubmissionTrigger)
 {
+    // The prepareForSubmission function also does this check, but we need to do it here
+    // too, since there are some code paths that bypass that function.
+    if (!isConnected())
+        return;
+
     RefPtr<FrameView> view = document().view();
     RefPtr<Frame> frame = document().frame();
     if (!view || !frame)

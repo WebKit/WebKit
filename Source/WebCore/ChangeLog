@@ -1,3 +1,20 @@
+2020-06-27  Rob Buis  <rbuis@igalia.com>
+
+        Require <form> to be connected
+        https://bugs.webkit.org/show_bug.cgi?id=177356
+
+        Reviewed by Sam Weinig.
+
+        Implement step 1 of [1], i.e. do not submit form if it
+        is not connected.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submission-checks.html
+
+        [1] https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-form-submit
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+
 2020-06-27  Youenn Fablet  <youenn@apple.com>
 
         Log capture device information in case of getUserMedia failing to select a device
