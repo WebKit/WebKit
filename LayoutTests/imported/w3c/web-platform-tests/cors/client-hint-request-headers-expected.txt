@@ -1,7 +1,6 @@
 Request headers
 
 
-FAIL Client hint headers are simple headers  A network error occurred.
 PASS Unspecified request headers are disallowed 
 PASS Unextractable device-memory client hint header is disallowed 
 PASS Unextractable DPR client hint header is disallowed 

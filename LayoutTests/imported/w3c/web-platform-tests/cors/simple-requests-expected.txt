@@ -24,10 +24,7 @@ PASS No preflight POST and {"content-type":"text/plain"}
 PASS No preflight GET and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} 
 PASS No preflight HEAD and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} 
 PASS No preflight POST and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} 
-FAIL No preflight GET and {"save-data":"on","device-memory":"2.0","dpr":"3.0","width":"1200","viewport-width":"1300"}  A network error occurred.
-FAIL No preflight HEAD and {"save-data":"on","device-memory":"2.0","dpr":"3.0","width":"1200","viewport-width":"1300"}  A network error occurred.
-FAIL No preflight POST and {"save-data":"on","device-memory":"2.0","dpr":"3.0","width":"1200","viewport-width":"1300"}  A network error occurred.
 PASS No preflight Get and {"content-type":"text/plain; parameter=extra_bonus"} 
 PASS No preflight post and {"content-type":"text/plain"} 
-FAIL Check simple headers (async) assert_unreached: onerror Reached unreachable code
+PASS Check simple headers (async) 
 

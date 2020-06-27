@@ -608,6 +608,15 @@
     "imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/cors/304.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cors/origin.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cors/preflight-cache.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/cors/status-async.htm": [
         "slow"
     ],

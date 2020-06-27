@@ -30,8 +30,14 @@ PASS Disallow origin: HTTP://LOCALHOST:8800
 PASS Disallow origin: HTTP://localhost:8800 
 PASS Disallow origin: - 
 PASS Disallow origin: ** 
+PASS Disallow origin: ,* 
+PASS Disallow origin: *, 
 PASS Disallow origin: \0* 
+FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
 PASS Disallow origin: *\0 
+FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
 PASS Disallow origin: '*' 
 PASS Disallow origin: "*" 
 PASS Disallow origin: * * 
@@ -52,7 +58,7 @@ PASS Disallow origin: http://127.0.0.1:8800/cors/
 PASS Disallow origin: localhost:8800 
 PASS Disallow origin: .localhost:8800 
 PASS Disallow origin: *.localhost:8800 
-FAIL Disallow origin: http://localhost:8800 assert_throws: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: http://localhost:8800 assert_throws_dom: send function "function () { client.send() }" did not throw
 PASS Disallow origin: http://.localhost:8800 
 PASS Disallow origin: http://*.localhost:8800 
 PASS Disallow multiple headers (, *) 

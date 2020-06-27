@@ -1,0 +1,9 @@
+Simple requests
+
+Simple requests shouldn't trigger preflight
+
+
+FAIL No preflight GET and {"save-data":"on","device-memory":"2.0","dpr":"3.0","width":"1200","viewport-width":"1300"}  A network error occurred.
+FAIL No preflight HEAD and {"save-data":"on","device-memory":"2.0","dpr":"3.0","width":"1200","viewport-width":"1300"}  A network error occurred.
+FAIL No preflight POST and {"save-data":"on","device-memory":"2.0","dpr":"3.0","width":"1200","viewport-width":"1300"}  A network error occurred.
+
