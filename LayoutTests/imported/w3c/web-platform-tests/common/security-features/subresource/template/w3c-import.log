@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/image.css.template
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/script.js.template
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/shared-worker.js.template
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/static-import.js.template
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/svg.css.template
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/svg.embedded.template
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/template/worker.js.template

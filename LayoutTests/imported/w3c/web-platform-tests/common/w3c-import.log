@@ -38,6 +38,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/rendering-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/common/sab.js
 /LayoutTests/imported/w3c/web-platform-tests/common/slow.py
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js.headers

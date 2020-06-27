@@ -3,9 +3,11 @@ CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
 FAIL Same-origin-domain prerequisite check: the original prototype is accessible assert_not_equals: got disallowed value null
 PASS Same-origin-domain: setting the prototype to an empty object via Object.setPrototypeOf should throw a TypeError 
-FAIL Same-origin-domain: setting the prototype to an empty object via __proto__ should throw a TypeError assert_throws: function "function () {
+FAIL Same-origin-domain: setting the prototype to an empty object via __proto__ should throw a TypeError assert_throws_js: function "function () {
       target.__proto__ = newValue;
-    }" threw object "SecurityError: Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match." ("SecurityError") expected object "TypeError" ("TypeError")
+    }" threw object "SecurityError: Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match." ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS Same-origin-domain: setting the prototype to an empty object via Reflect.setPrototypeOf should return false 
 PASS Same-origin-domain: the prototype must still be null 
 PASS Same-origin-domain: setting the prototype to null via Object.setPrototypeOf should not throw 

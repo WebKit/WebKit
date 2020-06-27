@@ -1,6 +1,7 @@
 from __future__ import print_function
 
-import os, sys, json, re
+import os, sys, json, json5, re
+import collections
 
 script_directory = os.path.dirname(os.path.abspath(__file__))
 template_directory = os.path.abspath(
@@ -30,7 +31,7 @@ def load_spec_json(path_to_spec):
     re_error_location = re.compile('line ([0-9]+) column ([0-9]+)')
     with open(path_to_spec, "r") as f:
         try:
-            return json.load(f)
+            return json5.load(f, object_pairs_hook=collections.OrderedDict)
         except ValueError as ex:
             print(ex.message)
             match = re_error_location.search(ex.message)
@@ -66,6 +67,9 @@ class PolicyDelivery(object):
         self.delivery_type = delivery_type
         self.key = key
         self.value = value
+
+    def __eq__(self, other):
+        return type(self) is type(other) and self.__dict__ == other.__dict__
 
     @classmethod
     def list_from_json(cls, list, target_policy_delivery,
@@ -120,7 +124,7 @@ class PolicyDelivery(object):
         elif obj == "anotherPolicy":
             policy_delivery = target_policy_delivery.get_another_policy(
                 supported_delivery_types[0])
-        elif type(obj) == dict:
+        elif isinstance(obj, dict):
             policy_delivery = PolicyDelivery(obj['deliveryType'], obj['key'],
                                              obj['value'])
         else:
@@ -147,6 +151,16 @@ class PolicyDelivery(object):
                 return PolicyDelivery(delivery_type, self.key, 'unsafe-url')
             else:
                 return PolicyDelivery(delivery_type, self.key, 'no-referrer')
+        elif self.key == 'mixedContent':
+            if self.value == 'opt-in':
+                return PolicyDelivery(delivery_type, self.key, None)
+            else:
+                return PolicyDelivery(delivery_type, self.key, 'opt-in')
+        elif self.key == 'upgradeInsecureRequests':
+            if self.value == 'upgrade':
+                return PolicyDelivery(delivery_type, self.key, None)
+            else:
+                return PolicyDelivery(delivery_type, self.key, 'upgrade')
         else:
             raise Exception('delivery key is invalid: ' + self.key)
 
@@ -156,6 +170,9 @@ class SourceContext(object):
         # type: (unicode, typing.List[PolicyDelivery]) -> None
         self.source_context_type = source_context_type
         self.policy_deliveries = policy_deliveries
+
+    def __eq__(self, other):
+        return type(self) is type(other) and self.__dict__ == other.__dict__
 
     @classmethod
     def from_json(cls, obj, target_policy_delivery, source_context_schema):

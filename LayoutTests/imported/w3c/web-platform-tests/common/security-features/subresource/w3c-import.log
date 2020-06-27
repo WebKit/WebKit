@@ -20,8 +20,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/empty.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/font.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/image.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/referrer.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/script.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/shared-worker.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/static-import.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/stylesheet.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/subresource.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/svg.py

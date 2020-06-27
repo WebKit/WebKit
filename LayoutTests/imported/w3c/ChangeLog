@@ -1,3 +1,14 @@
+2020-06-27  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests/common from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213665
+
+        Reviewed by Sam Weinig.
+
+        Update web-platform-tests/common from upstream b076c305a256e7fb7.
+
+        * web-platform-tests/common/*: Updated.
+
 2020-06-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop tests that got renamed in r263598 when re-syncing WebCryptAPI tests.
