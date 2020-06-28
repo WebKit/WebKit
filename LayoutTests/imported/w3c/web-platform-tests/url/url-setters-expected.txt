@@ -540,9 +540,9 @@ PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = 'lang=fr'
 PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '?lang=fr' 
 PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '?lang=fr' 
 PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '?lang=fr' 
-FAIL URL: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' assert_equals: expected "https://example.net/??lang=fr#nav" but got "https://example.net/?lang=fr#nav"
-FAIL <a>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' assert_equals: expected "https://example.net/??lang=fr#nav" but got "https://example.net/?lang=fr#nav"
-FAIL <area>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' assert_equals: expected "https://example.net/??lang=fr#nav" but got "https://example.net/?lang=fr#nav"
+PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' 
 PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '?' 
 PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '?' 
 PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '?' 

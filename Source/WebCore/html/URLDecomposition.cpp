@@ -221,7 +221,7 @@ void URLDecomposition::setSearch(const String& value)
         // If the given value is the empty string, set url's query to null.
         fullURL.setQuery({ });
     } else {
-        String newSearch = value.startsWith('?') ? value.substring(1) : value;
+        String newSearch = value;
         // Make sure that '#' in the query does not leak to the hash.
         fullURL.setQuery(newSearch.replaceWithLiteral('#', "%23"));
     }
