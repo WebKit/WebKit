@@ -1,3 +1,9 @@
+2020-06-28  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK/WPE Debug build fix after r263589.
+
+        * Platform/Logging.h: Define a log category for Memory Pressure.
+
 2020-06-27  Daniel Bates  <dabates@apple.com>
 
         Revert r262654 because it caused <rdar://problem/64664156>.

@@ -66,6 +66,7 @@ extern "C" {
     M(Loading) \
     M(LocalStorageDatabaseTracker) \
     M(Media) \
+    M(MemoryPressure) \
     M(MouseHandling) \
     M(Network) \
     M(NetworkCache) \
