@@ -37,7 +37,7 @@ int testFunctionOverrides()
 {
     bool failed = false;
 
-    JSC::initializeThreading();
+    JSC::initialize();
 
     const char* oldFunctionOverrides = Options::functionOverrides();
     

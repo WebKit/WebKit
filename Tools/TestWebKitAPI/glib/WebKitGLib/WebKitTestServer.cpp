@@ -27,7 +27,7 @@
 WebKitTestServer::WebKitTestServer(ServerOptions options)
 {
     if (options & ServerRunInThread) {
-        WTF::initializeThreading();
+        WTF::initialize();
         m_queue = WorkQueue::create("WebKitTestServer");
     }
 

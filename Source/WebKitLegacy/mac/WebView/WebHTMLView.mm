@@ -1031,7 +1031,7 @@ static NSControlStateValue kit(TriState state)
     // FIXME: Shouldn't all of this move into +[WebHTMLView initialize]?
     // And some of this work is likely redundant since +[WebHTMLView initialize] is guaranteed to run first.
 
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 
     if (!oldSetCursorForMouseLocationIMP) {
@@ -2565,7 +2565,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] returnTypes:[[self class] _insertablePasteboardTypes]];
 
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 }
 

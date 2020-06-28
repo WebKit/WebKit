@@ -66,7 +66,7 @@ using namespace JSC;
 
 JSContextGroupRef JSContextGroupCreate()
 {
-    initializeThreading();
+    JSC::initialize();
     return toRef(&VM::createContextGroup().leakRef());
 }
 
@@ -116,7 +116,7 @@ void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
 
 JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
-    initializeThreading();
+    JSC::initialize();
 
 #if OS(DARWIN)
     // If the application was linked before JSGlobalContextCreate was changed to use a unique VM,
@@ -131,7 +131,7 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 
 JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClassRef globalObjectClass)
 {
-    initializeThreading();
+    JSC::initialize();
 
     Ref<VM> vm = group ? Ref<VM>(*toJS(group)) : VM::createContextGroup();
 

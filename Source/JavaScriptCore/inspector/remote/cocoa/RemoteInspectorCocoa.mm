@@ -97,7 +97,7 @@ RemoteInspector& RemoteInspector::singleton()
         if (canAccessWebInspectorMachPort()) {
             dispatch_block_t initialize = ^{
                 WTF::initializeMainThread();
-                JSC::initializeThreading();
+                JSC::initialize();
                 if (RemoteInspector::startEnabled)
                     shared.get().start();
             };

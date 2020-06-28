@@ -194,7 +194,11 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase& database)
 ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
     ASSERT(isMainThread());
-    ScriptController::initializeThreading();
+
+    // FIXME: Remove this call to ScriptController::initializeMainThread(). The
+    // main thread should have been initialized by a WebKit entrypoint already.
+    // Also, initializeMainThread() does nothing on iOS.
+    ScriptController::initializeMainThread();
 
     bool setVersionInNewDatabase = !creationCallback;
     auto openResult = openDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase);

@@ -153,7 +153,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 {
     if (self == [WebDataSource class]) {
 #if !PLATFORM(IOS_FAMILY)
-        JSC::initializeThreading();
+        JSC::initialize();
         WTF::initializeMainThread();
 #endif
     }

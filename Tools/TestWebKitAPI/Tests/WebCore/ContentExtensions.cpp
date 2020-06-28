@@ -75,7 +75,7 @@ class ContentExtensionTest : public testing::Test {
 public:
     virtual void SetUp()
     {
-        JSC::initializeThreading();
+        JSC::initialize();
         WTF::initializeMainThread();
     }
 };

@@ -5557,7 +5557,7 @@ IGNORE_WARNINGS_END
     initialized = YES;
 
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 #endif
 

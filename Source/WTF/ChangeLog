@@ -1,3 +1,40 @@
+2020-06-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Rename initializeThreading to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=213674
+
+        Reviewed by Mark Lam.
+
+        Reasons:
+
+        (1) You need to call it even if you don't use threads.
+
+        (2) It initializes things unrelated to threads (like the PRNG).
+
+        (3) People seem to get confused about the relationship between
+        initializeThreading() and initializeMainThread(), and sometimes think
+        initializeThreading() is a superset. The opposite is true! I think the
+        confusion may come from "threading" being read as "all threading".
+
+        Some filenames still use the legacy name. We can fix that in post.
+
+        * benchmarks/ConditionSpeedTest.cpp:
+        (main):
+        * benchmarks/HashSetDFGReplay.cpp:
+        (main):
+        * benchmarks/LockFairnessTest.cpp:
+        (main):
+        * benchmarks/LockSpeedTest.cpp:
+        (main):
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        * wtf/Threading.cpp:
+        (WTF::Thread::create):
+        (WTF::initialize):
+        (WTF::initializeThreading): Deleted.
+        * wtf/Threading.h:
+        (WTF::Thread::current):
+
 2020-06-27  Sam Weinig  <weinig@apple.com>
 
         Improve assertions in StringParsingBuffer 

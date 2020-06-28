@@ -133,6 +133,6 @@ WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 
 JSStringRef WKStringCopyJSString(WKStringRef stringRef)
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     return OpaqueJSString::tryCreate(WebKit::toImpl(stringRef)->string()).leakRef();
 }

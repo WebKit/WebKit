@@ -2530,7 +2530,7 @@ static void testBranchIfNotType()
 
 void run(const char* filter)
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     unsigned numberOfTests = 0;
 
     Deque<RefPtr<SharedTask<void()>>> tasks;

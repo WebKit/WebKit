@@ -53,7 +53,7 @@ void initializeMainThread()
 {
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
-        initializeThreading();
+        initialize();
         initializeMainThreadPlatform();
         RunLoop::initializeMain();
     });

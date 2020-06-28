@@ -138,7 +138,7 @@ static WebViewInsertAction kit(EditorInsertAction action)
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 #endif
 }

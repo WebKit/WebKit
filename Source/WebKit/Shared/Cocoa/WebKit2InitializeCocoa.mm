@@ -52,7 +52,7 @@ static void runInitializationCode(void* = nullptr)
     InitWebCoreThreadSystemInterface();
 #endif
 
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();

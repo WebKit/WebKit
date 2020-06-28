@@ -127,7 +127,7 @@ int testExecutionTimeLimit()
     
     bool failed = false;
 
-    JSC::initializeThreading();
+    JSC::initialize();
 
     for (auto tierOptions : tierOptionsList) {
         StringBuilder savedOptionsBuilder;

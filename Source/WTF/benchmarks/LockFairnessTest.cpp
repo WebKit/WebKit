@@ -115,7 +115,7 @@ struct Benchmark {
 
 int main(int argc, char** argv)
 {
-    WTF::initializeThreading();
+    WTF::initialize();
     
     if (argc != 5
         || sscanf(argv[2], "%u", &numThreads) != 1

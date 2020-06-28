@@ -1,3 +1,26 @@
+2020-06-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Rename initializeThreading to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=213674
+
+        Reviewed by Mark Lam.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * WebCore.order:
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initializeMainThread):
+        (WebCore::ScriptController::initializeThreading): Deleted.
+        * bindings/js/ScriptController.h:
+        * bridge/objc/WebScriptObject.mm:
+        (+[WebScriptObject initialize]):
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (+[WebCoreSharedBufferData initialize]):
+        * platform/ios/wak/WebCoreThread.mm:
+        (RunWebThread):
+
 2020-06-28  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder stopRecorder() returns empty Blob after first use

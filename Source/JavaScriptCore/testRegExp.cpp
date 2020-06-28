@@ -165,8 +165,7 @@ int main(int argc, char** argv)
     timeBeginPeriod(1);
 #endif
 
-    // Initialize JSC before getting VM.
-    JSC::initializeThreading();
+    JSC::initialize();
 
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling

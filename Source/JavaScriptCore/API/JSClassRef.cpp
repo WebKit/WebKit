@@ -51,7 +51,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     , convertToType(definition->convertToType)
     , m_className(String::fromUTF8(definition->className))
 {
-    initializeThreading();
+    JSC::initialize();
 
     if (const JSStaticValue* staticValue = definition->staticValues) {
         m_staticValues = makeUnique<OpaqueJSClassStaticValuesTable>();

@@ -584,11 +584,11 @@ static void* RunWebThread(void*)
 {
     FloatingPointEnvironment::singleton().propagateMainThreadEnvironment();
 
-    // WTF::initializeWebThread() needs to be called before JSC::initializeThreading() since the
+    // WTF::initializeWebThread() needs to be called before JSC::initialize() since the
     // code invoked by the latter needs to know if it's running on the WebThread. See
     // <rdar://problem/8502487>.
     WTF::initializeWebThread();
-    JSC::initializeThreading();
+    JSC::initialize();
     
     // Make sure that the WebThread and the main thread share the same ThreadGlobalData objects.
     WebCore::threadGlobalData().setWebCoreThreadData();

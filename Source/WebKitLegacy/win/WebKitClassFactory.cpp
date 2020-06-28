@@ -63,7 +63,7 @@
 WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
     : m_targetClass(targetClass)
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 
     gClassCount++;

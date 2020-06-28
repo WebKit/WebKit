@@ -50,7 +50,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
 
 + (void)initialize
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 }
 

@@ -169,7 +169,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
 
 Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, ThreadType threadType)
 {
-    WTF::initializeThreading();
+    WTF::initialize();
     Ref<Thread> thread = adoptRef(*new Thread());
     Ref<NewThreadContext> context = adoptRef(*new NewThreadContext { name, WTFMove(entryPoint), thread.copyRef() });
     // Increment the context ref on behalf of the created thread. We do not just use a unique_ptr and leak it to the created thread because both the creator and created thread has a need to keep the context alive:
@@ -352,7 +352,7 @@ void Thread::dump(PrintStream& out) const
 ThreadSpecificKey Thread::s_key = InvalidThreadSpecificKey;
 #endif
 
-void initializeThreading()
+void initialize()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {

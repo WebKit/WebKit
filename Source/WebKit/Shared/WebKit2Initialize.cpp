@@ -39,7 +39,7 @@ namespace WebKit {
 
 void InitializeWebKit2()
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
     AtomString::init();
 

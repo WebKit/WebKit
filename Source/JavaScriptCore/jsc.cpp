@@ -2634,10 +2634,10 @@ int main(int argc, char** argv)
         WTFLogAlways("Locale not supported by C library.\n\tUsing the fallback 'C' locale.");
 #endif
 
-    // Need to initialize WTF threading before we start any threads. Cannot initialize JSC
-    // threading yet, since that would do somethings that we'd like to defer until after we
+    // Need to initialize WTF before we start any threads. Cannot initialize JSC
+    // yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
-    WTF::initializeThreading();
+    WTF::initialize();
 
 #if PLATFORM(IOS_FAMILY)
     Options::crashIfCantAllocateJITMemory() = true;
@@ -3297,8 +3297,7 @@ int jscmain(int argc, char** argv)
             Options::dumpGeneratedBytecodes() = true;
     }
 
-    // Initialize JSC before getting VM.
-    JSC::initializeThreading();
+    JSC::initialize();
     initializeTimeoutIfNeeded();
 
 #if OS(DARWIN) || OS(LINUX)

@@ -193,7 +193,7 @@ void runBenchmark(
 
 int main(int argc, char** argv)
 {
-    WTF::initializeThreading();
+    WTF::initialize();
 
     if (argc != 6
         || sscanf(argv[2], "%u", &numProducers) != 1

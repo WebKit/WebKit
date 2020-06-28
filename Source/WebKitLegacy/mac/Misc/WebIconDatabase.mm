@@ -97,7 +97,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 + (void)initialize
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 }
 

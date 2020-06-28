@@ -66,8 +66,7 @@ enum class ThreadGroupAddResult;
 class ThreadGroup;
 class PrintStream;
 
-// This function can be called from any threads.
-WTF_EXPORT_PRIVATE void initializeThreading();
+WTF_EXPORT_PRIVATE void initialize();
 
 #if USE(PTHREADS)
 
@@ -95,7 +94,7 @@ enum class ThreadType : uint8_t {
 class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
-    friend WTF_EXPORT_PRIVATE void initializeThreading();
+    friend WTF_EXPORT_PRIVATE void initialize();
 
     WTF_EXPORT_PRIVATE ~Thread();
 
@@ -377,11 +376,11 @@ inline Thread& Thread::current()
     //    Thread::current() is used on main thread before it could possibly be used
     //    on secondary ones, so there is no need for synchronization here.
     // WRT JavaScriptCore:
-    //    Thread::initializeTLSKey() is initially called from initializeThreading(), ensuring
+    //    Thread::initializeTLSKey() is initially called from initialize(), ensuring
     //    this is initially called in a std::call_once locked context.
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)
     if (UNLIKELY(Thread::s_key == InvalidThreadSpecificKey))
-        WTF::initializeThreading();
+        WTF::initialize();
 #endif
     if (auto* thread = currentMayBeNull())
         return *thread;

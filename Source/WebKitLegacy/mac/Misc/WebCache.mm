@@ -63,7 +63,7 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 #endif
 }

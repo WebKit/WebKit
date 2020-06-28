@@ -62,7 +62,7 @@ struct Config {
     bool jitDisabled;
 
     // The following HasBeenCalled flags are for auditing call_once initialization functions.
-    bool initializeThreadingHasBeenCalled;
+    bool initializeHasBeenCalled;
 
     struct {
 #if ASSERT_ENABLED

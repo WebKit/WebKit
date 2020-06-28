@@ -56,7 +56,7 @@ public:
 
     virtual void SetUp()
     {
-        JSC::initializeThreading();
+        JSC::initialize();
         WTF::initializeMainThread();
 
         m_manifestURL = { { }, "https://example.com/manifest.json" };

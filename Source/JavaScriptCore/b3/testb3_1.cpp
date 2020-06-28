@@ -907,7 +907,7 @@ int main(int argc, char** argv)
     JSC::Config::configureForTesting();
 
     WTF::initializeMainThread();
-    JSC::initializeThreading();
+    JSC::initialize();
     
     for (unsigned i = 0; i <= 2; ++i) {
         JSC::Options::defaultB3OptLevel() = i;

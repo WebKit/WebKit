@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 TEST(WebCore, WildcardStringMatching)
 {
-    JSC::initializeThreading();
+    JSC::initialize();
 
     String wildcardString = "a*b";
     EXPECT_TRUE(stringMatchesWildcardString("aaaabb", "a*b"));

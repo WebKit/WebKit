@@ -82,10 +82,10 @@
 namespace WebCore {
 using namespace JSC;
 
-void ScriptController::initializeThreading()
+void ScriptController::initializeMainThread()
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 #endif
 }

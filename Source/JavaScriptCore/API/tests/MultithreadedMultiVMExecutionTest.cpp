@@ -49,7 +49,7 @@ static std::vector<std::thread>& threadsList()
 void startMultithreadedMultiVMExecutionTest()
 {
     WTF::initializeMainThread();
-    JSC::initializeThreading();
+    JSC::initialize();
 
 #define CHECK(condition, message) do { \
         if (!condition) { \

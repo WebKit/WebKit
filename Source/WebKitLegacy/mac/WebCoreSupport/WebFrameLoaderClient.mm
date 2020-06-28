@@ -2342,7 +2342,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, WebCore::Sha
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
 #endif
 }

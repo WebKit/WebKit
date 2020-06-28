@@ -40,15 +40,15 @@ extern "C" void setupTestRun()
     FOR_EACH_JSC_OPTION(STATIC_OPTION)
 #undef STATIC_OPTION
 
-    // Need to initialize WTF threading before we start any threads. Cannot initialize JSC
-    // threading yet, since that would do somethings that we'd like to defer until after we
+    // Need to initialize WTF before we start any threads. Cannot initialize JSC
+    // yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
     WTF::initializeMainThread();
 
     // Need to override and enable restricted options before we start parsing options below.
     Config::enableRestrictedOptions();
 
-    JSC::initializeThreading();
+    JSC::initialize();
 
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();

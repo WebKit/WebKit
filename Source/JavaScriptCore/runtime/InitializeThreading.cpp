@@ -50,12 +50,12 @@ namespace JSC {
 
 static_assert(sizeof(bool) == 1, "LLInt and JIT assume sizeof(bool) is always 1 when touching it directly from assembly code.");
 
-void initializeThreading()
+void initialize()
 {
-    static std::once_flag initializeThreadingOnceFlag;
+    static std::once_flag onceFlag;
 
-    std::call_once(initializeThreadingOnceFlag, []{
-        WTF::initializeThreading();
+    std::call_once(onceFlag, [] {
+        WTF::initialize();
         Options::initialize();
 
         initializePtrTagLookup();
@@ -106,8 +106,8 @@ void initializeThreading()
 #endif
 
         WTF::compilerFence();
-        RELEASE_ASSERT(!g_jscConfig.initializeThreadingHasBeenCalled);
-        g_jscConfig.initializeThreadingHasBeenCalled = true;
+        RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
+        g_jscConfig.initializeHasBeenCalled = true;
     });
 }
 

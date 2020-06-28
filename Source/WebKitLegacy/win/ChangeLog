@@ -1,3 +1,15 @@
+2020-06-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Rename initializeThreading to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=213674
+
+        Reviewed by Mark Lam.
+
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory):
+        * WebView.cpp:
+        (WebView::WebView):
+
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Initializing the main thread should initialize the main run loop

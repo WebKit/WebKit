@@ -112,9 +112,7 @@ public:
     // This asserts that URL argument is a JavaScript URL.
     void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
 
-    // This function must be called from the main thread. It is safe to call it repeatedly.
-    // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
-    static void initializeThreading();
+    static void initializeMainThread();
 
     void loadModuleScriptInWorld(LoadableModuleScript&, const String& moduleName, Ref<ModuleFetchParameters>&&, DOMWrapperWorld&);
     void loadModuleScript(LoadableModuleScript&, const String& moduleName, Ref<ModuleFetchParameters>&&);

@@ -111,7 +111,7 @@ int main(int argc, char** argv)
         break;
     }
 
-    JSC::initializeThreading();
+    JSC::initialize();
     
     run(filter);
 

@@ -116,7 +116,7 @@ int testPingPongStackOverflow()
 {
     bool failed = false;
 
-    JSC::initializeThreading();
+    JSC::initialize();
 
     auto origSoftReservedZoneSize = Options::softReservedZoneSize();
     auto origReservedZoneSize = Options::reservedZoneSize();

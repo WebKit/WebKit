@@ -420,7 +420,7 @@ bool WebView::s_allowSiteSpecificHacks = false;
 
 WebView::WebView()
 {
-    JSC::initializeThreading();
+    JSC::initialize();
     WTF::initializeMainThread();
     WTF::setProcessPrivileges(allPrivileges());
     WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);

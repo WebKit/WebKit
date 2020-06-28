@@ -100,7 +100,7 @@ void testCompareAndSwap()
     RefPtr<Thread> threads[numThreads];
     Data data[numThreads];
 
-    WTF::initializeThreading();
+    WTF::initialize();
     
     printf("Starting %d threads for CompareAndSwap test.  Test should complete without hanging.\n", numThreads);
     for (int i = 0; i < numThreads; i++) {

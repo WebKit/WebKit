@@ -114,7 +114,7 @@ public:
     virtual void SetUp()
     {
 #if PLATFORM(IOS_FAMILY)
-        JSC::initializeThreading();
+        JSC::initialize();
 #endif
         view = [[WebView alloc] initWithFrame:NSZeroRect];
         view.frameLoadDelegate = [[[TestNSURLSessionLoaderDelegate alloc] init] autorelease];

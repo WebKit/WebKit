@@ -56,7 +56,7 @@ using namespace JSC;
 
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
-    initializeThreading();
+    JSC::initialize();
     auto jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
