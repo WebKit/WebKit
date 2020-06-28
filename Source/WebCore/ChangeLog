@@ -1,3 +1,48 @@
+2020-06-28  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder stopRecorder() returns empty Blob after first use
+        https://bugs.webkit.org/show_bug.cgi?id=212274
+        <rdar://problem/63601298>
+
+        Reviewed by Eric Carlson.
+
+        Refactor code to create/destroy MediaRecorderPrivate on MediaRecorder start/stop.
+        This allows reusing a MediaRecorder after a stop and restarting with a clean state.
+
+        We introduce MediaRecorderPrivate::startRecording to do the initialization,
+        which allows to fix a potential ref cycle as part of the error callback handling.
+
+        Make some improvements to the platform implementation, in particular add default initialization to all fields.
+        Align the code using AudioConverterRef to what is done in AudioSampleDataSource.
+        Also call VTCompressionSessionInvalidate when destroying the VideoSampleBufferCompressor.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::startRecording):
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::requestData):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        (WebCore::MediaRecorderPrivate::startRecording):
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.h:
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm:
+        (WebCore::AudioSampleBufferCompressor::~AudioSampleBufferCompressor):
+        (WebCore::AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription):
+        (WebCore::AudioSampleBufferCompressor::attachPrimingTrimsIfNeeded):
+        (WebCore::AudioSampleBufferCompressor::gradualDecoderRefreshCount):
+        (WebCore::AudioSampleBufferCompressor::sampleBufferWithNumPackets):
+        (WebCore::AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm:
+        (WebCore::VideoSampleBufferCompressor::~VideoSampleBufferCompressor):
+
 2020-06-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Replaced inline boxes sit on the baseline with their margins

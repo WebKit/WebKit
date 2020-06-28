@@ -83,11 +83,15 @@ void MediaRecorderPrivateMock::generateMockCounterString()
 
 void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
 {
-    auto locker = holdLock(m_bufferLock);
-    Vector<uint8_t> value(m_buffer.length());
-    memcpy(value.data(), m_buffer.characters8(), m_buffer.length());
-    m_buffer.clear();
-    completionHandler(SharedBuffer::create(WTFMove(value)), mimeType());
+    RefPtr<SharedBuffer> buffer;
+    {
+        auto locker = holdLock(m_bufferLock);
+        Vector<uint8_t> value(m_buffer.length());
+        memcpy(value.data(), m_buffer.characters8(), m_buffer.length());
+        m_buffer.clear();
+        buffer = SharedBuffer::create(WTFMove(value));
+    }
+    completionHandler(WTFMove(buffer), mimeType());
 }
 
 const String& MediaRecorderPrivateMock::mimeType()

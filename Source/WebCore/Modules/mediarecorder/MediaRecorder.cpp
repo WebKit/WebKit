@@ -51,11 +51,8 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
     auto privateInstance = MediaRecorder::createMediaRecorderPrivate(document, stream->privateStream());
     if (!privateInstance)
         return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
-    auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(privateInstance), WTFMove(options)));
+    auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
-    recorder->m_private->setErrorCallback([recorder](auto&& exception) mutable {
-        recorder->dispatchError(WTFMove(*exception));
-    });
     return recorder;
 }
 
@@ -82,11 +79,10 @@ std::unique_ptr<MediaRecorderPrivate> MediaRecorder::createMediaRecorderPrivate(
 #endif
 }
 
-MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, std::unique_ptr<MediaRecorderPrivate>&& privateImpl, Options&& option)
+MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Options&& option)
     : ActiveDOMObject(document)
     , m_options(WTFMove(option))
     , m_stream(WTFMove(stream))
-    , m_private(WTFMove(privateImpl))
 {
     m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
         return track->privateTrack();
@@ -132,9 +128,26 @@ const char* MediaRecorder::activeDOMObjectName() const
 ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeslice)
 {
     UNUSED_PARAM(timeslice);
+    if (!m_isActive)
+        return Exception { InvalidStateError, "The MediaRecorder is not active"_s };
+
     if (state() != RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
-    
+
+    ASSERT(!m_private);
+    m_private = createMediaRecorderPrivate(*document(), m_stream->privateStream());
+
+    if (!m_private)
+        return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
+
+    m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& exception) mutable {
+        if (!m_isActive || !exception)
+            return;
+
+        stopRecordingInternal();
+        dispatchError(WTFMove(*exception));
+    });
+
     for (auto& track : m_tracks)
         track->addObserver(*this);
 
@@ -146,22 +159,17 @@ ExceptionOr<void> MediaRecorder::stopRecording()
 {
     if (state() == RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
-    
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
-        if (!m_isActive || state() == RecordingState::Inactive)
-            return;
 
-        stopRecordingInternal();
-        ASSERT(m_state == RecordingState::Inactive);
-        m_private->fetchData([this, pendingActivity = makePendingActivity(*this)](auto&& buffer, auto& mimeType) {
+    stopRecordingInternal();
+    auto& privateRecorder = *m_private;
+    privateRecorder.fetchData([this, pendingActivity = makePendingActivity(*this), privateRecorder = WTFMove(m_private)](auto&& buffer, auto& mimeType) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, buffer = WTFMove(buffer), mimeType]() mutable {
             if (!m_isActive)
                 return;
-    
             dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
 
             if (!m_isActive)
                 return;
-
             dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
         });
     });
@@ -174,10 +182,12 @@ ExceptionOr<void> MediaRecorder::requestData()
         return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
     m_private->fetchData([this, pendingActivity = makePendingActivity(*this)](auto&& buffer, auto& mimeType) {
-        if (!m_isActive)
-            return;
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, buffer = WTFMove(buffer), mimeType]() mutable {
+            if (!m_isActive)
+                return;
 
-        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+        });
     });
     return { };
 }

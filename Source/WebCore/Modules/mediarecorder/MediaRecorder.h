@@ -75,7 +75,7 @@ public:
     MediaStream& stream() { return m_stream.get(); }
 
 private:
-    MediaRecorder(Document&, Ref<MediaStream>&&, std::unique_ptr<MediaRecorderPrivate>&&, Options&& = { });
+    MediaRecorder(Document&, Ref<MediaStream>&&, Options&& = { });
 
     static std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(Document&, MediaStreamPrivate&);
     

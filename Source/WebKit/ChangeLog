@@ -1,3 +1,21 @@
+2020-06-28  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder stopRecorder() returns empty Blob after first use
+        https://bugs.webkit.org/show_bug.cgi?id=212274
+        <rdar://problem/63601298>
+
+        Reviewed by Eric Carlson.
+
+        Update implementation to do initialization as part of startRecording.
+
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp:
+        (WebKit::RemoteMediaRecorderManager::releaseRecorder):
+        Remove ASSERT as recorder creation in WebProcess is always ok while creation in GPUProcess may fail and m_recorders may not be populated.
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::MediaRecorderPrivate):
+        (WebKit::MediaRecorderPrivate::startRecording):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+
 2020-06-28  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK/WPE Debug build fix after r263589.
