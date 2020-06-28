@@ -1,3 +1,17 @@
+2020-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Fix thread-safety issue in webProcessPoolHighDynamicRangeDidChangeCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=213689
+        <rdar://problem/64443996>
+
+        Reviewed by Darin Adler.
+
+        webProcessPoolHighDynamicRangeDidChangeCallback() gets called on a background thread so we
+        need to make sure we dispatch to the main thread before we iterate over the process pools.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::webProcessPoolHighDynamicRangeDidChangeCallback):
+
 2020-06-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rename initializeThreading to initialize

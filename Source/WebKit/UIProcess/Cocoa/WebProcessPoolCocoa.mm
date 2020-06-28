@@ -903,9 +903,11 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 #if PLATFORM(MAC)
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)
 {
-    auto screenProperties = WebCore::collectScreenProperties();
-    for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+    dispatch_async(dispatch_get_main_queue(), ^{
+        auto properties = WebCore::collectScreenProperties();
+        for (auto& pool : WebProcessPool::allProcessPools())
+            pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
+    });
 }
 
 void WebProcessPool::registerHighDynamicRangeChangeCallback()
