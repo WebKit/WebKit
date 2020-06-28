@@ -1,3 +1,13 @@
+2020-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Replaced inline boxes sit on the baseline with their margins
+        https://bugs.webkit.org/show_bug.cgi?id=213679
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/replaced-box-with-margin-on-baseline-expected.html: Added.
+        * fast/layoutformattingcontext/replaced-box-with-margin-on-baseline.html: Added.
+
 2020-06-27  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in createIDBKeyFromValue().

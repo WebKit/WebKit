@@ -173,8 +173,10 @@ void LineBuilder::alignContentVertically()
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 auto baselineOffsetFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaselineOffset;
                 logicalTop = baselineOffset() - baselineOffsetFromMarginBox;
-            } else
-                logicalTop = baselineOffset() - run.logicalRect().height();
+            } else {
+                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+                logicalTop = baselineOffset() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu) + run.logicalRect().height() + boxGeometry.marginAfter());
+            }
             break;
         case VerticalAlign::Top:
             logicalTop = 0_lu;
