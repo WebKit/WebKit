@@ -9,6 +9,9 @@ PASS document.createTreeWalker() threw exception TypeError: Not enough arguments
 Null root node
 PASS document.createTreeWalker(null) threw exception TypeError: Argument 1 ('root') to Document.createTreeWalker must be an instance of Node.
 
+Primitive (string) NodeFilter callback
+PASS document.createTreeWalker(document, null, 'str') threw exception TypeError: Argument 3 ('filter') to Document.createTreeWalker must be an object.
+
 Default parameters
 walker = document.createTreeWalker(document)
 PASS walker.root is document

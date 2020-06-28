@@ -13,6 +13,10 @@ debug("Null root node");
 shouldThrow("document.createTreeWalker(null)", "'TypeError: Argument 1 (\\'root\\') to Document.createTreeWalker must be an instance of Node'");
 
 debug("");
+debug("Primitive (string) NodeFilter callback");
+shouldThrow("document.createTreeWalker(document, null, 'str')", "'TypeError: Argument 3 (\\'filter\\') to Document.createTreeWalker must be an object'");
+
+debug("");
 debug("Default parameters");
 evalAndLog("walker = document.createTreeWalker(document)");
 shouldBe("walker.root", "document");

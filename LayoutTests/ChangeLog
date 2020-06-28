@@ -1,3 +1,15 @@
+2020-06-28  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Improve error message for primitive callback interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=213684
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/createNodeIterator-parameters-expected.txt:
+        * fast/dom/createNodeIterator-parameters.html:
+        * fast/dom/createTreeWalker-parameters-expected.txt:
+        * fast/dom/createTreeWalker-parameters.html:
+
 2020-06-28  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder stopRecorder() returns empty Blob after first use

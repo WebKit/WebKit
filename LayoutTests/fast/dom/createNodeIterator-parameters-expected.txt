@@ -9,6 +9,9 @@ PASS document.createNodeIterator() threw exception TypeError: Not enough argumen
 Null root node
 PASS document.createNodeIterator(null) threw exception TypeError: Argument 1 ('root') to Document.createNodeIterator must be an instance of Node.
 
+Primitive (symbol) NodeFilter callback
+PASS document.createNodeIterator(document, null, Symbol()) threw exception TypeError: Argument 3 ('filter') to Document.createNodeIterator must be an object.
+
 Default parameters
 iterator = document.createNodeIterator(document)
 PASS iterator.root is document

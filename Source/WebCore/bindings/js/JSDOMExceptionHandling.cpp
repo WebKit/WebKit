@@ -212,6 +212,14 @@ JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::JSGlobalObject& lexica
     return throwVMTypeError(&lexicalGlobalObject, scope, builder.toString());
 }
 
+JSC::EncodedJSValue throwArgumentMustBeObjectError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, unsigned argumentIndex, const char* argumentName, const char* interfaceName, const char* functionName)
+{
+    StringBuilder builder;
+    appendArgumentMustBe(builder, argumentIndex, argumentName, interfaceName, functionName);
+    builder.appendLiteral("an object");
+    return throwVMTypeError(&lexicalGlobalObject, scope, builder.toString());
+}
+
 JSC::EncodedJSValue throwArgumentTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType)
 {
     StringBuilder builder;

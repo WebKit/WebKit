@@ -1,3 +1,24 @@
+2020-06-28  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Improve error message for primitive callback interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=213684
+
+        Reviewed by Darin Adler.
+
+        This patch rewords TypeError message for non-object callback interfaces
+        because apart from function, an object with certain method is also allowed.
+        New error message matches Chrome and Firefox.
+
+        Tests: fast/dom/createNodeIterator-parameters.html
+               fast/dom/createTreeWalker-parameters.html
+
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::throwArgumentMustBeObjectError):
+        * bindings/js/JSDOMExceptionHandling.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetArgumentExceptionFunction):
+        * bindings/scripts/test/*: Updated.
+
 2020-06-28  Rob Buis  <rbuis@igalia.com>
 
         Setting url.search="??" (two questionmarks) has incorrect behavior

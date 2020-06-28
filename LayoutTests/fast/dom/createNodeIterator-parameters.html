@@ -13,6 +13,10 @@ debug("Null root node");
 shouldThrow("document.createNodeIterator(null)", "'TypeError: Argument 1 (\\'root\\') to Document.createNodeIterator must be an instance of Node'");
 
 debug("");
+debug("Primitive (symbol) NodeFilter callback");
+shouldThrow("document.createNodeIterator(document, null, Symbol())", "'TypeError: Argument 3 (\\'filter\\') to Document.createNodeIterator must be an object'");
+
+debug("");
 debug("Default parameters");
 evalAndLog("iterator = document.createNodeIterator(document)");
 shouldBe("iterator.root", "document");

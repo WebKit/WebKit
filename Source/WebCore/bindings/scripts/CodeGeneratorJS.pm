@@ -1503,8 +1503,11 @@ sub GetArgumentExceptionFunction
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
     my $typeName = GetTypeNameForDisplayInException($argument->type);
 
-    if ($codeGenerator->IsCallbackInterface($argument->type) || $codeGenerator->IsCallbackFunction($argument->type)) {
-        # FIXME: We should have specialized messages for callback interfaces vs. callback functions.
+    if ($codeGenerator->IsCallbackInterface($argument->type)) {
+        return "throwArgumentMustBeObjectError(lexicalGlobalObject, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName});";
+    }
+
+    if ($codeGenerator->IsCallbackFunction($argument->type)) {
         return "throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName});";
     }
 
