@@ -4179,8 +4179,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     auto selectionRange = selection.toNormalizedRange();
     auto rangeOfInterest = makeRange(rangeOfInterestStart, rangeOfInterestEnd);
     if (selectionRange && rangesOverlap(rangeOfInterest.get(), createLiveRange(*selectionRange).ptr())) {
-        startOfRangeOfInterestInSelection = rangeOfInterestStart > selectionStart ? rangeOfInterestStart : selectionStart;
-        endOfRangeOfInterestInSelection = rangeOfInterestEnd < selectionEnd ? rangeOfInterestEnd : selectionEnd;
+        startOfRangeOfInterestInSelection = std::max(rangeOfInterestStart, selectionStart);
+        endOfRangeOfInterestInSelection = std::min(rangeOfInterestEnd, selectionEnd);
     } else {
         auto rootNode = makeRefPtr(rangeOfInterest->commonAncestorContainer());
         if (!rootNode) {
@@ -4221,12 +4221,14 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         contextBeforeStart = rangeOfInterestStart;
         contextAfterEnd = rangeOfInterestEnd;
         if (wantsMarkedTextRects && compositionRange) {
-            // In the case where the client has requested marked text rects, additionally make sure that the
-            // context range encompasses the entire marked text range.
+            // In the case where the client has requested marked text rects make sure that the context
+            // range encompasses the entire marked text range so that we don't return a truncated result.
             auto compositionStart = compositionRange->startPosition();
             auto compositionEnd = compositionRange->endPosition();
-            contextBeforeStart = contextBeforeStart > compositionStart ? compositionStart : contextBeforeStart;
-            contextAfterEnd = contextAfterEnd < compositionEnd ? compositionEnd : contextAfterEnd;
+            if (contextBeforeStart > compositionStart)
+                contextBeforeStart = compositionStart;
+            if (contextAfterEnd < compositionEnd)
+                contextAfterEnd = compositionEnd;
         }
     }
 

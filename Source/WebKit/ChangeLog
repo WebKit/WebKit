@@ -1,3 +1,18 @@
+2020-06-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Clean up visible position comparisons in WebPage::requestDocumentEditingContext()
+        https://bugs.webkit.org/show_bug.cgi?id=213701
+
+        Reviewed by Geoffrey Garen.
+
+        Use std::min and std::max when the result needs to be copied instead of doing the comparison
+        by hand to make the code a tiny bit more clear. Also, don't copy a VisiblePosition when doing
+        the min/max in-place. Both of these things are unlikely to effect code generation. If they do,
+        the latter makes things a tiny bit more efficient.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2020-06-28  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder stopRecorder() returns empty Blob after first use
