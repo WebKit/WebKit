@@ -499,6 +499,7 @@ set(WTF_SOURCES
     unicode/UTF8Conversion.cpp
 
     unicode/icu/CollatorICU.cpp
+    unicode/icu/ICUHelpers.cpp
 )
 
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES

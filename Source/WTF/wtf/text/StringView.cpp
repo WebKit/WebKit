@@ -340,6 +340,20 @@ bool StringView::contains(const char* string) const
     return find(string) != notFound;
 }
 
+int codePointCompare(StringView lhs, StringView rhs)
+{
+    bool lhsIs8Bit = lhs.is8Bit();
+    bool rhsIs8Bit = rhs.is8Bit();
+    if (lhsIs8Bit) {
+        if (rhsIs8Bit)
+            return codePointCompare(lhs.characters8(), lhs.length(), rhs.characters8(), rhs.length());
+        return codePointCompare(lhs.characters8(), lhs.length(), rhs.characters16(), rhs.length());
+    }
+    if (rhsIs8Bit)
+        return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters8(), rhs.length());
+    return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters16(), rhs.length());
+}
+
 #if CHECK_STRINGVIEW_LIFETIME
 
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.

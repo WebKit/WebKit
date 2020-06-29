@@ -28,6 +28,7 @@
 #include <tuple>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
+#include <wtf/FunctionTraits.h>
 
 namespace WTF {
 
@@ -107,8 +108,24 @@ template<typename FunctionType, typename ...ArgumentTypes> UErrorCode callBuffer
     return status;
 }
 
-}
+template<auto deleteFunction>
+struct ICUDeleter {
+    void operator()(typename FunctionTraits<decltype(deleteFunction)>::template ArgumentType<0> pointer)
+    {
+        if (pointer)
+            deleteFunction(pointer);
+    }
+};
+
+namespace ICU {
+
+WTF_EXPORT_PRIVATE unsigned majorVersion();
+WTF_EXPORT_PRIVATE unsigned minorVersion();
+
+} // namespace ICU
+} // namespace WTF
 
 using WTF::callBufferProducingFunction;
 using WTF::needsToGrowToProduceCString;
 using WTF::needsToGrowToProduceBuffer;
+using WTF::ICUDeleter;

@@ -180,6 +180,7 @@
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
 		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
 		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; };
+		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB61EDC72409CCC1001EFE36 /* SystemTracingCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */; };
@@ -731,6 +732,7 @@
 		E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageCocoa.cpp; sourceTree = "<group>"; };
 		E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueMalloc.cpp; sourceTree = "<group>"; };
 		E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueMalloc.h; sourceTree = "<group>"; };
+		E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUHelpers.cpp; sourceTree = "<group>"; };
 		E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPointerTuple.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
 		E3E64F0B22813428001E55B4 /* Nonmovable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nonmovable.h; sourceTree = "<group>"; };
@@ -1273,8 +1275,8 @@
 				0F7075F31FBF537A00489AF0 /* TimingScope.h */,
 				553071C91C40427200384898 /* TinyLRUCache.h */,
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
-				2D1F2F462498F73300C63A83 /* TranslatedProcess.h */,
 				521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */,
+				2D1F2F462498F73300C63A83 /* TranslatedProcess.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
 				E360C7642127B85B00C90F0E /* UnalignedAccess.h */,
@@ -1452,6 +1454,7 @@
 			isa = PBXGroup;
 			children = (
 				A8A47350151A825B004123FF /* CollatorICU.cpp */,
+				E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */,
 				52B228C12458DC8200753D91 /* ICUHelpers.h */,
 			);
 			path = icu;
@@ -1676,6 +1679,7 @@
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
 				93B5B44E2213D616004B7AA7 /* HexNumber.cpp in Sources */,
+				E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */,
 				7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */,
 				E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */,
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
@@ -1747,7 +1751,6 @@
 				A5BA15F51824348000A82E69 /* StringImplCocoa.mm in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
-				521CC6B424A27809004377D6 /* TranslatedProcess.cpp in Sources */,
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewCocoa.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
@@ -1764,6 +1767,7 @@
 				5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */,
 				0F66B2901DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp in Sources */,
 				0F7075F51FBF53CD00489AF0 /* TimingScope.cpp in Sources */,
+				521CC6B424A27809004377D6 /* TranslatedProcess.cpp in Sources */,
 				0FA6F39520CCACE900A03DCD /* UniqueArray.cpp in Sources */,
 				5CC0EE7621629F1900A1A842 /* URL.cpp in Sources */,
 				5C1F0595216437B30039302C /* URLCF.cpp in Sources */,

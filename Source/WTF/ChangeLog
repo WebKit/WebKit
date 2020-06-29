@@ -1,3 +1,31 @@
+2020-06-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add more StringView / ASCIILiteral helper functions and add ICUDeleter
+        https://bugs.webkit.org/show_bug.cgi?id=209774
+
+        Reviewed by Ross Kirsling and Darin Adler.
+
+        Add ICUDeleter for cleaner ICU object deletion.
+        Add ICU::majorVersion and ICU::minorVersion to switch the skeleton string in Intl.NumberFormat.
+        Add more features for ASCIILiteral.
+
+        This patch is part of https://bugs.webkit.org/show_bug.cgi?id=209774. I land it separately from
+        Intl.NumberFormat change to unlock the further Intl implementations using ICUDeleter.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/ASCIILiteral.h:
+        * wtf/text/StringView.cpp:
+        (WTF::codePointCompare):
+        * wtf/text/StringView.h:
+        (WTF::StringView::StringView):
+        * wtf/unicode/icu/ICUHelpers.cpp: Copied from Source/WTF/wtf/text/ASCIILiteral.h.
+        (WTF::ICU::version):
+        (WTF::ICU::majorVersion):
+        (WTF::ICU::minorVersion):
+        * wtf/unicode/icu/ICUHelpers.h:
+        (WTF::ICUDeleter::operator()):
+
 2020-06-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rename initializeThreading to initialize

@@ -31,6 +31,7 @@
 #include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/LChar.h>
@@ -68,6 +69,7 @@ public:
     StringView(const UChar*, unsigned length);
     StringView(const char*);
     StringView(const char*, unsigned length);
+    explicit StringView(ASCIILiteral);
 
     static StringView empty();
 
@@ -354,6 +356,11 @@ inline StringView::StringView(const char* characters)
 inline StringView::StringView(const char* characters, unsigned length)
 {
     initialize(reinterpret_cast<const LChar*>(characters), length);
+}
+
+inline StringView::StringView(ASCIILiteral string)
+{
+    initialize(string.characters8(), string.length());
 }
 
 inline StringView::StringView(const StringImpl& string)
@@ -1065,6 +1072,8 @@ inline bool equalIgnoringNullity(StringView a, StringView b)
     // FIXME: equal(StringView, StringView) ignores nullity; consider changing to be like other string classes and respecting it.
     return equal(a, b);
 }
+
+WTF_EXPORT_PRIVATE int codePointCompare(StringView, StringView);
 
 } // namespace WTF
 
