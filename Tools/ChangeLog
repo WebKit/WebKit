@@ -1,3 +1,35 @@
+2020-06-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r263630. rdar://problem/64903618
+
+    Revert r262654 because it caused <rdar://problem/64664156>.
+    Moreover it is no longer necessary as the embedding client
+    changes selection through a different SPI after focusing.
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView cleanUpInteraction]):
+    (-[WKContentView _didCommitLoadForMainFrame]):
+    (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@263630 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-27  Daniel Bates  <dabates@apple.com>
+
+            Revert r262654 because it caused <rdar://problem/64664156>.
+            Moreover it is no longer necessary as the embedding client
+            changes selection through a different SPI after focusing.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+            (TestWebKitAPI::TEST):
+
 2020-06-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Persist sccache auth token across flatpak updates
