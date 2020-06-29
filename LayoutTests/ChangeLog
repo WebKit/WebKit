@@ -1,3 +1,12 @@
+2020-06-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] webanimations/accelerated-animation-with-easing.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213758
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky to speed up EWS.
+
 2020-06-29  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for media/fullscreen-api-enabled-media-with-presentation-mode.html as they are passing. 
