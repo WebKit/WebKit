@@ -1,3 +1,23 @@
+2020-06-29  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder.start() Method is Ignoring the "timeslice" Parameter
+        https://bugs.webkit.org/show_bug.cgi?id=202233
+        <rdar://problem/55720555>
+
+        Reviewed by Eric Carlson.
+
+        Use a timer to implement timeSlice parameter.
+        Schedule timer either when start is called or as part of requestData callback.
+        This should ensure that, if requestData is called by the application, the timer will be rescheduled appropriately.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-start-timeSlice.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::startRecording):
+        (WebCore::MediaRecorder::requestData):
+        * Modules/mediarecorder/MediaRecorder.h:
+
 2020-06-29  Rob Buis  <rbuis@igalia.com>
 
         window.location.replace with invalid urls should throw
