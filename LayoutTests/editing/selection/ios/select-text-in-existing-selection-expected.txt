@@ -1,10 +1,10 @@
 The quick brown fox jumped over the lazy dog.
-This test verifies that the selection can be modified via long press inside an existing selection. To manually test, select all the text in the editable area and long press on a word to select it.
+This test verifies that the selection can be modified via long press inside an existing selection. To manually test, select all the text in the editable area and long press on a word to change the selection.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getSelection().toString() is "jumped"
+PASS getSelection().getRangeAt(0).commonAncestorContainer is target.childNodes[0]
 PASS successfullyParsed is true
 
 TEST COMPLETE

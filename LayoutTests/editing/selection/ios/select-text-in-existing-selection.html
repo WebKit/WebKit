@@ -12,9 +12,9 @@ body, html {
 
 div[contenteditable] {
     width: 300px;
-    height: 300px;
+    height: 400px;
     border: 1px solid black;
-    font-size: 32px;
+    font-size: 64px;
 }
 </style>
 </head>
@@ -24,19 +24,18 @@ div[contenteditable] {
 <p id="console"></p>
 <script>
 jsTestIsAsync = true;
-description("This test verifies that the selection can be modified via long press inside an existing selection. To manually test, select all the text in the editable area and long press on a word to select it.");
+let editor = document.querySelector("div[contenteditable]");
+let target = document.getElementById("target");
+
+description("This test verifies that the selection can be modified via long press inside an existing selection. To manually test, select all the text in the editable area and long press on a word to change the selection.");
 document.addEventListener("dragstart", event => event.preventDefault());
 
 addEventListener("load", async () => {
-    const editor = document.querySelector("div[contenteditable]");
-    const longPressTarget = document.getElementById("target");
-
     await UIHelper.activateElementAndWaitForInputSession(editor);
     document.execCommand("SelectAll");
     await UIHelper.waitForSelectionToAppear();
-    await UIHelper.longPressElement(longPressTarget);
-
-    shouldBeEqualToString("getSelection().toString()", "jumped");
+    await UIHelper.longPressElement(target);
+    shouldBe("getSelection().getRangeAt(0).commonAncestorContainer", "target.childNodes[0]");
     finishJSTest();
 });
 </script>

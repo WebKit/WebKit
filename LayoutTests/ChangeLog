@@ -1,3 +1,39 @@
+2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 14] A couple of tests in editing/selection/ios fail after <rdar://problem/60978283>
+        https://bugs.webkit.org/show_bug.cgi?id=213746
+        More work towards <rdar://problem/64808138>
+
+        Reviewed by Devin Rousso.
+
+        The UIKit change in <rdar://problem/60978283> adjusts text interaction behaviors such that a long press gesture
+        while editing makes a new caret selection, rather than a new word-granularity selection. Tweak a couple of
+        layout tests in editing/selection/ios that currently assume that long presses while editing will select a word.
+
+        * editing/selection/ios/select-text-in-existing-selection-expected.txt:
+        * editing/selection/ios/select-text-in-existing-selection.html:
+
+        This test verifies that the selection can be changed by making a long press inside an existing selection.
+        However, it now fails after the changes in <rdar://problem/60978283> because it expects the selected text to be
+        "jumped", but instead, the selection ends up being a caret inside the word "jumped". Tweak this test to verify
+        that the selection anchors' common ancestor node is the text node with the text "jumped" instead, to handle both
+        possibilities (where a long press selects a word vs. sets a caret selection).
+
+        * editing/selection/ios/selection-extends-into-overflow-area.html:
+
+        This test verifies the position and size of a ranged selection made inside content that visibly overflows its
+        parent container. It now fails because it tries to long press the word to make a selection; instead, use a
+        double tap gesture to make the word selection.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.doubleTapElement):
+
+        Add a new helper method that double taps in the middle of the given element.
+
+        (window.UIHelper.callFunctionAndWaitForEvent):
+
+        Adjust this helper method to wait for the given function to resolve, if the given function returns a Promise.
+
 2020-06-29  Peng Liu  <peng.liu6@apple.com>
 
         Video spills over PiP screen a little when using Picture in Picture

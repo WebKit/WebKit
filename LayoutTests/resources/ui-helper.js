@@ -129,6 +129,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static doubleTapElement(element, delay = 0)
+    {
+        const x = element.offsetLeft + (element.offsetWidth / 2);
+        const y = element.offsetTop + (element.offsetHeight / 2);
+        this.doubleTapAt(x, y, delay);
+    }
+
     static doubleTapAt(x, y, delay = 0)
     {
         console.assert(this.isIOSFamily());
@@ -1090,9 +1097,21 @@ window.UIHelper = class UIHelper {
 
     static callFunctionAndWaitForEvent(functionToCall, target, eventName)
     {
-        return new Promise((resolve) => {
-            target.addEventListener(eventName, resolve, { once: true });
-            functionToCall();
+        return new Promise(async resolve => {
+            let event;
+            await Promise.all([
+                new Promise((eventListenerResolve) => {
+                    target.addEventListener(eventName, (e) => {
+                        event = e;
+                        eventListenerResolve();
+                    }, {once: true});
+                }),
+                new Promise(async functionResolve => {
+                    await functionToCall();
+                    functionResolve();
+                })
+            ]);
+            resolve(event);
         });
     }
 

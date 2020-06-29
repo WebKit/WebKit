@@ -23,18 +23,6 @@
             testRunner.waitUntilDone();
         }
 
-        function selectTextAt(tapX, tapY)
-        {
-            return new Promise(resolve => {
-                testRunner.runUIScript(`
-                    (function() {
-                        uiController.longPressAtPoint(${tapX}, ${tapY}, function() {
-                            uiController.uiScriptComplete("Done");
-                        });
-                    })();`, resolve);
-            });
-        }
-
         function rectToString(rect)
         {
             return `(left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)})`;
@@ -44,11 +32,10 @@
         {
             let container = document.getElementById('editable');
             await UIHelper.activateAndWaitForInputSessionAt(25, 25);
-
-            await selectTextAt(25, 400)
-            const selectionRects = await UIHelper.getUISelectionRects();
+            await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.doubleTapElement(target), document, "selectionchange");
+            await UIHelper.ensurePresentationUpdate();
             let rectsString = "";
-            for (let rect of selectionRects)
+            for (let rect of await UIHelper.getUISelectionRects())
                 rectsString += rectToString(rect) + ' ';
 
             document.querySelector("#selection-rects").textContent = rectsString;
@@ -81,7 +68,7 @@
         line<br>
         line<br>
         line<br>
-        line<br>
+        <span id="target">line</span><br>
         line<br>
         line<br>
         line<br>
