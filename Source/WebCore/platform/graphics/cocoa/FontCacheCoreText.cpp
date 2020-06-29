@@ -1156,7 +1156,11 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
     for (auto& font : familyFonts.installedFonts)
         capabilities.uncheckedAppend(font.capabilities);
     FontSelectionAlgorithm fontSelectionAlgorithm(fontSelectionRequest, capabilities, familyFonts.capabilities);
-    return &familyFonts.installedFonts[fontSelectionAlgorithm.indexOfBestCapabilities()];
+    auto index = fontSelectionAlgorithm.indexOfBestCapabilities();
+    if (index == notFound)
+        return nullptr;
+
+    return &familyFonts.installedFonts[index];
 }
 
 Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString& familyName, AllowUserInstalledFonts allowUserInstalledFonts)
