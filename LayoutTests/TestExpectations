@@ -1171,10 +1171,8 @@ webkit.org/b/175588 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/sc
 
 # Tests that are flaky due to console log / error messages
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure Pass ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-origin.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure Pass ]
 
 # These tests used to have deterministic load delegate callback order before webkit.org/b/160677
 http/tests/svg/svg-use-external.html [ Pass Failure ]
