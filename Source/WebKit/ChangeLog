@@ -1,3 +1,20 @@
+2020-06-29  David Kilzer  <ddkilzer@apple.com>
+
+        Crash in NetworkProcessProxy::getNetworkProcessConnection() lambda due to missing Optional<> value check
+        <https://webkit.org/b/213700>
+        <rdar://problem/64852903>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        - Rename `connectionIdentifier` to `identifier`.
+        - Return early from the lamba if `identifier` does not contain a
+          value.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        - Ditto.
+
 2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] editing/selection/ios/select-text-after-changing-focus.html sometimes fails
