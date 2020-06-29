@@ -3447,18 +3447,15 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.
-        return !editorState.isInPasswordField && [self hasContent] && !editorState.selectionIsNone && !editorState.selectionIsRange;
+        return !editorState.isInPasswordField && !editorState.selectionIsRange && self.hasContent;
     }
 
     if (action == @selector(selectAll:)) {
-        // By platform convention we don't show Select All in the callout menu for a range selection.
-        if ([sender isKindOfClass:UIMenuController.class])
-            return !editorState.selectionIsNone && !editorState.selectionIsRange;
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
+        if ([sender isKindOfClass:UIMenuController.class]) {
+            // By platform convention we don't show Select All in the callout menu for a range selection.
+            return !editorState.selectionIsRange && self.hasContent;
+        }
         return YES;
-#else
-        return !editorState.selectionIsNone && self.hasContent;
-#endif
     }
 
     if (action == @selector(replace:))

@@ -1,3 +1,30 @@
+2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/selection/ios/select-text-after-changing-focus.html sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=213745
+        Work towards <rdar://problem/64808138>
+
+        Reviewed by Tim Horton.
+
+        This test first taps an input field to focus it, taps a button below the input field to focus the button and
+        dismiss the keyboard, and finally long presses to select a word below the button. On recent iOS 14 builds, this
+        test occasionally fails due to recent changes in UIKit that may cause the callout bar appearance callback to
+        fire after focusing the input field. If this happens, we end up showing the callout bar with a single option to
+        "Select All" (despite the field being empty), and the subsequent tap that's intended to hit the button instead
+        hit-tests to this callout bar item. The tests subsequently times out waiting for the keyboard to dismiss, which
+        never happens because the input field remains focused.
+
+        Showing the "Select All" callout bar option in empty text fields is inconsistent with the rest of the platform
+        (iOS), and appears to have been unintentionally introduced in iOS 12 by <https://trac.webkit.org/r231726>. While
+        it's still unknown which exact system changes caused this test to begin timing out, we can at least fix it by
+        addressing this existing regression in behavior.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
+        Check `-hasContent` here, instead of just checking if the selection is a caret. Note that we don't need to check
+        whether the selection is none separately, since `-hasContent` will always return `NO` if there is no selection.
+
 2020-06-29  Sam Weinig  <weinig@apple.com>
 
         Remove remaining makeSimpleColorFrom* variants

@@ -1,3 +1,19 @@
+2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/selection/ios/select-text-after-changing-focus.html sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=213745
+        Work towards <rdar://problem/64808138>
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more details. If this test happens to be run after another test that has written
+        something to the pasteboard, it will still fail due to the callout menu showing up with the option to paste.
+        Mitigate this by clearing the contents of the system pasteboard between tests, such that content copied from
+        previous tests doesn't change the behavior of subsequent tests.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2020-06-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] run-webkit-tests is failing to run DRT and WTR without --architecture x86_64
