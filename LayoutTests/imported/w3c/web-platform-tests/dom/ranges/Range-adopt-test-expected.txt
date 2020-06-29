@@ -1,0 +1,6 @@
+
+PASS Range in document: Removing the only element in the range must collapse the range 
+PASS Parented range container moved to another document with appendChild: Moving the element to the other document must collapse the range 
+PASS Parentless range container moved to another document with appendChild: Removing the only element in the range must collapse the range 
+PASS Range container's parentless container moved to another document with appendChild: Removing the only element in the range must collapse the range 
+
