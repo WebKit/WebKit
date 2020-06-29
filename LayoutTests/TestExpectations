@@ -2777,7 +2777,6 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-005.x
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-property-whitelist.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scoping/slotted-with-pseudo-element.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-color-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002.xht [ ImageOnlyFailure ]
