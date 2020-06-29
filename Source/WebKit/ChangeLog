@@ -1,3 +1,16 @@
+2020-06-29  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Context menu is misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=213703
+
+        Reviewed by Carlos Garcia Campos.
+
+        Set halign on the context menu popover to the same value other context menus in GTK use,
+        like in GtkEntry.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::createMenuWidget): Set halign for the context menu to 'start'.
+
 2020-06-28  Chris Dumez  <cdumez@apple.com>
 
         Fix thread-safety issue in webProcessPoolHighDynamicRangeDidChangeCallback()

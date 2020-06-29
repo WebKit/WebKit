@@ -55,6 +55,7 @@ static GtkWidget* createMenuWidget(GtkWidget* webView)
     auto* widget = gtk_popover_menu_new_from_model(nullptr);
     gtk_popover_set_has_arrow(GTK_POPOVER(widget), FALSE);
     gtk_popover_set_position(GTK_POPOVER(widget), GTK_POS_BOTTOM);
+    gtk_widget_set_halign(widget, GTK_ALIGN_START);
     gtk_widget_set_parent(widget, webView);
     return widget;
 }
