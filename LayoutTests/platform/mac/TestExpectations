@@ -1375,9 +1375,6 @@ fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFa
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]
 
-# <rdar://problem/30182401> REGRESSION: LayoutTest media/media-source/media-source-abort-resets-parser.html failing
-media/media-source/media-source-abort-resets-parser.html [ Failure ]
-
 # <rdar://problem/30517283> REGRESSION: LayoutTests security/block-test.html and security/block-test-no-port.html failing
 security/block-test.html
 security/block-test-no-port.html
