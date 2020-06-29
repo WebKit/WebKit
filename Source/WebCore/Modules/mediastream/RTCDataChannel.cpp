@@ -90,14 +90,6 @@ RTCDataChannel::RTCDataChannel(Document& document, std::unique_ptr<RTCDataChanne
 {
 }
 
-size_t RTCDataChannel::bufferedAmount() const
-{
-    // FIXME: We should compute our own bufferedAmount and not count on m_handler which is made null at closing time.
-    if (m_stopped)
-        return 0;
-    return m_handler->bufferedAmount();
-}
-
 const AtomString& RTCDataChannel::binaryType() const
 {
     switch (m_binaryType) {
@@ -129,6 +121,7 @@ ExceptionOr<void> RTCDataChannel::send(const String& data)
     if (m_readyState != RTCDataChannelState::Open)
         return Exception { InvalidStateError };
 
+    m_bufferedAmount += data.utf8().length();
     m_messageQueue.enqueue(data);
     return { };
 }
@@ -138,6 +131,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
     if (m_readyState != RTCDataChannelState::Open)
         return Exception { InvalidStateError };
 
+    m_bufferedAmount += data.byteLength();
     m_messageQueue.enqueue(data, 0, data.byteLength());
     return { };
 }
@@ -147,6 +141,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
     if (m_readyState != RTCDataChannelState::Open)
         return Exception { InvalidStateError };
 
+    m_bufferedAmount += data.byteLength();
     m_messageQueue.enqueue(*data.unsharedBuffer(), data.byteOffset(), data.byteLength());
     return { };
 }
@@ -156,6 +151,7 @@ ExceptionOr<void> RTCDataChannel::send(Blob& blob)
     if (m_readyState != RTCDataChannelState::Open)
         return Exception { InvalidStateError };
 
+    m_bufferedAmount += blob.size();
     m_messageQueue.enqueue(blob);
     return { };
 }
@@ -219,7 +215,9 @@ void RTCDataChannel::didDetectError()
 
 void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)
 {
-    if (amount <= m_bufferedAmountLowThreshold)
+    auto previousBufferedAmount = m_bufferedAmount;
+    m_bufferedAmount -= amount;
+    if (previousBufferedAmount > m_bufferedAmountLowThreshold && m_bufferedAmount <= m_bufferedAmountLowThreshold)
         scheduleDispatchEvent(Event::create(eventNames().bufferedamountlowEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

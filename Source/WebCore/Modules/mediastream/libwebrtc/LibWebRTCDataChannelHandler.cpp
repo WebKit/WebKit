@@ -153,15 +153,12 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
     });
 }
 
-void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t previousAmount)
+void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t amount)
 {
     if (!m_client)
         return;
 
-    if (previousAmount <= m_channel->buffered_amount())
-        return;
-
-    callOnMainThread([protectedClient = makeRef(*m_client), amount = m_channel->buffered_amount()] {
+    callOnMainThread([protectedClient = makeRef(*m_client), amount] {
         protectedClient->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
     });
 }

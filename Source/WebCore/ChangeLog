@@ -1,3 +1,20 @@
+2020-06-29  Youenn Fablet  <youenn@apple.com>
+
+        RTCDataChannel.bufferedAmount should stay the same even if channel is closed
+        https://bugs.webkit.org/show_bug.cgi?id=213698
+
+        Reviewed by Darin Adler.
+
+        bufferedAmount was set back to zero when closing.
+        Instead, we should keep the value in RTCDataChannel and update it either when sending data
+        or being notified or some data getting sent.
+
+        Test: webrtc/datachannel/bufferedAmount-afterClose.html
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::bufferedAmountIsDecreasing):
+        * platform/mock/RTCDataChannelHandlerMock.h:
+
 2020-06-29  Antti Koivisto  <antti@apple.com>
 
         checked overflow in WebCore::findClosestFont

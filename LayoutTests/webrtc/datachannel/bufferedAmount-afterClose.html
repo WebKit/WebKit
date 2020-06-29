@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing bufferedAmount oafter close</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+window.addEventListener("unhandledrejection", event => {
+    event.preventDefault();
+});
+
+var localChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    closeConnections();
+}
+
+var string = "abcdefghij";
+var longString;
+for (var cptr = 0; cptr < 100; ++cptr)
+    longString += string;
+
+function sendMessages(channel)
+{
+    channel.send(longString);
+}
+
+function createArrayBuffer(length)
+{
+    var array = new Uint8Array(length);
+    for (var cptr = 0; cptr < length; cptr++)
+        array[cptr] = cptr + 1;
+    return array;
+}
+
+function createArrayBufferView(length)
+{
+    return createArrayBuffer(2 * length).subarray(length, 2 * length);
+}
+
+function sendBlob(channel)
+{
+    channel.send(new Blob([createArrayBuffer(1000)], ""));
+}
+
+function sendArrayBuffer(channel)
+{
+    channel.send(createArrayBuffer(1000));
+}
+
+function sendArrayBuffer(channel)
+{
+    channel.send(createArrayBufferView(1000));
+}
+
+async function doDataChannelTest(writeChannel)
+{
+    await new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            assert_equals(localChannel.bufferedAmountLowThreshold, 0, "default bufferedAmountLowThreshold value");
+            localChannel.onopen = resolve;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                event.channel.onmessage = () => { };
+            };
+        });
+        setTimeout(() => reject('timed out 1'), 5000);
+    });
+
+    const promise = new Promise((resolve, reject) => {
+        localChannel.onbufferedamountlow = resolve;
+        setTimeout(() => reject('timed out 2'), 5000);
+    });
+
+    writeChannel(localChannel);
+
+    const currentBufferedAmount = localChannel.bufferedAmount;
+    assert_greater_than_equal(currentBufferedAmount, 1000);
+    closeDataChannels();
+    assert_equals(localChannel.bufferedAmount, currentBufferedAmount);
+}
+
+promise_test(() => {
+    return doDataChannelTest(channel => channel.send(longString));
+}, "Close does not affect bufferedAmount - for text");
+
+promise_test(() => {
+    return doDataChannelTest(channel => channel.send(new Blob([createArrayBuffer(1000)])));
+}, "Close does not affect bufferedAmount - blob");
+
+promise_test(() => {
+    return doDataChannelTest(channel => channel.send(createArrayBuffer(1000)));
+}, "Close does not affect bufferedAmount - array buffer");
+
+promise_test(() => {
+    return doDataChannelTest(channel => channel.send(createArrayBuffer(1000)));
+}, "Close does not affect bufferedAmount - array buffer view");
+    </script>
+  </body>
+</html>

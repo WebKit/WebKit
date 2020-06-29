@@ -52,8 +52,6 @@ public:
     virtual bool sendStringData(const String&) = 0;
     virtual bool sendRawData(const char*, size_t) = 0;
     virtual void close() = 0;
-
-    virtual size_t bufferedAmount() const = 0;
 };
 
 } // namespace WebCore

@@ -61,7 +61,7 @@ public:
 
     String label() const { return m_label; }
     RTCDataChannelState readyState() const {return m_readyState; }
-    size_t bufferedAmount() const;
+    size_t bufferedAmount() const { return m_bufferedAmount; }
     size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
     void setBufferedAmountLowThreshold(size_t value) { m_bufferedAmountLowThreshold = value; }
 
@@ -113,6 +113,7 @@ private:
 
     String m_label;
     RTCDataChannelInit m_options;
+    size_t m_bufferedAmount { 0 };
     size_t m_bufferedAmountLowThreshold { 0 };
 
     NetworkSendQueue m_messageQueue;

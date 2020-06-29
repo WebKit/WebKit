@@ -43,7 +43,6 @@ private:
     bool sendStringData(const String&) final;
     bool sendRawData(const char*, size_t) final;
     void close() final;
-    size_t bufferedAmount() const final { return 0; }
 
     RTCDataChannelHandlerClient* m_client { nullptr };
 

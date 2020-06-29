@@ -1,5 +1,15 @@
 2020-06-29  Youenn Fablet  <youenn@apple.com>
 
+        RTCDataChannel.bufferedAmount should stay the same even if channel is closed
+        https://bugs.webkit.org/show_bug.cgi?id=213698
+
+        Reviewed by Darin Adler.
+
+        * webrtc/datachannel/bufferedAmount-afterClose-expected.txt: Added.
+        * webrtc/datachannel/bufferedAmount-afterClose.html: Added.
+
+2020-06-29  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder.start() Method is Ignoring the "timeslice" Parameter
         https://bugs.webkit.org/show_bug.cgi?id=202233
         <rdar://problem/55720555>
