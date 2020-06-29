@@ -42,7 +42,7 @@ class HeapCell {
 public:
     enum Kind : int8_t {
         JSCell,
-        JSCellWithInteriorPointers,
+        JSCellWithIndexingHeader,
         Auxiliary
     };
     
@@ -93,12 +93,12 @@ public:
 
 inline bool isJSCellKind(HeapCell::Kind kind)
 {
-    return kind == HeapCell::JSCell || kind == HeapCell::JSCellWithInteriorPointers;
+    return kind == HeapCell::JSCell || kind == HeapCell::JSCellWithIndexingHeader;
 }
 
-inline bool hasInteriorPointers(HeapCell::Kind kind)
+inline bool mayHaveIndexingHeader(HeapCell::Kind kind)
 {
-    return kind == HeapCell::Auxiliary || kind == HeapCell::JSCellWithInteriorPointers;
+    return kind == HeapCell::Auxiliary || kind == HeapCell::JSCellWithIndexingHeader;
 }
 
 } // namespace JSC

@@ -54,8 +54,8 @@ void printInternal(PrintStream& out, HeapCell::Kind kind)
     case HeapCell::JSCell:
         out.print("JSCell");
         return;
-    case HeapCell::JSCellWithInteriorPointers:
-        out.print("JSCellWithInteriorPointers");
+    case HeapCell::JSCellWithIndexingHeader:
+        out.print("JSCellWithIndexingHeader");
         return;
     case HeapCell::Auxiliary:
         out.print("Auxiliary");

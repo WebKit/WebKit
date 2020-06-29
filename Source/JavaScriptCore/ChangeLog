@@ -1,3 +1,42 @@
+2020-06-29  Keith Miller  <keith_miller@apple.com>
+
+        ConservativeRoots should mark any cell it finds an interior pointer to
+        https://bugs.webkit.org/show_bug.cgi?id=213686
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, if ConserativeRoots finds an interior pointer to a cell
+        it will only mark that cell if it's a butterfly of some
+        kind. However, this can cause problems if the C++ or B3 compilers
+        pre-compute the offset of some cell member they want to load from
+        after a call. If this happens and that interior pointer is the
+        only reference to the cell it can get collected while it is still
+        "alive".
+
+        A naive patch that doesn't return from
+        findGCObjectPointersForMarking after finding a live non-interior,
+        non-butterfly cell was a 2% regression on Speedometer2 and
+        JetStream2. So, this patch immediately returns after
+        marking some non-butterfly cell, which appears to have fixed the
+        regression locally. Given this was such a big regression (likely
+        from running MarkedBlock::isLive) more than once there's possibly
+        an optimization opportunity here. I filed
+        https://bugs.webkit.org/show_bug.cgi?id=213687 to investigate
+        further.
+
+        * heap/HeapCell.cpp:
+        (WTF::printInternal):
+        * heap/HeapCell.h:
+        (JSC::isJSCellKind):
+        (JSC::mayHaveIndexingHeader):
+        (JSC::hasInteriorPointers): Deleted.
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2020-06-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rename initializeThreading to initialize

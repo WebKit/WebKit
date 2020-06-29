@@ -208,7 +208,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     
     switch (heapCell->cellKind()) {
     case HeapCell::JSCell:
-    case HeapCell::JSCellWithInteriorPointers: {
+    case HeapCell::JSCellWithIndexingHeader: {
         // We have ample budget to perform validation here.
     
         JSCell* jsCell = static_cast<JSCell*>(heapCell);
