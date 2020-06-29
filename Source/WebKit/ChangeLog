@@ -1,3 +1,30 @@
+2020-06-29  Youenn Fablet  <youenn@apple.com>
+
+        Send WebRTC packets received from network process to web process from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=213548
+
+        Reviewed by Eric Carlson.
+
+        Make LibWebRTCSocketClient take a ref to an IPC connection at creation time.
+        Use this connection from the RTC network thread to send received packets to improve performances.
+        Covered by existing tests.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        (WebKit::LibWebRTCSocketClient::signalReadPacket):
+        (WebKit::LibWebRTCSocketClient::signalSentPacket):
+        (WebKit::LibWebRTCSocketClient::signalAddressReady):
+        (WebKit::LibWebRTCSocketClient::signalConnect):
+        (WebKit::LibWebRTCSocketClient::signalClose):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+
 2020-06-29  Elliot  <CheeseEBoi@mailo.com>
 
         [GTK] Dark mode for GTK themes that end with -Dark

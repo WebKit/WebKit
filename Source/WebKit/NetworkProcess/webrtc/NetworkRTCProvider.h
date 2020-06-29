@@ -110,7 +110,7 @@ private:
 
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 
-    void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, Socket::Type);
+    void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);
 
     void OnMessage(rtc::Message*);
 

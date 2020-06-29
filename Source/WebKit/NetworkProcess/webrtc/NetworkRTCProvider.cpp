@@ -113,23 +113,21 @@ void NetworkRTCProvider::close()
     });
 }
 
-void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Socket::Type type)
+void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Socket::Type type, Ref<IPC::Connection>&& connection)
 {
     if (!socket) {
-        sendFromMainThread([this, identifier, size = m_sockets.size()](IPC::Connection& connection) {
-            RELEASE_LOG_ERROR_IF_ALLOWED("createSocket with %u sockets is unable to create a new socket", size);
-            connection.send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
-        });
+        RELEASE_LOG_ERROR_IF_ALLOWED("createSocket with %u sockets is unable to create a new socket", m_sockets.size());
+        connection->send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
         return;
     }
-    addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), type));
+    addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), type, WTFMove(connection)));
 }
 
 void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
-    callOnRTCNetworkThread([this, identifier, address = RTCNetwork::isolatedCopy(address.value), minPort, maxPort]() {
+    callOnRTCNetworkThread([this, identifier, address = RTCNetwork::isolatedCopy(address.value), minPort, maxPort, connection = makeRef(m_connection->connection())]() mutable {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(address, minPort, maxPort));
-        createSocket(identifier, WTFMove(socket), Socket::Type::UDP);
+        createSocket(identifier, WTFMove(socket), Socket::Type::UDP, WTFMove(connection));
     });
 }
 
@@ -141,9 +139,9 @@ void NetworkRTCProvider::createServerTCPSocket(LibWebRTCSocketIdentifier identif
         return;
     }
 
-    callOnRTCNetworkThread([this, identifier, address = RTCNetwork::isolatedCopy(address.value), minPort, maxPort, options]() {
+    callOnRTCNetworkThread([this, identifier, address = RTCNetwork::isolatedCopy(address.value), minPort, maxPort, options, connection = makeRef(m_connection->connection())]() mutable {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateServerTcpSocket(address, minPort, maxPort, options));
-        createSocket(identifier, WTFMove(socket), Socket::Type::ServerTCP);
+        createSocket(identifier, WTFMove(socket), Socket::Type::ServerTCP, WTFMove(connection));
     });
 }
 
@@ -161,21 +159,21 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
         return;
     }
-    callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() {
+    callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options, connection = makeRef(m_connection->connection())]() mutable {
         rtc::PacketSocketTcpOptions tcpOptions;
         tcpOptions.opts = options;
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, proxyInfo, userAgent.utf8().data(), tcpOptions));
-        createSocket(identifier, WTFMove(socket), Socket::Type::ClientTCP);
+        createSocket(identifier, WTFMove(socket), Socket::Type::ClientTCP, WTFMove(connection));
     });
 }
 
 void NetworkRTCProvider::wrapNewTCPConnection(LibWebRTCSocketIdentifier identifier, LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
 {
-    callOnRTCNetworkThread([this, identifier, newConnectionSocketIdentifier]() {
+    callOnRTCNetworkThread([this, identifier, newConnectionSocketIdentifier, connection = makeRef(m_connection->connection())]() mutable {
         auto socket = m_pendingIncomingSockets.take(newConnectionSocketIdentifier);
         RELEASE_LOG_IF(!socket, WebRTC, "NetworkRTCProvider::wrapNewTCPConnection received an invalid socket identifier");
         if (socket)
-            addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), Socket::Type::ServerConnectionTCP));
+            addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), Socket::Type::ServerConnectionTCP, WTFMove(connection)));
     });
 }
 
