@@ -2699,7 +2699,6 @@ webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pa
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
 webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-contents-details.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-contents-first-letter-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-contents-svg-elements.html [ ImageOnlyFailure ]
