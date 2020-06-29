@@ -503,7 +503,7 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 media/controls/picture-in-picture.html [ Pass ]
 webkit.org/b/170620 media/controls/pip-placeholder-without-video-controls.html [ Pass Failure ]
 media/element-containing-pip-video-going-into-fullscreen.html [ Pass Timeout ]
-webkit.org/b/172998 media/fullscreen-api-enabled-media-with-presentation-mode.html [ Failure ]
+media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 webkit.org/b/173199 media/navigate-with-pip-should-not-crash.html [ Pass Failure ]
 media/pip-video-going-into-fullscreen.html [ Pass ]
 media/picture-in-picture [ Pass ]
