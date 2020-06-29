@@ -49,14 +49,17 @@
             shouldBeTrue("newBtn.isFocused");
             
             // 2. Click the new button, dialog2 shows and focus should move to the close button.
+            // Set aria-modal to false on the previous modal object (we shouldn't have two modals in play).
             document.getElementById("new").click();
+            document.getElementById("box").ariaModal = false;
             setTimeout(function(){ 
                 closeBtn = accessibilityController.accessibleElementById("close");
                 shouldBeTrue("closeBtn.isFocused");
                   
                 // 3. Click the close button, dialog2 closes and focus should go back to the
-                // first focusable child of dialog1.
+                // first focusable child of dialog1, which we now need to add aria-modal back to.
                 document.getElementById("close").click();
+                document.getElementById("box").ariaModal = true;
                 setTimeout(function(){
                     okBtn = accessibilityController.accessibleElementById("ok");
                     shouldBeTrue("okBtn.isFocused");

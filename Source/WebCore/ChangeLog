@@ -1,3 +1,44 @@
+2020-06-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-modal nodes wrapped in aria-hidden are not honored
+        https://bugs.webkit.org/show_bug.cgi?id=212849
+        <rdar://problem/64047019>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: accessibility/aria-modal-in-aria-hidden.html
+
+        If aria-modal was wrapped inside aria-hidden, we were still processing that as the modal node.
+        Fixing that uncovered a host of very finicky issues related to aria-modal.
+        1. We were processing modal status immediately instead of after a delay, so visibility requirements were not correct.
+        2. In handleModalChange: We were processing multiple modal nodes perhaps incorrectly (the spec doesn't account for multiple modal nodes). 
+             - had to update a test to turn off modal status before adding a new modal node
+        3. Changed the modal node to a WeakPtr
+        4. In isNodeAriaVisible: We stopped processing for visibile with aria-hidden as soon as we hit a renderable block, but that means it won't account
+           for nodes higher in the tree with aria-hidden.
+        5. In handleAttributeChange: if aria-hidden changes, we should update modal status if needed.
+        6. In focusModalNodeTimerFired: we need to verify the element is still live, otherwise it can lead to a crash.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::findModalNodes):
+        (WebCore::AXObjectCache::currentModalNode):
+        (WebCore::AXObjectCache::modalNode):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::deferModalChange):
+        (WebCore::AXObjectCache::focusModalNodeTimerFired):
+        (WebCore::AXObjectCache::handleAttributeChange):
+        (WebCore::AXObjectCache::handleModalChange):
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        (WebCore::isNodeAriaVisible):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::handleModalChange):
+        (WebCore::AXObjectCache::deferModalChange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::firstChild const):
+        (WebCore::AccessibilityRenderObject::lastChild const):
+
 2020-06-29  Youenn Fablet  <youenn@apple.com>
 
         Support MediaRecorder.onstart

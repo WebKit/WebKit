@@ -228,7 +228,8 @@ AccessibilityObject* AccessibilityRenderObject::firstChild() const
     if (!firstChild && !canHaveChildren())
         return AccessibilityNodeObject::firstChild();
 
-    return axObjectCache()->getOrCreate(firstChild);
+    auto objectCache = axObjectCache();
+    return objectCache ? objectCache->getOrCreate(firstChild) : nullptr;
 }
 
 AccessibilityObject* AccessibilityRenderObject::lastChild() const
@@ -241,7 +242,8 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
     if (!lastChild && !canHaveChildren())
         return AccessibilityNodeObject::lastChild();
 
-    return axObjectCache()->getOrCreate(lastChild);
+    auto objectCache = axObjectCache();
+    return objectCache ? objectCache->getOrCreate(lastChild) : nullptr;
 }
 
 static inline RenderInline* startOfContinuations(RenderObject& renderer)

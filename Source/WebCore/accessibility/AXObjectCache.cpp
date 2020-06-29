@@ -220,7 +220,7 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
     , m_focusModalNodeTimer(*this, &AXObjectCache::focusModalNodeTimerFired)
-    , m_currentModalNode(nullptr)
+    , m_currentModalElement(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
 {
     ASSERT(isMainThread());
@@ -252,39 +252,39 @@ void AXObjectCache::findModalNodes()
         if (!equalLettersIgnoringASCIICase(element->attributeWithoutSynchronization(aria_modalAttr), "true"))
             continue;
 
-        m_modalNodesSet.add(element);
+        m_modalElementsSet.add(element);
     }
 
     m_modalNodesInitialized = true;
 }
 
-Node* AXObjectCache::currentModalNode()
+Element* AXObjectCache::currentModalNode()
 {
     // There might be multiple nodes with aria-modal=true set.
     // We use this function to pick the one we want.
-    m_currentModalNode = nullptr;
-    if (m_modalNodesSet.isEmpty())
+    m_currentModalElement = nullptr;
+    if (m_modalElementsSet.isEmpty())
         return nullptr;
 
     // If any of the modal nodes contains the keyboard focus, we want to pick that one.
     // If not, we want to pick the last visible dialog in the DOM.
     RefPtr<Element> focusedElement = document().focusedElement();
-    RefPtr<Node> lastVisible;
-    for (auto& node : m_modalNodesSet) {
-        if (isNodeVisible(node)) {
-            if (focusedElement && focusedElement->isDescendantOf(node)) {
-                m_currentModalNode = node;
+    RefPtr<Element> lastVisible;
+    for (auto& element : m_modalElementsSet) {
+        if (isNodeVisible(element)) {
+            if (focusedElement && focusedElement->isDescendantOf(element)) {
+                m_currentModalElement = makeWeakPtr(element);
                 break;
             }
 
-            lastVisible = node;
+            lastVisible = element;
         }
     }
 
-    if (!m_currentModalNode)
-        m_currentModalNode = lastVisible.get();
+    if (!m_currentModalElement)
+        m_currentModalElement = makeWeakPtr(lastVisible.get());
 
-    return m_currentModalNode;
+    return m_currentModalElement.get();
 }
 
 bool AXObjectCache::isNodeVisible(Node* node) const
@@ -306,23 +306,21 @@ bool AXObjectCache::isNodeVisible(Node* node) const
     return true;
 }
 
+// This function returns the valid aria modal node.
 Node* AXObjectCache::modalNode()
 {
-    // This function returns the valid aria modal node.
-    if (!m_modalNodesInitialized) {
+    if (!m_modalNodesInitialized)
         findModalNodes();
-        return currentModalNode();
-    }
 
-    if (m_modalNodesSet.isEmpty())
+    if (m_modalElementsSet.isEmpty())
         return nullptr;
 
     // Check the cached current valid aria modal node first.
     // Usually when one dialog sets aria-modal=true, that dialog is the one we want.
-    if (isNodeVisible(m_currentModalNode))
-        return m_currentModalNode;
+    if (isNodeVisible(m_currentModalElement.get()))
+        return m_currentModalElement.get();
 
-    // Recompute the valid aria modal node when m_currentModalNode is null or hidden.
+    // Recompute the valid aria modal node when m_currentModalElement is null or hidden.
     return currentModalNode();
 }
 
@@ -874,6 +872,7 @@ void AXObjectCache::remove(Node& node)
     if (is<Element>(node)) {
         m_deferredTextFormControlValue.remove(downcast<Element>(&node));
         m_deferredAttributeChange.remove(downcast<Element>(&node));
+        m_modalElementsSet.remove(downcast<Element>(&node));
     }
     m_deferredChildrenChangedNodeList.remove(&node);
     m_deferredTextChangedList.remove(&node);
@@ -890,11 +889,6 @@ void AXObjectCache::remove(Node& node)
     removeNodeForUse(node);
 
     remove(m_nodeObjectMapping.take(&node));
-
-    if (m_currentModalNode == &node)
-        m_currentModalNode = nullptr;
-    m_modalNodesSet.remove(&node);
-
     remove(node.renderer());
 }
 
@@ -1187,6 +1181,13 @@ void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* new
             m_performCacheUpdateTimer.startOneShot(0_s);
     } else
         handleFocusedUIElementChanged(oldNode, newNode);
+}
+
+void AXObjectCache::deferModalChange(Element* element)
+{
+    m_deferredModalChangedList.add(element);
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
     
 void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode)
@@ -1586,15 +1587,19 @@ void AXObjectCache::focusModalNode()
 
 void AXObjectCache::focusModalNodeTimerFired()
 {
-    if (!m_currentModalNode)
+    if (!m_document.hasLivingRenderTree())
+        return;
+
+    Ref<Document> protectedDocument(m_document);
+    if (!nodeAndRendererAreValid(m_currentModalElement.get()) || !isNodeVisible(m_currentModalElement.get()))
         return;
     
     // Don't set focus if we are already focusing onto some element within
     // the dialog.
-    if (m_currentModalNode->contains(document().focusedElement()))
+    if (m_currentModalElement->contains(document().focusedElement()))
         return;
     
-    if (AccessibilityObject* currentModalNodeObject = getOrCreate(m_currentModalNode)) {
+    if (AccessibilityObject* currentModalNodeObject = getOrCreate(m_currentModalElement.get())) {
         if (AccessibilityObject* focusable = firstFocusableChild(currentModalNodeObject))
             focusable->setFocused(true);
     }
@@ -1692,12 +1697,17 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         selectedChildrenChanged(element);
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
-    else if (attrName == aria_hiddenAttr)
+    else if (attrName == aria_hiddenAttr) {
         childrenChanged(element->parentNode(), element);
+        if (m_currentModalElement && m_currentModalElement->isDescendantOf(element)) {
+            m_modalNodesInitialized = false;
+            deferModalChange(m_currentModalElement.get());
+        }
+    }
     else if (attrName == aria_invalidAttr)
         postNotification(element, AXObjectCache::AXInvalidStatusChanged);
     else if (attrName == aria_modalAttr)
-        handleModalChange(element);
+        deferModalChange(element);
     else if (attrName == aria_currentAttr)
         postNotification(element, AXObjectCache::AXCurrentChanged);
     else if (attrName == aria_disabledAttr)
@@ -1712,12 +1722,9 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXObjectCache::AXAriaAttributeChanged);
 }
 
-void AXObjectCache::handleModalChange(Node* node)
+void AXObjectCache::handleModalChange(Element& element)
 {
-    if (!is<Element>(node))
-        return;
-
-    if (!nodeHasRole(node, "dialog") && !nodeHasRole(node, "alertdialog"))
+    if (!nodeHasRole(&element, "dialog") && !nodeHasRole(&element, "alertdialog"))
         return;
 
     stopCachingComputedObjectAttributes();
@@ -1725,18 +1732,19 @@ void AXObjectCache::handleModalChange(Node* node)
     if (!m_modalNodesInitialized)
         findModalNodes();
 
-    if (equalLettersIgnoringASCIICase(downcast<Element>(*node).attributeWithoutSynchronization(aria_modalAttr), "true")) {
-        // Add the newly modified node to the modal nodes set, and set it to be the current valid aria modal node.
+    if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(aria_modalAttr), "true")) {
+        // Add the newly modified node to the modal nodes set.
         // We will recompute the current valid aria modal node in modalNode() when this node is not visible.
-        m_modalNodesSet.add(node);
-        m_currentModalNode = node;
+        m_modalElementsSet.add(&element);
     } else {
-        // Remove the node from the modal nodes set. There might be other visible modal nodes, so we recompute here.
-        m_modalNodesSet.remove(node);
-        currentModalNode();
+        // Remove the node from the modal nodes set.
+        m_modalElementsSet.remove(&element);
     }
 
-    if (m_currentModalNode)
+    // Find new active modal node.
+    currentModalNode();
+
+    if (m_currentModalElement)
         focusModalNode();
 
     startCachingComputedObjectAttributesUntilTreeMutates();
@@ -3035,13 +3043,13 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
     HashSet<Node*> nodesToRemove;
     filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
-    filterListForRemoval(m_modalNodesSet, document, nodesToRemove);
+    filterListForRemoval(m_modalElementsSet, document, nodesToRemove);
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
     filterListForRemoval(m_deferredChildrenChangedNodeList, document, nodesToRemove);
     filterMapForRemoval(m_deferredTextFormControlValue, document, nodesToRemove);
     filterMapForRemoval(m_deferredAttributeChange, document, nodesToRemove);
     filterVectorPairForRemoval(m_deferredFocusedNodeChange, document, nodesToRemove);
-
+    
     for (auto* node : nodesToRemove)
         remove(*node);
 }
@@ -3109,6 +3117,10 @@ void AXObjectCache::performDeferredCacheUpdate()
     for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange)
         handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second);
     m_deferredFocusedNodeChange.clear();
+
+    for (auto& deferredModalChangedElement : m_deferredModalChangedList)
+        handleModalChange(deferredModalChangedElement);
+    m_deferredModalChangedList.clear();
 
     platformPerformDeferredCacheUpdate();
 }
@@ -3302,15 +3314,16 @@ bool isNodeAriaVisible(Node* node)
             const AtomString& ariaHiddenValue = downcast<Element>(*testNode).attributeWithoutSynchronization(aria_hiddenAttr);
             if (equalLettersIgnoringASCIICase(ariaHiddenValue, "true"))
                 return false;
-            
+
+            // We should break early when it gets to the body.
+            if (testNode->hasTagName(bodyTag))
+                break;
+
             bool ariaHiddenFalse = equalLettersIgnoringASCIICase(ariaHiddenValue, "false");
             if (!testNode->renderer() && !ariaHiddenFalse)
                 return false;
             if (!ariaHiddenFalsePresent && ariaHiddenFalse)
                 ariaHiddenFalsePresent = true;
-            // We should break early when it gets to a rendered object.
-            if (testNode->renderer())
-                break;
         }
     }
     

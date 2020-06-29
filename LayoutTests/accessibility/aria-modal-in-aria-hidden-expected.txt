@@ -1,0 +1,14 @@
+This tests that when something is aria-modal inside an aria-hidden it is ignored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById('bgContent').isIgnored is false
+PASS !backgroundContent || !backgroundContent.isValid() is true
+PASS accessibilityController.accessibleElementById('bgContent').isIgnored is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Other page content with a dummy focusable element
+
+Just an example.

@@ -16,10 +16,12 @@
 <div hidden aria-hidden="false" id="hiddenDiv">HiddenText1</div>
 <input type="text" aria-labelledby="hiddenDiv" id="textFieldWithHiddenLabeller">
 
+<div>
 <div aria-hidden="false">
-<video id="video">
+<video hidden id="video">
 Hidden content
 </video>
+</div>
 </div>
 
 <p id="description"></p>
@@ -63,7 +65,7 @@ Hidden content
         
         // aria-hidden="false" need to be on each parent, including rendered parents.
         var video = accessibilityController.accessibleElementById("video");
-        shouldBe("video.childrenCount", "0");
+        shouldBeTrue("!video || video.childrenCount == 0");
     }
 
 </script>

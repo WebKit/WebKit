@@ -190,6 +190,7 @@ public:
     void updateCacheAfterNodeIsAttached(Node*);
 
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
+    void deferModalChange(Element*);
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleScrollbarUpdate(ScrollView*);
     
@@ -462,10 +463,10 @@ private:
 
     // aria-modal related
     void findModalNodes();
-    Node* currentModalNode();
+    Element* currentModalNode();
     bool isNodeVisible(Node*) const;
-    void handleModalChange(Node*);
-
+    void handleModalChange(Element&);
+    
     Document& m_document;
     const Optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
@@ -490,8 +491,10 @@ private:
     ListHashSet<RefPtr<AccessibilityObject>> m_liveRegionObjectsSet;
 
     Timer m_focusModalNodeTimer;
-    Node* m_currentModalNode;
-    ListHashSet<Node*> m_modalNodesSet;
+    WeakPtr<Element> m_currentModalElement;
+    // Multiple aria-modals behavior is undefined by spec. We keep them sorted based on DOM order here.
+    // If that changes to require only one aria-modal we could change this to a WeakHashSet, or discard the set completely.
+    ListHashSet<Element*> m_modalElementsSet;
     bool m_modalNodesInitialized { false };
 
     Timer m_performCacheUpdateTimer;
@@ -502,6 +505,7 @@ private:
     WeakHashSet<Element> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AXCoreObject>> m_deferredChildrenChangedList;
     ListHashSet<Node*> m_deferredChildrenChangedNodeList;
+    WeakHashSet<Element> m_deferredModalChangedList;
     HashMap<Element*, String> m_deferredTextFormControlValue;
     HashMap<Element*, QualifiedName> m_deferredAttributeChange;
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;
@@ -573,7 +577,8 @@ inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent)
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
 inline void AXObjectCache::handleActiveDescendantChanged(Node*) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
-inline void AXObjectCache::handleModalChange(Node*) { }
+inline void AXObjectCache::handleModalChange(Element*) { }
+inline void AXObjectCache::deferModalChange(Element*) { }
 inline void AXObjectCache::handleAriaRoleChanged(Node*) { }
 inline void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName&, Element*) { }
 inline void AXObjectCache::handleAttributeChange(const QualifiedName&, Element*) { }

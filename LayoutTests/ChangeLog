@@ -1,3 +1,18 @@
+2020-06-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-modal nodes wrapped in aria-hidden are not honored
+        https://bugs.webkit.org/show_bug.cgi?id=212849
+        <rdar://problem/64047019>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/aria-hidden-negates-no-visibility-expected.txt:
+        * accessibility/aria-hidden-negates-no-visibility.html:
+        * accessibility/aria-modal-in-aria-hidden-expected.txt: Added.
+        * accessibility/aria-modal-in-aria-hidden.html: Added.
+        * accessibility/aria-modal.html:
+        * accessibility/mac/aria-modal-auto-focus.html:
+
 2020-06-29  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html as it is passing. 

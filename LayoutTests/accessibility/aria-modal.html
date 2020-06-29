@@ -21,7 +21,7 @@
 <script>
 
     description("This tests that aria-modal on dialog makes other elements inert.");
-
+    jsTestIsAsync = true;
     if (window.accessibilityController) {
         // Background should be unaccessible after loading, since the 
         // dialog is displayed and aria-modal=true.
@@ -47,12 +47,15 @@
         document.getElementById("box").setAttribute("aria-hidden", "true");
         shouldBeTrue("backgroundAccessible()");
         document.getElementById("box").setAttribute("aria-hidden", "false");
-        shouldBeFalse("backgroundAccessible()");
+        setTimeout(function() {
+            shouldBeFalse("backgroundAccessible()");
         
-        // Test modal dialog is removed from DOM tree.
-        var dialog = document.getElementById("box");
-        dialog.parentNode.removeChild(dialog);
-        shouldBeTrue("backgroundAccessible()");
+            // Test modal dialog is removed from DOM tree.
+            var dialog = document.getElementById("box");
+            dialog.parentNode.removeChild(dialog);
+            shouldBeTrue("backgroundAccessible()");
+            finishJSTest();
+         }, 0);
     }
     
     function backgroundAccessible() {
