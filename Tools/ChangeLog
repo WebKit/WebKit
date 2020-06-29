@@ -1,5 +1,31 @@
 2020-06-29  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION(r263625): [WPE][GTK] MiniBrowser output no longer includes stderr and stdout
+        https://bugs.webkit.org/show_bug.cgi?id=213696
+
+        Reviewed by Žan Doberšek.
+
+        This patch adds a new optional argument to Executive.run_command() to control stdout output.
+        By default the subprocess.PIPE value is used, to keep backward compatibility. Set the stdout
+        argument to None to display the output on the terminal tty.
+
+        The GTK and WPE run_minibrowser() implementations now use this new argument, along with
+        setting return_stderr to False to indicate we also want stderr displayed on the terminal
+        tty.
+
+        * Scripts/webkitpy/common/system/abstractexecutive.py:
+        (AbstractExecutive.run_command):
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.run_command):
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.run_command):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.run_minibrowser):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.run_minibrowser):
+
+2020-06-29  Philippe Normand  <pnormand@igalia.com>
+
         REGRESSION(r263625): run-minibrowser --debug/--release options gone
         https://bugs.webkit.org/show_bug.cgi?id=213697
 

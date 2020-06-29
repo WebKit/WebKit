@@ -117,6 +117,7 @@ class MockExecutive(object):
                     args,
                     cwd=None,
                     input=None,
+                    stdout=None,
                     error_handler=None,
                     ignore_errors=False,
                     return_exit_code=False,

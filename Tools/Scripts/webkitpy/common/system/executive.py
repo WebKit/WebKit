@@ -383,6 +383,7 @@ class Executive(AbstractExecutive):
                     cwd=None,
                     env=None,
                     input=None,
+                    stdout=subprocess.PIPE,
                     error_handler=None,
                     ignore_errors=False,
                     return_exit_code=False,
@@ -397,7 +398,7 @@ class Executive(AbstractExecutive):
 
         process = self.popen(args,
                              stdin=stdin,
-                             stdout=self.PIPE,
+                             stdout=stdout,
                              stderr=stderr,
                              cwd=cwd,
                              env=env,
