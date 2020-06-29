@@ -1,3 +1,16 @@
+2020-06-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Temporarily open up sandbox for mapping of Launch Services database
+        https://bugs.webkit.org/show_bug.cgi?id=213756
+        <rdar://problem/64707000>
+
+        Reviewed by Brent Fulgham.
+
+        Temporarily open up sandbox for mapping of Launch Services database in the WebContent process on iOS.
+        This is just a short term fix, and access to the service will be closed again soon.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-06-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline messages.py tests.
