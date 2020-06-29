@@ -111,6 +111,9 @@ private:
     bool cencDecryptFullSample(cencDecryptContext&);
     bool cencDecryptSubsampled(cencDecryptContext&);
 
+    void releaseDecryptionResources() final;
+    void closeGCryptHandle();
+
     // FIXME: It would be nice to use something in WebCore for crypto...
     Optional<gcry_cipher_hd_t> m_gCryptHandle { WTF::nullopt };
 };

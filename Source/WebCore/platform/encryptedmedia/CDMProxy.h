@@ -136,6 +136,12 @@ public:
     void updateKeyStore(const KeyStore& newKeyStore);
     void setInstance(CDMInstanceProxy*);
 
+    virtual void releaseDecryptionResources()
+    {
+        ASSERT(isMainThread());
+        m_keyStore.removeAllKeys();
+    }
+
 protected:
     Vector<uint8_t> keyValue(const Vector<uint8_t>& keyID) const;
     bool keyAvailable(const Vector<uint8_t>& keyID) const;
@@ -179,6 +185,8 @@ private:
 };
 
 class CDMInstanceSessionProxy : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionProxy, WeakPtrFactoryInitialization::Eager> {
+public:
+    virtual void releaseDecryptionResources() { }
 };
 
 // Base class for common session management code and for communicating messages
@@ -206,6 +214,19 @@ public:
     // Proxy methods - must be thread-safe.
     void startedWaitingForKey();
     void stoppedWaitingForKey();
+
+    virtual void releaseDecryptionResources()
+    {
+        ASSERT(isMainThread());
+        m_keyStore.removeAllKeys();
+        for (auto& session : m_sessions)
+            session.releaseDecryptionResources();
+        m_sessions.clear();
+        if (m_cdmProxy) {
+            m_cdmProxy->releaseDecryptionResources();
+            m_cdmProxy = nullptr;
+        }
+    }
 
 protected:
     void trackSession(const CDMInstanceSessionProxy&);

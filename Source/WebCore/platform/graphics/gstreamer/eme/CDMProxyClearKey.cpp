@@ -84,8 +84,7 @@ bool CDMProxyFactoryClearKey::supportsKeySystem(const String& keySystem)
 
 CDMProxyClearKey::~CDMProxyClearKey()
 {
-    if (m_gCryptHandle)
-        gcry_cipher_close(*m_gCryptHandle);
+    closeGCryptHandle();
 }
 
 bool CDMProxyClearKey::cencSetCounterVector(const cencDecryptContext& input)
@@ -211,6 +210,20 @@ bool CDMProxyClearKey::cencDecrypt(CDMProxyClearKey::cencDecryptContext& input)
         return false;
 
     return input.isSubsampled() ? cencDecryptSubsampled(input) : cencDecryptFullSample(input);
+}
+
+void CDMProxyClearKey::releaseDecryptionResources()
+{
+    closeGCryptHandle();
+    CDMProxy::releaseDecryptionResources();
+}
+
+void CDMProxyClearKey::closeGCryptHandle()
+{
+    if (m_gCryptHandle) {
+        gcry_cipher_close(*m_gCryptHandle);
+        m_gCryptHandle.reset();
+    }
 }
 
 gcry_cipher_hd_t& CDMProxyClearKey::gCryptHandle()
