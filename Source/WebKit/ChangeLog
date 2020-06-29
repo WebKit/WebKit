@@ -1,3 +1,19 @@
+2020-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add webkit_authentication_request_get_security_origin
+        https://bugs.webkit.org/show_bug.cgi?id=213596
+
+        Reviewed by Michael Catanzaro.
+
+        Returns the security origin for the authentication protection space.
+
+        * UIProcess/API/glib/WebKitAuthenticationRequest.cpp:
+        (webkit_authentication_request_get_security_origin):
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitAuthenticationRequest.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2020-06-29  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Context menu is misaligned

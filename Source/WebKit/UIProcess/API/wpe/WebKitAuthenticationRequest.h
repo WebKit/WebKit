@@ -26,6 +26,7 @@
 
 #include <wpe/WebKitCredential.h>
 #include <wpe/WebKitDefines.h>
+#include <wpe/WebKitSecurityOrigin.h>
 
 G_BEGIN_DECLS
 
@@ -107,6 +108,9 @@ webkit_authentication_request_get_host                (WebKitAuthenticationReque
 
 WEBKIT_API guint
 webkit_authentication_request_get_port                (WebKitAuthenticationRequest *request);
+
+WEBKIT_API WebKitSecurityOrigin *
+webkit_authentication_request_get_security_origin     (WebKitAuthenticationRequest *request);
 
 WEBKIT_API const gchar *
 webkit_authentication_request_get_realm               (WebKitAuthenticationRequest *request);

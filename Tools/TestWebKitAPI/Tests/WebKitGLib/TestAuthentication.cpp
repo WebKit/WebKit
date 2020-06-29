@@ -134,6 +134,12 @@ static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpoi
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
     g_assert_false(webkit_authentication_request_is_for_proxy(request));
     g_assert_false(webkit_authentication_request_is_retry(request));
+    auto* origin = webkit_authentication_request_get_security_origin(request);
+    g_assert_nonnull(origin);
+    g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, soup_uri_get_scheme(kServer->baseURI()));
+    g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, soup_uri_get_host(kServer->baseURI()));
+    g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, soup_uri_get_port(kServer->baseURI()));
+    webkit_security_origin_unref(origin);
 }
 
 static void testWebViewAuthenticationCancel(AuthenticationTest* test, gconstpointer)
@@ -462,6 +468,12 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
     g_assert_true(webkit_authentication_request_is_for_proxy(request));
     g_assert_false(webkit_authentication_request_is_retry(request));
+    auto* origin = webkit_authentication_request_get_security_origin(request);
+    g_assert_nonnull(origin);
+    g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, soup_uri_get_scheme(kServer->baseURI()));
+    g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, soup_uri_get_host(kServer->baseURI()));
+    g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, soup_uri_get_port(kServer->baseURI()));
+    webkit_security_origin_unref(origin);
 }
 
 static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, gconstpointer)
@@ -478,6 +490,12 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
     g_assert_true(webkit_authentication_request_is_for_proxy(request));
     g_assert_false(webkit_authentication_request_is_retry(request));
+    auto* origin = webkit_authentication_request_get_security_origin(request);
+    g_assert_nonnull(origin);
+    g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, soup_uri_get_scheme(httpsServer->baseURI()));
+    g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, soup_uri_get_host(httpsServer->baseURI()));
+    g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, soup_uri_get_port(httpsServer->baseURI()));
+    webkit_security_origin_unref(origin);
 }
 
 void beforeAll()

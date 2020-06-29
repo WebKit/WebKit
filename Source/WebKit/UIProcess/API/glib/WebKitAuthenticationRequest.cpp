@@ -25,6 +25,7 @@
 #include "WebCredential.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitCredentialPrivate.h"
+#include "WebKitSecurityOriginPrivate.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ProtectionSpace.h>
@@ -326,6 +327,45 @@ guint webkit_authentication_request_get_port(WebKitAuthenticationRequest* reques
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
     return request->priv->authenticationChallenge->core().protectionSpace().port();
+}
+
+/**
+ * webkit_authentication_request_get_security_origin:
+ * @request: a #WebKitAuthenticationRequest
+ *
+ * Get the #WebKitSecurityOrigin that this authentication challenge is applicable to.
+ *
+ * Returns: (transfer full): a newly created #WebKitSecurityOrigin.
+ *
+ * Since: 2.30
+ */
+WebKitSecurityOrigin* webkit_authentication_request_get_security_origin(WebKitAuthenticationRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), nullptr);
+
+    const auto& protectionSpace = request->priv->authenticationChallenge->core().protectionSpace();
+    String protocol;
+    switch (protectionSpace.serverType()) {
+    case ProtectionSpaceServerHTTP:
+    case ProtectionSpaceProxyHTTP:
+        protocol = "http"_s;
+        break;
+    case ProtectionSpaceServerHTTPS:
+    case ProtectionSpaceProxyHTTPS:
+        protocol = "https"_s;
+        break;
+    case ProtectionSpaceServerFTP:
+    case ProtectionSpaceProxyFTP:
+        protocol = "ftp"_s;
+        break;
+    case ProtectionSpaceServerFTPS:
+        protocol = "ftps"_s;
+        break;
+    case ProtectionSpaceProxySOCKS:
+        protocol = "socks"_s;
+        break;
+    }
+    return webkitSecurityOriginCreate(SecurityOrigin::create(protocol, protectionSpace.host(), protectionSpace.port()));
 }
 
 /**
