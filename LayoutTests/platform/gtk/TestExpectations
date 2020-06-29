@@ -695,9 +695,6 @@ webkit.org/b/175199 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivate
 # libgcrypt-based implementation supports ecDH algorithm identifier for ECDH SPKI imports.
 crypto/subtle/ecdh-import-spki-key-ecdh-identifier.html [ Pass ]
 
-# These are the imported web-platform-tests covering crypto sections we haven't implemented yet.
-imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
-
 # GTK does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
@@ -1691,8 +1688,6 @@ webkit.org/b/186670 fast/scrolling/iframe-scrollable-after-back.html [ Failure P
 webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pass ]
 
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
-
-webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
 
 webkit.org/b/186847 [ Release ] http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 webkit.org/b/192407 http/tests/inspector/network/resource-security-connection.html [ Skip ]

@@ -243,7 +243,9 @@ webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.h
 # WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
 webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
+webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
 webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html [ Failure ]
 webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html [ Failure ]
 

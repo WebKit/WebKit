@@ -1,3 +1,16 @@
+2020-06-28  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Move WebCryptoAPI expectations to glib
+
+        Unreviewed test gardening.
+
+        Some expectations in the glib file were being overriden by the generic
+        gtk one marking the tests as Slow.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-06-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adjust table content vertical position to match vertical-align
