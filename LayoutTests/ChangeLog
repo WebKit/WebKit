@@ -1,3 +1,9 @@
+2020-06-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Addressing some timeouts and flaky failures.
+
+        * platform/wpe/TestExpectations:
+
 2020-06-28  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Add baseline for imported/w3c/web-platform-tests/cors/credentials-flag.htm

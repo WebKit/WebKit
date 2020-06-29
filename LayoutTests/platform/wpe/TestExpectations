@@ -855,7 +855,6 @@ imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-t
 
 # Passing since added in r258661.
 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
@@ -1143,6 +1142,8 @@ webkit.org/b/213231 fast/block/float/float-with-anonymous-previous-sibling.html 
 webkit.org/b/213232 fast/flexbox/aspect-ratio-intrinsic-adjust.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213233 fast/images/imagemap-focus-ring-zoom-style.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/213717 fast/scrolling/overflow-scrollable-after-back.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
@@ -1513,7 +1514,7 @@ webkit.org/b/173419 fast/events/before-input-prevent-paste.html [ Failure ]
 webkit.org/b/173419 fast/events/click-focus-control.html [ Failure ]
 webkit.org/b/173419 fast/events/content-changed-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/context-activated-by-key-event.html [ Failure ]
-webkit.org/b/173419 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Timeout ]
 webkit.org/b/173419 fast/events/crash-on-mutate-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/frame-tab-focus.html [ Failure ]
 webkit.org/b/173419 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
@@ -2183,6 +2184,8 @@ webkit.org/b/213507 fast/text/text-styles/small-caption.html [ ImageOnlyFailure 
 webkit.org/b/213507 fast/text/text-styles/status-bar.html [ ImageOnlyFailure ]
 
 webkit.org/b/213508 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Failure ]
+
+webkit.org/b/213718 fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
