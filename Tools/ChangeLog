@@ -1,3 +1,14 @@
+2020-06-29  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Support Apple Silicon running x86 processes
+        https://bugs.webkit.org/show_bug.cgi?id=213487
+        <rdar://problem/64606667>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitdirs.pm:
+        (architecturesForProducts): Return architecutre(), not determineArchitecture().
+
 2020-06-29  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [webkitpy] PHP7.4 support on Debian platforms

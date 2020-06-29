@@ -843,7 +843,7 @@ sub architecturesForProducts
 {
     # Most ports don't have emulation, assume that the user gave us an accurate architecture
     if (!isAppleCocoaWebKit()) {
-        return determineArchitecture();
+        return architecture();
     }
     my $webkitBinary = File::Spec->catdir(executableProductDir(), "JavaScriptCore.framework", "JavaScriptCore");
     my $architectures = `/usr/bin/lipo -archs $webkitBinary`;
