@@ -1,3 +1,18 @@
+2020-06-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Painting] Use the table section as the paint container for table cells
+        https://bugs.webkit.org/show_bug.cgi?id=213693
+
+        Reviewed by Antti Koivisto.
+
+        The cell's containing block is the table box (skipping both the row and the section),
+        but it's positioned relative to the table section.
+
+        Let's skip the row and go right to the section box when painting the cells.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::absoluteDisplayBox):
+
 2020-06-28  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Improve error message for primitive callback interfaces

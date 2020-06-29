@@ -141,17 +141,25 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
     }
 }
 
-static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBox)
+static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
 {
     // Should never really happen but table code is way too incomplete.
-    if (!layoutState.hasDisplayBox(layoutBox))
+    if (!layoutState.hasDisplayBox(layoutBoxToPaint))
         return { };
-    if (is<Layout::InitialContainingBlock>(layoutBox))
-        return layoutState.displayBoxForLayoutBox(layoutBox);
+    if (is<Layout::InitialContainingBlock>(layoutBoxToPaint))
+        return layoutState.displayBoxForLayoutBox(layoutBoxToPaint);
 
-    auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBox) };
-    for (auto* containingBlock = &layoutBox.containingBlock(); !is<Layout::InitialContainingBlock>(*containingBlock); containingBlock = &containingBlock->containingBlock())
-        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*containingBlock).topLeft());
+    auto paintContainer = [&] (const auto& layoutBox) {
+        if (layoutBox.isTableCell()) {
+            // The table cell's containing block is the table box (skipping both the row and the section), but it's positioned relative to the table section.
+            // Let's skip the row and go right to the section box.
+            return &layoutBox.parent().parent();
+        }
+        return &layoutBox.containingBlock();
+    };
+    auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBoxToPaint) };
+    for (auto* container = paintContainer(layoutBoxToPaint); !is<Layout::InitialContainingBlock>(container); container = paintContainer(*container))
+        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*container).topLeft());
     return absoluteBox;
 }
 
