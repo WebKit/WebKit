@@ -1,3 +1,9 @@
+2020-06-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Garden tests failing on the EWS GTK-WK2 queue.
+
+        * platform/gtk/TestExpectations:
+
 2020-06-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION(r263626): 2 imported/w3c/web-platform-tests/cors/ tests failing constantly
