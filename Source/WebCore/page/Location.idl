@@ -47,7 +47,7 @@
     [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
     [CallWith=ActiveWindow&FirstWindow, MayThrowException, ForwardDeclareInHeader] void assign(USVString url);
-    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(USVString url);
+    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, MayThrowException, ForwardDeclareInHeader] void replace(USVString url);
     [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes

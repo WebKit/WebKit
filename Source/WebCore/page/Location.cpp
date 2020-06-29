@@ -216,25 +216,25 @@ ExceptionOr<void> Location::assign(DOMWindow& activeWindow, DOMWindow& firstWind
     return setLocation(activeWindow, firstWindow, url);
 }
 
-void Location::replace(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString)
+ExceptionOr<void> Location::replace(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString)
 {
     auto* frame = this->frame();
     if (!frame)
-        return;
+        return { };
     ASSERT(frame->document());
     ASSERT(frame->document()->domWindow());
 
     Frame* firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
-        return;
+        return { };
 
     URL completedURL = firstFrame->document()->completeURL(urlString);
-    // FIXME: The specification says to throw a SyntaxError if the URL is not valid.
-    if (completedURL.isNull())
-        return;
+    if (!completedURL.isValid())
+        return Exception { SyntaxError };
 
     // We call DOMWindow::setLocation directly here because replace() always operates on the current frame.
     frame->document()->domWindow()->setLocation(activeWindow, completedURL, LockHistoryAndBackForwardList);
+    return { };
 }
 
 void Location::reload(DOMWindow& activeWindow)

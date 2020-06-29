@@ -1,3 +1,16 @@
+2020-06-29  Rob Buis  <rbuis@igalia.com>
+
+        window.location.replace with invalid urls should throw
+        https://bugs.webkit.org/show_bug.cgi?id=153121
+
+        Reviewed by Darin Adler.
+
+        Add a subtest to verify that location.replace throws SyntaxError if
+        the resulting url is not valid.
+
+        * web-platform-tests/html/browsers/history/the-location-interface/location_replace-expected.txt:
+        * web-platform-tests/html/browsers/history/the-location-interface/location_replace.html:
+
 2020-06-29  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Add a new Web Platform Test in LayoutTest/imported/w3c/web-platform-tests/dom/ranges

@@ -1,3 +1,24 @@
+2020-06-29  Rob Buis  <rbuis@igalia.com>
+
+        window.location.replace with invalid urls should throw
+        https://bugs.webkit.org/show_bug.cgi?id=153121
+
+        Reviewed by Darin Adler.
+
+        Throw SyntaxError if the url resulting from the
+        location.replace operation is not valid.
+
+        Behavior matches Firefox and Chrome.
+
+        Tests: imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_replace.html
+
+        [1] https://html.spec.whatwg.org/multipage/history.html#dom-location-replace
+
+        * page/Location.cpp:
+        (WebCore::Location::replace):
+        * page/Location.h:
+        * page/Location.idl:
+
 2020-06-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adjust table content vertical position to match vertical-align
