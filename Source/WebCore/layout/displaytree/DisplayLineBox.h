@@ -61,6 +61,8 @@ public:
     InlineLayoutUnit width() const { return m_rect.width(); }
     InlineLayoutUnit height() const { return m_rect.height(); }
 
+    void moveVertically(InlineLayoutUnit);
+
     const Baseline& baseline() const { return m_baseline; }
     // Baseline offset from line top. Note that offset does not necessarily equal to ascent.
     //
@@ -103,6 +105,12 @@ inline LineBox::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit des
     : m_ascent(ascent)
     , m_descent(descent)
 {
+}
+
+inline void LineBox::moveVertically(InlineLayoutUnit offset)
+{
+    m_rect.moveVertically(offset);
+    m_inkOverflow.moveVertically(offset);
 }
 
 }

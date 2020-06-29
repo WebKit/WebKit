@@ -1,3 +1,13 @@
+2020-06-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Adjust table content vertical position to match vertical-align
+        https://bugs.webkit.org/show_bug.cgi?id=213692
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-cell-vertical-alignment-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-cell-vertical-alignment-simple.html: Added.
+
 2020-06-28  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Improve error message for primitive callback interfaces

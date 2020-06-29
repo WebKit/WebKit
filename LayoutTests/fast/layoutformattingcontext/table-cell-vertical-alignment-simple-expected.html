@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container {
+    width: 150px;
+    height: 61px; 
+    background-color: green;
+}
+
+.aligned {
+    width: 10px;
+    height: 10px; 
+    background-color: blue;
+    position: relative;
+    left: 123px;
+    top: -89px;
+}
+
+img {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    left: 3px;
+    top: -58px;
+}
+</style>
+<div></div>
+<div class=container></div>
+<img src="../replaced/resources/square-blue-100x100.png">
+<div class=aligned></div>

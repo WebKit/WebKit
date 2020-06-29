@@ -78,6 +78,8 @@ struct Run {
     InlineLayoutUnit width() const { return m_rect.width(); }
     InlineLayoutUnit height() const { return m_rect.height(); }
 
+    void moveVertically(InlineLayoutUnit);
+
     Optional<TextContent>& textContent() { return m_textContent; }
     const Optional<TextContent>& textContent() const { return m_textContent; }
     // FIXME: This information should be preserved at Run construction time.
@@ -123,6 +125,12 @@ inline Run::TextContent::TextContent(unsigned start, unsigned length, const Stri
     , m_needsHyphen(needsHyphen)
     , m_contentString(contentString)
 {
+}
+
+inline void Run::moveVertically(InlineLayoutUnit offset)
+{
+    m_rect.moveVertically(offset);
+    m_inkOverflow.moveVertically(offset);
 }
 
 }

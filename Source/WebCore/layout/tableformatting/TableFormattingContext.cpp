@@ -113,6 +113,30 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
         }
+        if (intrinsicPaddingTop && cellBox.hasInFlowOrFloatingChild()) {
+            auto adjustCellContentWithInstrinsicPaddingBefore = [&] {
+                // Child boxes (and runs) are always in the coordinate system of the containing block's border box.
+                // The content box (where the child content lives) is inside the padding box, which is inside the border box.
+                // In order to compute the child box top/left position, we need to know both the padding and the border offsets.  
+                // Normally by the time we start positioning the child content, we already have computed borders and paddings for the containing block.
+                // This is different with table cells where the final padding offset depends on the content height as we use
+                // the padding box to vertically align the table cell content.
+                auto& formattingState = layoutState().establishedFormattingState(cellBox);
+                for (auto* child = cellBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
+                    if (child->isAnonymous() || child->isLineBreakBox())
+                        continue;
+                    formattingState.displayBox(*child).moveVertically(intrinsicPaddingTop);
+                }
+                if (cellBox.establishesInlineFormattingContext()) {
+                    auto& displayContent = layoutState().establishedInlineFormattingState(cellBox).ensureDisplayInlineContent();
+                    for (auto& run : displayContent.runs)
+                        run.moveVertically(intrinsicPaddingTop);
+                    for (auto& lineBox : displayContent.lineBoxes)
+                        lineBox.moveVertically(intrinsicPaddingTop);
+                }
+            };
+            adjustCellContentWithInstrinsicPaddingBefore();
+        }
         cellDisplayBox.setVerticalPadding({ paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
     }
 }
