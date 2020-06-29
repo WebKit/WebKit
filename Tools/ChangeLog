@@ -1,3 +1,13 @@
+2020-06-29  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [webkitpy] PHP7.4 support on Debian platforms
+        https://bugs.webkit.org/show_bug.cgi?id=213721
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._debian_php_version):
+
 2020-06-29  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r263625): [WPE][GTK] MiniBrowser output no longer includes stderr and stdout
