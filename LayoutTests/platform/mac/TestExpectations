@@ -1357,10 +1357,6 @@ webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failu
 webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
-svg/W3C-SVG-1.1/fonts-elem-01-t.svg [ Failure ]
-svg/W3C-SVG-1.1/fonts-elem-02-t.svg [ Failure ]
-svg/W3C-SVG-1.1/fonts-elem-03-b.svg [ Failure ]
-svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
