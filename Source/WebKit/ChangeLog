@@ -1,5 +1,35 @@
 2020-06-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r263699. rdar://problem/64707000
+
+    [iOS] Temporarily open up sandbox for mapping of Launch Services database
+    https://bugs.webkit.org/show_bug.cgi?id=213756
+    <rdar://problem/64707000>
+    
+    Reviewed by Brent Fulgham.
+    
+    Address review comments.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@263699 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-29  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Temporarily open up sandbox for mapping of Launch Services database
+            https://bugs.webkit.org/show_bug.cgi?id=213756
+            <rdar://problem/64707000>
+
+            Reviewed by Brent Fulgham.
+
+            Address review comments.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-06-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r263698. rdar://problem/64707000
 
     [iOS] Temporarily open up sandbox for mapping of Launch Services database
