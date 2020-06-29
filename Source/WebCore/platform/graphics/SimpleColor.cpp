@@ -62,15 +62,6 @@ SimpleColor unpremultiply(SimpleColor color)
     return makeSimpleColor(unpremultiplyChannel(r, a), unpremultiplyChannel(g, a), unpremultiplyChannel(b, a), a);
 }
 
-SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a)
-{
-    float colors = 1 - k;
-    float r = colors * (1.0f - c);
-    float g = colors * (1.0f - m);
-    float b = colors * (1.0f - y);
-    return makeSimpleColorFromFloats(r, g, b, a);
-}
-
 String SimpleColor::serializationForHTML() const
 {
     if (isOpaque())

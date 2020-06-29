@@ -144,7 +144,7 @@ static Gradient::ColorStop interpolateColorStop(Gradient::ColorStop from, Gradie
     float b = b1 + (b2 - b1) * 0.5f;
     float a = a1 + (a2 - a1) * 0.5f;
 
-    return Gradient::ColorStop(offset, makeSimpleColorFromFloats(r, g, b, a));
+    return Gradient::ColorStop(offset, makeSimpleColor(SRGBA { r, g, b, a }));
 }
 
 static cairo_pattern_t* createConic(float xo, float yo, float r, float angleRadians,

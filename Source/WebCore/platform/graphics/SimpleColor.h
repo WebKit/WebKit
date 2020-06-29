@@ -91,10 +91,8 @@ bool operator!=(SimpleColor, SimpleColor);
 
 constexpr SimpleColor makeSimpleColor(int r, int g, int b);
 constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a);
-
-SimpleColor makeSimpleColor(const ColorComponents<float>& sRGBComponents);
-SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a);
-SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a);
+constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>&);
+SimpleColor makeSimpleColor(const SRGBA<float>&);
 
 SimpleColor premultiplyFlooring(SimpleColor);
 SimpleColor premultiplyCeiling(SimpleColor);
@@ -120,14 +118,15 @@ constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
     return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), static_cast<uint8_t>(std::clamp(a, 0, 0xFF)) };
 }
 
+constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>& sRGBA)
+{
+    auto [r, g, b, a] = sRGBA;
+    return { r, g, b, a };
+}
+
 inline SimpleColor makeSimpleColor(const SRGBA<float>& sRGBA)
 {
     auto [r, g, b, a] = sRGBA;
-    return makeSimpleColorFromFloats(r, g, b, a);
-}
-
-inline SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a)
-{
     return { convertToComponentByte(r), convertToComponentByte(g), convertToComponentByte(b), convertToComponentByte(a) };
 }
 

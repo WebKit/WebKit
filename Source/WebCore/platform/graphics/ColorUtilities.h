@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+template<typename> struct CMYKA;
 template<typename> struct DisplayP3;
 template<typename> struct HSLA;
 template<typename> struct LinearDisplayP3;
@@ -52,21 +53,23 @@ DisplayP3<float> toDisplayP3(const SRGBA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
+SRGBA<float> toSRGBA(const CMYKA<float>&);
+
+
 float lightness(const SRGBA<float>&);
 float luminance(const SRGBA<float>&);
-
 float contrastRatio(const SRGBA<float>&, const SRGBA<float>&);
 
 SRGBA<float> premultiplied(const SRGBA<float>&);
 
 inline uint8_t convertPrescaledToComponentByte(float f)
 {
-    return std::clamp(static_cast<int>(std::lroundf(f)), 0, 255);
+    return std::clamp(std::lround(f), 0l, 255l);
 }
 
 inline uint8_t convertToComponentByte(float f)
 {
-    return std::clamp(static_cast<int>(std::lroundf(f * 255.0f)), 0, 255);
+    return std::clamp(std::lround(f * 255.0f), 0l, 255l);
 }
 
 constexpr float convertToComponentFloat(uint8_t byte)

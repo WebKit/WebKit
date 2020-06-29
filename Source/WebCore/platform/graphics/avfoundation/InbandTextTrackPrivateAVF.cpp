@@ -80,7 +80,7 @@ static Optional<SimpleColor> makeSimpleColorFromARGBCFArray(CFArrayRef colorArra
         componentArray[i] = component;
     }
 
-    return makeSimpleColorFromFloats(componentArray[1], componentArray[2], componentArray[3], componentArray[0]);
+    return makeSimpleColor(SRGBA { componentArray[1], componentArray[2], componentArray[3], componentArray[0] });
 }
 
 Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString)

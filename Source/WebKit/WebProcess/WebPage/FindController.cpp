@@ -509,8 +509,8 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
 {
     const int borderWidth = 1;
 
-    auto overlayBackgroundColor = makeSimpleColorFromFloats(0.1f, 0.1f, 0.1f, 0.25f);
-    auto shadowColor = makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, 0.5f);
+    constexpr auto overlayBackgroundColor = makeSimpleColor(26, 26, 26, 64);
+    constexpr auto shadowColor = makeSimpleColor(0, 0, 0, 128);
 
     IntRect borderInflatedDirtyRect = dirtyRect;
     borderInflatedDirtyRect.inflate(borderWidth);

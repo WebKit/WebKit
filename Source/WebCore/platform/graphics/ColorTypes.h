@@ -36,6 +36,8 @@ template<typename T> struct SRGBA {
     T alpha;
 };
 
+template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
+
 template<typename T> constexpr ColorComponents<T> asColorComponents(const SRGBA<T>& c)
 {
     return { c.red, c.green, c.blue, c.alpha };
@@ -46,6 +48,16 @@ template<typename T> constexpr SRGBA<T> asSRGBA(const ColorComponents<T>& c)
     return { c[0], c[1], c[2], c[3] };
 }
 
+template<typename T> constexpr bool operator==(const SRGBA<T>& a, const SRGBA<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const SRGBA<T>& a, const SRGBA<T>& b)
+{
+    return !(a == b);
+}
+
 template<typename T, typename Functor> void forEachNonAlphaComponent(SRGBA<T>& color, Functor&& f)
 {
     color.red = f(color.red);
@@ -53,12 +65,15 @@ template<typename T, typename Functor> void forEachNonAlphaComponent(SRGBA<T>& c
     color.blue = f(color.blue);
 }
 
+
 template<typename T> struct LinearSRGBA {
     T red;
     T green;
     T blue;
     T alpha;
 };
+
+template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearSRGBA<T>& c)
 {
@@ -70,12 +85,25 @@ template<typename T> constexpr LinearSRGBA<T> asLinearSRGBA(const ColorComponent
     return { c[0], c[1], c[2], c[3] };
 }
 
+template<typename T> constexpr bool operator==(const LinearSRGBA<T>& a, const LinearSRGBA<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const LinearSRGBA<T>& a, const LinearSRGBA<T>& b)
+{
+    return !(a == b);
+}
+
+
 template<typename T> struct DisplayP3 {
     T red;
     T green;
     T blue;
     T alpha;
 };
+
+template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const DisplayP3<T>& c)
 {
@@ -87,12 +115,25 @@ template<typename T> constexpr DisplayP3<T> asDisplayP3(const ColorComponents<T>
     return { c[0], c[1], c[2], c[3] };
 }
 
+template<typename T> constexpr bool operator==(const DisplayP3<T>& a, const DisplayP3<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const DisplayP3<T>& a, const DisplayP3<T>& b)
+{
+    return !(a == b);
+}
+
+
 template<typename T> struct LinearDisplayP3 {
     T red;
     T green;
     T blue;
     T alpha;
 };
+
+template<typename T> LinearDisplayP3(T, T, T, T) -> LinearDisplayP3<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearDisplayP3<T>& c)
 {
@@ -104,12 +145,25 @@ template<typename T> constexpr LinearDisplayP3<T> asLinearDisplayP3(const ColorC
     return { c[0], c[1], c[2], c[3] };
 }
 
+template<typename T> constexpr bool operator==(const LinearDisplayP3<T>& a, const LinearDisplayP3<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const LinearDisplayP3<T>& a, const LinearDisplayP3<T>& b)
+{
+    return !(a == b);
+}
+
+
 template<typename T> struct HSLA {
     T hue;
     T saturation;
     T lightness;
     T alpha;
 };
+
+template<typename T> HSLA(T, T, T, T) -> HSLA<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T>& c)
 {
@@ -121,12 +175,47 @@ template<typename T> constexpr HSLA<T> asHSLA(const ColorComponents<T>& c)
     return { c[0], c[1], c[2], c[3] };
 }
 
+template<typename T> constexpr bool operator==(const HSLA<T>& a, const HSLA<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const HSLA<T>& a, const HSLA<T>& b)
+{
+    return !(a == b);
+}
+
+
+// FIXME: When ColorComponents supports more than length == 4, add conversion to/from ColorComponents<T> for CMYKA
+template<typename T> struct CMYKA {
+    T cyan;
+    T magenta;
+    T yellow;
+    T black;
+    T alpha;
+};
+
+template<typename T> CMYKA(T, T, T, T, T) -> CMYKA<T>;
+
+template<typename T> constexpr bool operator==(const CMYKA<T>& a, const CMYKA<T>& b)
+{
+    return a.cyan == b.cyan && a.magenta == b.magenta && a.yellow == b.yellow && a.black == b.black && a.alpha == b.alpha;
+}
+
+template<typename T> constexpr bool operator!=(const CMYKA<T>& a, const CMYKA<T>& b)
+{
+    return !(a == b);
+}
+
+
 template<typename T> struct XYZA {
     T x;
     T y;
     T z;
     T alpha;
 };
+
+template<typename T> XYZA(T, T, T, T) -> XYZA<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const XYZA<T>& c)
 {
@@ -136,6 +225,16 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const XYZA<T
 template<typename T> constexpr XYZA<T> asXYZA(const ColorComponents<T>& c)
 {
     return { c[0], c[1], c[2], c[3] };
+}
+
+template<typename T> constexpr bool operator==(const XYZA<T>& a, const XYZA<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& b)
+{
+    return !(a == b);
 }
 
 } // namespace WebCore

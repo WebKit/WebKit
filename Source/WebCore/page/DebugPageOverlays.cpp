@@ -82,7 +82,7 @@ public:
 
 private:
     explicit MouseWheelRegionOverlay(Page& page)
-        : RegionOverlay(page, makeSimpleColorFromFloats(0.5f, 0.0f, 0.0f, 0.4f))
+        : RegionOverlay(page, makeSimpleColor(128, 0, 0, 102))
     {
     }
 
@@ -118,7 +118,7 @@ public:
 
 private:
     explicit NonFastScrollableRegionOverlay(Page& page)
-        : RegionOverlay(page, makeSimpleColorFromFloats(1.0f, 0.5f, 0.0f, 0.4f))
+        : RegionOverlay(page, makeSimpleColor(255, 128, 0, 102))
     {
     }
 

@@ -380,7 +380,7 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
 
     if (checked || indeterminate) {
         auto border = box.style().getRoundedBorderFor(rect);
-        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, 0.8f));
+        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), Color::black.colorWithAlpha(204));
 
         auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
         auto width = clip.width();
@@ -416,10 +416,10 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
         }
 
         lineWidth = std::max<float>(lineWidth, 1);
-        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(shadow) }, kCGLineCapSquare, lineWidth, makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, 0.7f));
+        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(shadow) }, kCGLineCapSquare, lineWidth, Color::black.colorWithAlpha(179));
 
         lineWidth = std::max<float>(std::min(width, height) * thicknessRatio, 1);
-        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(line) }, kCGLineCapButt, lineWidth, makeSimpleColorFromFloats(1.0f, 1.0f, 1.0f, 240 / 255.0f));
+        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(line) }, kCGLineCapButt, lineWidth, Color::white.colorWithAlpha(240));
     } else {
         auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
         auto width = clip.width();
@@ -477,7 +477,7 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
 
     if (isChecked(box)) {
         auto border = box.style().getRoundedBorderFor(rect);
-        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, 0.8f));
+        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), Color::black.colorWithAlpha(204));
 
         auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
         drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
@@ -490,7 +490,7 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
         clip.inflateX(-clip.width() * InnerInverseRatio);
         clip.inflateY(-clip.height() * InnerInverseRatio);
         
-        constexpr auto shadowColor = makeSimpleColor(0, 0, 0, 0.7f * 255);
+        constexpr auto shadowColor = Color::black.colorWithAlpha(179);
         paintInfo.context().drawRaisedEllipse(clip, Color::white, shadowColor);
 
         FloatSize radius(clip.width() / 2.0f, clip.height() / 2.0f);
@@ -738,7 +738,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         FloatRect ellipse(buttonClip.x() + (buttonClip.width() - count * (size + padding) + padding) / 2.0, buttonClip.maxY() - 10.0, size, size);
 
         for (int i = 0; i < count; ++i) {
-            paintInfo.context().drawRaisedEllipse(ellipse, Color::white, makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, 0.5f));
+            paintInfo.context().drawRaisedEllipse(ellipse, Color::white, Color::black.colorWithAlpha(128));
             ellipse.move(size + padding, 0);
         }
     }  else {
@@ -757,9 +757,9 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
             { arrow[2].x(), arrow[2].y() + 1 }
         };
 
-        float opacity = isReadOnlyControl(box) ? 0.2 : 0.5;
-        paintInfo.context().setStrokeColor(makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, opacity));
-        paintInfo.context().setFillColor(makeSimpleColorFromFloats(0.0f, 0.0f, 0.0f, opacity));
+        uint8_t opacity = isReadOnlyControl(box) ? 51 : 128;
+        paintInfo.context().setStrokeColor(Color::black.colorWithAlpha(opacity));
+        paintInfo.context().setFillColor(Color::black.colorWithAlpha(opacity));
         paintInfo.context().drawPath(Path::polygonPathFromPoints(shadow));
 
         paintInfo.context().setStrokeColor(Color::white);
@@ -1840,7 +1840,7 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     // Draw a drop shadow around the circle.
     // Use the GraphicsContext function, because it calculates the blur radius in context space,
     // rather than screen space.
-    auto shadowColor = makeSimpleColorFromFloats(0.f, 0.f, 0.f, 0.1f);
+    constexpr auto shadowColor = Color::black.colorWithAlpha(26);
     graphicsContext.setShadow(FloatSize { }, 16, shadowColor);
 
     // The circle must have an alpha channel value of 1 for the shadow color to appear.

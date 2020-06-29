@@ -97,7 +97,7 @@ static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
     [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return makeSimpleColorFromFloats(redComponent, greenComponent, blueComponent, alpha);
+    return makeSimpleColor(SRGBA { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }
 
 Color colorFromNSColor(NSColor *color)

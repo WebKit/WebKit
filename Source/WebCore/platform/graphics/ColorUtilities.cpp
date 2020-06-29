@@ -259,6 +259,16 @@ SRGBA<float> toSRGBA(const HSLA<float>& color)
     };
 }
 
+SRGBA<float> toSRGBA(const CMYKA<float>& color)
+{
+    auto [c, m, y, k, a] = color;
+    float colors = 1 - k;
+    float r = colors * (1.0f - c);
+    float g = colors * (1.0f - m);
+    float b = colors * (1.0f - y);
+    return { r, g, b, a };
+}
+
 SRGBA<float> premultiplied(const SRGBA<float>& color)
 {
     auto [r, g, b, a] = color;

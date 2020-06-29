@@ -1,3 +1,132 @@
+2020-06-29  Sam Weinig  <weinig@apple.com>
+
+        Remove remaining makeSimpleColorFrom* variants
+        https://bugs.webkit.org/show_bug.cgi?id=213706
+
+        Reviewed by Darin Adler.
+
+        Removed makeSimpleColorFromFloats and makeSimpleColorFromCMYKA.
+        - Updated callers that need to pass floats to use makeSimpleColor(SRGBA { ... });
+        - Updated callers that don't need to pass floats, mostly compile time constant
+          SimpleColors to use makeSimpleColor(...), passing in 0-255 based component
+          values.
+        - Updated callers of makeSimpleColorFromCMYKA to use makeSimpleColor(toSRGBA(CMYKA { ... })).
+          This required adding CMYKA type to ColorTypes.h and moving conversion SRGBA to
+          ColorUtilities with the other color conversion code.
+        - Added deduction guides for color types to allow component type deduction. This allows 
+          us to write:
+
+               function(SRGBA { redFloat, greenFloat, blueFloat, alphaFloat })
+
+          reather than the more cumbersome:
+
+               function(SRGBA<float> { redFloat, greenFloat, blueFloat, alphaFloat })
+
+        - Added operator==/operator!= for each color type. Only used by CMYKA at the moment,
+          but generally useful, so added for all of them. For all types convertable to ColorComponents,
+          the implementation uses the conversion to ColorComponents to avoid redundancy.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setStrokeColor):
+        (WebCore::CanvasRenderingContext2DBase::setFillColor):
+        Update to call new typed color based CanvasStyle functions.
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        Use makeSimpleColor rather than makeSimpleColorFromFloats/makeSimpleColorFromCMYKA.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        Replace constructors taking raw floats with ones taking typed colors (SRGBA<float>/CMYKA<float>)
+        to make it more clear what the parameters mean. 
+        (WebCore::CanvasStyle::isEquivalentColor const):
+        Compare the cmyka components using new operator== implementation for CMYKA<float>.
+        (WebCore::CanvasStyle::isEquivalent const):
+        (WebCore::CanvasStyle::isEquivalentRGBA const): Deleted.
+        (WebCore::CanvasStyle::isEquivalentCMYKA const): Deleted.
+        Replace isEquivalentRGBA/isEquivalentCMYKA with overloaded isEquivalent.
+        (WebCore::CanvasStyle::applyStrokeColor const):
+        (WebCore::CanvasStyle::applyFillColor const):
+        Update for new names of CMYKA members.
+        * html/canvas/CanvasStyle.h:
+        Use SRGBA<float> and CMYKA<float> to simplify interfaces
+        
+        * page/DebugPageOverlays.cpp:
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        Use makeSimpleColor rather than makeSimpleColorFromFloats, allowing for
+        constant expression creation of SimpleColors.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightened const):
+        (WebCore::Color::darkened const):
+        Use makeSimpleColor(SRGBA { ... }) rather than makeSimpleColorFromFloats.
+
+        (WebCore::Color::luminance const):
+        Fix comment.
+
+        (WebCore::blendWithoutPremultiply):
+        Use makeSimpleColor(...) rather than makeSimpleColorFromFloats.
+
+        * platform/graphics/ColorTypes.h:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        - Add deduction guides and operator==/operator!= for each color type.
+        - Add CMYKA type. No conversion to ColorComponents yet, as ColorComponents
+          only works with 4 component colors, not ones with 5 like CMYKA.
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::toSRGBA):
+        Move conversion from CMYKA to SRGBA from makeSimpleColorFromCMYKA to here.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::convertPrescaledToComponentByte):
+        (WebCore::convertToComponentByte):
+        Use std::round rather than std::lroundf, since it will have the same result 
+        and it reads nicer.
+
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::makeSimpleColorFromCMYKA): Deleted.
+        * platform/graphics/SimpleColor.h:
+        (WebCore::makeSimpleColor):
+        (WebCore::makeSimpleColorFromFloats): Deleted.
+        - Removed makeSimpleColorFromFloats and makeSimpleColorFromCMYKA.
+        - Added constexpr overload of makeSimpleColor taking a const SRGBA<uint8_t>&.
+        - Fixed forward declaration of makeSimpleColor that was taking ColorComponents 
+          to actually take an SRGBA<float>, which is what the inline implementation actually
+          takes.
+ 
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::makeSimpleColorFromARGBCFArray):
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::interpolateColorStop):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::makeSimpleColorFromCGColor):
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::brushWithColor):
+        Use makeSimpleColor(SRGBA { ... }) rather than makeSimpleColorFromFloats.
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        * platform/ios/ColorIOS.mm:
+        (WebCore::colorFromUIColor):
+        Use makeSimpleColor(SRGBA { ... }) rather than makeSimpleColorFromFloats. Casting to 
+        float is needed, as the input types are CGFloat which is double in 64-bit environments
+        and won't automatically narrow with the new types.
+
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::colorForGridTileBorder const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        Use makeSimpleColor rather than makeSimpleColorFromFloats, allowing for
+        constant expression creation of SimpleColors.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+        (WebCore::RenderThemeIOS::paintRadioDecorations):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+        Use Color::black/Color::white.colorWithAlpha(...) rather than makeSimpleColorFromFloats, 
+        allowing for constant expression creation of SimpleColors.
+
 2020-06-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-modal nodes wrapped in aria-hidden are not honored

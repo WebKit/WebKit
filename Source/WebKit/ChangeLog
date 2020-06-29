@@ -1,3 +1,21 @@
+2020-06-29  Sam Weinig  <weinig@apple.com>
+
+        Remove remaining makeSimpleColorFrom* variants
+        https://bugs.webkit.org/show_bug.cgi?id=213706
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkitColorToWebCoreColor):
+        Use makeSimpleColor(SRGBA { ... }) rather than makeSimpleColorFromFloats.
+
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        Use makeSimpleColor rather than makeSimpleColorFromFloats, allowing for
+        constant expression creation of SimpleColors.
+
 2020-06-29  Youenn Fablet  <youenn@apple.com>
 
         Send WebRTC packets received from network process to web process from a background thread

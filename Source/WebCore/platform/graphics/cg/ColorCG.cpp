@@ -78,7 +78,7 @@ static SimpleColor makeSimpleColorFromCGColor(CGColorRef color)
         ASSERT_NOT_REACHED();
     }
 
-    return makeSimpleColorFromFloats(r, g, b, a);
+    return makeSimpleColor(SRGBA { r, g, b, a });
 }
 
 Color::Color(CGColorRef color)

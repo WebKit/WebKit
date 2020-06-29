@@ -114,7 +114,7 @@ Color Color::lightened() const
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
-    return makeSimpleColorFromFloats(multiplier * r, multiplier * g, multiplier * b, a);
+    return makeSimpleColor(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
 Color Color::darkened() const
@@ -128,7 +128,7 @@ Color Color::darkened() const
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
-    return makeSimpleColorFromFloats(multiplier * r, multiplier * g, multiplier * b, a);
+    return makeSimpleColor(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
 bool Color::isDark() const
@@ -147,7 +147,8 @@ float Color::lightness() const
 
 float Color::luminance() const
 {
-    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for luminance (e.g. convertToXYZ(c).yComponent()).
+    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms
+    // for luminance (e.g. convertToXYZ(c).yComponent()).
     return WebCore::luminance(toSRGBALossy());
 }
 
@@ -290,7 +291,7 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
     auto fromSRGB = from.toSRGBASimpleColorLossy();
     auto toSRGB = from.toSRGBASimpleColorLossy();
 
-    return makeSimpleColorFromFloats(
+    return makeSimpleColor(
         WebCore::blend(fromSRGB.redComponent(), toSRGB.redComponent(), progress),
         WebCore::blend(fromSRGB.greenComponent(), toSRGB.greenComponent(), progress),
         WebCore::blend(fromSRGB.blueComponent(), toSRGB.blueComponent(), progress),
