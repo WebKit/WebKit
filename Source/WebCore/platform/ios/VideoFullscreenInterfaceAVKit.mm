@@ -889,14 +889,14 @@ void VideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::applicationDidBecomeActive(%p)", this);
 }
 
-void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const IntRect& initialRect, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby)
+void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby)
 {
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::setupFullscreen(%p)", this);
 
     [playerController() setHasEnabledVideo:true];
     [playerController() setHasVideo:true];
-    [playerController() setContentDimensions:initialRect.size()];
+    [playerController() setContentDimensions:videoDimensions];
 
     m_allowsPictureInPicturePlayback = allowsPictureInPicturePlayback;
     m_videoView = &videoView;

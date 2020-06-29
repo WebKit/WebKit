@@ -1,3 +1,22 @@
+2020-06-29  Peng Liu  <peng.liu6@apple.com>
+
+        Video spills over PiP screen a little when using Picture in Picture
+        https://bugs.webkit.org/show_bug.cgi?id=213658
+
+        Reviewed by Eric Carlson.
+
+        We need to provide video content dimensions instead of video element sizes to
+        AVPlayerController to make sure that the Picture-in-Picture window will have
+        the correct aspect ratio.
+
+        Test: media/picture-in-picture/picture-in-picture-window-aspect-ratio.html
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::setupFullscreen):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::setUpFullscreen):
+
 2020-06-29  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Remove ENABLE_STREAMS_API compilation flag

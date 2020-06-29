@@ -981,7 +981,9 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
     FloatRect videoLayerFrame = FloatRect(FloatPoint(), videoElementClientRect.size());
     m_fullscreenModel->setVideoLayerFrame(videoLayerFrame);
 
-    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, videoElementClientRect, viewRef, mode, allowsPictureInPicture] {
+    FloatSize videoDimensions = { (float)videoElement.videoWidth(), (float)videoElement.videoHeight() };
+
+    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, videoElementClientRect, videoDimensions, viewRef, mode, allowsPictureInPicture] {
         ASSERT(isUIThread());
         WebThreadLock();
 
@@ -993,7 +995,7 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
 
         m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);
 
-        m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture, false);
+        m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, videoDimensions, viewRef.get(), mode, allowsPictureInPicture, false);
     });
 }
 

@@ -55,6 +55,9 @@ typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
 
 namespace WebKit {
 
+constexpr size_t DefaultMockPictureInPictureWindowWidth = 100;
+constexpr size_t DefaultMockPictureInPictureWindowHeight = 100;
+
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
@@ -160,7 +163,7 @@ private:
     void hasVideoInPictureInPictureDidChange(bool);
 
     // Messages from VideoFullscreenManager
-    void setupFullscreenWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
+    void setupFullscreenWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::IntRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
     void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::IntRect& inlineRect, bool visible);
     void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
     void setHasVideo(PlaybackSessionContextIdentifier, bool);
@@ -188,6 +191,7 @@ private:
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
 
     bool m_mockVideoPresentationModeEnabled { false };
+    WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
     WebPageProxy* m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;

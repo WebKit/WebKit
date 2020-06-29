@@ -1,3 +1,13 @@
+2020-06-29  Peng Liu  <peng.liu6@apple.com>
+
+        Video spills over PiP screen a little when using Picture in Picture
+        https://bugs.webkit.org/show_bug.cgi?id=213658
+
+        Reviewed by Eric Carlson.
+
+        * media/picture-in-picture/picture-in-picture-window-aspect-ratio-expected.txt: Added.
+        * media/picture-in-picture/picture-in-picture-window-aspect-ratio.html: Added.
+
 2020-06-29  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for svg/W3C-SVG-1.1/fonts-elem-01-t.svg and svg/W3C-SVG-1.1/fonts-elem-02-t.svg and svg/W3C-SVG-1.1/fonts-elem-03-b.svg and svg/W3C-SVG-1.1/fonts-elem-07-b.svg as they are passing. 

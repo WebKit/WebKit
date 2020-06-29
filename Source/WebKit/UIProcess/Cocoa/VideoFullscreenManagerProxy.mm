@@ -506,7 +506,7 @@ void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value
 
 #pragma mark Messages from VideoFullscreenManager
 
-void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby)
+void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::IntRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby)
 {
     MESSAGE_CHECK(videoLayerID);
 
@@ -514,6 +514,8 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
     addClientForContext(contextId);
 
     if (m_mockVideoPresentationModeEnabled) {
+        if (!videoDimensions.isEmpty())
+            m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth /  videoDimensions.aspectRatio());
 #if PLATFORM(IOS_FAMILY)
         requestVideoContentLayer(contextId);
 #else
@@ -540,8 +542,9 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
 #if PLATFORM(IOS_FAMILY)
     auto* rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootNode();
     UIView *parentView = rootNode ? rootNode->uiView() : nil;
-    interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture, standby);
+    interface->setupFullscreen(*model->layerHostView(), initialRect, videoDimensions, parentView, videoFullscreenMode, allowsPictureInPicture, standby);
 #else
+    UNUSED_PARAM(videoDimensions);
     IntRect initialWindowRect;
     m_page->rootViewToWindow(initialRect, initialWindowRect);
     interface->setupFullscreen(*model->layerHostView(), initialWindowRect, m_page->platformWindow(), videoFullscreenMode, allowsPictureInPicture);
@@ -559,18 +562,26 @@ void VideoFullscreenManagerProxy::setHasVideo(PlaybackSessionContextIdentifier c
 
 void VideoFullscreenManagerProxy::setVideoDimensions(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
-    if (m_mockVideoPresentationModeEnabled)
+    auto* interface = findInterface(contextId);
+    if (!interface)
         return;
 
-    if (auto* interface = findInterface(contextId))
-        interface->videoDimensionsChanged(videoDimensions);
+    if (m_mockVideoPresentationModeEnabled) {
+        if (videoDimensions.isEmpty())
+            return;
+
+        m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth / videoDimensions.aspectRatio());
+        return;
+    }
+
+    interface->videoDimensionsChanged(videoDimensions);
 }
 
 void VideoFullscreenManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     if (m_mockVideoPresentationModeEnabled) {
         didEnterFullscreen(contextId);
-        setVideoLayerFrame(contextId, {0, 0, 200, 150});
+        setVideoLayerFrame(contextId, {0, 0, m_mockPictureInPictureWindowSize.width(), m_mockPictureInPictureWindowSize.height()});
         return;
     }
 
