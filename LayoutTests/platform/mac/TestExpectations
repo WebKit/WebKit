@@ -1734,8 +1734,6 @@ webkit.org/b/198867 webgl/many-contexts.html [ Skip ]
 
 webkit.org/b/203171 inspector/layers/layers-for-node.html [ Pass Failure ]
 
-webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html [ Failure ]
-
 webkit.org/b/203357 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
 webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Failure ]
 
