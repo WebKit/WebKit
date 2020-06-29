@@ -31,9 +31,13 @@
 
 extern const NSTimeInterval RBSProcessTimeLimitationNone;
 
+#if __has_include(<RunningBoardServices/RBSProcessLimitations.h>)
+#import <RunningBoardServices/RBSProcessLimitations.h>
+#else
 @interface RBSProcessLimitations : NSObject
 @property (nonatomic, readwrite, assign) NSTimeInterval runTime;
 @end
+#endif
 
 #else
 
