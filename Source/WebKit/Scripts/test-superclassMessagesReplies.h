@@ -45,6 +45,10 @@ using TestAsyncMessageWithNoArgumentsAsyncReply = CompletionHandler<void()>;
 using TestAsyncMessageWithMultipleArgumentsAsyncReply = CompletionHandler<void(bool flag, uint64_t value)>;
 #endif
 
+#if ENABLE(TEST_FEATURE)
+using TestAsyncMessageWithConnectionAsyncReply = CompletionHandler<void(bool flag)>;
+#endif
+
 using TestSyncMessageDelayedReply = CompletionHandler<void(uint8_t reply)>;
 
 using TestSynchronousMessageDelayedReply = CompletionHandler<void(const Optional<WebKit::TestClassName>& optionalReply)>;

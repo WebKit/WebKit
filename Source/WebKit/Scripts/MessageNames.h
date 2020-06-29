@@ -51,88 +51,92 @@ enum class MessageName : uint16_t {
     , WebPage_TestAsyncMessageWithMultipleArguments = 6
     , WebPage_TestAsyncMessageWithMultipleArgumentsReply = 7
 #endif
-    , WebPage_TestSyncMessage = 8
-    , WebPage_TestSynchronousMessage = 9
-    , WebPage_LoadURL = 10
+#if ENABLE(TEST_FEATURE)
+    , WebPage_TestAsyncMessageWithConnection = 8
+    , WebPage_TestAsyncMessageWithConnectionReply = 9
+#endif
+    , WebPage_TestSyncMessage = 10
+    , WebPage_TestSynchronousMessage = 11
+    , WebPage_LoadURL = 12
 #if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomething = 11
+    , WebPage_LoadSomething = 13
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_TouchEvent = 12
+    , WebPage_TouchEvent = 14
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_AddEvent = 13
+    , WebPage_AddEvent = 15
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomethingElse = 14
+    , WebPage_LoadSomethingElse = 16
 #endif
-    , WebPage_DidReceivePolicyDecision = 15
-    , WebPage_Close = 16
-    , WebPage_PreferencesDidChange = 17
-    , WebPage_SendDoubleAndFloat = 18
-    , WebPage_SendInts = 19
-    , WebPage_CreatePlugin = 20
-    , WebPage_RunJavaScriptAlert = 21
-    , WebPage_GetPlugins = 22
-    , WebPage_GetPluginProcessConnection = 23
-    , WebPage_TestMultipleAttributes = 24
-    , WebPage_TestParameterAttributes = 25
-    , WebPage_TemplateTest = 26
-    , WebPage_SetVideoLayerID = 27
+    , WebPage_DidReceivePolicyDecision = 17
+    , WebPage_Close = 18
+    , WebPage_PreferencesDidChange = 19
+    , WebPage_SendDoubleAndFloat = 20
+    , WebPage_SendInts = 21
+    , WebPage_CreatePlugin = 22
+    , WebPage_RunJavaScriptAlert = 23
+    , WebPage_GetPlugins = 24
+    , WebPage_GetPluginProcessConnection = 25
+    , WebPage_TestMultipleAttributes = 26
+    , WebPage_TestParameterAttributes = 27
+    , WebPage_TemplateTest = 28
+    , WebPage_SetVideoLayerID = 29
 #if PLATFORM(MAC)
-    , WebPage_DidCreateWebProcessConnection = 28
+    , WebPage_DidCreateWebProcessConnection = 30
 #endif
 #if PLATFORM(MAC)
-    , WebPage_InterpretKeyEvent = 29
+    , WebPage_InterpretKeyEvent = 31
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-    , WebPage_DeprecatedOperation = 30
+    , WebPage_DeprecatedOperation = 32
 #endif
 #if ENABLE(EXPERIMENTAL_FEATURE)
-    , WebPage_ExperimentalOperation = 31
+    , WebPage_ExperimentalOperation = 33
 #endif
-    , WebPage_LoadURL = 32
+    , WebPage_LoadURL = 34
 #if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomething = 33
+    , WebPage_LoadSomething = 35
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_TouchEvent = 34
+    , WebPage_TouchEvent = 36
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_AddEvent = 35
+    , WebPage_AddEvent = 37
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomethingElse = 36
+    , WebPage_LoadSomethingElse = 38
 #endif
-    , WebPage_DidReceivePolicyDecision = 37
-    , WebPage_Close = 38
-    , WebPage_PreferencesDidChange = 39
-    , WebPage_SendDoubleAndFloat = 40
-    , WebPage_SendInts = 41
-    , WebPage_CreatePlugin = 42
-    , WebPage_RunJavaScriptAlert = 43
-    , WebPage_GetPlugins = 44
-    , WebPage_GetPluginProcessConnection = 45
-    , WebPage_TestMultipleAttributes = 46
-    , WebPage_TestParameterAttributes = 47
-    , WebPage_TemplateTest = 48
-    , WebPage_SetVideoLayerID = 49
+    , WebPage_DidReceivePolicyDecision = 39
+    , WebPage_Close = 40
+    , WebPage_PreferencesDidChange = 41
+    , WebPage_SendDoubleAndFloat = 42
+    , WebPage_SendInts = 43
+    , WebPage_CreatePlugin = 44
+    , WebPage_RunJavaScriptAlert = 45
+    , WebPage_GetPlugins = 46
+    , WebPage_GetPluginProcessConnection = 47
+    , WebPage_TestMultipleAttributes = 48
+    , WebPage_TestParameterAttributes = 49
+    , WebPage_TemplateTest = 50
+    , WebPage_SetVideoLayerID = 51
 #if PLATFORM(MAC)
-    , WebPage_DidCreateWebProcessConnection = 50
+    , WebPage_DidCreateWebProcessConnection = 52
 #endif
 #if PLATFORM(MAC)
-    , WebPage_InterpretKeyEvent = 51
+    , WebPage_InterpretKeyEvent = 53
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-    , WebPage_DeprecatedOperation = 52
+    , WebPage_DeprecatedOperation = 54
 #endif
 #if ENABLE(EXPERIMENTAL_FEATURE)
-    , WebPage_ExperimentalOperation = 53
+    , WebPage_ExperimentalOperation = 55
 #endif
-    , WrappedAsyncMessageForTesting = 54
-    , SyncMessageReply = 55
-    , InitializeConnection = 56
-    , LegacySessionState = 57
+    , WrappedAsyncMessageForTesting = 56
+    , SyncMessageReply = 57
+    , InitializeConnection = 58
+    , LegacySessionState = 59
 };
 
 ReceiverName receiverName(MessageName);
@@ -145,11 +149,11 @@ namespace WTF {
 
 template<>
 class HasCustomIsValidEnum<IPC::MessageName> : public std::true_type { };
-template<typename E, typename T, typename = std::enable_if_t<std::is_same<E, IPC::MessageName>::value>>
+template<typename E, typename T, std::enable_if_t<std::is_same_v<E, IPC::MessageName>>* = nullptr>
 bool isValidEnum(T messageName)
 {
-    static_assert(sizeof(T) == sizeof(IPC::MessageName), "isValidEnum<MessageName> should only be called with 16-bit types");
-    return IPC::isValidMessageName(static_cast<IPC::MessageName>(messageName));
+    static_assert(sizeof(T) == sizeof(E), "isValidEnum<IPC::MessageName> should only be called with 16-bit types");
+    return IPC::isValidMessageName(static_cast<E>(messageName));
 };
 
 } // namespace WTF

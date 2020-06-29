@@ -50,6 +50,12 @@ const char* description(MessageName name)
     case MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply:
         return "WebPage::TestAsyncMessageWithMultipleArgumentsReply";
 #endif
+#if ENABLE(TEST_FEATURE)
+    case MessageName::WebPage_TestAsyncMessageWithConnection:
+        return "WebPage::TestAsyncMessageWithConnection";
+    case MessageName::WebPage_TestAsyncMessageWithConnectionReply:
+        return "WebPage::TestAsyncMessageWithConnectionReply";
+#endif
     case MessageName::WebPage_TestSyncMessage:
         return "WebPage::TestSyncMessage";
     case MessageName::WebPage_TestSynchronousMessage:
@@ -200,6 +206,9 @@ ReceiverName receiverName(MessageName messageName)
 #if ENABLE(TEST_FEATURE)
     case MessageName::WebPage_TestAsyncMessageWithMultipleArguments:
 #endif
+#if ENABLE(TEST_FEATURE)
+    case MessageName::WebPage_TestAsyncMessageWithConnection:
+#endif
     case MessageName::WebPage_TestSyncMessage:
     case MessageName::WebPage_TestSynchronousMessage:
         return ReceiverName::WebPage;
@@ -290,6 +299,9 @@ ReceiverName receiverName(MessageName messageName)
 #if ENABLE(TEST_FEATURE)
     case MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply:
 #endif
+#if ENABLE(TEST_FEATURE)
+    case MessageName::WebPage_TestAsyncMessageWithConnectionReply:
+#endif
         return ReceiverName::AsyncReply;
     case MessageName::WrappedAsyncMessageForTesting:
     case MessageName::SyncMessageReply:
@@ -321,6 +333,12 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::WebPage_TestAsyncMessageWithMultipleArguments)
         return true;
     if (messageName == IPC::MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply)
+        return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::WebPage_TestAsyncMessageWithConnection)
+        return true;
+    if (messageName == IPC::MessageName::WebPage_TestAsyncMessageWithConnectionReply)
         return true;
 #endif
     if (messageName == IPC::MessageName::WebPage_TestSyncMessage)
