@@ -18,8 +18,7 @@ GCC_PREPROCESSOR_DEFINITIONS[arch=arm64*] = $(inherited) OPUS_ARM_PRESUME_AARCH6
 GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) OPUS_X86_MAY_HAVE_SSE2 OPUS_X86_PRESUME_SSE2 $(SSE4_FLAG);
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = *_sse.c *_sse4_1.c x86_silk_map.c;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.c *_sse2.c *_sse4_1.c x86_silk_map.c;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+EXCLUDED_SOURCE_FILE_NAMES[arch=arm64*] = *_sse.c *_sse2.c *_sse4_1.c x86_silk_map.c;
 
 // The iOS Simulator can't use SSE4 intrinsics, but macOS can.
 SSE4_FLAG[sdk=macosx*] = OPUS_X86_MAY_HAVE_SSE4_1;

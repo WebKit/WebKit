@@ -32,9 +32,14 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) WEBRTC_USE_VTB_HARDWARE
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) WEBRTC_IOS;
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WEBRTC_IOS;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.cc *_sse2.cc macutils.cc macwindowpicker.cc audio_device_mac.cc audio_mixer_manager_mac.cc logging_mac.mm;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = macutils.cc macwindowpicker.cc audio_device_mac.cc audio_mixer_manager_mac.cc logging_mac.mm;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = voice_processing_audio_unit.mm;
+EXCLUDED_SOURCE_FILE_NAMES_macosx = voice_processing_audio_unit.mm;
+EXCLUDED_SOURCE_FILE_NAMES_ios = macutils.cc macwindowpicker.cc audio_device_mac.cc audio_mixer_manager_mac.cc logging_mac.mm;
+EXCLUDED_SOURCE_FILE_NAMES_arm = *_sse.cc *_sse2.cc;
+
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(EXCLUDED_SOURCE_FILE_NAMES_ios) $(EXCLUDED_SOURCE_FILE_NAMES_arm);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = $(EXCLUDED_SOURCE_FILE_NAMES_ios);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=arm64*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx) $(EXCLUDED_SOURCE_FILE_NAMES_arm);
 
 OTHER_LDFLAGS[sdk=macosx10.13*] = $(inherited);
 OTHER_LDFLAGS[sdk=macosx10.14*] = $(inherited);
