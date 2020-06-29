@@ -1,3 +1,16 @@
+2020-06-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] run-webkit-tests is failing to run DRT and WTR without --architecture x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=213688
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._port_flag_for_scripts):
+        (WinPort._build_path):
+        (WinPort._ntsd_location):
+        Replaced self.get_option('architecture') with self.architecture().
+
 2020-06-29  Jonathan Bedard  <jbedard@apple.com>
 
         run-javascriptcore-tests: Support Apple Silicon running x86 processes
