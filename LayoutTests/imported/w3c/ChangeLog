@@ -1,3 +1,13 @@
+2020-06-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r263626): 2 imported/w3c/web-platform-tests/cors/ tests failing constantly
+        https://bugs.webkit.org/show_bug.cgi?id=213729
+
+        Unreviewed, rebaseline a couple of cors tests after upstream resync in r263626.
+
+        * web-platform-tests/cors/credentials-flag-expected.txt:
+        * web-platform-tests/cors/origin-expected.txt:
+
 2020-06-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] WebKit mistakenly lets pointer events (click/hover/etc) pass through flex items, if they have negative margin

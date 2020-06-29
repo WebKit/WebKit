@@ -33,11 +33,11 @@ PASS Disallow origin: **
 PASS Disallow origin: ,* 
 PASS Disallow origin: *, 
 PASS Disallow origin: \0* 
-FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
-FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
+PASS Disallow origin: * 
+PASS Disallow origin: * 
 PASS Disallow origin: *\0 
-FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
-FAIL Disallow origin: * assert_throws_dom: send function "function () { client.send() }" did not throw
+PASS Disallow origin: * 
+PASS Disallow origin: * 
 PASS Disallow origin: '*' 
 PASS Disallow origin: "*" 
 PASS Disallow origin: * * 
