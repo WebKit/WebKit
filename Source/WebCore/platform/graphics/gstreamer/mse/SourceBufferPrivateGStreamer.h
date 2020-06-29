@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-class MediaSourceGStreamer;
+class MediaSourcePrivateGStreamer;
 
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate
 #if !RELEASE_LOG_DISABLED
@@ -54,7 +54,7 @@ class SourceBufferPrivateGStreamer final : public SourceBufferPrivate
 {
 
 public:
-    static Ref<SourceBufferPrivateGStreamer> create(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
+    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
     virtual ~SourceBufferPrivateGStreamer() = default;
 
     void clearMediaSource() { m_mediaSource = nullptr; }
@@ -94,10 +94,10 @@ public:
 #endif
 
 private:
-    SourceBufferPrivateGStreamer(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
+    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
     friend class MediaSourceClientGStreamerMSE;
 
-    MediaSourceGStreamer* m_mediaSource;
+    MediaSourcePrivateGStreamer* m_mediaSource;
     ContentType m_type;
     Ref<MediaSourceClientGStreamerMSE> m_client;
     SourceBufferPrivateClient* m_sourceBufferPrivateClient { nullptr };

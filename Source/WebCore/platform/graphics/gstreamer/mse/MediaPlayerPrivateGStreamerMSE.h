@@ -29,7 +29,7 @@
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "MediaSample.h"
-#include "MediaSourceGStreamer.h"
+#include "MediaSourcePrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 
 namespace WebCore {

@@ -40,7 +40,7 @@ public:
     static Ref<MediaSourceClientGStreamerMSE> create(MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourceClientGStreamerMSE();
 
-    // From MediaSourceGStreamer.
+    // From MediaSourcePrivateGStreamer.
     MediaSourcePrivate::AddStatus addSourceBuffer(RefPtr<SourceBufferPrivateGStreamer>, const ContentType&);
     void durationChanged(const MediaTime&);
     void markEndOfStream(MediaSourcePrivate::EndOfStreamStatus);

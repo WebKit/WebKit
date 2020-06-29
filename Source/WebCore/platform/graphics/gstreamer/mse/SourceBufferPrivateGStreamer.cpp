@@ -42,18 +42,18 @@
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSample.h"
 #include "MediaSourceClientGStreamerMSE.h"
-#include "MediaSourceGStreamer.h"
+#include "MediaSourcePrivateGStreamer.h"
 #include "NotImplemented.h"
 #include "WebKitMediaSourceGStreamer.h"
 
 namespace WebCore {
 
-Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourceGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
+Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
 {
     return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, client.get(), contentType));
 }
 
-SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourceGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
+SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
     : SourceBufferPrivate()
     , m_mediaSource(mediaSource)
     , m_type(contentType)

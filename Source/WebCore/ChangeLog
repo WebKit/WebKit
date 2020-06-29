@@ -1,3 +1,54 @@
+2020-06-29  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Rename MediaSourceGStreamer to MediaSourcePrivateGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=213722
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        It's about time to remove this FIXME:
+
+        // FIXME: Should this be called MediaSourcePrivateGStreamer?
+
+        Yes, it should. Because it's a MediaSourcePrivate, and that is an
+        important fact. The MSE class diagram is confusing enough already,
+        let's fix this.
+
+        To rebase commits after this change use `git format-patch` first to
+        get them in a patch format and then run:
+
+        sed -i 's|\<MediaSourceGStreamer\>|MediaSourcePrivateGStreamer|g' *.patch
+
+        This patch is a refactor that produces no behavior changes.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceSetup):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp: Renamed from Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceGStreamer.cpp.
+        (WebCore::MediaSourcePrivateGStreamer::open):
+        (WebCore::MediaSourcePrivateGStreamer::MediaSourcePrivateGStreamer):
+        (WebCore::MediaSourcePrivateGStreamer::~MediaSourcePrivateGStreamer):
+        (WebCore::MediaSourcePrivateGStreamer::addSourceBuffer):
+        (WebCore::MediaSourcePrivateGStreamer::removeSourceBuffer):
+        (WebCore::MediaSourcePrivateGStreamer::durationChanged):
+        (WebCore::MediaSourcePrivateGStreamer::markEndOfStream):
+        (WebCore::MediaSourcePrivateGStreamer::unmarkEndOfStream):
+        (WebCore::MediaSourcePrivateGStreamer::readyState const):
+        (WebCore::MediaSourcePrivateGStreamer::setReadyState):
+        (WebCore::MediaSourcePrivateGStreamer::waitForSeekCompleted):
+        (WebCore::MediaSourcePrivateGStreamer::seekCompleted):
+        (WebCore::MediaSourcePrivateGStreamer::sourceBufferPrivateDidChangeActiveState):
+        (WebCore::MediaSourcePrivateGStreamer::buffered):
+        (WebCore::MediaSourcePrivateGStreamer::logChannel const):
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.h: Renamed from Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceGStreamer.h.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h:
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::create):
+        (WebCore::SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+
 2020-06-29  Youenn Fablet  <youenn@apple.com>
 
         RTCDataChannel.bufferedAmount should stay the same even if channel is closed

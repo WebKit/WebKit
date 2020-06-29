@@ -33,7 +33,7 @@
 #include "MediaDescription.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSample.h"
-#include "MediaSourceGStreamer.h"
+#include "MediaSourcePrivateGStreamer.h"
 #include "NotImplemented.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"

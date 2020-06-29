@@ -33,7 +33,7 @@
  */
 
 #include "config.h"
-#include "MediaSourceGStreamer.h"
+#include "MediaSourcePrivateGStreamer.h"
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
@@ -51,12 +51,12 @@
 
 namespace WebCore {
 
-void MediaSourceGStreamer::open(MediaSourcePrivateClient& mediaSource, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+void MediaSourcePrivateGStreamer::open(MediaSourcePrivateClient& mediaSource, MediaPlayerPrivateGStreamerMSE& playerPrivate)
 {
-    mediaSource.setPrivateAndOpen(adoptRef(*new MediaSourceGStreamer(mediaSource, playerPrivate)));
+    mediaSource.setPrivateAndOpen(adoptRef(*new MediaSourcePrivateGStreamer(mediaSource, playerPrivate)));
 }
 
-MediaSourceGStreamer::MediaSourceGStreamer(MediaSourcePrivateClient& mediaSource, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+MediaSourcePrivateGStreamer::MediaSourcePrivateGStreamer(MediaSourcePrivateClient& mediaSource, MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : MediaSourcePrivate()
     , m_client(MediaSourceClientGStreamerMSE::create(playerPrivate))
     , m_mediaSource(mediaSource)
@@ -68,14 +68,14 @@ MediaSourceGStreamer::MediaSourceGStreamer(MediaSourcePrivateClient& mediaSource
 {
 }
 
-MediaSourceGStreamer::~MediaSourceGStreamer()
+MediaSourcePrivateGStreamer::~MediaSourcePrivateGStreamer()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     for (auto& sourceBufferPrivate : m_sourceBuffers)
         sourceBufferPrivate->clearMediaSource();
 }
 
-MediaSourceGStreamer::AddStatus MediaSourceGStreamer::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& sourceBufferPrivate)
+MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& sourceBufferPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
     sourceBufferPrivate = SourceBufferPrivateGStreamer::create(this, m_client.get(), contentType);
@@ -84,7 +84,7 @@ MediaSourceGStreamer::AddStatus MediaSourceGStreamer::addSourceBuffer(const Cont
     return m_client->addSourceBuffer(sourceBufferPrivateGStreamer, contentType);
 }
 
-void MediaSourceGStreamer::removeSourceBuffer(SourceBufferPrivate* sourceBufferPrivate)
+void MediaSourcePrivateGStreamer::removeSourceBuffer(SourceBufferPrivate* sourceBufferPrivate)
 {
     RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivateGStreamer = static_cast<SourceBufferPrivateGStreamer*>(sourceBufferPrivate);
     ASSERT(m_sourceBuffers.contains(sourceBufferPrivateGStreamer));
@@ -94,42 +94,42 @@ void MediaSourceGStreamer::removeSourceBuffer(SourceBufferPrivate* sourceBufferP
     m_activeSourceBuffers.remove(sourceBufferPrivateGStreamer.get());
 }
 
-void MediaSourceGStreamer::durationChanged()
+void MediaSourcePrivateGStreamer::durationChanged()
 {
     m_client->durationChanged(m_mediaSource->duration());
 }
 
-void MediaSourceGStreamer::markEndOfStream(EndOfStreamStatus status)
+void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus status)
 {
     m_client->markEndOfStream(status);
 }
 
-void MediaSourceGStreamer::unmarkEndOfStream()
+void MediaSourcePrivateGStreamer::unmarkEndOfStream()
 {
     notImplemented();
 }
 
-MediaPlayer::ReadyState MediaSourceGStreamer::readyState() const
+MediaPlayer::ReadyState MediaSourcePrivateGStreamer::readyState() const
 {
     return m_playerPrivate.readyState();
 }
 
-void MediaSourceGStreamer::setReadyState(MediaPlayer::ReadyState state)
+void MediaSourcePrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
 {
     m_playerPrivate.setReadyState(state);
 }
 
-void MediaSourceGStreamer::waitForSeekCompleted()
+void MediaSourcePrivateGStreamer::waitForSeekCompleted()
 {
     m_playerPrivate.waitForSeekCompleted();
 }
 
-void MediaSourceGStreamer::seekCompleted()
+void MediaSourcePrivateGStreamer::seekCompleted()
 {
     m_playerPrivate.seekCompleted();
 }
 
-void MediaSourceGStreamer::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer* sourceBufferPrivate, bool isActive)
+void MediaSourcePrivateGStreamer::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer* sourceBufferPrivate, bool isActive)
 {
     if (!isActive)
         m_activeSourceBuffers.remove(sourceBufferPrivate);
@@ -137,13 +137,13 @@ void MediaSourceGStreamer::sourceBufferPrivateDidChangeActiveState(SourceBufferP
         m_activeSourceBuffers.add(sourceBufferPrivate);
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaSourceGStreamer::buffered()
+std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateGStreamer::buffered()
 {
     return m_mediaSource->buffered();
 }
 
 #if !RELEASE_LOG_DISABLED
-WTFLogChannel& MediaSourceGStreamer::logChannel() const
+WTFLogChannel& MediaSourcePrivateGStreamer::logChannel() const
 {
     return LogMediaSource;
 }

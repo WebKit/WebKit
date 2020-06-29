@@ -50,15 +50,14 @@ class MediaSourceClientGStreamerMSE;
 class MediaPlayerPrivateGStreamerMSE;
 class PlatformTimeRanges;
 
-// FIXME: Should this be called MediaSourcePrivateGStreamer?
-class MediaSourceGStreamer final : public MediaSourcePrivate
+class MediaSourcePrivateGStreamer final : public MediaSourcePrivate
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
 {
 public:
     static void open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
-    virtual ~MediaSourceGStreamer();
+    virtual ~MediaSourcePrivateGStreamer();
 
     MediaSourceClientGStreamerMSE& client() { return m_client.get(); }
     AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
@@ -88,7 +87,7 @@ public:
 #endif
 
 private:
-    MediaSourceGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
+    MediaSourcePrivateGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
 
     HashSet<RefPtr<SourceBufferPrivateGStreamer>> m_sourceBuffers;
     HashSet<SourceBufferPrivateGStreamer*> m_activeSourceBuffers;

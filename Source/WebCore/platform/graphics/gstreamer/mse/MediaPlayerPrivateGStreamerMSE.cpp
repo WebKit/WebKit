@@ -491,7 +491,7 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
 
     m_playbackPipeline->setWebKitMediaSrc(WEBKIT_MEDIA_SRC(m_source.get()));
 
-    MediaSourceGStreamer::open(*m_mediaSource.get(), *this);
+    MediaSourcePrivateGStreamer::open(*m_mediaSource.get(), *this);
     g_signal_connect_swapped(m_source.get(), "video-changed", G_CALLBACK(videoChangedCallback), this);
     g_signal_connect_swapped(m_source.get(), "audio-changed", G_CALLBACK(audioChangedCallback), this);
     g_signal_connect_swapped(m_source.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
