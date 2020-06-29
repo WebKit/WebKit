@@ -720,10 +720,8 @@ public:
     String resourceLoadStatisticsForURL(const DOMURL&);
     void setResourceLoadStatisticsEnabled(bool);
 
-#if ENABLE(STREAMS_API)
     bool isReadableStreamDisturbed(JSC::JSGlobalObject&, JSC::JSValue);
     JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-#endif
 
     String composedTreeAsText(Node&);
 

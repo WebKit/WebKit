@@ -28,7 +28,6 @@
  */
 
 [
-    Conditional=STREAMS_API,
     EnabledAtRuntime=WritableStreamAPI,
     JSBuiltin
 ] interface WritableStream {

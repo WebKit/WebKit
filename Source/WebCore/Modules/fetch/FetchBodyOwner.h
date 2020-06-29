@@ -60,11 +60,9 @@ public:
     RefPtr<ReadableStream> readableStream(JSC::JSGlobalObject&);
     bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
 
-#if ENABLE(STREAMS_API)
     virtual void consumeBodyAsStream();
     virtual void feedStream() { }
     virtual void cancel() { }
-#endif
 
     bool hasLoadingError() const;
     ResourceError loadingError() const;
@@ -122,9 +120,7 @@ protected:
     Optional<FetchBody> m_body;
     String m_contentType;
     bool m_isDisturbed { false };
-#if ENABLE(STREAMS_API)
     RefPtr<FetchBodySource> m_readableStreamSource;
-#endif
     Ref<FetchHeaders> m_headers;
 
 private:

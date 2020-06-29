@@ -29,7 +29,6 @@
 
 [
     JSBuiltin,
-    Conditional=STREAMS_API,
     Exposed=(Window,Worker),
 ] interface ByteLengthQueuingStrategy {
     constructor();

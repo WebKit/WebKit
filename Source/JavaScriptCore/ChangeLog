@@ -1,3 +1,17 @@
+2020-06-29  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Remove ENABLE_STREAMS_API compilation flag
+        https://bugs.webkit.org/show_bug.cgi?id=213728
+
+        Reviewed by Sam Weinig.
+
+        test cases under Scripts/tests/builtins/ does not uses
+        this removed compilation flag. So we don't have to touch them in this change.
+        
+        But they are confusable so I plan to fix them in bug 213733.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-06-29  Keith Miller  <keith_miller@apple.com>
 
         ConservativeRoots should mark any cell it finds an interior pointer to

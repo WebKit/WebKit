@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API)
-
 #include "ActiveDOMObject.h"
 #include "ReadableStreamSource.h"
 
@@ -68,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

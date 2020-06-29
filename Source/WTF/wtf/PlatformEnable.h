@@ -458,10 +458,6 @@
 #define ENABLE_SPELLCHECK 0
 #endif
 
-#if !defined(ENABLE_STREAMS_API)
-#define ENABLE_STREAMS_API 1
-#endif
-
 #if !defined(ENABLE_SVG_FONTS)
 #define ENABLE_SVG_FONTS 1
 #endif

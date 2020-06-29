@@ -1,3 +1,13 @@
+2020-06-29  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Remove ENABLE_STREAMS_API compilation flag
+        https://bugs.webkit.org/show_bug.cgi?id=213728
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] editing/selection/ios/select-text-after-changing-focus.html sometimes fails

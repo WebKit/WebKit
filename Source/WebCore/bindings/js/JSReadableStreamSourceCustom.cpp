@@ -29,8 +29,6 @@
 #include "config.h"
 #include "JSReadableStreamSource.h"
 
-#if ENABLE(STREAMS_API)
-
 #include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
@@ -65,5 +63,3 @@ JSValue JSReadableStreamSource::controller(JSGlobalObject&) const
 }
 
 }
-
-#endif // ENABLE(STREAMS_API)

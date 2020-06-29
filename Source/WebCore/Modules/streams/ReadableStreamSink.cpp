@@ -32,8 +32,6 @@
 #include "ReadableStream.h"
 #include "SharedBuffer.h"
 
-#if ENABLE(STREAMS_API)
-
 namespace WebCore {
 
 ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink(Callback&& callback)
@@ -70,5 +68,3 @@ void ReadableStreamToSharedBufferSink::error(String&& message)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

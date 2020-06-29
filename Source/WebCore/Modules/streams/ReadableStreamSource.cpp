@@ -29,8 +29,6 @@
 
 #include "JSDOMPromiseDeferred.h"
 
-#if ENABLE(STREAMS_API)
-
 namespace WebCore {
 
 ReadableStreamSource::~ReadableStreamSource() = default;
@@ -87,5 +85,3 @@ void ReadableStreamSource::clean()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

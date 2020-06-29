@@ -27,7 +27,6 @@
  */
 
 [
-    Conditional=STREAMS_API,
     Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier

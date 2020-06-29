@@ -174,8 +174,6 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     m_consumer.resolve(WTFMove(promise), m_readableStream.get());
 }
 
-#if ENABLE(STREAMS_API)
-
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
@@ -206,8 +204,6 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
     if (closeStream)
         source.close();
 }
-
-#endif
 
 void FetchBody::consumeArrayBuffer(Ref<DeferredPromise>&& promise)
 {

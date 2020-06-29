@@ -1631,7 +1631,6 @@ ReadableByteStreamAPIEnabled:
   humanReadableDescription: "Enable Readable Byte Streams"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(STREAMS_API)
 
 ServiceWorkersEnabled:
   type: bool

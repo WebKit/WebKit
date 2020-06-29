@@ -651,10 +651,9 @@ public:
         @NO, WebKitCacheAPIEnabledPreferenceKey,
         @YES, WebKitFetchAPIEnabledPreferenceKey,
 
-#if ENABLE(STREAMS_API)
         @NO, WebKitReadableByteStreamAPIEnabledPreferenceKey,
         @NO, WebKitWritableStreamAPIEnabledPreferenceKey,
-#endif
+
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
         @NO, WebKitDownloadAttributeEnabledPreferenceKey,
 #endif

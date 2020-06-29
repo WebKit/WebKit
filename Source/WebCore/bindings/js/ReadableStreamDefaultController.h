@@ -29,8 +29,6 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API)
-
 #include "JSDOMConvertBufferSource.h"
 #include "JSReadableStreamDefaultController.h"
 #include <JavaScriptCore/JSCJSValue.h>
@@ -109,5 +107,3 @@ inline void ReadableStreamDefaultController::error(const Exception& exception)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

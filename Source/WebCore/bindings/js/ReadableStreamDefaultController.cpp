@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ReadableStreamDefaultController.h"
 
-#if ENABLE(STREAMS_API)
-
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
@@ -70,5 +68,3 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::JSGlobalObject& lexica
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)
