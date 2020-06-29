@@ -1,3 +1,14 @@
+2020-06-29  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r263625): run-minibrowser --debug/--release options gone
+        https://bugs.webkit.org/show_bug.cgi?id=213697
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/minibrowser/run_webkit_app.py:
+        (main): Explicitely skip the --target option. Previous code was also skipping --release and
+        --debug options because their `dest` is the same as with the --target option.
+
 2020-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add webkit_authentication_request_get_security_origin

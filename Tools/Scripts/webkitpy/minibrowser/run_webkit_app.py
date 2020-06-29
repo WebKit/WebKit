@@ -37,15 +37,17 @@ def main(argv):
 
         for option in group_options:
             # Skip deprecated option
-            if option.dest == "configuration":
-                continue
-            default = None
-            if option.default != ("NO", "DEFAULT"):
-                default = option.default
-            option_group.add_argument(option.get_opt_string(), action=option.action, dest=option.dest,
-                                      help=option.help, const=option.const, default=default)
+            if option.get_opt_string() != "--target":
+                default = None
+                if option.default != ("NO", "DEFAULT"):
+                    default = option.default
+                option_group.add_argument(option.get_opt_string(), action=option.action, dest=option.dest,
+                                          help=option.help, const=option.const, default=default)
 
     options, args = option_parser.parse_known_args(argv)
+
+    if not options.configuration:
+        options.configuration = "Release"
 
     if set(args).issubset(["-h", "--help"]) and not options.platform:
         option_parser.print_help()
