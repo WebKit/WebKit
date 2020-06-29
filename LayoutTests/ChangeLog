@@ -1,5 +1,21 @@
 2020-06-28  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK][WPE] Add baseline for imported/w3c/web-platform-tests/cors/credentials-flag.htm
+
+        Unreviewed test gardening.
+
+        The current baseline seems to be based on the Mojave results, where
+        the last two test cases fail. Let's add a glib baseline with a Pass
+        expectation with a link to the bug discussing the main expectation.
+
+        The added baseline mirrors the current WebKitGTK results from wpt.fyi,
+        with the two cookie failures.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/cors/credentials-flag-expected.txt: Added.
+
+2020-06-28  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Merge crypto expectations
 
         Unreviwed test gardening.
