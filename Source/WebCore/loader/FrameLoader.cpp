@@ -2077,7 +2077,13 @@ void FrameLoader::commitProvisionalLoad()
         notifier().sendRemainingDelegateMessages(m_documentLoader.get(), mainResourceIdentifier, mainResourceRequest, ResourceResponse(),
             nullptr, static_cast<int>(m_documentLoader->response().expectedContentLength()), 0, mainResouceError);
 
-        checkCompleted();
+        Vector<Ref<Frame>> targetFrames;
+        targetFrames.append(m_frame);
+        for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().traverseNext(&m_frame))
+            targetFrames.append(*child);
+
+        for (auto& frame : targetFrames)
+            frame->loader().checkCompleted();
     } else
         didOpenURL();
 
@@ -2350,10 +2356,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     updateFirstPartyForCookies();
 
     cachedFrame.restore();
-
-    // For the main frame, this gets called in FrameLoader::commitProvisionalLoad().
-    if (!m_frame.isMainFrame())
-        checkCompleted();
 }
 
 bool FrameLoader::isReplacing() const

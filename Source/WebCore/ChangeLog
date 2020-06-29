@@ -1,3 +1,21 @@
+2020-06-29  Chris Dumez  <cdumez@apple.com>
+
+        On load from back/forward cache, call checkCompleted() for ALL frames inside FrameLoader::commitProvisionalLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=213657
+
+        Reviewed by Youenn Fablet.
+
+        On load from back/forward cache, call checkCompleted() for ALL frames inside FrameLoader::commitProvisionalLoad().
+        Previously, we were doing it for the main frame in FrameLoader::commitProvisionalLoad() and for subframes in
+        FrameLoader::open(). Doing it all in one place results in more understandable code and is less error-prone.
+
+        Note that calling checkCompleted() for subframes was new in r262221 and is covered by:
+        fast/history/multiple-back-forward-navigations.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::open):
+
 2020-06-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] WebKit mistakenly lets pointer events (click/hover/etc) pass through flex items, if they have negative margin
