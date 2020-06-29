@@ -2003,10 +2003,25 @@ Node* RenderBlock::nodeForHitTest() const
     return continuation() ? continuation()->element() : element();
 }
 
+bool RenderBlock::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
+{
+    // Hit test descendants first.
+    const LayoutSize localOffset = toLayoutSize(adjustedLocation);
+    const LayoutSize scrolledOffset(localOffset - toLayoutSize(scrollPosition()));
+
+    if (hitTestAction == HitTestFloat && hitTestFloats(request, result, locationInContainer, toLayoutPoint(scrolledOffset)))
+        return true;
+    if (hitTestContents(request, result, locationInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
+        updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - localOffset));
+        return true;
+    }
+    return false;
+}
+
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    LayoutPoint adjustedLocation(accumulatedOffset + location());
-    LayoutSize localOffset = toLayoutSize(adjustedLocation);
+    const LayoutPoint adjustedLocation(accumulatedOffset + location());
+    const LayoutSize localOffset = toLayoutSize(adjustedLocation);
 
     if (!isRenderView()) {
         // Check if we need to do anything at all.
@@ -2054,17 +2069,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
     bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr, IncludeOverlayScrollbarSize)));
-    if (checkChildren) {
-        // Hit test descendants first.
-        LayoutSize scrolledOffset(localOffset - toLayoutSize(scrollPosition()));
-
-        if (hitTestAction == HitTestFloat && hitTestFloats(request, result, locationInContainer, toLayoutPoint(scrolledOffset)))
-            return true;
-        if (hitTestContents(request, result, locationInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
-            updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - localOffset));
-            return true;
-        }
-    }
+    if (checkChildren && hitTestChildren(request, result, locationInContainer, adjustedLocation, hitTestAction))
+        return true;
 
     if (!checkChildren && hitTestExcludedChildrenInBorder(request, result, locationInContainer, adjustedLocation, hitTestAction))
         return true;

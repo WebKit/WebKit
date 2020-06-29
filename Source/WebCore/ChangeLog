@@ -1,3 +1,33 @@
+2020-06-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] WebKit mistakenly lets pointer events (click/hover/etc) pass through flex items, if they have negative margin
+        https://bugs.webkit.org/show_bug.cgi?id=185771
+
+        Reviewed by Javier Fernandez.
+
+        When multiple child elements of a flexbox overlap (for example, due to negative margins), the element drawn in the
+        foreground may not actually capture the hit if the element underneath it is hit-tested despite being occluded.
+        This is because painting of flexbox children is done in order modified document order instead of raw document order.
+
+        In order to achieve this we should inspect flex items in reverse order modified document order. As the OrderIterator
+        cannot go backwards, we cache the reverse order of items when doing the layout in order to have fast hit testing in
+        flexbox containers.
+
+        As this behaviour is different to the one implemented in RenderBlock a new virtual method to perform hit testing of children
+        was extracted from RenderBlock:nodeAtPoint() to a new method called RenderBlock::hitTestChildren. The RenderBlock 
+        implementation is identical to the current one but flexbox containers overwrite it.
+
+        Two WPT flexbox hittests are passing now thanks to this patch.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hitTestChildren): Implementation of the new virtual method extracted from nodeAtPoint.
+        (WebCore::RenderBlock::nodeAtPoint): Moved code to hit test children to hitTestChildren()
+        * rendering/RenderBlock.h: Added hitTestChildren new virtual method.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::hitTestChildren): Implemented.
+        (WebCore::RenderFlexibleBox::layoutFlexItems): Cache the reverse of the order iterator to be used by hit testing.
+        * rendering/RenderFlexibleBox.h: Added hitTestChildren.
+
 2020-06-29  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https.html is a flaky crash

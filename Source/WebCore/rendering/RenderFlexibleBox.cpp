@@ -32,6 +32,7 @@
 #include "RenderFlexibleBox.h"
 
 #include "FlexibleBoxAlgorithm.h"
+#include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
@@ -252,6 +253,26 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
                 child.setChildNeedsLayout(MarkOnlyThis);
         }
     }
+}
+
+bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
+{
+    if (hitTestAction != HitTestForeground)
+        return false;
+
+    LayoutPoint scrolledOffset = hasOverflowClip() ? adjustedLocation - toLayoutSize(scrollPosition()) : adjustedLocation;
+
+    for (auto* child : m_reversedOrderIteratorForHitTesting) {
+        if (child->hasSelfPaintingLayer())
+            continue;
+        auto childPoint = flipForWritingModeForChild(child, scrolledOffset);
+        if (child->hitTest(request, result, locationInContainer, childPoint)) {
+            updateHitTestResult(result, flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
@@ -872,7 +893,9 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     // Set up our master list of flex items. All of the rest of the algorithm
     // should work off this list of a subset.
     // TODO(cbiesinger): That second part is not yet true.
+    // Also initialize the reversed order iterator that would be eventually used for hit testing.
     Vector<FlexItem> allItems;
+    m_reversedOrderIteratorForHitTesting.clear();
     m_orderIterator.first();
     for (RenderBox* child = m_orderIterator.currentChild(); child; child = m_orderIterator.next()) {
         if (m_orderIterator.shouldSkipChild(*child)) {
@@ -881,8 +904,10 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
                 prepareChildForPositionedLayout(*child);
             continue;
         }
+        m_reversedOrderIteratorForHitTesting.append(child);
         allItems.append(constructFlexItem(*child, relayoutChildren));
     }
+    m_reversedOrderIteratorForHitTesting.reverse();
     
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
     FlexLayoutAlgorithm flexAlgorithm(style(), lineBreakLength, allItems);

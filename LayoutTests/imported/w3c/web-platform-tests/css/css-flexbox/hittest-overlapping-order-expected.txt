@@ -1,4 +1,4 @@
 foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo
 
-FAIL Flexboxes should perform hit testing in reverse paint order for overlapping elements: flex order case (crbug.com/844505) assert_equals: expected "DIV" but got "A"
+PASS Flexboxes should perform hit testing in reverse paint order for overlapping elements: flex order case (crbug.com/844505) 
 

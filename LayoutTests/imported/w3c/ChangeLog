@@ -1,3 +1,13 @@
+2020-06-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] WebKit mistakenly lets pointer events (click/hover/etc) pass through flex items, if they have negative margin
+        https://bugs.webkit.org/show_bug.cgi?id=185771
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-margin-expected.txt: Replaced FAIL by PASS expectation.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-order-expected.txt: Ditto.
+
 2020-06-29  Rob Buis  <rbuis@igalia.com>
 
         window.location.replace with invalid urls should throw

@@ -57,6 +57,7 @@ public:
     Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
+    bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool isHorizontalFlow() const;
@@ -208,6 +209,7 @@ private:
     HashSet<const RenderBox*> m_relaidOutChildren;
     
     mutable OrderIterator m_orderIterator { *this };
+    Vector<RenderBox*> m_reversedOrderIteratorForHitTesting;
     int m_numberOfInFlowChildrenOnFirstLine { -1 };
     
     // This is SizeIsUnknown outside of layoutBlock()
