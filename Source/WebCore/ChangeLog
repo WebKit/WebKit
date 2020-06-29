@@ -1,3 +1,19 @@
+2020-06-29  Youenn Fablet  <youenn@apple.com>
+
+        Support MediaRecorder.onstart
+        https://bugs.webkit.org/show_bug.cgi?id=213720
+
+        Reviewed by Darin Adler.
+
+        Fire start event if MediaRecorder.start is successful.
+        Do some WebIDL clean-up, in particular change timeSlice from long to unsigned long, as per spec.
+        Covered by added test.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::startRecording):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+
 2020-06-29  Chris Dumez  <cdumez@apple.com>
 
         On load from back/forward cache, call checkCompleted() for ALL frames inside FrameLoader::commitProvisionalLoad()

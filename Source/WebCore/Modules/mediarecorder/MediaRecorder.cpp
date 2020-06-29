@@ -126,7 +126,7 @@ const char* MediaRecorder::activeDOMObjectName() const
     return "MediaRecorder";
 }
 
-ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeSlice)
+ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
 {
     if (!m_isActive)
         return Exception { InvalidStateError, "The MediaRecorder is not active"_s };
@@ -141,11 +141,16 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeSlice)
         return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
 
     m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& exception) mutable {
-        if (!m_isActive || !exception)
+        if (!m_isActive)
             return;
 
-        stopRecordingInternal();
-        dispatchError(WTFMove(*exception));
+        if (exception) {
+            stopRecordingInternal();
+            dispatchError(WTFMove(*exception));
+            return;
+        }
+
+        dispatchEvent(Event::create(eventNames().startEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 
     for (auto& track : m_tracks)

@@ -1,3 +1,13 @@
+2020-06-29  Youenn Fablet  <youenn@apple.com>
+
+        Support MediaRecorder.onstart
+        https://bugs.webkit.org/show_bug.cgi?id=213720
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/mediarecorder/MediaRecorder-start-timeSlice-expected.txt:
+        * http/wpt/mediarecorder/MediaRecorder-start-timeSlice.html:
+
 2020-06-29  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html as they are passing. 

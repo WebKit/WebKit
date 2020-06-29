@@ -23,6 +23,17 @@
         promise = new Promise(resolve => recorder.ondataavailable = resolve);
         await promise;
     }, 'Make sure that MediaRecorder timeSlice triggers regular ondataavailable events');
+
+    promise_test(async t => {
+        const video = await navigator.mediaDevices.getUserMedia({ audio : true, video : true });
+        const recorder = new MediaRecorder(video);
+
+	let promise = new Promise(resolve => recorder.onstart = resolve);
+        // We cover the case of invalid ignored timeSlice value by passing -1 here.
+        recorder.start(-1);
+
+        return promise;
+    }, 'Make sure that MediaRecorder fires onstart on successful start call');
 </script>
 </body>
 </html>
