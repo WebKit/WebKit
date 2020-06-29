@@ -1,3 +1,15 @@
+2020-06-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION(r263626): 2 imported/w3c/web-platform-tests/cors/ tests failing constantly
+        https://bugs.webkit.org/show_bug.cgi?id=213729
+
+        Unreviewed test gardening.
+
+        Add baselines for Mojave.
+
+        * platform/mac-mojave/imported/w3c/web-platform-tests/cors/credentials-flag-expected.txt: Added.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/cors/origin-expected.txt: Added.
+
 2020-06-29  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html and imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html as they are passing. 
