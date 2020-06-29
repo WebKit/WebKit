@@ -590,11 +590,11 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
         return true;
 
     if (auto* themeNameEnv = g_getenv("GTK_THEME"))
-        return g_str_has_suffix(themeNameEnv, "-dark") || g_str_has_suffix(themeNameEnv, ":dark");
+        return g_str_has_suffix(themeNameEnv, "-dark") || g_str_has_suffix(themeNameEnv, "-Dark") || g_str_has_suffix(themeNameEnv, ":dark");
 
     GUniqueOutPtr<char> themeName;
     g_object_get(settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
-    if (g_str_has_suffix(themeName.get(), "-dark"))
+    if (g_str_has_suffix(themeName.get(), "-dark") || (g_str_has_suffix(themeName.get(), "-Dark")))
         return true;
 
     return false;
@@ -617,7 +617,7 @@ String PageClientImpl::themeName() const
 {
     if (auto* themeNameEnv = g_getenv("GTK_THEME")) {
         String name = String::fromUTF8(themeNameEnv);
-        if (name.endsWith("-dark") || name.endsWith(":dark"))
+        if (name.endsWith("-dark") || name.endsWith("-Dark") || name.endsWith(":dark"))
             return name.substring(0, name.length() - 5);
         return name;
     }
@@ -625,7 +625,7 @@ String PageClientImpl::themeName() const
     GUniqueOutPtr<char> themeNameSetting;
     g_object_get(gtk_widget_get_settings(m_viewWidget), "gtk-theme-name", &themeNameSetting.outPtr(), nullptr);
     String name = String::fromUTF8(themeNameSetting.get());
-    if (name.endsWith("-dark"))
+    if (name.endsWith("-dark") || name.endsWith("-Dark"))
         return name.substring(0, name.length() - 5);
     return name;
 }

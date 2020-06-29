@@ -1,3 +1,18 @@
+2020-06-29  Elliot  <CheeseEBoi@mailo.com>
+
+        [GTK] Dark mode for GTK themes that end with -Dark
+        https://bugs.webkit.org/show_bug.cgi?id=213465
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebKitGtk has support for automatic detection of dark mode when it comes to GTK themes with the "-dark" and
+        ":dark" suffixes. However, when using GTK themes that end with "-Dark" or ":Dark", this is not the case. This
+        affects many themes like "Arc" and "Flat-Remix".
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::effectiveAppearanceIsDark const):
+        (WebKit::PageClientImpl::themeName const):
+
 2020-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add webkit_authentication_request_get_security_origin
