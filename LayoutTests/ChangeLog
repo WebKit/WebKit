@@ -1,3 +1,42 @@
+2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r263624): http/tests/quicklook/submit-form-blocked.html fails consistently
+        https://bugs.webkit.org/show_bug.cgi?id=213767
+        <rdar://problem/64893698>
+
+        Reviewed by Tim Horton.
+
+        This test loads a Word document (`.docx`) in an iframe, and then taps a JavaScript link in the Word document
+        that creates a new `form` element and attempts to submit it. The test requires a particular error message to be
+        logged to the console in order to pass (i.e. "Blocked form submission to '<URL>' because the form's frame is
+        sandboxed and the 'allow-forms' permission is not set.").
+
+        After r263624, this message is no longer logged, because the `form` element created by the Word document's
+        JavaScript link is disconnected from the DOM, and so we bail immediately in `HTMLFormElement::submit` without
+        ever getting to the security check.
+
+        To fix this and make it exercise what it was originally intended to test, we tweak the JavaScript link contained
+        within the Word document, such that it additionally appends the newly created form element to the document. This
+        is the modified (percent-decoded) JavaScript URL:
+
+        ```
+        (function() {
+            var form = document.createElement("form");
+            document.body.appendChild(form);
+            form.action = "fail.html";
+            form.innerHTML = '<input type="hidden" name="secret" value="webkit">';
+            form.submit();
+        })();
+        ```
+
+        This patch simply adds the third line (with the call to `document.body.appendChild`).
+
+        * http/tests/quicklook/resources/submit-form-blocked.docx:
+        * http/tests/quicklook/submit-form-blocked.html:
+
+        Make sure we also hit-test to the link in the Word document by making the link much bigger, and adjusting the
+        touch location offset to match.
+
 2020-06-29  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update baseline after r263673.
