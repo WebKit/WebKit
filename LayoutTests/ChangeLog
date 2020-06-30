@@ -1,3 +1,12 @@
+2020-06-30  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for canvas/philip/tests/2d.drawImage.animated.gif.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213797
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Gardened failures from EWS GTK-WK2 queue.
