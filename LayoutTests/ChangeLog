@@ -1,5 +1,14 @@
 2020-06-30  Karl Rackler  <rackler@apple.com>
 
+        Remove expectation for css3/filters/null-effect-check.html as it is passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213810
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-06-30  Karl Rackler  <rackler@apple.com>
+
         Remove expectation for editing/inserting/insert-paragraph-selection-outside-contenteditable.html as they are passing. 
         https://bugs.webkit.org/show_bug.cgi?id=213811
 
