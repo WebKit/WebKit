@@ -1052,13 +1052,21 @@ bool RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const Paint
     return paintPushButtonDecorations(box, paintInfo, rect);
 }
 
+static bool shouldUseConvexGradient(const Color& backgroundColor)
+{
+    // FIXME: This should probably be using luminance.
+    auto [r, g, b, a] = backgroundColor.toSRGBALossy();
+    float largestNonAlphaChannel = std::max({ r, g, b });
+    return a > 0.5 && largestNonAlphaChannel < 0.5;
+}
+
 bool RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
 
     CGContextRef cgContext = paintInfo.context().platformContext();
-    if (box.style().visitedDependentColor(CSSPropertyBackgroundColor).isDark())
+    if (shouldUseConvexGradient(box.style().visitedDependentColor(CSSPropertyBackgroundColor)))
         drawAxialGradient(cgContext, gradientWithName(ConvexGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
     else {
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
@@ -1107,7 +1115,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
             GraphicsContextStateSaver stateSaver2(paintInfo.context());
             CGContextRef cgContext = paintInfo.context().platformContext();
             paintInfo.context().clip(thumbnailRect);
-            if (backgroundImageColor.isDark())
+            if (shouldUseConvexGradient(backgroundImageColor))
                 drawAxialGradient(cgContext, gradientWithName(ConvexGradient), thumbnailRect.location(), FloatPoint(thumbnailRect.x(), thumbnailRect.maxY()), LinearInterpolation);
             else {
                 drawAxialGradient(cgContext, gradientWithName(ShadeGradient), thumbnailRect.location(), FloatPoint(thumbnailRect.x(), thumbnailRect.maxY()), LinearInterpolation);

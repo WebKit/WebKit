@@ -131,14 +131,6 @@ Color Color::darkened() const
     return makeSimpleColor(SRGBA { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
-bool Color::isDark() const
-{
-    // FIXME: This should probably be using luminance.
-    auto [r, g, b, a] = toSRGBALossy();
-    float largestNonAlphaChannel = std::max({ r, g, b });
-    return a > 0.5 && largestNonAlphaChannel < 0.5;
-}
-
 float Color::lightness() const
 {
     // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.

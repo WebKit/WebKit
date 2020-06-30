@@ -141,7 +141,6 @@ public:
     WEBCORE_EXPORT float luminance() const;
 
     // FIXME: Replace remaining uses with luminance.
-    WEBCORE_EXPORT bool isDark() const;
     WEBCORE_EXPORT float lightness() const;
 
     // This is an implementation of Porter-Duff's "source-over" equation

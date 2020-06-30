@@ -1,3 +1,21 @@
+2020-06-29  Sam Weinig  <weinig@apple.com>
+
+        Simplify Color's interface by removing isDark()
+        https://bugs.webkit.org/show_bug.cgi?id=213707
+
+        Reviewed by Darin Adler.
+
+        - Move Color::isDark to RenderThemeIOS.mm, its one client and rename it
+          to useConvexGradient() to indicate what it is actually determining.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::isDark const): Deleted.
+        * platform/graphics/Color.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::useConvexGradient):
+        (WebCore::RenderThemeIOS::paintPushButtonDecorations):
+        (WebCore::RenderThemeIOS::paintFileUploadIconDecorations):
+
 2020-06-29  Peng Liu  <peng.liu6@apple.com>
 
         Video spills over PiP screen a little when using Picture in Picture
