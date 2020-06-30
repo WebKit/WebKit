@@ -301,28 +301,25 @@ void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTa
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
-Optional<double> WebAnimation::startTime() const
+Optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)
         return WTF::nullopt;
-    return secondsToWebAnimationsAPITime(m_startTime.value());
+    return secondsToWebAnimationsAPITime(*m_startTime);
 }
 
-void WebAnimation::setBindingsStartTime(Optional<double> startTime)
+void WebAnimation::setBindingsStartTime(Optional<double> newStartTime)
 {
-    setStartTime(startTime);
+    if (newStartTime)
+        setStartTime(Seconds::fromMilliseconds(*newStartTime));
+    else
+        setStartTime(WTF::nullopt);
 }
 
-void WebAnimation::setStartTime(Optional<double> startTime)
+void WebAnimation::setStartTime(Optional<Seconds> newStartTime)
 {
     // 3.4.6 The procedure to set the start time of animation, animation, to new start time, is as follows:
     // https://drafts.csswg.org/web-animations/#setting-the-start-time-of-an-animation
-
-    Optional<Seconds> newStartTime;
-    if (!startTime)
-        newStartTime = WTF::nullopt;
-    else
-        newStartTime = Seconds::fromMilliseconds(startTime.value());
 
     // 1. Let timeline time be the current time value of the timeline that animation is associated with. If
     //    there is no timeline associated with animation or the associated timeline is inactive, let the timeline

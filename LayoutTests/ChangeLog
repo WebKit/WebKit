@@ -1,3 +1,18 @@
+2020-06-29  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] REGRESSION: Bootstrap Carousel component v4.1 regressed with Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=213376
+        <rdar://problem/64531242>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that uses a timeout instead of a "transitionend" event to retarget a transition upon completion
+        to the same computed value but not the same specified value to check that we generate a transition that has
+        no visual effect.
+
+        * webanimations/css-transition-retargeting-to-same-value-upon-completion-with-timeout-expected.txt: Added.
+        * webanimations/css-transition-retargeting-to-same-value-upon-completion-with-timeout.html: Added.
+
 2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r263624): http/tests/quicklook/submit-form-blocked.html fails consistently

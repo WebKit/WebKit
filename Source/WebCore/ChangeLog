@@ -1,3 +1,49 @@
+2020-06-29  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] REGRESSION: Bootstrap Carousel component v4.1 regressed with Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=213376
+        <rdar://problem/64531242>
+
+        Reviewed by Dean Jackson.
+
+        An older version of the Bootstrap CSS and JS library had a rather odd way to implement a completion callback
+        for a transition: it would register a "transitionend" event but also set a timeout of the transition's duration
+        and use whichever came first as a callback to run completion tasks for the transition.
+
+        Additionally, in that callback, it would set the transitioned value to the same computed value but using a different
+        specified value, for instance setting the "transform" CSS property to "translateX(0)" instead of "translateY(0)".
+
+        In our implementation this would make the completed transition repeat. Indeed, we would first incorrectly assume that
+        the transition was still "running" and not "finished", per the CSS Transitions spec terminology as we only update
+        that status when we update animations under Page::updateRendering(). We now update an existing transition's
+        status first in AnimationTimeline::updateCSSTransitionsForElementAndProperty().
+
+        Another issue is that when we considered the existing transition to be running, even though it was finished, we would
+        use the "timeline time at creation" to compute its current progress, which would yield situations where we computed
+        the before-change style to be the existing transition's current computed value, except that transition's progress was
+        0 since the "timeline time at creation" happens before the transition's resolved start time. We now only use the
+        "timeline time at creation" in the situations it was designed to be used: either when the transition has not yet had
+        a resolved start time, or its resolved start time is the current timeline time (ie. it was just set).
+
+        To be able to compare the transition's resolved start time and the current timeline time, we also updated the internal
+        start time getter and setter methods to use Seconds instead of double which is only needed for the JS bindings.
+
+        Test: webanimations/css-transition-retargeting-to-same-value-upon-completion-with-timeout.html
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::bindingsStartTime const):
+        (WebCore::DeclarativeAnimation::setBindingsStartTime):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::bindingsStartTime const):
+        (WebCore::WebAnimation::setBindingsStartTime):
+        (WebCore::WebAnimation::setStartTime):
+        (WebCore::WebAnimation::startTime const): Deleted.
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::startTime const):
+        (WebCore::WebAnimation::bindingsStartTime const): Deleted.
+
 2020-06-29  Brady Eidson  <beidson@apple.com>
 
         JavaScript cannot be injected into iframes

@@ -1,0 +1,3 @@
+
+PASS A CSS transition that is retargeted upon completion based on a timer should not use its to style as its before-change style. 
+
