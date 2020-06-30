@@ -1,3 +1,12 @@
+2020-06-29  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for svg/batik/text/textEffect3.svg as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213760
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 14] A couple of tests in editing/selection/ios fail after <rdar://problem/60978283>
