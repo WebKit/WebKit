@@ -279,9 +279,10 @@ webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass
 # WebAnimations-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure Pass ]
 webkit.org/b/211948 webanimations/accelerated-animation-playback-rate.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/212020 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
+webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure Pass ]
+webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs

@@ -1620,6 +1620,7 @@ webkit.org/b/177940 webkit.org/b/186638 workers/wasm-hashset-many.html [ Crash T
 webkit.org/b/186638 fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 webrtc/release-after-getting-track.html [ Crash Pass ]
+webkit.org/b/186638 fast/preloader/document-write.html [ Failure Pass ]
 
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass Crash ]
 
@@ -1895,6 +1896,8 @@ webkit.org/b/198830 [ Release ] media/track/track-cues-cuechange.html [ Pass Cra
 webkit.org/b/198830 [ Release ] media/video-autoplay.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-canvas-source.html [ Pass Crash ]
 
+webkit.org/b/198830 [ Release ] webrtc/ephemeral-certificates-and-cnames.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/remoteAudio-never-played.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay2.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay3.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay4.html [ Pass Crash ]
