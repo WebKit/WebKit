@@ -2874,9 +2874,6 @@ webgl/1.0.3/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip  ]
 webgl/1.0.3/conformance/ogles/GL/acos/acos_001_to_006.html [ Skip  ]
 webgl/1.0.3/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip  ]
 
-# <rdar://problem/28504406> LayoutTest fast/attachment/attachment-folder-icon.html failing
-fast/attachment/attachment-folder-icon.html [ ImageOnlyFailure ]
-
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 fast/text/text-indent-inside-float.html [ ImageOnlyFailure ]
 
