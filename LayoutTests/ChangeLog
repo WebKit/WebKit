@@ -1,5 +1,14 @@
 2020-06-29  Karl Rackler  <rackler@apple.com>
 
+        Remove expectation for imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html as it is passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=175290
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2020-06-29  Karl Rackler  <rackler@apple.com>
+
         Remove expectation for svg/batik/text/textEffect3.svg as they are passing. 
         https://bugs.webkit.org/show_bug.cgi?id=213760
 

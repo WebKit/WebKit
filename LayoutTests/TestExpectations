@@ -2637,7 +2637,6 @@ webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-013.html 
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-014.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-015.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-016.html [ ImageOnlyFailure ]
-webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ ImageOnlyFailure ]
 
 webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 
