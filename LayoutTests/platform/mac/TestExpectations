@@ -1542,9 +1542,6 @@ http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
 http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
 
-# <rdar://problem/36639117> REGRESSION (Mojave): LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
-svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
-
 # <rdar://problem/40498290> REGRESSION (Mojave): HTMLMeterElement LayoutTests failing
 fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Failure ]
