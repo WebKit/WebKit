@@ -2060,3 +2060,11 @@ MediaCaptureRequiresSecureConnection:
   type: bool
   defaultValue: true
   condition: ENABLE(MEDIA_STREAM)
+
+CoreImageAcceleratedFilterRenderEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CoreImage-Accelerated Filter Rendering"
+  humanReadableDescription: "Accelerated CSS and SVG filter rendering using CoreImage"
+  category: experimental
+  condition: ENABLE(CORE_IMAGE_ACCELERATED_FILTER_RENDER)

@@ -419,6 +419,10 @@ asyncOverflowScrollingEnabled:
   initial: false
   onChange: setNeedsRelayoutAllFrames
 
+coreImageAcceleratedFilterRenderEnabled:
+  initial: false
+  onChange: setNeedsRelayoutAllFrames
+
 legacyOverflowScrollingTouchEnabled:
   initial: true
   onChange: setNeedsRelayoutAllFrames

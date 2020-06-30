@@ -1,3 +1,15 @@
+2020-06-29  Guowei Yang  <guowei_yang@apple.com>
+
+        Adding Experimental Feature Flags for CoreImage backed SVG/CSS Filters
+        https://bugs.webkit.org/show_bug.cgi?id=213578
+
+        Reviewed by Darin Adler, Simon Fraser, Myles C. Maxfield.
+
+        Preparing to implement CoreImage backed filter rendering
+        Needs Compiler guards and experimental feature guard.
+
+        * Shared/WebPreferences.yaml: added feature flag definition
+
 2020-06-29  Peng Liu  <peng.liu6@apple.com>
 
         Video spills over PiP screen a little when using Picture in Picture

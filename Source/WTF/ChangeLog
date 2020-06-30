@@ -1,3 +1,18 @@
+2020-06-29  Guowei Yang  <guowei_yang@apple.com>
+
+        Adding Experimental Feature Flags for CoreImage backed SVG/CSS Filters
+        https://bugs.webkit.org/show_bug.cgi?id=213578
+
+        Reviewed by Darin Adler, Simon Fraser, Myles C. Maxfield.
+
+        Preparing to implement CoreImage backed filter rendering
+        Needs Compiler guards and experimental feature guard.
+
+        * wtf/PlatformEnableCocoa.h: Added definition of a feature flag, 
+          ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER
+        * wtf/PlatformUse.h:  Added compiler guard #define USE_CORE_IMAGE 1
+          to indicate whether CoreImage code is visible to the compiler
+
 2020-06-29  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Remove ENABLE_STREAMS_API compilation flag

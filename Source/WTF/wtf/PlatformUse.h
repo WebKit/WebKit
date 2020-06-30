@@ -58,6 +58,10 @@
 #define USE_CA 1
 #endif
 
+#if PLATFORM(COCOA)
+#define USE_CORE_IMAGE 1
+#endif
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_GLIB 1
 #endif
