@@ -577,7 +577,7 @@ inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent)
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
 inline void AXObjectCache::handleActiveDescendantChanged(Node*) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
-inline void AXObjectCache::handleModalChange(Element*) { }
+inline void AXObjectCache::handleModalChange(Element&) { }
 inline void AXObjectCache::deferModalChange(Element*) { }
 inline void AXObjectCache::handleAriaRoleChanged(Node*) { }
 inline void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName&, Element*) { }
