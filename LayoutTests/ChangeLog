@@ -1,3 +1,9 @@
+2020-06-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Dump JS output of several canvas tests in stderr.
+
+        * platform/gtk/TestExpectations:
+
 2020-06-29  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] REGRESSION: Bootstrap Carousel component v4.1 regressed with Web Animations
