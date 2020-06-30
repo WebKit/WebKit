@@ -29,6 +29,7 @@
 #include "AnimationUtilities.h"
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocumentReference.h"
+#include "ColorBlending.h"
 #include "ColorMatrix.h"
 #include "ColorUtilities.h"
 #include "FilterEffect.h"

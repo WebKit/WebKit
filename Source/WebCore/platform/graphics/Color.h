@@ -143,10 +143,6 @@ public:
     // FIXME: Replace remaining uses with luminance.
     WEBCORE_EXPORT float lightness() const;
 
-    // This is an implementation of Porter-Duff's "source-over" equation
-    Color blend(const Color&) const;
-    Color blendWithWhite() const;
-
     Color invertedColorWithAlpha(Optional<float> alpha) const;
     Color invertedColorWithAlpha(float alpha) const;
 
@@ -237,9 +233,6 @@ bool operator!=(const Color&, const Color&);
 
 // One or both must be extended colors.
 bool extendedColorsEqual(const Color&, const Color&);
-
-Color blend(const Color& from, const Color& to, double progress);
-Color blendWithoutPremultiply(const Color& from, const Color& to, double progress);
 
 #if USE(CG)
 WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
