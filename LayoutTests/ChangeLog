@@ -1,3 +1,9 @@
+2020-06-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baseline after r263673.
+
+        * platform/glib/accessibility/aria-hidden-negates-no-visibility-expected.txt:
+
 2020-06-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adjust baseline when the table cell itself establishes an IFC
