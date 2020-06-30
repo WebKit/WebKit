@@ -1,5 +1,12 @@
 2020-06-29  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Failures happening in the EWS GTK-WK2 queue.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-06-29  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Dump JS output of several canvas tests in stderr.
 
         * platform/gtk/TestExpectations:

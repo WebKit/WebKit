@@ -1627,9 +1627,9 @@ webkit.org/b/186638 printing/print-close-crash.html [ Crash ]
 webkit.org/b/177940 webkit.org/b/186638 workers/wasm-hashset-many.html [ Crash Timeout Pass ]
 
 # Tests failing on the EWS queue.
-webrtc/release-after-getting-track.html [ Crash Pass ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure Pass ]
-fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
+webkit.org/b/186638 fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 webrtc/release-after-getting-track.html [ Crash Pass ]
 
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass Crash ]
 
@@ -2517,6 +2517,7 @@ webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persis
 webkit.org/b/210796 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html [ Timeout Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Timeout Pass ]
