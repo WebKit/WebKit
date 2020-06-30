@@ -1,3 +1,15 @@
+2020-06-30  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Update stale comment in UserAgentGLib.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=213749
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove outdated comment.
+
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::platformVersionForUAString):
+
 2020-06-30  Youenn Fablet  <youenn@apple.com>
 
         Add VP9 WebRTC codec runtime flag
