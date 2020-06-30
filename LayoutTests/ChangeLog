@@ -1,3 +1,9 @@
+2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Gardened failures from EWS GTK-WK2 queue.
+
+        * platform/gtk/TestExpectations:
+
 2020-06-30  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS Debug and Mojave Debug ] http/tests/storage/storage-map-leaking.html is flaky timing out. 

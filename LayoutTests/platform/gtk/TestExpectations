@@ -573,6 +573,9 @@ webkit.org/b/209130 fast/mediastream/change-tracks-media-stream-being-played.htm
 webkit.org/b/210385 fast/mediastream/audio-track-enabled.html [ Crash Pass ]
 
 webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
+webkit.org/b/211166 webrtc/filtering-ice-candidate-after-reload.html [ Crash Pass ]
+webkit.org/b/211166 webrtc/release-after-getting-track.html [ Crash Pass ]
+webkit.org/b/211166 webrtc/remove-track.html [ Crash Pass ]
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1619,8 +1622,8 @@ webkit.org/b/177940 webkit.org/b/186638 workers/wasm-hashset-many.html [ Crash T
 # Tests failing on the EWS queue.
 webkit.org/b/186638 fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186638 webrtc/release-after-getting-track.html [ Crash Pass ]
 webkit.org/b/186638 fast/preloader/document-write.html [ Failure Pass ]
+webkit.org/b/186638 svg/W3C-SVG-1.1/animate-elem-02-t.svg [ Crash Pass ]
 
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass Crash ]
 
@@ -1641,7 +1644,8 @@ webkit.org/b/191497 http/tests/inspector/network/getSerializedCertificate.html [
 webkit.org/b/179173 [ Release ] http/tests/inspector/network/har/har-page.html [ Failure Pass ]
 webkit.org/b/179173 [ Release ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure Pass ]
 
-webkit.org/b/187326 fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
+webkit.org/b/187326 fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure Pass ]
+webkit.org/b/187326 fast/selectors/selection-window-inactive-text-shadow.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/187588 fast/forms/form-control-element-crash.html [ Timeout Pass ]
 
@@ -1959,6 +1963,7 @@ webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Fail
 webkit.org/b/206639 http/tests/contentextensions/block-cookies-send.html [ Failure Pass ]
 
 webkit.org/b/206875 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Pass Timeout ]
+webkit.org/b/206875 [ Release ] inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html [ Failure Pass ]
 
 webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
 webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
