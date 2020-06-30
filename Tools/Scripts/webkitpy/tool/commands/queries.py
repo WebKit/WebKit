@@ -451,8 +451,6 @@ class PrintExpectations(Command):
                         help='limit to tests not matching the given keyword (for example, "skip", "slow", or "crash". May specify multiple times'),
             make_option('-i', '--include-keyword', action='append', default=[],
                         help='limit to tests with the given keyword (for example, "skip", "slow", or "crash". May specify multiple times'),
-            make_option('--csv', action='store_true', default=False,
-                        help='Print a CSV-style report that includes the port name, modifiers, tests, and expectations'),
             make_option('-f', '--full', action='store_true', default=False,
                         help='Print a full TestExpectations-style line for every match'),
             make_option('--paths', action='store_true', default=False,
@@ -514,10 +512,7 @@ class PrintExpectations(Command):
 
     def _format_lines(self, options, port_name, lines):
         output = []
-        if options.csv:
-            for line in lines:
-                output.append("%s,%s" % (port_name, line.to_csv()))
-        elif lines:
+        if lines:
             include_modifiers = options.full
             include_expectations = options.full or len(options.include_keyword) != 1 or len(options.exclude_keyword)
             output.append("// For %s" % port_name)
@@ -540,8 +535,6 @@ class PrintBaselines(Command):
         options = [
             make_option('--all', action='store_true', default=False,
                         help='display the baselines for *all* tests'),
-            make_option('--csv', action='store_true', default=False,
-                        help='Print a CSV-style report that includes the port name, test_name, test platform, baseline type, baseline location, and baseline platform'),
         ] + platform_options(use_globs=True)
         Command.__init__(self, options=options)
         self._platform_regexp = re.compile('platform/([^\/]+)/(.+)')
@@ -565,8 +558,7 @@ class PrintBaselines(Command):
         for port_name in port_names:
             if port_name != port_names[0]:
                 print()
-            if not options.csv:
-                print("// For %s" % port_name)
+            print("// For %s" % port_name)
             port = tool.port_factory.get(port_name)
             for test_name in tests:
                 self._print_baselines(options, port_name, test_name, port.expected_baselines_by_extension(test_name))
@@ -575,11 +567,7 @@ class PrintBaselines(Command):
         for extension in sorted(baselines.keys()):
             baseline_location = baselines[extension]
             if baseline_location:
-                if options.csv:
-                    print("%s,%s,%s,%s,%s,%s" % (port_name, test_name, self._platform_for_path(test_name),
-                                                 extension[1:], baseline_location, self._platform_for_path(baseline_location)))
-                else:
-                    print(baseline_location)
+                print(baseline_location)
 
     def _platform_for_path(self, relpath):
         platform_matchobj = self._platform_regexp.match(relpath)

@@ -1,3 +1,27 @@
+2020-06-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [TestExpectations] Remove --csv option
+        https://bugs.webkit.org/show_bug.cgi?id=213762
+        <rdar://problem/64913762>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationLine.to_csv): Deleted.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.__init__): Remove --csv option.
+        (PrintExpectations._format_lines): Ditto.
+        (PrintBaselines.__init__): Ditto.
+        (PrintBaselines.execute): Ditto.
+        (PrintBaselines._print_baselines): Ditto.
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.run_test):
+        (PrintExpectationsTest.test_include):
+        (PrintBaselinesTest.test_basic):
+        (PrintBaselinesTest.test_multiple):
+        (PrintExpectationsTest.test_csv): Deleted.
+        (PrintBaselinesTest.test_csv): Deleted.
+
 2020-06-29  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Remove ENABLE_STREAMS_API compilation flag

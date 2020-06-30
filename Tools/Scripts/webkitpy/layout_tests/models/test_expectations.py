@@ -461,10 +461,6 @@ class TestExpectationLine(object):
         return self._format_line(self.modifiers, self.name, self.expectations, self.comment,
             include_modifiers, include_expectations, include_comment)
 
-    def to_csv(self):
-        # Note that this doesn't include the comments.
-        return '%s,%s,%s' % (self.name, ' '.join(self.modifiers), ' '.join(self.expectations))
-
     def _serialize_parsed_expectations(self, parsed_expectation_to_string):
         result = []
         for index in TestExpectations.EXPECTATION_ORDER:

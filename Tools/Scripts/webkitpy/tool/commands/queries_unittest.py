@@ -160,7 +160,7 @@ class FailureReasonTest(unittest.TestCase):
 
 class PrintExpectationsTest(unittest.TestCase):
     def run_test(self, tests, expected_stdout, platform='test-win-xp', **args):
-        options = MockOptions(all=False, csv=False, full=False, platform=platform,
+        options = MockOptions(all=False, full=False, platform=platform,
                               include_keyword=[], exclude_keyword=[], paths=False).update(**args)
         tool = MockTool()
         tool.port_factory.all_port_names = lambda: TestPort.ALL_BASELINE_VARIANTS
@@ -215,12 +215,6 @@ class PrintExpectationsTest(unittest.TestCase):
                        'failures/expected/image.html\n'),
                       include_keyword=['image'])
 
-    def test_csv(self):
-        self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
-                      ('test-win-xp,failures/expected/image.html,BUGTEST,IMAGE\n'
-                       'test-win-xp,failures/expected/text.html,BUGTEST,FAIL\n'),
-                      csv=True)
-
     def test_paths(self):
         self.run_test([],
                       ('LayoutTests/TestExpectations\n'
@@ -263,7 +257,7 @@ class PrintBaselinesTest(unittest.TestCase):
         command = PrintBaselines()
         command.bind_to_tool(self.tool)
         self.capture_output()
-        command.execute(MockOptions(all=False, csv=False, platform=None), ['passes/text.html'], self.tool)
+        command.execute(MockOptions(all=False, platform=None), ['passes/text.html'], self.tool)
         stdout, _, _ = self.restore_output()
         self.assertMultiLineEqual(stdout,
                           ('// For test-win-xp\n'
@@ -274,7 +268,7 @@ class PrintBaselinesTest(unittest.TestCase):
         command = PrintBaselines()
         command.bind_to_tool(self.tool)
         self.capture_output()
-        command.execute(MockOptions(all=False, csv=False, platform='test-win-*'), ['passes/text.html'], self.tool)
+        command.execute(MockOptions(all=False, platform='test-win-*'), ['passes/text.html'], self.tool)
         stdout, _, _ = self.restore_output()
         self.assertMultiLineEqual(stdout,
                           ('// For test-win-vista\n'
@@ -288,13 +282,3 @@ class PrintBaselinesTest(unittest.TestCase):
                            '// For test-win-xp\n'
                            'passes/text-expected.png\n'
                            'passes/text-expected.txt\n'))
-
-    def test_csv(self):
-        command = PrintBaselines()
-        command.bind_to_tool(self.tool)
-        self.capture_output()
-        command.execute(MockOptions(all=False, platform='*xp', csv=True), ['passes/text.html'], self.tool)
-        stdout, _, _ = self.restore_output()
-        self.assertMultiLineEqual(stdout,
-                          ('test-win-xp,passes/text.html,None,png,passes/text-expected.png,None\n'
-                           'test-win-xp,passes/text.html,None,txt,passes/text-expected.txt,None\n'))
