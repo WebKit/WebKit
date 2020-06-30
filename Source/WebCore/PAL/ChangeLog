@@ -1,3 +1,16 @@
+2020-06-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Connections to the preference daemon are established before entering the sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=213379
+
+        Reviewed by Darin Adler.
+
+        Use correct parameter types in _CFPrefsSetDirectModeEnabled and _CFPrefsSetReadOnly, and move
+        _CFPrefsSetDirectModeEnabled inside an Objective-C guard, since BOOL only seems to be a builtin
+        type in Objective-C.
+
+        * pal/spi/cf/CFUtilitiesSPI.h:
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Enable the support of FULLSCREEN_API in WebKitTestRunner

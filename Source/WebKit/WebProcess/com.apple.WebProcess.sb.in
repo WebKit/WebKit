@@ -1146,6 +1146,7 @@
         (syscall-number SYS_ulock_wait2) ;; <rdar://problem/58743778>
 #endif
         (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
+        (syscall-number SYS_gethostuuid)
     )
 
     (if (equal? (param "CPU") "arm64")

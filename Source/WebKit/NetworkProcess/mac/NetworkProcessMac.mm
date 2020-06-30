@@ -87,9 +87,9 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&
 void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Need to overide the default, because service has a different bundle ID.
-    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+    auto webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
 
-    sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
+    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebKit.NetworkProcess.sb"));
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 }
