@@ -81,8 +81,7 @@ template<typename CharacterType, typename DelimiterType> void skipUntil(const Ch
         ++position;
 }
 
-template<typename CharacterType, typename DelimiterType>
-void skipUntil(StringParsingBuffer<CharacterType>& buffer, DelimiterType delimiter)
+template<typename CharacterType, typename DelimiterType> void skipUntil(StringParsingBuffer<CharacterType>& buffer, DelimiterType delimiter)
 {
     while (buffer.hasCharactersRemaining() && *buffer != delimiter)
         ++buffer;

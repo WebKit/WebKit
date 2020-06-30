@@ -1,3 +1,39 @@
+2020-06-29  Sam Weinig  <weinig@apple.com>
+
+        Convert AppCache manifest parser over to using StringParsingBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=213680
+
+        Reviewed by Darin Adler.
+
+        - Renames parseManifest to parseApplicationCacheManifest to differentiate between the manifest
+          for the application cache and the "application manifest", which is a different thing entirely.
+          Also renames the container struct from being called Manifest to ApplicationCacheManifest.
+          (The file should be renamed as well, but will do that in a seperate pass). 
+        - Update parser to return an Optional<ApplicationCacheManifest> rather than using bool + out
+          parameter.
+        - Adopt readCharactersForParsing to replace unnecessary call to StringView::upconvertedCharacters().
+        - Adopt StringParsingBuffer and ParsingUtilities along with some refinements to the code
+          to make the intent more clear.
+
+
+        * html/parser/ParsingUtilities.h:
+        (WebCore::skipUntil):
+        Fix formatting, putting the whole signature on one line.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        Update for new parser function name and Optional return type.
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::isManifestWhitespace):
+        (WebCore::isManifestNewline):
+        (WebCore::isManifestWhitespaceOrNewline):
+        (WebCore::makeManifestURL):
+        (WebCore::parseApplicationCacheManifest):
+        * loader/appcache/ManifestParser.h:
+        Update parsing logic to use readCharactersForParsing (to avoid upconvesion) and rework
+        using StringParsingBuffer/ParsingUtilities to make things more clear.
+
 2020-06-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adjust baseline when the table cell itself establishes an IFC

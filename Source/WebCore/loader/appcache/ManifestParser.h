@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-struct Manifest {
+struct ApplicationCacheManifest {
     Vector<URL> onlineAllowedURLs;
     HashSet<String> explicitURLs;
     FallbackURLVector fallbackURLs;
-    bool allowAllNetworkRequests; // Wildcard found in NETWORK section.
+    bool allowAllNetworkRequests { false }; // Wildcard found in NETWORK section.
 };
 
-bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length, Manifest&);
+Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length);
 
 } // namespace WebCore

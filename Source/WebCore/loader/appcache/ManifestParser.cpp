@@ -26,14 +26,15 @@
 #include "config.h"
 #include "ManifestParser.h"
 
+#include "ParsingUtilities.h"
 #include "TextResourceDecoder.h"
 #include <wtf/URL.h>
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
-#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
-enum Mode { Explicit, Fallback, OnlineAllowlist, Unknown };
+enum class ApplicationCacheParserMode { Explicit, Fallback, OnlineAllowlist, Unknown };
 
 static StringView manifestPath(const URL& manifestURL)
 {
@@ -44,160 +45,192 @@ static StringView manifestPath(const URL& manifestURL)
     return manifestPath;
 }
 
-bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length, Manifest& manifest)
+template<typename CharacterType> static constexpr bool isManifestWhitespace(CharacterType character)
 {
-    ASSERT(manifest.explicitURLs.isEmpty());
-    ASSERT(manifest.onlineAllowedURLs.isEmpty());
-    ASSERT(manifest.fallbackURLs.isEmpty());
-    manifest.allowAllNetworkRequests = false;
+    return character == ' ' || character == '\t';
+}
 
+template<typename CharacterType> static constexpr bool isManifestNewline(CharacterType character)
+{
+    return character == '\n' || character == '\r';
+}
+
+template<typename CharacterType> static constexpr bool isManifestWhitespaceOrNewline(CharacterType character)
+{
+    return isManifestWhitespace(character) || isManifestNewline(character);
+}
+
+template<typename CharacterType> static URL makeManifestURL(const URL& manifestURL, const CharacterType* start, const CharacterType* end)
+{
+    URL url(manifestURL, String(start, end - start));
+    url.removeFragmentIdentifier();
+    return url;
+}
+
+template<typename CharacterType> static constexpr CharacterType cacheManifestIdentifier[] = { 'C', 'A', 'C', 'H', 'E', ' ', 'M', 'A', 'N', 'I', 'F', 'E', 'S', 'T' };
+template<typename CharacterType> static constexpr CharacterType cacheModeIdentifier[] = { 'C', 'A', 'C', 'H', 'E' };
+template<typename CharacterType> static constexpr CharacterType fallbackModeIdentifier[] = { 'F', 'A', 'L', 'L', 'B', 'A', 'C', 'K' };
+template<typename CharacterType> static constexpr CharacterType networkModeIdentifier[] = { 'N', 'E', 'T', 'W', 'O', 'R', 'K' };
+
+Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length)
+{
+    static constexpr const char cacheManifestMIMEType[] = "text/cache-manifest";
+    bool allowFallbackNamespaceOutsideManfestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
-    const char cacheManifestMIMEType[] = "text/cache-manifest";
-    bool allowFallbackNamespaceOutsideManfestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
+    auto manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
 
-    Mode mode = Explicit;
-
-    String manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
+    return readCharactersForParsing(manifestString, [&](auto buffer) -> Optional<ApplicationCacheManifest> {
+        using CharacterType = typename decltype(buffer)::CharacterType;
     
-    // Look for the magic signature: "^\xFEFF?CACHE MANIFEST[ \t]?" (the BOM is removed by TextResourceDecoder).
-    // Example: "CACHE MANIFEST #comment" is a valid signature.
-    // Example: "CACHE MANIFEST;V2" is not.
-    const char manifestSignature[] = "CACHE MANIFEST";
-    if (!manifestString.startsWith(manifestSignature))
-        return false;
+        ApplicationCacheManifest manifest;
+        auto mode = ApplicationCacheParserMode::Explicit;
+
+        // Look for the magic signature: "^\xFEFF?CACHE MANIFEST[ \t]?" (the BOM is removed by TextResourceDecoder).
+        // Example: "CACHE MANIFEST #comment" is a valid signature.
+        // Example: "CACHE MANIFEST;V2" is not.
+        if (!skipCharactersExactly(buffer, cacheManifestIdentifier<CharacterType>))
+            return WTF::nullopt;
     
-    StringView manifestAfterSignature = StringView(manifestString).substring(sizeof(manifestSignature) - 1);
-    auto upconvertedCharacters = manifestAfterSignature.upconvertedCharacters();
-    const UChar* p = upconvertedCharacters;
-    const UChar* end = p + manifestAfterSignature.length();
+        if (buffer.hasCharactersRemaining() && !isManifestWhitespaceOrNewline(*buffer))
+            return WTF::nullopt;
 
-    if (p < end && *p != ' ' && *p != '\t' && *p != '\n' && *p != '\r')
-        return false;
+        // Skip to the end of the line.
+        skipUntil<CharacterType, isManifestNewline>(buffer);
 
-    // Skip to the end of the line.
-    while (p < end && *p != '\r' && *p != '\n')
-        p++;
-
-    while (1) {
-        // Skip whitespace
-        while (p < end && (*p == '\n' || *p == '\r' || *p == ' ' || *p == '\t'))
-            p++;
-        
-        if (p == end)
-            break;
-        
-        const UChar* lineStart = p;
-        
-        // Find the end of the line
-        while (p < end && *p != '\r' && *p != '\n')
-            p++;
-        
-        // Check if we have a comment
-        if (*lineStart == '#')
-            continue;
-        
-        // Get rid of trailing whitespace
-        const UChar* tmp = p - 1;
-        while (tmp > lineStart && (*tmp == ' ' || *tmp == '\t'))
-            tmp--;
-        
-        String line(lineStart, tmp - lineStart + 1);
-
-        if (line == "CACHE:") 
-            mode = Explicit;
-        else if (line == "FALLBACK:")
-            mode = Fallback;
-        else if (line == "NETWORK:")
-            mode = OnlineAllowlist;
-        else if (line.endsWith(':'))
-            mode = Unknown;
-        else if (mode == Unknown)
-            continue;
-        else if (mode == Explicit || mode == OnlineAllowlist) {
-            auto upconvertedLineCharacters = StringView(line).upconvertedCharacters();
-            const UChar* p = upconvertedLineCharacters;
-            const UChar* lineEnd = p + line.length();
+        while (1) {
+            // Skip whitespace
+            skipWhile<CharacterType, isManifestWhitespaceOrNewline>(buffer);
             
-            // Look for whitespace separating the URL from subsequent ignored tokens.
-            while (p < lineEnd && *p != '\t' && *p != ' ') 
-                p++;
+            if (buffer.atEnd())
+                break;
+            
+            auto lineStart = buffer.position();
+            
+            // Find the end of the line
+            skipUntil<CharacterType, isManifestNewline>(buffer);
+            
+            // Line is a comment, skip to the next line.
+            if (*lineStart == '#')
+                continue;
+            
+            // Get rid of trailing whitespace
+            auto lineEnd = buffer.position() - 1;
+            while (lineEnd > lineStart && isManifestWhitespace(*lineEnd))
+                --lineEnd;
 
-            if (mode == OnlineAllowlist && p - upconvertedLineCharacters == 1 && line[0] == '*') {
-                // Wildcard was found.
-                manifest.allowAllNetworkRequests = true;
+            auto lineBuffer = StringParsingBuffer { lineStart, lineEnd + 1 };
+
+            if (lineBuffer[lineBuffer.lengthRemaining() - 1] == ':') {
+                if (skipCharactersExactly(lineBuffer, cacheModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
+                    mode = ApplicationCacheParserMode::Explicit;
+                    continue;
+                }
+                if (skipCharactersExactly(lineBuffer, fallbackModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
+                    mode = ApplicationCacheParserMode::Fallback;
+                    continue;
+                }
+                if (skipCharactersExactly(lineBuffer, networkModeIdentifier<CharacterType>) && lineBuffer.lengthRemaining() == 1) {
+                    mode = ApplicationCacheParserMode::OnlineAllowlist;
+                    continue;
+                }
+
+                // If the line (excluding the trailing whitespace) ends with a ':' and isn't one of the known mode
+                // headers, transition to the 'Unknown' mode.
+                mode = ApplicationCacheParserMode::Unknown;
                 continue;
             }
+    
+            switch (mode) {
+            case ApplicationCacheParserMode::Unknown:
+                continue;
+            
+            case ApplicationCacheParserMode::Explicit: {
+                // Look for whitespace separating the URL from subsequent ignored tokens.
+                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
 
-            URL url(manifestURL, line.substring(0, p - upconvertedLineCharacters));
-            
-            if (!url.isValid())
-                continue;
-
-            url.removeFragmentIdentifier();
-            
-            if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
-                continue;
-            
-            if (mode == Explicit && manifestURL.protocolIs("https") && !protocolHostAndPortAreEqual(manifestURL, url))
-                continue;
-            
-            if (mode == Explicit)
+                auto url = makeManifestURL(manifestURL, lineStart, lineBuffer.position());
+                if (!url.isValid())
+                    continue;
+                
+                if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
+                    continue;
+                
+                if (manifestURL.protocolIs("https") && !protocolHostAndPortAreEqual(manifestURL, url))
+                    continue;
+                
                 manifest.explicitURLs.add(url.string());
-            else
-                manifest.onlineAllowedURLs.append(url);
-            
-        } else if (mode == Fallback) {
-            auto upconvertedLineCharacters = StringView(line).upconvertedCharacters();
-            const UChar* p = upconvertedLineCharacters;
-            const UChar* lineEnd = p + line.length();
-            
-            // Look for whitespace separating the two URLs
-            while (p < lineEnd && *p != '\t' && *p != ' ') 
-                p++;
+                continue;
+            }
 
-            if (p == lineEnd) {
-                // There was no whitespace separating the URLs.
+            case ApplicationCacheParserMode::OnlineAllowlist: {
+                // Look for whitespace separating the URL from subsequent ignored tokens.
+                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+
+                if (lineBuffer.position() - lineStart == 1 && *lineStart == '*') {
+                    // Wildcard was found.
+                    manifest.allowAllNetworkRequests = true;
+                    continue;
+                }
+                
+                auto url = makeManifestURL(manifestURL, lineStart, lineBuffer.position());
+                if (!url.isValid())
+                    continue;
+                
+                if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
+                    continue;
+
+                manifest.onlineAllowedURLs.append(url);
                 continue;
             }
             
-            URL namespaceURL(manifestURL, line.substring(0, p - upconvertedLineCharacters));
-            if (!namespaceURL.isValid())
+            case ApplicationCacheParserMode::Fallback: {
+                // Look for whitespace separating the two URLs
+                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+
+                if (lineBuffer.atEnd()) {
+                    // There was no whitespace separating the URLs.
+                    continue;
+                }
+
+                auto namespaceURL = makeManifestURL(manifestURL, lineStart, lineBuffer.position());
+                if (!namespaceURL.isValid())
+                    continue;
+
+                if (!protocolHostAndPortAreEqual(manifestURL, namespaceURL))
+                    continue;
+
+                // Although <https://html.spec.whatwg.org/multipage/offline.html#parsing-cache-manifests> (07/06/2017) saids
+                // that we should always prefix match the manifest path we only do so if the manifest was served with a non-
+                // standard HTTP Content-Type header for web compatibility.
+                if (!allowFallbackNamespaceOutsideManfestPath && !namespaceURL.path().startsWith(manifestPath))
+                    continue;
+
+                // Skip whitespace separating fallback namespace from URL.
+                skipWhile<CharacterType, isManifestWhitespace>(lineBuffer);
+
+                auto fallbackStart = lineBuffer.position();
+
+                // Look for whitespace separating the URL from subsequent ignored tokens.
+                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+
+                auto fallbackURL = makeManifestURL(manifestURL, fallbackStart, lineBuffer.position());
+                if (!fallbackURL.isValid())
+                    continue;
+
+                if (!protocolHostAndPortAreEqual(manifestURL, fallbackURL))
+                    continue;
+
+                manifest.fallbackURLs.append(std::make_pair(namespaceURL, fallbackURL));
                 continue;
-            namespaceURL.removeFragmentIdentifier();
-
-            if (!protocolHostAndPortAreEqual(manifestURL, namespaceURL))
-                continue;
-
-            // Although <https://html.spec.whatwg.org/multipage/offline.html#parsing-cache-manifests> (07/06/2017) saids
-            // that we should always prefix match the manifest path we only do so if the manifest was served with a non-
-            // standard HTTP Content-Type header for web compatibility.
-            if (!allowFallbackNamespaceOutsideManfestPath && !namespaceURL.path().startsWith(manifestPath))
-                continue;
-
-            // Skip whitespace separating fallback namespace from URL.
-            while (p < lineEnd && (*p == '\t' || *p == ' '))
-                p++;
-
-            // Look for whitespace separating the URL from subsequent ignored tokens.
-            const UChar* fallbackStart = p;
-            while (p < lineEnd && *p != '\t' && *p != ' ') 
-                p++;
-
-            URL fallbackURL(manifestURL, String(fallbackStart, p - fallbackStart));
-            if (!fallbackURL.isValid())
-                continue;
-            fallbackURL.removeFragmentIdentifier();
-
-            if (!protocolHostAndPortAreEqual(manifestURL, fallbackURL))
-                continue;
-
-            manifest.fallbackURLs.append(std::make_pair(namespaceURL, fallbackURL));            
-        } else 
+            }
+            }
+            
             ASSERT_NOT_REACHED();
-    }
+        }
 
-    return true;
+        return manifest;
+    });
 }
 
 }

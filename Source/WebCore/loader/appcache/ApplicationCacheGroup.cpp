@@ -605,8 +605,8 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         }
     }
     
-    Manifest manifest;
-    if (!parseManifest(m_manifestURL, m_manifestResource->response().mimeType(), m_manifestResource->data().data(), m_manifestResource->data().size(), manifest)) {
+    auto manifest = parseApplicationCacheManifest(m_manifestURL, m_manifestResource->response().mimeType(), m_manifestResource->data().data(), m_manifestResource->data().size());
+    if (!manifest) {
         // At the time of this writing, lack of "CACHE MANIFEST" signature is the only reason for parseManifest to fail.
         m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, "Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?"_s);
         cacheUpdateFailed();
@@ -635,15 +635,15 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         }
     }
     
-    for (const auto& explicitURL : manifest.explicitURLs)
+    for (const auto& explicitURL : manifest->explicitURLs)
         addEntry(explicitURL, ApplicationCacheResource::Explicit);
 
-    for (auto& fallbackURL : manifest.fallbackURLs)
+    for (auto& fallbackURL : manifest->fallbackURLs)
         addEntry(fallbackURL.second.string(), ApplicationCacheResource::Fallback);
     
-    m_cacheBeingUpdated->setOnlineAllowlist(manifest.onlineAllowedURLs);
-    m_cacheBeingUpdated->setFallbackURLs(manifest.fallbackURLs);
-    m_cacheBeingUpdated->setAllowsAllNetworkRequests(manifest.allowAllNetworkRequests);
+    m_cacheBeingUpdated->setOnlineAllowlist(manifest->onlineAllowedURLs);
+    m_cacheBeingUpdated->setFallbackURLs(manifest->fallbackURLs);
+    m_cacheBeingUpdated->setAllowsAllNetworkRequests(manifest->allowAllNetworkRequests);
 
     m_progressTotal = m_pendingEntries.size();
     m_progressDone = 0;
