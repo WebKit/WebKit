@@ -112,6 +112,7 @@ AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
 
 OTHER_CFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;

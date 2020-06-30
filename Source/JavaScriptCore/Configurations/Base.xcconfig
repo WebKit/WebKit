@@ -118,6 +118,7 @@ AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
 
 WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);

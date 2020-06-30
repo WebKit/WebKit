@@ -92,6 +92,7 @@ WK_TARGET_WATCHOS_VERSION_MAJOR = $(WATCHOS_DEPLOYMENT_TARGET:base);
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
 
 SDKROOT = macosx.internal;
 

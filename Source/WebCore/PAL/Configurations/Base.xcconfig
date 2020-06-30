@@ -101,6 +101,7 @@ TARGET_MAC_OS_X_VERSION_MAJOR_10_17 = 101700;
 WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // iOS 9.3 => 9
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.

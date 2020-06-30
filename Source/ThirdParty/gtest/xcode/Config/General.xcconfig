@@ -70,3 +70,4 @@ COMBINE_HIDPI_IMAGES = YES;
 GTEST_VERSIONINFO_ABOUT =  © 2008 Google Inc.
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;

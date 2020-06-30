@@ -71,6 +71,7 @@ WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
 GCC_NO_COMMON_BLOCKS = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR_$(MACOSX_DEPLOYMENT_TARGET:base)$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
 TARGET_MAC_OS_X_VERSION_MAJOR_10_13 = 101300;

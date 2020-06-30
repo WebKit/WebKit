@@ -104,6 +104,7 @@ WK_TARGET_TVOS_VERSION_MAJOR = $(TVOS_DEPLOYMENT_TARGET:base);
 WK_TARGET_WATCHOS_VERSION_MAJOR = $(WATCHOS_DEPLOYMENT_TARGET:base);
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.

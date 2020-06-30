@@ -1,3 +1,20 @@
+2020-06-30  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Enable the "My Mac (Mac Catalyst)" destination in WebKit Xcode projects
+        https://bugs.webkit.org/show_bug.cgi?id=213740
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig: Set SUPPORTS_MACCATALYST to YES to tell
+        Xcode that these projects support building for Mac Catalyst.
+
+        * MiniBrowser/Configurations/MiniBrowser.xcconfig: Excluded all source files on Mac Catalyst
+        so that schemes that include MiniBrowser can build for Mac Catalyst.
+
 2020-06-30  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] Port API test harness to Python3

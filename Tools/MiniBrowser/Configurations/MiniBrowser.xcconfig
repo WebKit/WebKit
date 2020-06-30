@@ -27,5 +27,7 @@ PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier)
 GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch
 INFOPLIST_FILE = mac/Info.plist
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_PLATFORM_NAME))
+EXCLUDED_SOURCE_FILE_NAMES_maccatalyst = *
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework WebKit
 STRIP_STYLE = debugging;

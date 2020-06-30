@@ -83,3 +83,4 @@ PRODUCTION_FRAMEWORKS_DIR[sdk=macosx*] = $(SDKROOT)$(NEXT_ROOT)$(SYSTEM_LIBRARY_
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTS_MACCATALYST = YES;
