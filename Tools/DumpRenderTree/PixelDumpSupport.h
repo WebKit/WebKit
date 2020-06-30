@@ -33,7 +33,7 @@
 
 class BitmapContext;
 
-void computeMD5HashStringForBitmapContext(BitmapContext*, char hashString[33]);
+void computeSHA1HashStringForBitmapContext(BitmapContext*, char hashString[33]);
 RefPtr<BitmapContext> createPagedBitmapContext();
 RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);
 void dumpBitmap(BitmapContext*, const char* checksum);

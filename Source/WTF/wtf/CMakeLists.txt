@@ -124,7 +124,6 @@ set(WTF_PUBLIC_HEADERS
     LoggingHashMap.h
     LoggingHashSet.h
     LoggingHashTraits.h
-    MD5.h
     MachSendRight.h
     MainThread.h
     MainThreadData.h
@@ -403,7 +402,6 @@ set(WTF_SOURCES
     Lock.cpp
     LockedPrintStream.cpp
     Logger.cpp
-    MD5.cpp
     MainThread.cpp
     MediaTime.cpp
     MemoryPressureHandler.cpp

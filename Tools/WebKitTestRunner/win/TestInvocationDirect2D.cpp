@@ -35,7 +35,6 @@
 #include <WebCore/NotImplemented.h>
 #include <cstdio>
 #include <wtf/Assertions.h>
-#include <wtf/MD5.h>
 #include <wtf/StringExtras.h>
 
 namespace WTR {

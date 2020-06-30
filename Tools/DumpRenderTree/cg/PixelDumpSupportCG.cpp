@@ -39,10 +39,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SHA1.h>
 
-#if PLATFORM(WIN)
-#include "MD5.h"
-#elif PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 #include <MobileCoreServices/UTCoreTypes.h>
 #define COMMON_DIGEST_FOR_OPENSSL
 #include <CommonCrypto/CommonDigest.h>
@@ -71,7 +70,7 @@ static void printPNG(CGImageRef image, const char* checksum)
     printPNG(static_cast<const unsigned char*>(data), static_cast<size_t>(dataLength), checksum);
 }
 
-void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
+void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashString[33])
 {
     CGContextRef bitmapContext = context->cgContext();
 
@@ -81,8 +80,7 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
     size_t bytesPerRow = CGBitmapContextGetBytesPerRow(bitmapContext);
 
     // We need to swap the bytes to ensure consistent hashes independently of endianness
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
+    SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
 #if PLATFORM(COCOA)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
@@ -90,19 +88,19 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
             uint32_t buffer[pixelsWide];
             for (unsigned column = 0; column < pixelsWide; column++)
                 buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
-            MD5_Update(&md5Context, buffer, 4 * pixelsWide);
+            sha1.addBytes(reinterpret_cast<const uint8_t*>(buffer), 4 * pixelsWide);
             bitmapData += bytesPerRow;
         }
     } else
 #endif
     {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            MD5_Update(&md5Context, bitmapData, 4 * pixelsWide);
+            sha1.addBytes(bitmapData, 4 * pixelsWide);
             bitmapData += bytesPerRow;
         }
     }
-    unsigned char hash[16];
-    MD5_Final(hash, &md5Context);
+    SHA1::Digest hash;
+    sha1.computeHash(hash);
 
     hashString[0] = '\0';
     for (int i = 0; i < 16; i++)

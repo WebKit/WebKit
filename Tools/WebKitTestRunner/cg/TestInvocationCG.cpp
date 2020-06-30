@@ -31,8 +31,8 @@
 #include "TestController.h"
 #include <ImageIO/CGImageDestination.h>
 #include <WebKit/WKImageCG.h>
-#include <wtf/MD5.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SHA1.h>
 
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 #include <CoreServices/CoreServices.h>
@@ -67,10 +67,10 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage)
     return createCGContextFromCGImage(image.get());
 }
 
-void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[33])
+void computeSHA1HashStringForContext(CGContextRef bitmapContext, char hashString[33])
 {
     if (!bitmapContext) {
-        WTFLogAlways("computeMD5HashStringForContext: context is null\n");
+        WTFLogAlways("computeSHA1HashStringForContext: context is null\n");
         return;
     }
     ASSERT(CGBitmapContextGetBitsPerPixel(bitmapContext) == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
@@ -79,7 +79,7 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
     size_t bytesPerRow = CGBitmapContextGetBytesPerRow(bitmapContext);
     
     // We need to swap the bytes to ensure consistent hashes independently of endianness
-    MD5 md5;
+    SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
 #if PLATFORM(COCOA)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
@@ -87,23 +87,23 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
             Vector<uint8_t> buffer(4 * pixelsWide);
             for (unsigned column = 0; column < pixelsWide; column++)
                 buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
-            md5.addBytes(buffer);
+            sha1.addBytes(buffer);
             bitmapData += bytesPerRow;
         }
     } else
 #endif
     {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            md5.addBytes(bitmapData, 4 * pixelsWide);
+            sha1.addBytes(bitmapData, 4 * pixelsWide);
             bitmapData += bytesPerRow;
         }
     }
 
-    MD5::Digest hash;
-    md5.checksum(hash);
+    SHA1::Digest hash;
+    sha1.computeHash(hash);
 
     hashString[0] = '\0';
-    for (size_t i = 0; i < MD5::hashSize; i++)
+    for (size_t i = 0; i < 16; i++)
         snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
@@ -182,7 +182,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
         paintRepaintRectOverlay(context.get(), imageSize, repaintRects);
 
     char actualHash[33];
-    computeMD5HashStringForContext(context.get(), actualHash);
+    computeSHA1HashStringForContext(context.get(), actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
         dumpBitmap(context.get(), actualHash);
 }

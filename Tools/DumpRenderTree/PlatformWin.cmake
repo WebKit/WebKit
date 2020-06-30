@@ -11,7 +11,6 @@ list(APPEND DumpRenderTree_SOURCES
     win/FrameLoadDelegate.cpp
     win/GCControllerWin.cpp
     win/HistoryDelegate.cpp
-    win/MD5.cpp
     win/PixelDumpSupportWin.cpp
     win/PolicyDelegate.cpp
     win/ResourceLoadDelegate.cpp

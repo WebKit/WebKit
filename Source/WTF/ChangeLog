@@ -1,3 +1,18 @@
+2020-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WTF::MD5
+        https://bugs.webkit.org/show_bug.cgi?id=213766
+
+        Reviewed by Youenn Fablet.
+
+        It was only used for CURL's cache file name generation.
+        If you want to use a broken hash function, use SHA1.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MD5.cpp: Removed.
+        * wtf/MD5.h: Removed.
+
 2020-06-30  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable the "My Mac (Mac Catalyst)" destination in WebKit Xcode projects

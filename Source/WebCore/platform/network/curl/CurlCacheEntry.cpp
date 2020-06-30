@@ -42,7 +42,7 @@
 #include "SharedBuffer.h"
 #include <wtf/DateMath.h>
 #include <wtf/HexNumber.h>
-#include <wtf/MD5.h>
+#include <wtf/SHA1.h>
 
 namespace WebCore {
 
@@ -211,15 +211,15 @@ void CurlCacheEntry::didFinishLoading()
 
 void CurlCacheEntry::generateBaseFilename(const CString& url)
 {
-    MD5 md5;
-    md5.addBytes(reinterpret_cast<const uint8_t*>(url.data()), url.length());
+    SHA1 sha1;
+    sha1.addBytes(reinterpret_cast<const uint8_t*>(url.data()), url.length());
 
-    MD5::Digest sum;
-    md5.checksum(sum);
+    SHA1::Digest sum;
+    sha1.computeHash(sum);
     uint8_t* rawdata = sum.data();
 
     StringBuilder baseNameBuilder;
-    for (size_t i = 0; i < MD5::hashSize; i++)
+    for (size_t i = 0; i < 16; i++)
         baseNameBuilder.append(hex(rawdata[i], Lowercase));
     m_basename = baseNameBuilder.toString();
 }

@@ -36,8 +36,8 @@
 #include <algorithm>
 #include <ctype.h>
 #include <wtf/Assertions.h>
-#include <wtf/MD5.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SHA1.h>
 #include <wtf/StringExtras.h>
 
 using namespace std;
@@ -61,7 +61,7 @@ static void printPNG(cairo_surface_t* image, const char* checksum)
     printPNG(data, dataLength, checksum);
 }
 
-void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
+void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashString[33])
 {
     cairo_t* bitmapContext = context->cairoContext();
     cairo_surface_t* surface = cairo_get_target(bitmapContext);
@@ -72,14 +72,14 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
     size_t pixelsWide = cairo_image_surface_get_width(surface);
     size_t bytesPerRow = cairo_image_surface_get_stride(surface);
 
-    MD5 md5Context;
+    SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(cairo_image_surface_get_data(surface));
     for (unsigned row = 0; row < pixelsHigh; row++) {
-        md5Context.addBytes(bitmapData, 4 * pixelsWide);
+        sha1.addBytes(bitmapData, 4 * pixelsWide);
         bitmapData += bytesPerRow;
     }
-    MD5::Digest hash;
-    md5Context.checksum(hash);
+    SHA1::Digest hash;
+    sha1.computeHash(hash);
 
     snprintf(hashString, 33, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
         hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7],

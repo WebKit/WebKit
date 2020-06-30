@@ -57,7 +57,6 @@ set(TestWTF_SOURCES
     Tests/WTF/ListHashSet.cpp
     Tests/WTF/Lock.cpp
     Tests/WTF/Logger.cpp
-    Tests/WTF/MD5.cpp
     Tests/WTF/Markable.cpp
     Tests/WTF/MathExtras.cpp
     Tests/WTF/MediaTime.cpp

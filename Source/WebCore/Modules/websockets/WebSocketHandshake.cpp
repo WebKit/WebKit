@@ -48,7 +48,6 @@
 #include "WebSocket.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/MD5.h>
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>

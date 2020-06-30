@@ -27,7 +27,6 @@
 #include "PixelDumpSupportDirect2D.h"
 
 #include "DumpRenderTree.h"
-#include "MD5.h"
 #include "PixelDumpSupport.h"
 #include <algorithm>
 #include <ctype.h>
@@ -64,7 +63,7 @@ static void printPNG(ID2D1Bitmap* image, const char* checksum)
     // Not implemented.
 }
 
-void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
+void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashString[33])
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(hashString);

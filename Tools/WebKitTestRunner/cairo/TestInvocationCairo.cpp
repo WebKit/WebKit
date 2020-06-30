@@ -36,12 +36,12 @@
 #include <cairo/cairo.h>
 #include <cstdio>
 #include <wtf/Assertions.h>
-#include <wtf/MD5.h>
+#include <wtf/SHA1.h>
 #include <wtf/StringExtras.h>
 
 namespace WTR {
 
-static void computeMD5HashStringForCairoSurface(cairo_surface_t* surface, char hashString[33])
+static void computeSHA1HashStringForCairoSurface(cairo_surface_t* surface, char hashString[33])
 {
     ASSERT(cairo_image_surface_get_format(surface) == CAIRO_FORMAT_ARGB32 || cairo_image_surface_get_format(surface) == CAIRO_FORMAT_RGB24);
 
@@ -49,14 +49,14 @@ static void computeMD5HashStringForCairoSurface(cairo_surface_t* surface, char h
     size_t pixelsWide = cairo_image_surface_get_width(surface);
     size_t bytesPerRow = cairo_image_surface_get_stride(surface);
 
-    MD5 md5Context;
+    SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(cairo_image_surface_get_data(surface));
     for (size_t row = 0; row < pixelsHigh; ++row) {
-        md5Context.addBytes(bitmapData, 4 * pixelsWide);
+        sha1.addBytes(bitmapData, 4 * pixelsWide);
         bitmapData += bytesPerRow;
     }
-    MD5::Digest hash;
-    md5Context.checksum(hash);
+    SHA1::Digest hash;
+    sha1.computeHash(hash);
 
     snprintf(hashString, 33, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
         hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7],
@@ -122,7 +122,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
         paintRepaintRectOverlay(surface, repaintRects);
 
     char actualHash[33];
-    computeMD5HashStringForCairoSurface(surface, actualHash);
+    computeSHA1HashStringForCairoSurface(surface, actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
         dumpBitmap(surface, actualHash);
 
