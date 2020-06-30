@@ -106,7 +106,7 @@ private:
     // Queues all pending additions to the tree as the result of a subtree generation.
     void appendNodeChanges(Vector<NodeChange>&&);
     // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
-    void updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs);
+    void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs);
 
     AXIsolatedTreeID m_treeID;
     AXObjectCache* m_axObjectCache { nullptr };

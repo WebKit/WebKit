@@ -100,9 +100,7 @@ bool AccessibilityMenuList::isCollapsed() const
 {
 #if !PLATFORM(IOS_FAMILY)
     auto* renderer = this->renderer();
-    if (is<RenderMenuList>(renderer))
-        return !downcast<RenderMenuList>(*renderer).popupIsVisible();
-    return true;
+    return !(is<RenderMenuList>(renderer) && downcast<RenderMenuList>(*renderer).popupIsVisible());
 #else
     return true;
 #endif

@@ -1,3 +1,12 @@
+2020-06-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Code cleanup in AccessibilityMenuList.cpp and AXIsolatedTree.h.
+        https://bugs.webkit.org/show_bug.cgi?id=213806
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings:
+
 2020-06-29  Guowei Yang  <guowei_yang@apple.com>
 
         Adding Experimental Feature Flags for CoreImage backed SVG/CSS Filters
