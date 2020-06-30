@@ -1,3 +1,10 @@
+2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update expectations after r263733.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-06-30  Youenn Fablet  <youenn@apple.com>
 
         Add VP9 WebRTC codec runtime flag

@@ -1208,8 +1208,6 @@ webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigati
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Failure ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 
-webkit.org/b/210848 compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
-
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Failure ]
 
 webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mapping.html [ Failure ]
@@ -1296,8 +1294,8 @@ webkit.org/b/186779 http/tests/security/sandboxed-iframe-DENIED-modals.html [ Cr
 
 webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html [ Crash ]
 
-webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash Pass ]
-webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Crash ]
+webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Pass ]
+webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html [ ImageOnlyFailure ]
 
@@ -2146,6 +2144,8 @@ webkit.org/b/213386 fast/images/low-memory-decode.html [ Failure Timeout Pass ]
 
 webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introduction-4/event_noupdate.https.html [ Timeout Pass ]
 
+webkit.org/b/213776 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2480,6 +2480,7 @@ webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advan
 webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database.html [ Timeout Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Timeout Pass ]
 
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-cookie-blocking-between-each-other.html [ Skip ]
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html [ Skip ]
