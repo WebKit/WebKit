@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -48,25 +48,53 @@ static String preprocessString(String string)
     return string.replace('\0', replacementCharacter);
 }
 
+std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string)
+{
+    bool success = true;
+    // We can't use makeUnique here because it does not have access to this private constructor.
+    auto tokenizer = std::unique_ptr<CSSTokenizer>(new CSSTokenizer(preprocessString(string), nullptr, &success));
+    if (UNLIKELY(!success))
+        return nullptr;
+    return tokenizer;
+}
+
+std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string, CSSParserObserverWrapper& wrapper)
+{
+    bool success = true;
+    // We can't use makeUnique here because it does not have access to this private constructor.
+    auto tokenizer = std::unique_ptr<CSSTokenizer>(new CSSTokenizer(preprocessString(string), &wrapper, &success));
+    if (UNLIKELY(!success))
+        return nullptr;
+    return tokenizer;
+}
+
 CSSTokenizer::CSSTokenizer(const String& string)
-    : CSSTokenizer(preprocessString(string), nullptr)
+    : CSSTokenizer(preprocessString(string), nullptr, nullptr)
 {
 }
 
 CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper& wrapper)
-    : CSSTokenizer(preprocessString(string), &wrapper)
+    : CSSTokenizer(preprocessString(string), &wrapper, nullptr)
 {
 }
 
-inline CSSTokenizer::CSSTokenizer(String&& string, CSSParserObserverWrapper* wrapper)
+CSSTokenizer::CSSTokenizer(String&& string, CSSParserObserverWrapper* wrapper, bool* constructionSuccessPtr)
     : m_input(string)
 {
+    if (constructionSuccessPtr)
+        *constructionSuccessPtr = true;
+
     if (string.isEmpty())
         return;
 
     // To avoid resizing we err on the side of reserving too much space.
     // Most strings we tokenize have about 3.5 to 5 characters per token.
-    m_tokens.reserveInitialCapacity(string.length() / 3);
+    if (UNLIKELY(!m_tokens.tryReserveInitialCapacity(string.length() / 3))) {
+        // When constructionSuccessPtr is null, our policy is to crash on failure.
+        RELEASE_ASSERT(constructionSuccessPtr);
+        *constructionSuccessPtr = false;
+        return;
+    }
 
     unsigned offset = 0;
     while (true) {
@@ -77,7 +105,12 @@ inline CSSTokenizer::CSSTokenizer(String&& string, CSSParserObserverWrapper* wra
             if (wrapper)
                 wrapper->addComment(offset, m_input.offset(), m_tokens.size());
         } else {
-            m_tokens.append(token);
+            if (UNLIKELY(!m_tokens.tryAppend(token))) {
+                // When constructionSuccessPtr is null, our policy is to crash on failure.
+                RELEASE_ASSERT(constructionSuccessPtr);
+                *constructionSuccessPtr = false;
+                return;
+            }
             if (wrapper)
                 wrapper->addToken(offset);
         }

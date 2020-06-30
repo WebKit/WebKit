@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,6 +26,7 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/FailureAction.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/MallocPtr.h>
@@ -282,30 +283,34 @@ template<typename T, typename Malloc>
 class VectorBufferBase {
     WTF_MAKE_NONCOPYABLE(VectorBufferBase);
 public:
-    void allocateBuffer(size_t newCapacity)
+    template<FailureAction action>
+    bool allocateBuffer(size_t newCapacity)
     {
+        static_assert(action == FailureAction::Crash || action == FailureAction::Report);
         ASSERT(newCapacity);
-        if (newCapacity > std::numeric_limits<unsigned>::max() / sizeof(T))
-            CRASH();
-        size_t sizeToAllocate = newCapacity * sizeof(T);
-        m_capacity = sizeToAllocate / sizeof(T);
-        m_buffer = static_cast<T*>(Malloc::malloc(sizeToAllocate));
-    }
-
-    bool tryAllocateBuffer(size_t newCapacity)
-    {
-        ASSERT(newCapacity);
-        if (newCapacity > std::numeric_limits<unsigned>::max() / sizeof(T))
-            return false;
+        if (newCapacity > std::numeric_limits<unsigned>::max() / sizeof(T)) {
+            if constexpr (action == FailureAction::Crash)
+                CRASH();
+            else
+                return false;
+        }
 
         size_t sizeToAllocate = newCapacity * sizeof(T);
-        T* newBuffer = static_cast<T*>(Malloc::tryMalloc(sizeToAllocate));
-        if (!newBuffer)
-            return false;
+        T* newBuffer = nullptr;
+        if constexpr (action == FailureAction::Crash)
+            newBuffer = static_cast<T*>(Malloc::malloc(sizeToAllocate));
+        else {
+            newBuffer = static_cast<T*>(Malloc::tryMalloc(sizeToAllocate));
+            if (UNLIKELY(!newBuffer))
+                return false;
+        }
         m_capacity = sizeToAllocate / sizeof(T);
         m_buffer = newBuffer;
         return true;
     }
+
+    ALWAYS_INLINE void allocateBuffer(size_t newCapacity) { allocateBuffer<FailureAction::Crash>(newCapacity); }
+    ALWAYS_INLINE bool tryAllocateBuffer(size_t newCapacity) { return allocateBuffer<FailureAction::Report>(newCapacity); }
 
     bool shouldReallocateBuffer(size_t newCapacity) const
     {
@@ -457,25 +462,19 @@ public:
         deallocateBuffer(buffer());
     }
 
-    void allocateBuffer(size_t newCapacity)
+    template<FailureAction action>
+    bool allocateBuffer(size_t newCapacity)
     {
         // FIXME: This should ASSERT(!m_buffer) to catch misuse/leaks.
         if (newCapacity > inlineCapacity)
-            Base::allocateBuffer(newCapacity);
-        else {
-            m_buffer = inlineBuffer();
-            m_capacity = inlineCapacity;
-        }
-    }
-
-    bool tryAllocateBuffer(size_t newCapacity)
-    {
-        if (newCapacity > inlineCapacity)
-            return Base::tryAllocateBuffer(newCapacity);
+            return Base::template allocateBuffer<action>(newCapacity);
         m_buffer = inlineBuffer();
         m_capacity = inlineCapacity;
         return true;
     }
+
+    ALWAYS_INLINE void allocateBuffer(size_t newCapacity) { allocateBuffer<FailureAction::Crash>(newCapacity); }
+    ALWAYS_INLINE bool tryAllocateBuffer(size_t newCapacity) { return allocateBuffer<FailureAction::Report>(newCapacity); }
 
     void deallocateBuffer(T* bufferToDeallocate)
     {
@@ -761,9 +760,10 @@ public:
     void grow(size_t size);
     void resize(size_t size);
     void resizeToFit(size_t size);
-    void reserveCapacity(size_t newCapacity);
-    bool tryReserveCapacity(size_t newCapacity);
-    void reserveInitialCapacity(size_t initialCapacity);
+    ALWAYS_INLINE void reserveCapacity(size_t newCapacity) { reserveCapacity<FailureAction::Crash>(newCapacity); }
+    ALWAYS_INLINE bool tryReserveCapacity(size_t newCapacity) { return reserveCapacity<FailureAction::Report>(newCapacity); }
+    ALWAYS_INLINE void reserveInitialCapacity(size_t initialCapacity) { reserveInitialCapacity<FailureAction::Crash>(initialCapacity); }
+    ALWAYS_INLINE bool tryReserveInitialCapacity(size_t initialCapacity) { return reserveInitialCapacity<FailureAction::Report>(initialCapacity); }
     void shrinkCapacity(size_t newCapacity);
     void shrinkToFit() { shrinkCapacity(size()); }
 
@@ -772,18 +772,19 @@ public:
     template<typename U = T> Vector<U> isolatedCopy() const;
 
     ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
-    template<typename U> void append(U&&);
-    template<typename... Args> void constructAndAppend(Args&&...);
-    template<typename... Args> bool tryConstructAndAppend(Args&&...);
+    template<typename U> ALWAYS_INLINE void append(U&& u) { append<FailureAction::Crash, U>(std::forward<U>(u)); }
+    template<typename U> ALWAYS_INLINE bool tryAppend(U&& u) { return append<FailureAction::Report, U>(std::forward<U>(u)); }
+    template<typename... Args> ALWAYS_INLINE void constructAndAppend(Args&&... args) { constructAndAppend<FailureAction::Crash>(std::forward<Args>(args)...); }
+    template<typename... Args> ALWAYS_INLINE bool tryConstructAndAppend(Args&&... args) { return constructAndAppend<FailureAction::Report>(std::forward<Args>(args)...); }
 
     void uncheckedAppend(ValueType&& value) { uncheckedAppend<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> void uncheckedAppend(U&&);
     template<typename... Args> void uncheckedConstructAndAppend(Args&&...);
 
-    template<typename U> void append(const U*, size_t);
+    template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
+    template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
     template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
     template<typename U, size_t otherCapacity> void appendVector(Vector<U, otherCapacity>&&);
-    template<typename U> bool tryAppend(const U*, size_t);
 
     template<typename U> void insert(size_t position, const U*, size_t);
     template<typename U> void insert(size_t position, U&&);
@@ -837,14 +838,18 @@ public:
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
 private:
-    void expandCapacity(size_t newMinCapacity);
-    T* expandCapacity(size_t newMinCapacity, T*);
-    bool tryExpandCapacity(size_t newMinCapacity);
-    const T* tryExpandCapacity(size_t newMinCapacity, const T*);
-    template<typename U> U* expandCapacity(size_t newMinCapacity, U*); 
-    template<typename U> void appendSlowCase(U&&);
-    template<typename... Args> void constructAndAppendSlowCase(Args&&...);
-    template<typename... Args> bool tryConstructAndAppendSlowCase(Args&&...);
+    template<FailureAction> bool reserveCapacity(size_t newCapacity);
+    template<FailureAction> bool reserveInitialCapacity(size_t initialCapacity);
+
+    template<FailureAction> bool expandCapacity(size_t newMinCapacity);
+    template<FailureAction> T* expandCapacity(size_t newMinCapacity, T*);
+    template<FailureAction, typename U> U* expandCapacity(size_t newMinCapacity, U*);
+    template<FailureAction, typename U> bool appendSlowCase(U&&);
+    template<FailureAction, typename... Args> bool constructAndAppend(Args&&...);
+    template<FailureAction, typename... Args> bool constructAndAppendSlowCase(Args&&...);
+
+    template<FailureAction, typename U> bool append(U&&);
+    template<FailureAction, typename U> bool append(const U*, size_t);
 
     template<size_t position, typename U, typename... Items>
     void uncheckedInitialize(U&& item, Items&&... items)
@@ -1043,48 +1048,44 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendRang
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::expandCapacity(size_t newMinCapacity)
+template<FailureAction action>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::expandCapacity(size_t newMinCapacity)
 {
-    reserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), capacity() + capacity() / 4 + 1)));
+    return reserveCapacity<action>(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), capacity() + capacity() / 4 + 1)));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<FailureAction action>
 NEVER_INLINE T* Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::expandCapacity(size_t newMinCapacity, T* ptr)
 {
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     if (ptr < begin() || ptr >= end()) {
-        expandCapacity(newMinCapacity);
+        bool success = expandCapacity<action>(newMinCapacity);
+        if constexpr (action == FailureAction::Report) {
+            if (UNLIKELY(!success))
+                return nullptr;
+        }
         return ptr;
     }
     size_t index = ptr - begin();
-    expandCapacity(newMinCapacity);
+    bool success = expandCapacity<action>(newMinCapacity);
+    if constexpr (action == FailureAction::Report) {
+        if (UNLIKELY(!success))
+            return nullptr;
+    }
     return begin() + index;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryExpandCapacity(size_t newMinCapacity)
-{
-    return tryReserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), capacity() + capacity() / 4 + 1)));
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-const T* Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryExpandCapacity(size_t newMinCapacity, const T* ptr)
-{
-    if (ptr < begin() || ptr >= end()) {
-        if (!tryExpandCapacity(newMinCapacity))
-            return 0;
-        return ptr;
-    }
-    size_t index = ptr - begin();
-    if (!tryExpandCapacity(newMinCapacity))
-        return 0;
-    return begin() + index;
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
+template<FailureAction action, typename U>
 inline U* Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::expandCapacity(size_t newMinCapacity, U* ptr)
 {
-    expandCapacity(newMinCapacity);
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
+    bool success = expandCapacity<action>(newMinCapacity);
+    if constexpr (action == FailureAction::Report) {
+        if (UNLIKELY(!success))
+            return nullptr;
+    }
     return ptr;
 }
 
@@ -1096,7 +1097,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::res
         asanBufferSizeWillChangeTo(size);
     } else {
         if (size > capacity())
-            expandCapacity(size);
+            expandCapacity<FailureAction::Crash>(size);
         asanBufferSizeWillChangeTo(size);
         if (begin())
             TypeOperations::initializeIfNonPOD(end(), begin() + size);
@@ -1126,7 +1127,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::grow(size_
 {
     ASSERT(size >= m_size);
     if (size > capacity())
-        expandCapacity(size);
+        expandCapacity<FailureAction::Crash>(size);
     asanBufferSizeWillChangeTo(size);
     if (begin())
         TypeOperations::initializeIfNonPOD(end(), begin() + size);
@@ -1178,27 +1179,10 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::asa
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reserveCapacity(size_t newCapacity)
+template<FailureAction action>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reserveCapacity(size_t newCapacity)
 {
-    if (newCapacity <= capacity())
-        return;
-    T* oldBuffer = begin();
-    T* oldEnd = end();
-
-    asanSetBufferSizeToFullCapacity();
-
-    Base::allocateBuffer(newCapacity);
-    ASSERT(begin());
-
-    asanSetInitialBufferSizeTo(size());
-
-    TypeOperations::move(oldBuffer, oldEnd, begin());
-    Base::deallocateBuffer(oldBuffer);
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryReserveCapacity(size_t newCapacity)
-{
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     if (newCapacity <= capacity())
         return true;
     T* oldBuffer = begin();
@@ -1206,9 +1190,12 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryReserve
 
     asanSetBufferSizeToFullCapacity();
 
-    if (!Base::tryAllocateBuffer(newCapacity)) {
-        asanSetInitialBufferSizeTo(size());
-        return false;
+    bool success = Base::template allocateBuffer<action>(newCapacity);
+    if constexpr (action == FailureAction::Report) {
+        if (UNLIKELY(!success)) {
+            asanSetInitialBufferSizeTo(size());
+            return false;
+        }
     }
     ASSERT(begin());
 
@@ -1220,12 +1207,15 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryReserve
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reserveInitialCapacity(size_t initialCapacity)
+template<FailureAction action>
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reserveInitialCapacity(size_t initialCapacity)
 {
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     ASSERT(!m_size);
     ASSERT(capacity() == inlineCapacity);
-    if (initialCapacity > inlineCapacity)
-        Base::allocateBuffer(initialCapacity);
+    if (initialCapacity <= inlineCapacity)
+        return true;
+    return Base::template allocateBuffer<action>(initialCapacity);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1260,35 +1250,25 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrinkCapa
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
-ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::append(const U* data, size_t dataSize)
+template<FailureAction action, typename U>
+ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::append(const U* data, size_t dataSize)
 {
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
-        data = expandCapacity(newSize, data);
+        data = expandCapacity<action>(newSize, data);
+        if constexpr (action == FailureAction::Report) {
+            if (UNLIKELY(!data))
+                return false;
+        }
         ASSERT(begin());
     }
-    if (newSize < m_size)
-        CRASH();
-    asanBufferSizeWillChangeTo(newSize);
-    T* dest = end();
-    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
-    m_size = newSize;
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
-ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryAppend(const U* data, size_t dataSize)
-{
-    size_t newSize = m_size + dataSize;
-    if (newSize > capacity()) {
-        data = tryExpandCapacity(newSize, data);
-        if (!data)
+    if (newSize < m_size) {
+        if constexpr (action == FailureAction::Crash)
+            CRASH();
+        else
             return false;
-        ASSERT(begin());
     }
-    if (newSize < m_size)
-        return false;
     asanBufferSizeWillChangeTo(newSize);
     T* dest = end();
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
@@ -1297,36 +1277,22 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
-ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::append(U&& value)
+template<FailureAction action, typename U>
+ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::append(U&& value)
 {
     if (size() != capacity()) {
         asanBufferSizeWillChangeTo(m_size + 1);
         new (NotNull, end()) T(std::forward<U>(value));
         ++m_size;
-        return;
+        return true;
     }
 
-    appendSlowCase(std::forward<U>(value));
+    return appendSlowCase<action, U>(std::forward<U>(value));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename... Args>
-ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructAndAppend(Args&&... args)
-{
-    if (size() != capacity()) {
-        asanBufferSizeWillChangeTo(m_size + 1);
-        new (NotNull, end()) T(std::forward<Args>(args)...);
-        ++m_size;
-        return;
-    }
-
-    constructAndAppendSlowCase(std::forward<Args>(args)...);
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename... Args>
-ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryConstructAndAppend(Args&&... args)
+template<FailureAction action, typename... Args>
+ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructAndAppend(Args&&... args)
 {
     if (size() != capacity()) {
         asanBufferSizeWillChangeTo(m_size + 1);
@@ -1334,49 +1300,45 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
         ++m_size;
         return true;
     }
-    
-    return tryConstructAndAppendSlowCase(std::forward<Args>(args)...);
+
+    return constructAndAppendSlowCase<action>(std::forward<Args>(args)...);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendSlowCase(U&& value)
+template<FailureAction action, typename U>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendSlowCase(U&& value)
 {
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     ASSERT(size() == capacity());
 
     auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
-    ptr = expandCapacity(size() + 1, ptr);
+    ptr = expandCapacity<action>(size() + 1, ptr);
+    if constexpr (action == FailureAction::Report) {
+        if (UNLIKELY(!ptr))
+            return false;
+    }
     ASSERT(begin());
 
     asanBufferSizeWillChangeTo(m_size + 1);
     new (NotNull, end()) T(std::forward<U>(*ptr));
     ++m_size;
+    return true;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename... Args>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructAndAppendSlowCase(Args&&... args)
+template<FailureAction action, typename... Args>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructAndAppendSlowCase(Args&&... args)
 {
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     ASSERT(size() == capacity());
 
-    expandCapacity(size() + 1);
+    bool success = expandCapacity<action>(size() + 1);
+    if constexpr (action == FailureAction::Report) {
+        if (UNLIKELY(!success))
+            return false;
+    }
     ASSERT(begin());
 
-    asanBufferSizeWillChangeTo(m_size + 1);
-    new (NotNull, end()) T(std::forward<Args>(args)...);
-    ++m_size;
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename... Args>
-bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::tryConstructAndAppendSlowCase(Args&&... args)
-{
-    ASSERT(size() == capacity());
-    
-    if (UNLIKELY(!tryExpandCapacity(size() + 1)))
-        return false;
-    ASSERT(begin());
-    
     asanBufferSizeWillChangeTo(m_size + 1);
     new (NotNull, end()) T(std::forward<Args>(args)...);
     ++m_size;
@@ -1423,7 +1385,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::app
 {
     size_t newSize = m_size + val.size();
     if (newSize > capacity())
-        expandCapacity(newSize);
+        expandCapacity<FailureAction::Crash>(newSize);
     for (auto& item : val)
         uncheckedAppend(WTFMove(item));
 }
@@ -1435,7 +1397,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::insert(siz
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
-        data = expandCapacity(newSize, data);
+        data = expandCapacity<FailureAction::Crash>(newSize, data);
         ASSERT(begin());
     }
     if (newSize < m_size)
@@ -1455,7 +1417,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::ins
 
     auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
     if (size() == capacity()) {
-        ptr = expandCapacity(size() + 1, ptr);
+        ptr = expandCapacity<FailureAction::Crash>(size() + 1, ptr);
         ASSERT(begin());
     }
 

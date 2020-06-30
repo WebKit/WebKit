@@ -1,3 +1,14 @@
+2020-06-30  Mark Lam  <mark.lam@apple.com>
+
+        Add handling for a case of OOME in CSSTokenizer and CSSParser.
+        https://bugs.webkit.org/show_bug.cgi?id=213702
+        <rdar://problem/64808889>
+
+        Reviewed by Darin Adler.
+
+        * css3/out-of-memory-in-css-tokenizer-expected.txt: Added.
+        * css3/out-of-memory-in-css-tokenizer.html: Added.
+
 2020-06-30  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/attachment/attachment-folder-icon.html as it is passing. 

@@ -62,6 +62,7 @@ set(WTF_PUBLIC_HEADERS
     EnumTraits.h
     Expected.h
     ExportMacros.h
+    FailureAction.h
     FastBitVector.h
     FastMalloc.h
     FastTLS.h

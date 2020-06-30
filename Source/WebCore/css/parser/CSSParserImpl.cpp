@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -77,7 +77,9 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& stri
     , m_styleSheet(styleSheet)
     , m_observerWrapper(wrapper)
 {
-    m_tokenizer = wrapper ? makeUnique<CSSTokenizer>(string, *wrapper) : makeUnique<CSSTokenizer>(string);
+    m_tokenizer = wrapper ? CSSTokenizer::tryCreate(string, *wrapper) : CSSTokenizer::tryCreate(string);
+    if (!m_tokenizer)
+        return;
     if (context.deferredCSSParserEnabled && !wrapper && styleSheet && ruleParsing == CSSParser::RuleParsing::Deferred)
         m_deferredParser = CSSDeferredParser::create(context, string, *styleSheet);
 }

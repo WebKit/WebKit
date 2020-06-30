@@ -1,3 +1,51 @@
+2020-06-30  Mark Lam  <mark.lam@apple.com>
+
+        Add handling for a case of OOME in CSSTokenizer and CSSParser.
+        https://bugs.webkit.org/show_bug.cgi?id=213702
+        <rdar://problem/64808889>
+
+        Reviewed by Darin Adler.
+
+        We add a bool* constructionSuccess feedback argument to the private CSSTokenizer
+        constructor.  If construction fails and constructionSuccess is provided, the
+        constructor will set *constructionSuccess to false.  If construction fails and
+        constructionSuccess is not provided, the constructor will crash with a failed
+        RELEASE_ASSERT.  In other words, the client may opt in to handle the failure to
+        construct if it doesn't want the default behavior of crashing on failure.
+
+        We also provide 2 convenience factory methods for CSSTokenizer which will return
+        a null std::unique_ptr<CSSTokenizer> if construction fails.  This is currently
+        only used by CSSParserImpl, and ensures that its m_tokenizer is null if we fail to
+        construct.  This ensures that there isn't a pointer to a partially constructed
+        tokenizer that some code may unknowingly use.
+
+        The reason we don't force all clients of CSSTokenizer to use the factory methods
+        instead is because there are clients that currently use on-stack instantiations
+        of CSSTokenizer to do their work.  We don't want to force them to switch to using
+        a malloc instance.  Currently, the constructors used by those clients do not
+        provide a constructionSuccess argument to the underlying private constructor.
+        Hence, for them, the CSSTokenizer constructor will crash if construction fails,
+        which is how things work in pre-existing code.  The only difference is that
+        the crash is deferred till the client attempts to use the tokenizer instead of at
+        construction time.
+
+        As of this patch, only CSSParser::parseSupportsCondition() makes use of the new
+        feedback mechanism, and handles OOME during CSSTokenizer construction by
+        interpreting it as CSS not supporting the passed in condition string.
+
+        Test: css3/out-of-memory-in-css-tokenizer.html
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSupportsCondition):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::CSSParserImpl):
+        (WebCore::CSSParserImpl::failed const):
+        * css/parser/CSSParserImpl.h:
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::CSSTokenizer::CSSTokenizer):
+        * css/parser/CSSTokenizer.h:
+        (WebCore::CSSTokenizer::failed const):
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Enable the support of FULLSCREEN_API in WebKitTestRunner

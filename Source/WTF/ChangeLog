@@ -1,3 +1,55 @@
+2020-06-30  Mark Lam  <mark.lam@apple.com>
+
+        Add handling for a case of OOME in CSSTokenizer and CSSParser.
+        https://bugs.webkit.org/show_bug.cgi?id=213702
+        <rdar://problem/64808889>
+
+        Reviewed by Darin Adler.
+
+        1. Added FailureAction so that we can parameterize how we want to handle failures.
+           In this patch, we're only using this for allocation failures, but we could
+           technically apply this to other types of failures as well.
+
+        2. Apply FailureAction to many methods in Vector (and its super classes) so that
+           we can start de-duplicating code.  Previously, we were always duplicating code
+           just to have a "try" version of the same method that reports the failure to
+           allocate instead of crashing.  We can now parameterize all these methods on a
+           FailureAction template parameter instead, and avoid the code duplication.
+           This patch also reverses some of the existing code duplication.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FailureAction.h: Added.
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBuffer::allocateBuffer):
+        (WTF::VectorBuffer::tryAllocateBuffer):
+        (WTF::Vector::reserveCapacity):
+        (WTF::Vector::tryReserveCapacity):
+        (WTF::Vector::reserveInitialCapacity):
+        (WTF::Vector::tryReserveInitialCapacity):
+        (WTF::Vector::append):
+        (WTF::Vector::tryAppend):
+        (WTF::Vector::constructAndAppend):
+        (WTF::Vector::tryConstructAndAppend):
+        (WTF::Vector::expandCapacity):
+        (WTF::Vector::resize):
+        (WTF::Vector::grow):
+        (WTF::Vector::reserveCapacity):
+        (WTF::Vector::reserveInitialCapacity):
+        (WTF::Vector::append):
+        (WTF::Vector::constructAndAppend):
+        (WTF::Vector::appendSlowCase):
+        (WTF::Vector::constructAndAppendSlowCase):
+        (WTF::Vector::appendVector):
+        (WTF::Vector::insert):
+        (WTF::Vector::tryExpandCapacity): Deleted.
+        (WTF::Vector::tryReserveCapacity): Deleted.
+        (WTF::Vector::tryAppend): Deleted.
+        (WTF::Vector::tryConstructAndAppend): Deleted.
+        (WTF::Vector::tryConstructAndAppendSlowCase): Deleted.
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Enable the support of FULLSCREEN_API in WebKitTestRunner
