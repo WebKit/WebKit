@@ -3343,9 +3343,6 @@ imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
 # These tests fail unexpectedly with accelerated drawing enabled.
 # Interestingly, these versions fail worse than the more recently updated WPT versions above.
-canvas/philip/tests/2d.gradient.radial.touch1.html [ Failure ]
-canvas/philip/tests/2d.gradient.radial.touch2.html [ Failure ]
-canvas/philip/tests/2d.gradient.radial.touch3.html [ Failure ]
 fast/canvas/set-colors.html [ Failure ]
 
 webkit.org/b/202958 css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
