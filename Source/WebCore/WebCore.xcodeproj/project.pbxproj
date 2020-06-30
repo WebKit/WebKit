@@ -9963,8 +9963,6 @@
 		7C193BFC1F5E10C50088F3E6 /* JSImageSmoothingQuality.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageSmoothingQuality.h; sourceTree = "<group>"; };
 		7C193BFD1F5E10D60088F3E6 /* JSPath2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPath2D.cpp; sourceTree = "<group>"; };
 		7C193BFE1F5E10D70088F3E6 /* JSPath2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSPath2D.h; sourceTree = "<group>"; };
-		7C1B4A6524A997590033727F /* ColorBlending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorBlending.cpp; sourceTree = "<group>"; };
-		7C1B4A6724A997660033727F /* ColorBlending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorBlending.h; sourceTree = "<group>"; };
 		7C1E8CFF1ED0C2BE00B1D983 /* BeforeUnloadEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BeforeUnloadEvent.idl; sourceTree = "<group>"; };
 		7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackResult.h; sourceTree = "<group>"; };
 		7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoFillButtonElement.cpp; sourceTree = "<group>"; };
@@ -25495,8 +25493,6 @@
 				A89943260B42338700D7C802 /* BitmapImage.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
-				7C1B4A6524A997590033727F /* ColorBlending.cpp */,
-				7C1B4A6724A997660033727F /* ColorBlending.h */,
 				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,

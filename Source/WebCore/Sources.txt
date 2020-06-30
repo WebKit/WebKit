@@ -1907,7 +1907,6 @@ platform/encryptedmedia/CDMProxy.cpp
 platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
-platform/graphics/ColorBlending.cpp
 platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp

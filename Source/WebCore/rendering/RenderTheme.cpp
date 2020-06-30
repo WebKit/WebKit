@@ -22,7 +22,6 @@
 #include "RenderTheme.h"
 
 #include "CSSValueKeywords.h"
-#include "ColorBlending.h"
 #include "ControlStates.h"
 #include "Document.h"
 #include "FileList.h"
@@ -617,7 +616,7 @@ Color RenderTheme::inactiveSelectionBackgroundColor(OptionSet<StyleColor::Option
 
 Color RenderTheme::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColor::Options>) const
 {
-    return blendWithWhite(color);
+    return color.blendWithWhite();
 }
 
 Color RenderTheme::activeSelectionForegroundColor(OptionSet<StyleColor::Options> options) const

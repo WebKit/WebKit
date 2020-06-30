@@ -29,7 +29,6 @@
 #include "BitmapImage.h"
 #include "BorderEdge.h"
 #include "CachedImage.h"
-#include "ColorBlending.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "FloatRoundedRect.h"
@@ -935,7 +934,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             FloatRect backgroundRectForPainting = snapRectToDevicePixels(backgroundRect, deviceScaleFactor);
             if (baseColor.isVisible()) {
                 if (!baseBgColorOnly && bgColor.isVisible())
-                    baseColor = blendSourceOver(baseColor, bgColor);
+                    baseColor = baseColor.blend(bgColor);
                 context.fillRect(backgroundRectForPainting, baseColor, CompositeOperator::Copy);
             } else if (!baseBgColorOnly && bgColor.isVisible()) {
                 auto operation = context.compositeOperation();

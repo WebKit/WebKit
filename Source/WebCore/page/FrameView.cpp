@@ -35,7 +35,6 @@
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ColorBlending.h"
 #include "DOMWindow.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
@@ -4038,11 +4037,11 @@ Color FrameView::documentBackgroundColor() const
     if (!bodyBackgroundColor.isValid()) {
         if (!htmlBackgroundColor.isValid())
             return Color();
-        return blendSourceOver(baseBackgroundColor(), htmlBackgroundColor);
+        return baseBackgroundColor().blend(htmlBackgroundColor);
     }
 
     if (!htmlBackgroundColor.isValid())
-        return blendSourceOver(baseBackgroundColor(), bodyBackgroundColor);
+        return baseBackgroundColor().blend(bodyBackgroundColor);
 
     // We take the aggregate of the base background color
     // the <html> background color, and the <body>
@@ -4051,7 +4050,7 @@ Color FrameView::documentBackgroundColor() const
     // technically part of the document background, but it
     // otherwise poses problems when the aggregate is not
     // fully opaque.
-    return blendSourceOver(blendSourceOver(baseBackgroundColor(), htmlBackgroundColor), bodyBackgroundColor);
+    return baseBackgroundColor().blend(htmlBackgroundColor).blend(bodyBackgroundColor);
 }
 
 bool FrameView::hasCustomScrollbars() const

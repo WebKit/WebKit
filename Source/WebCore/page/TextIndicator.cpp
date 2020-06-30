@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TextIndicator.h"
 
-#include "ColorBlending.h"
 #include "ColorHash.h"
 #include "Document.h"
 #include "Editor.h"
@@ -250,7 +249,7 @@ static Color estimatedBackgroundColorForRange(const SimpleRange& range, const Fr
     }
     parentRendererBackgroundColors.reverse();
     for (const auto& backgroundColor : parentRendererBackgroundColors)
-        estimatedBackgroundColor = blendSourceOver(estimatedBackgroundColor, backgroundColor);
+        estimatedBackgroundColor = estimatedBackgroundColor.blend(backgroundColor);
 
     return estimatedBackgroundColor;
 }
