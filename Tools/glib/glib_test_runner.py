@@ -132,7 +132,7 @@ class GLibTestRunner(object):
         while read_set:
             try:
                 rlist, _, _ = select.select(read_set, [], [])
-            except select.error, e:
+            except select.error as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise
@@ -153,7 +153,7 @@ class GLibTestRunner(object):
         while True:
             try:
                 rlist, _, _ = select.select(read_set, [], [], 0)
-            except select.error, e:
+            except select.error as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise

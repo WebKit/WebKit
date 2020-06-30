@@ -1,3 +1,22 @@
+2020-06-30  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] Port API test harness to Python3
+        https://bugs.webkit.org/show_bug.cgi?id=213784
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        At least now the import chain starting from run-gtk-tests succeeds when the host Python
+        version is 3. Within the SDK the harness is still executed under Python2 though, for now.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner._setup_testing_environment):
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_qt):
+        * glib/glib_test_runner.py:
+        (GLibTestRunner._read_from_pipe):
+        (GLibTestRunner._read_from_stderr):
+        * jhbuild/jhbuildutils.py:
+
 2020-06-30  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitperl] nativeArchitecture() needs to support remote devices

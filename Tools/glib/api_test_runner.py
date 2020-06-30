@@ -180,13 +180,13 @@ class TestRunner(object):
         try:
             output = subprocess.check_output([test_program, ], stderr=subprocess.STDOUT,
                                              env=env, timeout=self._options.timeout)
-        except subprocess.CalledProcessError, exc:
+        except subprocess.CalledProcessError as exc:
             print(exc.output)
             if exc.returncode > 0:
                 result = "FAIL"
             elif exc.returncode < 0:
                 result = "CRASH"
-        except subprocess.TimeoutExpired, exp:
+        except subprocess.TimeoutExpired as exp:
             result = "TIMEOUT"
             print(exp.output)
         else:

@@ -17,6 +17,7 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from __future__ import print_function
 import logging
 import subprocess
 import os
@@ -109,7 +110,7 @@ class GtkTestRunner(TestRunner):
 
         # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
         if not self._start_accessibility_daemons():
-            print "Could not start accessibility bus, so disabling TestWebKitAccessibility"
+            print("Could not start accessibility bus, so disabling TestWebKitAccessibility")
             self._disabled_tests.append("WebKit2Gtk/TestWebKitAccessibility")
 
     def _tear_down_testing_environment(self):
@@ -131,10 +132,10 @@ class GtkTestRunner(TestRunner):
 if __name__ == "__main__":
     flatpakutils.run_in_sandbox_if_available(sys.argv)
     if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available("gtk"):
-        print '***'
-        print '*** Warning: jhbuild environment not present and not running in flatpak.'
-        print '*** Run update-webkitgtk-libs or update-webkit-flatpak before build-webkit to ensure proper testing..'
-        print '***'
+        print('***')
+        print('*** Warning: jhbuild environment not present and not running in flatpak.')
+        print('*** Run update-webkitgtk-libs or update-webkit-flatpak before build-webkit to ensure proper testing..')
+        print('***')
 
     option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
     add_options(option_parser)

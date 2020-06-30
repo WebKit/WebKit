@@ -2,7 +2,11 @@ import gettext
 import glob
 import os.path
 import sys
-import __builtin__
+try:
+    import __builtin__
+except ImportError:
+    import builtins
+    __builtin__ = builtins
 
 top_level_dir = None
 
