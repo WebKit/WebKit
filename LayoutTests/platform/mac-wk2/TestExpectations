@@ -1037,3 +1037,5 @@ webkit.org/b/213553 http/tests/resourceLoadStatistics/grandfathering-database.ht
 webkit.org/b/213621 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html [ Pass Failure ]
 
 webkit.org/b/213652 webrtc/video-autoplay1.html [ Pass Failure ]
+
+webkit.org/b/213795 [ Mojave Debug ] http/tests/storage/storage-map-leaking.html [ Pass Timeout ]
