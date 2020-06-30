@@ -1,3 +1,14 @@
+2020-06-30  Youenn Fablet  <youenn@apple.com>
+
+        Add VP9 WebRTC codec runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=213724
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2020-06-29  Brady Eidson  <beidson@apple.com>
 
         JavaScript cannot be injected into iframes

@@ -25,76 +25,10 @@
 
 #include "WebKitUtilities.h"
 
-//#include "Common/RTCUIApplicationStatusObserver.h"
-#import "WebRTC/RTCVideoCodecH264.h"
-
-#include "api/video/video_frame.h"
-#include "helpers/scoped_cftyperef.h"
 #include "native/src/objc_frame_buffer.h"
-#include "rtc_base/time_utils.h"
-#include "sdk/objc/components/video_codec/nalu_rewriter.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
-#include "webrtc/rtc_base/checks.h"
-#include "Framework/Headers/WebRTC/RTCVideoCodecFactory.h"
-#include "Framework/Headers/WebRTC/RTCVideoFrame.h"
 #include "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
-#include "Framework/Native/api/video_decoder_factory.h"
-#include "Framework/Native/api/video_encoder_factory.h"
-#include "VideoProcessingSoftLink.h"
-#include "WebKitEncoder.h"
 
-#include <mutex>
-
-/*
-#if !defined(WEBRTC_IOS)
-__attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
-@interface RTCUIApplicationStatusObserver : NSObject
-
-+ (instancetype)sharedInstance;
-+ (void)prepareForUse;
-
-- (BOOL)isApplicationActive;
-
-@end
-#endif
-
-@implementation RTCUIApplicationStatusObserver {
-    BOOL _isActive;
-}
-
-+ (instancetype)sharedInstance {
-    static id sharedInstance;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedInstance = [[self alloc] init];
-    });
-
-    return sharedInstance;
-}
-
-+ (void)prepareForUse {
-    __unused RTCUIApplicationStatusObserver *observer = [self sharedInstance];
-}
-
-- (id)init {
-    _isActive = YES;
-    return self;
-}
-
-- (void)setActive {
-    _isActive = YES;
-}
-
-- (void)setInactive {
-    _isActive = NO;
-}
-
-- (BOOL)isApplicationActive {
-    return _isActive;
-}
-
-@end
-*/
 namespace webrtc {
 
 void setApplicationStatus(bool isActive)
@@ -105,30 +39,6 @@ void setApplicationStatus(bool isActive)
     else
         [[RTCUIApplicationStatusObserver sharedInstance] setInactive];
  */
-}
-
-std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport codecSupport)
-{
-#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        webrtc::VPModuleInitialize();
-    });
-#endif
-
-    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: codecSupport == WebKitCodecSupport::H264VP8AndH265]);
-    return std::make_unique<VideoEncoderFactoryWithSimulcast>(std::move(internalFactory));
-}
-
-static bool h264HardwareEncoderAllowed = true;
-void setH264HardwareEncoderAllowed(bool allowed)
-{
-    h264HardwareEncoderAllowed = allowed;
-}
-
-bool isH264HardwareEncoderAllowed()
-{
-    return h264HardwareEncoderAllowed;
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef pixelBuffer)

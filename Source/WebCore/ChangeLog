@@ -1,3 +1,29 @@
+2020-06-30  Youenn Fablet  <youenn@apple.com>
+
+        Add VP9 WebRTC codec runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=213724
+
+        Reviewed by Eric Carlson.
+
+        Add binding code to switch on/off VP9 in WebRTC factories based on runtime flag.
+
+        Test: webrtc/vp9.html
+
+        * page/Page.cpp:
+        (WebCore::m_shouldRelaxThirdPartyCookieBlocking):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCVP9CodecEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCVP9CodecEnabled):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProviderCocoa::createDecoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setWebRTCH265Support):
+        (WebCore::Internals::setWebRTCVP9Support):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-29  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] REGRESSION: Bootstrap Carousel component v4.1 regressed with Web Animations

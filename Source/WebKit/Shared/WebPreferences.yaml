@@ -606,6 +606,15 @@ WebRTCH265CodecEnabled:
   humanReadableDescription: "Enable WebRTC H265 codec"
   category: experimental
 
+WebRTCVP9CodecEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC VP9 codec"
+  humanReadableDescription: "Enable WebRTC VP9 codec"
+  category: experimental
+
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool
   defaultValue: defaultWebRTCCodecsInGPUProcess()

@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 RTC_OBJC_EXPORT
 __attribute__((objc_runtime_name("WK_RTCDefaultVideoDecoderFactory")))
 @interface RTCDefaultVideoDecoderFactory : NSObject <RTCVideoDecoderFactory>
-- (id)initWithH265:(bool)supportH265;
+- (id)initWithH265:(bool)supportH265 vp9:(bool)supportsVP9;
 @end
 
 NS_ASSUME_NONNULL_END

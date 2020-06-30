@@ -14,6 +14,7 @@
 #import "RTCVideoDecoder.h"
 
 RTC_OBJC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoDecoderVP9")))
 @interface RTCVideoDecoderVP9 : NSObject
 
 /* This returns a VP9 decoder that can be returned from a RTCVideoDecoderFactory injected into

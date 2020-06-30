@@ -1613,6 +1613,25 @@ void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connecti
 {
     connection.applyRotationForOutgoingVideoSources();
 }
+void Internals::setWebRTCH265Support(bool value)
+{
+#if USE(LIBWEBRTC)
+    if (auto* page = contextDocument()->page()) {
+        page->libWebRTCProvider().setH265Support(value);
+        page->libWebRTCProvider().clearFactory();
+    }
+#endif
+}
+
+void Internals::setWebRTCVP9Support(bool value)
+{
+#if USE(LIBWEBRTC)
+    if (auto* page = contextDocument()->page()) {
+        page->libWebRTCProvider().setVP9Support(value);
+        page->libWebRTCProvider().clearFactory();
+    }
+#endif
+}
 
 void Internals::setEnableWebRTCEncryption(bool value)
 {

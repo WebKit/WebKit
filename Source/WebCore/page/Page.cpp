@@ -334,7 +334,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
 
 #if USE(LIBWEBRTC)
-    m_libWebRTCProvider->supportsH265(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
+    m_libWebRTCProvider->setH265Support(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
+    m_libWebRTCProvider->setVP9Support(RuntimeEnabledFeatures::sharedFeatures().webRTCVP9CodecEnabled());
 #endif
 
     if (!pageConfiguration.userScriptsShouldWaitUntilNotification)

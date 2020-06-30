@@ -776,6 +776,8 @@ enum CompositingPolicy {
 
     [Conditional=WEB_RTC] void setH264HardwareEncoderAllowed(boolean allowed);
     [Conditional=WEB_RTC] void applyRotationForOutgoingVideoSources(RTCPeerConnection connection);
+    [Conditional=WEB_RTC] void setWebRTCH265Support(boolean allowed);
+    [Conditional=WEB_RTC] void setWebRTCVP9Support(boolean allowed);
 
     [Conditional=MEDIA_STREAM] void setMockAudioTrackChannelNumber(MediaStreamTrack track, unsigned short count);
     [Conditional=MEDIA_STREAM] void setShouldInterruptAudioOnPageVisibilityChange(boolean shouldInterrupt);

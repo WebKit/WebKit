@@ -33,10 +33,11 @@
 #include "sdk/objc/api/peerconnection/RTCRtpFragmentationHeader+Private.h"
 #include "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
 #include "sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h"
+#include "sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h"
 #include "sdk/objc/components/video_codec/RTCVideoEncoderH264.h"
 #include "sdk/objc/components/video_codec/RTCVideoEncoderH265.h"
 #include "sdk/objc/native/src/objc_frame_buffer.h"
-
+#include "sdk/objc/native/api/video_encoder_factory.h"
 
 @interface WK_RTCLocalVideoH264H265Encoder : NSObject
 - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo;
@@ -93,6 +94,30 @@
 }
 @end
 namespace webrtc {
+
+std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9)
+{
+#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        webrtc::VPModuleInitialize();
+    });
+#endif
+
+    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9:supportsVP9 == WebKitVP9::On]);
+    return std::make_unique<VideoEncoderFactoryWithSimulcast>(std::move(internalFactory));
+}
+
+static bool h264HardwareEncoderAllowed = true;
+void setH264HardwareEncoderAllowed(bool allowed)
+{
+    h264HardwareEncoderAllowed = allowed;
+}
+
+bool isH264HardwareEncoderAllowed()
+{
+    return h264HardwareEncoderAllowed;
+}
 
 std::unique_ptr<VideoEncoder> VideoEncoderFactoryWithSimulcast::CreateVideoEncoder(const SdpVideoFormat& format)
 {

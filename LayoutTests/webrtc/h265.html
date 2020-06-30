@@ -18,9 +18,16 @@
 var hasH265 = false;
 test(() => {
     if (window.internals)
-        window.internals.clearPeerConnectionFactory();
+        window.internals.setWebRTCH265Support(false);
 
-    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    let codecs = RTCRtpSender.getCapabilities("video").codecs;
+    hasH265 = codecs.some((codec) => { return codec.mimeType == "video/H265"; });
+    assert_false(hasH265);
+
+    if (window.internals)
+        window.internals.setWebRTCH265Support(true);
+
+    codecs = RTCRtpSender.getCapabilities("video").codecs;
     hasH265 = codecs.some((codec) => { return codec.mimeType == "video/H265"; });
     assert_true(hasH265);
 }, "H265 in getCapabilities");

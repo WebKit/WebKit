@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VP9 in WebRTC</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+let hasVP9;
+test(() => {
+    if (window.internals)
+        window.internals.setWebRTCVP9Support(false);
+
+    let codecs = RTCRtpSender.getCapabilities("video").codecs;
+    hasVP9 = codecs.some((codec) => { return codec.mimeType == "video/VP9"; });
+    assert_false(hasVP9);
+
+    if (window.internals)
+        window.internals.setWebRTCVP9Support(true);
+
+    codecs = RTCRtpSender.getCapabilities("video").codecs;
+    hasVP9 = codecs.some((codec) => { return codec.mimeType == "video/VP9"; });
+    assert_true(hasVP9);
+}, "VP9 in getCapabilities");
+
+if (hasVP9) {
+    promise_test(async (test) => {
+        const pc = new RTCPeerConnection();
+        pc.addTransceiver("video");
+        const description = await pc.createOffer();
+        pc.close();
+        assert_true(description.sdp.indexOf("VP9") !== -1, "VP9 codec is in the SDP");
+    }, "Verify VP9 activation")
+}
+        </script>
+    </body>
+</html>

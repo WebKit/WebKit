@@ -104,7 +104,10 @@ public:
     void disableEnumeratingAllNetworkInterfaces();
     void enableEnumeratingAllNetworkInterfaces();
 
-    void supportsH265(bool value) { m_supportsH265 = value; }
+    void setH265Support(bool value) { m_supportsH265 = value; }
+    void setVP9Support(bool value) { m_supportsVP9 = value; }
+    bool isSupportingH265() const { return m_supportsH265; }
+    bool isSupportingVP9() const { return m_supportsVP9; }
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
     rtc::RTCCertificateGenerator& certificateGenerator();
@@ -146,6 +149,7 @@ protected:
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
     bool m_disableNonLocalhostConnections { false };
     bool m_supportsH265 { false };
+    bool m_supportsVP9 { false };
     bool m_enableLogging { true };
     bool m_useDTLS10 { false };
 #endif

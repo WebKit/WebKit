@@ -978,6 +978,12 @@
 		413E67A32169889500EF37ED /* RTCVideoEncoderQpThresholds.m in Sources */ = {isa = PBXBuildFile; fileRef = 413E679F2169889500EF37ED /* RTCVideoEncoderQpThresholds.m */; };
 		413E67A5216988DC00EF37ED /* video_stream_encoder_observer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413E67A4216988DC00EF37ED /* video_stream_encoder_observer.cc */; };
 		413F4D7022B0BAEF006A7A6B /* RTCVideoDecoderVP8.h in Headers */ = {isa = PBXBuildFile; fileRef = 413F4D6F22B0BAEE006A7A6B /* RTCVideoDecoderVP8.h */; };
+		414035EC24AA0EBC00BCE9B2 /* RTCVideoDecoderVP9.h in Headers */ = {isa = PBXBuildFile; fileRef = 414035E824AA0EBB00BCE9B2 /* RTCVideoDecoderVP9.h */; };
+		414035ED24AA0EBC00BCE9B2 /* RTCVideoEncoderVP9.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414035E924AA0EBB00BCE9B2 /* RTCVideoEncoderVP9.mm */; };
+		414035EE24AA0EBC00BCE9B2 /* RTCVideoEncoderVP9.h in Headers */ = {isa = PBXBuildFile; fileRef = 414035EA24AA0EBB00BCE9B2 /* RTCVideoEncoderVP9.h */; };
+		414035EF24AA0EBC00BCE9B2 /* RTCVideoDecoderVP9.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414035EB24AA0EBB00BCE9B2 /* RTCVideoDecoderVP9.mm */; };
+		414035F224AA0F5400BCE9B2 /* video_rtp_depacketizer_vp9.cc in Sources */ = {isa = PBXBuildFile; fileRef = 414035F024AA0F5300BCE9B2 /* video_rtp_depacketizer_vp9.cc */; };
+		414035F324AA0F5400BCE9B2 /* video_rtp_depacketizer_vp9.h in Headers */ = {isa = PBXBuildFile; fileRef = 414035F124AA0F5300BCE9B2 /* video_rtp_depacketizer_vp9.h */; };
 		4140B8201E4E3383007409E6 /* audio_encoder_pcm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */; };
 		4140B8211E4E3383007409E6 /* audio_encoder_pcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */; };
 		4140B8221E4E3383007409E6 /* audio_decoder_pcm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */; };
@@ -4991,6 +4997,12 @@
 		413E67A92169894C00EF37ED /* RTCNativeI420Buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCNativeI420Buffer.h; sourceTree = "<group>"; };
 		413E67AA2169894C00EF37ED /* RTCNativeMutableI420Buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCNativeMutableI420Buffer.h; sourceTree = "<group>"; };
 		413F4D6F22B0BAEE006A7A6B /* RTCVideoDecoderVP8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoDecoderVP8.h; sourceTree = "<group>"; };
+		414035E824AA0EBB00BCE9B2 /* RTCVideoDecoderVP9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoDecoderVP9.h; sourceTree = "<group>"; };
+		414035E924AA0EBB00BCE9B2 /* RTCVideoEncoderVP9.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCVideoEncoderVP9.mm; sourceTree = "<group>"; };
+		414035EA24AA0EBB00BCE9B2 /* RTCVideoEncoderVP9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoEncoderVP9.h; sourceTree = "<group>"; };
+		414035EB24AA0EBB00BCE9B2 /* RTCVideoDecoderVP9.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCVideoDecoderVP9.mm; sourceTree = "<group>"; };
+		414035F024AA0F5300BCE9B2 /* video_rtp_depacketizer_vp9.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_rtp_depacketizer_vp9.cc; sourceTree = "<group>"; };
+		414035F124AA0F5300BCE9B2 /* video_rtp_depacketizer_vp9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_rtp_depacketizer_vp9.h; sourceTree = "<group>"; };
 		4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audio_encoder_pcm.cc; path = g711/audio_encoder_pcm.cc; sourceTree = "<group>"; };
 		4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio_encoder_pcm.h; path = g711/audio_encoder_pcm.h; sourceTree = "<group>"; };
 		4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audio_decoder_pcm.cc; path = g711/audio_decoder_pcm.cc; sourceTree = "<group>"; };
@@ -9282,6 +9294,10 @@
 				41795402216985200028266B /* RTCVideoDecoderVP8.mm */,
 				417954012169851F0028266B /* RTCVideoEncoderVP8.h */,
 				413E67642169854500EF37ED /* RTCVideoEncoderVP8.mm */,
+				414035E824AA0EBB00BCE9B2 /* RTCVideoDecoderVP9.h */,
+				414035EB24AA0EBB00BCE9B2 /* RTCVideoDecoderVP9.mm */,
+				414035EA24AA0EBB00BCE9B2 /* RTCVideoEncoderVP9.h */,
+				414035E924AA0EBB00BCE9B2 /* RTCVideoEncoderVP9.mm */,
 				417953FE2169851F0028266B /* RTCWrappedNativeVideoDecoder.h */,
 				41795403216985200028266B /* RTCWrappedNativeVideoDecoder.mm */,
 				41795404216985200028266B /* RTCWrappedNativeVideoEncoder.h */,
@@ -13460,6 +13476,8 @@
 				41893907242A704B007FDC41 /* video_rtp_depacketizer_raw.h */,
 				4189390A242A704C007FDC41 /* video_rtp_depacketizer_vp8.cc */,
 				4189390B242A704C007FDC41 /* video_rtp_depacketizer_vp8.h */,
+				414035F024AA0F5300BCE9B2 /* video_rtp_depacketizer_vp9.cc */,
+				414035F124AA0F5300BCE9B2 /* video_rtp_depacketizer_vp9.h */,
 			);
 			name = source;
 			path = rtp_rtcp/source;
@@ -15061,6 +15079,7 @@
 				4131C02F234B898D0028A615 /* event.h in Headers */,
 				41893A5C242A77B8007FDC41 /* event_based_exponential_moving_average.h in Headers */,
 				5CD286151E6A66130094FDC8 /* event_log_writer.h in Headers */,
+				414035EC24AA0EBC00BCE9B2 /* RTCVideoDecoderVP9.h in Headers */,
 				41893A5B242A77B8007FDC41 /* event_rate_counter.h in Headers */,
 				4131C051234B898D0028A615 /* event_tracer.h in Headers */,
 				419C83501FE246650040C30F /* exp_filter.h in Headers */,
@@ -15703,6 +15722,7 @@
 				4131C4D6234C84A30028A615 /* rtp_dependency_descriptor_extension.h in Headers */,
 				4131C4DB234C84A30028A615 /* rtp_dependency_descriptor_reader.h in Headers */,
 				4131C4DC234C84A30028A615 /* rtp_dependency_descriptor_writer.h in Headers */,
+				414035EE24AA0EBC00BCE9B2 /* RTCVideoEncoderVP9.h in Headers */,
 				4189391B242A704E007FDC41 /* rtp_descriptor_authentication.h in Headers */,
 				5CDD8AB71E43C00F00621E92 /* rtp_file_source.h in Headers */,
 				5CDD88B11E43BE3C00621E92 /* rtp_format.h in Headers */,
@@ -15987,6 +16007,7 @@
 				5CDD873E1E43BABE00621E92 /* vad_circular_buffer.h in Headers */,
 				5CDD86D71E43BA2800621E92 /* vad_core.h in Headers */,
 				5CDD86DA1E43BA2800621E92 /* vad_filterbank.h in Headers */,
+				414035F324AA0F5400BCE9B2 /* video_rtp_depacketizer_vp9.h in Headers */,
 				5CDD86DD1E43BA2800621E92 /* vad_gmm.h in Headers */,
 				5CDD86E01E43BA2800621E92 /* vad_sp.h in Headers */,
 				415F1FB621272FBA00064CBF /* vad_with_level.h in Headers */,
@@ -17396,6 +17417,7 @@
 				5CDD8FFE1E43CE3A00621E92 /* audio_encoder_pcm16b.cc in Sources */,
 				5CD285461E6A61D20094FDC8 /* audio_format.cc in Sources */,
 				41DDB26F212679D200296D47 /* audio_format_to_string.cc in Sources */,
+				414035EF24AA0EBC00BCE9B2 /* RTCVideoDecoderVP9.mm in Sources */,
 				4131C3A7234B96C30028A615 /* audio_frame.cc in Sources */,
 				5CD284921E6A5F410094FDC8 /* audio_frame_manipulator.cc in Sources */,
 				5CD2854D1E6A62130094FDC8 /* audio_frame_operations.cc in Sources */,
@@ -17789,6 +17811,7 @@
 				4131BEFC234B88200028A615 /* jsep_transport_controller.cc in Sources */,
 				4131C227234B8BB20028A615 /* keyframe_interval_settings.cc in Sources */,
 				5CDD87C41E43BC0500621E92 /* lattice.c in Sources */,
+				414035ED24AA0EBC00BCE9B2 /* RTCVideoEncoderVP9.mm in Sources */,
 				41433CF21F79B33400387B4D /* lattice.c in Sources */,
 				41433D141F79B33400387B4D /* lattice_c.c in Sources */,
 				5CDD841F1E439B2900621E92 /* legacy_encoded_audio_frame.cc in Sources */,
@@ -17866,6 +17889,7 @@
 				5CDD8A321E43BFB300621E92 /* nack_tracker.cc in Sources */,
 				417953B4216982420028266B /* nalu_rewriter.cc in Sources */,
 				4131C03C234B898D0028A615 /* nat_server.cc in Sources */,
+				414035F224AA0F5400BCE9B2 /* video_rtp_depacketizer_vp9.cc in Sources */,
 				4131C054234B898D0028A615 /* nat_socket_factory.cc in Sources */,
 				4131C089234B898D0028A615 /* nat_types.cc in Sources */,
 				5CDD8BD11E43C2B500621E92 /* nearest_neighbor.c in Sources */,

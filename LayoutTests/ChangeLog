@@ -1,3 +1,14 @@
+2020-06-30  Youenn Fablet  <youenn@apple.com>
+
+        Add VP9 WebRTC codec runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=213724
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/h265.html:
+        * webrtc/vp9-expected.txt: Added.
+        * webrtc/vp9.html: Added.
+
 2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Add more OffscreenCanvas flaky failures.

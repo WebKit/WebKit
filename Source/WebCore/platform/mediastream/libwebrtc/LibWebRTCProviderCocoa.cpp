@@ -56,16 +56,14 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecod
 {
     ASSERT(isMainThread());
 
-    auto codecSupport = m_supportsH265 ? webrtc::WebKitCodecSupport::H264VP8AndH265 : webrtc::WebKitCodecSupport::H264AndVP8;
-    return webrtc::createWebKitDecoderFactory(codecSupport);
+    return webrtc::createWebKitDecoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off);
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()
 {
     ASSERT(isMainThread());
 
-    auto codecSupport = m_supportsH265 ? webrtc::WebKitCodecSupport::H264VP8AndH265 : webrtc::WebKitCodecSupport::H264AndVP8;
-    return webrtc::createWebKitEncoderFactory(codecSupport);
+    return webrtc::createWebKitEncoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off);
 }
 
 void LibWebRTCProviderCocoa::setActive(bool value)

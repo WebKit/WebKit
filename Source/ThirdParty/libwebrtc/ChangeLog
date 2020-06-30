@@ -1,3 +1,39 @@
+2020-06-30  Youenn Fablet  <youenn@apple.com>
+
+        Add VP9 WebRTC codec runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=213724
+
+        Reviewed by Eric Carlson.
+
+        Update WebKit binding code to switch on/off VP9 encoder/decoder.
+        We still use vp9_noop for now, so encoder/decoder is not functional.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Source/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        (webrtc::createWebKitDecoderFactory):
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (webrtc::createWebKitEncoderFactory):
+        (webrtc::setH264HardwareEncoderAllowed):
+        (webrtc::isH264HardwareEncoderAllowed):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        * Source/webrtc/sdk/objc/api/video_codec/RTCVideoDecoderVP9.h:
+        * Source/webrtc/sdk/objc/api/video_codec/RTCVideoEncoderVP9.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m:
+        (-[RTCDefaultVideoDecoderFactory initWithH265:vp9:]):
+        (-[RTCDefaultVideoDecoderFactory supportedCodecs]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m:
+        (-[RTCDefaultVideoEncoderFactory initWithH265:vp9:]):
+        (-[RTCDefaultVideoEncoderFactory supportedCodecs]):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-06-24  Youenn Fablet  <youenn@apple.com>
 
         Add logging to WebRTC video pipeline to check for frame rate stability

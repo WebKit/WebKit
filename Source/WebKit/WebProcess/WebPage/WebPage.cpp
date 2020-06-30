@@ -3728,7 +3728,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         m_drawingArea->updatePreferences(store);
 
 #if USE(LIBWEBRTC)
-    m_page->libWebRTCProvider().supportsH265(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
+    m_page->libWebRTCProvider().setH265Support(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
+    m_page->libWebRTCProvider().setVP9Support(RuntimeEnabledFeatures::sharedFeatures().webRTCVP9CodecEnabled());
 #endif
 
 #if ENABLE(GPU_PROCESS)

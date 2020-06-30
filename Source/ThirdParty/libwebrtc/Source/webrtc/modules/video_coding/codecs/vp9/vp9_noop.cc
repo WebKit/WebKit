@@ -9,9 +9,7 @@
  *
  */
 
-#if defined(RTC_ENABLE_VP9)
-#error
-#endif  // !defined(RTC_ENABLE_VP9)
+// FIXME: Use libvpx to support VP9 encoder and decoder.
 
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 
