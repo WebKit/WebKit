@@ -1,5 +1,11 @@
 2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Add more OffscreenCanvas flaky failures.
+
+        * platform/glib/TestExpectations:
+
+2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Move WPE and GTK OffscreenCanvas failures to GLIB.
 
         * platform/glib/TestExpectations:
