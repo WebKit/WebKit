@@ -268,6 +268,8 @@ webkit.org/b/186665 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr
 webkit.org/b/213113 svg/filters/feConvolveMatrix-clipped.svg [ ImageOnlyFailure ]
 webkit.org/b/213113 svg/filters/feGaussianBlur-clipped.svg [ ImageOnlyFailure ]
 
+webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +311,8 @@ webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [
 webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
 
 webkit.org/b/212925 webrtc/multi-audio.html [ Failure ]
+
+webkit.org/b/213780 webrtc/vp9.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

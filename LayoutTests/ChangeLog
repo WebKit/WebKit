@@ -1,5 +1,11 @@
 2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Update test expectations after r263734.
+
+        * platform/glib/TestExpectations:
+
+2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Update expectations after r263733.
 
         * platform/glib/TestExpectations:
