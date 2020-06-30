@@ -1,3 +1,20 @@
+2020-06-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitperl] nativeArchitecture() needs to support remote devices
+        https://bugs.webkit.org/show_bug.cgi?id=213727
+        <rdar://problem/64892021>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests: Determine the machine actually running tests and pass
+        that to nativeArchitecture(...).
+        (runTest): Pass nativeTarget and nativePort.
+        (runJSCStressTests): Ditto.
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture): Native architecture is dependent on the target device.
+        (determineArchitecture): Call nativeArchitecture() instead of accessing the variable directly.
+        (nativeArchitecture): Ensure that we return only the architecture of the specified target.
+
 2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed API test gardening. Update test expectations after r263738.

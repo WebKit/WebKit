@@ -486,17 +486,38 @@ if ($showHelp) {
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $archsInBuild = architecturesForProducts();
+
+my $nativeTarget = "";
+my $nativePort = 0;
+$nativeTarget = $remoteHost if ($remoteHost);
+if (defined $remoteConfigFile) {
+    open my $handle, '<', $remoteConfigFile or die "Failed to open $remoteConfigFile: $!";
+    my $configJson = do { local $/; <$handle> };
+    my $remoteConfig = decode_json($configJson);
+    if (defined $remoteConfig->{"remotes"}) {
+        my $remotes = $remoteConfig->{"remotes"};
+        my @split = split(':', @$remotes[0]->{"address"});
+        $nativeTarget = $split[0];
+        $nativePort = $split[1] if scalar(@split) > 1;
+    } elsif (defined $remoteConfig->{"remote"}) {
+        my @split = split(':', $remoteConfig->{"remote"});
+        $nativeTarget = $split[0];
+        $nativePort = $split[1] if scalar(@split) > 1;
+    }
+}
+$nativePort = 22 if $nativeTarget && !$nativePort;
+
 if (defined $archs) {
     die "$archs not supported by the provided binary, which supports '$archsInBuild'" if index($archsInBuild, $archs) == -1;
 } else {
     # Fallback is x86_64, which we replace with the native architecture if the native architecture is in the provided build
     $archs = "x86_64";
-    $archs = nativeArchitecture() if index($archsInBuild, nativeArchitecture()) != -1;
+    $archs = nativeArchitecture($nativeTarget, $nativePort) if (!isAppleMacWebKit() || index($archsInBuild, nativeArchitecture($nativeTarget, $nativePort)) != -1);
 }
 
 # For running tests, arm64e should map to arm64
 $archs = "arm64" if $archs eq "arm64e";
-if ($archs ne nativeArchitecture() && (nativeArchitecture() ne "arm64" || !isAppleMacWebKit())) {
+if ($archs ne nativeArchitecture($nativeTarget, $nativePort) && (nativeArchitecture($nativeTarget, $nativePort) ne "arm64" || !isAppleMacWebKit())) {
     die "Cannot run tests with $archs on this machine";
 }
 
@@ -568,7 +589,7 @@ sub runTest {
     chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
     my @command = (testPath($productDir, $testName));
     unshift @command, ("xcrun", "-sdk", xcodeSDK(), "sim") if willUseIOSSimulatorSDK();
-    unshift @command, ("/usr/bin/arch", "-$archs") if $archs ne nativeArchitecture();
+    unshift @command, ("/usr/bin/arch", "-$archs") if $archs ne nativeArchitecture($nativeTarget, $nativePort);
     unshift @command, wrapperPrefixIfNeeded() if isGtk() or isWPE();
 
     if ($envVars ne "") {
@@ -732,7 +753,7 @@ sub runJSCStressTests
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
         "-j", jscPath($productDir), "-o", $jscStressResultsDir, "--arch", $archs);
 
-    if (nativeArchitecture() != $archs) {
+    if (nativeArchitecture($nativeTarget, $nativePort) ne $archs) {
         push(@jscStressDriverCmd, "--force-architecture");
         push(@jscStressDriverCmd, $archs);
     }

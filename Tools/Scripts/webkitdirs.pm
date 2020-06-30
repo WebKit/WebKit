@@ -128,7 +128,7 @@ use constant IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX => "iPhone Developer: ";
 our @EXPORT_OK;
 
 my $architecture;
-my $nativeArchitecture;
+my %nativeArchitectureMap = ();
 my $asanIsEnabled;
 my $forceOptimizationLevel;
 my $coverageIsEnabled;
@@ -351,18 +351,29 @@ sub determineConfiguration
     }
 }
 
-sub determineNativeArchitecture
+sub determineNativeArchitecture(;$$)
 {
-    return if defined $nativeArchitecture;
-    $nativeArchitecture = `uname -m`;
-    chomp $nativeArchitecture;
-    $nativeArchitecture = "x86_64" if (not defined $nativeArchitecture);
+    my ($target, $port) = @_;
+    $target = '' if !defined $target;
+    $port = 0 if !defined $port;
+    return if defined $nativeArchitectureMap{"$target:$port"};
+
+    my $output;
+    if ($target eq "") {
+        $output = `uname -m`;
+    } else {
+        $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
+    }
+    chomp $output;
+    $output = "x86_64" if (not defined $output);
 
     # FIXME: Remove this when <rdar://problem/64208532> is resolved
-    if (isAppleCocoaWebKit() && $nativeArchitecture ne "x86_64") {
-        $nativeArchitecture = "arm64";
+    if (isAppleCocoaWebKit() && $output ne "x86_64") {
+        $output = "arm64";
     }
-    die "'arm64e' is an invalid native architecture" if $nativeArchitecture eq "arm64e";
+    $output = "arm" if $output eq "armv7l";
+    die "'arm64e' is an invalid native architecture" if $output eq "arm64e";
+    $nativeArchitectureMap{"$target:$port"} = $output;
 }
 
 sub determineArchitecture
@@ -371,8 +382,7 @@ sub determineArchitecture
 
     determineBaseProductDir();
     determineXcodeSDK();
-    determineNativeArchitecture();
-    $architecture = $nativeArchitecture;
+    $architecture = nativeArchitecture();
 
     if (isAppleCocoaWebKit()) {
         if (open ARCHITECTURE, "$baseProductDir/Architecture") {
@@ -1051,10 +1061,13 @@ sub passedArchitecture
     return $passedArchitecture;
 }
 
-sub nativeArchitecture()
+sub nativeArchitecture(;$$)
 {
-    determineNativeArchitecture();
-    return $nativeArchitecture;
+    my ($target, $port) = @_;
+    $target = '' if !defined $target;
+    $port = 0 if !defined $port;
+    determineNativeArchitecture($target, $port);
+    return $nativeArchitectureMap{"$target:$port"};
 }
 
 sub architecture()
