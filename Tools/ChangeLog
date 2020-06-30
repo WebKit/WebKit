@@ -1,3 +1,17 @@
+2020-06-30  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add libserf
+        https://bugs.webkit.org/show_bug.cgi?id=213682
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Subversion depends on SERF, which requires SCons for its build (the SERF CMake support is
+        incomplete)...
+
+        * buildstream/elements/sdk-build-depends/scons.bst: Added.
+        * buildstream/elements/sdk/libserf.bst: Added.
+        * buildstream/elements/sdk/subversion.bst:
+
 2020-06-29  Brady Eidson  <beidson@apple.com>
 
         JavaScript cannot be injected into iframes

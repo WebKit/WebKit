@@ -12,6 +12,7 @@ depends:
 - freedesktop-sdk.bst:components/perl.bst
 - test-infra/apr.bst
 - test-infra/apr-util.bst
+- sdk/libserf.bst
 
 sources:
 - kind: tar
