@@ -927,7 +927,7 @@ public:
 
     // Invalidation can fail if there is no enclosing compositing layer (e.g. nested iframe)
     // or the layer does not maintain an event region.
-    enum class EventRegionInvalidationReason { Paint, Style, NonCompositedFrame };
+    enum class EventRegionInvalidationReason { Paint, SettingDidChange, Style, NonCompositedFrame };
     bool invalidateEventRegion(EventRegionInvalidationReason);
 
     String debugDescription() const final;

@@ -130,8 +130,8 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    if (overrideUserModifyIsEditable || style.userModify() != UserModify::ReadOnly)
-        m_editableRegion.unite(region);
+    if (m_editableRegion && (overrideUserModifyIsEditable || style.userModify() != UserModify::ReadOnly))
+        m_editableRegion->unite(region);
 #else
     UNUSED_PARAM(overrideUserModifyIsEditable);
 #endif
@@ -156,7 +156,8 @@ void EventRegion::translate(const IntSize& offset)
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    m_editableRegion.translate(offset);
+    if (m_editableRegion)
+        m_editableRegion->translate(offset);
 #endif
 }
 
@@ -283,10 +284,12 @@ const Region& EventRegion::eventListenerRegionForType(EventListenerRegionType ty
 #endif // ENABLE(WHEEL_EVENT_REGIONS)
 
 #if ENABLE(EDITABLE_REGION)
+
 bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 {
-    return m_editableRegion.intersects(rect);
+    return m_editableRegion && m_editableRegion->intersects(rect);
 }
+
 #endif
 
 void EventRegion::dump(TextStream& ts) const
@@ -322,8 +325,8 @@ void EventRegion::dump(TextStream& ts) const
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    if (!m_editableRegion.isEmpty()) {
-        ts << indent << "(editable region" << m_editableRegion;
+    if (m_editableRegion && !m_editableRegion->isEmpty()) {
+        ts << indent << "(editable region" << *m_editableRegion;
         ts << indent << ")\n";
     }
 #endif

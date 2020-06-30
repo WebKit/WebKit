@@ -1,27 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
-<style>
-.trigger-bug {
-    position: absolute;
-    will-change: transform;
-    z-index: -1; /* Causes foreground layer creation */
-}
-</style>
-</head>
 <body>
-<div>
-    <input type="text">
-    <div class="trigger-bug"></div>
-</div>
+<input type="text">
 <pre id="results"></pre>
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
 if (window.internals)
     internals.settings.setEditableRegionEnabled(true);
-if (window.internals)
+if (window.internals) {
+    internals.settings.setEditableRegionEnabled(false);
     results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+}
 </script>
 </body>
 </html>

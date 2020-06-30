@@ -1708,7 +1708,7 @@ bool RenderLayerBacking::maintainsEventRegion() const
         return true;
 #endif
 #if ENABLE(EDITABLE_REGION)
-    if (renderer().document().mayHaveEditableElements())
+    if (renderer().document().mayHaveEditableElements() && renderer().page().shouldBuildEditableRegion())
         return true;
 #endif
 #if !PLATFORM(IOS_FAMILY)
@@ -1735,6 +1735,10 @@ void RenderLayerBacking::updateEventRegion()
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
         GraphicsContext nullContext(nullptr);
         EventRegion eventRegion;
+#if ENABLE(EDITABLE_REGION)
+        if (renderer().page().shouldBuildEditableRegion())
+            eventRegion.ensureEditableRegion();
+#endif
         auto eventRegionContext = eventRegion.makeContext();
         auto layerOffset = graphicsLayer.scrollOffset() - roundedIntSize(graphicsLayer.offsetFromRenderer());
 

@@ -22,6 +22,9 @@ window.jsTestIsAsync = true;
 if (window.testRunner)
     testRunner.dumpAsText();
 
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+
 async function runTest()
 {
     if (!window.testRunner) {

@@ -742,6 +742,12 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
+#if ENABLE(EDITABLE_REGION)
+    bool shouldBuildEditableRegion() const;
+    bool isEditableRegionEnabled() const { return m_isEditableRegionEnabled; }
+    WEBCORE_EXPORT void setEditableRegionEnabled(bool = true);
+#endif
+
     WEBCORE_EXPORT Vector<Ref<Element>> editableElementsInRect(const FloatRect&) const;
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
@@ -1002,6 +1008,10 @@ private:
     bool m_inUpdateRendering { false };
     bool m_hasResourceLoadClient { false };
     bool m_delegatesScaling { false };
+
+#if ENABLE(EDITABLE_REGION)
+    bool m_isEditableRegionEnabled { false };
+#endif
 
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     

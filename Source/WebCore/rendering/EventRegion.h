@@ -87,8 +87,10 @@ public:
 #endif
 
 #if ENABLE(EDITABLE_REGION)
+    void ensureEditableRegion();
+    bool hasEditableRegion() const { return m_editableRegion.hasValue(); }
     WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;
-    Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion.rects(); }
+    Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion ? m_editableRegion->rects() : Vector<IntRect, 1> { }; }
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
@@ -113,7 +115,7 @@ private:
     Region m_nonPassiveWheelEventListenerRegion;
 #endif
 #if ENABLE(EDITABLE_REGION)
-    Region m_editableRegion;
+    Optional<Region> m_editableRegion;
 #endif
 };
 
@@ -152,7 +154,7 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    Optional<Region> editableRegion;
+    Optional<Optional<Region>> editableRegion;
     decoder >> editableRegion;
     if (!editableRegion)
         return WTF::nullopt;
@@ -172,5 +174,15 @@ bool EventRegion::decode(Decoder& decoder, EventRegion& eventRegion)
     eventRegion = WTFMove(*decodedEventRegion);
     return true;
 }
+
+#if ENABLE(EDITABLE_REGION)
+
+inline void EventRegion::ensureEditableRegion()
+{
+    if (!m_editableRegion)
+        m_editableRegion.emplace();
+}
+
+#endif
 
 }

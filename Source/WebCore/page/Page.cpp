@@ -921,6 +921,31 @@ void Page::unmarkAllTextMatches()
     });
 }
 
+#if ENABLE(EDITABLE_REGION)
+
+void Page::setEditableRegionEnabled(bool enabled)
+{
+    if (m_isEditableRegionEnabled == enabled)
+        return;
+    m_isEditableRegionEnabled = enabled;
+    auto frameView = makeRefPtr(mainFrame().view());
+    if (!frameView)
+        return;
+    if (auto* renderView = frameView->renderView())
+        renderView->compositor().invalidateEventRegionForAllLayers();
+}
+
+#endif
+
+#if ENABLE(EDITABLE_REGION)
+
+bool Page::shouldBuildEditableRegion() const
+{
+    return m_isEditableRegionEnabled || m_settings->visibleDebugOverlayRegions() & EditableElementRegion;
+}
+
+#endif
+
 Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInRootViewCoordinates) const
 {
     auto frameView = makeRefPtr(mainFrame().view());
@@ -1187,6 +1212,9 @@ void Page::didStartProvisionalLoad()
 
 void Page::didFinishLoad()
 {
+#if ENABLE(EDITABLE_REGION)
+    m_isEditableRegionEnabled = false;
+#endif
     resetRelevantPaintedObjectCounter();
 
     if (m_performanceMonitor)

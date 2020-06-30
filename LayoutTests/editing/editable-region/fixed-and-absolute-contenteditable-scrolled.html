@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script>
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+</script>
+</head>
 <body style="height: 4096px">
 <div style="position: fixed; border: 1px solid black; width: 100%; height: 40px" contenteditable="true"></div>
 <div style="position: absolute; border: 1px solid black; height: 256px; width: 256px; top: 1000px; left: 200px" contenteditable="true"></div>

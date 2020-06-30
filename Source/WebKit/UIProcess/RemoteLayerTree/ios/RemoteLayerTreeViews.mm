@@ -120,6 +120,7 @@ bool mayContainEditableElementsInRect(UIView *rootView, const WebCore::FloatRect
     collectDescendantViewsInRect(viewsInRect, rootView, rect);
     if (viewsInRect.isEmpty())
         return false;
+    bool possiblyHasEditableElements = true;
     for (auto *view : WTF::makeReversedRange(viewsInRect)) {
         if (![view isKindOfClass:WKCompositingView.class])
             continue;
@@ -129,10 +130,13 @@ bool mayContainEditableElementsInRect(UIView *rootView, const WebCore::FloatRect
         WebCore::IntRect rectToTest { [view convertRect:rect fromView:rootView] };
         if (node->eventRegion().containsEditableElementsInRect(rectToTest))
             return true;
-        if (node->eventRegion().contains(rectToTest))
+        bool hasEditableRegion = node->eventRegion().hasEditableRegion();
+        if (hasEditableRegion && node->eventRegion().contains(rectToTest))
             return false;
+        if (hasEditableRegion)
+            possiblyHasEditableElements = false;
     }
-    return false;
+    return possiblyHasEditableElements;
 }
 
 #endif // ENABLE(EDITABLE_REGION)

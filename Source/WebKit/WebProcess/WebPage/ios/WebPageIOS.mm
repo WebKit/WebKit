@@ -4318,6 +4318,9 @@ void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<vo
         return context;
     });
     completionHandler(contexts);
+#if ENABLE(EDITABLE_REGION)
+    m_page->setEditableRegionEnabled();
+#endif
 }
 
 void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementContext, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)

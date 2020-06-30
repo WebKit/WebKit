@@ -1264,7 +1264,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         // though it's actually the inner text element of the control that is editable.
         // So, no need to traverse to find the inner text element in this case.
         if (!isTextControl())
-            needsTraverseDescendants |= document().mayHaveEditableElements();
+            needsTraverseDescendants |= document().mayHaveEditableElements() && page().shouldBuildEditableRegion();
 #endif
         if (!needsTraverseDescendants)
             return;

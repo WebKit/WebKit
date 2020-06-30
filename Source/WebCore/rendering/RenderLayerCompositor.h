@@ -282,6 +282,7 @@ public:
     void setIsInWindow(bool);
 
     void clearBackingForAllLayers();
+    void invalidateEventRegionForAllLayers();
     
     void layerBecameComposited(const RenderLayer&);
     void layerBecameNonComposited(const RenderLayer&);
@@ -417,7 +418,7 @@ private:
     bool updateBacking(RenderLayer&, RequiresCompositingData&, BackingSharingState* = nullptr, BackingRequired = BackingRequired::Unknown);
     bool updateLayerCompositingState(RenderLayer&, const RenderLayer* compositingAncestor, RequiresCompositingData&, BackingSharingState&);
 
-    void clearBackingForLayerIncludingDescendants(RenderLayer&);
+    template<typename ApplyFunctionType> void applyToCompositedLayerIncludingDescendants(RenderLayer&, const ApplyFunctionType&);
 
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);

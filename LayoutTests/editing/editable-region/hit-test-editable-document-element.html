@@ -9,6 +9,9 @@
 <script>
 window.jsTestIsAsync = true;
 
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+
 async function runTest()
 {
     if (!window.testRunner) {

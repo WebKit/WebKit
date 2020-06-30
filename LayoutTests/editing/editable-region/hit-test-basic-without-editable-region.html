@@ -26,7 +26,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 if (window.internals)
-    internals.settings.setEditableRegionEnabled(true);
+    internals.settings.setEditableRegionEnabled(false);
 
 async function runTest()
 {
@@ -37,13 +37,15 @@ async function runTest()
 
     let testContainer = document.getElementById("test-container");
     await shouldHaveEditableElementsInRectForElement(testContainer);
-    await shouldNotHaveEditableElementsInRect(0, 0, 50, 50);
+
+    // Without editable region enabled this rect is thought to contain something editable even though it doesn't.
+    await shouldHaveEditableElementsInRect(0, 0, 50, 50);
 
     document.body.removeChild(testContainer);
     finishJSTest();
 }
 
-description("Hit tests for editable elements inside the black outlined rectangle.");
+description("Hit tests for editable elements inside the black outlined rectangle when the editable region is disabled. There should be more false positives when disabled.");
 runTest();
 </script>
 </body>

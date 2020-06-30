@@ -1,0 +1,11 @@
+Hit tests for editable elements inside the black outlined rectangle when the editable region is disabled. There should be more false positives when disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (x = 100, y = 100, width = 202, height = 202) contains editable elements.
+PASS (x = 0, y = 0, width = 50, height = 50) contains editable elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

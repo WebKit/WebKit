@@ -122,5 +122,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     void setShouldDeactivateAudioSession(boolean shouldDeactivate);
     
     void setStorageAccessAPIPerPageScopeEnabled(boolean enabled);
+
+    [MayThrowException] void setEditableRegionEnabled(boolean enabled);
 };
 

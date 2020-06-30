@@ -313,7 +313,7 @@ void Frame::invalidateContentEventRegionsIfNeeded()
     hasTouchActionElements = m_doc->mayHaveElementsWithNonAutoTouchAction();
 #endif
 #if ENABLE(EDITABLE_REGION)
-    hasEditableElements = m_doc->mayHaveEditableElements();
+    hasEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
 #endif
     // FIXME: This needs to look at wheel event handlers too.
     if (!hasTouchActionElements && !hasEditableElements)

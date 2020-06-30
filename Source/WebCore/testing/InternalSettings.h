@@ -109,6 +109,8 @@ public:
 
     using FrameFlatteningValue = FrameFlattening;
     ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
+
+    ExceptionOr<void> setEditableRegionEnabled(bool);
     
     static void setAllowsAnySSLCertificate(bool);
 

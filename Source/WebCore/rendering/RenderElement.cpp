@@ -749,7 +749,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             bool wasEditable = m_style.userModify() != UserModify::ReadOnly;
             bool isEditable = newStyle.userModify() != UserModify::ReadOnly;
             if (wasEditable != isEditable)
-                return true;
+                return page().shouldBuildEditableRegion();
 #endif
             return false;
         };

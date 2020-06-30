@@ -441,6 +441,18 @@ ExceptionOr<void> InternalSettings::setTextAutosizingUsesIdempotentMode(bool ena
     return { };
 }
 
+ExceptionOr<void> InternalSettings::setEditableRegionEnabled(bool enabled)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+#if ENABLE(EDITABLE_REGION)
+    m_page->setEditableRegionEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+    return { };
+}
+
 ExceptionOr<void> InternalSettings::setMediaTypeOverride(const String& mediaType)
 {
     if (!m_page)

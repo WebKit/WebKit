@@ -1,3 +1,79 @@
+2020-06-30  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Editable regions causes ~1% slowdown in PLT5
+        https://bugs.webkit.org/show_bug.cgi?id=213659
+        <rdar://problem/64361390>
+
+        Reviewed by Simon Fraser.
+
+        Fix the slowdown by only enabling editable region when Page::editableElementsInRect is called.
+
+        There are two parts that make computing the editable region expensive:
+                1. Requires traversing descendents during painting when a normal paint may be
+                   able to avoid this.
+                2. Can cause more event region invalidations because it extends the invalidation
+                   criterion to include changes to element editability.
+
+        Tests: editing/editable-region/hit-test-basic-without-editable-region.html
+               editing/editable-region/iframe-without-editable-region.html
+               editing/editable-region/text-field-basic-without-editable-region.html
+
+        Tests: editing/editable-region/hit-test-basic-without-editable-region.html
+               editing/editable-region/iframe-without-editable-region.html
+               editing/editable-region/text-field-basic-without-editable-region.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::invalidateContentEventRegionsIfNeeded): Check if editable region is enabled.
+        If it is then do what we do now. Otherwise, don't invalidate the region unless we were going
+        to do so anyway.
+        * page/Page.cpp:
+        (WebCore::Page::setEditableRegionEnabled): Added. Update state and then invalidate
+        the event region in all layers.
+        (WebCore::Page::shouldBuildEditableRegion const): Added. Returns whether to build the
+        editable region: either when Page::isEditableRegionEnabled() is true or the editable
+        region debug overlay is enabled.
+        (WebCore::Page::didFinishLoad): Turn off editable region as it may not be needed on
+        the new page.
+        * page/Page.h:
+        (WebCore::Page::isEditableRegionEnabled const): Added.
+
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::unite):
+        (WebCore::EventRegion::translate):
+        (WebCore::EventRegion::containsEditableElementsInRect const):
+        (WebCore::EventRegion::dump const):
+        * rendering/EventRegion.h:
+        (WebCore::EventRegion::hasEditableRegion const):
+        (WebCore::EventRegion::rectsForEditableElements const):
+        (WebCore::EventRegion::decode):
+        (WebCore::EventRegion::ensureEditableRegion):
+        The editable region is now an Optional<>. There will only be one if ensureEditableRegion
+        was called, which is only when Page::isEditableRegionEnabled() returns true.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::maintainsEventRegion const):
+        Only do what we do now if Page::shouldBuildEditableRegion() returns true.
+
+        (WebCore::RenderLayerBacking::updateEventRegion): Instantiate the editable region, if needed.
+        Painting will then populate it.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::applyToCompositedLayerIncludingDescendants): Added.
+        (WebCore::RenderLayerCompositor::invalidateEventRegionForAllLayers): Added.
+        (WebCore::RenderLayerCompositor::clearBackingForAllLayers): Wrote in terms of applyToCompositedLayerIncludingDescendants.
+        (WebCore::RenderLayerCompositor::clearBackingForLayerIncludingDescendants): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setEditableRegionEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        Add a new internal setting for testing purposes to toggle enabling/disabling editable region.
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Scrunching a video to PiP can result in broken animation and leave Safari in a bad state

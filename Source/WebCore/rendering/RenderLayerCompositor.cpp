@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2357,18 +2357,25 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
     }
 }
 
-void RenderLayerCompositor::clearBackingForLayerIncludingDescendants(RenderLayer& layer)
+template<typename ApplyFunctionType>
+void RenderLayerCompositor::applyToCompositedLayerIncludingDescendants(RenderLayer& layer, const ApplyFunctionType& function)
 {
     if (layer.isComposited())
-        layer.clearBacking();
-
+        function(layer);
     for (auto* childLayer = layer.firstChild(); childLayer; childLayer = childLayer->nextSibling())
-        clearBackingForLayerIncludingDescendants(*childLayer);
+        applyToCompositedLayerIncludingDescendants(*childLayer, function);
+}
+
+void RenderLayerCompositor::invalidateEventRegionForAllLayers()
+{
+    applyToCompositedLayerIncludingDescendants(*m_renderView.layer(), [](auto& layer) {
+        layer.invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::SettingDidChange);
+    });
 }
 
 void RenderLayerCompositor::clearBackingForAllLayers()
 {
-    clearBackingForLayerIncludingDescendants(*m_renderView.layer());
+    applyToCompositedLayerIncludingDescendants(*m_renderView.layer(), [](auto& layer) { layer.clearBacking(); });
 }
 
 void RenderLayerCompositor::updateRootLayerPosition()

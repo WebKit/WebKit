@@ -1,3 +1,42 @@
+2020-06-30  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Editable regions causes ~1% slowdown in PLT5
+        https://bugs.webkit.org/show_bug.cgi?id=213659
+        <rdar://problem/64361390>
+
+        Reviewed by Simon Fraser.
+
+        Add some tests to ensure the new setting works and the feature can be disabled. Note
+        that the setting is enabled by default to keep the current behavior. See the WebCore
+        ChangeLog entry for more details.
+
+        Update existings tests that need the editable region enabled to enable it now that it must
+        be explicitly enabled.
+
+        * editing/editable-region/fixed-and-absolute-contenteditable-scrolled.html:
+        * editing/editable-region/float-contenteditable.html:
+        * editing/editable-region/hit-test-basic-without-editable-region-expected.txt: Added.
+        * editing/editable-region/hit-test-basic-without-editable-region.html: Copied from LayoutTests/editing/editable-region/hit-test-basic.html.
+        * editing/editable-region/hit-test-basic.html:
+        * editing/editable-region/hit-test-editable-document-element.html:
+        * editing/editable-region/hit-test-fixed.html:
+        * editing/editable-region/hit-test-overlap.html:
+        * editing/editable-region/hit-test-textarea-empty-space.html:
+        * editing/editable-region/iframe-without-editable-region-expected.txt: Added.
+        * editing/editable-region/iframe-without-editable-region.html: Copied from LayoutTests/editing/editable-region/iframe.html.
+        * editing/editable-region/iframe.html:
+        * editing/editable-region/out-hanging-child-of-contenteditable.html:
+        * editing/editable-region/overflow-scroll-text-field-and-contenteditable.html:
+        * editing/editable-region/relative-inside-fixed-contenteditable-scrolled.html:
+        * editing/editable-region/relative-inside-transformed-contenteditable.html:
+        * editing/editable-region/search-field-basic.html:
+        * editing/editable-region/text-field-basic-without-editable-region-expected.txt: Added.
+        * editing/editable-region/text-field-basic-without-editable-region.html: Copied from LayoutTests/editing/editable-region/text-field-basic.html.
+        * editing/editable-region/text-field-basic.html:
+        * editing/editable-region/text-field-inside-composited-negative-z-index-layer.html:
+        * editing/editable-region/textarea-basic.html:
+        * editing/editable-region/transformed-scrolled-on-top-of-fixed-contenteditables.html:
+
 2020-06-30  Antoine Quint  <graouts@webkit.org>
 
         [iOS] Test landed flaky: webanimations/accelerated-animation-with-easing.html

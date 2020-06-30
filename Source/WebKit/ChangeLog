@@ -1,3 +1,29 @@
+2020-06-30  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Editable regions causes ~1% slowdown in PLT5
+        https://bugs.webkit.org/show_bug.cgi?id=213659
+        <rdar://problem/64361390>
+
+        Reviewed by Simon Fraser.
+
+        Fix up RemoteLayerTreeViews now that the editable region is an Optional<>. Have
+        the UI process message the web process to enable editable region on the first
+        invocation of _requestTextInputContextsInRect, which is good indicator that there
+        would be benefit to computing it as a typical client that calls it will call it
+        many times.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::mayContainEditableElementsInRect): Fix up the logic now that there may
+        be not be an editable region sent over in the last event region update. If there
+        isn't one then we don't know if there are editable elements in the rect of not.
+        So, return true, which could turn out to be a false positive if there aren't any
+        editable elements in the rect. The caller will have to message the web process
+        to find out the real answer if they want it. Just to clarify, it's OK for this
+        function to have false positives, but it must never have false negatives.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::textInputContextsInRect): Enable editable region. If it's already
+        enabled then doing so again does nothing.
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Scrunching a video to PiP can result in broken animation and leave Safari in a bad state
