@@ -132,8 +132,11 @@ InlineLayoutUnit TableFormattingContext::Geometry::usedBaselineForCell(const Con
     // or the first in-flow table-row in the cell, whichever comes first.
     // If there is no such line box, the baseline is the bottom of content edge of the cell box.
     for (auto& cellDescendant : descendantsOfType<ContainerBox>(cellBox)) {
-        if (cellDescendant.establishesInlineFormattingContext())
-            return layoutState().establishedInlineFormattingState(cellDescendant).displayInlineContent()->lineBoxes[0].baselineOffset();
+        if (cellDescendant.establishesInlineFormattingContext()) {
+            auto* displayInlineContent = layoutState().establishedInlineFormattingState(cellDescendant).displayInlineContent();
+            if (!displayInlineContent->runs.isEmpty())
+                return displayInlineContent->lineBoxes[0].baselineOffset();
+        }
         if (cellDescendant.establishesTableFormattingContext())
             return layoutState().establishedTableFormattingState(cellDescendant).tableGrid().rows().list()[0].baselineOffset();
     }

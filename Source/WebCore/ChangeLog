@@ -1,3 +1,17 @@
+2020-06-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Adjust baseline offset for continuation
+        https://bugs.webkit.org/show_bug.cgi?id=213732
+
+        Reviewed by Antti Koivisto.
+
+        Skip empty IFC generated for the "pre" part of the continuation (e.g. <span><div>text content</div></span>).
+
+        Test: fast/layoutformattingcontext/table-cell-baseline-offset-simple.html
+
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::usedBaselineForCell):
+
 2020-06-29  Guowei Yang  <guowei_yang@apple.com>
 
         Adding Experimental Feature Flags for CoreImage backed SVG/CSS Filters
