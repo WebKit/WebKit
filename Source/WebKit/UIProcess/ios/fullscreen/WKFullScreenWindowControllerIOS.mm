@@ -779,6 +779,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     [_fullscreenViewController setPrefersStatusBarHidden:YES];
     _fullscreenViewController = nil;
+    _exitRequested = NO;
 }
 
 - (void)close
@@ -993,6 +994,11 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 - (void)_dismissFullscreenViewController
 {
+    if (!_fullscreenViewController) {
+        [self _completedExitFullScreen];
+        return;
+    }
+
     [_fullscreenViewController setAnimating:YES];
     [_fullscreenViewController dismissViewControllerAnimated:YES completion:^{
         if (![self._webView _page])
@@ -1036,11 +1042,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 - (void)_interactivePinchDismissChanged:(id)sender
 {
-    if (!_inInteractiveDismiss && _interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateBegan) {
-        [self _startToDismissFullscreenChanged:sender];
-        return;
-    }
-
     CGFloat scale = [_interactivePinchDismissGestureRecognizer scale];
     CGFloat velocity = [_interactivePinchDismissGestureRecognizer velocity];
     CGFloat progress = std::min(1., std::max(0., 1 - scale));

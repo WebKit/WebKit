@@ -1,3 +1,32 @@
+2020-06-30  Peng Liu  <peng.liu6@apple.com>
+
+        Scrunching a video to PiP can result in broken animation and leave Safari in a bad state
+        https://bugs.webkit.org/show_bug.cgi?id=213175
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        The "standby" state is relevant to a video element only when its presentation mode is VideoFullscreenModeNone.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::exitFullscreen):
+        (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+        Add a flag m_enteringPictureInPicture. Function exitFullscreen() and cleanupFullscreen() will check
+        m_enteringPictureInPicture and they will abort the process to exit fullscreen/picture-in-picture if the flag
+        is true. However, VideoFullscreenManager will retry to exit fullscreen/picture-in-picture after it confirms that
+        the previous starting picture-in-picture process is completed.
+
+        (VideoFullscreenInterfaceAVKit::willStartPictureInPicture):
+        Set the flag m_enteringPictureInPicture.
+
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        Call m_fullscreenChangeObserver->didEnterFullscreen() if the entering picture-in-picture process is
+        started by the UI process (e.g., swipe-up gesture).
+        Clear m_standby and m_enteringPictureInPicture after the video element enters picture-in-picture.
+
 2020-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Remove WTF::MD5

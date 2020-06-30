@@ -921,6 +921,9 @@ void VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
     if (m_watchdogTimer.isActive())
         m_watchdogTimer.stop();
 
+    if (m_enteringPictureInPicture)
+        return;
+
     m_targetMode = HTMLMediaElementEnums::VideoFullscreenModeNone;
 
     setInlineRect(finalRect, true);
@@ -930,9 +933,11 @@ void VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
 
 void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
 {
+    LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::cleanupFullscreen(%p)", this);
     m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason = false;
 
-    LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::cleanupFullscreen(%p)", this);
+    if (m_enteringPictureInPicture)
+        return;
 
     m_cleanupNeedsReturnVideoContentLayer = true;
     if (m_hasVideoContentLayer && m_fullscreenChangeObserver) {
@@ -1055,6 +1060,8 @@ void VideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline(WTF::Function<vo
 void VideoFullscreenInterfaceAVKit::willStartPictureInPicture()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::willStartPictureInPicture(%p)", this);
+    m_enteringPictureInPicture = true;
+
     if (m_standby && !m_currentMode.hasVideo()) {
         [m_window setHidden:NO];
         [[m_playerViewController view] setHidden:NO];
@@ -1088,6 +1095,13 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
 
     if (m_enterFullscreenNeedsEnterPictureInPicture)
         doEnterFullscreen();
+    else {
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->didEnterFullscreen();
+    }
+
+    m_enteringPictureInPicture = false;
+    m_standby = false;
 }
 
 void VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture()

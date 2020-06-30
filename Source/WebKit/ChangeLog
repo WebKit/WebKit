@@ -1,3 +1,19 @@
+2020-06-30  Peng Liu  <peng.liu6@apple.com>
+
+        Scrunching a video to PiP can result in broken animation and leave Safari in a bad state
+        https://bugs.webkit.org/show_bug.cgi?id=213175
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        Update _exitRequested after exiting fullscreen to make sure the following
+        enter fullscreen request can be processed.
+        (-[WKFullScreenWindowController _dismissFullscreenViewController]):
+        Make sure _completedExitFullScreen function will always execute.
+        (-[WKFullScreenWindowController _interactivePinchDismissChanged:]):
+        Remove a function call which corrupts the state machine under stress test.
+
 2020-06-30  Antoine Quint  <graouts@webkit.org>
 
         [iOS] Crash under WebKit::WebPage::getFocusedElementInformation()

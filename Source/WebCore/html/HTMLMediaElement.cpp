@@ -6049,7 +6049,10 @@ WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
         m_player->videoFullscreenStandbyChanged();
 #endif
 
-    if (m_videoFullscreenStandby || m_videoFullscreenMode != VideoFullscreenModeNone)
+    if (m_videoFullscreenMode != VideoFullscreenModeNone)
+        return;
+
+    if (m_videoFullscreenStandby)
         document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
     else
         document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));

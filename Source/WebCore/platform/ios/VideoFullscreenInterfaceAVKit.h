@@ -219,6 +219,7 @@ protected:
 
     bool m_waitingForPreparedToExit { false };
     bool m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason { false };
+    bool m_enteringPictureInPicture { false };
 };
 
 }
