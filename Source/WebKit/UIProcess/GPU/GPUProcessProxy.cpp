@@ -280,13 +280,8 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
 
     parameters.mediaCacheDirectory = store.resolvedMediaCacheDirectory();
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
-    if (!parameters.mediaCacheDirectory.isEmpty()) {
-        String parentFolder = parameters.mediaCacheDirectory;
-        auto position = parentFolder.reverseFind("/");
-        if (position != notFound)
-            parentFolder = parentFolder.substring(0, position);
-        SandboxExtension::createHandleWithoutResolvingPath(parentFolder, SandboxExtension::Type::ReadWrite, parameters.mediaCacheDirectorySandboxExtensionHandle);
-    }
+    if (!parameters.mediaCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaCacheDirectorySandboxExtensionHandle);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     parameters.mediaKeysStorageDirectory = store.resolvedMediaKeysDirectory();
