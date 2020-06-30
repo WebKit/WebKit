@@ -33,6 +33,7 @@ struct ExceptionDetails {
     enum class Type : uint8_t {
         Script,
         InvalidTargetFrame,
+        AppBoundDomain,
     };
 
     String message;
@@ -53,7 +54,8 @@ template<> struct EnumTraits<WebCore::ExceptionDetails::Type> {
     using values = EnumValues<
         WebCore::ExceptionDetails::Type,
         WebCore::ExceptionDetails::Type::Script,
-        WebCore::ExceptionDetails::Type::InvalidTargetFrame
+        WebCore::ExceptionDetails::Type::InvalidTargetFrame,
+        WebCore::ExceptionDetails::Type::AppBoundDomain
     >;
 };
 }

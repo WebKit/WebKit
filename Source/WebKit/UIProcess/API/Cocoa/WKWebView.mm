@@ -876,6 +876,9 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
     case WebCore::ExceptionDetails::Type::Script:
         errorCode = WKErrorJavaScriptExceptionOccurred;
         break;
+    case WebCore::ExceptionDetails::Type::AppBoundDomain:
+        errorCode = WKErrorJavaScriptAppBoundDomain;
+        break;
     }
 
     [userInfo setObject:localizedDescriptionForErrorCode(errorCode) forKey:NSLocalizedDescriptionKey];

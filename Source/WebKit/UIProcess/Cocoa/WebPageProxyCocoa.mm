@@ -41,6 +41,7 @@
 #import "WebPasteboardProxy.h"
 #import "WebProcessProxy.h"
 #import "WebsiteDataStore.h"
+#import "WKErrorInternal.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NotImplemented.h>
@@ -300,6 +301,11 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     }
 
     send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) });
+}
+
+ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const URL& url)
+{
+    return { WKErrorDomain, WKErrorNavigationAppBoundDomain, url, localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain) };
 }
     
 #if ENABLE(APPLE_PAY)

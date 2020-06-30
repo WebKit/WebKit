@@ -1,3 +1,15 @@
+2020-06-30  Brady Eidson  <beidson@apple.com>
+
+        App-bound JavaScript and Navigation failures should have specific error codes.
+        <rdar://problem/64940268> and https://bugs.webkit.org/show_bug.cgi?id=213808
+
+        Reviewed by Tim Hatcher.
+        (Informally by Kate Cheney)
+
+        Covered by API tests.
+
+        * bindings/js/ExceptionDetails.h:
+
 2020-06-30  Mark Lam  <mark.lam@apple.com>
 
         Add handling for a case of OOME in CSSTokenizer and CSSParser.

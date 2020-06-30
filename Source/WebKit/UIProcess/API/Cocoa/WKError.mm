@@ -76,6 +76,12 @@ NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
 
     case WKErrorJavaScriptInvalidFrameTarget:
         return WEB_UI_STRING("JavaScript execution targeted an invalid frame", "WKErrorJavaScriptInvalidFrameTarget description");
+
+    case WKErrorNavigationAppBoundDomain:
+        return WEB_UI_STRING("Attempted to navigate away from an app-bound domain or navigate after using restricted APIs", "WKErrorNavigationAppBoundDomain description");
+
+    case WKErrorJavaScriptAppBoundDomain:
+        return WEB_UI_STRING("JavaScript execution targeted a frame that is not in an app-bound domain", "WKErrorJavaScriptAppBoundDomain description");
     }
 }
 

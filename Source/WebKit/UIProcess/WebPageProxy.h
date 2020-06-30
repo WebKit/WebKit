@@ -1760,6 +1760,10 @@ public:
 
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
 
+#if PLATFORM(COCOA)
+    WebCore::ResourceError errorForUnpermittedAppBoundDomainNavigation(const URL&);
+#endif
+
     void disableServiceWorkerEntitlementInNetworkProcess();
     void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&&);
         

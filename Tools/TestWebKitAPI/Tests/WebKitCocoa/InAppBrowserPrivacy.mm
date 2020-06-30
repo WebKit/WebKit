@@ -149,6 +149,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
     [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
+        EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
         isDone = true;
     }];
 
@@ -188,6 +189,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtEnd)
     [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
+        EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
         isDone = true;
     }];
 
@@ -242,6 +244,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     [webView2 evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
+        EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
         cleanUpInAppBrowserPrivacyTestSettings();
         isDone = true;
     }];
@@ -364,7 +367,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForSpecificWebViewFails)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
@@ -387,7 +390,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForAllWebViewsFails)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
@@ -409,7 +412,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetAffectingAllFramesFails)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets-iframe"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
@@ -870,7 +873,7 @@ TEST(InAppBrowserPrivacy, AppBoundFlagForNonAppBoundDomainFails)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
 
     // Make sure the load didn't complete by checking the background color.
     // Red would indicate it finished loading.
@@ -901,7 +904,7 @@ TEST(InAppBrowserPrivacy, NavigateAwayFromAppBoundDomainWithAppBoundFlagFails)
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
 
     // Make sure the load didn't complete by checking the background color.
     // Red would indicate it finished loading.
@@ -980,6 +983,7 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
     isDone = false;
     [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
         EXPECT_TRUE(!!error);
+        EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
         isDone = true;
     }];
 
@@ -1017,7 +1021,7 @@ TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
 
     cleanUpInAppBrowserPrivacyTestSettings();
 }
@@ -1050,7 +1054,7 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-agent-script"]];
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
 }
 
 TEST(InAppBrowserPrivacy, WebViewCategory)
@@ -1137,7 +1141,7 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringsFailsIfNotAppBound)
 
     [webView loadHTMLString:HTML baseURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-agent-script"]];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ(error.localizedDescription, @"App-bound domain failure");
+    EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
 
     isDone = false;
     [webView _isForcedIntoAppBoundMode:^(BOOL isForcedIntoAppBoundMode) {
