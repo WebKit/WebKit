@@ -144,65 +144,6 @@ float Color::luminance() const
     return WebCore::luminance(toSRGBALossy());
 }
 
-Color Color::blend(const Color& source) const
-{
-    if (!isVisible() || source.isOpaque())
-        return source;
-
-    if (!source.alpha())
-        return *this;
-
-    auto [selfR, selfG, selfB, selfA] = toSRGBASimpleColorLossy();
-    auto [sourceR, sourceG, sourceB, sourceA] = source.toSRGBASimpleColorLossy();
-
-    int d = 0xFF * (selfA + sourceA) - selfA * sourceA;
-    int a = d / 0xFF;
-    int r = (selfR * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceR) / d;
-    int g = (selfG * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceG) / d;
-    int b = (selfB * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceB) / d;
-
-    return makeSimpleColor(r, g, b, a);
-}
-
-Color Color::blendWithWhite() const
-{
-    constexpr int startAlpha = 153; // 60%
-    constexpr int endAlpha = 204; // 80%;
-    constexpr int alphaIncrement = 17;
-
-    auto blendComponent = [](int c, int a) -> int {
-        float alpha = a / 255.0f;
-        int whiteBlend = 255 - a;
-        c -= whiteBlend;
-        return static_cast<int>(c / alpha);
-    };
-
-    // If the color contains alpha already, we leave it alone.
-    if (!isOpaque())
-        return *this;
-
-    auto [existingR, existingG, existingB, existingAlpha] = toSRGBASimpleColorLossy();
-
-    Color result;
-    for (int alpha = startAlpha; alpha <= endAlpha; alpha += alphaIncrement) {
-        // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
-        // at the current alpha.  Try using less transparency if the numbers end up being negative.
-        int r = blendComponent(existingR, alpha);
-        int g = blendComponent(existingG, alpha);
-        int b = blendComponent(existingB, alpha);
-        
-        result = makeSimpleColor(r, g, b, alpha);
-
-        if (r >= 0 && g >= 0 && b >= 0)
-            break;
-    }
-
-    // FIXME: Why is preserving the semantic bit desired and/or correct here?
-    if (isSemantic())
-        result.tagAsSemantic();
-    return result;
-}
-
 Color Color::colorWithAlpha(float alpha) const
 {
     if (isExtended())
@@ -250,45 +191,6 @@ SRGBA<float> Color::toSRGBALossy() const
     if (isExtended())
         return asExtended().toSRGBALossy();
     return asSimple().asSRGBA<float>();
-}
-
-Color blend(const Color& from, const Color& to, double progress)
-{
-    // FIXME: ExtendedColor - needs to handle color spaces.
-    // We need to preserve the state of the valid flag at the end of the animation
-    if (progress == 1 && !to.isValid())
-        return { };
-
-    // Since premultiplyCeiling() bails on zero alpha, special-case that.
-    auto premultipliedFrom = from.alpha() ? premultiplyCeiling(from.toSRGBASimpleColorLossy()) : Color::transparent;
-    auto premultipliedTo = to.alpha() ? premultiplyCeiling(to.toSRGBASimpleColorLossy()) : Color::transparent;
-
-    SimpleColor premultBlended = makeSimpleColor(
-        WebCore::blend(premultipliedFrom.redComponent(), premultipliedTo.redComponent(), progress),
-        WebCore::blend(premultipliedFrom.greenComponent(), premultipliedTo.greenComponent(), progress),
-        WebCore::blend(premultipliedFrom.blueComponent(), premultipliedTo.blueComponent(), progress),
-        WebCore::blend(premultipliedFrom.alphaComponent(), premultipliedTo.alphaComponent(), progress)
-    );
-
-    return unpremultiply(premultBlended);
-}
-
-Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
-{
-    // FIXME: ExtendedColor - needs to handle color spaces.
-    // We need to preserve the state of the valid flag at the end of the animation
-    if (progress == 1 && !to.isValid())
-        return { };
-
-    auto fromSRGB = from.toSRGBASimpleColorLossy();
-    auto toSRGB = from.toSRGBASimpleColorLossy();
-
-    return makeSimpleColor(
-        WebCore::blend(fromSRGB.redComponent(), toSRGB.redComponent(), progress),
-        WebCore::blend(fromSRGB.greenComponent(), toSRGB.greenComponent(), progress),
-        WebCore::blend(fromSRGB.blueComponent(), toSRGB.blueComponent(), progress),
-        WebCore::blend(fromSRGB.alphaComponent(), toSRGB.alphaComponent(), progress)
-    );
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

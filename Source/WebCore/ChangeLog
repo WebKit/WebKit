@@ -1,5 +1,48 @@
 2020-06-30  Sam Weinig  <weinig@apple.com>
 
+        Move Color blending related functions to their own files
+        https://bugs.webkit.org/show_bug.cgi?id=213742
+
+        Reviewed by Dean Jackson.
+
+        - Moves Color::blend(const Color&), Color::blendWithWhite(), blend(const Color&, const Color&, double)
+          and blendWithoutPremultiply(const Color&, const Color&, double) to their own files: ColorBlending.h/cpp
+        - Renames Color::blend(const Color&) to blendSourceOver(const Color&, const Color&) 
+        - Renames Color::blendWithWhite() to blendWithWhite(const Color&).
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::blend const): Deleted.
+        (WebCore::Color::blendWithWhite const): Deleted.
+        (WebCore::blend): Deleted.
+        (WebCore::blendWithoutPremultiply): Deleted.
+        * platform/graphics/Color.h:
+        * platform/graphics/ColorBlending.cpp: Copied from Source/WebCore/platform/graphics/Color.cpp.
+        * platform/graphics/ColorBlending.h: Added.
+        Move declarations / implementations from Color.h/cpp to ColorBlending.h/cpp.
+
+        * css/CSSGradientValue.cpp:
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::computeCaretColor):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::documentBackgroundColor const):
+        * page/TextIndicator.cpp:
+        (WebCore::estimatedBackgroundColorForRange):
+        * page/animation/CSSPropertyAnimation.cpp:
+        * platform/graphics/filters/FilterOperation.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::getItemBackgroundColor const):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::transformSelectionBackgroundColor const):
+        Update for new signatures and #include ColorBlending.h as neeeded.
+
+2020-06-30  Sam Weinig  <weinig@apple.com>
+
         Rename ManifestParser.h/cpp to ApplicationCacheManifestParser.h/cpp to make it clear its not the ApplicationManifestParser (a different thing entirely)
         https://bugs.webkit.org/show_bug.cgi?id=213815
 

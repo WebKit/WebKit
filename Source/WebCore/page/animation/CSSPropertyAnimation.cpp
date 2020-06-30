@@ -41,6 +41,7 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ClipPathOperation.h"
+#include "ColorBlending.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"

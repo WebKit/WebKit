@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CharacterData.h"
+#include "ColorBlending.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Editing.h"
@@ -1800,7 +1801,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, Node* node)
     if (!elementStyle.caretColor().isValid() && rootEditableStyle) {
         auto rootEditableBackgroundColor = rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-        auto disappearsIntoBackground = rootEditableBackgroundColor.blend(elementBackgroundColor) == rootEditableBackgroundColor;
+        auto disappearsIntoBackground = blendSourceOver(rootEditableBackgroundColor, elementBackgroundColor) == rootEditableBackgroundColor;
         if (disappearsIntoBackground)
             return rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
     }
