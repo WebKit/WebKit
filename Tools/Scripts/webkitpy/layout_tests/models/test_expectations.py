@@ -229,6 +229,7 @@ class TestExpectationParser(object):
     _configuration_tokens_list = [
         'SnowLeopard', 'Lion', 'MountainLion', 'Mavericks', 'Yosemite', 'ElCapitan', # Legacy macOS
         'Mac', 'Sierra', 'HighSierra', 'Mojave', 'Catalina', 'BigSur',
+        'x86_64', 'x86', 'arm64', 'arm64_32', 'armv7k',
         'Win', 'XP', 'Vista', 'Win7',
         'Linux',
         'Android',
