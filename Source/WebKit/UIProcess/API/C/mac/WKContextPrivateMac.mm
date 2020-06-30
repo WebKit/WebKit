@@ -101,12 +101,14 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
 #endif
 }
 
-void WKContextResetHSTSHosts(WKContextRef)
+void WKContextResetHSTSHosts(WKContextRef context)
 {
+    return WebKit::toImpl(context)->resetHSTSHosts();
 }
 
-void WKContextResetHSTSHostsAddedAfterDate(WKContextRef, double)
+void WKContextResetHSTSHostsAddedAfterDate(WKContextRef context, double startDateIntervalSince1970)
 {
+    return WebKit::toImpl(context)->resetHSTSHostsAddedAfterDate(startDateIntervalSince1970);
 }
 
 void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)

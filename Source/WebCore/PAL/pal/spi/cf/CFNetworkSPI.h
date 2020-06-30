@@ -407,7 +407,7 @@ WTF_EXTERN_C_BEGIN
 CFDataRef _CFNetworkCopyATSContext(void);
 Boolean _CFNetworkSetATSContext(CFDataRef);
 
-#if PLATFORM(COCOA) && !HAVE(HSTS_STORAGE)
+#if PLATFORM(COCOA)
 extern const CFStringRef _kCFNetworkHSTSPreloaded;
 CFDictionaryRef _CFNetworkCopyHSTSPolicies(CFURLStorageSessionRef);
 void _CFNetworkResetHSTS(CFURLRef, CFURLStorageSessionRef);
@@ -458,22 +458,9 @@ WTF_EXTERN_C_END
 - (void)_setMIMEType:(NSString *)type;
 @end
 
-#if HAVE(HSTS_STORAGE)
-@interface _NSHSTSStorage : NSObject
--(instancetype)initPersistentStoreWithURL:(nullable NSURL*)path;
--(BOOL)shouldPromoteHostToHTTPS:(NSString *)host;
--(NSArray<NSString *> *)nonPreloadedHosts;
--(void)resetHSTSForHost:(NSString *)host;
--(void)resetHSTSHostsSinceDate:(NSDate *)date;
-@end
-#endif
-
 @interface NSURLSessionConfiguration ()
 // FIXME: Remove this once rdar://problem/40650244 is in a build.
 @property (copy) NSDictionary *_socketStreamProperties;
-#if HAVE(HSTS_STORAGE)
-@property (nullable, retain) _NSHSTSStorage *_hstsStorage;
-#endif
 @end
 
 @interface NSURLSessionTask ()

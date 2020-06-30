@@ -422,6 +422,8 @@ public:
     static void didReceiveInvalidMessage(IPC::MessageName);
 
     bool isURLKnownHSTSHost(const String& urlString) const;
+    void resetHSTSHosts();
+    void resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970);
 
     static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
     static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);

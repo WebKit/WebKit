@@ -232,8 +232,6 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setJavaScriptConfigurationDirectory(resolvePathForSandboxExtension(m_configuration->javaScriptConfigurationDirectory()));
     if (!m_configuration->cacheStorageDirectory().isEmpty() && m_resolvedConfiguration->cacheStorageDirectory().isEmpty())
         m_resolvedConfiguration->setCacheStorageDirectory(resolvePathForSandboxExtension(m_configuration->cacheStorageDirectory()));
-    if (!m_configuration->hstsStorageDirectory().isEmpty() && m_resolvedConfiguration->hstsStorageDirectory().isEmpty())
-        m_resolvedConfiguration->setHSTSStorageDirectory(resolvePathForSandboxExtension(m_configuration->hstsStorageDirectory()));
 
     // Resolve directories for file paths.
     if (!m_configuration->cookieStorageFile().isEmpty()) {
@@ -2261,11 +2259,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!networkCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
 
-    auto hstsStorageDirectory = resolvedHSTSStorageDirectory();
-    SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
-    if (!hstsStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(hstsStorageDirectory, hstsStorageDirectoryExtensionHandle);
-
     bool shouldIncludeLocalhostInResourceLoadStatistics = false;
     bool enableResourceLoadStatisticsDebugMode = false;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
@@ -2307,8 +2300,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting = m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();
     networkSessionParameters.networkCacheDirectory = WTFMove(networkCacheDirectory);
     networkSessionParameters.networkCacheDirectoryExtensionHandle = WTFMove(networkCacheDirectoryExtensionHandle);
-    networkSessionParameters.hstsStorageDirectory = WTFMove(hstsStorageDirectory);
-    networkSessionParameters.hstsStorageDirectoryExtensionHandle = WTFMove(hstsStorageDirectoryExtensionHandle);
     networkSessionParameters.dataConnectionServiceType = m_configuration->dataConnectionServiceType();
     networkSessionParameters.fastServerTrustEvaluationEnabled = m_configuration->fastServerTrustEvaluationEnabled();
     networkSessionParameters.networkCacheSpeculativeValidationEnabled = m_configuration->networkCacheSpeculativeValidationEnabled();

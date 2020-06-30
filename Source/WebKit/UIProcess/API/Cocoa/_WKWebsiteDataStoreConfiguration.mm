@@ -290,19 +290,6 @@ static void checkURLArgument(NSURL *url)
     _configuration->setMediaKeysStorageDirectory(url.path);
 }
 
-- (NSURL *)hstsStorageDirectory
-{
-    return [NSURL fileURLWithPath:_configuration->hstsStorageDirectory() isDirectory:YES];
-}
-
-- (void)setHSTSStorageDirectory:(NSURL *)url
-{
-    if (!_configuration->isPersistent())
-        [NSException raise:NSInvalidArgumentException format:@"Cannot set mediaKeysStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
-    checkURLArgument(url);
-    _configuration->setHSTSStorageDirectory(url.path);
-}
-
 - (NSURL *)alternativeServicesStorageDirectory
 {
     return [NSURL fileURLWithPath:_configuration->alternativeServicesDirectory() isDirectory:YES];

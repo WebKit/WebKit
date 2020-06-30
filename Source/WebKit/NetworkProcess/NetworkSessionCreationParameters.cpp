@@ -57,8 +57,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << alternativeServiceDirectoryExtensionHandle;
     encoder << http3Enabled;
 #endif
-    encoder << hstsStorageDirectory;
-    encoder << hstsStorageDirectoryExtensionHandle;
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
@@ -155,16 +153,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         return WTF::nullopt;
 #endif
 
-    Optional<String> hstsStorageDirectory;
-    decoder >> hstsStorageDirectory;
-    if (!hstsStorageDirectory)
-        return WTF::nullopt;
-
-    Optional<SandboxExtension::Handle> hstsStorageDirectoryExtensionHandle;
-    decoder >> hstsStorageDirectoryExtensionHandle;
-    if (!hstsStorageDirectoryExtensionHandle)
-        return WTF::nullopt;
-    
 #if USE(SOUP)
     Optional<String> cookiePersistentStoragePath;
     decoder >> cookiePersistentStoragePath;
@@ -287,8 +275,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*alternativeServiceDirectoryExtensionHandle)
         , WTFMove(*http3Enabled)
 #endif
-        , WTFMove(*hstsStorageDirectory)
-        , WTFMove(*hstsStorageDirectoryExtensionHandle)
 #if USE(SOUP)
         , WTFMove(*cookiePersistentStoragePath)
         , WTFMove(*cookiePersistentStorageType)
