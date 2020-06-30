@@ -1,3 +1,10 @@
+2020-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out an accidental change from r263723.
+
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::TimerBase::timerFired):
+
 2020-06-29  Alex Christensen  <achristensen@webkit.org>
 
         Make _WKWebsiteDataStoreConfiguration SPI for HSTS storage to replace _WKProcessPoolConfiguration.hstsStorageDirectory
