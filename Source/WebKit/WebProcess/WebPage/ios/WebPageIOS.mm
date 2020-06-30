@@ -3100,17 +3100,18 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     information.focusedElementIdentifier = m_currentFocusedElementIdentifier;
 
     if (is<LabelableElement>(*focusedElement)) {
-        auto labels = downcast<LabelableElement>(*focusedElement).labels();
-        Vector<Ref<Element>> associatedLabels;
-        for (unsigned index = 0; index < labels->length(); ++index) {
-            if (is<Element>(labels->item(index)) && labels->item(index)->renderer())
-                associatedLabels.append(downcast<Element>(*labels->item(index)));
-        }
-        for (auto& labelElement : associatedLabels) {
-            auto text = labelElement->innerText();
-            if (!text.isEmpty()) {
-                information.label = WTFMove(text);
-                break;
+        if (auto labels = downcast<LabelableElement>(*focusedElement).labels()) {
+            Vector<Ref<Element>> associatedLabels;
+            for (unsigned index = 0; index < labels->length(); ++index) {
+                if (is<Element>(labels->item(index)) && labels->item(index)->renderer())
+                    associatedLabels.append(downcast<Element>(*labels->item(index)));
+            }
+            for (auto& labelElement : associatedLabels) {
+                auto text = labelElement->innerText();
+                if (!text.isEmpty()) {
+                    information.label = WTFMove(text);
+                    break;
+                }
             }
         }
     }

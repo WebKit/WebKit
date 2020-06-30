@@ -1,3 +1,16 @@
+2020-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Crash under WebKit::WebPage::getFocusedElementInformation()
+        https://bugs.webkit.org/show_bug.cgi?id=213798
+        <rdar://problem/62754594>
+
+        Reviewed by Wenson Hsieh.
+
+        Since LabelableElement::labels() returns a RefPtr<NodeList>, ensure we get a value before attempting to read data from it.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2020-06-30  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable the "My Mac (Mac Catalyst)" destination in WebKit Xcode projects
