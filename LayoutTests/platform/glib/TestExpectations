@@ -101,13 +101,24 @@ webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ Imag
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Crash ImageOnlyFailure Timeout Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Events-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# Times out due to missing event 'callAfterScrollingCompletes'.
+webkit.org/b/212202 fast/events/platform-wheelevent-in-scrolling-div.html [ Skip ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Events-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
 webkit.org/b/79203  fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
@@ -136,7 +147,7 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
 # HiDPI-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure ]
+webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure Pass ]
 webkit.org/b/209475 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html [ ImageOnlyFailure ]
@@ -573,7 +584,8 @@ imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/i
 
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ DumpJSConsoleLogInStdErr ]
+# Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
+imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
@@ -622,6 +634,8 @@ webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
 
 webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
+
+webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Crash ImageOnlyFailure Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of NEEDS TRIAGING. Don't put expectations below this section.

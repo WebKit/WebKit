@@ -2470,8 +2470,6 @@ webkit.org/b/212202 webkit.org/b/158917 fast/scrolling/overflow-scroll-past-max.
 webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Skip ]
-# Times out due to missing event 'callAfterScrollingCompletes'.
-webkit.org/b/212202 fast/events/platform-wheelevent-in-scrolling-div.html [ Skip ]
 
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Timeout Pass ]
@@ -3661,8 +3659,6 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
-
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ DumpJSConsoleLogInStdErr ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

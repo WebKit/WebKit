@@ -1,5 +1,13 @@
 2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Update test expectations after r263737.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Upload test expectations after r263737.
 
         * platform/glib/TestExpectations:
