@@ -37,41 +37,12 @@
 #endif
 
 #include <wtf/RunLoop.h>
-#include <wtf/NeverDestroyed.h>
-#if USE(GLIB)
-#include <wtf/glib/RunLoopSourcePriority.h>
-#endif
 
 namespace WTF {
 
 #if !HAVE(PTHREAD_MAIN_NP)
 static pthread_t mainThread;
 #endif
-
-class MainThreadDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    MainThreadDispatcher()
-        : m_timer(RunLoop::main(), this, &MainThreadDispatcher::fired)
-    {
-#if USE(GLIB)
-        m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
-#endif
-    }
-
-    void schedule()
-    {
-        m_timer.startOneShot(0_s);
-    }
-
-private:
-    void fired()
-    {
-        dispatchFunctionsFromMainThread();
-    }
-
-    RunLoop::Timer<MainThreadDispatcher> m_timer;
-};
 
 void initializeMainThreadPlatform()
 {
@@ -91,10 +62,7 @@ bool isMainThread()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    // Use a RunLoop::Timer instead of RunLoop::dispatch() to be able to use a different priority and
-    // avoid the double queue because dispatchOnMainThread also queues the functions.
-    static NeverDestroyed<MainThreadDispatcher> dispatcher;
-    dispatcher.get().schedule();
+    RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
 }
 
 } // namespace WTF

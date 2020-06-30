@@ -1,3 +1,25 @@
+2020-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+        [GTK] [Win] Build callOnMainThread on WTF::RunLoop rather than on a timer
+        https://bugs.webkit.org/show_bug.cgi?id=213694
+
+        Reviewed by Carlos Garcia Campos.
+
+        As of https://bugs.webkit.org/show_bug.cgi?id=213063, Darwin platforms
+        use the RunLoop. Let's match them for consistency, and to delete some
+        code.
+
+        * wtf/generic/MainThreadGeneric.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::MainThreadDispatcher::MainThreadDispatcher): Deleted.
+        (WTF::MainThreadDispatcher::schedule): Deleted.
+        (WTF::MainThreadDispatcher::fired): Deleted.
+        * wtf/glib/RunLoopSourcePriority.h:
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::ThreadingWindowWndProc): Deleted.
+
 2020-06-29  Guowei Yang  <guowei_yang@apple.com>
 
         Adding Experimental Feature Flags for CoreImage backed SVG/CSS Filters

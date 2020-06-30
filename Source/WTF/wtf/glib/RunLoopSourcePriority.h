@@ -48,9 +48,6 @@ enum RunLoopSourcePriority {
     // Garbage collector timers.
     JavascriptTimer = 200,
 
-    // callOnMainThread.
-    MainThreadDispatcherTimer = 100,
-
     // Memory pressure monitor.
     MemoryPressureHandlerTimer = -100,
 
@@ -87,8 +84,6 @@ enum RunLoopSourcePriority {
 enum RunLoopSourcePriority {
     RunLoopDispatcher = 0,
     RunLoopTimer = 0,
-
-    MainThreadDispatcherTimer = 10,
 
     MemoryPressureHandlerTimer = -10,
 
