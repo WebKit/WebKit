@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKContentWorld;
 @class WKFindConfiguration;
 @class WKFindResult;
+@class WKFrameInfo;
 @class WKNavigation;
 @class WKPDFConfiguration;
 @class WKSnapshotConfiguration;
@@ -220,14 +221,25 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @param javaScriptString The JavaScript string to evaluate.
  @param completionHandler A block to invoke when script evaluation completes or fails.
  @discussion The completionHandler is passed the result of the script evaluation or an error.
+ Calling this method is equivalent to calling `evaluateJavaScript:inFrame:inContentWorld:completionHandler:` with:
+   - A `frame` value of `nil` to represent the main frame
+   - A `contentWorld` value of `WKContentWorld.pageWorld`
 */
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler;
 
 /* @abstract Evaluates the given JavaScript string.
  @param javaScriptString The JavaScript string to evaluate.
+ @param frame A WKFrameInfo identifying the frame in which to evaluate the JavaScript string.
  @param contentWorld The WKContentWorld in which to evaluate the JavaScript string.
  @param completionHandler A block to invoke when script evaluation completes or fails.
  @discussion The completionHandler is passed the result of the script evaluation or an error.
+
+ Passing nil is equivalent to targeting the main frame.
+ If the frame argument no longer represents a valid frame by the time WebKit attempts to call the JavaScript function your completion handler will be called with a WKErrorJavaScriptInvalidFrameTarget error.
+ This might happen for a number of reasons, including but not limited to:
+     - The target frame has been removed from the DOM via JavaScript
+     - A parent frame has navigated, destroying all of its previous child frames
+
  No matter which WKContentWorld you use to evaluate your JavaScript string, you can make changes to the underlying web content. (e.g. the Document and its DOM structure)
  Such changes will be visible to script executing in all WKContentWorlds.
  Evaluating your JavaScript string can leave behind other changes to global state visibile to JavaScript. (e.g. `window.myVariable = 1;`)
@@ -235,11 +247,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  evaluateJavaScript: is a great way to set up global state for future JavaScript execution in a given world. (e.g. Importing libraries/utilities that future JavaScript execution will rely on)
  Once your global state is set up, consider using callAsyncJavaScript: for more flexible interaction with the JavaScript programming model.
 */
-- (void)evaluateJavaScript:(NSString *)javaScriptString inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /* @abstract Calls the given JavaScript string as an async JavaScript function, passing the given named arguments to that function.
  @param functionBody The JavaScript string to use as the function body.
  @param arguments A dictionary representing the arguments to be passed to the function call.
+ @param frame A WKFrameInfo identifying the frame in which to call the JavaScript function.
  @param contentWorld The WKContentWorld in which to call the JavaScript function.
  @param completionHandler A block to invoke with the return value of the function call, or with the asynchronous resolution of the function's return value.
  @discussion The functionBody string is treated as an anonymous JavaScript function body that can be called with named arguments.
@@ -271,6 +284,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  NSNumber, NSString, NSDate, NSArray, NSDictionary, and NSNull.
  Any NSArray or NSDictionary containers can only contain objects of those types.
 
+ Passing nil is equivalent to targeting the main frame.
+ If the frame argument no longer represents a valid frame by the time WebKit attempts to call the JavaScript function your completion handler will be called with a WKErrorJavaScriptInvalidFrameTarget error.
+ This might happen for a number of reasons, including but not limited to:
+     - The target frame has been removed from the DOM via JavaScript
+     - A parent frame has navigated, destroying all of its previous child frames
+
  No matter which WKContentWorld you use to call your JavaScript function, you can make changes to the underlying web content. (e.g. the Document and its DOM structure)
  Such changes will be visible to script executing in all WKContentWorlds.
  Calling your JavaScript function can leave behind other changes to global state visibile to JavaScript. (e.g. `window.myVariable = 1;`)
@@ -300,7 +319,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
-- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Get a snapshot for the visible viewport of WKWebView.
  @param snapshotConfiguration An object that specifies how the snapshot is configured.

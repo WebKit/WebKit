@@ -30,9 +30,16 @@
 namespace WebCore {
 
 struct ExceptionDetails {
+    enum class Type : uint8_t {
+        Script,
+        InvalidTargetFrame,
+    };
+
     String message;
     int lineNumber { 0 };
     int columnNumber { 0 };
+    Type type { Type::Script };
+
     // This bizarre explicit initialization of String is because older compilers (like on High Sierra)
     // don't properly handle partial initialization lists unless every struct member has an explicit default value.
     // Once we stop building on those platforms we can remove this.
@@ -40,3 +47,13 @@ struct ExceptionDetails {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::ExceptionDetails::Type> {
+    using values = EnumValues<
+        WebCore::ExceptionDetails::Type,
+        WebCore::ExceptionDetails::Type::Script,
+        WebCore::ExceptionDetails::Type::InvalidTargetFrame
+    >;
+};
+}

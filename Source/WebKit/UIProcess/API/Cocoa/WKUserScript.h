@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,8 +57,17 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @param source The script source.
  @param injectionTime When the script should be injected.
  @param forMainFrameOnly Whether the script should be injected into all frames or just the main frame.
+ @discussion Calling this method is the same as calling `initWithSource:injectionTime:forMainFrameOnly:inContentWorld:` with a `contentWorld` value of `WKContentWorld.pageWorld`
  */
 - (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly;
+
+/*! @abstract Returns an initialized user script that can be added to a @link WKUserContentController @/link.
+ @param source The script source.
+ @param injectionTime When the script should be injected.
+ @param forMainFrameOnly Whether the script should be injected into all frames or just the main frame.
+ @param contentWorld The WKContentWorld in which to inject the script.
+ */
+- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly inContentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

@@ -221,7 +221,7 @@ TEST(WKUserContentController, ScriptMessageHandlerCallRemovedHandler)
 
     __block bool done = false;
     // Test that we throw an exception if you try to use a message handler that has been removed.
-    [webView callAsyncJavaScript:@"return handlerToRemove.postMessage('FAIL')" arguments:nil inContentWorld:[WKContentWorld pageWorld] completionHandler:^ (id value, NSError * error) {
+    [webView callAsyncJavaScript:@"return handlerToRemove.postMessage('FAIL')" arguments:nil inFrame:nil inContentWorld:[WKContentWorld pageWorld] completionHandler:^ (id value, NSError * error) {
         EXPECT_NULL(value);
         EXPECT_NOT_NULL(error);
         EXPECT_TRUE([[error description] containsString:@"InvalidAccessError"]);
@@ -1012,7 +1012,7 @@ TEST(WKUserContentController, MessageHandlerAPI)
     NSString *functionBody = @"var p = window.webkit.messageHandlers[handler].postMessage(arg); await p; return p;";
 
     // pageWorld is where testhandler1 lives
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler1", @"arg" : @1 } inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler1", @"arg" : @1 } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
         done = true;
@@ -1021,7 +1021,7 @@ TEST(WKUserContentController, MessageHandlerAPI)
     done = false;
 
     // Trying to find testHandler1 in the defaultClientWorld should fail
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler1", @"arg" : @1 } inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler1", @"arg" : @1 } inFrame:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NOT_NULL(error);
         done = true;
@@ -1030,7 +1030,7 @@ TEST(WKUserContentController, MessageHandlerAPI)
     done = false;
 
     // defaultClientWorld is where testhandler2 lives
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler2", @"arg" : @1 } inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler2", @"arg" : @1 } inFrame:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
         done = true;
@@ -1040,7 +1040,7 @@ TEST(WKUserContentController, MessageHandlerAPI)
 
     // But if we remvoe it, it should no longer live there, and using it should cause an error.
     [[configuration userContentController] removeScriptMessageHandlerForName:@"testHandler2" contentWorld:WKContentWorld.defaultClientWorld];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler2", @"arg" : @1 } inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler2", @"arg" : @1 } inFrame:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NOT_NULL(error);
         done = true;
@@ -1049,15 +1049,15 @@ TEST(WKUserContentController, MessageHandlerAPI)
     done = false;
 
     // Verify handlers 3, 4, and 5 are all in the custom world.
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler3", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler3", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
     }];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler4", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler4", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
     }];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler5", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler5", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
         done = true;
@@ -1067,7 +1067,7 @@ TEST(WKUserContentController, MessageHandlerAPI)
 
     // Remove 3 from the wrong world, verify it is still there in the custom world.
     [[configuration userContentController] removeScriptMessageHandlerForName:@"testHandler3" contentWorld:WKContentWorld.defaultClientWorld];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler3", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler3", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
         done = true;
@@ -1077,15 +1077,15 @@ TEST(WKUserContentController, MessageHandlerAPI)
 
     // Remove 3 from the correct world, verify it is gone, but 4 and 5 are still there.
     [[configuration userContentController] removeScriptMessageHandlerForName:@"testHandler3" contentWorld:world];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler3", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler3", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NOT_NULL(error);
     }];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler4", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler4", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
     }];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler5", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler5", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isEqualToNumber:@1]);
         done = true;
@@ -1095,11 +1095,11 @@ TEST(WKUserContentController, MessageHandlerAPI)
 
     // Remove "all" in the custom world, verify 4 and 5 are now gone.
     [[configuration userContentController] removeAllScriptMessageHandlersFromContentWorld:world];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler4", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler4", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NOT_NULL(error);
     }];
-    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler5", @"arg" : @1 } inContentWorld:world completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:@{ @"handler" : @"testHandler5", @"arg" : @1 } inFrame:nil inContentWorld:world completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NOT_NULL(error);
         done = true;
@@ -1118,7 +1118,7 @@ TEST(WKUserContentController, AsyncScriptMessageHandlerBasicPost)
 
     bool done = false;
     NSString *functionBody = @"var p = window.webkit.messageHandlers.testHandler.postMessage('Fulfill'); await p; return p;";
-    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"Fulfilled!"]);
@@ -1129,7 +1129,7 @@ TEST(WKUserContentController, AsyncScriptMessageHandlerBasicPost)
 
     done = false;
     functionBody = @"var p = window.webkit.messageHandlers.testHandler.postMessage('Reject'); await p; return p;";
-    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_TRUE(!!error);
         EXPECT_TRUE([[error description] containsString:@"Rejected!"]);
@@ -1141,7 +1141,7 @@ TEST(WKUserContentController, AsyncScriptMessageHandlerBasicPost)
 
     done = false;
     functionBody = @"var p = window.webkit.messageHandlers.testHandler.postMessage('Undefined'); var result = await p; return result == undefined ? 'Yes' : 'No'";
-    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"Yes"]);
@@ -1153,7 +1153,7 @@ TEST(WKUserContentController, AsyncScriptMessageHandlerBasicPost)
 
     done = false;
     functionBody = @"var p = window.webkit.messageHandlers.testHandler.postMessage('Do nothing'); await p; return p;";
-    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_TRUE(!!error);
         EXPECT_TRUE([[error description] containsString:@"did not respond to this postMessage"]);
@@ -1165,7 +1165,7 @@ TEST(WKUserContentController, AsyncScriptMessageHandlerBasicPost)
 
     done = false;
     functionBody = @"var p = window.webkit.messageHandlers.testHandler.postMessage('Invalid reply'); await p; return p;";
-    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_TRUE(!!error);
         EXPECT_TRUE([[error description] containsString:@"unable to be serialized"]);
@@ -1187,7 +1187,7 @@ TEST(WKUserContentController, WorldLifetime)
 
     // Set a variable in the world.
     bool done = false;
-    [webView evaluateJavaScript:@"var foo = 'bar'" inContentWorld:world.get() completionHandler:[&] (id result, NSError *error) {
+    [webView evaluateJavaScript:@"var foo = 'bar'" inFrame:nil inContentWorld:world.get() completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -1196,7 +1196,7 @@ TEST(WKUserContentController, WorldLifetime)
 
     // Have the message handler bounce back that value.
     NSString *functionBody = @"var p = window.webkit.messageHandlers.testHandler.postMessage(foo); await p; return p;";
-    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:world.get() completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inFrame:nil inContentWorld:world.get() completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bar"]);
@@ -1208,7 +1208,7 @@ TEST(WKUserContentController, WorldLifetime)
     // Remove the message handler, which used to cause the world to be destroyed in the web process.
     // But by evaluating JS make sure the value is still there.
     [[configuration userContentController] removeAllScriptMessageHandlersFromContentWorld:world.get()];
-    [webView evaluateJavaScript:@"foo" inContentWorld:world.get() completionHandler:[&] (id result, NSError *error) {
+    [webView evaluateJavaScript:@"foo" inFrame:nil inContentWorld:world.get() completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bar"]);

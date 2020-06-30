@@ -820,14 +820,14 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
 }
 
-- (void)evaluateJavaScript:(NSString *)javaScriptString inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *))completionHandler
+- (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:contentWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
-- (void)callAsyncJavaScript:(NSString *)javaScriptString arguments:(NSDictionary<NSString *, id> *)arguments inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
+- (void)callAsyncJavaScript:(NSString *)javaScriptString arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:nil inWorld:contentWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
 static bool validateArgument(id argument)
@@ -862,6 +862,31 @@ static bool validateArgument(id argument)
     }
 
     return false;
+}
+
+static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
+{
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+
+    WKErrorCode errorCode;
+    switch (details.type) {
+    case WebCore::ExceptionDetails::Type::InvalidTargetFrame:
+        errorCode = WKErrorJavaScriptInvalidFrameTarget;
+        break;
+    case WebCore::ExceptionDetails::Type::Script:
+        errorCode = WKErrorJavaScriptExceptionOccurred;
+        break;
+    }
+
+    [userInfo setObject:localizedDescriptionForErrorCode(errorCode) forKey:NSLocalizedDescriptionKey];
+    [userInfo setObject:details.message forKey:_WKJavaScriptExceptionMessageErrorKey];
+    [userInfo setObject:@(details.lineNumber) forKey:_WKJavaScriptExceptionLineNumberErrorKey];
+    [userInfo setObject:@(details.columnNumber) forKey:_WKJavaScriptExceptionColumnNumberErrorKey];
+
+    if (!details.sourceURL.isEmpty())
+        [userInfo setObject:[NSURL _web_URLWithWTFString:details.sourceURL] forKey:_WKJavaScriptExceptionSourceURLErrorKey];
+
+    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
 }
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withSourceURL:(NSURL *)sourceURL withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
@@ -930,18 +955,7 @@ static bool validateArgument(id argument)
         auto rawHandler = (void (^)(id, NSError *))handler.get();
         if (details) {
             ASSERT(!serializedScriptValue);
-
-            RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-
-            [userInfo setObject:localizedDescriptionForErrorCode(WKErrorJavaScriptExceptionOccurred) forKey:NSLocalizedDescriptionKey];
-            [userInfo setObject:static_cast<NSString *>(details->message) forKey:_WKJavaScriptExceptionMessageErrorKey];
-            [userInfo setObject:@(details->lineNumber) forKey:_WKJavaScriptExceptionLineNumberErrorKey];
-            [userInfo setObject:@(details->columnNumber) forKey:_WKJavaScriptExceptionColumnNumberErrorKey];
-
-            if (!details->sourceURL.isEmpty())
-                [userInfo setObject:[NSURL _web_URLWithWTFString:details->sourceURL] forKey:_WKJavaScriptExceptionSourceURLErrorKey];
-
-            rawHandler(nil, adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]).get());
+            rawHandler(nil, nsErrorFromExceptionDetails(*details).get());
             return;
         }
 

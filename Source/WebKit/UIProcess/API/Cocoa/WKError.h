@@ -58,6 +58,7 @@ typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorContentRuleListStoreVersionMismatch WK_API_AVAILABLE(macos(10.13), ios(11.0)),
     WKErrorAttributedStringContentFailedToLoad WK_API_AVAILABLE(macos(10.15), ios(13.0)),
     WKErrorAttributedStringContentLoadTimedOut WK_API_AVAILABLE(macos(10.15), ios(13.0)),
+    WKErrorJavaScriptInvalidFrameTarget WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 NS_ASSUME_NONNULL_END

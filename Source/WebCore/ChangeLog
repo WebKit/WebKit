@@ -1,3 +1,15 @@
+2020-06-29  Brady Eidson  <beidson@apple.com>
+
+        JavaScript cannot be injected into iframes
+        <rdar://problem/54168946> and https://bugs.webkit.org/show_bug.cgi?id=213556
+
+        Reviewed by Geoff Garen.
+
+        Covered by API tests.
+
+        * bindings/js/ExceptionDetails.h: Start a collection of "exception types" that will grow quickly,
+          beginning with the specialized "missing frame" type.
+
 2020-06-29  Sam Weinig  <weinig@apple.com>
 
         Convert AppCache manifest parser over to using StringParsingBuffer

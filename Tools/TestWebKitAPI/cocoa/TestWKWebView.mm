@@ -198,7 +198,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
         *errorOut = nil;
 
     RetainPtr<id> evalResult;
-    [self callAsyncJavaScript:script arguments:arguments inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [self callAsyncJavaScript:script arguments:arguments inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         evalResult = result;
         if (errorOut)
             *errorOut = [error retain];

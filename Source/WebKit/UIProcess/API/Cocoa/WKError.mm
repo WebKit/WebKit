@@ -73,6 +73,9 @@ NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
 
     case WKErrorAttributedStringContentLoadTimedOut:
         return WEB_UI_STRING("Timed out while loading attributed string content", "WKErrorAttributedStringContentLoadTimedOut description");
+
+    case WKErrorJavaScriptInvalidFrameTarget:
+        return WEB_UI_STRING("JavaScript execution targeted an invalid frame", "WKErrorJavaScriptInvalidFrameTarget description");
     }
 }
 

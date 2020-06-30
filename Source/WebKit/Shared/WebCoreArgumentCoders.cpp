@@ -2659,6 +2659,7 @@ void ArgumentCoder<ExceptionDetails>::encode(IPC::Encoder& encoder, const Except
     encoder << info.message;
     encoder << info.lineNumber;
     encoder << info.columnNumber;
+    encoder << info.type;
     encoder << info.sourceURL;
 }
 
@@ -2671,6 +2672,9 @@ bool ArgumentCoder<ExceptionDetails>::decode(IPC::Decoder& decoder, ExceptionDet
         return false;
 
     if (!decoder.decode(result.columnNumber))
+        return false;
+
+    if (!decoder.decode(result.type))
         return false;
 
     if (!decoder.decode(result.sourceURL))

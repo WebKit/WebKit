@@ -1,3 +1,21 @@
+2020-06-29  Brady Eidson  <beidson@apple.com>
+
+        JavaScript cannot be injected into iframes
+        <rdar://problem/54168946> and https://bugs.webkit.org/show_bug.cgi?id=213556
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        (-[FramesMessageHandler userContentController:didReceiveScriptMessage:]):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView objectByCallingAsyncFunction:withArguments:error:]):
+
 2020-06-29  Jonathan Bedard  <jbedard@apple.com>
 
         [TestExpectations] Remove --csv option
