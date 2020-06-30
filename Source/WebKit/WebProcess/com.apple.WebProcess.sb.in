@@ -640,8 +640,6 @@
 (allow iokit-open
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
-    (iokit-user-client-class "IOAudioControlUserClient")
-    (iokit-user-client-class "IOAudioEngineUserClient")
 )
 #endif
 
@@ -650,8 +648,6 @@
     (with send-signal SIGKILL)
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
-    (iokit-user-client-class "IOAudioControlUserClient")
-    (iokit-user-client-class "IOAudioEngineUserClient")
     (iokit-registry-entry-class "IOFramebufferSharedUserClient")
 )
 #endif
@@ -660,6 +656,8 @@
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
     (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
+    (iokit-user-client-class "IOAudioControlUserClient")
+    (iokit-user-client-class "IOAudioEngineUserClient")
 )
 
 ;; <rdar://problem/60088861>

@@ -1,3 +1,16 @@
+2020-06-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Stop blocking two audio-related user client classes
+        https://bugs.webkit.org/show_bug.cgi?id=213807
+        <rdar://problem/64874902>
+
+        Reviewed by Per Arne Vollan.
+
+        Restore IOAudioControlUserClient and IOAudioEngineUserClient since we find them being
+        actively used on macOS for some media playback purposes.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Enable the support of FULLSCREEN_API in WebKitTestRunner
