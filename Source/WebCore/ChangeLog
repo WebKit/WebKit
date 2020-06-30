@@ -1,3 +1,15 @@
+2020-06-30  Youenn Fablet  <youenn@apple.com>
+
+        Set runtime flag m_isWebRTCPlatformCodecsInGPUProcessEnabled to false by default
+        https://bugs.webkit.org/show_bug.cgi?id=213779
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior since this flag is WebKit 2 only and off by default.
+        Move off by default WebRTC flags at the end of the section.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2020-06-30  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r263753.

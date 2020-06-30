@@ -512,12 +512,12 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isWebRTCDTMFEnabled { true };
+    bool m_isPeerConnectionEnabled { true };
+    bool m_isWebRTCH264SimulcastEnabled { true };
+    bool m_isWebRTCMDNSICECandidatesEnabled { false };
+    bool m_isWebRTCPlatformCodecsInGPUProcessEnabled { false };
     bool m_isWebRTCH265CodecEnabled { false };
     bool m_isWebRTCVP9CodecEnabled { false };
-    bool m_isPeerConnectionEnabled { true };
-    bool m_isWebRTCMDNSICECandidatesEnabled { false };
-    bool m_isWebRTCH264SimulcastEnabled { true };
-    bool m_isWebRTCPlatformCodecsInGPUProcessEnabled { true };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
