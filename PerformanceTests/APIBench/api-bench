@@ -1,0 +1,263 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set -eo pipefail
+
+API_BENCH_EXECUTABLE=$(basename "$0")
+
+pushd "$(dirname "$0")" &> /dev/null
+API_BENCH_DIR=$PWD
+popd &> /dev/null
+
+BENCHMARKS=()
+BUILD_DIRECTORIES=()
+RICHARDS_JS=-1
+RICHARDS_SWIFT=-1
+
+shouldBuild=true
+verbose=false
+iterations=5
+
+log() {
+    if [ "$verbose" == true ]; then
+        echo "$*"
+    fi
+}
+
+printUsage() {
+    cat <<EOF
+usage: $API_BENCH_EXECUTABLE [-h|--help] [--no-build] [--verbose] [--iterations <n=$iterations>] <build_directory1> [<build_directory2> ...]
+EOF
+    exit 0
+}
+
+collectFlags() {
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -h|--help)
+                printUsage
+                ;;
+            --no-build)
+                shouldBuild=false
+                ;;
+            --verbose)
+                verbose=true
+                ;;
+            --iterations)
+                shift
+                iterations=$1
+                ;;
+            *)
+                BUILD_DIRECTORIES=("$@")
+                break 2
+                ;;
+        esac
+        shift
+  done
+
+  if [ ${#BUILD_DIRECTORIES[@]} -lt 1 ]; then
+      printUsage
+      exit 1
+  fi
+
+  for i in "${!BUILD_DIRECTORIES[@]}"; do
+      local buildDirectory
+      buildDirectory=${BUILD_DIRECTORIES[$i]}
+
+      if ! [ -d "$buildDirectory" ]; then
+          echo "No such file or directory: $buildDirectory"
+          exit 1
+      fi
+
+      pushd "$buildDirectory" &> /dev/null
+      BUILD_DIRECTORIES[$i]=$PWD
+      popd &> /dev/null
+  done
+}
+
+collectBenchmarks() {
+    local benchmarkDirs
+    benchmarkDirs=("$API_BENCH_DIR"/*/)
+    for benchmarkID in "${!benchmarkDirs[@]}"; do
+        local benchmark
+        benchmark=${benchmarkDirs[$benchmarkID]}
+        pushd "$benchmark" &> /dev/null
+        BENCHMARKS[$benchmarkID]=$PWD
+        case "$(basename "$PWD")" in
+            RichardsJS)
+                RICHARDS_JS=$benchmarkID
+                ;;
+            RichardsSwift)
+                RICHARDS_SWIFT=$benchmarkID
+                ;;
+        esac
+        popd &> /dev/null
+    done
+}
+
+forEachBenchmark() {
+    local functor
+    functor="$1"
+    declare "$functor"
+    for benchmarkID in "${!BENCHMARKS[@]}"; do
+        local benchmark
+        benchmark=${BENCHMARKS[$benchmarkID]}
+        pushd "$benchmark" &> /dev/null
+        BENCHMARK_ID=$benchmarkID
+        BENCHMARK_NAME=$(basename "$benchmark")
+        "$functor"
+        popd &> /dev/null
+    done
+}
+
+buildBenchmark() {
+    project=$BENCHMARK_NAME.xcodeproj
+
+    if ! [ -e "$project" ]; then
+        return
+    fi
+
+    log "Building $BENCHMARK_NAME..."
+    xcodebuild -project "$project" -target "$BENCHMARK_NAME" -configuration Release build
+}
+
+build() {
+    forEachBenchmark "buildBenchmark"
+}
+
+runJSBenchmark() {
+    "$DYLD_FRAMEWORK_PATH/jsc" "$BENCHMARK_NAME.js"
+}
+
+runNativeBenchmark() {
+    pushd "build/Release" &> /dev/null
+    "./$BENCHMARK_NAME"
+    popd &> /dev/null
+}
+
+runBenchmarkIteration() {
+    if [ -e "build" ]; then
+        runNativeBenchmark
+    else
+        runJSBenchmark
+    fi
+}
+
+runBenchmark() {
+    log "Running $BENCHMARK_NAME..."
+
+    local result
+    result=$(runBenchmarkIteration)
+    RESULTS[$((BENCHMARK_ID * iterations + ITERATION))]=$result
+    log "Finished in ${result}ms"
+}
+
+computeAverage() {
+    local benchmarkID benchmark sum avg
+    benchmarkID=$1
+    benchmark=${BENCHMARKS[$benchmarkID]}
+    sum=0
+    for iteration in $(seq 0 1 $((iterations - 1))); do
+        local result
+        result=${RESULTS[$((benchmarkID * iterations + iteration))]}
+        sum=$((sum + result))
+    done
+    bc <<< "$sum.0 / $iterations.0"
+}
+
+printAverage() {
+    local benchmarkID benchmark name avg
+    benchmarkID=$1
+    avg=$2
+    benchmark=${BENCHMARKS[$benchmarkID]}
+    name=$(basename "$benchmark")
+    echo "$name: ${avg}ms"
+}
+
+printBenchmark() {
+    printAverage "$@" "$(computeAverage "$@")"
+}
+
+printResults() {
+    local buildDirectory
+    buildDirectory=$1
+
+    echo "Results for $buildDirectory ($iterations iterations)"
+    echo "================================================================================"
+
+    echo ""
+    echo "References:"
+    echo "----------------------------------------"
+    printBenchmark "$RICHARDS_JS"
+    printBenchmark "$RICHARDS_SWIFT"
+
+    echo ""
+    echo "Tests:"
+    echo "----------------------------------------"
+
+    local score count
+    score=1
+    count=0
+    for benchmarkID in "${!BENCHMARKS[@]}"; do
+        if [ "$benchmarkID" -eq "$RICHARDS_JS" ] || [ "$benchmarkID" -eq "$RICHARDS_SWIFT" ]; then
+            continue
+        fi
+        avg=$(computeAverage "$benchmarkID")
+        printAverage "$benchmarkID" "$avg"
+        count=$((count + 1))
+        score=$((score * avg))
+    done
+    score=$(echo "$score" "$count" | awk '{ print(5000.0 / ($1.0 ^ (1.0 / $2))) }')
+
+    echo ""
+    echo "Score: $score"
+}
+
+run() {
+    local buildDirectory
+    buildDirectory=$1
+
+    export DYLD_FRAMEWORK_PATH=$buildDirectory
+    for iteration in $(seq 0 1 $((iterations-1))); do
+        ITERATION=$iteration
+        forEachBenchmark "runBenchmark"
+    done
+
+    printResults "$buildDirectory"
+}
+
+
+main() {
+    collectFlags "$@"
+    collectBenchmarks
+    if [ "$shouldBuild" == true ]; then
+        build
+    fi
+
+    for buildDirectory in "${BUILD_DIRECTORIES[@]}"; do
+        run "$buildDirectory"
+    done
+}
+
+main "$@"
