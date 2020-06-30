@@ -6,6 +6,9 @@
             },
             "/webkit/WebKitWebView/pointer-lock-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205266"}}
+            },
+            "/webkit/WebKitWebView/geolocation-permission-requests": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/213786"}}
             }
         }
     },
@@ -36,7 +39,7 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": ["webkit.org/b/147822", "webkit.org/b/210635"]}}
             },
             "/webkit/WebKitWebExtension/form-submission-steps": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205333"}}
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205333"}}
             },
             "/webkit/WebKitWebExtension/form-controls-associated-signal": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205380"}}
@@ -59,6 +62,9 @@
             },
             "/webkit/WebKitWebsiteData/configuration": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/205441"}}
+            },
+            "/webkit/WebKitWebsiteData/dom-cache": {
+                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}}
             }
         }
     },

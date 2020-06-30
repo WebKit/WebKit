@@ -1,3 +1,9 @@
+2020-06-30  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed API test gardening. Update test expectations after r263738.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-06-30  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add libserf
