@@ -3,7 +3,6 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
-editing/inserting/insert-paragraph-selection-outside-contenteditable.html [ Failure ]
 fast/events/offsetX-offsetY.html [ Failure ]
 fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
