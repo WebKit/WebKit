@@ -1,3 +1,16 @@
+2020-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Test landed flaky: webanimations/accelerated-animation-with-easing.html
+        https://bugs.webkit.org/show_bug.cgi?id=213758
+        <rdar://problem/64911008>
+
+        Reviewed by Dean Jackson.
+
+        Adding a little tolerance which seems to address the reported flakiness, at least locally.
+
+        * platform/ios/TestExpectations:
+        * webanimations/accelerated-animation-with-easing.html:
+
 2020-06-30  Karl Rackler  <rackler@apple.com>
 
         Remove expectations for canvas/philip/tests/2d.gradient.radial.cone.bottom.html and canvas/philip/tests/2d.gradient.radial.cone.cylinder.html and canvas/philip/tests/2d.gradient.radial.cone.front.html and canvas/philip/tests/2d.gradient.radial.cone.shape1.html and canvas/philip/tests/2d.gradient.radial.cone.top.html as they are passing. 
