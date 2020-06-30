@@ -28,6 +28,7 @@
 
 #include "ApplicationCache.h"
 #include "ApplicationCacheHost.h"
+#include "ApplicationCacheManifestParser.h"
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheResourceLoader.h"
 #include "ApplicationCacheStorage.h"
@@ -42,7 +43,6 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPHeaderValues.h"
 #include "InspectorInstrumentation.h"
-#include "ManifestParser.h"
 #include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
 #include "Page.h"

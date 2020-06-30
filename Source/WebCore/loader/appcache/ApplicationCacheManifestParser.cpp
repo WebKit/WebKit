@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ManifestParser.h"
+#include "ApplicationCacheManifestParser.h"
 
 #include "ParsingUtilities.h"
 #include "TextResourceDecoder.h"

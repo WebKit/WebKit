@@ -1,3 +1,18 @@
+2020-06-30  Sam Weinig  <weinig@apple.com>
+
+        Rename ManifestParser.h/cpp to ApplicationCacheManifestParser.h/cpp to make it clear its not the ApplicationManifestParser (a different thing entirely)
+        https://bugs.webkit.org/show_bug.cgi?id=213815
+
+        Reviewed by Darin Adler.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/appcache/ApplicationCacheManifestParser.cpp: Copied from Source/WebCore/loader/appcache/ManifestParser.cpp.
+        * loader/appcache/ApplicationCacheManifestParser.h: Copied from Source/WebCore/loader/appcache/ManifestParser.h.
+        * loader/appcache/ManifestParser.cpp: Removed.
+        * loader/appcache/ManifestParser.h: Removed.
+
 2020-06-30  Brady Eidson  <beidson@apple.com>
 
         App-bound JavaScript and Navigation failures should have specific error codes.
