@@ -131,6 +131,8 @@ InlineLayoutUnit TableFormattingContext::Geometry::usedBaselineForCell(const Con
     // The baseline of a cell is defined as the baseline of the first in-flow line box in the cell,
     // or the first in-flow table-row in the cell, whichever comes first.
     // If there is no such line box, the baseline is the bottom of content edge of the cell box.
+    if (cellBox.establishesInlineFormattingContext())
+        return layoutState().establishedInlineFormattingState(cellBox).displayInlineContent()->lineBoxes[0].baselineOffset();
     for (auto& cellDescendant : descendantsOfType<ContainerBox>(cellBox)) {
         if (cellDescendant.establishesInlineFormattingContext()) {
             auto* displayInlineContent = layoutState().establishedInlineFormattingState(cellDescendant).displayInlineContent();
