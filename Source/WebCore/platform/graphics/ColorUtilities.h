@@ -26,6 +26,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
 #include <math.h>
 
 namespace WebCore {

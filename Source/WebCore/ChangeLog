@@ -1,3 +1,11 @@
+2020-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed build fix after r263776
+
+        > WebCore\platform\graphics\ColorUtilities.h(67): error C2039: 'lround': is not a member of 'std'
+
+        * platform/graphics/ColorUtilities.h: Include <cmath> for std::lround.
+
 2020-06-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Code cleanup in AccessibilityMenuList.cpp and AXIsolatedTree.h.
