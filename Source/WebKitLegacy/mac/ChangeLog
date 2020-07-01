@@ -1,3 +1,22 @@
+2020-06-30  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove NeedsInAppBrowserPrivacyQuirks flag from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=213802
+        <rdar://problem/64945642>
+
+        Reviewed by Darin Adler.
+
+        This feature is for testing only and is not needed in WebKitLegacy.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences needsInAppBrowserPrivacyQuirks]): Deleted.
+        (-[WebPreferences setNeedsInAppBrowserPrivacyQuirks:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Enable the support of FULLSCREEN_API in WebKitTestRunner

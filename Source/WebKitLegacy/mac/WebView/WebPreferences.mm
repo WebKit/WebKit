@@ -716,7 +716,6 @@ public:
         @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
         @NO, WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey,
         @(webSQLEnabled), WebKitWebSQLEnabledPreferenceKey,
-        @YES, WebKitDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3680,16 +3679,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setInAppBrowserPrivacyEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey];
-}
-
-- (BOOL)needsInAppBrowserPrivacyQuirks
-{
-    return [self _boolValueForKey:WebKitDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey];
-}
-
-- (void)setNeedsInAppBrowserPrivacyQuirks:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey];
 }
 
 - (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled
