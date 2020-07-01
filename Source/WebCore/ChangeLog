@@ -1,3 +1,17 @@
+2020-06-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Don't include scrollbar extents when computing sizes for percentage resolution
+        https://bugs.webkit.org/show_bug.cgi?id=213739
+
+        Reviewed by Javier Fernandez.
+
+        Content override sizes do include scrollbars so they must be substracted when using the override size
+        to compute percentages.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::crossSizeForPercentageResolution): Remove scrollbars.
+        (WebCore::RenderFlexibleBox::mainSizeForPercentageResolution): Ditto.
+
 2020-06-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Remove death code paths when evaluating percentage resolution

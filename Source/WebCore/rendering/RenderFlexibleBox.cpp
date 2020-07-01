@@ -1167,7 +1167,7 @@ Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const R
 
     // Here we implement https://drafts.csswg.org/css-flexbox/#algo-stretch
     if (child.hasOverrideContentLogicalHeight())
-        return child.overrideContentLogicalHeight();
+        return child.overrideContentLogicalHeight() - child.scrollbarLogicalHeight();
     
     // We don't currently implement the optimization from
     // https://drafts.csswg.org/css-flexbox/#definite-sizes case 1. While that
@@ -1187,7 +1187,7 @@ Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const Re
     if (!mainAxisLengthIsDefinite(child, Length(0, Percent)))
         return WTF::nullopt;
 
-    return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight()) : WTF::nullopt;
+    return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight() - child.scrollbarLogicalHeight()) : WTF::nullopt;
 }
 
 Optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
