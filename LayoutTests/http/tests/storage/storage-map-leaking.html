@@ -10,7 +10,14 @@ localStorage.setItem("foo", "bar");
 onload = function() {
     initialStorageAreaMapCount = internals.storageAreaMapCount;
 
-    document.getElementById("testFrame").remove();
+    // We use 4 frames, one per origin that we support in layout tests so that we get 4 StorageAreaMap objects
+    // and 4 Storage JS wrappers. Because our GC is conservative, we consider that this test is passing if
+    // any of the Storage JS wrappers gets collected and thus any of the underlying StorageAreaMap objects
+    // get destroyed.
+    document.getElementById("testFrame1").remove();
+    document.getElementById("testFrame2").remove();
+    document.getElementById("testFrame3").remove();
+    document.getElementById("testFrame4").remove();
 
     handle = setInterval(() => {
         gc()
@@ -22,6 +29,9 @@ onload = function() {
     }, 10);
 }
 </script>
-<iframe id="testFrame" src="http://localhost:8000/storage/resources/storage-map-leaking-iframe.html"></iframe>
+<iframe id="testFrame1" src="http://localhost:8000/storage/resources/storage-map-leaking-iframe.html"></iframe>
+<iframe id="testFrame2" src="https://localhost:8443/storage/resources/storage-map-leaking-iframe.html"></iframe>
+<iframe id="testFrame3" src="http://127.0.0.1:8443/storage/resources/storage-map-leaking-iframe.html"></iframe>
+<iframe id="testFrame4" src="https://127.0.0.1:8443/storage/resources/storage-map-leaking-iframe.html"></iframe>
 </body>
 </html>

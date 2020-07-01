@@ -1,3 +1,20 @@
+2020-07-01  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Debug and Mojave Debug ] http/tests/storage/storage-map-leaking.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=213795
+        <rdar://problem/64937993>
+
+        Reviewed by Darin Adler.
+
+        Because our GC is conservative, a particular JS wrapper is not guaranteed to go away in a timely fashion.
+        To try and make the test more reliable, we now use 4 separate Storage wrappers instead of a single one.
+        We treat the test as passing if any of the 4 storage wrappers go away after removing the 4 subframes from
+        4 separate origins.
+
+        * http/tests/storage/storage-map-leaking.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-01  Youenn Fablet  <youenn@apple.com>
 
         Add a functional WebRTC VP9 codec
