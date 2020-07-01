@@ -30,156 +30,70 @@ namespace IPC {
 const char* description(MessageName name)
 {
     switch (name) {
+    case MessageName::WebPage_AddEvent:
+        return "WebPage_AddEvent";
+    case MessageName::WebPage_Close:
+        return "WebPage_Close";
+    case MessageName::WebPage_CreatePlugin:
+        return "WebPage_CreatePlugin";
+    case MessageName::WebPage_DeprecatedOperation:
+        return "WebPage_DeprecatedOperation";
+    case MessageName::WebPage_DidCreateWebProcessConnection:
+        return "WebPage_DidCreateWebProcessConnection";
+    case MessageName::WebPage_DidReceivePolicyDecision:
+        return "WebPage_DidReceivePolicyDecision";
+    case MessageName::WebPage_ExperimentalOperation:
+        return "WebPage_ExperimentalOperation";
+    case MessageName::WebPage_GetPluginProcessConnection:
+        return "WebPage_GetPluginProcessConnection";
+    case MessageName::WebPage_GetPlugins:
+        return "WebPage_GetPlugins";
+    case MessageName::WebPage_InterpretKeyEvent:
+        return "WebPage_InterpretKeyEvent";
+    case MessageName::WebPage_LoadSomething:
+        return "WebPage_LoadSomething";
+    case MessageName::WebPage_LoadSomethingElse:
+        return "WebPage_LoadSomethingElse";
     case MessageName::WebPage_LoadURL:
-        return "WebPage::LoadURL";
-#if ENABLE(TEST_FEATURE)
+        return "WebPage_LoadURL";
+    case MessageName::WebPage_PreferencesDidChange:
+        return "WebPage_PreferencesDidChange";
+    case MessageName::WebPage_RunJavaScriptAlert:
+        return "WebPage_RunJavaScriptAlert";
+    case MessageName::WebPage_SendDoubleAndFloat:
+        return "WebPage_SendDoubleAndFloat";
+    case MessageName::WebPage_SendInts:
+        return "WebPage_SendInts";
+    case MessageName::WebPage_SetVideoLayerID:
+        return "WebPage_SetVideoLayerID";
+    case MessageName::WebPage_TemplateTest:
+        return "WebPage_TemplateTest";
     case MessageName::WebPage_TestAsyncMessage:
-        return "WebPage::TestAsyncMessage";
+        return "WebPage_TestAsyncMessage";
     case MessageName::WebPage_TestAsyncMessageReply:
-        return "WebPage::TestAsyncMessageReply";
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithNoArguments:
-        return "WebPage::TestAsyncMessageWithNoArguments";
-    case MessageName::WebPage_TestAsyncMessageWithNoArgumentsReply:
-        return "WebPage::TestAsyncMessageWithNoArgumentsReply";
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithMultipleArguments:
-        return "WebPage::TestAsyncMessageWithMultipleArguments";
-    case MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply:
-        return "WebPage::TestAsyncMessageWithMultipleArgumentsReply";
-#endif
-#if ENABLE(TEST_FEATURE)
+        return "WebPage_TestAsyncMessageReply";
     case MessageName::WebPage_TestAsyncMessageWithConnection:
-        return "WebPage::TestAsyncMessageWithConnection";
+        return "WebPage_TestAsyncMessageWithConnection";
     case MessageName::WebPage_TestAsyncMessageWithConnectionReply:
-        return "WebPage::TestAsyncMessageWithConnectionReply";
-#endif
+        return "WebPage_TestAsyncMessageWithConnectionReply";
+    case MessageName::WebPage_TestAsyncMessageWithMultipleArguments:
+        return "WebPage_TestAsyncMessageWithMultipleArguments";
+    case MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply:
+        return "WebPage_TestAsyncMessageWithMultipleArgumentsReply";
+    case MessageName::WebPage_TestAsyncMessageWithNoArguments:
+        return "WebPage_TestAsyncMessageWithNoArguments";
+    case MessageName::WebPage_TestAsyncMessageWithNoArgumentsReply:
+        return "WebPage_TestAsyncMessageWithNoArgumentsReply";
+    case MessageName::WebPage_TestMultipleAttributes:
+        return "WebPage_TestMultipleAttributes";
+    case MessageName::WebPage_TestParameterAttributes:
+        return "WebPage_TestParameterAttributes";
     case MessageName::WebPage_TestSyncMessage:
-        return "WebPage::TestSyncMessage";
+        return "WebPage_TestSyncMessage";
     case MessageName::WebPage_TestSynchronousMessage:
-        return "WebPage::TestSynchronousMessage";
-    case MessageName::WebPage_LoadURL:
-        return "WebPage::LoadURL";
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomething:
-        return "WebPage::LoadSomething";
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+        return "WebPage_TestSynchronousMessage";
     case MessageName::WebPage_TouchEvent:
-        return "WebPage::TouchEvent";
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    case MessageName::WebPage_AddEvent:
-        return "WebPage::AddEvent";
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomethingElse:
-        return "WebPage::LoadSomethingElse";
-#endif
-    case MessageName::WebPage_DidReceivePolicyDecision:
-        return "WebPage::DidReceivePolicyDecision";
-    case MessageName::WebPage_Close:
-        return "WebPage::Close";
-    case MessageName::WebPage_PreferencesDidChange:
-        return "WebPage::PreferencesDidChange";
-    case MessageName::WebPage_SendDoubleAndFloat:
-        return "WebPage::SendDoubleAndFloat";
-    case MessageName::WebPage_SendInts:
-        return "WebPage::SendInts";
-    case MessageName::WebPage_CreatePlugin:
-        return "WebPage::CreatePlugin";
-    case MessageName::WebPage_RunJavaScriptAlert:
-        return "WebPage::RunJavaScriptAlert";
-    case MessageName::WebPage_GetPlugins:
-        return "WebPage::GetPlugins";
-    case MessageName::WebPage_GetPluginProcessConnection:
-        return "WebPage::GetPluginProcessConnection";
-    case MessageName::WebPage_TestMultipleAttributes:
-        return "WebPage::TestMultipleAttributes";
-    case MessageName::WebPage_TestParameterAttributes:
-        return "WebPage::TestParameterAttributes";
-    case MessageName::WebPage_TemplateTest:
-        return "WebPage::TemplateTest";
-    case MessageName::WebPage_SetVideoLayerID:
-        return "WebPage::SetVideoLayerID";
-#if PLATFORM(MAC)
-    case MessageName::WebPage_DidCreateWebProcessConnection:
-        return "WebPage::DidCreateWebProcessConnection";
-#endif
-#if PLATFORM(MAC)
-    case MessageName::WebPage_InterpretKeyEvent:
-        return "WebPage::InterpretKeyEvent";
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    case MessageName::WebPage_DeprecatedOperation:
-        return "WebPage::DeprecatedOperation";
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    case MessageName::WebPage_ExperimentalOperation:
-        return "WebPage::ExperimentalOperation";
-#endif
-    case MessageName::WebPage_LoadURL:
-        return "WebPage::LoadURL";
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomething:
-        return "WebPage::LoadSomething";
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    case MessageName::WebPage_TouchEvent:
-        return "WebPage::TouchEvent";
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    case MessageName::WebPage_AddEvent:
-        return "WebPage::AddEvent";
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomethingElse:
-        return "WebPage::LoadSomethingElse";
-#endif
-    case MessageName::WebPage_DidReceivePolicyDecision:
-        return "WebPage::DidReceivePolicyDecision";
-    case MessageName::WebPage_Close:
-        return "WebPage::Close";
-    case MessageName::WebPage_PreferencesDidChange:
-        return "WebPage::PreferencesDidChange";
-    case MessageName::WebPage_SendDoubleAndFloat:
-        return "WebPage::SendDoubleAndFloat";
-    case MessageName::WebPage_SendInts:
-        return "WebPage::SendInts";
-    case MessageName::WebPage_CreatePlugin:
-        return "WebPage::CreatePlugin";
-    case MessageName::WebPage_RunJavaScriptAlert:
-        return "WebPage::RunJavaScriptAlert";
-    case MessageName::WebPage_GetPlugins:
-        return "WebPage::GetPlugins";
-    case MessageName::WebPage_GetPluginProcessConnection:
-        return "WebPage::GetPluginProcessConnection";
-    case MessageName::WebPage_TestMultipleAttributes:
-        return "WebPage::TestMultipleAttributes";
-    case MessageName::WebPage_TestParameterAttributes:
-        return "WebPage::TestParameterAttributes";
-    case MessageName::WebPage_TemplateTest:
-        return "WebPage::TemplateTest";
-    case MessageName::WebPage_SetVideoLayerID:
-        return "WebPage::SetVideoLayerID";
-#if PLATFORM(MAC)
-    case MessageName::WebPage_DidCreateWebProcessConnection:
-        return "WebPage::DidCreateWebProcessConnection";
-#endif
-#if PLATFORM(MAC)
-    case MessageName::WebPage_InterpretKeyEvent:
-        return "WebPage::InterpretKeyEvent";
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    case MessageName::WebPage_DeprecatedOperation:
-        return "WebPage::DeprecatedOperation";
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    case MessageName::WebPage_ExperimentalOperation:
-        return "WebPage::ExperimentalOperation";
-#endif
+        return "WebPage_TouchEvent";
     case MessageName::WrappedAsyncMessageForTesting:
         return "IPC::WrappedAsyncMessageForTesting";
     case MessageName::SyncMessageReply:
@@ -196,112 +110,33 @@ const char* description(MessageName name)
 ReceiverName receiverName(MessageName messageName)
 {
     switch (messageName) {
-    case MessageName::WebPage_LoadURL:
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessage:
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithNoArguments:
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithMultipleArguments:
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithConnection:
-#endif
-    case MessageName::WebPage_TestSyncMessage:
-    case MessageName::WebPage_TestSynchronousMessage:
-        return ReceiverName::WebPage;
-    case MessageName::WebPage_LoadURL:
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomething:
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    case MessageName::WebPage_TouchEvent:
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::WebPage_AddEvent:
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomethingElse:
-#endif
-    case MessageName::WebPage_DidReceivePolicyDecision:
     case MessageName::WebPage_Close:
+    case MessageName::WebPage_CreatePlugin:
+    case MessageName::WebPage_DeprecatedOperation:
+    case MessageName::WebPage_DidCreateWebProcessConnection:
+    case MessageName::WebPage_DidReceivePolicyDecision:
+    case MessageName::WebPage_ExperimentalOperation:
+    case MessageName::WebPage_GetPluginProcessConnection:
+    case MessageName::WebPage_GetPlugins:
+    case MessageName::WebPage_InterpretKeyEvent:
+    case MessageName::WebPage_LoadSomething:
+    case MessageName::WebPage_LoadSomethingElse:
+    case MessageName::WebPage_LoadURL:
     case MessageName::WebPage_PreferencesDidChange:
+    case MessageName::WebPage_RunJavaScriptAlert:
     case MessageName::WebPage_SendDoubleAndFloat:
     case MessageName::WebPage_SendInts:
-    case MessageName::WebPage_CreatePlugin:
-    case MessageName::WebPage_RunJavaScriptAlert:
-    case MessageName::WebPage_GetPlugins:
-    case MessageName::WebPage_GetPluginProcessConnection:
+    case MessageName::WebPage_SetVideoLayerID:
+    case MessageName::WebPage_TemplateTest:
     case MessageName::WebPage_TestMultipleAttributes:
     case MessageName::WebPage_TestParameterAttributes:
-    case MessageName::WebPage_TemplateTest:
-    case MessageName::WebPage_SetVideoLayerID:
-#if PLATFORM(MAC)
-    case MessageName::WebPage_DidCreateWebProcessConnection:
-#endif
-#if PLATFORM(MAC)
-    case MessageName::WebPage_InterpretKeyEvent:
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    case MessageName::WebPage_DeprecatedOperation:
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    case MessageName::WebPage_ExperimentalOperation:
-#endif
-        return ReceiverName::WebPage;
-    case MessageName::WebPage_LoadURL:
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomething:
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::WebPage_TouchEvent:
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    case MessageName::WebPage_AddEvent:
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    case MessageName::WebPage_LoadSomethingElse:
-#endif
-    case MessageName::WebPage_DidReceivePolicyDecision:
-    case MessageName::WebPage_Close:
-    case MessageName::WebPage_PreferencesDidChange:
-    case MessageName::WebPage_SendDoubleAndFloat:
-    case MessageName::WebPage_SendInts:
-    case MessageName::WebPage_CreatePlugin:
-    case MessageName::WebPage_RunJavaScriptAlert:
-    case MessageName::WebPage_GetPlugins:
-    case MessageName::WebPage_GetPluginProcessConnection:
-    case MessageName::WebPage_TestMultipleAttributes:
-    case MessageName::WebPage_TestParameterAttributes:
-    case MessageName::WebPage_TemplateTest:
-    case MessageName::WebPage_SetVideoLayerID:
-#if PLATFORM(MAC)
-    case MessageName::WebPage_DidCreateWebProcessConnection:
-#endif
-#if PLATFORM(MAC)
-    case MessageName::WebPage_InterpretKeyEvent:
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    case MessageName::WebPage_DeprecatedOperation:
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    case MessageName::WebPage_ExperimentalOperation:
-#endif
         return ReceiverName::WebPage;
-#if ENABLE(TEST_FEATURE)
     case MessageName::WebPage_TestAsyncMessageReply:
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithNoArgumentsReply:
-#endif
-#if ENABLE(TEST_FEATURE)
-    case MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply:
-#endif
-#if ENABLE(TEST_FEATURE)
     case MessageName::WebPage_TestAsyncMessageWithConnectionReply:
-#endif
+    case MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply:
+    case MessageName::WebPage_TestAsyncMessageWithNoArgumentsReply:
         return ReceiverName::AsyncReply;
     case MessageName::WrappedAsyncMessageForTesting:
     case MessageName::SyncMessageReply:

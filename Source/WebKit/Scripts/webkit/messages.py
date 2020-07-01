@@ -904,31 +904,25 @@ def generate_message_names_header(receivers):
     result.append('\n')
     result.append('enum class MessageName : uint16_t {')
 
-    enum_value = 1
-    first_message = True
+    enum_values = set()
     for receiver in receivers:
         for message in receiver.messages:
-            result.append('\n')
-            if message.condition:
-                result.append('#if %s\n' % message.condition)
-            result.append('    ')
-            if not first_message:
-                result.append(', ')
-            first_message = False
-            result.append('%s_%s = %d' % (receiver.name, message.name, enum_value))
-            enum_value = enum_value + 1
+            enum_values.add('%s_%s' % (receiver.name, message.name))
             if message.has_attribute(ASYNC_ATTRIBUTE):
-                result.append('\n    , %s_%sReply = %d' % (receiver.name, message.name, enum_value))
-                enum_value = enum_value + 1
-            if message.condition:
-                result.append('\n#endif')
-    result.append('\n    , WrappedAsyncMessageForTesting = %d' % enum_value)
-    enum_value = enum_value + 1
-    result.append('\n    , SyncMessageReply = %d' % enum_value)
-    enum_value = enum_value + 1
-    result.append('\n    , InitializeConnection = %d' % enum_value)
-    enum_value = enum_value + 1
-    result.append('\n    , LegacySessionState = %d' % enum_value)
+                enum_values.add('%s_%sReply' % (receiver.name, message.name))
+
+    first_message = True
+    for enum_value in sorted(enum_values):
+        result.append('\n    ')
+        if not first_message:
+            result.append(', ')
+        first_message = False
+        result.append(enum_value)
+    result.append('\n    , WrappedAsyncMessageForTesting')
+    result.append('\n    , SyncMessageReply')
+    result.append('\n    , InitializeConnection')
+    result.append('\n    , LegacySessionState')
+    result.append('\n    , Last = LegacySessionState')
     result.append('\n};\n')
     result.append('\n')
     result.append('ReceiverName receiverName(MessageName);\n')
@@ -945,6 +939,9 @@ def generate_message_names_header(receivers):
     result.append('bool isValidEnum(T messageName)\n')
     result.append('{\n')
     result.append('    static_assert(sizeof(T) == sizeof(E), "isValidEnum<IPC::MessageName> should only be called with 16-bit types");\n')
+    result.append('    static_assert(std::is_unsigned<T>::value, "isValidEnum<IPC::MessageName> should only be called with unsigned types");\n')
+    result.append('    if (messageName > static_cast<std::underlying_type<IPC::MessageName>::type>(IPC::MessageName::Last))\n')
+    result.append('        return false;\n')
     result.append('    return IPC::isValidMessageName(static_cast<E>(messageName));\n')
     result.append('};\n')
     result.append('\n')
@@ -963,17 +960,16 @@ def generate_message_names_implementation(receivers):
     result.append('const char* description(MessageName name)\n')
     result.append('{\n')
     result.append('    switch (name) {\n')
+    enum_values = set()
     for receiver in receivers:
         for message in receiver.messages:
-            if message.condition:
-                result.append('#if %s\n' % message.condition)
-            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
-            result.append('        return "%s::%s";\n' % (receiver.name, message.name))
+            enum_values.add('%s_%s' % (receiver.name, message.name))
             if message.has_attribute(ASYNC_ATTRIBUTE):
-                result.append('    case MessageName::%s_%sReply:\n' % (receiver.name, message.name))
-                result.append('        return "%s::%sReply";\n' % (receiver.name, message.name))
-            if message.condition:
-                result.append('#endif\n')
+                enum_values.add('%s_%sReply' % (receiver.name, message.name))
+
+    for enum_value in sorted(enum_values):
+        result.append('    case MessageName::%s:\n' % enum_value)
+        result.append('        return "%s";\n' % enum_value)
     result.append('    case MessageName::WrappedAsyncMessageForTesting:\n')
     result.append('        return "IPC::WrappedAsyncMessageForTesting";\n')
     result.append('    case MessageName::SyncMessageReply:\n')
@@ -990,22 +986,24 @@ def generate_message_names_implementation(receivers):
     result.append('ReceiverName receiverName(MessageName messageName)\n')
     result.append('{\n')
     result.append('    switch (messageName) {\n')
+    message_receiver_map = dict()
+    async_reply_messages = set()
     for receiver in receivers:
+        messages = set()
         for message in receiver.messages:
-            if message.condition:
-                result.append('#if %s\n' % message.condition)
-            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
-            if message.condition:
-                result.append('#endif\n')
-        result.append('        return ReceiverName::%s;\n' % receiver.name)
-    for receiver in receivers:
-        for message in receiver.messages:
+            messages.add('%s_%s' % (receiver.name, message.name))
             if message.has_attribute(ASYNC_ATTRIBUTE):
-                if message.condition:
-                    result.append('#if %s\n' % message.condition)
-                result.append('    case MessageName::%s_%sReply:\n' % (receiver.name, message.name))
-                if message.condition:
-                    result.append('#endif\n')
+                async_reply_messages.add('%s_%sReply' % (receiver.name, message.name))
+        if len(messages):
+            message_receiver_map[receiver.name] = messages
+
+    for receiver_name, message_names in message_receiver_map.items():
+        for message_name in sorted(message_names):
+            result.append('    case MessageName::%s:\n' % message_name)
+        result.append('        return ReceiverName::%s;\n' % receiver_name)
+
+    for async_reply_message in sorted(async_reply_messages):
+        result.append('    case MessageName::%s:\n' % async_reply_message)
     result.append('        return ReceiverName::AsyncReply;\n')
     result.append('    case MessageName::WrappedAsyncMessageForTesting:\n')
     result.append('    case MessageName::SyncMessageReply:\n')

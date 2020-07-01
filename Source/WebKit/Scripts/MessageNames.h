@@ -38,105 +38,43 @@ enum class ReceiverName : uint8_t {
 };
 
 enum class MessageName : uint16_t {
-    WebPage_LoadURL = 1
-#if ENABLE(TEST_FEATURE)
-    , WebPage_TestAsyncMessage = 2
-    , WebPage_TestAsyncMessageReply = 3
-#endif
-#if ENABLE(TEST_FEATURE)
-    , WebPage_TestAsyncMessageWithNoArguments = 4
-    , WebPage_TestAsyncMessageWithNoArgumentsReply = 5
-#endif
-#if ENABLE(TEST_FEATURE)
-    , WebPage_TestAsyncMessageWithMultipleArguments = 6
-    , WebPage_TestAsyncMessageWithMultipleArgumentsReply = 7
-#endif
-#if ENABLE(TEST_FEATURE)
-    , WebPage_TestAsyncMessageWithConnection = 8
-    , WebPage_TestAsyncMessageWithConnectionReply = 9
-#endif
-    , WebPage_TestSyncMessage = 10
-    , WebPage_TestSynchronousMessage = 11
-    , WebPage_LoadURL = 12
-#if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomething = 13
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_TouchEvent = 14
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_AddEvent = 15
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomethingElse = 16
-#endif
-    , WebPage_DidReceivePolicyDecision = 17
-    , WebPage_Close = 18
-    , WebPage_PreferencesDidChange = 19
-    , WebPage_SendDoubleAndFloat = 20
-    , WebPage_SendInts = 21
-    , WebPage_CreatePlugin = 22
-    , WebPage_RunJavaScriptAlert = 23
-    , WebPage_GetPlugins = 24
-    , WebPage_GetPluginProcessConnection = 25
-    , WebPage_TestMultipleAttributes = 26
-    , WebPage_TestParameterAttributes = 27
-    , WebPage_TemplateTest = 28
-    , WebPage_SetVideoLayerID = 29
-#if PLATFORM(MAC)
-    , WebPage_DidCreateWebProcessConnection = 30
-#endif
-#if PLATFORM(MAC)
-    , WebPage_InterpretKeyEvent = 31
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    , WebPage_DeprecatedOperation = 32
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    , WebPage_ExperimentalOperation = 33
-#endif
-    , WebPage_LoadURL = 34
-#if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomething = 35
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_TouchEvent = 36
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    , WebPage_AddEvent = 37
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    , WebPage_LoadSomethingElse = 38
-#endif
-    , WebPage_DidReceivePolicyDecision = 39
-    , WebPage_Close = 40
-    , WebPage_PreferencesDidChange = 41
-    , WebPage_SendDoubleAndFloat = 42
-    , WebPage_SendInts = 43
-    , WebPage_CreatePlugin = 44
-    , WebPage_RunJavaScriptAlert = 45
-    , WebPage_GetPlugins = 46
-    , WebPage_GetPluginProcessConnection = 47
-    , WebPage_TestMultipleAttributes = 48
-    , WebPage_TestParameterAttributes = 49
-    , WebPage_TemplateTest = 50
-    , WebPage_SetVideoLayerID = 51
-#if PLATFORM(MAC)
-    , WebPage_DidCreateWebProcessConnection = 52
-#endif
-#if PLATFORM(MAC)
-    , WebPage_InterpretKeyEvent = 53
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    , WebPage_DeprecatedOperation = 54
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    , WebPage_ExperimentalOperation = 55
-#endif
-    , WrappedAsyncMessageForTesting = 56
-    , SyncMessageReply = 57
-    , InitializeConnection = 58
-    , LegacySessionState = 59
+    WebPage_AddEvent
+    , WebPage_Close
+    , WebPage_CreatePlugin
+    , WebPage_DeprecatedOperation
+    , WebPage_DidCreateWebProcessConnection
+    , WebPage_DidReceivePolicyDecision
+    , WebPage_ExperimentalOperation
+    , WebPage_GetPluginProcessConnection
+    , WebPage_GetPlugins
+    , WebPage_InterpretKeyEvent
+    , WebPage_LoadSomething
+    , WebPage_LoadSomethingElse
+    , WebPage_LoadURL
+    , WebPage_PreferencesDidChange
+    , WebPage_RunJavaScriptAlert
+    , WebPage_SendDoubleAndFloat
+    , WebPage_SendInts
+    , WebPage_SetVideoLayerID
+    , WebPage_TemplateTest
+    , WebPage_TestAsyncMessage
+    , WebPage_TestAsyncMessageReply
+    , WebPage_TestAsyncMessageWithConnection
+    , WebPage_TestAsyncMessageWithConnectionReply
+    , WebPage_TestAsyncMessageWithMultipleArguments
+    , WebPage_TestAsyncMessageWithMultipleArgumentsReply
+    , WebPage_TestAsyncMessageWithNoArguments
+    , WebPage_TestAsyncMessageWithNoArgumentsReply
+    , WebPage_TestMultipleAttributes
+    , WebPage_TestParameterAttributes
+    , WebPage_TestSyncMessage
+    , WebPage_TestSynchronousMessage
+    , WebPage_TouchEvent
+    , WrappedAsyncMessageForTesting
+    , SyncMessageReply
+    , InitializeConnection
+    , LegacySessionState
+    , Last = LegacySessionState
 };
 
 ReceiverName receiverName(MessageName);
@@ -153,6 +91,9 @@ template<typename E, typename T, std::enable_if_t<std::is_same_v<E, IPC::Message
 bool isValidEnum(T messageName)
 {
     static_assert(sizeof(T) == sizeof(E), "isValidEnum<IPC::MessageName> should only be called with 16-bit types");
+    static_assert(std::is_unsigned<T>::value, "isValidEnum<IPC::MessageName> should only be called with unsigned types");
+    if (messageName > static_cast<std::underlying_type<IPC::MessageName>::type>(IPC::MessageName::Last))
+        return false;
     return IPC::isValidMessageName(static_cast<E>(messageName));
 };
 

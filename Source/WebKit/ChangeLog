@@ -1,3 +1,25 @@
+2020-07-01  Chris Dumez  <cdumez@apple.com>
+
+        Crash under IPC::isValidMessageName()
+        https://bugs.webkit.org/show_bug.cgi?id=213751
+        <rdar://problem/64773416>
+
+        Reviewed by Geoffrey Garen.
+
+        This is a speculative fix for the crashes tracked by <rdar://problem/64773416>.
+        The suspicion is that the compiler optimizes the code for IPC::isValidMessageName()
+        because its parameter is of type MessageName. It may therefore assume the parameter
+        is a valid MessageName enum value, which is ironic because the purpose of this
+        function is to check whether or not the enum value is valid.
+
+        To address the issue, I got rid of the #ifdefs in MessageName enum so that the
+        enum values have an underlying value in the range [0, MessageName::Last]. I then
+        updated the isValidEnum template specialization to verify that the input integer
+        is indeed in the range [0, MessageName::Last] before casting it to a MessageName
+        and calling IPC::isValidMessageName().
+
+        * Scripts/webkit/messages.py:
+
 2020-07-01  Kate Cheney  <katherine_cheney@apple.com>
 
         WKUserScripts injecting into all frames seem to violate app-bound domains
