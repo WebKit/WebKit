@@ -36,10 +36,10 @@ bool CopyMasteringMetadata(const mkvparser::MasteringMetadata& parser_mm,
   if (MasteringMetadataValuePresent(parser_mm.luminance_min))
     muxer_mm->set_luminance_min(parser_mm.luminance_min);
 
-  PrimaryChromaticityPtr r_ptr(NULL);
-  PrimaryChromaticityPtr g_ptr(NULL);
-  PrimaryChromaticityPtr b_ptr(NULL);
-  PrimaryChromaticityPtr wp_ptr(NULL);
+  PrimaryChromaticityPtr r_ptr(nullptr);
+  PrimaryChromaticityPtr g_ptr(nullptr);
+  PrimaryChromaticityPtr b_ptr(nullptr);
+  PrimaryChromaticityPtr wp_ptr(nullptr);
 
   if (parser_mm.r) {
     if (!CopyPrimaryChromaticity(*parser_mm.r, &r_ptr))

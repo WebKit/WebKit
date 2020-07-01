@@ -1,5 +1,5 @@
-URL: https://github.com/google/googletest
-Version: 1.8.0
+URL: https://github.com/google/googletest.git
+Version: release-1.8.1
 License: BSD
 License File: LICENSE
 
@@ -13,12 +13,16 @@ generation.
 
 Local Modifications:
 - Remove everything but:
-  googletest-release-1.8.0/googletest/
+  googletest-release-1.8.1/googletest/
    CHANGES
    CONTRIBUTORS
    include
    LICENSE
    README.md
    src
-- Suppress unsigned overflow instrumentation in the LCG
-  https://github.com/google/googletest/pull/1066
+
+- Make WithParamInterface<T>::GetParam static in order to avoid
+  initialization issues
+  https://github.com/google/googletest/pull/1830
+- Use wcslen() instead of std::wcslen()
+  https://github.com/google/googletest/pull/1899

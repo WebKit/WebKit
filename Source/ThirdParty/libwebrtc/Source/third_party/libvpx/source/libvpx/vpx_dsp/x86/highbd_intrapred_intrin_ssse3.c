@@ -170,9 +170,9 @@ void vpx_highbd_d45_predictor_32x32_ssse3(uint16_t *dst, ptrdiff_t stride,
   }
 }
 
-DECLARE_ALIGNED(16, static const uint8_t, rotate_right_epu16[16]) = {
-  2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1
-};
+DECLARE_ALIGNED(16, static const uint8_t,
+                rotate_right_epu16[16]) = { 2,  3,  4,  5,  6,  7,  8, 9,
+                                            10, 11, 12, 13, 14, 15, 0, 1 };
 
 static INLINE __m128i rotr_epu16(__m128i *a, const __m128i *rotrw) {
   *a = _mm_shuffle_epi8(*a, *rotrw);

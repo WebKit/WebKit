@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
 #include <string>
 
 #include "test/codec_factory.h"
@@ -53,7 +54,7 @@ class DecodeSvcTest : public ::libvpx_test::DecoderTest,
 // number of frames decoded. This results in 1/4x1/4 resolution (320x180).
 TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer0) {
   const std::string filename = GET_PARAM(1);
-  testing::internal::scoped_ptr<libvpx_test::CompressedVideoSource> video;
+  std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
   ASSERT_TRUE(video.get() != NULL);
   video->Init();
@@ -70,7 +71,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer0) {
 // number of frames decoded. This results in 1/2x1/2 resolution (640x360).
 TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer1) {
   const std::string filename = GET_PARAM(1);
-  testing::internal::scoped_ptr<libvpx_test::CompressedVideoSource> video;
+  std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
   ASSERT_TRUE(video.get() != NULL);
   video->Init();
@@ -87,7 +88,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer1) {
 // number of frames decoded. This results in the full resolution (1280x720).
 TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer2) {
   const std::string filename = GET_PARAM(1);
-  testing::internal::scoped_ptr<libvpx_test::CompressedVideoSource> video;
+  std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
   ASSERT_TRUE(video.get() != NULL);
   video->Init();
@@ -105,7 +106,7 @@ TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer2) {
 // the decoding should result in the full resolution (1280x720).
 TEST_P(DecodeSvcTest, DecodeSvcTestUpToSpatialLayer10) {
   const std::string filename = GET_PARAM(1);
-  testing::internal::scoped_ptr<libvpx_test::CompressedVideoSource> video;
+  std::unique_ptr<libvpx_test::CompressedVideoSource> video;
   video.reset(new libvpx_test::IVFVideoSource(filename));
   ASSERT_TRUE(video.get() != NULL);
   video->Init();

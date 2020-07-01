@@ -35,7 +35,7 @@ class ActiveMapTest
 
   virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
                                   ::libvpx_test::Encoder *encoder) {
-    if (video->frame() == 1) {
+    if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
     } else if (video->frame() == 3) {
       vpx_active_map_t map = vpx_active_map_t();

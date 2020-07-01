@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_FRAME_BUFFERS_H_
-#define VP9_COMMON_VP9_FRAME_BUFFERS_H_
+#ifndef VPX_VP9_COMMON_VP9_FRAME_BUFFERS_H_
+#define VPX_VP9_COMMON_VP9_FRAME_BUFFERS_H_
 
 #include "vpx/vpx_frame_buffer.h"
 #include "vpx/vpx_integer.h"
@@ -50,4 +50,4 @@ int vp9_release_frame_buffer(void *cb_priv, vpx_codec_frame_buffer_t *fb);
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_FRAME_BUFFERS_H_
+#endif  // VPX_VP9_COMMON_VP9_FRAME_BUFFERS_H_

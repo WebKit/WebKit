@@ -341,7 +341,7 @@
                                     const uint8_t *ref_array, int ref_stride, \
                                     uint32_t *sad_array) {                    \
     int i;                                                                    \
-    for (i = 0; i < k; ++i)                                                   \
+    for (i = 0; i < (k); ++i)                                                 \
       sad_array[i] =                                                          \
           vpx_sad##m##x##n##_mmi(src, src_stride, &ref_array[i], ref_stride); \
   }

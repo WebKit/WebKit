@@ -333,6 +333,13 @@ void vp8_build_inter16x16_predictors_mb(MACROBLOCKD *x, unsigned char *dst_y,
   _16x16mv.as_mv.row &= x->fullpixel_mask;
   _16x16mv.as_mv.col &= x->fullpixel_mask;
 
+  if (2 * _16x16mv.as_mv.col < (x->mb_to_left_edge - (19 << 3)) ||
+      2 * _16x16mv.as_mv.col > x->mb_to_right_edge + (18 << 3) ||
+      2 * _16x16mv.as_mv.row < (x->mb_to_top_edge - (19 << 3)) ||
+      2 * _16x16mv.as_mv.row > x->mb_to_bottom_edge + (18 << 3)) {
+    return;
+  }
+
   pre_stride >>= 1;
   offset = (_16x16mv.as_mv.row >> 3) * pre_stride + (_16x16mv.as_mv.col >> 3);
   uptr = x->pre.u_buffer + offset;

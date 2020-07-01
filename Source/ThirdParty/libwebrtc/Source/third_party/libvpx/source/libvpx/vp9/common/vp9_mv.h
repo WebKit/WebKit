@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_MV_H_
-#define VP9_COMMON_VP9_MV_H_
+#ifndef VPX_VP9_COMMON_VP9_MV_H_
+#define VPX_VP9_COMMON_VP9_MV_H_
 
 #include "vpx/vpx_integer.h"
 
@@ -18,6 +18,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define INVALID_MV 0x80008000
 
 typedef struct mv {
   int16_t row;
@@ -52,4 +54,4 @@ static INLINE void clamp_mv(MV *mv, int min_col, int max_col, int min_row,
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_MV_H_
+#endif  // VPX_VP9_COMMON_VP9_MV_H_

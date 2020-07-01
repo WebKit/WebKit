@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_POSTPROC_H_
-#define VPX_DSP_POSTPROC_H_
+#ifndef VPX_VPX_DSP_POSTPROC_H_
+#define VPX_VPX_DSP_POSTPROC_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,4 +22,4 @@ int vpx_setup_noise(double sigma, int8_t *noise, int size);
 }
 #endif
 
-#endif  // VPX_DSP_POSTPROC_H_
+#endif  // VPX_VPX_DSP_POSTPROC_H_

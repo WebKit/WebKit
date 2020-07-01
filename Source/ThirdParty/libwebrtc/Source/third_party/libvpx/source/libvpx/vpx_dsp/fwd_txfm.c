@@ -87,11 +87,11 @@ void vpx_fdct4x4_1_c(const int16_t *input, tran_low_t *output, int stride) {
   output[0] = sum * 2;
 }
 
-void vpx_fdct8x8_c(const int16_t *input, tran_low_t *final_output, int stride) {
+void vpx_fdct8x8_c(const int16_t *input, tran_low_t *output, int stride) {
   int i, j;
   tran_low_t intermediate[64];
   int pass;
-  tran_low_t *output = intermediate;
+  tran_low_t *out = intermediate;
   const tran_low_t *in = NULL;
 
   // Transform columns
@@ -133,10 +133,10 @@ void vpx_fdct8x8_c(const int16_t *input, tran_low_t *final_output, int stride) {
       t1 = (x0 - x1) * cospi_16_64;
       t2 = x2 * cospi_24_64 + x3 * cospi_8_64;
       t3 = -x2 * cospi_8_64 + x3 * cospi_24_64;
-      output[0] = (tran_low_t)fdct_round_shift(t0);
-      output[2] = (tran_low_t)fdct_round_shift(t2);
-      output[4] = (tran_low_t)fdct_round_shift(t1);
-      output[6] = (tran_low_t)fdct_round_shift(t3);
+      out[0] = (tran_low_t)fdct_round_shift(t0);
+      out[2] = (tran_low_t)fdct_round_shift(t2);
+      out[4] = (tran_low_t)fdct_round_shift(t1);
+      out[6] = (tran_low_t)fdct_round_shift(t3);
 
       // Stage 2
       t0 = (s6 - s5) * cospi_16_64;
@@ -155,19 +155,19 @@ void vpx_fdct8x8_c(const int16_t *input, tran_low_t *final_output, int stride) {
       t1 = x1 * cospi_12_64 + x2 * cospi_20_64;
       t2 = x2 * cospi_12_64 + x1 * -cospi_20_64;
       t3 = x3 * cospi_28_64 + x0 * -cospi_4_64;
-      output[1] = (tran_low_t)fdct_round_shift(t0);
-      output[3] = (tran_low_t)fdct_round_shift(t2);
-      output[5] = (tran_low_t)fdct_round_shift(t1);
-      output[7] = (tran_low_t)fdct_round_shift(t3);
-      output += 8;
+      out[1] = (tran_low_t)fdct_round_shift(t0);
+      out[3] = (tran_low_t)fdct_round_shift(t2);
+      out[5] = (tran_low_t)fdct_round_shift(t1);
+      out[7] = (tran_low_t)fdct_round_shift(t3);
+      out += 8;
     }
     in = intermediate;
-    output = final_output;
+    out = output;
   }
 
   // Rows
   for (i = 0; i < 8; ++i) {
-    for (j = 0; j < 8; ++j) final_output[j + i * 8] /= 2;
+    for (j = 0; j < 8; ++j) output[j + i * 8] /= 2;
   }
 }
 
@@ -705,9 +705,9 @@ void vpx_fdct32(const tran_high_t *input, tran_high_t *output, int round) {
   output[31] = dct_32_round(step[31] * cospi_31_64 + step[16] * -cospi_1_64);
 }
 
-void vpx_fdct32x32_c(const int16_t *input, tran_low_t *out, int stride) {
+void vpx_fdct32x32_c(const int16_t *input, tran_low_t *output, int stride) {
   int i, j;
-  tran_high_t output[32 * 32];
+  tran_high_t out[32 * 32];
 
   // Columns
   for (i = 0; i < 32; ++i) {
@@ -715,16 +715,16 @@ void vpx_fdct32x32_c(const int16_t *input, tran_low_t *out, int stride) {
     for (j = 0; j < 32; ++j) temp_in[j] = input[j * stride + i] * 4;
     vpx_fdct32(temp_in, temp_out, 0);
     for (j = 0; j < 32; ++j)
-      output[j * 32 + i] = (temp_out[j] + 1 + (temp_out[j] > 0)) >> 2;
+      out[j * 32 + i] = (temp_out[j] + 1 + (temp_out[j] > 0)) >> 2;
   }
 
   // Rows
   for (i = 0; i < 32; ++i) {
     tran_high_t temp_in[32], temp_out[32];
-    for (j = 0; j < 32; ++j) temp_in[j] = output[j + i * 32];
+    for (j = 0; j < 32; ++j) temp_in[j] = out[j + i * 32];
     vpx_fdct32(temp_in, temp_out, 0);
     for (j = 0; j < 32; ++j)
-      out[j + i * 32] =
+      output[j + i * 32] =
           (tran_low_t)((temp_out[j] + 1 + (temp_out[j] < 0)) >> 2);
   }
 }
@@ -732,9 +732,9 @@ void vpx_fdct32x32_c(const int16_t *input, tran_low_t *out, int stride) {
 // Note that although we use dct_32_round in dct32 computation flow,
 // this 2d fdct32x32 for rate-distortion optimization loop is operating
 // within 16 bits precision.
-void vpx_fdct32x32_rd_c(const int16_t *input, tran_low_t *out, int stride) {
+void vpx_fdct32x32_rd_c(const int16_t *input, tran_low_t *output, int stride) {
   int i, j;
-  tran_high_t output[32 * 32];
+  tran_high_t out[32 * 32];
 
   // Columns
   for (i = 0; i < 32; ++i) {
@@ -745,15 +745,15 @@ void vpx_fdct32x32_rd_c(const int16_t *input, tran_low_t *out, int stride) {
       // TODO(cd): see quality impact of only doing
       //           output[j * 32 + i] = (temp_out[j] + 1) >> 2;
       //           PS: also change code in vpx_dsp/x86/vpx_dct_sse2.c
-      output[j * 32 + i] = (temp_out[j] + 1 + (temp_out[j] > 0)) >> 2;
+      out[j * 32 + i] = (temp_out[j] + 1 + (temp_out[j] > 0)) >> 2;
   }
 
   // Rows
   for (i = 0; i < 32; ++i) {
     tran_high_t temp_in[32], temp_out[32];
-    for (j = 0; j < 32; ++j) temp_in[j] = output[j + i * 32];
+    for (j = 0; j < 32; ++j) temp_in[j] = out[j + i * 32];
     vpx_fdct32(temp_in, temp_out, 1);
-    for (j = 0; j < 32; ++j) out[j + i * 32] = (tran_low_t)temp_out[j];
+    for (j = 0; j < 32; ++j) output[j + i * 32] = (tran_low_t)temp_out[j];
   }
 }
 
@@ -772,14 +772,14 @@ void vpx_highbd_fdct4x4_c(const int16_t *input, tran_low_t *output,
   vpx_fdct4x4_c(input, output, stride);
 }
 
-void vpx_highbd_fdct8x8_c(const int16_t *input, tran_low_t *final_output,
+void vpx_highbd_fdct8x8_c(const int16_t *input, tran_low_t *output,
                           int stride) {
-  vpx_fdct8x8_c(input, final_output, stride);
+  vpx_fdct8x8_c(input, output, stride);
 }
 
-void vpx_highbd_fdct8x8_1_c(const int16_t *input, tran_low_t *final_output,
+void vpx_highbd_fdct8x8_1_c(const int16_t *input, tran_low_t *output,
                             int stride) {
-  vpx_fdct8x8_1_c(input, final_output, stride);
+  vpx_fdct8x8_1_c(input, output, stride);
 }
 
 void vpx_highbd_fdct16x16_c(const int16_t *input, tran_low_t *output,
@@ -792,17 +792,18 @@ void vpx_highbd_fdct16x16_1_c(const int16_t *input, tran_low_t *output,
   vpx_fdct16x16_1_c(input, output, stride);
 }
 
-void vpx_highbd_fdct32x32_c(const int16_t *input, tran_low_t *out, int stride) {
-  vpx_fdct32x32_c(input, out, stride);
+void vpx_highbd_fdct32x32_c(const int16_t *input, tran_low_t *output,
+                            int stride) {
+  vpx_fdct32x32_c(input, output, stride);
 }
 
-void vpx_highbd_fdct32x32_rd_c(const int16_t *input, tran_low_t *out,
+void vpx_highbd_fdct32x32_rd_c(const int16_t *input, tran_low_t *output,
                                int stride) {
-  vpx_fdct32x32_rd_c(input, out, stride);
+  vpx_fdct32x32_rd_c(input, output, stride);
 }
 
-void vpx_highbd_fdct32x32_1_c(const int16_t *input, tran_low_t *out,
+void vpx_highbd_fdct32x32_1_c(const int16_t *input, tran_low_t *output,
                               int stride) {
-  vpx_fdct32x32_1_c(input, out, stride);
+  vpx_fdct32x32_1_c(input, output, stride);
 }
 #endif  // CONFIG_VP9_HIGHBITDEPTH

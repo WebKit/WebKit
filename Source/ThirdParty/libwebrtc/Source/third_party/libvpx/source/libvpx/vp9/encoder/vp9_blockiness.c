@@ -11,6 +11,7 @@
 
 #include "vpx/vpx_integer.h"
 #include "vpx_ports/system_state.h"
+#include "vp9/encoder/vp9_blockiness.h"
 
 static int horizontal_filter(const uint8_t *s) {
   return (s[1] - s[-2]) * 2 + (s[-1] - s[0]) * 6;

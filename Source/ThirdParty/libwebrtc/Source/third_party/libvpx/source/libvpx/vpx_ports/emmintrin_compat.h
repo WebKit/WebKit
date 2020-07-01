@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_EMMINTRIN_COMPAT_H_
-#define VPX_PORTS_EMMINTRIN_COMPAT_H_
+#ifndef VPX_VPX_PORTS_EMMINTRIN_COMPAT_H_
+#define VPX_VPX_PORTS_EMMINTRIN_COMPAT_H_
 
 #if defined(__GNUC__) && __GNUC__ < 4
 /* From emmintrin.h (gcc 4.5.3) */
@@ -52,4 +52,4 @@ extern __inline __m128d
 }
 #endif
 
-#endif  // VPX_PORTS_EMMINTRIN_COMPAT_H_
+#endif  // VPX_VPX_PORTS_EMMINTRIN_COMPAT_H_

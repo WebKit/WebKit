@@ -18,16 +18,16 @@ namespace libyuv {
 extern "C" {
 #endif
 
-#define TANY(NAMEANY, TPOS_SIMD, MASK)                                         \
-    void NAMEANY(const uint8* src, int src_stride,                             \
-                 uint8* dst, int dst_stride, int width) {                      \
-      int r = width & MASK;                                                    \
-      int n = width - r;                                                       \
-      if (n > 0) {                                                             \
-        TPOS_SIMD(src, src_stride, dst, dst_stride, n);                        \
-      }                                                                        \
-      TransposeWx8_C(src + n, src_stride, dst + n * dst_stride, dst_stride, r);\
-    }
+#define TANY(NAMEANY, TPOS_SIMD, MASK)                                        \
+  void NAMEANY(const uint8_t* src, int src_stride, uint8_t* dst,              \
+               int dst_stride, int width) {                                   \
+    int r = width & MASK;                                                     \
+    int n = width - r;                                                        \
+    if (n > 0) {                                                              \
+      TPOS_SIMD(src, src_stride, dst, dst_stride, n);                         \
+    }                                                                         \
+    TransposeWx8_C(src + n, src_stride, dst + n * dst_stride, dst_stride, r); \
+  }
 
 #ifdef HAS_TRANSPOSEWX8_NEON
 TANY(TransposeWx8_Any_NEON, TransposeWx8_NEON, 7)
@@ -38,25 +38,23 @@ TANY(TransposeWx8_Any_SSSE3, TransposeWx8_SSSE3, 7)
 #ifdef HAS_TRANSPOSEWX8_FAST_SSSE3
 TANY(TransposeWx8_Fast_Any_SSSE3, TransposeWx8_Fast_SSSE3, 15)
 #endif
-#ifdef HAS_TRANSPOSEWX8_DSPR2
-TANY(TransposeWx8_Any_DSPR2, TransposeWx8_DSPR2, 7)
+#ifdef HAS_TRANSPOSEWX16_MSA
+TANY(TransposeWx16_Any_MSA, TransposeWx16_MSA, 15)
 #endif
 #undef TANY
 
 #define TUVANY(NAMEANY, TPOS_SIMD, MASK)                                       \
-    void NAMEANY(const uint8* src, int src_stride,                             \
-                uint8* dst_a, int dst_stride_a,                                \
-                uint8* dst_b, int dst_stride_b, int width) {                   \
-      int r = width & MASK;                                                    \
-      int n = width - r;                                                       \
-      if (n > 0) {                                                             \
-        TPOS_SIMD(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,   \
-                  n);                                                          \
-      }                                                                        \
-      TransposeUVWx8_C(src + n * 2, src_stride,                                \
-                       dst_a + n * dst_stride_a, dst_stride_a,                 \
-                       dst_b + n * dst_stride_b, dst_stride_b, r);             \
-    }
+  void NAMEANY(const uint8_t* src, int src_stride, uint8_t* dst_a,             \
+               int dst_stride_a, uint8_t* dst_b, int dst_stride_b,             \
+               int width) {                                                    \
+    int r = width & MASK;                                                      \
+    int n = width - r;                                                         \
+    if (n > 0) {                                                               \
+      TPOS_SIMD(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b, n); \
+    }                                                                          \
+    TransposeUVWx8_C(src + n * 2, src_stride, dst_a + n * dst_stride_a,        \
+                     dst_stride_a, dst_b + n * dst_stride_b, dst_stride_b, r); \
+  }
 
 #ifdef HAS_TRANSPOSEUVWX8_NEON
 TUVANY(TransposeUVWx8_Any_NEON, TransposeUVWx8_NEON, 7)
@@ -64,8 +62,8 @@ TUVANY(TransposeUVWx8_Any_NEON, TransposeUVWx8_NEON, 7)
 #ifdef HAS_TRANSPOSEUVWX8_SSE2
 TUVANY(TransposeUVWx8_Any_SSE2, TransposeUVWx8_SSE2, 7)
 #endif
-#ifdef HAS_TRANSPOSEUVWX8_DSPR2
-TUVANY(TransposeUVWx8_Any_DSPR2, TransposeUVWx8_DSPR2, 7)
+#ifdef HAS_TRANSPOSEUVWX16_MSA
+TUVANY(TransposeUVWx16_Any_MSA, TransposeUVWx16_MSA, 7)
 #endif
 #undef TUVANY
 
@@ -73,8 +71,3 @@ TUVANY(TransposeUVWx8_Any_DSPR2, TransposeUVWx8_DSPR2, 7)
 }  // extern "C"
 }  // namespace libyuv
 #endif
-
-
-
-
-

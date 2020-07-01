@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef TEST_MD5_HELPER_H_
-#define TEST_MD5_HELPER_H_
+#ifndef VPX_TEST_MD5_HELPER_H_
+#define VPX_TEST_MD5_HELPER_H_
 
 #include "./md5_utils.h"
 #include "vpx/vpx_decoder.h"
@@ -72,4 +72,4 @@ class MD5 {
 
 }  // namespace libvpx_test
 
-#endif  // TEST_MD5_HELPER_H_
+#endif  // VPX_TEST_MD5_HELPER_H_

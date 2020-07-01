@@ -9,7 +9,9 @@
  */
 
 #include <arm_neon.h>
+
 #include "./vpx_config.h"
+#include "vp8/common/arm/loopfilter_arm.h"
 
 static INLINE void vp8_mbloop_filter_neon(uint8x16_t qblimit,  // mblimit
                                           uint8x16_t qlimit,   // limit

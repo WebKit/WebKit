@@ -11,6 +11,7 @@
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "test/acm_random.h"
+#include "test/bench.h"
 #include "test/buffer.h"
 #include "test/clear_system_state.h"
 #include "test/register_state_check.h"
@@ -32,7 +33,6 @@ typedef void (*VpxMbPostProcDownFunc)(unsigned char *dst, int pitch, int rows,
                                       int cols, int flimit);
 
 namespace {
-
 // Compute the filter level used in post proc from the loop filter strength
 int q2mbl(int x) {
   if (x < 20) x = 20;
@@ -42,33 +42,52 @@ int q2mbl(int x) {
 }
 
 class VpxPostProcDownAndAcrossMbRowTest
-    : public ::testing::TestWithParam<VpxPostProcDownAndAcrossMbRowFunc> {
+    : public AbstractBench,
+      public ::testing::TestWithParam<VpxPostProcDownAndAcrossMbRowFunc> {
  public:
+  VpxPostProcDownAndAcrossMbRowTest()
+      : mb_post_proc_down_and_across_(GetParam()) {}
   virtual void TearDown() { libvpx_test::ClearSystemState(); }
+
+ protected:
+  virtual void Run();
+
+  const VpxPostProcDownAndAcrossMbRowFunc mb_post_proc_down_and_across_;
+  // Size of the underlying data block that will be filtered.
+  int block_width_;
+  int block_height_;
+  Buffer<uint8_t> *src_image_;
+  Buffer<uint8_t> *dst_image_;
+  uint8_t *flimits_;
 };
+
+void VpxPostProcDownAndAcrossMbRowTest::Run() {
+  mb_post_proc_down_and_across_(
+      src_image_->TopLeftPixel(), dst_image_->TopLeftPixel(),
+      src_image_->stride(), dst_image_->stride(), block_width_, flimits_, 16);
+}
 
 // Test routine for the VPx post-processing function
 // vpx_post_proc_down_and_across_mb_row_c.
 
 TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckFilterOutput) {
   // Size of the underlying data block that will be filtered.
-  const int block_width = 16;
-  const int block_height = 16;
+  block_width_ = 16;
+  block_height_ = 16;
 
   // 5-tap filter needs 2 padding rows above and below the block in the input.
-  Buffer<uint8_t> src_image = Buffer<uint8_t>(block_width, block_height, 2);
+  Buffer<uint8_t> src_image = Buffer<uint8_t>(block_width_, block_height_, 2);
   ASSERT_TRUE(src_image.Init());
 
   // Filter extends output block by 8 samples at left and right edges.
   // Though the left padding is only 8 bytes, the assembly code tries to
   // read 16 bytes before the pointer.
   Buffer<uint8_t> dst_image =
-      Buffer<uint8_t>(block_width, block_height, 8, 16, 8, 8);
+      Buffer<uint8_t>(block_width_, block_height_, 8, 16, 8, 8);
   ASSERT_TRUE(dst_image.Init());
 
-  uint8_t *const flimits =
-      reinterpret_cast<uint8_t *>(vpx_memalign(16, block_width));
-  (void)memset(flimits, 255, block_width);
+  flimits_ = reinterpret_cast<uint8_t *>(vpx_memalign(16, block_width_));
+  (void)memset(flimits_, 255, block_width_);
 
   // Initialize pixels in the input:
   //   block pixels to value 1,
@@ -79,37 +98,36 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckFilterOutput) {
   // Initialize pixels in the output to 99.
   dst_image.Set(99);
 
-  ASM_REGISTER_STATE_CHECK(GetParam()(
+  ASM_REGISTER_STATE_CHECK(mb_post_proc_down_and_across_(
       src_image.TopLeftPixel(), dst_image.TopLeftPixel(), src_image.stride(),
-      dst_image.stride(), block_width, flimits, 16));
+      dst_image.stride(), block_width_, flimits_, 16));
 
-  static const uint8_t kExpectedOutput[block_height] = {
-    4, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 4
-  };
+  static const uint8_t kExpectedOutput[] = { 4, 3, 1, 1, 1, 1, 1, 1,
+                                             1, 1, 1, 1, 1, 1, 3, 4 };
 
   uint8_t *pixel_ptr = dst_image.TopLeftPixel();
-  for (int i = 0; i < block_height; ++i) {
-    for (int j = 0; j < block_width; ++j) {
+  for (int i = 0; i < block_height_; ++i) {
+    for (int j = 0; j < block_width_; ++j) {
       ASSERT_EQ(kExpectedOutput[i], pixel_ptr[j])
           << "at (" << i << ", " << j << ")";
     }
     pixel_ptr += dst_image.stride();
   }
 
-  vpx_free(flimits);
+  vpx_free(flimits_);
 };
 
 TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckCvsAssembly) {
   // Size of the underlying data block that will be filtered.
   // Y blocks are always a multiple of 16 wide and exactly 16 high. U and V
   // blocks are always a multiple of 8 wide and exactly 8 high.
-  const int block_width = 136;
-  const int block_height = 16;
+  block_width_ = 136;
+  block_height_ = 16;
 
   // 5-tap filter needs 2 padding rows above and below the block in the input.
   // SSE2 reads in blocks of 16. Pad an extra 8 in case the width is not %16.
   Buffer<uint8_t> src_image =
-      Buffer<uint8_t>(block_width, block_height, 2, 2, 10, 2);
+      Buffer<uint8_t>(block_width_, block_height_, 2, 2, 10, 2);
   ASSERT_TRUE(src_image.Init());
 
   // Filter extends output block by 8 samples at left and right edges.
@@ -118,17 +136,17 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckCvsAssembly) {
   // not a problem.
   // SSE2 reads in blocks of 16. Pad an extra 8 in case the width is not %16.
   Buffer<uint8_t> dst_image =
-      Buffer<uint8_t>(block_width, block_height, 8, 8, 16, 8);
+      Buffer<uint8_t>(block_width_, block_height_, 8, 8, 16, 8);
   ASSERT_TRUE(dst_image.Init());
-  Buffer<uint8_t> dst_image_ref = Buffer<uint8_t>(block_width, block_height, 8);
+  Buffer<uint8_t> dst_image_ref =
+      Buffer<uint8_t>(block_width_, block_height_, 8);
   ASSERT_TRUE(dst_image_ref.Init());
 
   // Filter values are set in blocks of 16 for Y and 8 for U/V. Each macroblock
   // can have a different filter. SSE2 assembly reads flimits in blocks of 16 so
   // it must be padded out.
-  const int flimits_width = block_width % 16 ? block_width + 8 : block_width;
-  uint8_t *const flimits =
-      reinterpret_cast<uint8_t *>(vpx_memalign(16, flimits_width));
+  const int flimits_width = block_width_ % 16 ? block_width_ + 8 : block_width_;
+  flimits_ = reinterpret_cast<uint8_t *>(vpx_memalign(16, flimits_width));
 
   ACMRandom rnd;
   rnd.Reset(ACMRandom::DeterministicSeed());
@@ -138,37 +156,78 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckCvsAssembly) {
   src_image.SetPadding(10);
   src_image.Set(&rnd, &ACMRandom::Rand8);
 
-  for (int blocks = 0; blocks < block_width; blocks += 8) {
-    (void)memset(flimits, 0, sizeof(*flimits) * flimits_width);
+  for (int blocks = 0; blocks < block_width_; blocks += 8) {
+    (void)memset(flimits_, 0, sizeof(*flimits_) * flimits_width);
 
     for (int f = 0; f < 255; f++) {
-      (void)memset(flimits + blocks, f, sizeof(*flimits) * 8);
-
+      (void)memset(flimits_ + blocks, f, sizeof(*flimits_) * 8);
       dst_image.Set(0);
       dst_image_ref.Set(0);
 
       vpx_post_proc_down_and_across_mb_row_c(
           src_image.TopLeftPixel(), dst_image_ref.TopLeftPixel(),
-          src_image.stride(), dst_image_ref.stride(), block_width, flimits,
-          block_height);
-      ASM_REGISTER_STATE_CHECK(
-          GetParam()(src_image.TopLeftPixel(), dst_image.TopLeftPixel(),
-                     src_image.stride(), dst_image.stride(), block_width,
-                     flimits, block_height));
+          src_image.stride(), dst_image_ref.stride(), block_width_, flimits_,
+          block_height_);
+      ASM_REGISTER_STATE_CHECK(mb_post_proc_down_and_across_(
+          src_image.TopLeftPixel(), dst_image.TopLeftPixel(),
+          src_image.stride(), dst_image.stride(), block_width_, flimits_,
+          block_height_));
 
       ASSERT_TRUE(dst_image.CheckValues(dst_image_ref));
     }
   }
 
-  vpx_free(flimits);
+  vpx_free(flimits_);
 }
 
+TEST_P(VpxPostProcDownAndAcrossMbRowTest, DISABLED_Speed) {
+  // Size of the underlying data block that will be filtered.
+  block_width_ = 16;
+  block_height_ = 16;
+
+  // 5-tap filter needs 2 padding rows above and below the block in the input.
+  Buffer<uint8_t> src_image = Buffer<uint8_t>(block_width_, block_height_, 2);
+  ASSERT_TRUE(src_image.Init());
+  this->src_image_ = &src_image;
+
+  // Filter extends output block by 8 samples at left and right edges.
+  // Though the left padding is only 8 bytes, the assembly code tries to
+  // read 16 bytes before the pointer.
+  Buffer<uint8_t> dst_image =
+      Buffer<uint8_t>(block_width_, block_height_, 8, 16, 8, 8);
+  ASSERT_TRUE(dst_image.Init());
+  this->dst_image_ = &dst_image;
+
+  flimits_ = reinterpret_cast<uint8_t *>(vpx_memalign(16, block_width_));
+  (void)memset(flimits_, 255, block_width_);
+
+  // Initialize pixels in the input:
+  //   block pixels to value 1,
+  //   border pixels to value 10.
+  src_image.SetPadding(10);
+  src_image.Set(1);
+
+  // Initialize pixels in the output to 99.
+  dst_image.Set(99);
+
+  RunNTimes(INT16_MAX);
+  PrintMedian("16x16");
+
+  vpx_free(flimits_);
+};
+
 class VpxMbPostProcAcrossIpTest
-    : public ::testing::TestWithParam<VpxMbPostProcAcrossIpFunc> {
+    : public AbstractBench,
+      public ::testing::TestWithParam<VpxMbPostProcAcrossIpFunc> {
  public:
+  VpxMbPostProcAcrossIpTest()
+      : rows_(16), cols_(16), mb_post_proc_across_ip_(GetParam()),
+        src_(Buffer<uint8_t>(rows_, cols_, 8, 8, 17, 8)) {}
   virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
+  virtual void Run();
+
   void SetCols(unsigned char *s, int rows, int cols, int src_width) {
     for (int r = 0; r < rows; r++) {
       for (int c = 0; c < cols; c++) {
@@ -195,71 +254,67 @@ class VpxMbPostProcAcrossIpTest
         GetParam()(s, src_width, rows, cols, filter_level));
     RunComparison(expected_output, s, rows, cols, src_width);
   }
+
+  const int rows_;
+  const int cols_;
+  const VpxMbPostProcAcrossIpFunc mb_post_proc_across_ip_;
+  Buffer<uint8_t> src_;
 };
 
+void VpxMbPostProcAcrossIpTest::Run() {
+  mb_post_proc_across_ip_(src_.TopLeftPixel(), src_.stride(), rows_, cols_,
+                          q2mbl(0));
+}
+
 TEST_P(VpxMbPostProcAcrossIpTest, CheckLowFilterOutput) {
-  const int rows = 16;
-  const int cols = 16;
+  ASSERT_TRUE(src_.Init());
+  src_.SetPadding(10);
+  SetCols(src_.TopLeftPixel(), rows_, cols_, src_.stride());
 
-  Buffer<uint8_t> src = Buffer<uint8_t>(cols, rows, 8, 8, 17, 8);
-  ASSERT_TRUE(src.Init());
-  src.SetPadding(10);
-  SetCols(src.TopLeftPixel(), rows, cols, src.stride());
-
-  Buffer<uint8_t> expected_output = Buffer<uint8_t>(cols, rows, 0);
+  Buffer<uint8_t> expected_output = Buffer<uint8_t>(cols_, rows_, 0);
   ASSERT_TRUE(expected_output.Init());
-  SetCols(expected_output.TopLeftPixel(), rows, cols, expected_output.stride());
+  SetCols(expected_output.TopLeftPixel(), rows_, cols_,
+          expected_output.stride());
 
-  RunFilterLevel(src.TopLeftPixel(), rows, cols, src.stride(), q2mbl(0),
+  RunFilterLevel(src_.TopLeftPixel(), rows_, cols_, src_.stride(), q2mbl(0),
                  expected_output.TopLeftPixel());
 }
 
 TEST_P(VpxMbPostProcAcrossIpTest, CheckMediumFilterOutput) {
-  const int rows = 16;
-  const int cols = 16;
+  ASSERT_TRUE(src_.Init());
+  src_.SetPadding(10);
+  SetCols(src_.TopLeftPixel(), rows_, cols_, src_.stride());
 
-  Buffer<uint8_t> src = Buffer<uint8_t>(cols, rows, 8, 8, 17, 8);
-  ASSERT_TRUE(src.Init());
-  src.SetPadding(10);
-  SetCols(src.TopLeftPixel(), rows, cols, src.stride());
-
-  static const unsigned char kExpectedOutput[cols] = {
+  static const unsigned char kExpectedOutput[] = {
     2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 13
   };
 
-  RunFilterLevel(src.TopLeftPixel(), rows, cols, src.stride(), q2mbl(70),
+  RunFilterLevel(src_.TopLeftPixel(), rows_, cols_, src_.stride(), q2mbl(70),
                  kExpectedOutput);
 }
 
 TEST_P(VpxMbPostProcAcrossIpTest, CheckHighFilterOutput) {
-  const int rows = 16;
-  const int cols = 16;
+  ASSERT_TRUE(src_.Init());
+  src_.SetPadding(10);
+  SetCols(src_.TopLeftPixel(), rows_, cols_, src_.stride());
 
-  Buffer<uint8_t> src = Buffer<uint8_t>(cols, rows, 8, 8, 17, 8);
-  ASSERT_TRUE(src.Init());
-  src.SetPadding(10);
-  SetCols(src.TopLeftPixel(), rows, cols, src.stride());
-
-  static const unsigned char kExpectedOutput[cols] = {
+  static const unsigned char kExpectedOutput[] = {
     2, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 11, 12, 13, 13
   };
 
-  RunFilterLevel(src.TopLeftPixel(), rows, cols, src.stride(), INT_MAX,
+  RunFilterLevel(src_.TopLeftPixel(), rows_, cols_, src_.stride(), INT_MAX,
                  kExpectedOutput);
 
-  SetCols(src.TopLeftPixel(), rows, cols, src.stride());
+  SetCols(src_.TopLeftPixel(), rows_, cols_, src_.stride());
 
-  RunFilterLevel(src.TopLeftPixel(), rows, cols, src.stride(), q2mbl(100),
+  RunFilterLevel(src_.TopLeftPixel(), rows_, cols_, src_.stride(), q2mbl(100),
                  kExpectedOutput);
 }
 
 TEST_P(VpxMbPostProcAcrossIpTest, CheckCvsAssembly) {
-  const int rows = 16;
-  const int cols = 16;
-
-  Buffer<uint8_t> c_mem = Buffer<uint8_t>(cols, rows, 8, 8, 17, 8);
+  Buffer<uint8_t> c_mem = Buffer<uint8_t>(cols_, rows_, 8, 8, 17, 8);
   ASSERT_TRUE(c_mem.Init());
-  Buffer<uint8_t> asm_mem = Buffer<uint8_t>(cols, rows, 8, 8, 17, 8);
+  Buffer<uint8_t> asm_mem = Buffer<uint8_t>(cols_, rows_, 8, 8, 17, 8);
   ASSERT_TRUE(asm_mem.Init());
 
   // When level >= 100, the filter behaves the same as the level = INT_MAX
@@ -267,24 +322,41 @@ TEST_P(VpxMbPostProcAcrossIpTest, CheckCvsAssembly) {
   for (int level = 0; level < 100; level++) {
     c_mem.SetPadding(10);
     asm_mem.SetPadding(10);
-    SetCols(c_mem.TopLeftPixel(), rows, cols, c_mem.stride());
-    SetCols(asm_mem.TopLeftPixel(), rows, cols, asm_mem.stride());
+    SetCols(c_mem.TopLeftPixel(), rows_, cols_, c_mem.stride());
+    SetCols(asm_mem.TopLeftPixel(), rows_, cols_, asm_mem.stride());
 
-    vpx_mbpost_proc_across_ip_c(c_mem.TopLeftPixel(), c_mem.stride(), rows,
-                                cols, q2mbl(level));
+    vpx_mbpost_proc_across_ip_c(c_mem.TopLeftPixel(), c_mem.stride(), rows_,
+                                cols_, q2mbl(level));
     ASM_REGISTER_STATE_CHECK(GetParam()(
-        asm_mem.TopLeftPixel(), asm_mem.stride(), rows, cols, q2mbl(level)));
+        asm_mem.TopLeftPixel(), asm_mem.stride(), rows_, cols_, q2mbl(level)));
 
     ASSERT_TRUE(asm_mem.CheckValues(c_mem));
   }
 }
 
+TEST_P(VpxMbPostProcAcrossIpTest, DISABLED_Speed) {
+  ASSERT_TRUE(src_.Init());
+  src_.SetPadding(10);
+
+  SetCols(src_.TopLeftPixel(), rows_, cols_, src_.stride());
+
+  RunNTimes(100000);
+  PrintMedian("16x16");
+}
+
 class VpxMbPostProcDownTest
-    : public ::testing::TestWithParam<VpxMbPostProcDownFunc> {
+    : public AbstractBench,
+      public ::testing::TestWithParam<VpxMbPostProcDownFunc> {
  public:
+  VpxMbPostProcDownTest()
+      : rows_(16), cols_(16), mb_post_proc_down_(GetParam()),
+        src_c_(Buffer<uint8_t>(rows_, cols_, 8, 8, 8, 17)) {}
+
   virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
+  virtual void Run();
+
   void SetRows(unsigned char *src_c, int rows, int cols, int src_width) {
     for (int r = 0; r < rows; r++) {
       memset(src_c, r, cols);
@@ -306,22 +378,28 @@ class VpxMbPostProcDownTest
   void RunFilterLevel(unsigned char *s, int rows, int cols, int src_width,
                       int filter_level, const unsigned char *expected_output) {
     ASM_REGISTER_STATE_CHECK(
-        GetParam()(s, src_width, rows, cols, filter_level));
+        mb_post_proc_down_(s, src_width, rows, cols, filter_level));
     RunComparison(expected_output, s, rows, cols, src_width);
   }
+
+  const int rows_;
+  const int cols_;
+  const VpxMbPostProcDownFunc mb_post_proc_down_;
+  Buffer<uint8_t> src_c_;
 };
 
+void VpxMbPostProcDownTest::Run() {
+  mb_post_proc_down_(src_c_.TopLeftPixel(), src_c_.stride(), rows_, cols_,
+                     q2mbl(0));
+}
+
 TEST_P(VpxMbPostProcDownTest, CheckHighFilterOutput) {
-  const int rows = 16;
-  const int cols = 16;
+  ASSERT_TRUE(src_c_.Init());
+  src_c_.SetPadding(10);
 
-  Buffer<uint8_t> src_c = Buffer<uint8_t>(cols, rows, 8, 8, 8, 17);
-  ASSERT_TRUE(src_c.Init());
-  src_c.SetPadding(10);
+  SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
 
-  SetRows(src_c.TopLeftPixel(), rows, cols, src_c.stride());
-
-  static const unsigned char kExpectedOutput[rows * cols] = {
+  static const unsigned char kExpectedOutput[] = {
     2,  2,  1,  1,  2,  2,  2,  2,  2,  2,  1,  1,  2,  2,  2,  2,  2,  2,  2,
     2,  3,  2,  2,  2,  2,  2,  2,  2,  3,  2,  2,  2,  3,  3,  3,  3,  3,  3,
     3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  4,  4,  3,  4,  4,  3,  3,  3,
@@ -338,26 +416,22 @@ TEST_P(VpxMbPostProcDownTest, CheckHighFilterOutput) {
     13, 13, 13, 13, 14, 13, 13, 13, 13
   };
 
-  RunFilterLevel(src_c.TopLeftPixel(), rows, cols, src_c.stride(), INT_MAX,
+  RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(), INT_MAX,
                  kExpectedOutput);
 
-  src_c.SetPadding(10);
-  SetRows(src_c.TopLeftPixel(), rows, cols, src_c.stride());
-  RunFilterLevel(src_c.TopLeftPixel(), rows, cols, src_c.stride(), q2mbl(100),
-                 kExpectedOutput);
+  src_c_.SetPadding(10);
+  SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
+  RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(),
+                 q2mbl(100), kExpectedOutput);
 }
 
 TEST_P(VpxMbPostProcDownTest, CheckMediumFilterOutput) {
-  const int rows = 16;
-  const int cols = 16;
+  ASSERT_TRUE(src_c_.Init());
+  src_c_.SetPadding(10);
 
-  Buffer<uint8_t> src_c = Buffer<uint8_t>(cols, rows, 8, 8, 8, 17);
-  ASSERT_TRUE(src_c.Init());
-  src_c.SetPadding(10);
+  SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
 
-  SetRows(src_c.TopLeftPixel(), rows, cols, src_c.stride());
-
-  static const unsigned char kExpectedOutput[rows * cols] = {
+  static const unsigned char kExpectedOutput[] = {
     2,  2,  1,  1,  2,  2,  2,  2,  2,  2,  1,  1,  2,  2,  2,  2,  2,  2,  2,
     2,  3,  2,  2,  2,  2,  2,  2,  2,  3,  2,  2,  2,  2,  2,  2,  2,  2,  2,
     2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,  3,  3,
@@ -374,65 +448,67 @@ TEST_P(VpxMbPostProcDownTest, CheckMediumFilterOutput) {
     13, 13, 13, 13, 14, 13, 13, 13, 13
   };
 
-  RunFilterLevel(src_c.TopLeftPixel(), rows, cols, src_c.stride(), q2mbl(70),
-                 kExpectedOutput);
+  RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(),
+                 q2mbl(70), kExpectedOutput);
 }
 
 TEST_P(VpxMbPostProcDownTest, CheckLowFilterOutput) {
-  const int rows = 16;
-  const int cols = 16;
+  ASSERT_TRUE(src_c_.Init());
+  src_c_.SetPadding(10);
 
-  Buffer<uint8_t> src_c = Buffer<uint8_t>(cols, rows, 8, 8, 8, 17);
-  ASSERT_TRUE(src_c.Init());
-  src_c.SetPadding(10);
+  SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
 
-  SetRows(src_c.TopLeftPixel(), rows, cols, src_c.stride());
-
-  unsigned char *expected_output = new unsigned char[rows * cols];
+  unsigned char *expected_output = new unsigned char[rows_ * cols_];
   ASSERT_TRUE(expected_output != NULL);
-  SetRows(expected_output, rows, cols, cols);
+  SetRows(expected_output, rows_, cols_, cols_);
 
-  RunFilterLevel(src_c.TopLeftPixel(), rows, cols, src_c.stride(), q2mbl(0),
+  RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(), q2mbl(0),
                  expected_output);
 
   delete[] expected_output;
 }
 
 TEST_P(VpxMbPostProcDownTest, CheckCvsAssembly) {
-  const int rows = 16;
-  const int cols = 16;
-
   ACMRandom rnd;
   rnd.Reset(ACMRandom::DeterministicSeed());
 
-  Buffer<uint8_t> src_c = Buffer<uint8_t>(cols, rows, 8, 8, 8, 17);
-  ASSERT_TRUE(src_c.Init());
-  Buffer<uint8_t> src_asm = Buffer<uint8_t>(cols, rows, 8, 8, 8, 17);
+  ASSERT_TRUE(src_c_.Init());
+  Buffer<uint8_t> src_asm = Buffer<uint8_t>(cols_, rows_, 8, 8, 8, 17);
   ASSERT_TRUE(src_asm.Init());
 
   for (int level = 0; level < 100; level++) {
-    src_c.SetPadding(10);
+    src_c_.SetPadding(10);
     src_asm.SetPadding(10);
-    src_c.Set(&rnd, &ACMRandom::Rand8);
-    src_asm.CopyFrom(src_c);
+    src_c_.Set(&rnd, &ACMRandom::Rand8);
+    src_asm.CopyFrom(src_c_);
 
-    vpx_mbpost_proc_down_c(src_c.TopLeftPixel(), src_c.stride(), rows, cols,
+    vpx_mbpost_proc_down_c(src_c_.TopLeftPixel(), src_c_.stride(), rows_, cols_,
                            q2mbl(level));
-    ASM_REGISTER_STATE_CHECK(GetParam()(
-        src_asm.TopLeftPixel(), src_asm.stride(), rows, cols, q2mbl(level)));
-    ASSERT_TRUE(src_asm.CheckValues(src_c));
+    ASM_REGISTER_STATE_CHECK(mb_post_proc_down_(
+        src_asm.TopLeftPixel(), src_asm.stride(), rows_, cols_, q2mbl(level)));
+    ASSERT_TRUE(src_asm.CheckValues(src_c_));
 
-    src_c.SetPadding(10);
+    src_c_.SetPadding(10);
     src_asm.SetPadding(10);
-    src_c.Set(&rnd, &ACMRandom::Rand8Extremes);
-    src_asm.CopyFrom(src_c);
+    src_c_.Set(&rnd, &ACMRandom::Rand8Extremes);
+    src_asm.CopyFrom(src_c_);
 
-    vpx_mbpost_proc_down_c(src_c.TopLeftPixel(), src_c.stride(), rows, cols,
+    vpx_mbpost_proc_down_c(src_c_.TopLeftPixel(), src_c_.stride(), rows_, cols_,
                            q2mbl(level));
-    ASM_REGISTER_STATE_CHECK(GetParam()(
-        src_asm.TopLeftPixel(), src_asm.stride(), rows, cols, q2mbl(level)));
-    ASSERT_TRUE(src_asm.CheckValues(src_c));
+    ASM_REGISTER_STATE_CHECK(mb_post_proc_down_(
+        src_asm.TopLeftPixel(), src_asm.stride(), rows_, cols_, q2mbl(level)));
+    ASSERT_TRUE(src_asm.CheckValues(src_c_));
   }
+}
+
+TEST_P(VpxMbPostProcDownTest, DISABLED_Speed) {
+  ASSERT_TRUE(src_c_.Init());
+  src_c_.SetPadding(10);
+
+  SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
+
+  RunNTimes(100000);
+  PrintMedian("16x16");
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -480,5 +556,17 @@ INSTANTIATE_TEST_CASE_P(MSA, VpxMbPostProcAcrossIpTest,
 INSTANTIATE_TEST_CASE_P(MSA, VpxMbPostProcDownTest,
                         ::testing::Values(vpx_mbpost_proc_down_msa));
 #endif  // HAVE_MSA
+
+#if HAVE_VSX
+INSTANTIATE_TEST_CASE_P(
+    VSX, VpxPostProcDownAndAcrossMbRowTest,
+    ::testing::Values(vpx_post_proc_down_and_across_mb_row_vsx));
+
+INSTANTIATE_TEST_CASE_P(VSX, VpxMbPostProcAcrossIpTest,
+                        ::testing::Values(vpx_mbpost_proc_across_ip_vsx));
+
+INSTANTIATE_TEST_CASE_P(VSX, VpxMbPostProcDownTest,
+                        ::testing::Values(vpx_mbpost_proc_down_vsx));
+#endif  // HAVE_VSX
 
 }  // namespace

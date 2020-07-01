@@ -989,7 +989,7 @@ static void rd_check_segment(VP8_COMP *cpi, MACROBLOCK *x, BEST_SEG_INFO *bsi,
   br += rate;
 
   for (i = 0; i < label_count; ++i) {
-    int_mv mode_mv[B_MODE_COUNT];
+    int_mv mode_mv[B_MODE_COUNT] = { { 0 }, { 0 } };
     int best_label_rd = INT_MAX;
     B_PREDICTION_MODE mode_selected = ZERO4X4;
     int bestlabelyrate = 0;
@@ -1767,7 +1767,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
   /* search range got from mv_pred(). It uses step_param levels. (0-7) */
   int sr = 0;
 
-  unsigned char *plane[4][3];
+  unsigned char *plane[4][3] = { { 0, 0 } };
   int ref_frame_map[4];
   int sign_bias = 0;
 
@@ -1778,6 +1778,10 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
   unsigned int zero_mv_sse = UINT_MAX, best_sse = UINT_MAX,
                best_rd_sse = UINT_MAX;
 #endif
+
+  // _uv variables are not set consistantly before calling update_best_mode.
+  rd.rate_uv = 0;
+  rd.distortion_uv = 0;
 
   mode_mv = mode_mv_sb[sign_bias];
   best_ref_mv.as_int = 0;
@@ -1846,6 +1850,9 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
 
     /* everything but intra */
     if (x->e_mbd.mode_info_context->mbmi.ref_frame) {
+      assert(plane[this_ref_frame][0] != NULL &&
+             plane[this_ref_frame][1] != NULL &&
+             plane[this_ref_frame][2] != NULL);
       x->e_mbd.pre.y_buffer = plane[this_ref_frame][0];
       x->e_mbd.pre.u_buffer = plane[this_ref_frame][1];
       x->e_mbd.pre.v_buffer = plane[this_ref_frame][2];
@@ -1940,6 +1947,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
         rd.distortion2 += distortion;
 
         if (tmp_rd < best_mode.yrd) {
+          assert(uv_intra_done);
           rd.rate2 += uv_intra_rate;
           rd.rate_uv = uv_intra_rate_tokenonly;
           rd.distortion2 += uv_intra_distortion;
@@ -2000,6 +2008,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
         rd.distortion2 += distortion;
         rd.rate2 += x->mbmode_cost[x->e_mbd.frame_type]
                                   [x->e_mbd.mode_info_context->mbmi.mode];
+        assert(uv_intra_done);
         rd.rate2 += uv_intra_rate;
         rd.rate_uv = uv_intra_rate_tokenonly;
         rd.distortion2 += uv_intra_distortion;
@@ -2131,6 +2140,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
         rd.rate2 +=
             vp8_mv_bit_cost(&mode_mv[NEWMV], &best_ref_mv, x->mvcost, 96);
       }
+        // fall through
 
       case NEARESTMV:
       case NEARMV:
@@ -2147,6 +2157,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
             (mode_mv[this_mode].as_int == 0)) {
           continue;
         }
+        // fall through
 
       case ZEROMV:
 
@@ -2352,11 +2363,11 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
   rd_update_mvcount(x, &best_ref_mv);
 }
 
-void vp8_rd_pick_intra_mode(MACROBLOCK *x, int *rate_) {
+void vp8_rd_pick_intra_mode(MACROBLOCK *x, int *rate) {
   int error4x4, error16x16;
   int rate4x4, rate16x16 = 0, rateuv;
   int dist4x4, dist16x16, distuv;
-  int rate;
+  int rate_;
   int rate4x4_tokenonly = 0;
   int rate16x16_tokenonly = 0;
   int rateuv_tokenonly = 0;
@@ -2364,7 +2375,7 @@ void vp8_rd_pick_intra_mode(MACROBLOCK *x, int *rate_) {
   x->e_mbd.mode_info_context->mbmi.ref_frame = INTRA_FRAME;
 
   rd_pick_intra_mbuv_mode(x, &rateuv, &rateuv_tokenonly, &distuv);
-  rate = rateuv;
+  rate_ = rateuv;
 
   error16x16 = rd_pick_intra16x16mby_mode(x, &rate16x16, &rate16x16_tokenonly,
                                           &dist16x16);
@@ -2374,10 +2385,10 @@ void vp8_rd_pick_intra_mode(MACROBLOCK *x, int *rate_) {
 
   if (error4x4 < error16x16) {
     x->e_mbd.mode_info_context->mbmi.mode = B_PRED;
-    rate += rate4x4;
+    rate_ += rate4x4;
   } else {
-    rate += rate16x16;
+    rate_ += rate16x16;
   }
 
-  *rate_ = rate;
+  *rate = rate_;
 }

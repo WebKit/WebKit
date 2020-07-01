@@ -270,28 +270,32 @@ static void vp8_simple_filter(signed char mask, uc *op1, uc *op0, uc *oq0,
   *op0 = u ^ 0x80;
 }
 
-void vp8_loop_filter_simple_horizontal_edge_c(unsigned char *s, int p,
+void vp8_loop_filter_simple_horizontal_edge_c(unsigned char *y_ptr,
+                                              int y_stride,
                                               const unsigned char *blimit) {
   signed char mask = 0;
   int i = 0;
 
   do {
-    mask = vp8_simple_filter_mask(blimit[0], s[-2 * p], s[-1 * p], s[0 * p],
-                                  s[1 * p]);
-    vp8_simple_filter(mask, s - 2 * p, s - 1 * p, s, s + 1 * p);
-    ++s;
+    mask = vp8_simple_filter_mask(blimit[0], y_ptr[-2 * y_stride],
+                                  y_ptr[-1 * y_stride], y_ptr[0 * y_stride],
+                                  y_ptr[1 * y_stride]);
+    vp8_simple_filter(mask, y_ptr - 2 * y_stride, y_ptr - 1 * y_stride, y_ptr,
+                      y_ptr + 1 * y_stride);
+    ++y_ptr;
   } while (++i < 16);
 }
 
-void vp8_loop_filter_simple_vertical_edge_c(unsigned char *s, int p,
+void vp8_loop_filter_simple_vertical_edge_c(unsigned char *y_ptr, int y_stride,
                                             const unsigned char *blimit) {
   signed char mask = 0;
   int i = 0;
 
   do {
-    mask = vp8_simple_filter_mask(blimit[0], s[-2], s[-1], s[0], s[1]);
-    vp8_simple_filter(mask, s - 2, s - 1, s, s + 1);
-    s += p;
+    mask = vp8_simple_filter_mask(blimit[0], y_ptr[-2], y_ptr[-1], y_ptr[0],
+                                  y_ptr[1]);
+    vp8_simple_filter(mask, y_ptr - 2, y_ptr - 1, y_ptr, y_ptr + 1);
+    y_ptr += y_stride;
   } while (++i < 16);
 }
 

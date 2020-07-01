@@ -18,13 +18,13 @@ extern "C" {
 #endif
 
 // Helper function to scan for EOI marker (0xff 0xd9).
-static LIBYUV_BOOL ScanEOI(const uint8* sample, size_t sample_size) {
+static LIBYUV_BOOL ScanEOI(const uint8_t* sample, size_t sample_size) {
   if (sample_size >= 2) {
-    const uint8* end = sample + sample_size - 1;
-    const uint8* it = sample;
+    const uint8_t* end = sample + sample_size - 1;
+    const uint8_t* it = sample;
     while (it < end) {
       // TODO(fbarchard): scan for 0xd9 instead.
-      it = static_cast<const uint8 *>(memchr(it, 0xff, end - it));
+      it = (const uint8_t*)(memchr(it, 0xff, end - it));
       if (it == NULL) {
         break;
       }
@@ -39,7 +39,7 @@ static LIBYUV_BOOL ScanEOI(const uint8* sample, size_t sample_size) {
 }
 
 // Helper function to validate the jpeg appears intact.
-LIBYUV_BOOL ValidateJpeg(const uint8* sample, size_t sample_size) {
+LIBYUV_BOOL ValidateJpeg(const uint8_t* sample, size_t sample_size) {
   // Maximum size that ValidateJpeg will consider valid.
   const size_t kMaxJpegSize = 0x7fffffffull;
   const size_t kBackSearchSize = 1024;
@@ -68,4 +68,3 @@ LIBYUV_BOOL ValidateJpeg(const uint8* sample, size_t sample_size) {
 }  // extern "C"
 }  // namespace libyuv
 #endif
-

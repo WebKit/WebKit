@@ -325,7 +325,7 @@ void vpx_convolve8_vert_dspr2(const uint8_t *src, ptrdiff_t src_stride,
   assert(y_step_q4 == 16);
   assert(((const int32_t *)filter_y)[1] != 0x800000);
 
-  if (((const int32_t *)filter_y)[0] == 0) {
+  if (vpx_get_filter_taps(filter_y) == 2) {
     vpx_convolve2_vert_dspr2(src, src_stride, dst, dst_stride, filter, x0_q4,
                              x_step_q4, y0_q4, y_step_q4, w, h);
   } else {

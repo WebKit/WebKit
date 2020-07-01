@@ -52,9 +52,9 @@ void vp8_fast_quantize_b_ssse3(BLOCK *b, BLOCKD *d) {
 
   __m128i sz0, sz1, x, x0, x1, y0, y1, zeros, abs0, abs1;
 
-  DECLARE_ALIGNED(16, const uint8_t, pshufb_zig_zag_mask[16]) = {
-    0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15
-  };
+  DECLARE_ALIGNED(16, const uint8_t,
+                  pshufb_zig_zag_mask[16]) = { 0, 1,  4,  8,  5, 2,  3,  6,
+                                               9, 12, 13, 10, 7, 11, 14, 15 };
   __m128i zig_zag = _mm_load_si128((const __m128i *)pshufb_zig_zag_mask);
 
   /* sign of z: z >> 15 */

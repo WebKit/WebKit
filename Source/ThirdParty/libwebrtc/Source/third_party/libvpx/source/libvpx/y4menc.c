@@ -17,11 +17,9 @@ int y4m_write_file_header(char *buf, size_t len, int width, int height,
   const char *color;
   switch (bit_depth) {
     case 8:
-      color = fmt == VPX_IMG_FMT_444A
-                  ? "C444alpha\n"
-                  : fmt == VPX_IMG_FMT_I444
-                        ? "C444\n"
-                        : fmt == VPX_IMG_FMT_I422 ? "C422\n" : "C420jpeg\n";
+      color = fmt == VPX_IMG_FMT_I444
+                  ? "C444\n"
+                  : fmt == VPX_IMG_FMT_I422 ? "C422\n" : "C420jpeg\n";
       break;
     case 9:
       color = fmt == VPX_IMG_FMT_I44416

@@ -28,5 +28,7 @@ VP9_DX_SRCS-yes += decoder/vp9_decoder.c
 VP9_DX_SRCS-yes += decoder/vp9_decoder.h
 VP9_DX_SRCS-yes += decoder/vp9_dsubexp.c
 VP9_DX_SRCS-yes += decoder/vp9_dsubexp.h
+VP9_DX_SRCS-yes += decoder/vp9_job_queue.c
+VP9_DX_SRCS-yes += decoder/vp9_job_queue.h
 
 VP9_DX_SRCS-yes := $(filter-out $(VP9_DX_SRCS_REMOVE-yes),$(VP9_DX_SRCS-yes))

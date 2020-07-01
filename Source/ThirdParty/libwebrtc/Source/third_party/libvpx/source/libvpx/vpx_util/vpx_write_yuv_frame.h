@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_UTIL_VPX_WRITE_YUV_FRAME_H_
-#define VPX_UTIL_VPX_WRITE_YUV_FRAME_H_
+#ifndef VPX_VPX_UTIL_VPX_WRITE_YUV_FRAME_H_
+#define VPX_VPX_UTIL_VPX_WRITE_YUV_FRAME_H_
 
 #include <stdio.h>
 #include "vpx_scale/yv12config.h"
@@ -24,4 +24,4 @@ void vpx_write_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s);
 }  // extern "C"
 #endif
 
-#endif  // VPX_UTIL_VPX_WRITE_YUV_FRAME_H_
+#endif  // VPX_VPX_UTIL_VPX_WRITE_YUV_FRAME_H_

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_VPX_ONCE_H_
-#define VPX_PORTS_VPX_ONCE_H_
+#ifndef VPX_VPX_PORTS_VPX_ONCE_H_
+#define VPX_VPX_PORTS_VPX_ONCE_H_
 
 #include "vpx_config.h"
 
@@ -137,4 +137,4 @@ static void once(void (*func)(void)) {
 }
 #endif
 
-#endif  // VPX_PORTS_VPX_ONCE_H_
+#endif  // VPX_VPX_PORTS_VPX_ONCE_H_

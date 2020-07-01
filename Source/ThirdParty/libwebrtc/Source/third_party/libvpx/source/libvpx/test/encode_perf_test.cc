@@ -48,7 +48,7 @@ const EncodePerfTestVideo kVP9EncodePerfTestVectors[] = {
   EncodePerfTestVideo("niklas_1280_720_30.yuv", 1280, 720, 600, 470),
 };
 
-const int kEncodePerfTestSpeeds[] = { 5, 6, 7, 8 };
+const int kEncodePerfTestSpeeds[] = { 5, 6, 7, 8, 9 };
 const int kEncodePerfTestThreads[] = { 1, 2, 4 };
 
 #define NELEMENTS(x) (sizeof((x)) / sizeof((x)[0]))

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_MIPS_DSPR2_VP9_LOOPFILTER_MACROS_DSPR2_H_
-#define VP9_COMMON_MIPS_DSPR2_VP9_LOOPFILTER_MACROS_DSPR2_H_
+#ifndef VPX_VPX_DSP_MIPS_LOOPFILTER_MACROS_DSPR2_H_
+#define VPX_VPX_DSP_MIPS_LOOPFILTER_MACROS_DSPR2_H_
 
 #include <stdlib.h>
 
@@ -432,4 +432,4 @@ extern "C" {
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_MIPS_DSPR2_VP9_LOOPFILTER_MACROS_DSPR2_H_
+#endif  // VPX_VPX_DSP_MIPS_LOOPFILTER_MACROS_DSPR2_H_

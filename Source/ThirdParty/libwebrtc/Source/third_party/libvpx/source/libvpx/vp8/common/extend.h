@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_EXTEND_H_
-#define VP8_COMMON_EXTEND_H_
+#ifndef VPX_VP8_COMMON_EXTEND_H_
+#define VPX_VP8_COMMON_EXTEND_H_
 
 #include "vpx_scale/yv12config.h"
 
@@ -29,4 +29,4 @@ void vp8_copy_and_extend_frame_with_rect(YV12_BUFFER_CONFIG *src,
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_EXTEND_H_
+#endif  // VPX_VP8_COMMON_EXTEND_H_

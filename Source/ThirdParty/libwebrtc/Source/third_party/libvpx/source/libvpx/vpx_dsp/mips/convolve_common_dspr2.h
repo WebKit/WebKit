@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_MIPS_VPX_COMMON_DSPR2_H_
-#define VPX_DSP_MIPS_VPX_COMMON_DSPR2_H_
+#ifndef VPX_VPX_DSP_MIPS_CONVOLVE_COMMON_DSPR2_H_
+#define VPX_VPX_DSP_MIPS_CONVOLVE_COMMON_DSPR2_H_
 
 #include <assert.h>
 
@@ -55,4 +55,4 @@ void vpx_convolve2_vert_dspr2(const uint8_t *src, ptrdiff_t src_stride,
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_MIPS_VPX_COMMON_DSPR2_H_
+#endif  // VPX_VPX_DSP_MIPS_CONVOLVE_COMMON_DSPR2_H_

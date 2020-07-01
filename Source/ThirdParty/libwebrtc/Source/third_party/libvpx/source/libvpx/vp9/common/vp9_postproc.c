@@ -183,7 +183,8 @@ void vp9_highbd_mbpost_proc_down_c(uint16_t *dst, int pitch, int rows, int cols,
 }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
-static void deblock_and_de_macro_block(YV12_BUFFER_CONFIG *source,
+static void deblock_and_de_macro_block(VP9_COMMON *cm,
+                                       YV12_BUFFER_CONFIG *source,
                                        YV12_BUFFER_CONFIG *post, int q,
                                        int low_var_thresh, int flag,
                                        uint8_t *limits) {
@@ -216,7 +217,7 @@ static void deblock_and_de_macro_block(YV12_BUFFER_CONFIG *source,
         source->uv_height, source->uv_width, ppl);
   } else {
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-    vp9_deblock(source, post, q, limits);
+    vp9_deblock(cm, source, post, q, limits);
     vpx_mbpost_proc_across_ip(post->y_buffer, post->y_stride, post->y_height,
                               post->y_width, q2mbl(q));
     vpx_mbpost_proc_down(post->y_buffer, post->y_stride, post->y_height,
@@ -226,8 +227,8 @@ static void deblock_and_de_macro_block(YV12_BUFFER_CONFIG *source,
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 }
 
-void vp9_deblock(const YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst, int q,
-                 uint8_t *limits) {
+void vp9_deblock(struct VP9Common *cm, const YV12_BUFFER_CONFIG *src,
+                 YV12_BUFFER_CONFIG *dst, int q, uint8_t *limits) {
   const int ppl =
       (int)(6.0e-05 * q * q * q - 0.0067 * q * q + 0.306 * q + 0.0065 + 0.5);
 #if CONFIG_VP9_HIGHBITDEPTH
@@ -252,9 +253,8 @@ void vp9_deblock(const YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst, int q,
   } else {
 #endif  // CONFIG_VP9_HIGHBITDEPTH
     int mbr;
-    const int mb_rows = src->y_height / 16;
-    const int mb_cols = src->y_width / 16;
-
+    const int mb_rows = cm->mb_rows;
+    const int mb_cols = cm->mb_cols;
     memset(limits, (unsigned char)ppl, 16 * mb_cols);
 
     for (mbr = 0; mbr < mb_rows; mbr++) {
@@ -276,9 +276,9 @@ void vp9_deblock(const YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst, int q,
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 }
 
-void vp9_denoise(const YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst, int q,
-                 uint8_t *limits) {
-  vp9_deblock(src, dst, q, limits);
+void vp9_denoise(struct VP9Common *cm, const YV12_BUFFER_CONFIG *src,
+                 YV12_BUFFER_CONFIG *dst, int q, uint8_t *limits) {
+  vp9_deblock(cm, src, dst, q, limits);
 }
 
 static void swap_mi_and_prev_mi(VP9_COMMON *cm) {
@@ -293,7 +293,7 @@ static void swap_mi_and_prev_mi(VP9_COMMON *cm) {
 }
 
 int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
-                        vp9_ppflags_t *ppflags) {
+                        vp9_ppflags_t *ppflags, int unscaled_width) {
   const int q = VPXMIN(105, cm->lf.filter_level * 2);
   const int flags = ppflags->post_proc_flag;
   YV12_BUFFER_CONFIG *const ppbuf = &cm->post_proc_buffer;
@@ -359,7 +359,7 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
   if (flags & (VP9D_DEMACROBLOCK | VP9D_DEBLOCK)) {
     if (!cm->postproc_state.limits) {
       cm->postproc_state.limits =
-          vpx_calloc(cm->width, sizeof(*cm->postproc_state.limits));
+          vpx_calloc(unscaled_width, sizeof(*cm->postproc_state.limits));
     }
   }
 
@@ -383,21 +383,21 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
       vpx_yv12_copy_frame(ppbuf, &cm->post_proc_buffer_int);
     }
     if ((flags & VP9D_DEMACROBLOCK) && cm->post_proc_buffer_int.buffer_alloc) {
-      deblock_and_de_macro_block(&cm->post_proc_buffer_int, ppbuf,
+      deblock_and_de_macro_block(cm, &cm->post_proc_buffer_int, ppbuf,
                                  q + (ppflags->deblocking_level - 5) * 10, 1, 0,
                                  cm->postproc_state.limits);
     } else if (flags & VP9D_DEBLOCK) {
-      vp9_deblock(&cm->post_proc_buffer_int, ppbuf, q,
+      vp9_deblock(cm, &cm->post_proc_buffer_int, ppbuf, q,
                   cm->postproc_state.limits);
     } else {
       vpx_yv12_copy_frame(&cm->post_proc_buffer_int, ppbuf);
     }
   } else if (flags & VP9D_DEMACROBLOCK) {
-    deblock_and_de_macro_block(cm->frame_to_show, ppbuf,
+    deblock_and_de_macro_block(cm, cm->frame_to_show, ppbuf,
                                q + (ppflags->deblocking_level - 5) * 10, 1, 0,
                                cm->postproc_state.limits);
   } else if (flags & VP9D_DEBLOCK) {
-    vp9_deblock(cm->frame_to_show, ppbuf, q, cm->postproc_state.limits);
+    vp9_deblock(cm, cm->frame_to_show, ppbuf, q, cm->postproc_state.limits);
   } else {
     vpx_yv12_copy_frame(cm->frame_to_show, ppbuf);
   }

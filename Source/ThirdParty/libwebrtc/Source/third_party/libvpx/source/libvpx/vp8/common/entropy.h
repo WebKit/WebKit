@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_ENTROPY_H_
-#define VP8_COMMON_ENTROPY_H_
+#ifndef VPX_VP8_COMMON_ENTROPY_H_
+#define VPX_VP8_COMMON_ENTROPY_H_
 
 #include "treecoder.h"
 #include "blockd.h"
@@ -105,4 +105,4 @@ void vp8_coef_tree_initialize(void);
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_ENTROPY_H_
+#endif  // VPX_VP8_COMMON_ENTROPY_H_

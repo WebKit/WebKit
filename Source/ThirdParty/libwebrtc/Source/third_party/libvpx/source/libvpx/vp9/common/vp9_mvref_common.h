@@ -7,8 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef VP9_COMMON_VP9_MVREF_COMMON_H_
-#define VP9_COMMON_VP9_MVREF_COMMON_H_
+#ifndef VPX_VP9_COMMON_VP9_MVREF_COMMON_H_
+#define VPX_VP9_COMMON_VP9_MVREF_COMMON_H_
 
 #include "vp9/common/vp9_onyxc_int.h"
 #include "vp9/common/vp9_blockd.h"
@@ -263,10 +263,10 @@ static INLINE int_mv scale_mv(const MODE_INFO *mi, int ref,
                                  mv_ref_list, Done)                           \
   do {                                                                        \
     if (is_inter_block(mbmi)) {                                               \
-      if ((mbmi)->ref_frame[0] != ref_frame)                                  \
+      if ((mbmi)->ref_frame[0] != (ref_frame))                                \
         ADD_MV_REF_LIST(scale_mv((mbmi), 0, ref_frame, ref_sign_bias),        \
                         refmv_count, mv_ref_list, Done);                      \
-      if (has_second_ref(mbmi) && (mbmi)->ref_frame[1] != ref_frame &&        \
+      if (has_second_ref(mbmi) && (mbmi)->ref_frame[1] != (ref_frame) &&      \
           (mbmi)->mv[1].as_int != (mbmi)->mv[0].as_int)                       \
         ADD_MV_REF_LIST(scale_mv((mbmi), 1, ref_frame, ref_sign_bias),        \
                         refmv_count, mv_ref_list, Done);                      \
@@ -320,4 +320,4 @@ void vp9_append_sub8x8_mvs_for_idx(VP9_COMMON *cm, MACROBLOCKD *xd, int block,
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_MVREF_COMMON_H_
+#endif  // VPX_VP9_COMMON_VP9_MVREF_COMMON_H_

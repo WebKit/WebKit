@@ -12,6 +12,10 @@
 
 #include "./bitwriter.h"
 
+#if CONFIG_BITSTREAM_DEBUG
+#include "vpx_util/vpx_debug_util.h"
+#endif
+
 void vpx_start_encode(vpx_writer *br, uint8_t *source) {
   br->lowvalue = 0;
   br->range = 255;
@@ -24,8 +28,15 @@ void vpx_start_encode(vpx_writer *br, uint8_t *source) {
 void vpx_stop_encode(vpx_writer *br) {
   int i;
 
+#if CONFIG_BITSTREAM_DEBUG
+  bitstream_queue_set_skip_write(1);
+#endif
   for (i = 0; i < 32; i++) vpx_write_bit(br, 0);
 
   // Ensure there's no ambigous collision with any index marker bytes
   if ((br->buffer[br->pos - 1] & 0xe0) == 0xc0) br->buffer[br->pos++] = 0;
+
+#if CONFIG_BITSTREAM_DEBUG
+  bitstream_queue_set_skip_write(0);
+#endif
 }

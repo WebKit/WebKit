@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_PPC_BITDEPTH_CONVERSION_VSX_H_
-#define VPX_DSP_PPC_BITDEPTH_CONVERSION_VSX_H_
+#ifndef VPX_VPX_DSP_PPC_BITDEPTH_CONVERSION_VSX_H_
+#define VPX_VPX_DSP_PPC_BITDEPTH_CONVERSION_VSX_H_
 
 #include "./vpx_config.h"
 #include "vpx/vpx_integer.h"
@@ -44,4 +44,4 @@ static INLINE void store_tran_low(int16x8_t v, int32_t c, tran_low_t *s) {
 #endif
 }
 
-#endif  // VPX_DSP_PPC_BITDEPTH_CONVERSION_VSX_H_
+#endif  // VPX_VPX_DSP_PPC_BITDEPTH_CONVERSION_VSX_H_

@@ -23,7 +23,7 @@ LIBYUV_SRCS +=  third_party/libyuv/include/libyuv/basic_types.h  \
                 third_party/libyuv/source/row_any.cc \
                 third_party/libyuv/source/row_common.cc \
                 third_party/libyuv/source/row_gcc.cc \
-                third_party/libyuv/source/row_mips.cc \
+                third_party/libyuv/source/row_msa.cc \
                 third_party/libyuv/source/row_neon.cc \
                 third_party/libyuv/source/row_neon64.cc \
                 third_party/libyuv/source/row_win.cc \
@@ -31,7 +31,7 @@ LIBYUV_SRCS +=  third_party/libyuv/include/libyuv/basic_types.h  \
                 third_party/libyuv/source/scale_any.cc \
                 third_party/libyuv/source/scale_common.cc \
                 third_party/libyuv/source/scale_gcc.cc \
-                third_party/libyuv/source/scale_mips.cc \
+                third_party/libyuv/source/scale_msa.cc \
                 third_party/libyuv/source/scale_neon.cc \
                 third_party/libyuv/source/scale_neon64.cc \
                 third_party/libyuv/source/scale_win.cc \
@@ -65,6 +65,7 @@ endif
 # while EXAMPLES demonstrate specific portions of the API.
 UTILS-$(CONFIG_DECODERS)    += vpxdec.c
 vpxdec.SRCS                 += md5_utils.c md5_utils.h
+vpxdec.SRCS                 += vpx_ports/compiler_attributes.h
 vpxdec.SRCS                 += vpx_ports/mem_ops.h
 vpxdec.SRCS                 += vpx_ports/mem_ops_aligned.h
 vpxdec.SRCS                 += vpx_ports/msvc.h
@@ -72,11 +73,12 @@ vpxdec.SRCS                 += vpx_ports/vpx_timer.h
 vpxdec.SRCS                 += vpx/vpx_integer.h
 vpxdec.SRCS                 += args.c args.h
 vpxdec.SRCS                 += ivfdec.c ivfdec.h
+vpxdec.SRCS                 += y4minput.c y4minput.h
 vpxdec.SRCS                 += tools_common.c tools_common.h
 vpxdec.SRCS                 += y4menc.c y4menc.h
 ifeq ($(CONFIG_LIBYUV),yes)
   vpxdec.SRCS                 += $(LIBYUV_SRCS)
-  $(BUILD_PFX)third_party/libyuv/%.cc.o: CXXFLAGS += -Wno-unused-parameter
+  $(BUILD_PFX)third_party/libyuv/%.cc.o: CXXFLAGS += ${LIBYUV_CXXFLAGS}
 endif
 ifeq ($(CONFIG_WEBM_IO),yes)
   vpxdec.SRCS                 += $(LIBWEBM_COMMON_SRCS)
@@ -109,18 +111,20 @@ ifeq ($(CONFIG_WEBM_IO),yes)
 endif
 vpxenc.GUID                  = 548DEC74-7A15-4B2B-AFC3-AA102E7C25C1
 vpxenc.DESCRIPTION           = Full featured encoder
-ifeq ($(CONFIG_SPATIAL_SVC),yes)
-  EXAMPLES-$(CONFIG_VP9_ENCODER)      += vp9_spatial_svc_encoder.c
-  vp9_spatial_svc_encoder.SRCS        += args.c args.h
-  vp9_spatial_svc_encoder.SRCS        += ivfenc.c ivfenc.h
-  vp9_spatial_svc_encoder.SRCS        += tools_common.c tools_common.h
-  vp9_spatial_svc_encoder.SRCS        += video_common.h
-  vp9_spatial_svc_encoder.SRCS        += video_writer.h video_writer.c
-  vp9_spatial_svc_encoder.SRCS        += vpx_ports/msvc.h
-  vp9_spatial_svc_encoder.SRCS        += vpxstats.c vpxstats.h
-  vp9_spatial_svc_encoder.GUID        = 4A38598D-627D-4505-9C7B-D4020C84100D
-  vp9_spatial_svc_encoder.DESCRIPTION = VP9 Spatial SVC Encoder
-endif
+
+EXAMPLES-$(CONFIG_VP9_ENCODER)      += vp9_spatial_svc_encoder.c
+vp9_spatial_svc_encoder.SRCS        += args.c args.h
+vp9_spatial_svc_encoder.SRCS        += ivfenc.c ivfenc.h
+vp9_spatial_svc_encoder.SRCS        += y4minput.c y4minput.h
+vp9_spatial_svc_encoder.SRCS        += tools_common.c tools_common.h
+vp9_spatial_svc_encoder.SRCS        += video_common.h
+vp9_spatial_svc_encoder.SRCS        += video_writer.h video_writer.c
+vp9_spatial_svc_encoder.SRCS        += vpx_ports/msvc.h
+vp9_spatial_svc_encoder.SRCS        += vpxstats.c vpxstats.h
+vp9_spatial_svc_encoder.SRCS        += examples/svc_encodeframe.c
+vp9_spatial_svc_encoder.SRCS        += examples/svc_context.h
+vp9_spatial_svc_encoder.GUID        = 4A38598D-627D-4505-9C7B-D4020C84100D
+vp9_spatial_svc_encoder.DESCRIPTION = VP9 Spatial SVC Encoder
 
 ifneq ($(CONFIG_SHARED),yes)
 EXAMPLES-$(CONFIG_VP9_ENCODER)    += resize_util.c
@@ -128,6 +132,7 @@ endif
 
 EXAMPLES-$(CONFIG_ENCODERS)          += vpx_temporal_svc_encoder.c
 vpx_temporal_svc_encoder.SRCS        += ivfenc.c ivfenc.h
+vpx_temporal_svc_encoder.SRCS        += y4minput.c y4minput.h
 vpx_temporal_svc_encoder.SRCS        += tools_common.c tools_common.h
 vpx_temporal_svc_encoder.SRCS        += video_common.h
 vpx_temporal_svc_encoder.SRCS        += video_writer.h video_writer.c
@@ -137,6 +142,7 @@ vpx_temporal_svc_encoder.DESCRIPTION = Temporal SVC Encoder
 EXAMPLES-$(CONFIG_DECODERS)        += simple_decoder.c
 simple_decoder.GUID                 = D3BBF1E9-2427-450D-BBFF-B2843C1D44CC
 simple_decoder.SRCS                += ivfdec.h ivfdec.c
+simple_decoder.SRCS                += y4minput.c y4minput.h
 simple_decoder.SRCS                += tools_common.h tools_common.c
 simple_decoder.SRCS                += video_common.h
 simple_decoder.SRCS                += video_reader.h video_reader.c
@@ -146,6 +152,7 @@ simple_decoder.SRCS                += vpx_ports/msvc.h
 simple_decoder.DESCRIPTION          = Simplified decoder loop
 EXAMPLES-$(CONFIG_DECODERS)        += postproc.c
 postproc.SRCS                      += ivfdec.h ivfdec.c
+postproc.SRCS                      += y4minput.c y4minput.h
 postproc.SRCS                      += tools_common.h tools_common.c
 postproc.SRCS                      += video_common.h
 postproc.SRCS                      += video_reader.h video_reader.c
@@ -157,9 +164,11 @@ postproc.DESCRIPTION                = Decoder postprocessor control
 EXAMPLES-$(CONFIG_DECODERS)        += decode_to_md5.c
 decode_to_md5.SRCS                 += md5_utils.h md5_utils.c
 decode_to_md5.SRCS                 += ivfdec.h ivfdec.c
+decode_to_md5.SRCS                 += y4minput.c y4minput.h
 decode_to_md5.SRCS                 += tools_common.h tools_common.c
 decode_to_md5.SRCS                 += video_common.h
 decode_to_md5.SRCS                 += video_reader.h video_reader.c
+decode_to_md5.SRCS                 += vpx_ports/compiler_attributes.h
 decode_to_md5.SRCS                 += vpx_ports/mem_ops.h
 decode_to_md5.SRCS                 += vpx_ports/mem_ops_aligned.h
 decode_to_md5.SRCS                 += vpx_ports/msvc.h
@@ -167,6 +176,7 @@ decode_to_md5.GUID                  = 59120B9B-2735-4BFE-B022-146CA340FE42
 decode_to_md5.DESCRIPTION           = Frame by frame MD5 checksum
 EXAMPLES-$(CONFIG_ENCODERS)     += simple_encoder.c
 simple_encoder.SRCS             += ivfenc.h ivfenc.c
+simple_encoder.SRCS             += y4minput.c y4minput.h
 simple_encoder.SRCS             += tools_common.h tools_common.c
 simple_encoder.SRCS             += video_common.h
 simple_encoder.SRCS             += video_writer.h video_writer.c
@@ -175,6 +185,7 @@ simple_encoder.GUID              = 4607D299-8A71-4D2C-9B1D-071899B6FBFD
 simple_encoder.DESCRIPTION       = Simplified encoder loop
 EXAMPLES-$(CONFIG_VP9_ENCODER)  += vp9_lossless_encoder.c
 vp9_lossless_encoder.SRCS       += ivfenc.h ivfenc.c
+vp9_lossless_encoder.SRCS       += y4minput.c y4minput.h
 vp9_lossless_encoder.SRCS       += tools_common.h tools_common.c
 vp9_lossless_encoder.SRCS       += video_common.h
 vp9_lossless_encoder.SRCS       += video_writer.h video_writer.c
@@ -183,6 +194,7 @@ vp9_lossless_encoder.GUID        = B63C7C88-5348-46DC-A5A6-CC151EF93366
 vp9_lossless_encoder.DESCRIPTION = Simplified lossless VP9 encoder
 EXAMPLES-$(CONFIG_ENCODERS)     += twopass_encoder.c
 twopass_encoder.SRCS            += ivfenc.h ivfenc.c
+twopass_encoder.SRCS            += y4minput.c y4minput.h
 twopass_encoder.SRCS            += tools_common.h tools_common.c
 twopass_encoder.SRCS            += video_common.h
 twopass_encoder.SRCS            += video_writer.h video_writer.c
@@ -191,6 +203,7 @@ twopass_encoder.GUID             = 73494FA6-4AF9-4763-8FBB-265C92402FD8
 twopass_encoder.DESCRIPTION      = Two-pass encoder loop
 EXAMPLES-$(CONFIG_DECODERS)     += decode_with_drops.c
 decode_with_drops.SRCS          += ivfdec.h ivfdec.c
+decode_with_drops.SRCS          += y4minput.c y4minput.h
 decode_with_drops.SRCS          += tools_common.h tools_common.c
 decode_with_drops.SRCS          += video_common.h
 decode_with_drops.SRCS          += video_reader.h video_reader.c
@@ -201,6 +214,7 @@ decode_with_drops.GUID           = CE5C53C4-8DDA-438A-86ED-0DDD3CDB8D26
 decode_with_drops.DESCRIPTION    = Drops frames while decoding
 EXAMPLES-$(CONFIG_ENCODERS)        += set_maps.c
 set_maps.SRCS                      += ivfenc.h ivfenc.c
+set_maps.SRCS                      += y4minput.c y4minput.h
 set_maps.SRCS                      += tools_common.h tools_common.c
 set_maps.SRCS                      += video_common.h
 set_maps.SRCS                      += video_writer.h video_writer.c
@@ -209,6 +223,7 @@ set_maps.GUID                       = ECB2D24D-98B8-4015-A465-A4AF3DCC145F
 set_maps.DESCRIPTION                = Set active and ROI maps
 EXAMPLES-$(CONFIG_VP8_ENCODER)     += vp8cx_set_ref.c
 vp8cx_set_ref.SRCS                 += ivfenc.h ivfenc.c
+vp8cx_set_ref.SRCS                 += y4minput.c y4minput.h
 vp8cx_set_ref.SRCS                 += tools_common.h tools_common.c
 vp8cx_set_ref.SRCS                 += video_common.h
 vp8cx_set_ref.SRCS                 += video_writer.h video_writer.c
@@ -220,6 +235,7 @@ ifeq ($(CONFIG_VP9_ENCODER),yes)
 ifeq ($(CONFIG_DECODERS),yes)
 EXAMPLES-yes                       += vp9cx_set_ref.c
 vp9cx_set_ref.SRCS                 += ivfenc.h ivfenc.c
+vp9cx_set_ref.SRCS                 += y4minput.c y4minput.h
 vp9cx_set_ref.SRCS                 += tools_common.h tools_common.c
 vp9cx_set_ref.SRCS                 += video_common.h
 vp9cx_set_ref.SRCS                 += video_writer.h video_writer.c
@@ -232,6 +248,7 @@ ifeq ($(CONFIG_MULTI_RES_ENCODING),yes)
 ifeq ($(CONFIG_LIBYUV),yes)
 EXAMPLES-$(CONFIG_VP8_ENCODER)          += vp8_multi_resolution_encoder.c
 vp8_multi_resolution_encoder.SRCS       += ivfenc.h ivfenc.c
+vp8_multi_resolution_encoder.SRCS       += y4minput.c y4minput.h
 vp8_multi_resolution_encoder.SRCS       += tools_common.h tools_common.c
 vp8_multi_resolution_encoder.SRCS       += video_writer.h video_writer.c
 vp8_multi_resolution_encoder.SRCS       += vpx_ports/msvc.h
@@ -403,3 +420,4 @@ CLEAN-OBJS += examples.doxy samples.dox $(ALL_EXAMPLES:.c=.dox)
 DOCS-yes += examples.doxy samples.dox
 examples.doxy: samples.dox $(ALL_EXAMPLES:.c=.dox)
 	@echo "INPUT += $^" > $@
+	@echo "ENABLED_SECTIONS += samples" >> $@

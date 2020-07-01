@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef RATE_HIST_H_
-#define RATE_HIST_H_
+#ifndef VPX_RATE_HIST_H_
+#define VPX_RATE_HIST_H_
 
 #include "vpx/vpx_encoder.h"
 
@@ -37,4 +37,4 @@ void show_rate_histogram(struct rate_hist *hist, const vpx_codec_enc_cfg_t *cfg,
 }  // extern "C"
 #endif
 
-#endif  // RATE_HIST_H_
+#endif  // VPX_RATE_HIST_H_

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_TXFM_COMMON_H_
-#define VPX_DSP_TXFM_COMMON_H_
+#ifndef VPX_VPX_DSP_TXFM_COMMON_H_
+#define VPX_VPX_DSP_TXFM_COMMON_H_
 
 #include "vpx_dsp/vpx_dsp_common.h"
 
@@ -63,4 +63,4 @@ static const tran_coef_t sinpi_2_9 = 9929;
 static const tran_coef_t sinpi_3_9 = 13377;
 static const tran_coef_t sinpi_4_9 = 15212;
 
-#endif  // VPX_DSP_TXFM_COMMON_H_
+#endif  // VPX_VPX_DSP_TXFM_COMMON_H_

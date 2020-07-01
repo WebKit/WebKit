@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#ifndef VPX_VPX_DSP_ARM_VPX_CONVOLVE8_NEON_H_
+#define VPX_VPX_DSP_ARM_VPX_CONVOLVE8_NEON_H_
+
 #include <arm_neon.h>
 
 #include "./vpx_config.h"
@@ -131,3 +134,5 @@ static INLINE uint8x8_t scale_filter_8(const uint8x8_t *const s,
   return convolve8_8(ss[0], ss[1], ss[2], ss[3], ss[4], ss[5], ss[6], ss[7],
                      filters, filter3, filter4);
 }
+
+#endif  // VPX_VPX_DSP_ARM_VPX_CONVOLVE8_NEON_H_

@@ -9,6 +9,7 @@
  */
 #include <stdlib.h>
 
+#include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "vpx_dsp/mips/macros_msa.h"
 
@@ -56,6 +57,7 @@ uint32_t vpx_avg_4x4_msa(const uint8_t *src, int32_t src_stride) {
   return sum_out;
 }
 
+#if !CONFIG_VP9_HIGHBITDEPTH
 void vpx_hadamard_8x8_msa(const int16_t *src, ptrdiff_t src_stride,
                           int16_t *dst) {
   v8i16 src0, src1, src2, src3, src4, src5, src6, src7;
@@ -391,6 +393,7 @@ int vpx_satd_msa(const int16_t *data, int length) {
 
   return satd;
 }
+#endif  // !CONFIG_VP9_HIGHBITDEPTH
 
 void vpx_int_pro_row_msa(int16_t hbuf[16], const uint8_t *ref,
                          const int ref_stride, const int height) {

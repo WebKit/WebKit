@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_SVC_LAYERCONTEXT_H_
-#define VP9_ENCODER_VP9_SVC_LAYERCONTEXT_H_
+#ifndef VPX_VP9_ENCODER_VP9_SVC_LAYERCONTEXT_H_
+#define VPX_VP9_ENCODER_VP9_SVC_LAYERCONTEXT_H_
 
 #include "vpx/vpx_encoder.h"
 
@@ -18,6 +18,24 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef enum {
+  // Inter-layer prediction is on on all frames.
+  INTER_LAYER_PRED_ON,
+  // Inter-layer prediction is off on all frames.
+  INTER_LAYER_PRED_OFF,
+  // Inter-layer prediction is off on non-key frames and non-sync frames.
+  INTER_LAYER_PRED_OFF_NONKEY,
+  // Inter-layer prediction is on on all frames, but constrained such
+  // that any layer S (> 0) can only predict from previous spatial
+  // layer S-1, from the same superframe.
+  INTER_LAYER_PRED_ON_CONSTRAINED
+} INTER_LAYER_PRED;
+
+typedef struct BUFFER_LONGTERM_REF {
+  int idx;
+  int is_used;
+} BUFFER_LONGTERM_REF;
 
 typedef struct {
   RATE_CONTROL rc;
@@ -29,6 +47,9 @@ typedef struct {
   int min_q;
   int scaling_factor_num;
   int scaling_factor_den;
+  // Scaling factors used for internal resize scaling for single layer SVC.
+  int scaling_factor_num_resize;
+  int scaling_factor_den_resize;
   TWO_PASS twopass;
   vpx_fixed_buf_t rc_twopass_stats_in;
   unsigned int current_video_frame_in_layer;
@@ -40,12 +61,15 @@ typedef struct {
   int gold_ref_idx;
   int has_alt_frame;
   size_t layer_size;
-  struct vpx_psnr_pkt psnr_pkt;
   // Cyclic refresh parameters (aq-mode=3), that need to be updated per-frame.
+  // TODO(jianj/marpan): Is it better to use the full cyclic refresh struct.
   int sb_index;
   signed char *map;
   uint8_t *last_coded_q_map;
   uint8_t *consec_zero_mv;
+  int actual_num_seg1_blocks;
+  int actual_num_seg2_blocks;
+  int counter_encode_maxq_scene_change;
   uint8_t speed;
 } LAYER_CONTEXT;
 
@@ -56,8 +80,6 @@ typedef struct SVC {
   int number_temporal_layers;
 
   int spatial_layer_to_encode;
-  int first_spatial_layer_to_encode;
-  int rc_drop_superframe;
 
   // Workaround for multiple frame contexts
   enum { ENCODED = 0, ENCODING, NEED_TO_ENCODE } encode_empty_frame_state;
@@ -81,11 +103,16 @@ typedef struct SVC {
   // Frame flags and buffer indexes for each spatial layer, set by the
   // application (external settings).
   int ext_frame_flags[VPX_MAX_LAYERS];
-  int ext_lst_fb_idx[VPX_MAX_LAYERS];
-  int ext_gld_fb_idx[VPX_MAX_LAYERS];
-  int ext_alt_fb_idx[VPX_MAX_LAYERS];
-  int ref_frame_index[REF_FRAMES];
+  int lst_fb_idx[VPX_MAX_LAYERS];
+  int gld_fb_idx[VPX_MAX_LAYERS];
+  int alt_fb_idx[VPX_MAX_LAYERS];
   int force_zero_mode_spatial_ref;
+  // Sequence level flag to enable second (long term) temporal reference.
+  int use_gf_temporal_ref;
+  // Frame level flag to enable second (long term) temporal reference.
+  int use_gf_temporal_ref_current_layer;
+  // Allow second reference for at most 2 top highest resolution layers.
+  BUFFER_LONGTERM_REF buffer_gf_temporal_ref[2];
   int current_superframe;
   int non_reference_frame;
   int use_base_mv;
@@ -100,12 +127,77 @@ typedef struct SVC {
 
   BLOCK_SIZE *prev_partition_svc;
   int mi_stride[VPX_MAX_LAYERS];
+  int mi_rows[VPX_MAX_LAYERS];
+  int mi_cols[VPX_MAX_LAYERS];
 
   int first_layer_denoise;
 
   int skip_enhancement_layer;
 
   int lower_layer_qindex;
+
+  int last_layer_dropped[VPX_MAX_LAYERS];
+  int drop_spatial_layer[VPX_MAX_LAYERS];
+  int framedrop_thresh[VPX_MAX_LAYERS];
+  int drop_count[VPX_MAX_LAYERS];
+  int force_drop_constrained_from_above[VPX_MAX_LAYERS];
+  int max_consec_drop;
+  SVC_LAYER_DROP_MODE framedrop_mode;
+
+  INTER_LAYER_PRED disable_inter_layer_pred;
+
+  // Flag to indicate scene change and high num of motion blocks at current
+  // superframe, scene detection is currently checked for each superframe prior
+  // to encoding, on the full resolution source.
+  int high_source_sad_superframe;
+  int high_num_blocks_with_motion;
+
+  // Flags used to get SVC pattern info.
+  int update_buffer_slot[VPX_SS_MAX_LAYERS];
+  uint8_t reference_last[VPX_SS_MAX_LAYERS];
+  uint8_t reference_golden[VPX_SS_MAX_LAYERS];
+  uint8_t reference_altref[VPX_SS_MAX_LAYERS];
+  // TODO(jianj): Remove these last 3, deprecated.
+  uint8_t update_last[VPX_SS_MAX_LAYERS];
+  uint8_t update_golden[VPX_SS_MAX_LAYERS];
+  uint8_t update_altref[VPX_SS_MAX_LAYERS];
+
+  // Keep track of the frame buffer index updated/refreshed on the base
+  // temporal superframe.
+  int fb_idx_upd_tl0[VPX_SS_MAX_LAYERS];
+
+  // Keep track of the spatial and temporal layer id of the frame that last
+  // updated the frame buffer index.
+  uint8_t fb_idx_spatial_layer_id[REF_FRAMES];
+  uint8_t fb_idx_temporal_layer_id[REF_FRAMES];
+
+  int spatial_layer_sync[VPX_SS_MAX_LAYERS];
+  uint8_t set_intra_only_frame;
+  uint8_t previous_frame_is_intra_only;
+  uint8_t superframe_has_layer_sync;
+
+  uint8_t fb_idx_base[REF_FRAMES];
+
+  int use_set_ref_frame_config;
+
+  int temporal_layer_id_per_spatial[VPX_SS_MAX_LAYERS];
+
+  int first_spatial_layer_to_encode;
+
+  // Parameters for allowing framerate per spatial layer, and buffer
+  // update based on timestamps.
+  int64_t duration[VPX_SS_MAX_LAYERS];
+  int64_t timebase_fac;
+  int64_t time_stamp_superframe;
+  int64_t time_stamp_prev[VPX_SS_MAX_LAYERS];
+
+  int num_encoded_top_layer;
+
+  // Every spatial layer on a superframe whose base is key is key too.
+  int simulcast_mode;
+
+  // Flag to indicate SVC is dynamically switched to a single layer.
+  int single_layer_svc;
 } SVC;
 
 struct VP9_COMP;
@@ -153,16 +245,37 @@ struct lookahead_entry *vp9_svc_lookahead_pop(struct VP9_COMP *const cpi,
 // Start a frame and initialize svc parameters
 int vp9_svc_start_frame(struct VP9_COMP *const cpi);
 
+#if CONFIG_VP9_TEMPORAL_DENOISING
+int vp9_denoise_svc_non_key(struct VP9_COMP *const cpi);
+#endif
+
+void vp9_copy_flags_ref_update_idx(struct VP9_COMP *const cpi);
+
 int vp9_one_pass_cbr_svc_start_layer(struct VP9_COMP *const cpi);
 
 void vp9_free_svc_cyclic_refresh(struct VP9_COMP *const cpi);
 
-void vp9_svc_reset_key_frame(struct VP9_COMP *const cpi);
+void vp9_svc_reset_temporal_layers(struct VP9_COMP *const cpi, int is_key);
 
 void vp9_svc_check_reset_layer_rc_flag(struct VP9_COMP *const cpi);
 
+void vp9_svc_constrain_inter_layer_pred(struct VP9_COMP *const cpi);
+
+void vp9_svc_assert_constraints_pattern(struct VP9_COMP *const cpi);
+
+void vp9_svc_check_spatial_layer_sync(struct VP9_COMP *const cpi);
+
+void vp9_svc_update_ref_frame_buffer_idx(struct VP9_COMP *const cpi);
+
+void vp9_svc_update_ref_frame_key_simulcast(struct VP9_COMP *const cpi);
+
+void vp9_svc_update_ref_frame(struct VP9_COMP *const cpi);
+
+void vp9_svc_adjust_frame_rate(struct VP9_COMP *const cpi);
+
+void vp9_svc_adjust_avg_frame_qindex(struct VP9_COMP *const cpi);
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_SVC_LAYERCONTEXT_
+#endif  // VPX_VP9_ENCODER_VP9_SVC_LAYERCONTEXT_H_

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_TEMPORAL_FILTER_H_
-#define VP8_ENCODER_TEMPORAL_FILTER_H_
+#ifndef VPX_VP8_ENCODER_TEMPORAL_FILTER_H_
+#define VPX_VP8_ENCODER_TEMPORAL_FILTER_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,4 +23,4 @@ void vp8_temporal_filter_prepare_c(struct VP8_COMP *cpi, int distance);
 }
 #endif
 
-#endif  // VP8_ENCODER_TEMPORAL_FILTER_H_
+#endif  // VPX_VP8_ENCODER_TEMPORAL_FILTER_H_

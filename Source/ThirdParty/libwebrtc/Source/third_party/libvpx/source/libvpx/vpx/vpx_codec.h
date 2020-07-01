@@ -35,8 +35,8 @@
  * Once initialized, the instance is manged using other functions from
  * the vpx_codec_* family.
  */
-#ifndef VPX_VPX_CODEC_H_
-#define VPX_VPX_CODEC_H_
+#ifndef VPX_VPX_VPX_CODEC_H_
+#define VPX_VPX_VPX_CODEC_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -241,11 +241,11 @@ typedef enum vpx_bit_depth {
  */
 int vpx_codec_version(void);
 #define VPX_VERSION_MAJOR(v) \
-  ((v >> 16) & 0xff) /**< extract major from packed version */
+  (((v) >> 16) & 0xff) /**< extract major from packed version */
 #define VPX_VERSION_MINOR(v) \
-  ((v >> 8) & 0xff) /**< extract minor from packed version */
+  (((v) >> 8) & 0xff) /**< extract minor from packed version */
 #define VPX_VERSION_PATCH(v) \
-  ((v >> 0) & 0xff) /**< extract patch from packed version */
+  (((v) >> 0) & 0xff) /**< extract patch from packed version */
 
 /*!\brief Return the version major number */
 #define vpx_codec_version_major() ((vpx_codec_version() >> 16) & 0xff)
@@ -465,4 +465,4 @@ vpx_codec_err_t vpx_codec_control_(vpx_codec_ctx_t *ctx, int ctrl_id, ...);
 #ifdef __cplusplus
 }
 #endif
-#endif  // VPX_VPX_CODEC_H_
+#endif  // VPX_VPX_VPX_CODEC_H_

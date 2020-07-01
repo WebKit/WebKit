@@ -1,6 +1,6 @@
 Name: libyuv
 URL: https://chromium.googlesource.com/libyuv/libyuv
-Version: de944ed8c74909ea6fbd743a22efe1e55e851b83
+Version: a37e7bfece9e0676ae90a1700b0ec85b0f4f22a1
 License: BSD
 License File: LICENSE
 
@@ -8,15 +8,16 @@ Description:
 libyuv is an open source project that includes YUV conversion and scaling
 functionality.
 
-The optimized scaler in libyuv is used in multiple resolution encoder example,
-which down-samples the original input video (f.g. 1280x720) a number of times
-in order to encode multiple resolution bit streams.
+The optimized scaler in libyuv is used in the multiple resolution encoder
+example which down-samples the original input video (f.g. 1280x720) a number of
+times in order to encode multiple resolution bit streams.
 
 Local Modifications:
-rm -rf .gitignore .gn AUTHORS Android.mk BUILD.gn CMakeLists.txt DEPS LICENSE \
-  LICENSE_THIRD_PARTY OWNERS PATENTS PRESUBMIT.py README.chromium README.md \
-  all.gyp build_overrides/ chromium/ codereview.settings docs/ \
-  download_vs_toolchain.py gyp_libyuv gyp_libyuv.py include/libyuv.h \
-  include/libyuv/compare_row.h libyuv.gyp libyuv.gypi libyuv_nacl.gyp \
-  libyuv_test.gyp linux.mk public.mk setup_links.py sync_chromium.py \
-  third_party/ tools/ unit_test/ util/ winarm.mk
+Disable ARGBToRGB24Row_AVX512VBMI due to build failure on Mac.
+rm libyuv/include/libyuv.h libyuv/include/libyuv/compare_row.h
+mv libyuv/include tmp/
+mv libyuv/source tmp/
+mv libyuv/LICENSE tmp/
+rm -rf libyuv
+
+mv tmp/* third_party/libyuv/

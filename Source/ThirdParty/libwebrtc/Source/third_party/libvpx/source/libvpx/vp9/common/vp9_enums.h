@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_ENUMS_H_
-#define VP9_COMMON_VP9_ENUMS_H_
+#ifndef VPX_VP9_COMMON_VP9_ENUMS_H_
+#define VPX_VP9_COMMON_VP9_ENUMS_H_
 
 #include "./vpx_config.h"
 #include "vpx/vpx_integer.h"
@@ -40,6 +40,8 @@ typedef enum BITSTREAM_PROFILE {
   PROFILE_3,
   MAX_PROFILES
 } BITSTREAM_PROFILE;
+
+typedef enum PARSE_RECON_FLAG { PARSE = 1, RECON = 2 } PARSE_RECON_FLAG;
 
 #define BLOCK_4X4 0
 #define BLOCK_4X8 1
@@ -140,4 +142,4 @@ typedef uint8_t PREDICTION_MODE;
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_ENUMS_H_
+#endif  // VPX_VP9_COMMON_VP9_ENUMS_H_

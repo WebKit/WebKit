@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_RD_H_
-#define VP9_ENCODER_VP9_RD_H_
+#ifndef VPX_VP9_ENCODER_VP9_RD_H_
+#define VPX_VP9_ENCODER_VP9_RD_H_
 
 #include <limits.h>
 
@@ -27,13 +27,16 @@ extern "C" {
 #define RD_EPB_SHIFT 6
 
 #define RDCOST(RM, DM, R, D) \
-  (ROUND_POWER_OF_TWO(((int64_t)R) * (RM), VP9_PROB_COST_SHIFT) + (D << DM))
+  ROUND_POWER_OF_TWO(((int64_t)(R)) * (RM), VP9_PROB_COST_SHIFT) + ((D) << (DM))
+#define RDCOST_NEG_R(RM, DM, R, D) \
+  ((D) << (DM)) - ROUND_POWER_OF_TWO(((int64_t)(R)) * (RM), VP9_PROB_COST_SHIFT)
+#define RDCOST_NEG_D(RM, DM, R, D) \
+  ROUND_POWER_OF_TWO(((int64_t)(R)) * (RM), VP9_PROB_COST_SHIFT) - ((D) << (DM))
+
 #define QIDX_SKIP_THRESH 115
 
 #define MV_COST_WEIGHT 108
 #define MV_COST_WEIGHT_SUB 120
-
-#define INVALID_MV 0x80008000
 
 #define MAX_MODES 30
 #define MAX_REFS 6
@@ -41,6 +44,9 @@ extern "C" {
 #define RD_THRESH_INIT_FACT 32
 #define RD_THRESH_MAX_FACT 64
 #define RD_THRESH_INC 1
+
+#define VP9_DIST_SCALE_LOG2 4
+#define VP9_DIST_SCALE (1 << VP9_DIST_SCALE_LOG2)
 
 // This enumerator type needs to be kept aligned with the mode order in
 // const MODE_DEFINITION vp9_mode_order[MAX_MODES] used in the rd code.
@@ -98,8 +104,8 @@ typedef enum {
 typedef struct RD_OPT {
   // Thresh_mult is used to set a threshold for the rd score. A higher value
   // means that we will accept the best mode so far more often. This number
-  // is used in combination with the current block size, and thresh_freq_fact
-  // to pick a threshold.
+  // is used in combination with the current block size, and thresh_freq_fact to
+  // pick a threshold.
   int thresh_mult[MAX_MODES];
   int thresh_mult_sub8x8[MAX_REFS];
 
@@ -108,9 +114,14 @@ typedef struct RD_OPT {
   int64_t prediction_type_threshes[MAX_REF_FRAMES][REFERENCE_MODES];
 
   int64_t filter_threshes[MAX_REF_FRAMES][SWITCHABLE_FILTER_CONTEXTS];
+#if CONFIG_CONSISTENT_RECODE || CONFIG_RATE_CTRL
+  int64_t prediction_type_threshes_prev[MAX_REF_FRAMES][REFERENCE_MODES];
 
+  int64_t filter_threshes_prev[MAX_REF_FRAMES][SWITCHABLE_FILTER_CONTEXTS];
+#endif  // CONFIG_CONSISTENT_RECODE || CONFIG_RATE_CTRL
   int RDMULT;
   int RDDIV;
+  double r0;
 } RD_OPT;
 
 typedef struct RD_COST {
@@ -123,22 +134,27 @@ typedef struct RD_COST {
 void vp9_rd_cost_reset(RD_COST *rd_cost);
 // Initialize the rate distortion cost values to zero.
 void vp9_rd_cost_init(RD_COST *rd_cost);
+// It supports negative rate and dist, which is different from RDCOST().
+int64_t vp9_calculate_rd_cost(int mult, int div, int rate, int64_t dist);
+// Update the cost value based on its rate and distortion.
+void vp9_rd_cost_update(int mult, int div, RD_COST *rd_cost);
 
 struct TileInfo;
 struct TileDataEnc;
 struct VP9_COMP;
 struct macroblock;
 
-int64_t vp9_compute_rd_mult_based_on_qindex(const struct VP9_COMP *cpi,
-                                            int qindex);
+int vp9_compute_rd_mult_based_on_qindex(const struct VP9_COMP *cpi, int qindex);
 
 int vp9_compute_rd_mult(const struct VP9_COMP *cpi, int qindex);
+
+int vp9_get_adaptive_rdmult(const struct VP9_COMP *cpi, double beta);
 
 void vp9_initialize_rd_consts(struct VP9_COMP *cpi);
 
 void vp9_initialize_me_consts(struct VP9_COMP *cpi, MACROBLOCK *x, int qindex);
 
-void vp9_model_rd_from_var_lapndz(unsigned int var, unsigned int n,
+void vp9_model_rd_from_var_lapndz(unsigned int var, unsigned int n_log2,
                                   unsigned int qstep, int *rate, int64_t *dist);
 
 void vp9_model_rd_from_var_lapndz_vec(unsigned int var[MAX_MB_PLANE],
@@ -169,8 +185,8 @@ void vp9_set_rd_speed_thresholds(struct VP9_COMP *cpi);
 
 void vp9_set_rd_speed_thresholds_sub8x8(struct VP9_COMP *cpi);
 
-void vp9_update_rd_thresh_fact(int (*fact)[MAX_MODES], int rd_thresh, int bsize,
-                               int best_mode_index);
+void vp9_update_rd_thresh_fact(int (*factor_buf)[MAX_MODES], int rd_thresh,
+                               int bsize, int best_mode_index);
 
 static INLINE int rd_less_than_thresh(int64_t best_rd, int thresh,
                                       const int *const thresh_fact) {
@@ -208,8 +224,10 @@ unsigned int vp9_high_get_sby_perpixel_variance(struct VP9_COMP *cpi,
                                                 BLOCK_SIZE bs, int bd);
 #endif
 
+void vp9_build_inter_mode_cost(struct VP9_COMP *cpi);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_RD_H_
+#endif  // VPX_VP9_ENCODER_VP9_RD_H_

@@ -11,6 +11,7 @@
 #include "vp8/common/blockd.h"
 #include "onyxd_int.h"
 #include "vpx_mem/vpx_mem.h"
+#include "vpx_ports/compiler_attributes.h"
 #include "vpx_ports/mem.h"
 #include "detokenize.h"
 
@@ -52,7 +53,10 @@ static const uint8_t kZigzag[16] = { 0, 1,  4,  8,  5, 2,  3,  6,
 /* for const-casting */
 typedef const uint8_t (*ProbaArray)[NUM_CTX][NUM_PROBAS];
 
-static int GetSigned(BOOL_DECODER *br, int value_to_sign) {
+// With corrupt / fuzzed streams the calculation of br->value may overflow. See
+// b/148271109.
+static VPX_NO_UNSIGNED_OVERFLOW_CHECK int GetSigned(BOOL_DECODER *br,
+                                                    int value_to_sign) {
   int split = (br->range + 1) >> 1;
   VP8_BD_VALUE bigsplit = (VP8_BD_VALUE)split << (VP8_BD_VALUE_SIZE - 8);
   int v;

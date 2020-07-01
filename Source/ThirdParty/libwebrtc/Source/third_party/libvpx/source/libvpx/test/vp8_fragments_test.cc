@@ -13,11 +13,11 @@
 
 namespace {
 
-class VP8FramgmentsTest : public ::libvpx_test::EncoderTest,
-                          public ::testing::Test {
+class VP8FragmentsTest : public ::libvpx_test::EncoderTest,
+                         public ::testing::Test {
  protected:
-  VP8FramgmentsTest() : EncoderTest(&::libvpx_test::kVP8) {}
-  virtual ~VP8FramgmentsTest() {}
+  VP8FragmentsTest() : EncoderTest(&::libvpx_test::kVP8) {}
+  virtual ~VP8FragmentsTest() {}
 
   virtual void SetUp() {
     const unsigned long init_flags =  // NOLINT(runtime/int)
@@ -28,7 +28,7 @@ class VP8FramgmentsTest : public ::libvpx_test::EncoderTest,
   }
 };
 
-TEST_F(VP8FramgmentsTest, TestFragmentsEncodeDecode) {
+TEST_F(VP8FragmentsTest, TestFragmentsEncodeDecode) {
   ::libvpx_test::RandomVideoSource video;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 }

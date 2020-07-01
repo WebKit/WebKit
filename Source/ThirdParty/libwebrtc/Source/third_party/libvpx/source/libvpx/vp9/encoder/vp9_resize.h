@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_RESIZE_H_
-#define VP9_ENCODER_VP9_RESIZE_H_
+#ifndef VPX_VP9_ENCODER_VP9_RESIZE_H_
+#define VPX_VP9_ENCODER_VP9_RESIZE_H_
 
 #include <stdio.h>
 #include "vpx/vpx_integer.h"
@@ -65,4 +65,4 @@ void vp9_highbd_resize_frame444(const uint8_t *const y, int y_stride,
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_RESIZE_H_
+#endif  // VPX_VP9_ENCODER_VP9_RESIZE_H_

@@ -9,8 +9,8 @@
 //
 // Endian related functions.
 
-#ifndef VPX_UTIL_ENDIAN_INL_H_
-#define VPX_UTIL_ENDIAN_INL_H_
+#ifndef VPX_VPX_UTIL_ENDIAN_INL_H_
+#define VPX_VPX_UTIL_ENDIAN_INL_H_
 
 #include <stdlib.h>
 #include "./vpx_config.h"
@@ -115,4 +115,4 @@ static INLINE uint64_t BSwap64(uint64_t x) {
 #endif  // HAVE_BUILTIN_BSWAP64
 }
 
-#endif  // VPX_UTIL_ENDIAN_INL_H_
+#endif  // VPX_VPX_UTIL_ENDIAN_INL_H_

@@ -7,9 +7,10 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef TEST_Y4M_VIDEO_SOURCE_H_
-#define TEST_Y4M_VIDEO_SOURCE_H_
+#ifndef VPX_TEST_Y4M_VIDEO_SOURCE_H_
+#define VPX_TEST_Y4M_VIDEO_SOURCE_H_
 #include <algorithm>
+#include <memory>
 #include <string>
 
 #include "test/video_source.h"
@@ -108,7 +109,7 @@ class Y4mVideoSource : public VideoSource {
 
   std::string file_name_;
   FILE *input_file_;
-  testing::internal::scoped_ptr<vpx_image_t> img_;
+  std::unique_ptr<vpx_image_t> img_;
   unsigned int start_;
   unsigned int limit_;
   unsigned int frame_;
@@ -119,4 +120,4 @@ class Y4mVideoSource : public VideoSource {
 
 }  // namespace libvpx_test
 
-#endif  // TEST_Y4M_VIDEO_SOURCE_H_
+#endif  // VPX_TEST_Y4M_VIDEO_SOURCE_H_

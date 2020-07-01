@@ -7,8 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WARNINGS_H_
-#define WARNINGS_H_
+#ifndef VPX_WARNINGS_H_
+#define VPX_WARNINGS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,4 +30,4 @@ void check_encoder_config(int disable_prompt,
 }  // extern "C"
 #endif
 
-#endif  // WARNINGS_H_
+#endif  // VPX_WARNINGS_H_

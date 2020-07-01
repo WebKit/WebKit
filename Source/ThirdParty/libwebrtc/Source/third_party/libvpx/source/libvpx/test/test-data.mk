@@ -3,14 +3,16 @@ LIBVPX_TEST_SRCS-yes += test-data.mk
 # Encoder test source
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += hantro_collage_w352h288.yuv
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += hantro_odd.yuv
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += desktop_office1.1280_720-020.yuv
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += slides_code_term_web_plot.1920_1080.yuv
 
-LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_420.y4m
-LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_422.y4m
-LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_444.y4m
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_420_20f.y4m
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_422_20f.y4m
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_444_20f.y4m
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_10_440.yuv
-LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_420.y4m
-LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_422.y4m
-LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_444.y4m
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_420_20f.y4m
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_422_20f.y4m
+LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_444_20f.y4m
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_12_440.yuv
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_8_420_a10-1.y4m
 LIBVPX_TEST_DATA-$(CONFIG_ENCODERS) += park_joy_90p_8_420.y4m
@@ -24,6 +26,7 @@ LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += noisy_clip_640_360.y4m
 LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += rush_hour_444.y4m
 LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += screendata.y4m
 LIBVPX_TEST_DATA-$(CONFIG_VP9_ENCODER) += niklas_640_480_30.yuv
+LIBVPX_TEST_DATA-$(CONFIG_RATE_CTRL) += bus_352x288_420_f20_b8.yuv
 
 # Test vectors
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += vp80-00-comprehensive-001.ivf
@@ -734,10 +737,14 @@ endif  # CONFIG_VP9_HIGHBITDEPTH
 # Invalid files for testing libvpx error checking.
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-bug-1443.ivf
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-bug-1443.ivf.res
+LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-bug-148271109.ivf
+LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-bug-148271109.ivf.res
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-token-partition.ivf
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-token-partition.ivf.res
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-vp80-00-comprehensive-018.ivf.2kf_0x6.ivf
 LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-vp80-00-comprehensive-018.ivf.2kf_0x6.ivf.res
+LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-vp80-00-comprehensive-s17661_r01-05_b6-.ivf
+LIBVPX_TEST_DATA-$(CONFIG_VP8_DECODER) += invalid-vp80-00-comprehensive-s17661_r01-05_b6-.ivf.res
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-vp90-01-v3.webm
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-vp90-01-v3.webm.res
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-vp90-02-v2.webm
@@ -785,8 +792,13 @@ LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-vp90-2-07-frame_parallel-2.web
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-vp90-2-07-frame_parallel-3.webm
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-629481.webm
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-629481.webm.res
+LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-1558.ivf
+LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-1558.ivf.res
+LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-1562.ivf
+LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-1562.ivf.res
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-667044.webm
 LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += invalid-crbug-667044.webm.res
+LIBVPX_TEST_DATA-$(CONFIG_VP9_DECODER) += crbug-1539.rawfile
 
 ifeq ($(CONFIG_DECODE_PERF_TESTS),yes)
 # Encode / Decode test

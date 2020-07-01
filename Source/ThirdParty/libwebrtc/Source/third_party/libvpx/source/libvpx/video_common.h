@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VIDEO_COMMON_H_
-#define VIDEO_COMMON_H_
+#ifndef VPX_VIDEO_COMMON_H_
+#define VPX_VIDEO_COMMON_H_
 
 #include "./tools_common.h"
 
@@ -20,4 +20,4 @@ typedef struct {
   struct VpxRational time_base;
 } VpxVideoInfo;
 
-#endif  // VIDEO_COMMON_H_
+#endif  // VPX_VIDEO_COMMON_H_

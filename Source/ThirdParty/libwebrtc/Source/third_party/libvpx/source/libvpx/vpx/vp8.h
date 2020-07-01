@@ -10,7 +10,7 @@
 
 /*!\defgroup vp8 VP8
  * \ingroup codecs
- * VP8 is vpx's newest video compression algorithm that uses motion
+ * VP8 is a video compression algorithm that uses motion
  * compensated prediction, Discrete Cosine Transform (DCT) coding of the
  * prediction error signal and context dependent entropy coding techniques
  * based on arithmetic principles. It features:
@@ -27,8 +27,8 @@
 /*!\file
  * \brief Provides controls common to both the VP8 encoder and decoder.
  */
-#ifndef VPX_VP8_H_
-#define VPX_VP8_H_
+#ifndef VPX_VPX_VP8_H_
+#define VPX_VPX_VP8_H_
 
 #include "./vpx_codec.h"
 #include "./vpx_image.h"
@@ -47,10 +47,6 @@ enum vp8_com_control_id {
   VP8_SET_REFERENCE = 1,
   VP8_COPY_REFERENCE = 2, /**< get a copy of reference frame from the decoder */
   VP8_SET_POSTPROC = 3,   /**< set the decoder's post processing settings  */
-  VP8_SET_DBG_COLOR_REF_FRAME = 4, /**< \deprecated */
-  VP8_SET_DBG_COLOR_MB_MODES = 5,  /**< \deprecated */
-  VP8_SET_DBG_COLOR_B_MODES = 6,   /**< \deprecated */
-  VP8_SET_DBG_DISPLAY_MV = 7,      /**< \deprecated */
 
   /* TODO(jkoleszar): The encoder incorrectly reuses some of these values (5+)
    * for its control ids. These should be migrated to something like the
@@ -70,12 +66,7 @@ enum vp8_postproc_level {
   VP8_DEBLOCK = 1 << 0,
   VP8_DEMACROBLOCK = 1 << 1,
   VP8_ADDNOISE = 1 << 2,
-  VP8_DEBUG_TXT_FRAME_INFO = 1 << 3, /**< print frame information */
-  VP8_DEBUG_TXT_MBLK_MODES =
-      1 << 4, /**< print macro block modes over each macro block */
-  VP8_DEBUG_TXT_DC_DIFF = 1 << 5,   /**< print dc diff for each macro block */
-  VP8_DEBUG_TXT_RATE_INFO = 1 << 6, /**< print video rate info (encoder only) */
-  VP8_MFQE = 1 << 10
+  VP8_MFQE = 1 << 3
 };
 
 /*!\brief post process flags
@@ -132,14 +123,6 @@ VPX_CTRL_USE_TYPE(VP8_COPY_REFERENCE, vpx_ref_frame_t *)
 #define VPX_CTRL_VP8_COPY_REFERENCE
 VPX_CTRL_USE_TYPE(VP8_SET_POSTPROC, vp8_postproc_cfg_t *)
 #define VPX_CTRL_VP8_SET_POSTPROC
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8_SET_DBG_COLOR_REF_FRAME, int)
-#define VPX_CTRL_VP8_SET_DBG_COLOR_REF_FRAME
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8_SET_DBG_COLOR_MB_MODES, int)
-#define VPX_CTRL_VP8_SET_DBG_COLOR_MB_MODES
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8_SET_DBG_COLOR_B_MODES, int)
-#define VPX_CTRL_VP8_SET_DBG_COLOR_B_MODES
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8_SET_DBG_DISPLAY_MV, int)
-#define VPX_CTRL_VP8_SET_DBG_DISPLAY_MV
 VPX_CTRL_USE_TYPE(VP9_GET_REFERENCE, vp9_ref_frame_t *)
 #define VPX_CTRL_VP9_GET_REFERENCE
 
@@ -150,4 +133,4 @@ VPX_CTRL_USE_TYPE(VP9_GET_REFERENCE, vp9_ref_frame_t *)
 }  // extern "C"
 #endif
 
-#endif  // VPX_VP8_H_
+#endif  // VPX_VPX_VP8_H_

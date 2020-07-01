@@ -10,7 +10,7 @@
 
 // Common definitions for video, including fourcc and VideoFormat.
 
-#ifndef INCLUDE_LIBYUV_VIDEO_COMMON_H_  // NOLINT
+#ifndef INCLUDE_LIBYUV_VIDEO_COMMON_H_
 #define INCLUDE_LIBYUV_VIDEO_COMMON_H_
 
 #include "libyuv/basic_types.h"
@@ -28,13 +28,13 @@ extern "C" {
 // Needs to be a macro otherwise the OS X compiler complains when the kFormat*
 // constants are used in a switch.
 #ifdef __cplusplus
-#define FOURCC(a, b, c, d) ( \
-    (static_cast<uint32>(a)) | (static_cast<uint32>(b) << 8) | \
-    (static_cast<uint32>(c) << 16) | (static_cast<uint32>(d) << 24))
+#define FOURCC(a, b, c, d)                                        \
+  ((static_cast<uint32_t>(a)) | (static_cast<uint32_t>(b) << 8) | \
+   (static_cast<uint32_t>(c) << 16) | (static_cast<uint32_t>(d) << 24))
 #else
-#define FOURCC(a, b, c, d) ( \
-    ((uint32)(a)) | ((uint32)(b) << 8) | /* NOLINT */ \
-    ((uint32)(c) << 16) | ((uint32)(d) << 24))  /* NOLINT */
+#define FOURCC(a, b, c, d)                                     \
+  (((uint32_t)(a)) | ((uint32_t)(b) << 8) |       /* NOLINT */ \
+   ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24)) /* NOLINT */
 #endif
 
 // Some pages discussing FourCC codes:
@@ -53,38 +53,33 @@ enum FourCC {
   FOURCC_I420 = FOURCC('I', '4', '2', '0'),
   FOURCC_I422 = FOURCC('I', '4', '2', '2'),
   FOURCC_I444 = FOURCC('I', '4', '4', '4'),
-  FOURCC_I411 = FOURCC('I', '4', '1', '1'),
   FOURCC_I400 = FOURCC('I', '4', '0', '0'),
   FOURCC_NV21 = FOURCC('N', 'V', '2', '1'),
   FOURCC_NV12 = FOURCC('N', 'V', '1', '2'),
   FOURCC_YUY2 = FOURCC('Y', 'U', 'Y', '2'),
   FOURCC_UYVY = FOURCC('U', 'Y', 'V', 'Y'),
+  FOURCC_H010 = FOURCC('H', '0', '1', '0'),  // unofficial fourcc. 10 bit lsb
 
-  // 2 Secondary YUV formats: row biplanar.
+  // 1 Secondary YUV format: row biplanar.
   FOURCC_M420 = FOURCC('M', '4', '2', '0'),
-  FOURCC_Q420 = FOURCC('Q', '4', '2', '0'),  // deprecated.
 
-  // 9 Primary RGB formats: 4 32 bpp, 2 24 bpp, 3 16 bpp.
+  // 11 Primary RGB formats: 4 32 bpp, 2 24 bpp, 3 16 bpp, 1 10 bpc
   FOURCC_ARGB = FOURCC('A', 'R', 'G', 'B'),
   FOURCC_BGRA = FOURCC('B', 'G', 'R', 'A'),
   FOURCC_ABGR = FOURCC('A', 'B', 'G', 'R'),
+  FOURCC_AR30 = FOURCC('A', 'R', '3', '0'),  // 10 bit per channel. 2101010.
+  FOURCC_AB30 = FOURCC('A', 'B', '3', '0'),  // ABGR version of 10 bit
   FOURCC_24BG = FOURCC('2', '4', 'B', 'G'),
-  FOURCC_RAW  = FOURCC('r', 'a', 'w', ' '),
+  FOURCC_RAW = FOURCC('r', 'a', 'w', ' '),
   FOURCC_RGBA = FOURCC('R', 'G', 'B', 'A'),
   FOURCC_RGBP = FOURCC('R', 'G', 'B', 'P'),  // rgb565 LE.
   FOURCC_RGBO = FOURCC('R', 'G', 'B', 'O'),  // argb1555 LE.
   FOURCC_R444 = FOURCC('R', '4', '4', '4'),  // argb4444 LE.
 
-  // 4 Secondary RGB formats: 4 Bayer Patterns. deprecated.
-  FOURCC_RGGB = FOURCC('R', 'G', 'G', 'B'),
-  FOURCC_BGGR = FOURCC('B', 'G', 'G', 'R'),
-  FOURCC_GRBG = FOURCC('G', 'R', 'B', 'G'),
-  FOURCC_GBRG = FOURCC('G', 'B', 'R', 'G'),
-
   // 1 Primary Compressed YUV format.
   FOURCC_MJPG = FOURCC('M', 'J', 'P', 'G'),
 
-  // 5 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
+  // 7 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
   FOURCC_YV12 = FOURCC('Y', 'V', '1', '2'),
   FOURCC_YV16 = FOURCC('Y', 'V', '1', '6'),
   FOURCC_YV24 = FOURCC('Y', 'V', '2', '4'),
@@ -112,7 +107,13 @@ enum FourCC {
   FOURCC_L565 = FOURCC('L', '5', '6', '5'),  // Alias for RGBP.
   FOURCC_5551 = FOURCC('5', '5', '5', '1'),  // Alias for RGBO.
 
-  // 1 Auxiliary compressed YUV format set aside for capturer.
+  // deprecated formats.  Not supported, but defined for backward compatibility.
+  FOURCC_I411 = FOURCC('I', '4', '1', '1'),
+  FOURCC_Q420 = FOURCC('Q', '4', '2', '0'),
+  FOURCC_RGGB = FOURCC('R', 'G', 'G', 'B'),
+  FOURCC_BGGR = FOURCC('B', 'G', 'G', 'R'),
+  FOURCC_GRBG = FOURCC('G', 'R', 'B', 'G'),
+  FOURCC_GBRG = FOURCC('G', 'B', 'R', 'G'),
   FOURCC_H264 = FOURCC('H', '2', '6', '4'),
 
   // Match any fourcc.
@@ -136,8 +137,10 @@ enum FourCCBpp {
   FOURCC_BPP_BGRA = 32,
   FOURCC_BPP_ABGR = 32,
   FOURCC_BPP_RGBA = 32,
+  FOURCC_BPP_AR30 = 32,
+  FOURCC_BPP_AB30 = 32,
   FOURCC_BPP_24BG = 24,
-  FOURCC_BPP_RAW  = 24,
+  FOURCC_BPP_RAW = 24,
   FOURCC_BPP_RGBP = 16,
   FOURCC_BPP_RGBO = 16,
   FOURCC_BPP_R444 = 16,
@@ -152,6 +155,7 @@ enum FourCCBpp {
   FOURCC_BPP_J420 = 12,
   FOURCC_BPP_J400 = 8,
   FOURCC_BPP_H420 = 12,
+  FOURCC_BPP_H010 = 24,
   FOURCC_BPP_MJPG = 0,  // 0 means unknown.
   FOURCC_BPP_H264 = 0,
   FOURCC_BPP_IYUV = 12,
@@ -170,15 +174,15 @@ enum FourCCBpp {
   FOURCC_BPP_CM24 = 24,
 
   // Match any fourcc.
-  FOURCC_BPP_ANY  = 0,  // 0 means unknown.
+  FOURCC_BPP_ANY = 0,  // 0 means unknown.
 };
 
 // Converts fourcc aliases into canonical ones.
-LIBYUV_API uint32 CanonicalFourCC(uint32 fourcc);
+LIBYUV_API uint32_t CanonicalFourCC(uint32_t fourcc);
 
 #ifdef __cplusplus
 }  // extern "C"
 }  // namespace libyuv
 #endif
 
-#endif  // INCLUDE_LIBYUV_VIDEO_COMMON_H_  NOLINT
+#endif  // INCLUDE_LIBYUV_VIDEO_COMMON_H_

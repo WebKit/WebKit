@@ -11,6 +11,7 @@
 #include <arm_neon.h>
 #include <string.h>
 #include "./vpx_config.h"
+#include "./vp8_rtcd.h"
 #include "vpx_dsp/arm/mem_neon.h"
 #include "vpx_ports/mem.h"
 

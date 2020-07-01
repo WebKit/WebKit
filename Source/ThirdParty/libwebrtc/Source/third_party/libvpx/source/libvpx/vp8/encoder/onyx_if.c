@@ -38,7 +38,7 @@
 #include "vpx_ports/system_state.h"
 #include "vpx_ports/vpx_timer.h"
 #include "vpx_util/vpx_write_yuv_frame.h"
-#if ARCH_ARM
+#if VPX_ARCH_ARM
 #include "vpx_ports/arm.h"
 #endif
 #if CONFIG_MULTI_RES_ENCODING
@@ -62,12 +62,7 @@
 extern int vp8_update_coef_context(VP8_COMP *cpi);
 #endif
 
-extern void vp8_deblock_frame(YV12_BUFFER_CONFIG *source,
-                              YV12_BUFFER_CONFIG *post, int filt_lvl,
-                              int low_var_thresh, int flag);
-extern void print_parms(VP8_CONFIG *ocf, char *filenam);
 extern unsigned int vp8_get_processor_freq();
-extern void print_tree_update_probs();
 
 int vp8_calc_ss_err(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest);
 
@@ -99,10 +94,6 @@ FILE *keyfile;
 #if 0
 extern int skip_true_count;
 extern int skip_false_count;
-#endif
-
-#ifdef VP8_ENTROPY_STATS
-extern int intra_mode_stats[10][10][10];
 #endif
 
 #ifdef SPEEDSTATS
@@ -224,6 +215,8 @@ static void save_layer_context(VP8_COMP *cpi) {
   lc->frames_since_last_drop_overshoot = cpi->frames_since_last_drop_overshoot;
   lc->force_maxqp = cpi->force_maxqp;
   lc->last_frame_percent_intra = cpi->last_frame_percent_intra;
+  lc->last_q[0] = cpi->last_q[0];
+  lc->last_q[1] = cpi->last_q[1];
 
   memcpy(lc->count_mb_ref_frame_usage, cpi->mb.count_mb_ref_frame_usage,
          sizeof(cpi->mb.count_mb_ref_frame_usage));
@@ -261,6 +254,8 @@ static void restore_layer_context(VP8_COMP *cpi, const int layer) {
   cpi->frames_since_last_drop_overshoot = lc->frames_since_last_drop_overshoot;
   cpi->force_maxqp = lc->force_maxqp;
   cpi->last_frame_percent_intra = lc->last_frame_percent_intra;
+  cpi->last_q[0] = lc->last_q[0];
+  cpi->last_q[1] = lc->last_q[1];
 
   memcpy(cpi->mb.count_mb_ref_frame_usage, lc->count_mb_ref_frame_usage,
          sizeof(cpi->mb.count_mb_ref_frame_usage));
@@ -689,8 +684,8 @@ static void set_default_lf_deltas(VP8_COMP *cpi) {
 /* Convenience macros for mapping speed and mode into a continuous
  * range
  */
-#define GOOD(x) (x + 1)
-#define RT(x) (x + 7)
+#define GOOD(x) ((x) + 1)
+#define RT(x) ((x) + 7)
 
 static int speed_map(int speed, const int *map) {
   int res;
@@ -743,9 +738,9 @@ static const int mode_check_freq_map_zn2[] = {
   0, RT(10), 1 << 1, RT(11), 1 << 2, RT(12), 1 << 3, INT_MAX
 };
 
-static const int mode_check_freq_map_vhbpred[] = {
-  0, GOOD(5), 2, RT(0), 0, RT(3), 2, RT(5), 4, INT_MAX
-};
+static const int mode_check_freq_map_vhbpred[] = { 0, GOOD(5), 2, RT(0),
+                                                   0, RT(3),   2, RT(5),
+                                                   4, INT_MAX };
 
 static const int mode_check_freq_map_near2[] = {
   0,      GOOD(5), 2,      RT(0),  0,      RT(3),  2,
@@ -761,13 +756,13 @@ static const int mode_check_freq_map_new2[] = { 0,      GOOD(5), 4,      RT(0),
                                                 1 << 3, RT(11),  1 << 4, RT(12),
                                                 1 << 5, INT_MAX };
 
-static const int mode_check_freq_map_split1[] = {
-  0, GOOD(2), 2, GOOD(3), 7, RT(1), 2, RT(2), 7, INT_MAX
-};
+static const int mode_check_freq_map_split1[] = { 0, GOOD(2), 2, GOOD(3),
+                                                  7, RT(1),   2, RT(2),
+                                                  7, INT_MAX };
 
-static const int mode_check_freq_map_split2[] = {
-  0, GOOD(1), 2, GOOD(2), 4, GOOD(3), 15, RT(1), 4, RT(2), 15, INT_MAX
-};
+static const int mode_check_freq_map_split2[] = { 0, GOOD(1), 2,  GOOD(2),
+                                                  4, GOOD(3), 15, RT(1),
+                                                  4, RT(2),   15, INT_MAX };
 
 void vp8_set_speed_features(VP8_COMP *cpi) {
   SPEED_FEATURES *sf = &cpi->sf;
@@ -1534,6 +1529,8 @@ void vp8_change_config(VP8_COMP *cpi, VP8_CONFIG *oxcf) {
     }
   }
 
+  cpi->ext_refresh_frame_flags_pending = 0;
+
   cpi->baseline_gf_interval =
       cpi->oxcf.alt_freq ? cpi->oxcf.alt_freq : DEFAULT_GF_INTERVAL;
 
@@ -1893,10 +1890,6 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   CHECK_MEM_ERROR(cpi->consec_zero_last_mvbias,
                   vpx_calloc((cpi->common.mb_rows * cpi->common.mb_cols), 1));
 
-#ifdef VP8_ENTROPY_STATS
-  init_context_counters();
-#endif
-
   /*Initialize the feed-forward activity masking.*/
   cpi->activity_avg = 90 << 12;
 
@@ -2005,10 +1998,6 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
     cpi->mb.rd_thresh_mult[i] = 128;
   }
 
-#ifdef VP8_ENTROPY_STATS
-  init_mv_ref_counts();
-#endif
-
 #if CONFIG_MULTITHREAD
   if (vp8cx_create_encoder_threads(cpi)) {
     vp8_remove_compressor(&cpi);
@@ -2051,7 +2040,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   cpi->fn_ptr[BLOCK_4X4].sdx8f = vpx_sad4x4x8;
   cpi->fn_ptr[BLOCK_4X4].sdx4df = vpx_sad4x4x4d;
 
-#if ARCH_X86 || ARCH_X86_64
+#if VPX_ARCH_X86 || VPX_ARCH_X86_64
   cpi->fn_ptr[BLOCK_16X16].copymem = vp8_copy32xn;
   cpi->fn_ptr[BLOCK_16X8].copymem = vp8_copy32xn;
   cpi->fn_ptr[BLOCK_8X16].copymem = vp8_copy32xn;
@@ -2106,8 +2095,8 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   return cpi;
 }
 
-void vp8_remove_compressor(VP8_COMP **ptr) {
-  VP8_COMP *cpi = *ptr;
+void vp8_remove_compressor(VP8_COMP **comp) {
+  VP8_COMP *cpi = *comp;
 
   if (!cpi) return;
 
@@ -2118,12 +2107,6 @@ void vp8_remove_compressor(VP8_COMP **ptr) {
       vp8_end_second_pass(cpi);
     }
 
-#endif
-
-#ifdef VP8_ENTROPY_STATS
-    print_context_counters();
-    print_tree_update_probs();
-    print_mode_context();
 #endif
 
 #if CONFIG_INTERNAL_STATS
@@ -2252,40 +2235,6 @@ void vp8_remove_compressor(VP8_COMP **ptr) {
     }
 #endif
 
-#ifdef VP8_ENTROPY_STATS
-    {
-      int i, j, k;
-      FILE *fmode = fopen("modecontext.c", "w");
-
-      fprintf(fmode, "\n#include \"entropymode.h\"\n\n");
-      fprintf(fmode, "const unsigned int vp8_kf_default_bmode_counts ");
-      fprintf(fmode,
-              "[VP8_BINTRAMODES] [VP8_BINTRAMODES] [VP8_BINTRAMODES] =\n{\n");
-
-      for (i = 0; i < 10; ++i) {
-        fprintf(fmode, "    { /* Above Mode :  %d */\n", i);
-
-        for (j = 0; j < 10; ++j) {
-          fprintf(fmode, "        {");
-
-          for (k = 0; k < 10; ++k) {
-            if (!intra_mode_stats[i][j][k])
-              fprintf(fmode, " %5d, ", 1);
-            else
-              fprintf(fmode, " %5d, ", intra_mode_stats[i][j][k]);
-          }
-
-          fprintf(fmode, "}, /* left_mode %d */\n", j);
-        }
-
-        fprintf(fmode, "    },\n");
-      }
-
-      fprintf(fmode, "};\n");
-      fclose(fmode);
-    }
-#endif
-
 #if defined(SECTIONBITS_OUTPUT)
 
     if (0) {
@@ -2326,7 +2275,7 @@ void vp8_remove_compressor(VP8_COMP **ptr) {
 
   vp8_remove_common(&cpi->common);
   vpx_free(cpi);
-  *ptr = 0;
+  *comp = 0;
 
 #ifdef OUTPUT_YUV_SRC
   fclose(yuv_file);
@@ -2464,6 +2413,7 @@ int vp8_update_reference(VP8_COMP *cpi, int ref_frame_flags) {
 
   if (ref_frame_flags & VP8_ALTR_FRAME) cpi->common.refresh_alt_ref_frame = 1;
 
+  cpi->ext_refresh_frame_flags_pending = 1;
   return 0;
 }
 
@@ -2819,13 +2769,8 @@ static int decide_key_frame(VP8_COMP *cpi) {
   return code_key_frame;
 }
 
-static void Pass1Encode(VP8_COMP *cpi, size_t *size, unsigned char *dest,
-                        unsigned int *frame_flags) {
-  (void)size;
-  (void)dest;
-  (void)frame_flags;
+static void Pass1Encode(VP8_COMP *cpi) {
   vp8_set_quantizer(cpi, 26);
-
   vp8_first_pass(cpi);
 }
 #endif
@@ -3562,6 +3507,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
       cm->current_video_frame++;
       cpi->frames_since_key++;
+      cpi->ext_refresh_frame_flags_pending = 0;
       // We advance the temporal pattern for dropped frames.
       cpi->temporal_pattern_counter++;
 
@@ -3603,6 +3549,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 #endif
     cm->current_video_frame++;
     cpi->frames_since_key++;
+    cpi->ext_refresh_frame_flags_pending = 0;
     // We advance the temporal pattern for dropped frames.
     cpi->temporal_pattern_counter++;
     return;
@@ -3836,8 +3783,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
   // (temporal denoising) mode.
   if (cpi->oxcf.noise_sensitivity >= 3) {
     if (cpi->denoiser.denoise_pars.spatial_blur != 0) {
-      vp8_de_noise(cm, cpi->Source, cpi->Source,
-                   cpi->denoiser.denoise_pars.spatial_blur, 1, 0, 0);
+      vp8_de_noise(cm, cpi->Source, cpi->denoiser.denoise_pars.spatial_blur, 1);
     }
   }
 #endif
@@ -3858,9 +3804,9 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     }
 
     if (cm->frame_type == KEY_FRAME) {
-      vp8_de_noise(cm, cpi->Source, cpi->Source, l, 1, 0, 1);
+      vp8_de_noise(cm, cpi->Source, l, 1);
     } else {
-      vp8_de_noise(cm, cpi->Source, cpi->Source, l, 1, 0, 1);
+      vp8_de_noise(cm, cpi->Source, l, 1);
 
       src = cpi->Source->y_buffer;
 
@@ -4003,7 +3949,13 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     vp8_encode_frame(cpi);
 
     if (cpi->pass == 0 && cpi->oxcf.end_usage == USAGE_STREAM_FROM_SERVER) {
-      if (vp8_drop_encodedframe_overshoot(cpi, Q)) return;
+      if (vp8_drop_encodedframe_overshoot(cpi, Q)) {
+        vpx_clear_system_state();
+        return;
+      }
+      if (cm->frame_type != KEY_FRAME)
+        cpi->last_pred_err_mb =
+            (int)(cpi->mb.prediction_error / cpi->common.MBs);
     }
 
     cpi->projected_frame_size -= vp8_estimate_entropy_savings(cpi);
@@ -4286,6 +4238,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     cpi->common.current_video_frame++;
     cpi->frames_since_key++;
     cpi->drop_frame_count++;
+    cpi->ext_refresh_frame_flags_pending = 0;
     // We advance the temporal pattern for dropped frames.
     cpi->temporal_pattern_counter++;
     return;
@@ -4394,8 +4347,10 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
   /* For inter frames the current default behavior is that when
    * cm->refresh_golden_frame is set we copy the old GF over to the ARF buffer
    * This is purely an encoder decision at present.
+   * Avoid this behavior when refresh flags are set by the user.
    */
-  if (!cpi->oxcf.error_resilient_mode && cm->refresh_golden_frame) {
+  if (!cpi->oxcf.error_resilient_mode && cm->refresh_golden_frame &&
+      !cpi->ext_refresh_frame_flags_pending) {
     cm->copy_buffer_to_arf = 2;
   } else {
     cm->copy_buffer_to_arf = 0;
@@ -4702,6 +4657,8 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
 #endif
 
+  cpi->ext_refresh_frame_flags_pending = 0;
+
   if (cm->refresh_golden_frame == 1) {
     cm->frame_flags = cm->frame_flags | FRAMEFLAGS_GOLDEN;
   } else {
@@ -4866,14 +4823,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   if (!cpi) return -1;
 
   cm = &cpi->common;
-
-  if (setjmp(cpi->common.error.jmp)) {
-    cpi->common.error.setjmp = 0;
-    vpx_clear_system_state();
-    return VPX_CODEC_CORRUPT_FRAME;
-  }
-
-  cpi->common.error.setjmp = 1;
 
   vpx_usec_timer_start(&cmptimer);
 
@@ -5112,7 +5061,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   }
   switch (cpi->pass) {
 #if !CONFIG_REALTIME_ONLY
-    case 1: Pass1Encode(cpi, size, dest, frame_flags); break;
+    case 1: Pass1Encode(cpi); break;
     case 2: Pass2Encode(cpi, size, dest, dest_end, frame_flags); break;
 #endif  // !CONFIG_REALTIME_ONLY
     default:
@@ -5231,7 +5180,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
           double weight = 0;
 
           vp8_deblock(cm, cm->frame_to_show, &cm->post_proc_buffer,
-                      cm->filter_level * 10 / 6, 1, 0);
+                      cm->filter_level * 10 / 6);
           vpx_clear_system_state();
 
           ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,

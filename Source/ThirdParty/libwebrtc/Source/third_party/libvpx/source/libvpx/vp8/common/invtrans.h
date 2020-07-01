@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_INVTRANS_H_
-#define VP8_COMMON_INVTRANS_H_
+#ifndef VPX_VP8_COMMON_INVTRANS_H_
+#define VPX_VP8_COMMON_INVTRANS_H_
 
 #include "./vpx_config.h"
 #include "vp8_rtcd.h"
@@ -54,4 +54,4 @@ static INLINE void vp8_inverse_transform_mby(MACROBLOCKD *xd) {
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_INVTRANS_H_
+#endif  // VPX_VP8_COMMON_INVTRANS_H_

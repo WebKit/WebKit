@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_ARM_TRANSPOSE_NEON_H_
-#define VPX_DSP_ARM_TRANSPOSE_NEON_H_
+#ifndef VPX_VPX_DSP_ARM_TRANSPOSE_NEON_H_
+#define VPX_VPX_DSP_ARM_TRANSPOSE_NEON_H_
 
 #include <arm_neon.h>
 
@@ -138,8 +138,8 @@ static INLINE void transpose_s16_4x4q(int16x8_t *a0, int16x8_t *a1) {
       vtrnq_s32(vreinterpretq_s32_s16(*a0), vreinterpretq_s32_s16(*a1));
 
   // Swap 64 bit elements resulting in:
-  // c0.val[0]: 00 01 20 21  02 03 22 23
-  // c0.val[1]: 10 11 30 31  12 13 32 33
+  // c0: 00 01 20 21  02 03 22 23
+  // c1: 10 11 30 31  12 13 32 33
 
   const int32x4_t c0 =
       vcombine_s32(vget_low_s32(b0.val[0]), vget_low_s32(b0.val[1]));
@@ -169,8 +169,8 @@ static INLINE void transpose_u16_4x4q(uint16x8_t *a0, uint16x8_t *a1) {
       vtrnq_u32(vreinterpretq_u32_u16(*a0), vreinterpretq_u32_u16(*a1));
 
   // Swap 64 bit elements resulting in:
-  // c0.val[0]: 00 01 20 21  02 03 22 23
-  // c0.val[1]: 10 11 30 31  12 13 32 33
+  // c0: 00 01 20 21  02 03 22 23
+  // c1: 10 11 30 31  12 13 32 33
 
   const uint32x4_t c0 =
       vcombine_u32(vget_low_u32(b0.val[0]), vget_low_u32(b0.val[1]));
@@ -1313,4 +1313,4 @@ static INLINE void load_and_transpose_s32_8x8(
 
   transpose_s32_8x8(a0, a1, a2, a3, a4, a5, a6, a7);
 }
-#endif  // VPX_DSP_ARM_TRANSPOSE_NEON_H_
+#endif  // VPX_VPX_DSP_ARM_TRANSPOSE_NEON_H_

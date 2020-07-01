@@ -2,8 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//build/config/arm.gni")
 import("//build/config/android/config.gni")
+import("//build/config/arm.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//third_party/libvpx/libvpx_srcs.gni")
 import("//third_party/yasm/yasm_assemble.gni")
@@ -18,7 +18,10 @@ if (current_cpu == "x86") {
     cpu_arch_full = "x64"
   }
 } else if (current_cpu == "arm") {
-  if (arm_use_neon) {
+  if (is_chromeos) {
+    # ChromeOS gets highbd vp9 but other arm targets do not.
+    cpu_arch_full = "arm-neon-highbd"
+  } else if (arm_use_neon) {
     cpu_arch_full = "arm-neon"
   } else if (is_android) {
     cpu_arch_full = "arm-neon-cpu-detect"
@@ -26,7 +29,11 @@ if (current_cpu == "x86") {
     cpu_arch_full = "arm"
   }
 } else {
-  cpu_arch_full = current_cpu
+  if (is_chromeos) {
+    cpu_arch_full = "arm64-highbd"
+  } else {
+    cpu_arch_full = current_cpu
+  }
 }
 
 if (is_nacl) {
@@ -243,6 +250,8 @@ if (cpu_arch_full == "arm-neon-cpu-detect") {
 if (current_cpu == "arm") {
   if (cpu_arch_full == "arm-neon") {
     arm_assembly_sources = libvpx_srcs_arm_neon_assembly
+  } else if (cpu_arch_full == "arm-neon-highbd") {
+    arm_assembly_sources = libvpx_srcs_arm_neon_highbd_assembly
   } else if (cpu_arch_full == "arm-neon-cpu-detect") {
     arm_assembly_sources = libvpx_srcs_arm_neon_cpu_detect_assembly
   } else {
@@ -258,9 +267,7 @@ if (current_cpu == "arm" && arm_assembly_sources != []) {
     gen_file =
         get_label_info("//third_party/libvpx/source/libvpx", "root_gen_dir") +
         "/{{source_root_relative_dir}}/{{source_file_part}}.S"
-    outputs = [
-      gen_file,
-    ]
+    outputs = [ gen_file ]
     if (is_ios) {
       ads2gas_script =
           "//third_party/libvpx/source/libvpx/build/make/ads2gas_apple.pl"
@@ -282,7 +289,8 @@ if (current_cpu == "arm" && arm_assembly_sources != []) {
     sources = get_target_outputs(":convert_arm_assembly")
     configs -= [ "//build/config/compiler:compiler_arm_fpu" ]
     configs += [ ":libvpx_config" ]
-    if (cpu_arch_full == "arm-neon" || cpu_arch_full == "arm-neon-cpu-detect") {
+    if (cpu_arch_full == "arm-neon" || cpu_arch_full == "arm-neon-cpu-detect" ||
+        cpu_arch_full == "arm-neon-highbd") {
       asmflags = [ "-mfpu=neon" ]
 
       # allow asm files to include generated sources which match the source
@@ -290,9 +298,7 @@ if (current_cpu == "arm" && arm_assembly_sources != []) {
       include_dirs = [ get_label_info("//third_party/libvpx/source/libvpx",
                                       "target_gen_dir") ]
     }
-    deps = [
-      ":convert_arm_assembly",
-    ]
+    deps = [ ":convert_arm_assembly" ]
   }
 }
 
@@ -315,7 +321,9 @@ static_library("libvpx") {
   } else if (current_cpu == "mipsel" || current_cpu == "mips64el") {
     sources = libvpx_srcs_mips
   } else if (current_cpu == "arm") {
-    if (arm_use_neon) {
+    if (is_chromeos) {
+      sources = libvpx_srcs_arm_neon_highbd
+    } else if (arm_use_neon) {
       sources = libvpx_srcs_arm_neon
     } else if (is_android) {
       sources = libvpx_srcs_arm_neon_cpu_detect
@@ -323,7 +331,11 @@ static_library("libvpx") {
       sources = libvpx_srcs_arm
     }
   } else if (current_cpu == "arm64") {
-    sources = libvpx_srcs_arm64
+    if (is_chromeos || is_win) {
+      sources = libvpx_srcs_arm64_highbd
+    } else {
+      sources = libvpx_srcs_arm64
+    }
   }
 
   configs -= [ "//build/config/compiler:chromium_code" ]
@@ -346,7 +358,7 @@ static_library("libvpx") {
     deps += [ ":libvpx_intrinsics_neon" ]
   }
   if (is_android) {
-    deps += [ "//third_party/android_tools:cpu_features" ]
+    deps += [ "//third_party/android_ndk:cpu_features" ]
   }
   if (current_cpu == "arm" && arm_assembly_sources != []) {
     deps += [ ":libvpx_assembly_arm" ]

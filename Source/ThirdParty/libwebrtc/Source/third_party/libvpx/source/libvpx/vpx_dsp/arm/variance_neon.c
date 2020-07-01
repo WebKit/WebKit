@@ -27,8 +27,9 @@
 // this limit.
 
 // Process a block of width 4 four rows at a time.
-static void variance_neon_w4x4(const uint8_t *a, int a_stride, const uint8_t *b,
-                               int b_stride, int h, uint32_t *sse, int *sum) {
+static void variance_neon_w4x4(const uint8_t *src_ptr, int src_stride,
+                               const uint8_t *ref_ptr, int ref_stride, int h,
+                               uint32_t *sse, int *sum) {
   int i;
   int16x8_t sum_s16 = vdupq_n_s16(0);
   int32x4_t sse_lo_s32 = vdupq_n_s32(0);
@@ -38,8 +39,8 @@ static void variance_neon_w4x4(const uint8_t *a, int a_stride, const uint8_t *b,
   assert(h <= 256);
 
   for (i = 0; i < h; i += 4) {
-    const uint8x16_t a_u8 = load_unaligned_u8q(a, a_stride);
-    const uint8x16_t b_u8 = load_unaligned_u8q(b, b_stride);
+    const uint8x16_t a_u8 = load_unaligned_u8q(src_ptr, src_stride);
+    const uint8x16_t b_u8 = load_unaligned_u8q(ref_ptr, ref_stride);
     const uint16x8_t diff_lo_u16 =
         vsubl_u8(vget_low_u8(a_u8), vget_low_u8(b_u8));
     const uint16x8_t diff_hi_u16 =
@@ -61,8 +62,8 @@ static void variance_neon_w4x4(const uint8_t *a, int a_stride, const uint8_t *b,
     sse_hi_s32 = vmlal_s16(sse_hi_s32, vget_high_s16(diff_hi_s16),
                            vget_high_s16(diff_hi_s16));
 
-    a += 4 * a_stride;
-    b += 4 * b_stride;
+    src_ptr += 4 * src_stride;
+    ref_ptr += 4 * ref_stride;
   }
 
   *sum = vget_lane_s32(horizontal_add_int16x8(sum_s16), 0);
@@ -72,9 +73,9 @@ static void variance_neon_w4x4(const uint8_t *a, int a_stride, const uint8_t *b,
 }
 
 // Process a block of any size where the width is divisible by 16.
-static void variance_neon_w16(const uint8_t *a, int a_stride, const uint8_t *b,
-                              int b_stride, int w, int h, uint32_t *sse,
-                              int *sum) {
+static void variance_neon_w16(const uint8_t *src_ptr, int src_stride,
+                              const uint8_t *ref_ptr, int ref_stride, int w,
+                              int h, uint32_t *sse, int *sum) {
   int i, j;
   int16x8_t sum_s16 = vdupq_n_s16(0);
   int32x4_t sse_lo_s32 = vdupq_n_s32(0);
@@ -86,8 +87,8 @@ static void variance_neon_w16(const uint8_t *a, int a_stride, const uint8_t *b,
 
   for (i = 0; i < h; ++i) {
     for (j = 0; j < w; j += 16) {
-      const uint8x16_t a_u8 = vld1q_u8(a + j);
-      const uint8x16_t b_u8 = vld1q_u8(b + j);
+      const uint8x16_t a_u8 = vld1q_u8(src_ptr + j);
+      const uint8x16_t b_u8 = vld1q_u8(ref_ptr + j);
 
       const uint16x8_t diff_lo_u16 =
           vsubl_u8(vget_low_u8(a_u8), vget_low_u8(b_u8));
@@ -110,8 +111,8 @@ static void variance_neon_w16(const uint8_t *a, int a_stride, const uint8_t *b,
       sse_hi_s32 = vmlal_s16(sse_hi_s32, vget_high_s16(diff_hi_s16),
                              vget_high_s16(diff_hi_s16));
     }
-    a += a_stride;
-    b += b_stride;
+    src_ptr += src_stride;
+    ref_ptr += ref_stride;
   }
 
   *sum = vget_lane_s32(horizontal_add_int16x8(sum_s16), 0);
@@ -121,8 +122,9 @@ static void variance_neon_w16(const uint8_t *a, int a_stride, const uint8_t *b,
 }
 
 // Process a block of width 8 two rows at a time.
-static void variance_neon_w8x2(const uint8_t *a, int a_stride, const uint8_t *b,
-                               int b_stride, int h, uint32_t *sse, int *sum) {
+static void variance_neon_w8x2(const uint8_t *src_ptr, int src_stride,
+                               const uint8_t *ref_ptr, int ref_stride, int h,
+                               uint32_t *sse, int *sum) {
   int i = 0;
   int16x8_t sum_s16 = vdupq_n_s16(0);
   int32x4_t sse_lo_s32 = vdupq_n_s32(0);
@@ -132,10 +134,10 @@ static void variance_neon_w8x2(const uint8_t *a, int a_stride, const uint8_t *b,
   assert(h <= 128);
 
   do {
-    const uint8x8_t a_0_u8 = vld1_u8(a);
-    const uint8x8_t a_1_u8 = vld1_u8(a + a_stride);
-    const uint8x8_t b_0_u8 = vld1_u8(b);
-    const uint8x8_t b_1_u8 = vld1_u8(b + b_stride);
+    const uint8x8_t a_0_u8 = vld1_u8(src_ptr);
+    const uint8x8_t a_1_u8 = vld1_u8(src_ptr + src_stride);
+    const uint8x8_t b_0_u8 = vld1_u8(ref_ptr);
+    const uint8x8_t b_1_u8 = vld1_u8(ref_ptr + ref_stride);
     const uint16x8_t diff_0_u16 = vsubl_u8(a_0_u8, b_0_u8);
     const uint16x8_t diff_1_u16 = vsubl_u8(a_1_u8, b_1_u8);
     const int16x8_t diff_0_s16 = vreinterpretq_s16_u16(diff_0_u16);
@@ -150,8 +152,8 @@ static void variance_neon_w8x2(const uint8_t *a, int a_stride, const uint8_t *b,
                            vget_high_s16(diff_0_s16));
     sse_hi_s32 = vmlal_s16(sse_hi_s32, vget_high_s16(diff_1_s16),
                            vget_high_s16(diff_1_s16));
-    a += a_stride + a_stride;
-    b += b_stride + b_stride;
+    src_ptr += src_stride + src_stride;
+    ref_ptr += ref_stride + ref_stride;
     i += 2;
   } while (i < h);
 
@@ -161,31 +163,36 @@ static void variance_neon_w8x2(const uint8_t *a, int a_stride, const uint8_t *b,
                        0);
 }
 
-void vpx_get8x8var_neon(const uint8_t *a, int a_stride, const uint8_t *b,
-                        int b_stride, unsigned int *sse, int *sum) {
-  variance_neon_w8x2(a, a_stride, b, b_stride, 8, sse, sum);
+void vpx_get8x8var_neon(const uint8_t *src_ptr, int src_stride,
+                        const uint8_t *ref_ptr, int ref_stride,
+                        unsigned int *sse, int *sum) {
+  variance_neon_w8x2(src_ptr, src_stride, ref_ptr, ref_stride, 8, sse, sum);
 }
 
-void vpx_get16x16var_neon(const uint8_t *a, int a_stride, const uint8_t *b,
-                          int b_stride, unsigned int *sse, int *sum) {
-  variance_neon_w16(a, a_stride, b, b_stride, 16, 16, sse, sum);
+void vpx_get16x16var_neon(const uint8_t *src_ptr, int src_stride,
+                          const uint8_t *ref_ptr, int ref_stride,
+                          unsigned int *sse, int *sum) {
+  variance_neon_w16(src_ptr, src_stride, ref_ptr, ref_stride, 16, 16, sse, sum);
 }
 
-#define varianceNxM(n, m, shift)                                            \
-  unsigned int vpx_variance##n##x##m##_neon(const uint8_t *a, int a_stride, \
-                                            const uint8_t *b, int b_stride, \
-                                            unsigned int *sse) {            \
-    int sum;                                                                \
-    if (n == 4)                                                             \
-      variance_neon_w4x4(a, a_stride, b, b_stride, m, sse, &sum);           \
-    else if (n == 8)                                                        \
-      variance_neon_w8x2(a, a_stride, b, b_stride, m, sse, &sum);           \
-    else                                                                    \
-      variance_neon_w16(a, a_stride, b, b_stride, n, m, sse, &sum);         \
-    if (n * m < 16 * 16)                                                    \
-      return *sse - ((sum * sum) >> shift);                                 \
-    else                                                                    \
-      return *sse - (uint32_t)(((int64_t)sum * sum) >> shift);              \
+#define varianceNxM(n, m, shift)                                             \
+  unsigned int vpx_variance##n##x##m##_neon(                                 \
+      const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr,        \
+      int ref_stride, unsigned int *sse) {                                   \
+    int sum;                                                                 \
+    if (n == 4)                                                              \
+      variance_neon_w4x4(src_ptr, src_stride, ref_ptr, ref_stride, m, sse,   \
+                         &sum);                                              \
+    else if (n == 8)                                                         \
+      variance_neon_w8x2(src_ptr, src_stride, ref_ptr, ref_stride, m, sse,   \
+                         &sum);                                              \
+    else                                                                     \
+      variance_neon_w16(src_ptr, src_stride, ref_ptr, ref_stride, n, m, sse, \
+                        &sum);                                               \
+    if (n * m < 16 * 16)                                                     \
+      return *sse - ((sum * sum) >> shift);                                  \
+    else                                                                     \
+      return *sse - (uint32_t)(((int64_t)sum * sum) >> shift);               \
   }
 
 varianceNxM(4, 4, 4);
@@ -199,58 +206,66 @@ varianceNxM(16, 32, 9);
 varianceNxM(32, 16, 9);
 varianceNxM(32, 32, 10);
 
-unsigned int vpx_variance32x64_neon(const uint8_t *a, int a_stride,
-                                    const uint8_t *b, int b_stride,
+unsigned int vpx_variance32x64_neon(const uint8_t *src_ptr, int src_stride,
+                                    const uint8_t *ref_ptr, int ref_stride,
                                     unsigned int *sse) {
   int sum1, sum2;
   uint32_t sse1, sse2;
-  variance_neon_w16(a, a_stride, b, b_stride, 32, 32, &sse1, &sum1);
-  variance_neon_w16(a + (32 * a_stride), a_stride, b + (32 * b_stride),
-                    b_stride, 32, 32, &sse2, &sum2);
+  variance_neon_w16(src_ptr, src_stride, ref_ptr, ref_stride, 32, 32, &sse1,
+                    &sum1);
+  variance_neon_w16(src_ptr + (32 * src_stride), src_stride,
+                    ref_ptr + (32 * ref_stride), ref_stride, 32, 32, &sse2,
+                    &sum2);
   *sse = sse1 + sse2;
   sum1 += sum2;
   return *sse - (unsigned int)(((int64_t)sum1 * sum1) >> 11);
 }
 
-unsigned int vpx_variance64x32_neon(const uint8_t *a, int a_stride,
-                                    const uint8_t *b, int b_stride,
+unsigned int vpx_variance64x32_neon(const uint8_t *src_ptr, int src_stride,
+                                    const uint8_t *ref_ptr, int ref_stride,
                                     unsigned int *sse) {
   int sum1, sum2;
   uint32_t sse1, sse2;
-  variance_neon_w16(a, a_stride, b, b_stride, 64, 16, &sse1, &sum1);
-  variance_neon_w16(a + (16 * a_stride), a_stride, b + (16 * b_stride),
-                    b_stride, 64, 16, &sse2, &sum2);
+  variance_neon_w16(src_ptr, src_stride, ref_ptr, ref_stride, 64, 16, &sse1,
+                    &sum1);
+  variance_neon_w16(src_ptr + (16 * src_stride), src_stride,
+                    ref_ptr + (16 * ref_stride), ref_stride, 64, 16, &sse2,
+                    &sum2);
   *sse = sse1 + sse2;
   sum1 += sum2;
   return *sse - (unsigned int)(((int64_t)sum1 * sum1) >> 11);
 }
 
-unsigned int vpx_variance64x64_neon(const uint8_t *a, int a_stride,
-                                    const uint8_t *b, int b_stride,
+unsigned int vpx_variance64x64_neon(const uint8_t *src_ptr, int src_stride,
+                                    const uint8_t *ref_ptr, int ref_stride,
                                     unsigned int *sse) {
   int sum1, sum2;
   uint32_t sse1, sse2;
 
-  variance_neon_w16(a, a_stride, b, b_stride, 64, 16, &sse1, &sum1);
-  variance_neon_w16(a + (16 * a_stride), a_stride, b + (16 * b_stride),
-                    b_stride, 64, 16, &sse2, &sum2);
+  variance_neon_w16(src_ptr, src_stride, ref_ptr, ref_stride, 64, 16, &sse1,
+                    &sum1);
+  variance_neon_w16(src_ptr + (16 * src_stride), src_stride,
+                    ref_ptr + (16 * ref_stride), ref_stride, 64, 16, &sse2,
+                    &sum2);
   sse1 += sse2;
   sum1 += sum2;
 
-  variance_neon_w16(a + (16 * 2 * a_stride), a_stride, b + (16 * 2 * b_stride),
-                    b_stride, 64, 16, &sse2, &sum2);
+  variance_neon_w16(src_ptr + (16 * 2 * src_stride), src_stride,
+                    ref_ptr + (16 * 2 * ref_stride), ref_stride, 64, 16, &sse2,
+                    &sum2);
   sse1 += sse2;
   sum1 += sum2;
 
-  variance_neon_w16(a + (16 * 3 * a_stride), a_stride, b + (16 * 3 * b_stride),
-                    b_stride, 64, 16, &sse2, &sum2);
+  variance_neon_w16(src_ptr + (16 * 3 * src_stride), src_stride,
+                    ref_ptr + (16 * 3 * ref_stride), ref_stride, 64, 16, &sse2,
+                    &sum2);
   *sse = sse1 + sse2;
   sum1 += sum2;
   return *sse - (unsigned int)(((int64_t)sum1 * sum1) >> 12);
 }
 
-unsigned int vpx_mse16x16_neon(const unsigned char *src_ptr, int source_stride,
-                               const unsigned char *ref_ptr, int recon_stride,
+unsigned int vpx_mse16x16_neon(const unsigned char *src_ptr, int src_stride,
+                               const unsigned char *ref_ptr, int ref_stride,
                                unsigned int *sse) {
   int i;
   int16x4_t d22s16, d23s16, d24s16, d25s16, d26s16, d27s16, d28s16, d29s16;
@@ -267,13 +282,13 @@ unsigned int vpx_mse16x16_neon(const unsigned char *src_ptr, int source_stride,
 
   for (i = 0; i < 8; i++) {  // mse16x16_neon_loop
     q0u8 = vld1q_u8(src_ptr);
-    src_ptr += source_stride;
+    src_ptr += src_stride;
     q1u8 = vld1q_u8(src_ptr);
-    src_ptr += source_stride;
+    src_ptr += src_stride;
     q2u8 = vld1q_u8(ref_ptr);
-    ref_ptr += recon_stride;
+    ref_ptr += ref_stride;
     q3u8 = vld1q_u8(ref_ptr);
-    ref_ptr += recon_stride;
+    ref_ptr += ref_stride;
 
     q11u16 = vsubl_u8(vget_low_u8(q0u8), vget_low_u8(q2u8));
     q12u16 = vsubl_u8(vget_high_u8(q0u8), vget_high_u8(q2u8));
@@ -312,10 +327,9 @@ unsigned int vpx_mse16x16_neon(const unsigned char *src_ptr, int source_stride,
   return vget_lane_u32(vreinterpret_u32_s64(d0s64), 0);
 }
 
-unsigned int vpx_get4x4sse_cs_neon(const unsigned char *src_ptr,
-                                   int source_stride,
+unsigned int vpx_get4x4sse_cs_neon(const unsigned char *src_ptr, int src_stride,
                                    const unsigned char *ref_ptr,
-                                   int recon_stride) {
+                                   int ref_stride) {
   int16x4_t d22s16, d24s16, d26s16, d28s16;
   int64x1_t d0s64;
   uint8x8_t d0u8, d1u8, d2u8, d3u8, d4u8, d5u8, d6u8, d7u8;
@@ -324,21 +338,21 @@ unsigned int vpx_get4x4sse_cs_neon(const unsigned char *src_ptr,
   int64x2_t q1s64;
 
   d0u8 = vld1_u8(src_ptr);
-  src_ptr += source_stride;
+  src_ptr += src_stride;
   d4u8 = vld1_u8(ref_ptr);
-  ref_ptr += recon_stride;
+  ref_ptr += ref_stride;
   d1u8 = vld1_u8(src_ptr);
-  src_ptr += source_stride;
+  src_ptr += src_stride;
   d5u8 = vld1_u8(ref_ptr);
-  ref_ptr += recon_stride;
+  ref_ptr += ref_stride;
   d2u8 = vld1_u8(src_ptr);
-  src_ptr += source_stride;
+  src_ptr += src_stride;
   d6u8 = vld1_u8(ref_ptr);
-  ref_ptr += recon_stride;
+  ref_ptr += ref_stride;
   d3u8 = vld1_u8(src_ptr);
-  src_ptr += source_stride;
+  src_ptr += src_stride;
   d7u8 = vld1_u8(ref_ptr);
-  ref_ptr += recon_stride;
+  ref_ptr += ref_stride;
 
   q11u16 = vsubl_u8(d0u8, d4u8);
   q12u16 = vsubl_u8(d1u8, d5u8);

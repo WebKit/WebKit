@@ -27,7 +27,7 @@ TRANSFORM_COEFFS  9102,  13623
 
 SECTION .text
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 INIT_XMM ssse3
 cglobal fdct8x8, 3, 5, 13, input, output, stride
 

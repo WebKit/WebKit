@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_BITREADER_BUFFER_H_
-#define VPX_DSP_BITREADER_BUFFER_H_
+#ifndef VPX_VPX_DSP_BITREADER_BUFFER_H_
+#define VPX_VPX_DSP_BITREADER_BUFFER_H_
 
 #include <limits.h>
 
@@ -44,4 +44,4 @@ int vpx_rb_read_inv_signed_literal(struct vpx_read_bit_buffer *rb, int bits);
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_BITREADER_BUFFER_H_
+#endif  // VPX_VPX_DSP_BITREADER_BUFFER_H_

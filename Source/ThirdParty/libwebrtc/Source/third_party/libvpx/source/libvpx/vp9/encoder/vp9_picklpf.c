@@ -24,10 +24,20 @@
 #include "vp9/encoder/vp9_picklpf.h"
 #include "vp9/encoder/vp9_quantize.h"
 
+static unsigned int get_section_intra_rating(const VP9_COMP *cpi) {
+  unsigned int section_intra_rating;
+
+  section_intra_rating = (cpi->common.frame_type == KEY_FRAME)
+                             ? cpi->twopass.key_frame_section_intra_rating
+                             : cpi->twopass.section_intra_rating;
+
+  return section_intra_rating;
+}
+
 static int get_max_filter_level(const VP9_COMP *cpi) {
   if (cpi->oxcf.pass == 2) {
-    return cpi->twopass.section_intra_rating > 8 ? MAX_LOOP_FILTER * 3 / 4
-                                                 : MAX_LOOP_FILTER;
+    unsigned int section_intra_rating = get_section_intra_rating(cpi);
+    return section_intra_rating > 8 ? MAX_LOOP_FILTER * 3 / 4 : MAX_LOOP_FILTER;
   } else {
     return MAX_LOOP_FILTER;
   }
@@ -81,6 +91,7 @@ static int search_filter_level(const YV12_BUFFER_CONFIG *sd, VP9_COMP *cpi,
   int filter_step = filt_mid < 16 ? 4 : filt_mid / 4;
   // Sum squared error at each filter level
   int64_t ss_err[MAX_LOOP_FILTER + 1];
+  unsigned int section_intra_rating = get_section_intra_rating(cpi);
 
   // Set each entry to -1
   memset(ss_err, 0xFF, sizeof(ss_err));
@@ -99,8 +110,8 @@ static int search_filter_level(const YV12_BUFFER_CONFIG *sd, VP9_COMP *cpi,
     // Bias against raising loop filter in favor of lowering it.
     int64_t bias = (best_err >> (15 - (filt_mid / 8))) * filter_step;
 
-    if ((cpi->oxcf.pass == 2) && (cpi->twopass.section_intra_rating < 20))
-      bias = (bias * cpi->twopass.section_intra_rating) / 20;
+    if ((cpi->oxcf.pass == 2) && (section_intra_rating < 20))
+      bias = (bias * section_intra_rating) / 20;
 
     // yx, bias less for large block size
     if (cm->tx_mode != ONLY_4X4) bias >>= 1;
@@ -150,7 +161,7 @@ void vp9_pick_filter_level(const YV12_BUFFER_CONFIG *sd, VP9_COMP *cpi,
   VP9_COMMON *const cm = &cpi->common;
   struct loopfilter *const lf = &cm->lf;
 
-  lf->sharpness_level = cm->frame_type == KEY_FRAME ? 0 : cpi->oxcf.sharpness;
+  lf->sharpness_level = 0;
 
   if (method == LPF_PICK_MINIMAL_LPF && lf->filter_level) {
     lf->filter_level = 0;
@@ -169,20 +180,17 @@ void vp9_pick_filter_level(const YV12_BUFFER_CONFIG *sd, VP9_COMP *cpi,
       case VPX_BITS_10:
         filt_guess = ROUND_POWER_OF_TWO(q * 20723 + 4060632, 20);
         break;
-      case VPX_BITS_12:
+      default:
+        assert(cm->bit_depth == VPX_BITS_12);
         filt_guess = ROUND_POWER_OF_TWO(q * 20723 + 16242526, 22);
         break;
-      default:
-        assert(0 &&
-               "bit_depth should be VPX_BITS_8, VPX_BITS_10 "
-               "or VPX_BITS_12");
-        return;
     }
 #else
     int filt_guess = ROUND_POWER_OF_TWO(q * 20723 + 1015158, 18);
 #endif  // CONFIG_VP9_HIGHBITDEPTH
     if (cpi->oxcf.pass == 0 && cpi->oxcf.rc_mode == VPX_CBR &&
         cpi->oxcf.aq_mode == CYCLIC_REFRESH_AQ && cm->seg.enabled &&
+        (cm->base_qindex < 200 || cm->width * cm->height > 320 * 240) &&
         cpi->oxcf.content != VP9E_CONTENT_SCREEN && cm->frame_type != KEY_FRAME)
       filt_guess = 5 * filt_guess >> 3;
 

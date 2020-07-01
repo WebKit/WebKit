@@ -460,7 +460,8 @@ void vpx_highbd_d153_predictor_4x4_sse2(uint16_t *dst, ptrdiff_t stride,
   const int J = left[1];
   const int K = left[2];
   const int L = left[3];
-  const __m128i XXXXXABC = _mm_loadu_si128((const __m128i *)(above - 5));
+  const __m128i XXXXXABC = _mm_castps_si128(
+      _mm_loadh_pi(_mm_setzero_ps(), (const __m64 *)(above - 1)));
   const __m128i LXXXXABC = _mm_insert_epi16(XXXXXABC, L, 0);
   const __m128i LKXXXABC = _mm_insert_epi16(LXXXXABC, K, 1);
   const __m128i LKJXXABC = _mm_insert_epi16(LKXXXABC, J, 2);

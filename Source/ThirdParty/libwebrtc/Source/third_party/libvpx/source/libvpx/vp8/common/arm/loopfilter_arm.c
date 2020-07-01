@@ -8,27 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "vpx_config.h"
-#include "vp8_rtcd.h"
+#include "./vpx_config.h"
+#include "./vp8_rtcd.h"
+#include "vp8/common/arm/loopfilter_arm.h"
 #include "vp8/common/loopfilter.h"
 #include "vp8/common/onyxc_int.h"
-
-typedef void loopfilter_y_neon(unsigned char *src, int pitch,
-                               unsigned char blimit, unsigned char limit,
-                               unsigned char thresh);
-typedef void loopfilter_uv_neon(unsigned char *u, int pitch,
-                                unsigned char blimit, unsigned char limit,
-                                unsigned char thresh, unsigned char *v);
-
-extern loopfilter_y_neon vp8_loop_filter_horizontal_edge_y_neon;
-extern loopfilter_y_neon vp8_loop_filter_vertical_edge_y_neon;
-extern loopfilter_uv_neon vp8_loop_filter_horizontal_edge_uv_neon;
-extern loopfilter_uv_neon vp8_loop_filter_vertical_edge_uv_neon;
-
-extern loopfilter_y_neon vp8_mbloop_filter_horizontal_edge_y_neon;
-extern loopfilter_y_neon vp8_mbloop_filter_vertical_edge_y_neon;
-extern loopfilter_uv_neon vp8_mbloop_filter_horizontal_edge_uv_neon;
-extern loopfilter_uv_neon vp8_mbloop_filter_vertical_edge_uv_neon;
 
 /* NEON loopfilter functions */
 /* Horizontal MB filtering */

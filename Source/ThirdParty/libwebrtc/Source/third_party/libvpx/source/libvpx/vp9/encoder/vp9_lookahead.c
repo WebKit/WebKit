@@ -64,6 +64,7 @@ struct lookahead_ctx *vp9_lookahead_init(unsigned int width,
     unsigned int i;
     ctx->max_sz = depth;
     ctx->buf = calloc(depth, sizeof(*ctx->buf));
+    ctx->next_show_idx = 0;
     if (!ctx->buf) goto bail;
     for (i = 0; i < depth; i++)
       if (vpx_alloc_frame_buffer(
@@ -81,12 +82,16 @@ bail:
 }
 
 #define USE_PARTIAL_COPY 0
+int vp9_lookahead_full(const struct lookahead_ctx *ctx) {
+  return ctx->sz + 1 + MAX_PRE_FRAMES > ctx->max_sz;
+}
+
+int vp9_lookahead_next_show_idx(const struct lookahead_ctx *ctx) {
+  return ctx->next_show_idx;
+}
 
 int vp9_lookahead_push(struct lookahead_ctx *ctx, YV12_BUFFER_CONFIG *src,
-                       int64_t ts_start, int64_t ts_end,
-#if CONFIG_VP9_HIGHBITDEPTH
-                       int use_highbitdepth,
-#endif
+                       int64_t ts_start, int64_t ts_end, int use_highbitdepth,
                        vpx_enc_frame_flags_t flags) {
   struct lookahead_entry *buf;
 #if USE_PARTIAL_COPY
@@ -101,8 +106,12 @@ int vp9_lookahead_push(struct lookahead_ctx *ctx, YV12_BUFFER_CONFIG *src,
   int subsampling_x = src->subsampling_x;
   int subsampling_y = src->subsampling_y;
   int larger_dimensions, new_dimensions;
+#if !CONFIG_VP9_HIGHBITDEPTH
+  (void)use_highbitdepth;
+  assert(use_highbitdepth == 0);
+#endif
 
-  if (ctx->sz + 1 + MAX_PRE_FRAMES > ctx->max_sz) return 1;
+  if (vp9_lookahead_full(ctx)) return 1;
   ctx->sz++;
   buf = pop(ctx, &ctx->write_idx);
 
@@ -184,6 +193,8 @@ int vp9_lookahead_push(struct lookahead_ctx *ctx, YV12_BUFFER_CONFIG *src,
   buf->ts_start = ts_start;
   buf->ts_end = ts_end;
   buf->flags = flags;
+  buf->show_idx = ctx->next_show_idx;
+  ++ctx->next_show_idx;
   return 0;
 }
 

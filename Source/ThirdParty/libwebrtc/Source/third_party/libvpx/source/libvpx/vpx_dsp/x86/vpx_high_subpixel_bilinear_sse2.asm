@@ -26,7 +26,7 @@
     pshufd      xmm3, xmm3, 0
 
     mov         rdx, 0x00010001
-    movsxd      rcx, DWORD PTR arg(6)       ;bps
+    movsxd      rcx, DWORD PTR arg(6)       ;bd
     movq        xmm5, rdx
     movq        xmm2, rcx
     pshufd      xmm5, xmm5, 0b
@@ -64,7 +64,7 @@
     dec         rcx
 %endm
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 %macro HIGH_GET_PARAM 0
     mov         rdx, arg(5)                 ;filter ptr
     mov         rsi, arg(0)                 ;src_ptr
@@ -82,7 +82,7 @@
     pshufd      xmm4, xmm4, 0
 
     mov         rdx, 0x00010001
-    movsxd      rcx, DWORD PTR arg(6)       ;bps
+    movsxd      rcx, DWORD PTR arg(6)       ;bd
     movq        xmm8, rdx
     movq        xmm5, rcx
     pshufd      xmm8, xmm8, 0b
@@ -197,7 +197,7 @@ sym(vpx_highbd_filter_block1d4_v2_sse2):
     pop         rbp
     ret
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 global sym(vpx_highbd_filter_block1d8_v2_sse2) PRIVATE
 sym(vpx_highbd_filter_block1d8_v2_sse2):
     push        rbp
@@ -277,7 +277,7 @@ sym(vpx_highbd_filter_block1d4_v2_avg_sse2):
     pop         rbp
     ret
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 global sym(vpx_highbd_filter_block1d8_v2_avg_sse2) PRIVATE
 sym(vpx_highbd_filter_block1d8_v2_avg_sse2):
     push        rbp
@@ -358,7 +358,7 @@ sym(vpx_highbd_filter_block1d4_h2_sse2):
     pop         rbp
     ret
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 global sym(vpx_highbd_filter_block1d8_h2_sse2) PRIVATE
 sym(vpx_highbd_filter_block1d8_h2_sse2):
     push        rbp
@@ -439,7 +439,7 @@ sym(vpx_highbd_filter_block1d4_h2_avg_sse2):
     pop         rbp
     ret
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 global sym(vpx_highbd_filter_block1d8_h2_avg_sse2) PRIVATE
 sym(vpx_highbd_filter_block1d8_h2_avg_sse2):
     push        rbp

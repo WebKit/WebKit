@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_PICKMODE_H_
-#define VP9_ENCODER_VP9_PICKMODE_H_
+#ifndef VPX_VP9_ENCODER_VP9_PICKMODE_H_
+#define VPX_VP9_ENCODER_VP9_PICKMODE_H_
 
 #include "vp9/encoder/vp9_encoder.h"
 
@@ -32,4 +32,4 @@ void vp9_pick_inter_mode_sub8x8(VP9_COMP *cpi, MACROBLOCK *x, int mi_row,
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_PICKMODE_H_
+#endif  // VPX_VP9_ENCODER_VP9_PICKMODE_H_

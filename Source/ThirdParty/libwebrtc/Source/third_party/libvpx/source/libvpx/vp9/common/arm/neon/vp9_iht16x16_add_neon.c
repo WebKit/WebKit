@@ -19,9 +19,9 @@
 #include "vpx_dsp/arm/mem_neon.h"
 #include "vpx_dsp/arm/transpose_neon.h"
 
-static void iadst16x16_256_add_half1d(const void *const input, int16_t *output,
-                                      void *const dest, const int stride,
-                                      const int highbd_flag) {
+void vpx_iadst16x16_256_add_half1d(const void *const input, int16_t *output,
+                                   void *const dest, const int stride,
+                                   const int highbd_flag) {
   int16x8_t in[16], out[16];
   const int16x4_t c_1_31_5_27 =
       create_s16x4_neon(cospi_1_64, cospi_31_64, cospi_5_64, cospi_27_64);
@@ -221,30 +221,10 @@ static void iadst16x16_256_add_half1d(const void *const input, int16_t *output,
   x[15] = sub_dct_const_round_shift_low_8(s13, s15);
 
   // stage 4
-  {
-    const int16x8_t sum = vaddq_s16(x[2], x[3]);
-    const int16x8_t sub = vsubq_s16(x[2], x[3]);
-    x[2] = iadst_half_butterfly_neg_neon(sum, c_16_n16_8_24);
-    x[3] = iadst_half_butterfly_pos_neon(sub, c_16_n16_8_24);
-  }
-  {
-    const int16x8_t sum = vaddq_s16(x[7], x[6]);
-    const int16x8_t sub = vsubq_s16(x[7], x[6]);
-    x[6] = iadst_half_butterfly_pos_neon(sum, c_16_n16_8_24);
-    x[7] = iadst_half_butterfly_pos_neon(sub, c_16_n16_8_24);
-  }
-  {
-    const int16x8_t sum = vaddq_s16(x[11], x[10]);
-    const int16x8_t sub = vsubq_s16(x[11], x[10]);
-    x[10] = iadst_half_butterfly_pos_neon(sum, c_16_n16_8_24);
-    x[11] = iadst_half_butterfly_pos_neon(sub, c_16_n16_8_24);
-  }
-  {
-    const int16x8_t sum = vaddq_s16(x[14], x[15]);
-    const int16x8_t sub = vsubq_s16(x[14], x[15]);
-    x[14] = iadst_half_butterfly_neg_neon(sum, c_16_n16_8_24);
-    x[15] = iadst_half_butterfly_pos_neon(sub, c_16_n16_8_24);
-  }
+  iadst_half_butterfly_neg_neon(&x[3], &x[2], c_16_n16_8_24);
+  iadst_half_butterfly_pos_neon(&x[7], &x[6], c_16_n16_8_24);
+  iadst_half_butterfly_pos_neon(&x[11], &x[10], c_16_n16_8_24);
+  iadst_half_butterfly_neg_neon(&x[15], &x[14], c_16_n16_8_24);
 
   out[0] = x[0];
   out[1] = vnegq_s16(x[8]);
@@ -274,24 +254,17 @@ static void iadst16x16_256_add_half1d(const void *const input, int16_t *output,
   }
 }
 
-typedef void (*iht_1d)(const void *const input, int16_t *output,
-                       void *const dest, const int stride,
-                       const int highbd_flag);
-
-typedef struct {
-  iht_1d cols, rows;  // vertical and horizontal
-} iht_2d;
-
 void vp9_iht16x16_256_add_neon(const tran_low_t *input, uint8_t *dest,
                                int stride, int tx_type) {
   static const iht_2d IHT_16[] = {
     { vpx_idct16x16_256_add_half1d,
       vpx_idct16x16_256_add_half1d },  // DCT_DCT  = 0
-    { iadst16x16_256_add_half1d,
+    { vpx_iadst16x16_256_add_half1d,
       vpx_idct16x16_256_add_half1d },  // ADST_DCT = 1
     { vpx_idct16x16_256_add_half1d,
-      iadst16x16_256_add_half1d },                            // DCT_ADST = 2
-    { iadst16x16_256_add_half1d, iadst16x16_256_add_half1d }  // ADST_ADST = 3
+      vpx_iadst16x16_256_add_half1d },  // DCT_ADST = 2
+    { vpx_iadst16x16_256_add_half1d,
+      vpx_iadst16x16_256_add_half1d }  // ADST_ADST = 3
   };
   const iht_2d ht = IHT_16[tx_type];
   int16_t row_output[16 * 16];

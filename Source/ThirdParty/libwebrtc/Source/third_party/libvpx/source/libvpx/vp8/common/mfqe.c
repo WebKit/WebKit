@@ -18,6 +18,7 @@
 
 #include "./vp8_rtcd.h"
 #include "./vpx_dsp_rtcd.h"
+#include "vp8/common/common.h"
 #include "vp8/common/postproc.h"
 #include "vpx_dsp/variance.h"
 #include "vpx_mem/vpx_mem.h"
@@ -211,6 +212,7 @@ static int qualify_inter_mb(const MODE_INFO *mode_info_context, int *map) {
       { 0, 1, 4, 5 }, { 2, 3, 6, 7 }, { 8, 9, 12, 13 }, { 10, 11, 14, 15 }
     };
     int i, j;
+    vp8_zero(*map);
     for (i = 0; i < 4; ++i) {
       map[i] = 1;
       for (j = 0; j < 4 && map[j]; ++j) {
@@ -233,7 +235,7 @@ void vp8_multiframe_quality_enhance(VP8_COMMON *cm) {
 
   FRAME_TYPE frame_type = cm->frame_type;
   /* Point at base of Mb MODE_INFO list has motion vectors etc */
-  const MODE_INFO *mode_info_context = cm->show_frame_mi;
+  const MODE_INFO *mode_info_context = cm->mi;
   int mb_row;
   int mb_col;
   int totmap, map[4];

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VIDEO_WRITER_H_
-#define VIDEO_WRITER_H_
+#ifndef VPX_VIDEO_WRITER_H_
+#define VPX_VIDEO_WRITER_H_
 
 #include "./video_common.h"
 
@@ -41,4 +41,4 @@ int vpx_video_writer_write_frame(VpxVideoWriter *writer, const uint8_t *buffer,
 }  // extern "C"
 #endif
 
-#endif  // VIDEO_WRITER_H_
+#endif  // VPX_VIDEO_WRITER_H_

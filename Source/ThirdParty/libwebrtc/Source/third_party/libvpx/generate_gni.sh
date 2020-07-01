@@ -56,9 +56,6 @@ done
 # $1 - Output base name
 function write_license {
   echo "# This file is generated. Do not edit." >> $1
-  echo "# Copyright (c) 2014 The Chromium Authors. All rights reserved." >> $1
-  echo "# Use of this source code is governed by a BSD-style license that can be" >> $1
-  echo "# found in the LICENSE file." >> $1
   echo "" >> $1
 }
 
@@ -287,6 +284,10 @@ function gen_config_files {
   # Disable HAVE_UNISTD_H as it causes vp8 to try to detect how many cpus
   # available, which doesn't work from inside a sandbox on linux.
   sed -i.bak -e 's/\(HAVE_UNISTD_H[[:space:]]*\)1/\10/' vpx_config.h
+  # Maintain old ARCH_ defines to avoid build errors because assembly file
+  # dependencies are incorrect.
+  sed -i.bak -e 's/\(#define \)VPX_\(ARCH_[_0-9A-Z]\+ [01]\)/&\n\1\2/' vpx_config.h
+
   rm vpx_config.h.bak
 
   # Use the correct ads2gas script.
@@ -305,6 +306,7 @@ function gen_config_files {
     fi
   fi
 
+  mkdir -p $BASE_DIR/$LIBVPX_CONFIG_DIR/$1
   cp vpx_config.* $BASE_DIR/$LIBVPX_CONFIG_DIR/$1
   make_clean
   rm -rf vpx_config.*
@@ -338,9 +340,16 @@ cp -R $LIBVPX_SRC_DIR $TEMP_DIR
 cd $TEMP_DIR
 
 echo "Generate config files."
-all_platforms="--enable-external-build --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising"
-all_platforms="${all_platforms} --enable-vp9-temporal-denoising --enable-vp9-postproc --size-limit=16384x16384"
-all_platforms="${all_platforms} --enable-realtime-only --disable-install-docs"
+all_platforms="--enable-external-build"
+all_platforms+=" --enable-postproc"
+all_platforms+=" --enable-multi-res-encoding"
+all_platforms+=" --enable-temporal-denoising"
+all_platforms+=" --enable-vp9-temporal-denoising"
+all_platforms+=" --enable-vp9-postproc"
+all_platforms+=" --size-limit=16384x16384"
+all_platforms+=" --enable-realtime-only"
+all_platforms+=" --disable-install-docs"
+all_platforms+=" --disable-libyuv"
 x86_platforms="--enable-pic --as=yasm $DISABLE_AVX512 $HIGHBD"
 gen_config_files linux/ia32 "--target=x86-linux-gcc ${all_platforms} ${x86_platforms}"
 gen_config_files linux/x64 "--target=x86_64-linux-gcc ${all_platforms} ${x86_platforms}"
@@ -348,11 +357,14 @@ gen_config_files linux/arm "--target=armv7-linux-gcc --disable-neon ${all_platfo
 gen_config_files linux/arm-neon "--target=armv7-linux-gcc ${all_platforms}"
 gen_config_files linux/arm-neon-cpu-detect "--target=armv7-linux-gcc --enable-runtime-cpu-detect ${all_platforms}"
 gen_config_files linux/arm64 "--target=armv8-linux-gcc ${all_platforms}"
+gen_config_files linux/arm-neon-highbd "--target=armv7-linux-gcc ${all_platforms} ${HIGHBD}"
+gen_config_files linux/arm64-highbd "--target=armv8-linux-gcc ${all_platforms} ${HIGHBD}"
 gen_config_files linux/mipsel "--target=mips32-linux-gcc ${all_platforms}"
 gen_config_files linux/mips64el "--target=mips64-linux-gcc ${all_platforms}"
 gen_config_files linux/generic "--target=generic-gnu $HIGHBD ${all_platforms}"
-gen_config_files win/ia32 "--target=x86-win32-vs12 ${all_platforms} ${x86_platforms}"
-gen_config_files win/x64 "--target=x86_64-win64-vs12 ${all_platforms} ${x86_platforms}"
+gen_config_files win/arm64 "--target=arm64-win64-vs15 ${all_platforms} ${HIGHBD}"
+gen_config_files win/ia32 "--target=x86-win32-vs14 ${all_platforms} ${x86_platforms}"
+gen_config_files win/x64 "--target=x86_64-win64-vs14 ${all_platforms} ${x86_platforms}"
 gen_config_files mac/ia32 "--target=x86-darwin9-gcc ${all_platforms} ${x86_platforms}"
 gen_config_files mac/x64 "--target=x86_64-darwin9-gcc ${all_platforms} ${x86_platforms}"
 gen_config_files ios/arm-neon "--target=armv7-linux-gcc ${all_platforms}"
@@ -370,9 +382,12 @@ lint_config linux/arm
 lint_config linux/arm-neon
 lint_config linux/arm-neon-cpu-detect
 lint_config linux/arm64
+lint_config linux/arm-neon-highbd
+lint_config linux/arm64-highbd
 lint_config linux/mipsel
 lint_config linux/mips64el
 lint_config linux/generic
+lint_config win/arm64
 lint_config win/ia32
 lint_config win/x64
 lint_config mac/ia32
@@ -387,18 +402,24 @@ rm -rf $TEMP_DIR
 cp -R $LIBVPX_SRC_DIR $TEMP_DIR
 cd $TEMP_DIR
 
-gen_rtcd_header linux/ia32 x86
+# chromium has required sse2 for x86 since 2014
+require_sse2="--require-mmx --require-sse --require-sse2"
+
+gen_rtcd_header linux/ia32 x86 "${require_sse2}"
 gen_rtcd_header linux/x64 x86_64
 gen_rtcd_header linux/arm armv7 "--disable-neon --disable-neon_asm"
 gen_rtcd_header linux/arm-neon armv7
 gen_rtcd_header linux/arm-neon-cpu-detect armv7
 gen_rtcd_header linux/arm64 armv8
+gen_rtcd_header linux/arm-neon-highbd armv7
+gen_rtcd_header linux/arm64-highbd armv8
 gen_rtcd_header linux/mipsel mipsel
 gen_rtcd_header linux/mips64el mips64el
 gen_rtcd_header linux/generic generic
-gen_rtcd_header win/ia32 x86
+gen_rtcd_header win/arm64 armv8
+gen_rtcd_header win/ia32 x86 "${require_sse2}"
 gen_rtcd_header win/x64 x86_64
-gen_rtcd_header mac/ia32 x86
+gen_rtcd_header mac/ia32 x86 "${require_sse2}"
 gen_rtcd_header mac/x64 x86_64
 gen_rtcd_header ios/arm-neon armv7
 gen_rtcd_header ios/arm64 armv8
@@ -420,6 +441,7 @@ if [ -z $ONLY_CONFIGS ]; then
   convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_x86
 
   # Copy vpx_version.h. The file should be the same for all platforms.
+  clang-format -i -style=Chromium vpx_version.h
   cp vpx_version.h $BASE_DIR/$LIBVPX_CONFIG_DIR
 
   echo "Generate X86_64 source list."
@@ -455,6 +477,20 @@ if [ -z $ONLY_CONFIGS ]; then
   make_clean
   make libvpx_srcs.txt target=libs $config > /dev/null
   convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_arm64
+
+  echo "Generate ARM NEON HighBD source list."
+  config=$(print_config linux/arm-neon-highbd)
+  make_clean
+  make libvpx_srcs.txt target=libs $config > /dev/null
+  convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_arm_neon_highbd
+
+  echo "Generate ARM64 HighBD source list."
+  config=$(print_config linux/arm64-highbd)
+  make_clean
+  make libvpx_srcs.txt target=libs $config > /dev/null
+  convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_arm64_highbd
+
+  echo "ARM64 Windows uses the ARM64 Linux HighBD source list. No need to generate it."
 
   echo "Generate MIPS source list."
   config=$(print_config_basic linux/mipsel)

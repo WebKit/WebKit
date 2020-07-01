@@ -144,21 +144,7 @@ void vp8_copy32xn_c(const unsigned char* src_ptr,
                     unsigned char* dst_ptr,
                     int dst_stride,
                     int n);
-void vp8_copy32xn_sse2(const unsigned char* src_ptr,
-                       int source_stride,
-                       unsigned char* dst_ptr,
-                       int dst_stride,
-                       int n);
-void vp8_copy32xn_sse3(const unsigned char* src_ptr,
-                       int source_stride,
-                       unsigned char* dst_ptr,
-                       int dst_stride,
-                       int n);
-RTCD_EXTERN void (*vp8_copy32xn)(const unsigned char* src_ptr,
-                                 int source_stride,
-                                 unsigned char* dst_ptr,
-                                 int dst_stride,
-                                 int n);
+#define vp8_copy32xn vp8_copy32xn_c
 
 void vp8_copy_mem16x16_c(unsigned char* src,
                          int src_pitch,
@@ -638,7 +624,6 @@ static void setup_rtcd_internal(void) {
 
   vp8_bilinear_predict16x16 = vp8_bilinear_predict16x16_c;
   vp8_bilinear_predict8x8 = vp8_bilinear_predict8x8_c;
-  vp8_copy32xn = vp8_copy32xn_c;
   vp8_fast_quantize_b = vp8_fast_quantize_b_c;
   vp8_full_search_sad = vp8_full_search_sad_c;
   vp8_regular_quantize_b = vp8_regular_quantize_b_c;

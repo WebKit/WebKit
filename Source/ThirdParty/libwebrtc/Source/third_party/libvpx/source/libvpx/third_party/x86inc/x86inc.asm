@@ -45,7 +45,7 @@
 %endif
 
 %ifndef STACK_ALIGNMENT
-    %if ARCH_X86_64
+    %if VPX_ARCH_X86_64
         %define STACK_ALIGNMENT 16
     %else
         %define STACK_ALIGNMENT 4
@@ -54,7 +54,7 @@
 
 %define WIN64  0
 %define UNIX64 0
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
     %ifidn __OUTPUT_FORMAT__,win32
         %define WIN64  1
     %elifidn __OUTPUT_FORMAT__,win64
@@ -165,7 +165,7 @@
         %endif
     %endif
 
-    %if ARCH_X86_64 == 0
+    %if VPX_ARCH_X86_64 == 0
         %undef PIC
     %endif
 
@@ -260,7 +260,7 @@
     %if %0 == 2
         %define r%1m  %2d
         %define r%1mp %2
-    %elif ARCH_X86_64 ; memory
+    %elif VPX_ARCH_X86_64 ; memory
         %define r%1m [rstk + stack_offset + %3]
         %define r%1mp qword r %+ %1 %+ m
     %else
@@ -281,7 +281,7 @@
     %define e%1h %3
     %define r%1b %2
     %define e%1b %2
-    %if ARCH_X86_64 == 0
+    %if VPX_ARCH_X86_64 == 0
         %define r%1 e%1
     %endif
 %endmacro
@@ -318,7 +318,7 @@ DECLARE_REG_SIZE bp, bpl, null
 
 DECLARE_REG_TMP_SIZE 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
     %define gprsize 8
 %else
     %define gprsize 4
@@ -485,7 +485,7 @@ DECLARE_REG_TMP_SIZE 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
             %if %1 > 0
                 %assign regs_used (regs_used + 1)
             %endif
-            %if ARCH_X86_64 && regs_used < 5 + UNIX64 * 3
+            %if VPX_ARCH_X86_64 && regs_used < 5 + UNIX64 * 3
                 ; Ensure that we don't clobber any registers containing arguments
                 %assign regs_used 5 + UNIX64 * 3
             %endif
@@ -607,7 +607,7 @@ DECLARE_REG 14, R15, 120
     AUTO_REP_RET
 %endmacro
 
-%elif ARCH_X86_64 ; *nix x64 ;=============================================
+%elif VPX_ARCH_X86_64 ; *nix x64 ;=============================================
 
 DECLARE_REG 0,  rdi
 DECLARE_REG 1,  rsi
@@ -948,7 +948,7 @@ BRANCH_INSTR jz, je, jnz, jne, jl, jle, jnl, jnle, jg, jge, jng, jnge, ja, jae, 
         %endif
     %endif
 
-    %if ARCH_X86_64 || cpuflag(sse2)
+    %if VPX_ARCH_X86_64 || cpuflag(sse2)
         %ifdef __NASM_VER__
             ALIGNMODE k8
         %else
@@ -1005,7 +1005,7 @@ BRANCH_INSTR jz, je, jnz, jne, jl, jle, jnl, jnle, jg, jge, jng, jnge, ja, jae, 
     %define RESET_MM_PERMUTATION INIT_XMM %1
     %define mmsize 16
     %define num_mmregs 8
-    %if ARCH_X86_64
+    %if VPX_ARCH_X86_64
         %define num_mmregs 16
     %endif
     %define mova movdqa
@@ -1026,7 +1026,7 @@ BRANCH_INSTR jz, je, jnz, jne, jl, jle, jnl, jnle, jg, jge, jng, jnge, ja, jae, 
     %define RESET_MM_PERMUTATION INIT_YMM %1
     %define mmsize 32
     %define num_mmregs 8
-    %if ARCH_X86_64
+    %if VPX_ARCH_X86_64
         %define num_mmregs 16
     %endif
     %define mova movdqa
@@ -1637,7 +1637,7 @@ FMA4_INSTR fnmsub,   pd, ps, sd, ss
 
 ; workaround: vpbroadcastq is broken in x86_32 due to a yasm bug (fixed in 1.3.0)
 %ifdef __YASM_VER__
-    %if __YASM_VERSION_ID__ < 0x01030000 && ARCH_X86_64 == 0
+    %if __YASM_VERSION_ID__ < 0x01030000 && VPX_ARCH_X86_64 == 0
         %macro vpbroadcastq 2
             %if sizeof%1 == 16
                 movddup %1, %2

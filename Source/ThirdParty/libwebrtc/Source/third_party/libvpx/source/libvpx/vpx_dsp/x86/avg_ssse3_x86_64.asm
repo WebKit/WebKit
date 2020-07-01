@@ -13,7 +13,7 @@
 
 SECTION .text
 
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 ; matrix transpose
 %macro TRANSPOSE8X8 10
   ; stage 1

@@ -21,7 +21,7 @@
 #define ADD_EPI16 _mm_adds_epi16
 #define SUB_EPI16 _mm_subs_epi16
 #if FDCT32x32_HIGH_PRECISION
-void vpx_fdct32x32_rows_c(const int16_t *intermediate, tran_low_t *out) {
+static void vpx_fdct32x32_rows_c(const int16_t *intermediate, tran_low_t *out) {
   int i, j;
   for (i = 0; i < 32; ++i) {
     tran_high_t temp_in[32], temp_out[32];
@@ -35,7 +35,8 @@ void vpx_fdct32x32_rows_c(const int16_t *intermediate, tran_low_t *out) {
 #define HIGH_FDCT32x32_2D_C vpx_highbd_fdct32x32_c
 #define HIGH_FDCT32x32_2D_ROWS_C vpx_fdct32x32_rows_c
 #else
-void vpx_fdct32x32_rd_rows_c(const int16_t *intermediate, tran_low_t *out) {
+static void vpx_fdct32x32_rd_rows_c(const int16_t *intermediate,
+                                    tran_low_t *out) {
   int i, j;
   for (i = 0; i < 32; ++i) {
     tran_high_t temp_in[32], temp_out[32];

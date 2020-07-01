@@ -23,34 +23,55 @@
 static INLINE void highbd_iadst4(int32x4_t *const io) {
   const int32_t sinpis[4] = { sinpi_1_9, sinpi_2_9, sinpi_3_9, sinpi_4_9 };
   const int32x4_t sinpi = vld1q_s32(sinpis);
-  int32x4_t s[8];
+  int64x2x2_t s[7], t[4];
+  int32x4_t s7;
 
-  s[0] = vmulq_lane_s32(io[0], vget_low_s32(sinpi), 0);
-  s[1] = vmulq_lane_s32(io[0], vget_low_s32(sinpi), 1);
-  s[2] = vmulq_lane_s32(io[1], vget_high_s32(sinpi), 0);
-  s[3] = vmulq_lane_s32(io[2], vget_high_s32(sinpi), 1);
-  s[4] = vmulq_lane_s32(io[2], vget_low_s32(sinpi), 0);
-  s[5] = vmulq_lane_s32(io[3], vget_low_s32(sinpi), 1);
-  s[6] = vmulq_lane_s32(io[3], vget_high_s32(sinpi), 1);
-  s[7] = vsubq_s32(io[0], io[2]);
-  s[7] = vaddq_s32(s[7], io[3]);
+  s[0].val[0] = vmull_lane_s32(vget_low_s32(io[0]), vget_low_s32(sinpi), 0);
+  s[0].val[1] = vmull_lane_s32(vget_high_s32(io[0]), vget_low_s32(sinpi), 0);
+  s[1].val[0] = vmull_lane_s32(vget_low_s32(io[0]), vget_low_s32(sinpi), 1);
+  s[1].val[1] = vmull_lane_s32(vget_high_s32(io[0]), vget_low_s32(sinpi), 1);
+  s[2].val[0] = vmull_lane_s32(vget_low_s32(io[1]), vget_high_s32(sinpi), 0);
+  s[2].val[1] = vmull_lane_s32(vget_high_s32(io[1]), vget_high_s32(sinpi), 0);
+  s[3].val[0] = vmull_lane_s32(vget_low_s32(io[2]), vget_high_s32(sinpi), 1);
+  s[3].val[1] = vmull_lane_s32(vget_high_s32(io[2]), vget_high_s32(sinpi), 1);
+  s[4].val[0] = vmull_lane_s32(vget_low_s32(io[2]), vget_low_s32(sinpi), 0);
+  s[4].val[1] = vmull_lane_s32(vget_high_s32(io[2]), vget_low_s32(sinpi), 0);
+  s[5].val[0] = vmull_lane_s32(vget_low_s32(io[3]), vget_low_s32(sinpi), 1);
+  s[5].val[1] = vmull_lane_s32(vget_high_s32(io[3]), vget_low_s32(sinpi), 1);
+  s[6].val[0] = vmull_lane_s32(vget_low_s32(io[3]), vget_high_s32(sinpi), 1);
+  s[6].val[1] = vmull_lane_s32(vget_high_s32(io[3]), vget_high_s32(sinpi), 1);
+  s7 = vsubq_s32(io[0], io[2]);
+  s7 = vaddq_s32(s7, io[3]);
 
-  s[0] = vaddq_s32(s[0], s[3]);
-  s[0] = vaddq_s32(s[0], s[5]);
-  s[1] = vsubq_s32(s[1], s[4]);
-  s[1] = vsubq_s32(s[1], s[6]);
+  s[0].val[0] = vaddq_s64(s[0].val[0], s[3].val[0]);
+  s[0].val[1] = vaddq_s64(s[0].val[1], s[3].val[1]);
+  s[0].val[0] = vaddq_s64(s[0].val[0], s[5].val[0]);
+  s[0].val[1] = vaddq_s64(s[0].val[1], s[5].val[1]);
+  s[1].val[0] = vsubq_s64(s[1].val[0], s[4].val[0]);
+  s[1].val[1] = vsubq_s64(s[1].val[1], s[4].val[1]);
+  s[1].val[0] = vsubq_s64(s[1].val[0], s[6].val[0]);
+  s[1].val[1] = vsubq_s64(s[1].val[1], s[6].val[1]);
   s[3] = s[2];
-  s[2] = vmulq_lane_s32(s[7], vget_high_s32(sinpi), 0);
+  s[2].val[0] = vmull_lane_s32(vget_low_s32(s7), vget_high_s32(sinpi), 0);
+  s[2].val[1] = vmull_lane_s32(vget_high_s32(s7), vget_high_s32(sinpi), 0);
 
-  io[0] = vaddq_s32(s[0], s[3]);
-  io[1] = vaddq_s32(s[1], s[3]);
-  io[2] = s[2];
-  io[3] = vaddq_s32(s[0], s[1]);
-  io[3] = vsubq_s32(io[3], s[3]);
-  io[0] = vrshrq_n_s32(io[0], DCT_CONST_BITS);
-  io[1] = vrshrq_n_s32(io[1], DCT_CONST_BITS);
-  io[2] = vrshrq_n_s32(io[2], DCT_CONST_BITS);
-  io[3] = vrshrq_n_s32(io[3], DCT_CONST_BITS);
+  t[0].val[0] = vaddq_s64(s[0].val[0], s[3].val[0]);
+  t[0].val[1] = vaddq_s64(s[0].val[1], s[3].val[1]);
+  t[1].val[0] = vaddq_s64(s[1].val[0], s[3].val[0]);
+  t[1].val[1] = vaddq_s64(s[1].val[1], s[3].val[1]);
+  t[2] = s[2];
+  t[3].val[0] = vaddq_s64(s[0].val[0], s[1].val[0]);
+  t[3].val[1] = vaddq_s64(s[0].val[1], s[1].val[1]);
+  t[3].val[0] = vsubq_s64(t[3].val[0], s[3].val[0]);
+  t[3].val[1] = vsubq_s64(t[3].val[1], s[3].val[1]);
+  io[0] = vcombine_s32(vrshrn_n_s64(t[0].val[0], DCT_CONST_BITS),
+                       vrshrn_n_s64(t[0].val[1], DCT_CONST_BITS));
+  io[1] = vcombine_s32(vrshrn_n_s64(t[1].val[0], DCT_CONST_BITS),
+                       vrshrn_n_s64(t[1].val[1], DCT_CONST_BITS));
+  io[2] = vcombine_s32(vrshrn_n_s64(t[2].val[0], DCT_CONST_BITS),
+                       vrshrn_n_s64(t[2].val[1], DCT_CONST_BITS));
+  io[3] = vcombine_s32(vrshrn_n_s64(t[3].val[0], DCT_CONST_BITS),
+                       vrshrn_n_s64(t[3].val[1], DCT_CONST_BITS));
 }
 
 void vp9_highbd_iht4x4_16_add_neon(const tran_low_t *input, uint16_t *dest,

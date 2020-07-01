@@ -22,7 +22,7 @@ class IMkvReader {
   virtual int Length(long long* total, long long* available) = 0;
 
  protected:
-  virtual ~IMkvReader();
+  virtual ~IMkvReader() {}
 };
 
 template <typename Type>
@@ -527,6 +527,8 @@ class VideoTrack : public Track {
 
   Projection* GetProjection() const;
 
+  const char* GetColourSpace() const { return m_colour_space; }
+
  private:
   long long m_width;
   long long m_height;
@@ -534,7 +536,7 @@ class VideoTrack : public Track {
   long long m_display_height;
   long long m_display_unit;
   long long m_stereo_mode;
-
+  char* m_colour_space;
   double m_rate;
 
   Colour* m_colour;

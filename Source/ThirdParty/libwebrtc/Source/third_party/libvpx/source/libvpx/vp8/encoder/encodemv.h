@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_ENCODEMV_H_
-#define VP8_ENCODER_ENCODEMV_H_
+#ifndef VPX_VP8_ENCODER_ENCODEMV_H_
+#define VPX_VP8_ENCODER_ENCODEMV_H_
 
 #include "onyx_int.h"
 
@@ -26,4 +26,4 @@ void vp8_build_component_cost_table(int *mvcost[2], const MV_CONTEXT *mvc,
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_ENCODEMV_H_
+#endif  // VPX_VP8_ENCODER_ENCODEMV_H_

@@ -538,8 +538,8 @@ void vpx_convolve8_avg_msa(const uint8_t *src, ptrdiff_t src_stride,
     filt_ver[cnt] = filter_y[cnt];
   }
 
-  if (((const int32_t *)filter_x)[0] == 0 &&
-      ((const int32_t *)filter_y)[0] == 0) {
+  if (vpx_get_filter_taps(filter_x) == 2 &&
+      vpx_get_filter_taps(filter_y) == 2) {
     switch (w) {
       case 4:
         common_hv_2ht_2vt_and_aver_dst_4w_msa(src, (int32_t)src_stride, dst,
@@ -571,8 +571,8 @@ void vpx_convolve8_avg_msa(const uint8_t *src, ptrdiff_t src_stride,
                             x_step_q4, y0_q4, y_step_q4, w, h);
         break;
     }
-  } else if (((const int32_t *)filter_x)[0] == 0 ||
-             ((const int32_t *)filter_y)[0] == 0) {
+  } else if (vpx_get_filter_taps(filter_x) == 2 ||
+             vpx_get_filter_taps(filter_y) == 2) {
     vpx_convolve8_avg_c(src, src_stride, dst, dst_stride, filter, x0_q4,
                         x_step_q4, y0_q4, y_step_q4, w, h);
   } else {

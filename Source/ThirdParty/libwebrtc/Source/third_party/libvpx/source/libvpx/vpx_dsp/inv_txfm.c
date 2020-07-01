@@ -67,11 +67,11 @@ void vpx_iwht4x4_16_add_c(const tran_low_t *input, uint8_t *dest, int stride) {
   }
 }
 
-void vpx_iwht4x4_1_add_c(const tran_low_t *in, uint8_t *dest, int stride) {
+void vpx_iwht4x4_1_add_c(const tran_low_t *input, uint8_t *dest, int stride) {
   int i;
   tran_high_t a1, e1;
   tran_low_t tmp[4];
-  const tran_low_t *ip = in;
+  const tran_low_t *ip = input;
   tran_low_t *op = tmp;
 
   a1 = ip[0] >> UNIT_QUANT_SHIFT;
@@ -701,22 +701,22 @@ void idct16_c(const tran_low_t *input, tran_low_t *output) {
   step2[15] = step1[15];
 
   // stage 7
-  output[0] = WRAPLOW(step2[0] + step2[15]);
-  output[1] = WRAPLOW(step2[1] + step2[14]);
-  output[2] = WRAPLOW(step2[2] + step2[13]);
-  output[3] = WRAPLOW(step2[3] + step2[12]);
-  output[4] = WRAPLOW(step2[4] + step2[11]);
-  output[5] = WRAPLOW(step2[5] + step2[10]);
-  output[6] = WRAPLOW(step2[6] + step2[9]);
-  output[7] = WRAPLOW(step2[7] + step2[8]);
-  output[8] = WRAPLOW(step2[7] - step2[8]);
-  output[9] = WRAPLOW(step2[6] - step2[9]);
-  output[10] = WRAPLOW(step2[5] - step2[10]);
-  output[11] = WRAPLOW(step2[4] - step2[11]);
-  output[12] = WRAPLOW(step2[3] - step2[12]);
-  output[13] = WRAPLOW(step2[2] - step2[13]);
-  output[14] = WRAPLOW(step2[1] - step2[14]);
-  output[15] = WRAPLOW(step2[0] - step2[15]);
+  output[0] = (tran_low_t)WRAPLOW(step2[0] + step2[15]);
+  output[1] = (tran_low_t)WRAPLOW(step2[1] + step2[14]);
+  output[2] = (tran_low_t)WRAPLOW(step2[2] + step2[13]);
+  output[3] = (tran_low_t)WRAPLOW(step2[3] + step2[12]);
+  output[4] = (tran_low_t)WRAPLOW(step2[4] + step2[11]);
+  output[5] = (tran_low_t)WRAPLOW(step2[5] + step2[10]);
+  output[6] = (tran_low_t)WRAPLOW(step2[6] + step2[9]);
+  output[7] = (tran_low_t)WRAPLOW(step2[7] + step2[8]);
+  output[8] = (tran_low_t)WRAPLOW(step2[7] - step2[8]);
+  output[9] = (tran_low_t)WRAPLOW(step2[6] - step2[9]);
+  output[10] = (tran_low_t)WRAPLOW(step2[5] - step2[10]);
+  output[11] = (tran_low_t)WRAPLOW(step2[4] - step2[11]);
+  output[12] = (tran_low_t)WRAPLOW(step2[3] - step2[12]);
+  output[13] = (tran_low_t)WRAPLOW(step2[2] - step2[13]);
+  output[14] = (tran_low_t)WRAPLOW(step2[1] - step2[14]);
+  output[15] = (tran_low_t)WRAPLOW(step2[0] - step2[15]);
 }
 
 void vpx_idct16x16_256_add_c(const tran_low_t *input, uint8_t *dest,
@@ -1346,12 +1346,12 @@ void vpx_highbd_iwht4x4_16_add_c(const tran_low_t *input, uint16_t *dest,
   }
 }
 
-void vpx_highbd_iwht4x4_1_add_c(const tran_low_t *in, uint16_t *dest,
+void vpx_highbd_iwht4x4_1_add_c(const tran_low_t *input, uint16_t *dest,
                                 int stride, int bd) {
   int i;
   tran_high_t a1, e1;
   tran_low_t tmp[4];
-  const tran_low_t *ip = in;
+  const tran_low_t *ip = input;
   tran_low_t *op = tmp;
   (void)bd;
 

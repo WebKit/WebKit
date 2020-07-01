@@ -1,3 +1,143 @@
+2020-07-01  Youenn Fablet  <youenn@apple.com>
+
+        Add a functional WebRTC VP9 codec
+        https://bugs.webkit.org/show_bug.cgi?id=213778
+
+        Reviewed by Eric Carlson.
+
+        Update libvpx to synchronize VP9 support with the rest of libwebrtc.
+        Disable vp9_noop in the build system and use function vp9 encoder/decoder instead.
+
+        * Configurations/libvpx.xcconfig:
+        * Source/third_party/libvpx/BUILD.gn:
+        * Source/third_party/libvpx/OWNERS:
+        * Source/third_party/libvpx/README.chromium:
+        * Source/third_party/libvpx/generate_gni.sh:
+        * Source/third_party/libvpx/libvpx_srcs.gni:
+        * Source/third_party/libvpx/lint_config.sh:
+        * Source/third_party/libvpx/run_perl.py:
+        * Source/third_party/libvpx/source/config/ios/arm-neon/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/ios/arm-neon/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/ios/arm-neon/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/ios/arm-neon/vpx_config.c:
+        * Source/third_party/libvpx/source/config/ios/arm-neon/vpx_config.h:
+        * Source/third_party/libvpx/source/config/ios/arm-neon/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/ios/arm64/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/ios/arm64/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/ios/arm64/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/ios/arm64/vpx_config.c:
+        * Source/third_party/libvpx/source/config/ios/arm64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/ios/arm64/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-cpu-detect/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-cpu-detect/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-cpu-detect/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-cpu-detect/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-cpu-detect/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-cpu-detect/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vp8_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm-neon/vp8_rtcd.h.
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vp9_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/generic/vp9_rtcd.h.
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vpx_config.asm: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm-neon/vpx_config.asm.
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vpx_config.c: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/ios/arm-neon/vpx_config.c.
+        (vpx_codec_build_config):
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vpx_config.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm-neon/vpx_config.h.
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vpx_dsp_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/generic/vpx_dsp_rtcd.h.
+        * Source/third_party/libvpx/source/config/linux/arm-neon-highbd/vpx_scale_rtcd.h: Added.
+        * Source/third_party/libvpx/source/config/linux/arm-neon/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/arm-neon/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/arm-neon/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/arm-neon/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/arm/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/arm/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/arm/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vp8_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm-neon/vp8_rtcd.h.
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vp9_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/generic/vp9_rtcd.h.
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_config.asm: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm64/vpx_config.asm.
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_config.c: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/ios/arm64/vpx_config.c.
+        (vpx_codec_build_config):
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_config.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm64/vpx_config.h.
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_dsp_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/generic/vpx_dsp_rtcd.h.
+        * Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_scale_rtcd.h: Added.
+        * Source/third_party/libvpx/source/config/linux/arm64/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm64/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/arm64/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/arm64/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/arm64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/arm64/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/generic/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/generic/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/generic/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/generic/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/generic/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/generic/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/ia32/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/ia32/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/ia32/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/ia32/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/ia32/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/ia32/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/mips64el/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/mips64el/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/mips64el/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/mips64el/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/mips64el/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/mipsel/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/mipsel/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/mipsel/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/mipsel/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/mipsel/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/x64/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/x64/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/linux/x64/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/linux/x64/vpx_config.c:
+        * Source/third_party/libvpx/source/config/linux/x64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/linux/x64/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/ia32/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/ia32/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/ia32/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/mac/ia32/vpx_config.c:
+        * Source/third_party/libvpx/source/config/mac/ia32/vpx_config.h:
+        * Source/third_party/libvpx/source/config/mac/ia32/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vp8_rtcd_no_acceleration.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_config.c:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_dsp_rtcd_no_acceleration.h:
+        * Source/third_party/libvpx/source/config/nacl/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/nacl/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/nacl/vpx_config.c:
+        * Source/third_party/libvpx/source/config/nacl/vpx_config.h:
+        * Source/third_party/libvpx/source/config/nacl/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/vpx_version.h:
+        * Source/third_party/libvpx/source/config/win/arm64/vp8_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm-neon/vp8_rtcd.h.
+        * Source/third_party/libvpx/source/config/win/arm64/vp9_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/generic/vp9_rtcd.h.
+        * Source/third_party/libvpx/source/config/win/arm64/vpx_config.asm: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/ios/arm64/vpx_config.asm.
+        * Source/third_party/libvpx/source/config/win/arm64/vpx_config.c: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/mips64el/vpx_config.c.
+        (vpx_codec_build_config):
+        * Source/third_party/libvpx/source/config/win/arm64/vpx_config.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/arm64/vpx_config.h.
+        * Source/third_party/libvpx/source/config/win/arm64/vpx_dsp_rtcd.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux/generic/vpx_dsp_rtcd.h.
+        * Source/third_party/libvpx/source/config/win/arm64/vpx_scale_rtcd.h: Added.
+        * Source/third_party/libvpx/source/config/win/ia32/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/win/ia32/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/win/ia32/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/win/ia32/vpx_config.c:
+        * Source/third_party/libvpx/source/config/win/ia32/vpx_config.h:
+        * Source/third_party/libvpx/source/config/win/ia32/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/win/x64/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/win/x64/vp9_rtcd.h:
+        * Source/third_party/libvpx/source/config/win/x64/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/win/x64/vpx_config.c:
+        * Source/third_party/libvpx/source/config/win/x64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/win/x64/vpx_dsp_rtcd.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-06-30  Youenn Fablet  <youenn@apple.com>
 
         Add VP9 WebRTC codec runtime flag

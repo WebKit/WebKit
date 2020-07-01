@@ -12,8 +12,8 @@
  * \brief Describes the vpx image descriptor and associated operations
  *
  */
-#ifndef VPX_VPX_IMAGE_H_
-#define VPX_VPX_IMAGE_H_
+#ifndef VPX_VPX_VPX_IMAGE_H_
+#define VPX_VPX_VPX_IMAGE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +27,7 @@ extern "C" {
  * types, removing or reassigning enums, adding/removing/rearranging
  * fields to structures
  */
-#define VPX_IMAGE_ABI_VERSION (4) /**<\hideinitializer*/
+#define VPX_IMAGE_ABI_VERSION (5) /**<\hideinitializer*/
 
 #define VPX_IMG_FMT_PLANAR 0x100       /**< Image is a planar format. */
 #define VPX_IMG_FMT_UV_FLIP 0x200      /**< V plane precedes U in memory. */
@@ -37,29 +37,12 @@ extern "C" {
 /*!\brief List of supported image formats */
 typedef enum vpx_img_fmt {
   VPX_IMG_FMT_NONE,
-  VPX_IMG_FMT_RGB24,     /**< 24 bit per pixel packed RGB */
-  VPX_IMG_FMT_RGB32,     /**< 32 bit per pixel packed 0RGB */
-  VPX_IMG_FMT_RGB565,    /**< 16 bit per pixel, 565 */
-  VPX_IMG_FMT_RGB555,    /**< 16 bit per pixel, 555 */
-  VPX_IMG_FMT_UYVY,      /**< UYVY packed YUV */
-  VPX_IMG_FMT_YUY2,      /**< YUYV packed YUV */
-  VPX_IMG_FMT_YVYU,      /**< YVYU packed YUV */
-  VPX_IMG_FMT_BGR24,     /**< 24 bit per pixel packed BGR */
-  VPX_IMG_FMT_RGB32_LE,  /**< 32 bit packed BGR0 */
-  VPX_IMG_FMT_ARGB,      /**< 32 bit packed ARGB, alpha=255 */
-  VPX_IMG_FMT_ARGB_LE,   /**< 32 bit packed BGRA, alpha=255 */
-  VPX_IMG_FMT_RGB565_LE, /**< 16 bit per pixel, gggbbbbb rrrrrggg */
-  VPX_IMG_FMT_RGB555_LE, /**< 16 bit per pixel, gggbbbbb 0rrrrrgg */
   VPX_IMG_FMT_YV12 =
       VPX_IMG_FMT_PLANAR | VPX_IMG_FMT_UV_FLIP | 1, /**< planar YVU */
   VPX_IMG_FMT_I420 = VPX_IMG_FMT_PLANAR | 2,
-  VPX_IMG_FMT_VPXYV12 = VPX_IMG_FMT_PLANAR | VPX_IMG_FMT_UV_FLIP |
-                        3, /** < planar 4:2:0 format with vpx color space */
-  VPX_IMG_FMT_VPXI420 = VPX_IMG_FMT_PLANAR | 4,
   VPX_IMG_FMT_I422 = VPX_IMG_FMT_PLANAR | 5,
   VPX_IMG_FMT_I444 = VPX_IMG_FMT_PLANAR | 6,
   VPX_IMG_FMT_I440 = VPX_IMG_FMT_PLANAR | 7,
-  VPX_IMG_FMT_444A = VPX_IMG_FMT_PLANAR | VPX_IMG_FMT_HAS_ALPHA | 6,
   VPX_IMG_FMT_I42016 = VPX_IMG_FMT_I420 | VPX_IMG_FMT_HIGHBITDEPTH,
   VPX_IMG_FMT_I42216 = VPX_IMG_FMT_I422 | VPX_IMG_FMT_HIGHBITDEPTH,
   VPX_IMG_FMT_I44416 = VPX_IMG_FMT_I444 | VPX_IMG_FMT_HIGHBITDEPTH,
@@ -167,21 +150,21 @@ vpx_image_t *vpx_img_alloc(vpx_image_t *img, vpx_img_fmt_t fmt,
  * storage for descriptor has been allocated elsewhere, and a descriptor is
  * desired to "wrap" that storage.
  *
- * \param[in]    img       Pointer to storage for descriptor. If this parameter
- *                         is NULL, the storage for the descriptor will be
- *                         allocated on the heap.
- * \param[in]    fmt       Format for the image
- * \param[in]    d_w       Width of the image
- * \param[in]    d_h       Height of the image
- * \param[in]    align     Alignment, in bytes, of each row in the image.
- * \param[in]    img_data  Storage to use for the image
+ * \param[in]    img           Pointer to storage for descriptor. If this
+ *                             parameter is NULL, the storage for the descriptor
+ *                             will be allocated on the heap.
+ * \param[in]    fmt           Format for the image
+ * \param[in]    d_w           Width of the image
+ * \param[in]    d_h           Height of the image
+ * \param[in]    stride_align  Alignment, in bytes, of each row in the image.
+ * \param[in]    img_data      Storage to use for the image
  *
  * \return Returns a pointer to the initialized image descriptor. If the img
  *         parameter is non-null, the value of the img parameter will be
  *         returned.
  */
 vpx_image_t *vpx_img_wrap(vpx_image_t *img, vpx_img_fmt_t fmt, unsigned int d_w,
-                          unsigned int d_h, unsigned int align,
+                          unsigned int d_h, unsigned int stride_align,
                           unsigned char *img_data);
 
 /*!\brief Set the rectangle identifying the displayed portion of the image
@@ -221,4 +204,4 @@ void vpx_img_free(vpx_image_t *img);
 }  // extern "C"
 #endif
 
-#endif  // VPX_VPX_IMAGE_H_
+#endif  // VPX_VPX_VPX_IMAGE_H_

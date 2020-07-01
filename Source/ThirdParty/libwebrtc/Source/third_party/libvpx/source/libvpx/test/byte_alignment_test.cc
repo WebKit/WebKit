@@ -171,8 +171,9 @@ TEST_F(ByteAlignmentTest, SwitchByteAlignment) {
 TEST_P(ByteAlignmentTest, TestAlignment) {
   const ByteAlignmentTestParam t = GetParam();
   SetByteAlignment(t.byte_alignment, t.expected_value);
-  if (t.decode_remaining)
+  if (t.decode_remaining) {
     ASSERT_EQ(VPX_CODEC_OK, DecodeRemainingFrames(t.byte_alignment));
+  }
 }
 
 INSTANTIATE_TEST_CASE_P(Alignments, ByteAlignmentTest,

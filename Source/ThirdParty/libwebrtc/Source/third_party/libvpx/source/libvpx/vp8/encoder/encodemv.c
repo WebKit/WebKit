@@ -16,10 +16,6 @@
 
 #include <math.h>
 
-#ifdef VP8_ENTROPY_STATS
-extern unsigned int active_section;
-#endif
-
 static void encode_mvcomponent(vp8_writer *const w, const int v,
                                const struct mv_context *mvc) {
   const vp8_prob *p = mvc->prob;
@@ -309,9 +305,6 @@ void vp8_write_mvprobs(VP8_COMP *cpi) {
   vp8_writer *const w = cpi->bc;
   MV_CONTEXT *mvc = cpi->common.fc.mvc;
   int flags[2] = { 0, 0 };
-#ifdef VP8_ENTROPY_STATS
-  active_section = 4;
-#endif
   write_component_probs(w, &mvc[0], &vp8_default_mv_context[0],
                         &vp8_mv_update_probs[0], cpi->mb.MVcount[0], 0,
                         &flags[0]);
@@ -323,8 +316,4 @@ void vp8_write_mvprobs(VP8_COMP *cpi) {
     vp8_build_component_cost_table(
         cpi->mb.mvcost, (const MV_CONTEXT *)cpi->common.fc.mvc, flags);
   }
-
-#ifdef VP8_ENTROPY_STATS
-  active_section = 5;
-#endif
 }

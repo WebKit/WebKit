@@ -12,6 +12,7 @@
 
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
+#include "vpx_dsp/arm/highbd_idct_neon.h"
 #include "vpx_dsp/arm/idct_neon.h"
 #include "vpx_dsp/arm/transpose_neon.h"
 #include "vpx_dsp/txfm_common.h"

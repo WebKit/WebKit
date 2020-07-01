@@ -57,6 +57,30 @@ void vp9_rd_cost_init(RD_COST *rd_cost) {
   rd_cost->rdcost = 0;
 }
 
+int64_t vp9_calculate_rd_cost(int mult, int div, int rate, int64_t dist) {
+  assert(mult >= 0);
+  assert(div > 0);
+  if (rate >= 0 && dist >= 0) {
+    return RDCOST(mult, div, rate, dist);
+  }
+  if (rate >= 0 && dist < 0) {
+    return RDCOST_NEG_D(mult, div, rate, -dist);
+  }
+  if (rate < 0 && dist >= 0) {
+    return RDCOST_NEG_R(mult, div, -rate, dist);
+  }
+  return -RDCOST(mult, div, -rate, -dist);
+}
+
+void vp9_rd_cost_update(int mult, int div, RD_COST *rd_cost) {
+  if (rd_cost->rate < INT_MAX && rd_cost->dist < INT64_MAX) {
+    rd_cost->rdcost =
+        vp9_calculate_rd_cost(mult, div, rd_cost->rate, rd_cost->dist);
+  } else {
+    vp9_rd_cost_reset(rd_cost);
+  }
+}
+
 // The baseline rd thresholds for breaking out of the rd loop for
 // certain modes are assumed to be based on 8x8 blocks.
 // This table is used to correct for block size.
@@ -69,10 +93,12 @@ static void fill_mode_costs(VP9_COMP *cpi) {
   const FRAME_CONTEXT *const fc = cpi->common.fc;
   int i, j;
 
-  for (i = 0; i < INTRA_MODES; ++i)
-    for (j = 0; j < INTRA_MODES; ++j)
+  for (i = 0; i < INTRA_MODES; ++i) {
+    for (j = 0; j < INTRA_MODES; ++j) {
       vp9_cost_tokens(cpi->y_mode_costs[i][j], vp9_kf_y_mode_prob[i][j],
                       vp9_intra_mode_tree);
+    }
+  }
 
   vp9_cost_tokens(cpi->mbmode_cost, fc->y_mode_prob[1], vp9_intra_mode_tree);
   for (i = 0; i < INTRA_MODES; ++i) {
@@ -82,9 +108,28 @@ static void fill_mode_costs(VP9_COMP *cpi) {
                     fc->uv_mode_prob[i], vp9_intra_mode_tree);
   }
 
-  for (i = 0; i < SWITCHABLE_FILTER_CONTEXTS; ++i)
+  for (i = 0; i < SWITCHABLE_FILTER_CONTEXTS; ++i) {
     vp9_cost_tokens(cpi->switchable_interp_costs[i],
                     fc->switchable_interp_prob[i], vp9_switchable_interp_tree);
+  }
+
+  for (i = TX_8X8; i < TX_SIZES; ++i) {
+    for (j = 0; j < TX_SIZE_CONTEXTS; ++j) {
+      const vpx_prob *tx_probs = get_tx_probs(i, j, &fc->tx_probs);
+      int k;
+      for (k = 0; k <= i; ++k) {
+        int cost = 0;
+        int m;
+        for (m = 0; m <= k - (k == i); ++m) {
+          if (m == k)
+            cost += vp9_cost_zero(tx_probs[m]);
+          else
+            cost += vp9_cost_one(tx_probs[m]);
+        }
+        cpi->tx_size_cost[i - 1][j][k] = cost;
+      }
+    }
+  }
 }
 
 static void fill_token_costs(vp9_coeff_cost *c,
@@ -143,40 +188,74 @@ void vp9_init_me_luts(void) {
 
 static const int rd_boost_factor[16] = { 64, 32, 32, 32, 24, 16, 12, 12,
                                          8,  8,  4,  4,  2,  2,  1,  0 };
-static const int rd_frame_type_factor[FRAME_UPDATE_TYPES] = { 128, 144, 128,
-                                                              128, 144 };
 
-int64_t vp9_compute_rd_mult_based_on_qindex(const VP9_COMP *cpi, int qindex) {
-  const int64_t q = vp9_dc_quant(qindex, 0, cpi->common.bit_depth);
-#if CONFIG_VP9_HIGHBITDEPTH
-  int64_t rdmult = 0;
-  switch (cpi->common.bit_depth) {
-    case VPX_BITS_8: rdmult = 88 * q * q / 24; break;
-    case VPX_BITS_10: rdmult = ROUND_POWER_OF_TWO(88 * q * q / 24, 4); break;
-    case VPX_BITS_12: rdmult = ROUND_POWER_OF_TWO(88 * q * q / 24, 8); break;
-    default:
-      assert(0 && "bit_depth should be VPX_BITS_8, VPX_BITS_10 or VPX_BITS_12");
-      return -1;
+// Note that the element below for frame type "USE_BUF_FRAME", which indicates
+// that the show frame flag is set, should not be used as no real frame
+// is encoded so we should not reach here. However, a dummy value
+// is inserted here to make sure the data structure has the right number
+// of values assigned.
+static const int rd_frame_type_factor[FRAME_UPDATE_TYPES] = { 128, 144, 128,
+                                                              128, 144, 144 };
+
+int vp9_compute_rd_mult_based_on_qindex(const VP9_COMP *cpi, int qindex) {
+  // largest dc_quant is 21387, therefore rdmult should always fit in int32_t
+  const int q = vp9_dc_quant(qindex, 0, cpi->common.bit_depth);
+  uint32_t rdmult = q * q;
+
+  if (cpi->common.frame_type != KEY_FRAME) {
+    if (qindex < 128)
+      rdmult = rdmult * 4;
+    else if (qindex < 190)
+      rdmult = rdmult * 4 + rdmult / 2;
+    else
+      rdmult = rdmult * 3;
+  } else {
+    if (qindex < 64)
+      rdmult = rdmult * 4;
+    else if (qindex <= 128)
+      rdmult = rdmult * 3 + rdmult / 2;
+    else if (qindex < 190)
+      rdmult = rdmult * 4 + rdmult / 2;
+    else
+      rdmult = rdmult * 7 + rdmult / 2;
   }
-#else
-  int64_t rdmult = 88 * q * q / 24;
+#if CONFIG_VP9_HIGHBITDEPTH
+  switch (cpi->common.bit_depth) {
+    case VPX_BITS_10: rdmult = ROUND_POWER_OF_TWO(rdmult, 4); break;
+    case VPX_BITS_12: rdmult = ROUND_POWER_OF_TWO(rdmult, 8); break;
+    default: break;
+  }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-  return rdmult;
+  return rdmult > 0 ? rdmult : 1;
 }
 
-int vp9_compute_rd_mult(const VP9_COMP *cpi, int qindex) {
-  int64_t rdmult = vp9_compute_rd_mult_based_on_qindex(cpi, qindex);
-
+static int modulate_rdmult(const VP9_COMP *cpi, int rdmult) {
+  int64_t rdmult_64 = rdmult;
   if (cpi->oxcf.pass == 2 && (cpi->common.frame_type != KEY_FRAME)) {
     const GF_GROUP *const gf_group = &cpi->twopass.gf_group;
     const FRAME_UPDATE_TYPE frame_type = gf_group->update_type[gf_group->index];
-    const int boost_index = VPXMIN(15, (cpi->rc.gfu_boost / 100));
+    const int gfu_boost = cpi->multi_layer_arf
+                              ? gf_group->gfu_boost[gf_group->index]
+                              : cpi->rc.gfu_boost;
+    const int boost_index = VPXMIN(15, (gfu_boost / 100));
 
-    rdmult = (rdmult * rd_frame_type_factor[frame_type]) >> 7;
-    rdmult += ((rdmult * rd_boost_factor[boost_index]) >> 7);
+    rdmult_64 = (rdmult_64 * rd_frame_type_factor[frame_type]) >> 7;
+    rdmult_64 += ((rdmult_64 * rd_boost_factor[boost_index]) >> 7);
   }
-  if (rdmult < 1) rdmult = 1;
-  return (int)rdmult;
+  return (int)rdmult_64;
+}
+
+int vp9_compute_rd_mult(const VP9_COMP *cpi, int qindex) {
+  int rdmult = vp9_compute_rd_mult_based_on_qindex(cpi, qindex);
+  return modulate_rdmult(cpi, rdmult);
+}
+
+int vp9_get_adaptive_rdmult(const VP9_COMP *cpi, double beta) {
+  int rdmult =
+      vp9_compute_rd_mult_based_on_qindex(cpi, cpi->common.base_qindex);
+  rdmult = (int)((double)rdmult / beta);
+  rdmult = rdmult > 0 ? rdmult : 1;
+  return modulate_rdmult(cpi, rdmult);
 }
 
 static int compute_rd_thresh_factor(int qindex, vpx_bit_depth_t bit_depth) {
@@ -185,10 +264,10 @@ static int compute_rd_thresh_factor(int qindex, vpx_bit_depth_t bit_depth) {
   switch (bit_depth) {
     case VPX_BITS_8: q = vp9_dc_quant(qindex, 0, VPX_BITS_8) / 4.0; break;
     case VPX_BITS_10: q = vp9_dc_quant(qindex, 0, VPX_BITS_10) / 16.0; break;
-    case VPX_BITS_12: q = vp9_dc_quant(qindex, 0, VPX_BITS_12) / 64.0; break;
     default:
-      assert(0 && "bit_depth should be VPX_BITS_8, VPX_BITS_10 or VPX_BITS_12");
-      return -1;
+      assert(bit_depth == VPX_BITS_12);
+      q = vp9_dc_quant(qindex, 0, VPX_BITS_12) / 64.0;
+      break;
   }
 #else
   (void)bit_depth;
@@ -209,12 +288,11 @@ void vp9_initialize_me_consts(VP9_COMP *cpi, MACROBLOCK *x, int qindex) {
       x->sadperbit16 = sad_per_bit16lut_10[qindex];
       x->sadperbit4 = sad_per_bit4lut_10[qindex];
       break;
-    case VPX_BITS_12:
+    default:
+      assert(cpi->common.bit_depth == VPX_BITS_12);
       x->sadperbit16 = sad_per_bit16lut_12[qindex];
       x->sadperbit4 = sad_per_bit4lut_12[qindex];
       break;
-    default:
-      assert(0 && "bit_depth should be VPX_BITS_8, VPX_BITS_10 or VPX_BITS_12");
   }
 #else
   (void)cpi;
@@ -252,6 +330,15 @@ static void set_block_thresholds(const VP9_COMMON *cm, RD_OPT *rd) {
                   : INT_MAX;
       }
     }
+  }
+}
+
+void vp9_build_inter_mode_cost(VP9_COMP *cpi) {
+  const VP9_COMMON *const cm = &cpi->common;
+  int i;
+  for (i = 0; i < INTER_MODE_CONTEXTS; ++i) {
+    vp9_cost_tokens((int *)cpi->inter_mode_cost[i], cm->fc->inter_mode_probs[i],
+                    vp9_inter_mode_tree);
   }
 }
 
@@ -303,10 +390,7 @@ void vp9_initialize_rd_consts(VP9_COMP *cpi) {
             x->nmvjointcost,
             cm->allow_high_precision_mv ? x->nmvcost_hp : x->nmvcost,
             &cm->fc->nmvc, cm->allow_high_precision_mv);
-
-        for (i = 0; i < INTER_MODE_CONTEXTS; ++i)
-          vp9_cost_tokens((int *)cpi->inter_mode_cost[i],
-                          cm->fc->inter_mode_probs[i], vp9_inter_mode_tree);
+        vp9_build_inter_mode_cost(cpi);
       }
     }
   }
@@ -471,13 +555,13 @@ void vp9_get_entropy_contexts(BLOCK_SIZE bsize, TX_SIZE tx_size,
       for (i = 0; i < num_4x4_h; i += 4)
         t_left[i] = !!*(const uint32_t *)&left[i];
       break;
-    case TX_32X32:
+    default:
+      assert(tx_size == TX_32X32);
       for (i = 0; i < num_4x4_w; i += 8)
         t_above[i] = !!*(const uint64_t *)&above[i];
       for (i = 0; i < num_4x4_h; i += 8)
         t_left[i] = !!*(const uint64_t *)&left[i];
       break;
-    default: assert(0 && "Invalid transform size."); break;
   }
 }
 
@@ -493,8 +577,7 @@ void vp9_mv_pred(VP9_COMP *cpi, MACROBLOCK *x, uint8_t *ref_y_buffer,
   uint8_t *src_y_ptr = x->plane[0].src.buf;
   uint8_t *ref_y_ptr;
   const int num_mv_refs =
-      MAX_MV_REF_CANDIDATES +
-      (cpi->sf.adaptive_motion_search && block_size < x->max_partition_size);
+      MAX_MV_REF_CANDIDATES + (block_size < x->max_partition_size);
 
   MV pred_mv[3];
   pred_mv[0] = x->mbmi_ext->ref_mvs[ref_frame][0].as_mv;
@@ -504,11 +587,12 @@ void vp9_mv_pred(VP9_COMP *cpi, MACROBLOCK *x, uint8_t *ref_y_buffer,
 
   near_same_nearest = x->mbmi_ext->ref_mvs[ref_frame][0].as_int ==
                       x->mbmi_ext->ref_mvs[ref_frame][1].as_int;
+
   // Get the sad for each candidate reference mv.
   for (i = 0; i < num_mv_refs; ++i) {
     const MV *this_mv = &pred_mv[i];
     int fp_row, fp_col;
-
+    if (this_mv->row == INT16_MAX || this_mv->col == INT16_MAX) continue;
     if (i == 1 && near_same_nearest) continue;
     fp_row = (this_mv->row + 3 + (this_mv->row >= 0)) >> 3;
     fp_col = (this_mv->col + 3 + (this_mv->col >= 0)) >> 3;
@@ -573,6 +657,7 @@ YV12_BUFFER_CONFIG *vp9_get_scaled_ref_frame(const VP9_COMP *cpi,
   const VP9_COMMON *const cm = &cpi->common;
   const int scaled_idx = cpi->scaled_ref_idx[ref_frame - 1];
   const int ref_idx = get_ref_frame_buf_idx(cpi, ref_frame);
+  assert(ref_frame >= LAST_FRAME && ref_frame <= ALTREF_FRAME);
   return (scaled_idx != ref_idx && scaled_idx != INVALID_IDX)
              ? &cm->buffer_pool->frame_bufs[scaled_idx].buf
              : NULL;

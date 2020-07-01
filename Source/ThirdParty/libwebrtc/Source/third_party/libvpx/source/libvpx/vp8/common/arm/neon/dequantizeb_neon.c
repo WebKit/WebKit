@@ -10,6 +10,7 @@
 
 #include <arm_neon.h>
 
+#include "./vp8_rtcd.h"
 #include "vp8/common/blockd.h"
 
 void vp8_dequantize_b_neon(BLOCKD *d, short *DQC) {

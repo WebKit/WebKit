@@ -8,10 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "memory"
+
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
+#include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/y4m_video_source.h"
 #include "test/yuv_video_source.h"
@@ -21,14 +24,14 @@ namespace {
 const unsigned int kWidth = 160;
 const unsigned int kHeight = 90;
 const unsigned int kFramerate = 50;
-const unsigned int kFrames = 10;
+const unsigned int kFrames = 20;
 const int kBitrate = 500;
 // List of psnr thresholds for speed settings 0-7 and 5 encoding modes
 const double kPsnrThreshold[][5] = {
   { 36.0, 37.0, 37.0, 37.0, 37.0 }, { 35.0, 36.0, 36.0, 36.0, 36.0 },
   { 34.0, 35.0, 35.0, 35.0, 35.0 }, { 33.0, 34.0, 34.0, 34.0, 34.0 },
-  { 32.0, 33.0, 33.0, 33.0, 33.0 }, { 31.0, 32.0, 32.0, 32.0, 32.0 },
-  { 30.0, 31.0, 31.0, 31.0, 31.0 }, { 29.0, 30.0, 30.0, 30.0, 30.0 },
+  { 32.0, 33.0, 33.0, 33.0, 33.0 }, { 28.0, 32.0, 32.0, 32.0, 32.0 },
+  { 28.5, 31.0, 31.0, 31.0, 31.0 }, { 27.5, 30.0, 30.0, 30.0, 30.0 },
 };
 
 typedef struct {
@@ -45,13 +48,13 @@ const TestVideoParam kTestVectors[] = {
   { "park_joy_90p_8_444.y4m", 8, VPX_IMG_FMT_I444, VPX_BITS_8, 1 },
   { "park_joy_90p_8_440.yuv", 8, VPX_IMG_FMT_I440, VPX_BITS_8, 1 },
 #if CONFIG_VP9_HIGHBITDEPTH
-  { "park_joy_90p_10_420.y4m", 10, VPX_IMG_FMT_I42016, VPX_BITS_10, 2 },
-  { "park_joy_90p_10_422.y4m", 10, VPX_IMG_FMT_I42216, VPX_BITS_10, 3 },
-  { "park_joy_90p_10_444.y4m", 10, VPX_IMG_FMT_I44416, VPX_BITS_10, 3 },
+  { "park_joy_90p_10_420_20f.y4m", 10, VPX_IMG_FMT_I42016, VPX_BITS_10, 2 },
+  { "park_joy_90p_10_422_20f.y4m", 10, VPX_IMG_FMT_I42216, VPX_BITS_10, 3 },
+  { "park_joy_90p_10_444_20f.y4m", 10, VPX_IMG_FMT_I44416, VPX_BITS_10, 3 },
   { "park_joy_90p_10_440.yuv", 10, VPX_IMG_FMT_I44016, VPX_BITS_10, 3 },
-  { "park_joy_90p_12_420.y4m", 12, VPX_IMG_FMT_I42016, VPX_BITS_12, 2 },
-  { "park_joy_90p_12_422.y4m", 12, VPX_IMG_FMT_I42216, VPX_BITS_12, 3 },
-  { "park_joy_90p_12_444.y4m", 12, VPX_IMG_FMT_I44416, VPX_BITS_12, 3 },
+  { "park_joy_90p_12_420_20f.y4m", 12, VPX_IMG_FMT_I42016, VPX_BITS_12, 2 },
+  { "park_joy_90p_12_422_20f.y4m", 12, VPX_IMG_FMT_I42216, VPX_BITS_12, 3 },
+  { "park_joy_90p_12_444_20f.y4m", 12, VPX_IMG_FMT_I44416, VPX_BITS_12, 3 },
   { "park_joy_90p_12_440.yuv", 12, VPX_IMG_FMT_I44016, VPX_BITS_12, 3 },
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 };
@@ -63,7 +66,7 @@ const libvpx_test::TestMode kEncodingModeVectors[] = {
 };
 
 // Speed settings tested
-const int kCpuUsedVectors[] = { 1, 2, 3, 5, 6 };
+const int kCpuUsedVectors[] = { 1, 2, 3, 5, 6, 7 };
 
 int is_extension_y4m(const char *filename) {
   const char *dot = strrchr(filename, '.');
@@ -74,6 +77,43 @@ int is_extension_y4m(const char *filename) {
   }
 }
 
+class EndToEndTestAdaptiveRDThresh
+    : public ::libvpx_test::EncoderTest,
+      public ::libvpx_test::CodecTestWith2Params<int, int> {
+ protected:
+  EndToEndTestAdaptiveRDThresh()
+      : EncoderTest(GET_PARAM(0)), cpu_used_start_(GET_PARAM(1)),
+        cpu_used_end_(GET_PARAM(2)) {}
+
+  virtual ~EndToEndTestAdaptiveRDThresh() {}
+
+  virtual void SetUp() {
+    InitializeConfig();
+    SetMode(::libvpx_test::kRealTime);
+    cfg_.g_lag_in_frames = 0;
+    cfg_.rc_end_usage = VPX_CBR;
+    cfg_.rc_buf_sz = 1000;
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_buf_optimal_sz = 600;
+    dec_cfg_.threads = 4;
+  }
+
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
+    if (video->frame() == 0) {
+      encoder->Control(VP8E_SET_CPUUSED, cpu_used_start_);
+      encoder->Control(VP9E_SET_ROW_MT, 1);
+      encoder->Control(VP9E_SET_TILE_COLUMNS, 2);
+    }
+    if (video->frame() == 100)
+      encoder->Control(VP8E_SET_CPUUSED, cpu_used_end_);
+  }
+
+ private:
+  int cpu_used_start_;
+  int cpu_used_end_;
+};
+
 class EndToEndTestLarge
     : public ::libvpx_test::EncoderTest,
       public ::libvpx_test::CodecTestWith3Params<libvpx_test::TestMode,
@@ -82,7 +122,10 @@ class EndToEndTestLarge
   EndToEndTestLarge()
       : EncoderTest(GET_PARAM(0)), test_video_param_(GET_PARAM(2)),
         cpu_used_(GET_PARAM(3)), psnr_(0.0), nframes_(0),
-        encoding_mode_(GET_PARAM(1)) {}
+        encoding_mode_(GET_PARAM(1)) {
+    cyclic_refresh_ = 0;
+    denoiser_on_ = 0;
+  }
 
   virtual ~EndToEndTestLarge() {}
 
@@ -114,7 +157,7 @@ class EndToEndTestLarge
 
   virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
                                   ::libvpx_test::Encoder *encoder) {
-    if (video->frame() == 1) {
+    if (video->frame() == 0) {
       encoder->Control(VP9E_SET_FRAME_PARALLEL_DECODING, 1);
       encoder->Control(VP9E_SET_TILE_COLUMNS, 4);
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
@@ -123,6 +166,9 @@ class EndToEndTestLarge
         encoder->Control(VP8E_SET_ARNR_MAXFRAMES, 7);
         encoder->Control(VP8E_SET_ARNR_STRENGTH, 5);
         encoder->Control(VP8E_SET_ARNR_TYPE, 3);
+      } else {
+        encoder->Control(VP9E_SET_NOISE_SENSITIVITY, denoiser_on_);
+        encoder->Control(VP9E_SET_AQ_MODE, cyclic_refresh_);
       }
     }
   }
@@ -138,12 +184,58 @@ class EndToEndTestLarge
 
   TestVideoParam test_video_param_;
   int cpu_used_;
+  int cyclic_refresh_;
+  int denoiser_on_;
 
  private:
   double psnr_;
   unsigned int nframes_;
   libvpx_test::TestMode encoding_mode_;
 };
+
+#if CONFIG_VP9_DECODER
+// The test parameters control VP9D_SET_LOOP_FILTER_OPT and the number of
+// decoder threads.
+class EndToEndTestLoopFilterThreading
+    : public ::libvpx_test::EncoderTest,
+      public ::libvpx_test::CodecTestWith2Params<bool, int> {
+ protected:
+  EndToEndTestLoopFilterThreading()
+      : EncoderTest(GET_PARAM(0)), use_loop_filter_opt_(GET_PARAM(1)) {}
+
+  virtual ~EndToEndTestLoopFilterThreading() {}
+
+  virtual void SetUp() {
+    InitializeConfig();
+    SetMode(::libvpx_test::kRealTime);
+    cfg_.g_threads = 2;
+    cfg_.g_lag_in_frames = 0;
+    cfg_.rc_target_bitrate = 500;
+    cfg_.rc_end_usage = VPX_CBR;
+    cfg_.kf_min_dist = 1;
+    cfg_.kf_max_dist = 1;
+    dec_cfg_.threads = GET_PARAM(2);
+  }
+
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
+    if (video->frame() == 0) {
+      encoder->Control(VP8E_SET_CPUUSED, 8);
+    }
+    encoder->Control(VP9E_SET_TILE_COLUMNS, 4 - video->frame() % 5);
+  }
+
+  virtual void PreDecodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Decoder *decoder) {
+    if (video->frame() == 0) {
+      decoder->Control(VP9D_SET_LOOP_FILTER_OPT, use_loop_filter_opt_ ? 1 : 0);
+    }
+  }
+
+ private:
+  const bool use_loop_filter_opt_;
+};
+#endif  // CONFIG_VP9_DECODER
 
 TEST_P(EndToEndTestLarge, EndtoEndPSNRTest) {
   cfg_.rc_target_bitrate = kBitrate;
@@ -154,7 +246,7 @@ TEST_P(EndToEndTestLarge, EndtoEndPSNRTest) {
   init_flags_ = VPX_CODEC_USE_PSNR;
   if (cfg_.g_bit_depth > 8) init_flags_ |= VPX_CODEC_USE_HIGHBITDEPTH;
 
-  testing::internal::scoped_ptr<libvpx_test::VideoSource> video;
+  std::unique_ptr<libvpx_test::VideoSource> video;
   if (is_extension_y4m(test_video_param_.filename)) {
     video.reset(new libvpx_test::Y4mVideoSource(test_video_param_.filename, 0,
                                                 kFrames));
@@ -170,8 +262,63 @@ TEST_P(EndToEndTestLarge, EndtoEndPSNRTest) {
   EXPECT_GT(psnr, GetPsnrThreshold());
 }
 
+TEST_P(EndToEndTestLarge, EndtoEndPSNRDenoiserAQTest) {
+  cfg_.rc_target_bitrate = kBitrate;
+  cfg_.g_error_resilient = 0;
+  cfg_.g_profile = test_video_param_.profile;
+  cfg_.g_input_bit_depth = test_video_param_.input_bit_depth;
+  cfg_.g_bit_depth = test_video_param_.bit_depth;
+  init_flags_ = VPX_CODEC_USE_PSNR;
+  cyclic_refresh_ = 3;
+  denoiser_on_ = 1;
+  if (cfg_.g_bit_depth > 8) init_flags_ |= VPX_CODEC_USE_HIGHBITDEPTH;
+
+  std::unique_ptr<libvpx_test::VideoSource> video;
+  if (is_extension_y4m(test_video_param_.filename)) {
+    video.reset(new libvpx_test::Y4mVideoSource(test_video_param_.filename, 0,
+                                                kFrames));
+  } else {
+    video.reset(new libvpx_test::YUVVideoSource(
+        test_video_param_.filename, test_video_param_.fmt, kWidth, kHeight,
+        kFramerate, 1, 0, kFrames));
+  }
+  ASSERT_TRUE(video.get() != NULL);
+
+  ASSERT_NO_FATAL_FAILURE(RunLoop(video.get()));
+  const double psnr = GetAveragePsnr();
+  EXPECT_GT(psnr, GetPsnrThreshold());
+}
+
+TEST_P(EndToEndTestAdaptiveRDThresh, EndtoEndAdaptiveRDThreshRowMT) {
+  cfg_.rc_target_bitrate = kBitrate;
+  cfg_.g_error_resilient = 0;
+  cfg_.g_threads = 2;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, 400);
+
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
+#if CONFIG_VP9_DECODER
+TEST_P(EndToEndTestLoopFilterThreading, TileCountChange) {
+  ::libvpx_test::RandomVideoSource video;
+  video.SetSize(4096, 2160);
+  video.set_limit(10);
+
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+#endif  // CONFIG_VP9_DECODER
+
 VP9_INSTANTIATE_TEST_CASE(EndToEndTestLarge,
                           ::testing::ValuesIn(kEncodingModeVectors),
                           ::testing::ValuesIn(kTestVectors),
                           ::testing::ValuesIn(kCpuUsedVectors));
+
+VP9_INSTANTIATE_TEST_CASE(EndToEndTestAdaptiveRDThresh,
+                          ::testing::Values(5, 6, 7), ::testing::Values(8, 9));
+
+#if CONFIG_VP9_DECODER
+VP9_INSTANTIATE_TEST_CASE(EndToEndTestLoopFilterThreading, ::testing::Bool(),
+                          ::testing::Range(2, 6));
+#endif  // CONFIG_VP9_DECODER
 }  // namespace

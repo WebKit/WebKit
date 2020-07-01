@@ -204,10 +204,9 @@ static int get_qzbin_factor(int q, vpx_bit_depth_t bit_depth) {
   switch (bit_depth) {
     case VPX_BITS_8: return q == 0 ? 64 : (quant < 148 ? 84 : 80);
     case VPX_BITS_10: return q == 0 ? 64 : (quant < 592 ? 84 : 80);
-    case VPX_BITS_12: return q == 0 ? 64 : (quant < 2368 ? 84 : 80);
     default:
-      assert(0 && "bit_depth should be VPX_BITS_8, VPX_BITS_10 or VPX_BITS_12");
-      return -1;
+      assert(bit_depth == VPX_BITS_12);
+      return q == 0 ? 64 : (quant < 2368 ? 84 : 80);
   }
 #else
   (void)bit_depth;
@@ -221,13 +220,20 @@ void vp9_init_quantizer(VP9_COMP *cpi) {
   int i, q, quant;
 
   for (q = 0; q < QINDEX_RANGE; q++) {
-    const int qzbin_factor = get_qzbin_factor(q, cm->bit_depth);
-    const int qrounding_factor = q == 0 ? 64 : 48;
+    int qzbin_factor = get_qzbin_factor(q, cm->bit_depth);
+    int qrounding_factor = q == 0 ? 64 : 48;
+    const int sharpness_adjustment = 16 * (7 - cpi->oxcf.sharpness) / 7;
+
+    if (cpi->oxcf.sharpness > 0 && q > 0) {
+      qzbin_factor = 64 + sharpness_adjustment;
+      qrounding_factor = 64 - sharpness_adjustment;
+    }
 
     for (i = 0; i < 2; ++i) {
       int qrounding_factor_fp = i == 0 ? 48 : 42;
       if (q == 0) qrounding_factor_fp = 64;
-
+      if (cpi->oxcf.sharpness > 0)
+        qrounding_factor_fp = 64 - sharpness_adjustment;
       // y
       quant = i == 0 ? vp9_dc_quant(q, cm->y_dc_delta_q, cm->bit_depth)
                      : vp9_ac_quant(q, 0, cm->bit_depth);
@@ -282,12 +288,12 @@ void vp9_init_plane_quantizers(VP9_COMP *cpi, MACROBLOCK *x) {
   // Y
   x->plane[0].quant = quants->y_quant[qindex];
   x->plane[0].quant_fp = quants->y_quant_fp[qindex];
-  x->plane[0].round_fp = quants->y_round_fp[qindex];
+  memcpy(x->plane[0].round_fp, quants->y_round_fp[qindex],
+         8 * sizeof(*(x->plane[0].round_fp)));
   x->plane[0].quant_shift = quants->y_quant_shift[qindex];
   x->plane[0].zbin = quants->y_zbin[qindex];
   x->plane[0].round = quants->y_round[qindex];
   xd->plane[0].dequant = cpi->y_dequant[qindex];
-
   x->plane[0].quant_thred[0] = x->plane[0].zbin[0] * x->plane[0].zbin[0];
   x->plane[0].quant_thred[1] = x->plane[0].zbin[1] * x->plane[0].zbin[1];
 
@@ -295,12 +301,12 @@ void vp9_init_plane_quantizers(VP9_COMP *cpi, MACROBLOCK *x) {
   for (i = 1; i < 3; i++) {
     x->plane[i].quant = quants->uv_quant[qindex];
     x->plane[i].quant_fp = quants->uv_quant_fp[qindex];
-    x->plane[i].round_fp = quants->uv_round_fp[qindex];
+    memcpy(x->plane[i].round_fp, quants->uv_round_fp[qindex],
+           8 * sizeof(*(x->plane[i].round_fp)));
     x->plane[i].quant_shift = quants->uv_quant_shift[qindex];
     x->plane[i].zbin = quants->uv_zbin[qindex];
     x->plane[i].round = quants->uv_round[qindex];
     xd->plane[i].dequant = cpi->uv_dequant[qindex];
-
     x->plane[i].quant_thred[0] = x->plane[i].zbin[0] * x->plane[i].zbin[0];
     x->plane[i].quant_thred[1] = x->plane[i].zbin[1] * x->plane[i].zbin[1];
   }
@@ -317,13 +323,18 @@ void vp9_frame_init_quantizer(VP9_COMP *cpi) {
   vp9_init_plane_quantizers(cpi, &cpi->td.mb);
 }
 
-void vp9_set_quantizer(VP9_COMMON *cm, int q) {
+void vp9_set_quantizer(VP9_COMP *cpi, int q) {
+  VP9_COMMON *cm = &cpi->common;
   // quantizer has to be reinitialized with vp9_init_quantizer() if any
   // delta_q changes.
   cm->base_qindex = q;
   cm->y_dc_delta_q = 0;
   cm->uv_dc_delta_q = 0;
   cm->uv_ac_delta_q = 0;
+  if (cpi->oxcf.delta_q_uv != 0) {
+    cm->uv_dc_delta_q = cm->uv_ac_delta_q = cpi->oxcf.delta_q_uv;
+    vp9_init_quantizer(cpi);
+  }
 }
 
 // Table that converts 0-63 Q-range values passed in outside to the Qindex

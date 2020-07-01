@@ -201,7 +201,7 @@
     str         lr, [sp, #16]              ; thresh1
     add         sp, #4
     pop         {r0-r1, lr}
-    add         r0, r1, lsl #3             ; s + 8 * pitch
+    add         r0, r0, r1, lsl #3         ; s + 8 * pitch
     b           vpx_lpf_vertical_8_neon
     ENDP        ; |vpx_lpf_vertical_8_dual_neon|
 

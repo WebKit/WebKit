@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_ENCODEFRAME_H_
-#define VP9_ENCODER_VP9_ENCODEFRAME_H_
+#ifndef VPX_VP9_ENCODER_VP9_ENCODEFRAME_H_
+#define VPX_VP9_ENCODER_VP9_ENCODEFRAME_H_
 
 #include "vpx/vpx_integer.h"
 
@@ -45,8 +45,13 @@ void vp9_encode_sb_row(struct VP9_COMP *cpi, struct ThreadData *td,
 void vp9_set_variance_partition_thresholds(struct VP9_COMP *cpi, int q,
                                            int content_state);
 
+struct KMEANS_DATA;
+void vp9_kmeans(double *ctr_ls, double *boundary_ls, int *count_ls, int k,
+                struct KMEANS_DATA *arr, int size);
+int vp9_get_group_idx(double value, double *boundary_ls, int k);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_ENCODEFRAME_H_
+#endif  // VPX_VP9_ENCODER_VP9_ENCODEFRAME_H_

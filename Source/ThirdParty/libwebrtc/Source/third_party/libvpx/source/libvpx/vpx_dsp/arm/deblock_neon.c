@@ -91,11 +91,6 @@ void vpx_post_proc_down_and_across_mb_row_neon(uint8_t *src_ptr,
   int row;
   int col;
 
-  // Process a stripe of macroblocks. The stripe will be a multiple of 16 (for
-  // Y) or 8 (for U/V) wide (cols) and the height (size) will be 16 (for Y) or 8
-  // (for U/V).
-  assert((size == 8 || size == 16) && cols % 8 == 0);
-
   // While columns of length 16 can be processed, load them.
   for (col = 0; col < cols - 8; col += 16) {
     uint8x16_t a0, a1, a2, a3, a4, a5, a6, a7;

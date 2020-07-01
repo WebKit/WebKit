@@ -63,14 +63,14 @@ static INLINE int round_mv_comp_q4(int value) {
 }
 
 static MV mi_mv_pred_q4(const MODE_INFO *mi, int idx) {
-  MV res = {
-    round_mv_comp_q4(
-        mi->bmi[0].as_mv[idx].as_mv.row + mi->bmi[1].as_mv[idx].as_mv.row +
-        mi->bmi[2].as_mv[idx].as_mv.row + mi->bmi[3].as_mv[idx].as_mv.row),
-    round_mv_comp_q4(
-        mi->bmi[0].as_mv[idx].as_mv.col + mi->bmi[1].as_mv[idx].as_mv.col +
-        mi->bmi[2].as_mv[idx].as_mv.col + mi->bmi[3].as_mv[idx].as_mv.col)
-  };
+  MV res = { round_mv_comp_q4(mi->bmi[0].as_mv[idx].as_mv.row +
+                              mi->bmi[1].as_mv[idx].as_mv.row +
+                              mi->bmi[2].as_mv[idx].as_mv.row +
+                              mi->bmi[3].as_mv[idx].as_mv.row),
+             round_mv_comp_q4(mi->bmi[0].as_mv[idx].as_mv.col +
+                              mi->bmi[1].as_mv[idx].as_mv.col +
+                              mi->bmi[2].as_mv[idx].as_mv.col +
+                              mi->bmi[3].as_mv[idx].as_mv.col) };
   return res;
 }
 
@@ -96,8 +96,8 @@ MV clamp_mv_to_umv_border_sb(const MACROBLOCKD *xd, const MV *src_mv, int bw,
   const int spel_right = spel_left - SUBPEL_SHIFTS;
   const int spel_top = (VP9_INTERP_EXTEND + bh) << SUBPEL_BITS;
   const int spel_bottom = spel_top - SUBPEL_SHIFTS;
-  MV clamped_mv = { src_mv->row * (1 << (1 - ss_y)),
-                    src_mv->col * (1 << (1 - ss_x)) };
+  MV clamped_mv = { (short)(src_mv->row * (1 << (1 - ss_y))),
+                    (short)(src_mv->col * (1 << (1 - ss_x))) };
   assert(ss_x <= 1);
   assert(ss_y <= 1);
 
@@ -136,7 +136,7 @@ static void build_inter_predictors(MACROBLOCKD *xd, int plane, int block,
     const struct scale_factors *const sf = &xd->block_refs[ref]->sf;
     struct buf_2d *const pre_buf = &pd->pre[ref];
     struct buf_2d *const dst_buf = &pd->dst;
-    uint8_t *const dst = dst_buf->buf + dst_buf->stride * y + x;
+    uint8_t *const dst = dst_buf->buf + (int64_t)dst_buf->stride * y + x;
     const MV mv = mi->sb_type < BLOCK_8X8
                       ? average_split_mvs(pd, mi, ref, block)
                       : mi->mv[ref].as_mv;
@@ -178,7 +178,7 @@ static void build_inter_predictors(MACROBLOCKD *xd, int plane, int block,
       xs = sf->x_step_q4;
       ys = sf->y_step_q4;
     } else {
-      pre = pre_buf->buf + (y * pre_buf->stride + x);
+      pre = pre_buf->buf + ((int64_t)y * pre_buf->stride + x);
       scaled_mv.row = mv_q4.row;
       scaled_mv.col = mv_q4.col;
       xs = ys = 16;

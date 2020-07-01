@@ -11,8 +11,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <limits>
+#include <tuple>
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
@@ -51,8 +51,8 @@ void highbd_wrapper(const tran_low_t *in, uint8_t *out, int stride, int bd) {
 }
 #endif
 
-typedef std::tr1::tuple<FwdTxfmFunc, InvTxfmWithBdFunc, InvTxfmWithBdFunc,
-                        TX_SIZE, int, int, int>
+typedef std::tuple<FwdTxfmFunc, InvTxfmWithBdFunc, InvTxfmWithBdFunc, TX_SIZE,
+                   int, int, int>
     PartialInvTxfmParam;
 const int kMaxNumCoeffs = 1024;
 const int kCountTestBlock = 1000;
@@ -324,7 +324,7 @@ TEST_P(PartialIDctTest, DISABLED_Speed) {
       << "Error: partial inverse transform produces different results";
 }
 
-using std::tr1::make_tuple;
+using std::make_tuple;
 
 const PartialInvTxfmParam c_partial_idct_tests[] = {
 #if CONFIG_VP9_HIGHBITDEPTH

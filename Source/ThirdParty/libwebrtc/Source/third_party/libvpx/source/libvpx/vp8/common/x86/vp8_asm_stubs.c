@@ -11,7 +11,6 @@
 #include "vpx_config.h"
 #include "vp8_rtcd.h"
 #include "vpx_ports/mem.h"
-#include "filter_x86.h"
 
 extern const short vp8_six_tap_x86[8][6 * 8];
 

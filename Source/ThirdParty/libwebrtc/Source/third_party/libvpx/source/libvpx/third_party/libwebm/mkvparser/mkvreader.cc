@@ -118,6 +118,8 @@ int MkvReader::Read(long long offset, long len, unsigned char* buffer) {
 
   if (status)
     return -1;  // error
+#elif defined(_WIN32)
+  fseeko64(m_file, static_cast<off_t>(offset), SEEK_SET);
 #else
   fseeko(m_file, static_cast<off_t>(offset), SEEK_SET);
 #endif

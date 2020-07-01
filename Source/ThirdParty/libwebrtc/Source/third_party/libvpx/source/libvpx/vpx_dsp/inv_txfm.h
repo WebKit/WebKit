@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_INV_TXFM_H_
-#define VPX_DSP_INV_TXFM_H_
+#ifndef VPX_VPX_DSP_INV_TXFM_H_
+#define VPX_VPX_DSP_INV_TXFM_H_
 
 #include <assert.h>
 
@@ -122,4 +122,4 @@ static INLINE uint8_t clip_pixel_add(uint8_t dest, tran_high_t trans) {
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_INV_TXFM_H_
+#endif  // VPX_VPX_DSP_INV_TXFM_H_

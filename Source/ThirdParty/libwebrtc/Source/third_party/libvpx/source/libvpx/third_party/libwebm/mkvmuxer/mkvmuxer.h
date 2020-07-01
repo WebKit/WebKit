@@ -795,6 +795,8 @@ class VideoTrack : public Track {
   uint64_t alpha_mode() { return alpha_mode_; }
   void set_width(uint64_t width) { width_ = width; }
   uint64_t width() const { return width_; }
+  void set_colour_space(const char* colour_space);
+  const char* colour_space() const { return colour_space_; }
 
   Colour* colour() { return colour_; }
 
@@ -824,6 +826,7 @@ class VideoTrack : public Track {
   uint64_t stereo_mode_;
   uint64_t alpha_mode_;
   uint64_t width_;
+  char* colour_space_;
 
   Colour* colour_;
   Projection* projection_;
@@ -871,9 +874,9 @@ class Tracks {
 
   static const char kOpusCodecId[];
   static const char kVorbisCodecId[];
+  static const char kAv1CodecId[];
   static const char kVp8CodecId[];
   static const char kVp9CodecId[];
-  static const char kVp10CodecId[];
   static const char kWebVttCaptionsId[];
   static const char kWebVttDescriptionsId[];
   static const char kWebVttMetadataId[];

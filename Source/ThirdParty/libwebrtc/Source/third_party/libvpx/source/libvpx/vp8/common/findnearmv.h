@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_FINDNEARMV_H_
-#define VP8_COMMON_FINDNEARMV_H_
+#ifndef VPX_VP8_COMMON_FINDNEARMV_H_
+#define VPX_VP8_COMMON_FINDNEARMV_H_
 
 #include "./vpx_config.h"
 #include "mv.h"
@@ -70,7 +70,7 @@ static INLINE unsigned int vp8_check_mv_bounds(int_mv *mv, int mb_to_left_edge,
 }
 
 void vp8_find_near_mvs(MACROBLOCKD *xd, const MODE_INFO *here, int_mv *nearest,
-                       int_mv *nearby, int_mv *best, int near_mv_ref_cts[4],
+                       int_mv *nearby, int_mv *best_mv, int near_mv_ref_cnts[4],
                        int refframe, int *ref_frame_sign_bias);
 
 int vp8_find_near_mvs_bias(MACROBLOCKD *xd, const MODE_INFO *here,
@@ -148,4 +148,4 @@ static INLINE B_PREDICTION_MODE above_block_mode(const MODE_INFO *cur_mb, int b,
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_FINDNEARMV_H_
+#endif  // VPX_VP8_COMMON_FINDNEARMV_H_

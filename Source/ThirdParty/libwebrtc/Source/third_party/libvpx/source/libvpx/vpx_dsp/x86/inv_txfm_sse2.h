@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_INV_TXFM_SSE2_H_
-#define VPX_DSP_X86_INV_TXFM_SSE2_H_
+#ifndef VPX_VPX_DSP_X86_INV_TXFM_SSE2_H_
+#define VPX_VPX_DSP_X86_INV_TXFM_SSE2_H_
 
 #include <emmintrin.h>  // SSE2
 
@@ -707,4 +707,4 @@ void idct32_1024_8x32(const __m128i *const in, __m128i *const out);
 void idct32_34_8x32_sse2(const __m128i *const in, __m128i *const out);
 void idct32_34_8x32_ssse3(const __m128i *const in, __m128i *const out);
 
-#endif  // VPX_DSP_X86_INV_TXFM_SSE2_H_
+#endif  // VPX_VPX_DSP_X86_INV_TXFM_SSE2_H_

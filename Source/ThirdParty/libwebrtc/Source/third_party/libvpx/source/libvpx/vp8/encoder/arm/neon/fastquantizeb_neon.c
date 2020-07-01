@@ -9,6 +9,8 @@
  */
 
 #include <arm_neon.h>
+
+#include "./vp8_rtcd.h"
 #include "vp8/encoder/block.h"
 
 static const uint16_t inv_zig_zag[16] = { 1, 2, 6,  7,  3,  5,  8,  13,
@@ -26,9 +28,11 @@ void vp8_fast_quantize_b_neon(BLOCK *b, BLOCKD *d) {
                    zig_zag1 = vld1q_u16(inv_zig_zag + 8);
   int16x8_t x0, x1, sz0, sz1, y0, y1;
   uint16x8_t eob0, eob1;
+#ifndef __aarch64__
   uint16x4_t eob_d16;
   uint32x2_t eob_d32;
   uint32x4_t eob_q32;
+#endif  // __arch64__
 
   /* sign of z: z >> 15 */
   sz0 = vshrq_n_s16(z0, 15);
@@ -66,10 +70,16 @@ void vp8_fast_quantize_b_neon(BLOCK *b, BLOCKD *d) {
 
   /* select the largest value */
   eob0 = vmaxq_u16(eob0, eob1);
+#ifdef __aarch64__
+  *d->eob = (int8_t)vmaxvq_u16(eob0);
+#else
   eob_d16 = vmax_u16(vget_low_u16(eob0), vget_high_u16(eob0));
   eob_q32 = vmovl_u16(eob_d16);
   eob_d32 = vmax_u32(vget_low_u32(eob_q32), vget_high_u32(eob_q32));
   eob_d32 = vpmax_u32(eob_d32, eob_d32);
+
+  vst1_lane_s8((int8_t *)d->eob, vreinterpret_s8_u32(eob_d32), 0);
+#endif  // __aarch64__
 
   /* qcoeff = x */
   vst1q_s16(d->qcoeff, x0);
@@ -78,6 +88,4 @@ void vp8_fast_quantize_b_neon(BLOCK *b, BLOCKD *d) {
   /* dqcoeff = x * dequant */
   vst1q_s16(d->dqcoeff, vmulq_s16(dequant0, x0));
   vst1q_s16(d->dqcoeff + 8, vmulq_s16(dequant1, x1));
-
-  vst1_lane_s8((int8_t *)d->eob, vreinterpret_s8_u32(eob_d32), 0);
 }

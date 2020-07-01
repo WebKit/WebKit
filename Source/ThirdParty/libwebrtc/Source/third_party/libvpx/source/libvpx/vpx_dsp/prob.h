@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_PROB_H_
-#define VPX_DSP_PROB_H_
+#ifndef VPX_VPX_DSP_PROB_H_
+#define VPX_VPX_DSP_PROB_H_
 
 #include <assert.h>
 
@@ -32,7 +32,7 @@ typedef int8_t vpx_tree_index;
 
 #define TREE_SIZE(leaf_count) (2 * (leaf_count)-2)
 
-#define vpx_complement(x) (255 - x)
+#define vpx_complement(x) (255 - (x))
 
 #define MODE_MV_COUNT_SAT 20
 
@@ -103,4 +103,4 @@ DECLARE_ALIGNED(16, extern const uint8_t, vpx_norm[256]);
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_PROB_H_
+#endif  // VPX_VPX_DSP_PROB_H_

@@ -158,7 +158,8 @@ static int vp8_temporal_filter_find_matching_mb_c(VP8_COMP *cpi,
   /* Ignore mv costing by sending NULL cost arrays */
   bestsme =
       vp8_hex_search(x, b, d, &best_ref_mv1_full, &d->bmi.mv, step_param, sadpb,
-                     &cpi->fn_ptr[BLOCK_16X16], NULL, NULL, &best_ref_mv1);
+                     &cpi->fn_ptr[BLOCK_16X16], NULL, &best_ref_mv1);
+  (void)bestsme;  // Ignore unused return value.
 
 #if ALT_REF_SUBPEL_ENABLED
   /* Try sub-pixel MC? */

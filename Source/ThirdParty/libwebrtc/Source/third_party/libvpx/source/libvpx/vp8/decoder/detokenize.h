@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_DECODER_DETOKENIZE_H_
-#define VP8_DECODER_DETOKENIZE_H_
+#ifndef VPX_VP8_DECODER_DETOKENIZE_H_
+#define VPX_VP8_DECODER_DETOKENIZE_H_
 
 #include "onyxd_int.h"
 
@@ -24,4 +24,4 @@ int vp8_decode_mb_tokens(VP8D_COMP *, MACROBLOCKD *);
 }  // extern "C"
 #endif
 
-#endif  // VP8_DECODER_DETOKENIZE_H_
+#endif  // VPX_VP8_DECODER_DETOKENIZE_H_

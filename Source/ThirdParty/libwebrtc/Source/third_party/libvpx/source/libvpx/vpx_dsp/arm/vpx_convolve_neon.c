@@ -24,7 +24,8 @@ void vpx_convolve8_neon(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
   uint8_t temp[64 * 72];
 
   // Account for the vertical phase needing 3 lines prior and 4 lines post
-  const int intermediate_height = h + 7;
+  // (+ 1 to make it divisible by 4).
+  const int intermediate_height = h + 8;
 
   assert(y_step_q4 == 16);
   assert(x_step_q4 == 16);
@@ -48,7 +49,7 @@ void vpx_convolve8_avg_neon(const uint8_t *src, ptrdiff_t src_stride,
                             int x_step_q4, int y0_q4, int y_step_q4, int w,
                             int h) {
   uint8_t temp[64 * 72];
-  const int intermediate_height = h + 7;
+  const int intermediate_height = h + 8;
 
   assert(y_step_q4 == 16);
   assert(x_step_q4 == 16);

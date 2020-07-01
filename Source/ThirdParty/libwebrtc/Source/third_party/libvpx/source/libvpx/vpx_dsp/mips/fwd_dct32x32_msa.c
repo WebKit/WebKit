@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "./vpx_dsp_rtcd.h"
 #include "vpx_dsp/mips/fwd_txfm_msa.h"
 
 static void fdct8x32_1d_column_load_butterfly(const int16_t *input,

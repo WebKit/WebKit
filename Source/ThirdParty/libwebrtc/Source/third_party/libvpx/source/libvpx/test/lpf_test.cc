@@ -11,6 +11,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <string>
+#include <tuple>
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
@@ -56,8 +57,8 @@ typedef void (*dual_loop_op_t)(Pixel *s, int p, const uint8_t *blimit0,
                                const uint8_t *thresh1);
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
-typedef std::tr1::tuple<loop_op_t, loop_op_t, int> loop8_param_t;
-typedef std::tr1::tuple<dual_loop_op_t, dual_loop_op_t, int> dualloop8_param_t;
+typedef std::tuple<loop_op_t, loop_op_t, int> loop8_param_t;
+typedef std::tuple<dual_loop_op_t, dual_loop_op_t, int> dualloop8_param_t;
 
 void InitInput(Pixel *s, Pixel *ref_s, ACMRandom *rnd, const uint8_t limit,
                const int mask, const int32_t p, const int i) {
@@ -74,9 +75,9 @@ void InitInput(Pixel *s, Pixel *ref_s, ACMRandom *rnd, const uint8_t limit,
         if (j < 1) {
           tmp_s[j] = rnd->Rand16();
         } else if (val & 0x20) {  // Increment by a value within the limit.
-          tmp_s[j] = tmp_s[j - 1] + (limit - 1);
+          tmp_s[j] = static_cast<uint16_t>(tmp_s[j - 1] + (limit - 1));
         } else {  // Decrement by a value within the limit.
-          tmp_s[j] = tmp_s[j - 1] - (limit - 1);
+          tmp_s[j] = static_cast<uint16_t>(tmp_s[j - 1] - (limit - 1));
         }
         j++;
       }
@@ -93,11 +94,11 @@ void InitInput(Pixel *s, Pixel *ref_s, ACMRandom *rnd, const uint8_t limit,
         if (j < 1) {
           tmp_s[j] = rnd->Rand16();
         } else if (val & 0x20) {  // Increment by a value within the limit.
-          tmp_s[(j % 32) * 32 + j / 32] =
-              tmp_s[((j - 1) % 32) * 32 + (j - 1) / 32] + (limit - 1);
+          tmp_s[(j % 32) * 32 + j / 32] = static_cast<uint16_t>(
+              tmp_s[((j - 1) % 32) * 32 + (j - 1) / 32] + (limit - 1));
         } else {  // Decrement by a value within the limit.
-          tmp_s[(j % 32) * 32 + j / 32] =
-              tmp_s[((j - 1) % 32) * 32 + (j - 1) / 32] - (limit - 1);
+          tmp_s[(j % 32) * 32 + j / 32] = static_cast<uint16_t>(
+              tmp_s[((j - 1) % 32) * 32 + (j - 1) / 32] - (limit - 1));
         }
         j++;
       }
@@ -402,7 +403,7 @@ TEST_P(Loop8Test9Param, ValueCheck) {
       << "First failed at test case " << first_failure;
 }
 
-using std::tr1::make_tuple;
+using std::make_tuple;
 
 #if HAVE_SSE2
 #if CONFIG_VP9_HIGHBITDEPTH

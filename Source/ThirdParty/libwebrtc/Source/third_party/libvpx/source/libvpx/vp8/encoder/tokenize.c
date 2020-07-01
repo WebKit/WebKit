@@ -19,10 +19,6 @@
 /* Global event counters used for accumulating statistics across several
    compressions, then generating context.c = initial stats. */
 
-#ifdef VP8_ENTROPY_STATS
-_int64 context_counters[BLOCK_TYPES][COEF_BANDS][PREV_COEF_CONTEXTS]
-                       [MAX_ENTROPY_TOKENS];
-#endif
 void vp8_stuff_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t);
 void vp8_fix_contexts(MACROBLOCKD *x);
 
@@ -382,72 +378,6 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t) {
 
   tokenize1st_order_b(x, t, plane_type, cpi);
 }
-
-#ifdef VP8_ENTROPY_STATS
-
-void init_context_counters(void) {
-  memset(context_counters, 0, sizeof(context_counters));
-}
-
-void print_context_counters() {
-  int type, band, pt, t;
-
-  FILE *const f = fopen("context.c", "w");
-
-  fprintf(f, "#include \"entropy.h\"\n");
-
-  fprintf(f, "\n/* *** GENERATED FILE: DO NOT EDIT *** */\n\n");
-
-  fprintf(f,
-          "int Contexts[BLOCK_TYPES] [COEF_BANDS] [PREV_COEF_CONTEXTS] "
-          "[MAX_ENTROPY_TOKENS];\n\n");
-
-  fprintf(f,
-          "const int default_contexts[BLOCK_TYPES] [COEF_BANDS] "
-          "[PREV_COEF_CONTEXTS] [MAX_ENTROPY_TOKENS] = {");
-
-#define Comma(X) (X ? "," : "")
-
-  type = 0;
-
-  do {
-    fprintf(f, "%s\n  { /* block Type %d */", Comma(type), type);
-
-    band = 0;
-
-    do {
-      fprintf(f, "%s\n    { /* Coeff Band %d */", Comma(band), band);
-
-      pt = 0;
-
-      do {
-        fprintf(f, "%s\n      {", Comma(pt));
-
-        t = 0;
-
-        do {
-          const _int64 x = context_counters[type][band][pt][t];
-          const int y = (int)x;
-
-          assert(x == (_int64)y); /* no overflow handling yet */
-          fprintf(f, "%s %d", Comma(t), y);
-
-        } while (++t < MAX_ENTROPY_TOKENS);
-
-        fprintf(f, "}");
-      } while (++pt < PREV_COEF_CONTEXTS);
-
-      fprintf(f, "\n    }");
-
-    } while (++band < COEF_BANDS);
-
-    fprintf(f, "\n  }");
-  } while (++type < BLOCK_TYPES);
-
-  fprintf(f, "\n};\n");
-  fclose(f);
-}
-#endif
 
 static void stuff2nd_order_b(TOKENEXTRA **tp, ENTROPY_CONTEXT *a,
                              ENTROPY_CONTEXT *l, VP8_COMP *cpi, MACROBLOCK *x) {

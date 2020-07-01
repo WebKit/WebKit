@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_MIPS_MSA_VP9_FDCT_MSA_H_
-#define VP9_ENCODER_MIPS_MSA_VP9_FDCT_MSA_H_
+#ifndef VPX_VP9_ENCODER_MIPS_MSA_VP9_FDCT_MSA_H_
+#define VPX_VP9_ENCODER_MIPS_MSA_VP9_FDCT_MSA_H_
 
 #include "vpx_dsp/mips/fwd_txfm_msa.h"
 #include "vpx_dsp/mips/txfm_macros_msa.h"
@@ -113,4 +113,4 @@
     PCKEV_H4_SH(in0_r_m, in0_r_m, in1_r_m, in1_r_m, s2_m, s2_m, s3_m, s3_m, \
                 out0, out1, out2, out3);                                    \
   }
-#endif /* VP9_ENCODER_MIPS_MSA_VP9_FDCT_MSA_H_ */
+#endif  // VPX_VP9_ENCODER_MIPS_MSA_VP9_FDCT_MSA_H_

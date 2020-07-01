@@ -57,11 +57,12 @@ static unsigned int do_16x16_motion_iteration(VP9_COMP *cpi, const MV *ref_mv,
   {
     uint32_t distortion;
     uint32_t sse;
+    // TODO(yunqing): may use higher tap interp filter than 2 taps if needed.
     cpi->find_fractional_mv_step(
         x, dst_mv, ref_mv, cpi->common.allow_high_precision_mv, x->errorperbit,
-        &v_fn_ptr, 0, mv_sf->subpel_iters_per_step,
+        &v_fn_ptr, 0, mv_sf->subpel_search_level,
         cond_cost_list(cpi, cost_list), NULL, NULL, &distortion, &sse, NULL, 0,
-        0);
+        0, USE_2_TAPS);
   }
 
   xd->mi[0]->mode = NEWMV;

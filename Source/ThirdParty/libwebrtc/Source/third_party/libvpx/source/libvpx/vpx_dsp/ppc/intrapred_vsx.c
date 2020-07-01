@@ -35,6 +35,8 @@ void vpx_v_predictor_32x32_vsx(uint8_t *dst, ptrdiff_t stride,
   }
 }
 
+// TODO(crbug.com/webm/1522): Fix test failures.
+#if 0
 static const uint32x4_t mask4 = { 0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };
 
 void vpx_h_predictor_4x4_vsx(uint8_t *dst, ptrdiff_t stride,
@@ -87,6 +89,7 @@ void vpx_h_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
   dst += stride;
   vec_vsx_st(xxpermdi(v7, vec_vsx_ld(0, dst), 1), 0, dst);
 }
+#endif
 
 void vpx_h_predictor_16x16_vsx(uint8_t *dst, ptrdiff_t stride,
                                const uint8_t *above, const uint8_t *left) {
@@ -233,6 +236,8 @@ void vpx_h_predictor_32x32_vsx(uint8_t *dst, ptrdiff_t stride,
   H_PREDICTOR_32(v15_1);
 }
 
+// TODO(crbug.com/webm/1522): Fix test failures.
+#if 0
 void vpx_tm_predictor_4x4_vsx(uint8_t *dst, ptrdiff_t stride,
                               const uint8_t *above, const uint8_t *left) {
   const int16x8_t tl = unpack_to_s16_h(vec_splat(vec_vsx_ld(-1, above), 0));
@@ -311,6 +316,7 @@ void vpx_tm_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
   val = vec_sub(vec_add(vec_splat(l, 7), a), tl);
   vec_vsx_st(vec_packsu(val, tmp), 0, dst);
 }
+#endif
 
 static void tm_predictor_16x8(uint8_t *dst, const ptrdiff_t stride, int16x8_t l,
                               int16x8_t ah, int16x8_t al, int16x8_t tl) {
@@ -547,6 +553,8 @@ void vpx_dc_top_predictor_32x32_vsx(uint8_t *dst, ptrdiff_t stride,
   dc_fill_predictor_32x32(dst, stride, avg32(above));
 }
 
+// TODO(crbug.com/webm/1522): Fix test failures.
+#if 0
 static uint8x16_t dc_avg8(const uint8_t *above, const uint8_t *left) {
   const uint8x16_t a0 = vec_vsx_ld(0, above);
   const uint8x16_t l0 = vec_vsx_ld(0, left);
@@ -559,6 +567,7 @@ static uint8x16_t dc_avg8(const uint8_t *above, const uint8_t *left) {
   return vec_splat(vec_pack(vec_pack(avg, vec_splat_u32(0)), vec_splat_u16(0)),
                    3);
 }
+#endif
 
 static uint8x16_t dc_avg16(const uint8_t *above, const uint8_t *left) {
   const uint8x16_t a0 = vec_vsx_ld(0, above);
@@ -573,10 +582,13 @@ static uint8x16_t dc_avg16(const uint8_t *above, const uint8_t *left) {
                    3);
 }
 
+// TODO(crbug.com/webm/1522): Fix test failures.
+#if 0
 void vpx_dc_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
                               const uint8_t *above, const uint8_t *left) {
   dc_fill_predictor_8x8(dst, stride, dc_avg8(above, left));
 }
+#endif
 
 void vpx_dc_predictor_16x16_vsx(uint8_t *dst, ptrdiff_t stride,
                                 const uint8_t *above, const uint8_t *left) {
@@ -615,6 +627,8 @@ static uint8x16_t avg3(const uint8x16_t a, const uint8x16_t b,
 static const uint8x16_t sl1 = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8,
                                 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10 };
 
+// TODO(crbug.com/webm/1522): Fix test failures.
+#if 0
 void vpx_d45_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
                                const uint8_t *above, const uint8_t *left) {
   const uint8x16_t af = vec_vsx_ld(0, above);
@@ -633,6 +647,7 @@ void vpx_d45_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
     row = vec_perm(row, above_right, sl1);
   }
 }
+#endif
 
 void vpx_d45_predictor_16x16_vsx(uint8_t *dst, ptrdiff_t stride,
                                  const uint8_t *above, const uint8_t *left) {
@@ -674,6 +689,8 @@ void vpx_d45_predictor_32x32_vsx(uint8_t *dst, ptrdiff_t stride,
   }
 }
 
+// TODO(crbug.com/webm/1522): Fix test failures.
+#if 0
 void vpx_d63_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
                                const uint8_t *above, const uint8_t *left) {
   const uint8x16_t af = vec_vsx_ld(0, above);
@@ -696,6 +713,7 @@ void vpx_d63_predictor_8x8_vsx(uint8_t *dst, ptrdiff_t stride,
     row1 = vec_perm(row1, above_right, sl1);
   }
 }
+#endif
 
 void vpx_d63_predictor_16x16_vsx(uint8_t *dst, ptrdiff_t stride,
                                  const uint8_t *above, const uint8_t *left) {

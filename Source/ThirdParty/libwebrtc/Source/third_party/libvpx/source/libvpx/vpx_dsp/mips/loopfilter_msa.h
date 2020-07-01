@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_LOOPFILTER_MSA_H_
-#define VPX_DSP_LOOPFILTER_MSA_H_
+#ifndef VPX_VPX_DSP_MIPS_LOOPFILTER_MSA_H_
+#define VPX_VPX_DSP_MIPS_LOOPFILTER_MSA_H_
 
 #include "vpx_dsp/mips/macros_msa.h"
 
@@ -174,4 +174,4 @@
     mask_out = limit_in < (v16u8)mask_out;                                   \
     mask_out = __msa_xori_b(mask_out, 0xff);                                 \
   }
-#endif /* VPX_DSP_LOOPFILTER_MSA_H_ */
+#endif  // VPX_VPX_DSP_MIPS_LOOPFILTER_MSA_H_

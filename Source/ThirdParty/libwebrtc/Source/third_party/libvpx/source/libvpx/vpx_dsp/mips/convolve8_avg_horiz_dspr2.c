@@ -15,6 +15,7 @@
 #include "vpx_dsp/mips/convolve_common_dspr2.h"
 #include "vpx_dsp/vpx_convolve.h"
 #include "vpx_dsp/vpx_dsp_common.h"
+#include "vpx_dsp/vpx_filter.h"
 #include "vpx_ports/mem.h"
 
 #if HAVE_DSPR2
@@ -945,7 +946,7 @@ void vpx_convolve8_avg_horiz_dspr2(const uint8_t *src, ptrdiff_t src_stride,
   assert(x_step_q4 == 16);
   assert(((const int32_t *)filter_x)[1] != 0x800000);
 
-  if (((const int32_t *)filter_x)[0] == 0) {
+  if (vpx_get_filter_taps(filter_x) == 2) {
     vpx_convolve2_avg_horiz_dspr2(src, src_stride, dst, dst_stride, filter,
                                   x0_q4, x_step_q4, y0_q4, y_step_q4, w, h);
   } else {

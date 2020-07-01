@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_BITOPS_H_
-#define VPX_PORTS_BITOPS_H_
+#ifndef VPX_VPX_PORTS_BITOPS_H_
+#define VPX_VPX_PORTS_BITOPS_H_
 
 #include <assert.h>
 
@@ -72,4 +72,4 @@ static INLINE int get_msb(unsigned int n) {
 }  // extern "C"
 #endif
 
-#endif  // VPX_PORTS_BITOPS_H_
+#endif  // VPX_VPX_PORTS_BITOPS_H_

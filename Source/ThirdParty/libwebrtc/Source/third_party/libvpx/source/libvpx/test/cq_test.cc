@@ -65,7 +65,7 @@ class CQTest : public ::libvpx_test::EncoderTest,
 
   virtual void PreEncodeFrameHook(libvpx_test::VideoSource *video,
                                   libvpx_test::Encoder *encoder) {
-    if (video->frame() == 1) {
+    if (video->frame() == 0) {
       if (cfg_.rc_end_usage == VPX_CQ) {
         encoder->Control(VP8E_SET_CQ_LEVEL, cq_level_);
       }

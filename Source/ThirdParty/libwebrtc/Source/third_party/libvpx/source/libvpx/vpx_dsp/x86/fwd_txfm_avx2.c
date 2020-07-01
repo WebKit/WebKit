@@ -9,7 +9,9 @@
  */
 
 #include "./vpx_config.h"
+#include "./vpx_dsp_rtcd.h"
 
+#if !CONFIG_VP9_HIGHBITDEPTH
 #define FDCT32x32_2D_AVX2 vpx_fdct32x32_rd_avx2
 #define FDCT32x32_HIGH_PRECISION 0
 #include "vpx_dsp/x86/fwd_dct32x32_impl_avx2.h"
@@ -21,3 +23,4 @@
 #include "vpx_dsp/x86/fwd_dct32x32_impl_avx2.h"  // NOLINT
 #undef FDCT32x32_2D_AVX2
 #undef FDCT32x32_HIGH_PRECISION
+#endif  // !CONFIG_VP9_HIGHBITDEPTH

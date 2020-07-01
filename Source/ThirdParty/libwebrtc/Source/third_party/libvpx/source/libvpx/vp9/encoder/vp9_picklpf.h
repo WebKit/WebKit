@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_PICKLPF_H_
-#define VP9_ENCODER_VP9_PICKLPF_H_
+#ifndef VPX_VP9_ENCODER_VP9_PICKLPF_H_
+#define VPX_VP9_ENCODER_VP9_PICKLPF_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,4 +26,4 @@ void vp9_pick_filter_level(const struct yv12_buffer_config *sd,
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_PICKLPF_H_
+#endif  // VPX_VP9_ENCODER_VP9_PICKLPF_H_

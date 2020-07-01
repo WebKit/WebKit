@@ -18,3 +18,4 @@ Copy PIC 'GLOBAL' macros from x86_abi_support.asm
 Use .text instead of .rodata on macho to avoid broken tables in PIC mode.
 Use .text with no alignment for aout
 Only use 'hidden' visibility with Chromium
+Prefix ARCH_* with VPX_.

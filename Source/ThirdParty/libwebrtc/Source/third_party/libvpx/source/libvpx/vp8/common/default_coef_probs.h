@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_DEFAULT_COEF_PROBS_H_
-#define VP8_COMMON_DEFAULT_COEF_PROBS_H_
+#ifndef VPX_VP8_COMMON_DEFAULT_COEF_PROBS_H_
+#define VPX_VP8_COMMON_DEFAULT_COEF_PROBS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -157,4 +157,4 @@ static const vp8_prob default_coef_probs
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_DEFAULT_COEF_PROBS_H_
+#endif  // VPX_VP8_COMMON_DEFAULT_COEF_PROBS_H_

@@ -8,12 +8,42 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_MEM_SSE2_H_
-#define VPX_DSP_X86_MEM_SSE2_H_
+#ifndef VPX_VPX_DSP_X86_MEM_SSE2_H_
+#define VPX_VPX_DSP_X86_MEM_SSE2_H_
 
 #include <emmintrin.h>  // SSE2
+#include <string.h>
 
 #include "./vpx_config.h"
+
+static INLINE void storeu_uint32(void *dst, uint32_t v) {
+  memcpy(dst, &v, sizeof(v));
+}
+
+static INLINE uint32_t loadu_uint32(const void *src) {
+  uint32_t v;
+  memcpy(&v, src, sizeof(v));
+  return v;
+}
+
+static INLINE __m128i load_unaligned_u32(const void *a) {
+  uint32_t val;
+  memcpy(&val, a, sizeof(val));
+  return _mm_cvtsi32_si128(val);
+}
+
+static INLINE void store_unaligned_u32(void *const a, const __m128i v) {
+  const uint32_t val = _mm_cvtsi128_si32(v);
+  memcpy(a, &val, sizeof(val));
+}
+
+#define mm_storelu(dst, v) memcpy((dst), (const char *)&(v), 8)
+#define mm_storehu(dst, v) memcpy((dst), (const char *)&(v) + 8, 8)
+
+static INLINE __m128i loadh_epi64(const __m128i s, const void *const src) {
+  return _mm_castps_si128(
+      _mm_loadh_pi(_mm_castsi128_ps(s), (const __m64 *)src));
+}
 
 static INLINE void load_8bit_4x4(const uint8_t *const s, const ptrdiff_t stride,
                                  __m128i *const d) {
@@ -121,4 +151,4 @@ static INLINE void storeu_8bit_16x4(const __m128i *const s, uint8_t *const d,
   _mm_storeu_si128((__m128i *)(d + 3 * stride), s[3]);
 }
 
-#endif  // VPX_DSP_X86_MEM_SSE2_H_
+#endif  // VPX_VPX_DSP_X86_MEM_SSE2_H_

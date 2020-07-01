@@ -20,6 +20,15 @@
 #include "vpx_scale/yv12config.h"
 
 namespace libvpx_test {
+namespace {
+
+#if VPX_ARCH_ARM || (VPX_ARCH_MIPS && !HAVE_MIPS64) || VPX_ARCH_X86
+// Avoid OOM failures on 32-bit platforms.
+const int kNumSizesToTest = 7;
+#else
+const int kNumSizesToTest = 8;
+#endif
+const int kSizesToTest[] = { 1, 15, 33, 145, 512, 1025, 3840, 16383 };
 
 typedef void (*ExtendFrameBorderFunc)(YV12_BUFFER_CONFIG *ybf);
 typedef void (*CopyFrameFunc)(const YV12_BUFFER_CONFIG *src_ybf,
@@ -37,13 +46,6 @@ class ExtendBorderTest
   void ExtendBorder() { ASM_REGISTER_STATE_CHECK(extend_fn_(&img_)); }
 
   void RunTest() {
-#if ARCH_ARM
-    // Some arm devices OOM when trying to allocate the largest buffers.
-    static const int kNumSizesToTest = 6;
-#else
-    static const int kNumSizesToTest = 7;
-#endif
-    static const int kSizesToTest[] = { 1, 15, 33, 145, 512, 1025, 16383 };
     for (int h = 0; h < kNumSizesToTest; ++h) {
       for (int w = 0; w < kNumSizesToTest; ++w) {
         ASSERT_NO_FATAL_FAILURE(ResetImages(kSizesToTest[w], kSizesToTest[h]));
@@ -76,13 +78,6 @@ class CopyFrameTest : public VpxScaleBase,
   }
 
   void RunTest() {
-#if ARCH_ARM
-    // Some arm devices OOM when trying to allocate the largest buffers.
-    static const int kNumSizesToTest = 6;
-#else
-    static const int kNumSizesToTest = 7;
-#endif
-    static const int kSizesToTest[] = { 1, 15, 33, 145, 512, 1025, 16383 };
     for (int h = 0; h < kNumSizesToTest; ++h) {
       for (int w = 0; w < kNumSizesToTest; ++w) {
         ASSERT_NO_FATAL_FAILURE(ResetImages(kSizesToTest[w], kSizesToTest[h]));
@@ -102,4 +97,5 @@ TEST_P(CopyFrameTest, CopyFrame) { ASSERT_NO_FATAL_FAILURE(RunTest()); }
 INSTANTIATE_TEST_CASE_P(C, CopyFrameTest,
                         ::testing::Values(vp8_yv12_copy_frame_c));
 
+}  // namespace
 }  // namespace libvpx_test

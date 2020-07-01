@@ -18,7 +18,7 @@
 #include "vpx_scale/vpx_scale.h"
 #include "vp8/common/alloccommon.h"
 #include "vp8/common/loopfilter.h"
-#if ARCH_ARM
+#if VPX_ARCH_ARM
 #include "vpx_ports/arm.h"
 #endif
 

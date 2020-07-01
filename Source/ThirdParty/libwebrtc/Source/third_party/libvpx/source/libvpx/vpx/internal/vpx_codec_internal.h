@@ -40,8 +40,8 @@
  * Once initialized, the instance is manged using other functions from
  * the vpx_codec_* family.
  */
-#ifndef VPX_INTERNAL_VPX_CODEC_INTERNAL_H_
-#define VPX_INTERNAL_VPX_CODEC_INTERNAL_H_
+#ifndef VPX_VPX_INTERNAL_VPX_CODEC_INTERNAL_H_
+#define VPX_VPX_INTERNAL_VPX_CODEC_INTERNAL_H_
 #include "../vpx_decoder.h"
 #include "../vpx_encoder.h"
 #include <stdarg.h>
@@ -442,4 +442,4 @@ void vpx_internal_error(struct vpx_internal_error_info *info,
 }  // extern "C"
 #endif
 
-#endif  // VPX_INTERNAL_VPX_CODEC_INTERNAL_H_
+#endif  // VPX_VPX_INTERNAL_VPX_CODEC_INTERNAL_H_

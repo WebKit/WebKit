@@ -11,28 +11,29 @@
 #include <smmintrin.h> /* SSE4.1 */
 
 #include "./vp8_rtcd.h"
-#include "vp8/encoder/block.h"
 #include "vp8/common/entropy.h" /* vp8_default_inv_zig_zag */
+#include "vp8/encoder/block.h"
 
-#define SELECT_EOB(i, z, x, y, q)         \
-  do {                                    \
-    short boost = *zbin_boost_ptr;        \
-    short x_z = _mm_extract_epi16(x, z);  \
-    short y_z = _mm_extract_epi16(y, z);  \
-    int cmp = (x_z < boost) | (y_z == 0); \
-    zbin_boost_ptr++;                     \
-    if (cmp) break;                       \
-    q = _mm_insert_epi16(q, y_z, z);      \
-    eob = i;                              \
-    zbin_boost_ptr = b->zrun_zbin_boost;  \
+#define SELECT_EOB(i, z, x, y, q)                         \
+  do {                                                    \
+    short boost = *zbin_boost_ptr;                        \
+    /* Technically _mm_extract_epi16() returns an int: */ \
+    /* https://bugs.llvm.org/show_bug.cgi?id=41657 */     \
+    short x_z = (short)_mm_extract_epi16(x, z);           \
+    short y_z = (short)_mm_extract_epi16(y, z);           \
+    int cmp = (x_z < boost) | (y_z == 0);                 \
+    zbin_boost_ptr++;                                     \
+    if (cmp) break;                                       \
+    q = _mm_insert_epi16(q, y_z, z);                      \
+    eob = i;                                              \
+    zbin_boost_ptr = b->zrun_zbin_boost;                  \
   } while (0)
 
 void vp8_regular_quantize_b_sse4_1(BLOCK *b, BLOCKD *d) {
   char eob = 0;
   short *zbin_boost_ptr = b->zrun_zbin_boost;
 
-  __m128i sz0, x0, sz1, x1, y0, y1, x_minus_zbin0, x_minus_zbin1, dqcoeff0,
-      dqcoeff1;
+  __m128i x0, x1, y0, y1, x_minus_zbin0, x_minus_zbin1, dqcoeff0, dqcoeff1;
   __m128i quant_shift0 = _mm_load_si128((__m128i *)(b->quant_shift));
   __m128i quant_shift1 = _mm_load_si128((__m128i *)(b->quant_shift + 8));
   __m128i z0 = _mm_load_si128((__m128i *)(b->coeff));
@@ -53,15 +54,9 @@ void vp8_regular_quantize_b_sse4_1(BLOCK *b, BLOCKD *d) {
   zbin_extra = _mm_shufflelo_epi16(zbin_extra, 0);
   zbin_extra = _mm_unpacklo_epi16(zbin_extra, zbin_extra);
 
-  /* Sign of z: z >> 15 */
-  sz0 = _mm_srai_epi16(z0, 15);
-  sz1 = _mm_srai_epi16(z1, 15);
-
-  /* x = abs(z): (z ^ sz) - sz */
-  x0 = _mm_xor_si128(z0, sz0);
-  x1 = _mm_xor_si128(z1, sz1);
-  x0 = _mm_sub_epi16(x0, sz0);
-  x1 = _mm_sub_epi16(x1, sz1);
+  /* x = abs(z) */
+  x0 = _mm_abs_epi16(z0);
+  x1 = _mm_abs_epi16(z1);
 
   /* zbin[] + zbin_extra */
   zbin0 = _mm_add_epi16(zbin0, zbin_extra);
@@ -89,11 +84,9 @@ void vp8_regular_quantize_b_sse4_1(BLOCK *b, BLOCKD *d) {
   y0 = _mm_mulhi_epi16(y0, quant_shift0);
   y1 = _mm_mulhi_epi16(y1, quant_shift1);
 
-  /* Return the sign: (y ^ sz) - sz */
-  y0 = _mm_xor_si128(y0, sz0);
-  y1 = _mm_xor_si128(y1, sz1);
-  y0 = _mm_sub_epi16(y0, sz0);
-  y1 = _mm_sub_epi16(y1, sz1);
+  /* Restore the sign. */
+  y0 = _mm_sign_epi16(y0, z0);
+  y1 = _mm_sign_epi16(y1, z1);
 
   /* The loop gets unrolled anyway. Avoid the vp8_default_zig_zag1d lookup. */
   SELECT_EOB(1, 0, x_minus_zbin0, y0, qcoeff0);

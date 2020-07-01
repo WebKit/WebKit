@@ -25,11 +25,11 @@ cglobal sad%1x%2, 4, %3, 6, src, src_stride, ref, ref_stride, \
 cglobal sad%1x%2_avg, 5, 1 + %3, 5, src, src_stride, ref, ref_stride, \
                                     second_pred, n_rows
 %else ; %3 == 7
-cglobal sad%1x%2_avg, 5, ARCH_X86_64 + %3, 6, src, src_stride, \
+cglobal sad%1x%2_avg, 5, VPX_ARCH_X86_64 + %3, 6, src, src_stride, \
                                               ref, ref_stride, \
                                               second_pred, \
                                               src_stride3, ref_stride3
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
 %define n_rowsd r7d
 %else ; x86-32
 %define n_rowsd dword r0m

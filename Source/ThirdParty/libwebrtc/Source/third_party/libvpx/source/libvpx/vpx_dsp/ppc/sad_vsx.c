@@ -17,71 +17,75 @@
 #include "vpx/vpx_integer.h"
 #include "vpx_ports/mem.h"
 
-#define PROCESS16(offset)           \
-  v_a = vec_vsx_ld(offset, a);      \
-  v_b = vec_vsx_ld(offset, b);      \
-  v_ah = unpack_to_s16_h(v_a);      \
-  v_al = unpack_to_s16_l(v_a);      \
-  v_bh = unpack_to_s16_h(v_b);      \
-  v_bl = unpack_to_s16_l(v_b);      \
-  v_subh = vec_sub(v_ah, v_bh);     \
-  v_subl = vec_sub(v_al, v_bl);     \
-  v_absh = vec_abs(v_subh);         \
-  v_absl = vec_abs(v_subl);         \
-  v_sad = vec_sum4s(v_absh, v_sad); \
-  v_sad = vec_sum4s(v_absl, v_sad);
+#define PROCESS16(offset)      \
+  v_a = vec_vsx_ld(offset, a); \
+  v_b = vec_vsx_ld(offset, b); \
+  v_abs = vec_absd(v_a, v_b);  \
+  v_sad = vec_sum4s(v_abs, v_sad);
+
+#define SAD8(height)                                                     \
+  unsigned int vpx_sad8x##height##_vsx(const uint8_t *a, int a_stride,   \
+                                       const uint8_t *b, int b_stride) { \
+    int y = 0;                                                           \
+    uint8x16_t v_a, v_b, v_abs;                                          \
+    uint32x4_t v_sad = vec_zeros_u32;                                    \
+                                                                         \
+    do {                                                                 \
+      PROCESS16(0)                                                       \
+                                                                         \
+      a += a_stride;                                                     \
+      b += b_stride;                                                     \
+      y++;                                                               \
+    } while (y < height);                                                \
+                                                                         \
+    return v_sad[1] + v_sad[0];                                          \
+  }
 
 #define SAD16(height)                                                     \
   unsigned int vpx_sad16x##height##_vsx(const uint8_t *a, int a_stride,   \
                                         const uint8_t *b, int b_stride) { \
-    int y;                                                                \
-    unsigned int sad[4];                                                  \
-    uint8x16_t v_a, v_b;                                                  \
-    int16x8_t v_ah, v_al, v_bh, v_bl, v_absh, v_absl, v_subh, v_subl;     \
-    int32x4_t v_sad = vec_splat_s32(0);                                   \
+    int y = 0;                                                            \
+    uint8x16_t v_a, v_b, v_abs;                                           \
+    uint32x4_t v_sad = vec_zeros_u32;                                     \
                                                                           \
-    for (y = 0; y < height; y++) {                                        \
+    do {                                                                  \
       PROCESS16(0);                                                       \
                                                                           \
       a += a_stride;                                                      \
       b += b_stride;                                                      \
-    }                                                                     \
-    vec_vsx_st((uint32x4_t)v_sad, 0, sad);                                \
+      y++;                                                                \
+    } while (y < height);                                                 \
                                                                           \
-    return sad[3] + sad[2] + sad[1] + sad[0];                             \
+    return v_sad[3] + v_sad[2] + v_sad[1] + v_sad[0];                     \
   }
 
 #define SAD32(height)                                                     \
   unsigned int vpx_sad32x##height##_vsx(const uint8_t *a, int a_stride,   \
                                         const uint8_t *b, int b_stride) { \
-    int y;                                                                \
-    unsigned int sad[4];                                                  \
-    uint8x16_t v_a, v_b;                                                  \
-    int16x8_t v_ah, v_al, v_bh, v_bl, v_absh, v_absl, v_subh, v_subl;     \
-    int32x4_t v_sad = vec_splat_s32(0);                                   \
+    int y = 0;                                                            \
+    uint8x16_t v_a, v_b, v_abs;                                           \
+    uint32x4_t v_sad = vec_zeros_u32;                                     \
                                                                           \
-    for (y = 0; y < height; y++) {                                        \
+    do {                                                                  \
       PROCESS16(0);                                                       \
       PROCESS16(16);                                                      \
                                                                           \
       a += a_stride;                                                      \
       b += b_stride;                                                      \
-    }                                                                     \
-    vec_vsx_st((uint32x4_t)v_sad, 0, sad);                                \
+      y++;                                                                \
+    } while (y < height);                                                 \
                                                                           \
-    return sad[3] + sad[2] + sad[1] + sad[0];                             \
+    return v_sad[3] + v_sad[2] + v_sad[1] + v_sad[0];                     \
   }
 
 #define SAD64(height)                                                     \
   unsigned int vpx_sad64x##height##_vsx(const uint8_t *a, int a_stride,   \
                                         const uint8_t *b, int b_stride) { \
-    int y;                                                                \
-    unsigned int sad[4];                                                  \
-    uint8x16_t v_a, v_b;                                                  \
-    int16x8_t v_ah, v_al, v_bh, v_bl, v_absh, v_absl, v_subh, v_subl;     \
-    int32x4_t v_sad = vec_splat_s32(0);                                   \
+    int y = 0;                                                            \
+    uint8x16_t v_a, v_b, v_abs;                                           \
+    uint32x4_t v_sad = vec_zeros_u32;                                     \
                                                                           \
-    for (y = 0; y < height; y++) {                                        \
+    do {                                                                  \
       PROCESS16(0);                                                       \
       PROCESS16(16);                                                      \
       PROCESS16(32);                                                      \
@@ -89,12 +93,15 @@
                                                                           \
       a += a_stride;                                                      \
       b += b_stride;                                                      \
-    }                                                                     \
-    vec_vsx_st((uint32x4_t)v_sad, 0, sad);                                \
+      y++;                                                                \
+    } while (y < height);                                                 \
                                                                           \
-    return sad[3] + sad[2] + sad[1] + sad[0];                             \
+    return v_sad[3] + v_sad[2] + v_sad[1] + v_sad[0];                     \
   }
 
+SAD8(4);
+SAD8(8);
+SAD8(16);
 SAD16(8);
 SAD16(16);
 SAD16(32);
@@ -108,7 +115,7 @@ SAD64(64);
   unsigned int vpx_sad16x##height##_avg_vsx(                                  \
       const uint8_t *src, int src_stride, const uint8_t *ref, int ref_stride, \
       const uint8_t *second_pred) {                                           \
-    DECLARE_ALIGNED(16, uint8_t, comp_pred[16 * height]);                     \
+    DECLARE_ALIGNED(16, uint8_t, comp_pred[16 * (height)]);                   \
     vpx_comp_avg_pred_vsx(comp_pred, second_pred, 16, height, ref,            \
                           ref_stride);                                        \
                                                                               \
@@ -119,7 +126,7 @@ SAD64(64);
   unsigned int vpx_sad32x##height##_avg_vsx(                                  \
       const uint8_t *src, int src_stride, const uint8_t *ref, int ref_stride, \
       const uint8_t *second_pred) {                                           \
-    DECLARE_ALIGNED(32, uint8_t, comp_pred[32 * height]);                     \
+    DECLARE_ALIGNED(32, uint8_t, comp_pred[32 * (height)]);                   \
     vpx_comp_avg_pred_vsx(comp_pred, second_pred, 32, height, ref,            \
                           ref_stride);                                        \
                                                                               \
@@ -130,7 +137,7 @@ SAD64(64);
   unsigned int vpx_sad64x##height##_avg_vsx(                                  \
       const uint8_t *src, int src_stride, const uint8_t *ref, int ref_stride, \
       const uint8_t *second_pred) {                                           \
-    DECLARE_ALIGNED(64, uint8_t, comp_pred[64 * height]);                     \
+    DECLARE_ALIGNED(64, uint8_t, comp_pred[64 * (height)]);                   \
     vpx_comp_avg_pred_vsx(comp_pred, second_pred, 64, height, ref,            \
                           ref_stride);                                        \
     return vpx_sad64x##height##_vsx(src, src_stride, comp_pred, 64);          \

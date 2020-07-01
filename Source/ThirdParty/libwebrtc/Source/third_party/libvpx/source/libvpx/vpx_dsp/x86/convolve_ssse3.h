@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_CONVOLVE_SSSE3_H_
-#define VPX_DSP_X86_CONVOLVE_SSSE3_H_
+#ifndef VPX_VPX_DSP_X86_CONVOLVE_SSSE3_H_
+#define VPX_VPX_DSP_X86_CONVOLVE_SSSE3_H_
 
 #include <assert.h>
 #include <tmmintrin.h>  // SSSE3
@@ -109,4 +109,4 @@ static INLINE __m128i convolve8_8_odd_offset_ssse3(const __m128i *const s,
   return temp;
 }
 
-#endif  // VPX_DSP_X86_CONVOLVE_SSSE3_H_
+#endif  // VPX_VPX_DSP_X86_CONVOLVE_SSSE3_H_

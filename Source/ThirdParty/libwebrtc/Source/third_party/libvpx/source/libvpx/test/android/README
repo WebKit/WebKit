@@ -3,15 +3,16 @@ Android.mk will build vpx unittests on android.
 ./libvpx/configure --target=armv7-android-gcc --enable-external-build \
   --enable-postproc --disable-install-srcs --enable-multi-res-encoding \
   --enable-temporal-denoising --disable-unit-tests --disable-install-docs \
-  --disable-examples --disable-runtime-cpu-detect --sdk-path=$NDK
+  --disable-examples --disable-runtime-cpu-detect
 
 2) From the parent directory, invoke ndk-build:
 NDK_PROJECT_PATH=. ndk-build APP_BUILD_SCRIPT=./libvpx/test/android/Android.mk \
   APP_ABI=armeabi-v7a APP_PLATFORM=android-18 APP_OPTIM=release \
-  APP_STL=gnustl_static
+  APP_STL=c++_static
 
-Note: Both adb and ndk-build are available prebuilt at:
-  https://chromium.googlesource.com/android_tools
+Note: Both adb and ndk-build are available at:
+  https://developer.android.com/studio#downloads
+  https://developer.android.com/ndk/downloads
 
 3) Run get_files.py to download the test files:
 python get_files.py -i /path/to/test-data.sha1 -o /path/to/put/files \

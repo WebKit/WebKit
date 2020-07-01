@@ -75,9 +75,9 @@ const vp8_tree_index vp8_ymode_tree[8] = {
   -DC_PRED, 2, 4, 6, -V_PRED, -H_PRED, -TM_PRED, -B_PRED
 };
 
-const vp8_tree_index vp8_kf_ymode_tree[8] = {
-  -B_PRED, 2, 4, 6, -DC_PRED, -V_PRED, -H_PRED, -TM_PRED
-};
+const vp8_tree_index vp8_kf_ymode_tree[8] = { -B_PRED, 2,        4,
+                                              6,       -DC_PRED, -V_PRED,
+                                              -H_PRED, -TM_PRED };
 
 const vp8_tree_index vp8_uv_mode_tree[6] = { -DC_PRED, 2,       -V_PRED,
                                              4,        -H_PRED, -TM_PRED };
@@ -99,6 +99,6 @@ void vp8_init_mbmode_probs(VP8_COMMON *x) {
   memcpy(x->fc.sub_mv_ref_prob, sub_mv_ref_prob, sizeof(sub_mv_ref_prob));
 }
 
-void vp8_default_bmode_probs(vp8_prob p[VP8_BINTRAMODES - 1]) {
-  memcpy(p, vp8_bmode_prob, sizeof(vp8_bmode_prob));
+void vp8_default_bmode_probs(vp8_prob dest[VP8_BINTRAMODES - 1]) {
+  memcpy(dest, vp8_bmode_prob, sizeof(vp8_bmode_prob));
 }

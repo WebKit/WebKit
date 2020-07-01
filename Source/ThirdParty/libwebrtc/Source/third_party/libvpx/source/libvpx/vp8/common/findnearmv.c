@@ -21,19 +21,20 @@ const unsigned char vp8_mbsplit_offset[4][16] = {
    Note that we only consider one 4x4 subblock from each candidate 16x16
    macroblock.   */
 void vp8_find_near_mvs(MACROBLOCKD *xd, const MODE_INFO *here, int_mv *nearest,
-                       int_mv *nearby, int_mv *best_mv, int cnt[4],
+                       int_mv *nearby, int_mv *best_mv, int near_mv_ref_cnts[4],
                        int refframe, int *ref_frame_sign_bias) {
   const MODE_INFO *above = here - xd->mode_info_stride;
   const MODE_INFO *left = here - 1;
   const MODE_INFO *aboveleft = above - 1;
   int_mv near_mvs[4];
   int_mv *mv = near_mvs;
-  int *cntx = cnt;
+  int *cntx = near_mv_ref_cnts;
   enum { CNT_INTRA, CNT_NEAREST, CNT_NEAR, CNT_SPLITMV };
 
   /* Zero accumulators */
   mv[0].as_int = mv[1].as_int = mv[2].as_int = 0;
-  cnt[0] = cnt[1] = cnt[2] = cnt[3] = 0;
+  near_mv_ref_cnts[0] = near_mv_ref_cnts[1] = near_mv_ref_cnts[2] =
+      near_mv_ref_cnts[3] = 0;
 
   /* Process above */
   if (above->mbmi.ref_frame != INTRA_FRAME) {
@@ -63,7 +64,7 @@ void vp8_find_near_mvs(MACROBLOCKD *xd, const MODE_INFO *here, int_mv *nearest,
 
       *cntx += 2;
     } else {
-      cnt[CNT_INTRA] += 2;
+      near_mv_ref_cnts[CNT_INTRA] += 2;
     }
   }
 
@@ -83,33 +84,34 @@ void vp8_find_near_mvs(MACROBLOCKD *xd, const MODE_INFO *here, int_mv *nearest,
 
       *cntx += 1;
     } else {
-      cnt[CNT_INTRA] += 1;
+      near_mv_ref_cnts[CNT_INTRA] += 1;
     }
   }
 
   /* If we have three distinct MV's ... */
-  if (cnt[CNT_SPLITMV]) {
+  if (near_mv_ref_cnts[CNT_SPLITMV]) {
     /* See if above-left MV can be merged with NEAREST */
-    if (mv->as_int == near_mvs[CNT_NEAREST].as_int) cnt[CNT_NEAREST] += 1;
+    if (mv->as_int == near_mvs[CNT_NEAREST].as_int)
+      near_mv_ref_cnts[CNT_NEAREST] += 1;
   }
 
-  cnt[CNT_SPLITMV] =
+  near_mv_ref_cnts[CNT_SPLITMV] =
       ((above->mbmi.mode == SPLITMV) + (left->mbmi.mode == SPLITMV)) * 2 +
       (aboveleft->mbmi.mode == SPLITMV);
 
   /* Swap near and nearest if necessary */
-  if (cnt[CNT_NEAR] > cnt[CNT_NEAREST]) {
+  if (near_mv_ref_cnts[CNT_NEAR] > near_mv_ref_cnts[CNT_NEAREST]) {
     int tmp;
-    tmp = cnt[CNT_NEAREST];
-    cnt[CNT_NEAREST] = cnt[CNT_NEAR];
-    cnt[CNT_NEAR] = tmp;
+    tmp = near_mv_ref_cnts[CNT_NEAREST];
+    near_mv_ref_cnts[CNT_NEAREST] = near_mv_ref_cnts[CNT_NEAR];
+    near_mv_ref_cnts[CNT_NEAR] = tmp;
     tmp = near_mvs[CNT_NEAREST].as_int;
     near_mvs[CNT_NEAREST].as_int = near_mvs[CNT_NEAR].as_int;
     near_mvs[CNT_NEAR].as_int = tmp;
   }
 
   /* Use near_mvs[0] to store the "best" MV */
-  if (cnt[CNT_NEAREST] >= cnt[CNT_INTRA]) {
+  if (near_mv_ref_cnts[CNT_NEAREST] >= near_mv_ref_cnts[CNT_INTRA]) {
     near_mvs[CNT_INTRA] = near_mvs[CNT_NEAREST];
   }
 

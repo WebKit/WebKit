@@ -58,7 +58,7 @@ static void extend_plane(uint8_t *const src, int src_stride, int width,
     dst_ptr2 += src_stride;
   }
 }
-#if CONFIG_VP9
+
 #if CONFIG_VP9_HIGHBITDEPTH
 static void extend_plane_high(uint8_t *const src8, int src_stride, int width,
                               int height, int extend_top, int extend_left,
@@ -100,7 +100,6 @@ static void extend_plane_high(uint8_t *const src8, int src_stride, int width,
     dst_ptr2 += src_stride;
   }
 }
-#endif
 #endif
 
 void vp8_yv12_extend_frame_borders_c(YV12_BUFFER_CONFIG *ybf) {

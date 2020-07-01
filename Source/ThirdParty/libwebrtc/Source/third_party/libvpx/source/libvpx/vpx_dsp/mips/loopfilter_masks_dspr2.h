@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_MIPS_DSPR2_VP9_LOOPFILTER_MASKS_DSPR2_H_
-#define VP9_COMMON_MIPS_DSPR2_VP9_LOOPFILTER_MASKS_DSPR2_H_
+#ifndef VPX_VPX_DSP_MIPS_LOOPFILTER_MASKS_DSPR2_H_
+#define VPX_VPX_DSP_MIPS_LOOPFILTER_MASKS_DSPR2_H_
 
 #include <stdlib.h>
 
@@ -352,4 +352,4 @@ static INLINE void flatmask5(uint32_t p4, uint32_t p3, uint32_t p2, uint32_t p1,
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_MIPS_DSPR2_VP9_LOOPFILTER_MASKS_DSPR2_H_
+#endif  // VPX_VPX_DSP_MIPS_LOOPFILTER_MASKS_DSPR2_H_

@@ -97,30 +97,30 @@ static void var_filter_block2d_bil_w16(const uint8_t *src_ptr,
 
 // 4xM filter writes an extra row to fdata because it processes two rows at a
 // time.
-#define sub_pixel_varianceNxM(n, m)                                 \
-  uint32_t vpx_sub_pixel_variance##n##x##m##_neon(                  \
-      const uint8_t *a, int a_stride, int xoffset, int yoffset,     \
-      const uint8_t *b, int b_stride, uint32_t *sse) {              \
-    uint8_t temp0[n * (m + (n == 4 ? 2 : 1))];                      \
-    uint8_t temp1[n * m];                                           \
-                                                                    \
-    if (n == 4) {                                                   \
-      var_filter_block2d_bil_w4(a, temp0, a_stride, 1, (m + 2),     \
-                                bilinear_filters[xoffset]);         \
-      var_filter_block2d_bil_w4(temp0, temp1, n, n, m,              \
-                                bilinear_filters[yoffset]);         \
-    } else if (n == 8) {                                            \
-      var_filter_block2d_bil_w8(a, temp0, a_stride, 1, (m + 1),     \
-                                bilinear_filters[xoffset]);         \
-      var_filter_block2d_bil_w8(temp0, temp1, n, n, m,              \
-                                bilinear_filters[yoffset]);         \
-    } else {                                                        \
-      var_filter_block2d_bil_w16(a, temp0, a_stride, 1, (m + 1), n, \
-                                 bilinear_filters[xoffset]);        \
-      var_filter_block2d_bil_w16(temp0, temp1, n, n, m, n,          \
-                                 bilinear_filters[yoffset]);        \
-    }                                                               \
-    return vpx_variance##n##x##m(temp1, n, b, b_stride, sse);       \
+#define sub_pixel_varianceNxM(n, m)                                         \
+  uint32_t vpx_sub_pixel_variance##n##x##m##_neon(                          \
+      const uint8_t *src_ptr, int src_stride, int x_offset, int y_offset,   \
+      const uint8_t *ref_ptr, int ref_stride, uint32_t *sse) {              \
+    uint8_t temp0[n * (m + (n == 4 ? 2 : 1))];                              \
+    uint8_t temp1[n * m];                                                   \
+                                                                            \
+    if (n == 4) {                                                           \
+      var_filter_block2d_bil_w4(src_ptr, temp0, src_stride, 1, (m + 2),     \
+                                bilinear_filters[x_offset]);                \
+      var_filter_block2d_bil_w4(temp0, temp1, n, n, m,                      \
+                                bilinear_filters[y_offset]);                \
+    } else if (n == 8) {                                                    \
+      var_filter_block2d_bil_w8(src_ptr, temp0, src_stride, 1, (m + 1),     \
+                                bilinear_filters[x_offset]);                \
+      var_filter_block2d_bil_w8(temp0, temp1, n, n, m,                      \
+                                bilinear_filters[y_offset]);                \
+    } else {                                                                \
+      var_filter_block2d_bil_w16(src_ptr, temp0, src_stride, 1, (m + 1), n, \
+                                 bilinear_filters[x_offset]);               \
+      var_filter_block2d_bil_w16(temp0, temp1, n, n, m, n,                  \
+                                 bilinear_filters[y_offset]);               \
+    }                                                                       \
+    return vpx_variance##n##x##m(temp1, n, ref_ptr, ref_stride, sse);       \
   }
 
 sub_pixel_varianceNxM(4, 4);
@@ -139,34 +139,34 @@ sub_pixel_varianceNxM(64, 64);
 
 // 4xM filter writes an extra row to fdata because it processes two rows at a
 // time.
-#define sub_pixel_avg_varianceNxM(n, m)                             \
-  uint32_t vpx_sub_pixel_avg_variance##n##x##m##_neon(              \
-      const uint8_t *a, int a_stride, int xoffset, int yoffset,     \
-      const uint8_t *b, int b_stride, uint32_t *sse,                \
-      const uint8_t *second_pred) {                                 \
-    uint8_t temp0[n * (m + (n == 4 ? 2 : 1))];                      \
-    uint8_t temp1[n * m];                                           \
-                                                                    \
-    if (n == 4) {                                                   \
-      var_filter_block2d_bil_w4(a, temp0, a_stride, 1, (m + 2),     \
-                                bilinear_filters[xoffset]);         \
-      var_filter_block2d_bil_w4(temp0, temp1, n, n, m,              \
-                                bilinear_filters[yoffset]);         \
-    } else if (n == 8) {                                            \
-      var_filter_block2d_bil_w8(a, temp0, a_stride, 1, (m + 1),     \
-                                bilinear_filters[xoffset]);         \
-      var_filter_block2d_bil_w8(temp0, temp1, n, n, m,              \
-                                bilinear_filters[yoffset]);         \
-    } else {                                                        \
-      var_filter_block2d_bil_w16(a, temp0, a_stride, 1, (m + 1), n, \
-                                 bilinear_filters[xoffset]);        \
-      var_filter_block2d_bil_w16(temp0, temp1, n, n, m, n,          \
-                                 bilinear_filters[yoffset]);        \
-    }                                                               \
-                                                                    \
-    vpx_comp_avg_pred(temp0, second_pred, n, m, temp1, n);          \
-                                                                    \
-    return vpx_variance##n##x##m(temp0, n, b, b_stride, sse);       \
+#define sub_pixel_avg_varianceNxM(n, m)                                     \
+  uint32_t vpx_sub_pixel_avg_variance##n##x##m##_neon(                      \
+      const uint8_t *src_ptr, int src_stride, int x_offset, int y_offset,   \
+      const uint8_t *ref_ptr, int ref_stride, uint32_t *sse,                \
+      const uint8_t *second_pred) {                                         \
+    uint8_t temp0[n * (m + (n == 4 ? 2 : 1))];                              \
+    uint8_t temp1[n * m];                                                   \
+                                                                            \
+    if (n == 4) {                                                           \
+      var_filter_block2d_bil_w4(src_ptr, temp0, src_stride, 1, (m + 2),     \
+                                bilinear_filters[x_offset]);                \
+      var_filter_block2d_bil_w4(temp0, temp1, n, n, m,                      \
+                                bilinear_filters[y_offset]);                \
+    } else if (n == 8) {                                                    \
+      var_filter_block2d_bil_w8(src_ptr, temp0, src_stride, 1, (m + 1),     \
+                                bilinear_filters[x_offset]);                \
+      var_filter_block2d_bil_w8(temp0, temp1, n, n, m,                      \
+                                bilinear_filters[y_offset]);                \
+    } else {                                                                \
+      var_filter_block2d_bil_w16(src_ptr, temp0, src_stride, 1, (m + 1), n, \
+                                 bilinear_filters[x_offset]);               \
+      var_filter_block2d_bil_w16(temp0, temp1, n, n, m, n,                  \
+                                 bilinear_filters[y_offset]);               \
+    }                                                                       \
+                                                                            \
+    vpx_comp_avg_pred(temp0, second_pred, n, m, temp1, n);                  \
+                                                                            \
+    return vpx_variance##n##x##m(temp0, n, ref_ptr, ref_stride, sse);       \
   }
 
 sub_pixel_avg_varianceNxM(4, 4);

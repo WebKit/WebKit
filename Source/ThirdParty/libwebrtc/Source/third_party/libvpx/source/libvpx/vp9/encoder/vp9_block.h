@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_BLOCK_H_
-#define VP9_ENCODER_VP9_BLOCK_H_
+#ifndef VPX_VP9_ENCODER_VP9_BLOCK_H_
+#define VPX_VP9_ENCODER_VP9_BLOCK_H_
 
 #include "vpx_util/vpx_thread.h"
 
@@ -34,8 +34,8 @@ struct macroblock_plane {
   struct buf_2d src;
 
   // Quantizer setings
+  DECLARE_ALIGNED(16, int16_t, round_fp[8]);
   int16_t *quant_fp;
-  int16_t *round_fp;
   int16_t *quant;
   int16_t *quant_shift;
   int16_t *zbin;
@@ -92,6 +92,8 @@ struct macroblock {
   int sadperbit4;
   int rddiv;
   int rdmult;
+  int cb_rdmult;
+  int segment_id;
   int mb_energy;
 
   // These are set to their default values at the beginning, and then adjusted
@@ -114,6 +116,12 @@ struct macroblock {
   int *nmvsadcost[2];
   int *nmvsadcost_hp[2];
   int **mvsadcost;
+
+  // sharpness is used to disable skip mode and change rd_mult
+  int sharpness;
+
+  // aq mode is used to adjust rd based on segment.
+  int adjust_rdmult_by_segment;
 
   // These define limits to motion vector components to prevent them
   // from extending outside the UMV borders
@@ -180,6 +188,8 @@ struct macroblock {
 
   int sb_pickmode_part;
 
+  int zero_temp_sad_source;
+
   // For each superblock: saves the content value (e.g., low/high sad/sumdiff)
   // based on source sad, prior to encoding the frame.
   uint8_t content_state_sb;
@@ -199,10 +209,13 @@ struct macroblock {
   void (*highbd_inv_txfm_add)(const tran_low_t *input, uint16_t *dest,
                               int stride, int eob, int bd);
 #endif
+  DECLARE_ALIGNED(16, uint8_t, est_pred[64 * 64]);
+
+  struct scale_factors *me_sf;
 };
 
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_BLOCK_H_
+#endif  // VPX_VP9_ENCODER_VP9_BLOCK_H_

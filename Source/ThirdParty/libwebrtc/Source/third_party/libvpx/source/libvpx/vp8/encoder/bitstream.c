@@ -41,13 +41,6 @@ const int vp8cx_base_skip_false_prob[128] = {
 unsigned __int64 Sectionbits[500];
 #endif
 
-#ifdef VP8_ENTROPY_STATS
-int intra_mode_stats[10][10][10];
-static unsigned int tree_update_hist[BLOCK_TYPES][COEF_BANDS]
-                                    [PREV_COEF_CONTEXTS][ENTROPY_NODES][2];
-extern unsigned int active_section;
-#endif
-
 #ifdef MODE_STATS
 int count_mb_seg[4] = { 0, 0, 0, 0 };
 #endif
@@ -178,7 +171,7 @@ void vp8_pack_tokens(vp8_writer *w, const TOKENEXTRA *p, int xcount) {
 
         validate_buffer(w->buffer + w->pos, 1, w->buffer_end, w->error);
 
-        w->buffer[w->pos++] = (lowvalue >> (24 - offset));
+        w->buffer[w->pos++] = (lowvalue >> (24 - offset)) & 0xff;
         lowvalue <<= offset;
         shift = count;
         lowvalue &= 0xffffff;
@@ -428,10 +421,6 @@ static void pack_inter_mode_mvs(VP8_COMP *const cpi) {
 
   vp8_convert_rfct_to_prob(cpi);
 
-#ifdef VP8_ENTROPY_STATS
-  active_section = 1;
-#endif
-
   if (pc->mb_no_coeff_skip) {
     int total_mbs = pc->mb_rows * pc->mb_cols;
 
@@ -472,10 +461,6 @@ static void pack_inter_mode_mvs(VP8_COMP *const cpi) {
       xd->mb_to_top_edge = -((mb_row * 16) << 3);
       xd->mb_to_bottom_edge = ((pc->mb_rows - 1 - mb_row) * 16) << 3;
 
-#ifdef VP8_ENTROPY_STATS
-      active_section = 9;
-#endif
-
       if (cpi->mb.e_mbd.update_mb_segmentation_map) {
         write_mb_features(w, mi, &cpi->mb.e_mbd);
       }
@@ -486,9 +471,6 @@ static void pack_inter_mode_mvs(VP8_COMP *const cpi) {
 
       if (rf == INTRA_FRAME) {
         vp8_write(w, 0, cpi->prob_intra_coded);
-#ifdef VP8_ENTROPY_STATS
-        active_section = 6;
-#endif
         write_ymode(w, mode, pc->fc.ymode_prob);
 
         if (mode == B_PRED) {
@@ -522,28 +504,13 @@ static void pack_inter_mode_mvs(VP8_COMP *const cpi) {
           vp8_clamp_mv2(&best_mv, xd);
 
           vp8_mv_ref_probs(mv_ref_p, ct);
-
-#ifdef VP8_ENTROPY_STATS
-          accum_mv_refs(mode, ct);
-#endif
         }
-
-#ifdef VP8_ENTROPY_STATS
-        active_section = 3;
-#endif
 
         write_mv_ref(w, mode, mv_ref_p);
 
         switch (mode) /* new, split require MVs */
         {
-          case NEWMV:
-
-#ifdef VP8_ENTROPY_STATS
-            active_section = 5;
-#endif
-
-            write_mv(w, &mi->mv.as_mv, &best_mv, mvc);
-            break;
+          case NEWMV: write_mv(w, &mi->mv.as_mv, &best_mv, mvc); break;
 
           case SPLITMV: {
             int j = 0;
@@ -574,9 +541,6 @@ static void pack_inter_mode_mvs(VP8_COMP *const cpi) {
               write_sub_mv_ref(w, blockmode, vp8_sub_mv_ref_prob2[mv_contz]);
 
               if (blockmode == NEW4X4) {
-#ifdef VP8_ENTROPY_STATS
-                active_section = 11;
-#endif
                 write_mv(w, &blockmv.as_mv, &best_mv, (const MV_CONTEXT *)mvc);
               }
             } while (++j < cpi->mb.partition_info->count);
@@ -641,10 +605,6 @@ static void write_kfmodes(VP8_COMP *cpi) {
           const B_PREDICTION_MODE A = above_block_mode(m, i, mis);
           const B_PREDICTION_MODE L = left_block_mode(m, i);
           const int bm = m->bmi[i].as_mode;
-
-#ifdef VP8_ENTROPY_STATS
-          ++intra_mode_stats[A][L][bm];
-#endif
 
           write_bmode(bc, bm, vp8_kf_bmode_prob[A][L]);
         } while (++i < 16);
@@ -973,10 +933,6 @@ void vp8_update_coef_probs(VP8_COMP *cpi) {
           vp8_write(w, u, upd);
 #endif
 
-#ifdef VP8_ENTROPY_STATS
-          ++tree_update_hist[i][j][k][t][u];
-#endif
-
           if (u) {
             /* send/use new probability */
 
@@ -989,16 +945,6 @@ void vp8_update_coef_probs(VP8_COMP *cpi) {
           }
 
         } while (++t < ENTROPY_NODES);
-
-/* Accum token counts for generation of default statistics */
-#ifdef VP8_ENTROPY_STATS
-        t = 0;
-
-        do {
-          context_counters[i][j][k][t] += cpi->coef_counts[i][j][k][t];
-        } while (++t < MAX_ENTROPY_TOKENS);
-
-#endif
 
       } while (++k < PREV_COEF_CONTEXTS);
     } while (++j < COEF_BANDS);
@@ -1097,12 +1043,18 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
     cx_data[1] = 0x01;
     cx_data[2] = 0x2a;
 
+    /* Pack scale and frame size into 16 bits. Store it 8 bits at a time.
+     * https://tools.ietf.org/html/rfc6386
+     * 9.1. Uncompressed Data Chunk
+     * 16 bits      :     (2 bits Horizontal Scale << 14) | Width (14 bits)
+     * 16 bits      :     (2 bits Vertical Scale << 14) | Height (14 bits)
+     */
     v = (pc->horiz_scale << 14) | pc->Width;
-    cx_data[3] = v;
+    cx_data[3] = v & 0xff;
     cx_data[4] = v >> 8;
 
     v = (pc->vert_scale << 14) | pc->Height;
-    cx_data[5] = v;
+    cx_data[5] = v & 0xff;
     cx_data[6] = v >> 8;
 
     extra_bytes_packed = 7;
@@ -1286,15 +1238,6 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
 
   if (pc->frame_type != KEY_FRAME) vp8_write_bit(bc, pc->refresh_last_frame);
 
-#ifdef VP8_ENTROPY_STATS
-
-  if (pc->frame_type == INTER_FRAME)
-    active_section = 0;
-  else
-    active_section = 7;
-
-#endif
-
   vpx_clear_system_state();
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
@@ -1308,25 +1251,13 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
   vp8_update_coef_probs(cpi);
 #endif
 
-#ifdef VP8_ENTROPY_STATS
-  active_section = 2;
-#endif
-
   /* Write out the mb_no_coeff_skip flag */
   vp8_write_bit(bc, pc->mb_no_coeff_skip);
 
   if (pc->frame_type == KEY_FRAME) {
     write_kfmodes(cpi);
-
-#ifdef VP8_ENTROPY_STATS
-    active_section = 8;
-#endif
   } else {
     pack_inter_mode_mvs(cpi);
-
-#ifdef VP8_ENTROPY_STATS
-    active_section = 1;
-#endif
   }
 
   vp8_stop_encode(bc);
@@ -1337,11 +1268,30 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
 
   /* update frame tag */
   {
+    /* Pack partition size, show frame, version and frame type into to 24 bits.
+     * Store it 8 bits at a time.
+     * https://tools.ietf.org/html/rfc6386
+     * 9.1. Uncompressed Data Chunk
+     *    The uncompressed data chunk comprises a common (for key frames and
+     *    interframes) 3-byte frame tag that contains four fields, as follows:
+     *
+     *    1.  A 1-bit frame type (0 for key frames, 1 for interframes).
+     *
+     *    2.  A 3-bit version number (0 - 3 are defined as four different
+     *        profiles with different decoding complexity; other values may be
+     *        defined for future variants of the VP8 data format).
+     *
+     *    3.  A 1-bit show_frame flag (0 when current frame is not for display,
+     *        1 when current frame is for display).
+     *
+     *    4.  A 19-bit field containing the size of the first data partition in
+     *        bytes
+     */
     int v = (oh.first_partition_length_in_bytes << 5) | (oh.show_frame << 4) |
             (oh.version << 1) | oh.type;
 
-    dest[0] = v;
-    dest[1] = v >> 8;
+    dest[0] = v & 0xff;
+    dest[1] = (v >> 8) & 0xff;
     dest[2] = v >> 16;
   }
 
@@ -1431,50 +1381,3 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
   }
 #endif
 }
-
-#ifdef VP8_ENTROPY_STATS
-void print_tree_update_probs() {
-  int i, j, k, l;
-  FILE *f = fopen("context.c", "a");
-  int Sum;
-  fprintf(f, "\n/* Update probabilities for token entropy tree. */\n\n");
-  fprintf(f,
-          "const vp8_prob tree_update_probs[BLOCK_TYPES] [COEF_BANDS] "
-          "[PREV_COEF_CONTEXTS] [ENTROPY_NODES] = {\n");
-
-  for (i = 0; i < BLOCK_TYPES; ++i) {
-    fprintf(f, "  { \n");
-
-    for (j = 0; j < COEF_BANDS; ++j) {
-      fprintf(f, "    {\n");
-
-      for (k = 0; k < PREV_COEF_CONTEXTS; ++k) {
-        fprintf(f, "      {");
-
-        for (l = 0; l < ENTROPY_NODES; ++l) {
-          Sum =
-              tree_update_hist[i][j][k][l][0] + tree_update_hist[i][j][k][l][1];
-
-          if (Sum > 0) {
-            if (((tree_update_hist[i][j][k][l][0] * 255) / Sum) > 0)
-              fprintf(f, "%3ld, ",
-                      (tree_update_hist[i][j][k][l][0] * 255) / Sum);
-            else
-              fprintf(f, "%3ld, ", 1);
-          } else
-            fprintf(f, "%3ld, ", 128);
-        }
-
-        fprintf(f, "},\n");
-      }
-
-      fprintf(f, "    },\n");
-    }
-
-    fprintf(f, "  },\n");
-  }
-
-  fprintf(f, "};\n");
-  fclose(f);
-}
-#endif

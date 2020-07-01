@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_COMMON_MIPS_DSPR2_H_
-#define VPX_COMMON_MIPS_DSPR2_H_
+#ifndef VPX_VPX_DSP_MIPS_COMMON_DSPR2_H_
+#define VPX_VPX_DSP_MIPS_COMMON_DSPR2_H_
 
 #include <assert.h>
 #include "./vpx_config.h"
@@ -45,4 +45,4 @@ static INLINE void prefetch_store_streamed(unsigned char *dst) {
 }  // extern "C"
 #endif
 
-#endif  // VPX_COMMON_MIPS_DSPR2_H_
+#endif  // VPX_VPX_DSP_MIPS_COMMON_DSPR2_H_

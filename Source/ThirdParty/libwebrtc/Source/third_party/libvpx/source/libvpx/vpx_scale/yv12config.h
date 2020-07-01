@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_SCALE_YV12CONFIG_H_
-#define VPX_SCALE_YV12CONFIG_H_
+#ifndef VPX_VPX_SCALE_YV12CONFIG_H_
+#define VPX_VPX_SCALE_YV12CONFIG_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,9 +49,9 @@ typedef struct yv12_buffer_config {
   uint8_t *alpha_buffer;
 
   uint8_t *buffer_alloc;
-  int buffer_alloc_sz;
+  size_t buffer_alloc_sz;
   int border;
-  int frame_size;
+  size_t frame_size;
   int subsampling_x;
   int subsampling_y;
   unsigned int bit_depth;
@@ -100,4 +100,4 @@ int vpx_free_frame_buffer(YV12_BUFFER_CONFIG *ybf);
 }
 #endif
 
-#endif  // VPX_SCALE_YV12CONFIG_H_
+#endif  // VPX_VPX_SCALE_YV12CONFIG_H_

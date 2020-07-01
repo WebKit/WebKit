@@ -19,7 +19,7 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WK_DISABLE_HAR
 ARM_FILES = *_neon.c arm_cpudetect.c *_arm.c
 X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx.c *.asm
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*][arch=x86_64] = $(ARM_FILES) sad.c
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*][arch=arm64*] = $(X86_FILES)
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=arm64*] = $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*][arch=x86_64] = $(ARM_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*][arch=arm64*] = $(X86_FILES) *_mmx.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=arm64*] = $(X86_FILES) *_mmx.c
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = $(X86_FILES) $(ARM_FILES)

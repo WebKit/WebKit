@@ -39,11 +39,10 @@ const int16_t vpx_rv[] = {
   9,  10, 13,
 };
 
-void vpx_post_proc_down_and_across_mb_row_c(unsigned char *src_ptr,
-                                            unsigned char *dst_ptr,
-                                            int src_pixels_per_line,
-                                            int dst_pixels_per_line, int cols,
-                                            unsigned char *f, int size) {
+void vpx_post_proc_down_and_across_mb_row_c(unsigned char *src,
+                                            unsigned char *dst, int src_pitch,
+                                            int dst_pitch, int cols,
+                                            unsigned char *flimits, int size) {
   unsigned char *p_src, *p_dst;
   int row;
   int col;
@@ -55,19 +54,21 @@ void vpx_post_proc_down_and_across_mb_row_c(unsigned char *src_ptr,
 
   for (row = 0; row < size; row++) {
     /* post_proc_down for one row */
-    p_src = src_ptr;
-    p_dst = dst_ptr;
+    p_src = src;
+    p_dst = dst;
 
     for (col = 0; col < cols; col++) {
-      unsigned char p_above2 = p_src[col - 2 * src_pixels_per_line];
-      unsigned char p_above1 = p_src[col - src_pixels_per_line];
-      unsigned char p_below1 = p_src[col + src_pixels_per_line];
-      unsigned char p_below2 = p_src[col + 2 * src_pixels_per_line];
+      unsigned char p_above2 = p_src[col - 2 * src_pitch];
+      unsigned char p_above1 = p_src[col - src_pitch];
+      unsigned char p_below1 = p_src[col + src_pitch];
+      unsigned char p_below2 = p_src[col + 2 * src_pitch];
 
       v = p_src[col];
 
-      if ((abs(v - p_above2) < f[col]) && (abs(v - p_above1) < f[col]) &&
-          (abs(v - p_below1) < f[col]) && (abs(v - p_below2) < f[col])) {
+      if ((abs(v - p_above2) < flimits[col]) &&
+          (abs(v - p_above1) < flimits[col]) &&
+          (abs(v - p_below1) < flimits[col]) &&
+          (abs(v - p_below2) < flimits[col])) {
         unsigned char k1, k2, k3;
         k1 = (p_above2 + p_above1 + 1) >> 1;
         k2 = (p_below2 + p_below1 + 1) >> 1;
@@ -79,8 +80,8 @@ void vpx_post_proc_down_and_across_mb_row_c(unsigned char *src_ptr,
     }
 
     /* now post_proc_across */
-    p_src = dst_ptr;
-    p_dst = dst_ptr;
+    p_src = dst;
+    p_dst = dst;
 
     p_src[-2] = p_src[-1] = p_src[0];
     p_src[cols] = p_src[cols + 1] = p_src[cols - 1];
@@ -88,10 +89,10 @@ void vpx_post_proc_down_and_across_mb_row_c(unsigned char *src_ptr,
     for (col = 0; col < cols; col++) {
       v = p_src[col];
 
-      if ((abs(v - p_src[col - 2]) < f[col]) &&
-          (abs(v - p_src[col - 1]) < f[col]) &&
-          (abs(v - p_src[col + 1]) < f[col]) &&
-          (abs(v - p_src[col + 2]) < f[col])) {
+      if ((abs(v - p_src[col - 2]) < flimits[col]) &&
+          (abs(v - p_src[col - 1]) < flimits[col]) &&
+          (abs(v - p_src[col + 1]) < flimits[col]) &&
+          (abs(v - p_src[col + 2]) < flimits[col])) {
         unsigned char k1, k2, k3;
         k1 = (p_src[col - 2] + p_src[col - 1] + 1) >> 1;
         k2 = (p_src[col + 2] + p_src[col + 1] + 1) >> 1;
@@ -109,8 +110,8 @@ void vpx_post_proc_down_and_across_mb_row_c(unsigned char *src_ptr,
     p_dst[col - 1] = d[(col - 1) & 3];
 
     /* next row */
-    src_ptr += src_pixels_per_line;
-    dst_ptr += dst_pixels_per_line;
+    src += src_pitch;
+    dst += dst_pitch;
   }
 }
 

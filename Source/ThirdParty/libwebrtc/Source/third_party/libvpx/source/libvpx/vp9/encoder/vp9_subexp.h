@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_SUBEXP_H_
-#define VP9_ENCODER_VP9_SUBEXP_H_
+#ifndef VPX_VP9_ENCODER_VP9_SUBEXP_H_
+#define VPX_VP9_ENCODER_VP9_SUBEXP_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,4 +37,4 @@ int vp9_prob_diff_update_savings_search_model(const unsigned int *ct,
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_SUBEXP_H_
+#endif  // VPX_VP9_ENCODER_VP9_SUBEXP_H_

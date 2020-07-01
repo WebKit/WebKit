@@ -93,9 +93,9 @@ void FDCT4x4_2D(const int16_t *input, tran_low_t *output, int stride) {
 #if DCT_HIGH_BIT_DEPTH
   // Check inputs small enough to use optimised code
   cmp0 = _mm_xor_si128(_mm_cmpgt_epi16(in0, _mm_set1_epi16(0x3ff)),
-                       _mm_cmplt_epi16(in0, _mm_set1_epi16(0xfc00)));
+                       _mm_cmplt_epi16(in0, _mm_set1_epi16((int16_t)0xfc00)));
   cmp1 = _mm_xor_si128(_mm_cmpgt_epi16(in1, _mm_set1_epi16(0x3ff)),
-                       _mm_cmplt_epi16(in1, _mm_set1_epi16(0xfc00)));
+                       _mm_cmplt_epi16(in1, _mm_set1_epi16((int16_t)0xfc00)));
   test = _mm_movemask_epi8(_mm_or_si128(cmp0, cmp1));
   if (test) {
     vpx_highbd_fdct4x4_c(input, output, stride);

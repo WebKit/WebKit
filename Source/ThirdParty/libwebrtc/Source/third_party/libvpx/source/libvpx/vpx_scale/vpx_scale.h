@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_SCALE_VPX_SCALE_H_
-#define VPX_SCALE_VPX_SCALE_H_
+#ifndef VPX_VPX_SCALE_VPX_SCALE_H_
+#define VPX_VPX_SCALE_VPX_SCALE_H_
 
 #include "vpx_scale/yv12config.h"
 
@@ -19,4 +19,4 @@ extern void vpx_scale_frame(YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst,
                             unsigned int vscale, unsigned int vratio,
                             unsigned int interlaced);
 
-#endif  // VPX_SCALE_VPX_SCALE_H_
+#endif  // VPX_VPX_SCALE_VPX_SCALE_H_

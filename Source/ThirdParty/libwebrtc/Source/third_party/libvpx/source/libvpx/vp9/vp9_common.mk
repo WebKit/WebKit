@@ -10,6 +10,7 @@
 
 VP9_COMMON_SRCS-yes += vp9_common.mk
 VP9_COMMON_SRCS-yes += vp9_iface_common.h
+VP9_COMMON_SRCS-yes += vp9_iface_common.c
 VP9_COMMON_SRCS-yes += common/vp9_ppflags.h
 VP9_COMMON_SRCS-yes += common/vp9_alloccommon.c
 VP9_COMMON_SRCS-yes += common/vp9_blockd.c
@@ -64,10 +65,14 @@ VP9_COMMON_SRCS-$(CONFIG_VP9_POSTPROC) += common/vp9_postproc.c
 VP9_COMMON_SRCS-$(CONFIG_VP9_POSTPROC) += common/vp9_mfqe.h
 VP9_COMMON_SRCS-$(CONFIG_VP9_POSTPROC) += common/vp9_mfqe.c
 
+ifneq ($(CONFIG_VP9_HIGHBITDEPTH),yes)
 VP9_COMMON_SRCS-$(HAVE_MSA)   += common/mips/msa/vp9_idct4x4_msa.c
 VP9_COMMON_SRCS-$(HAVE_MSA)   += common/mips/msa/vp9_idct8x8_msa.c
 VP9_COMMON_SRCS-$(HAVE_MSA)   += common/mips/msa/vp9_idct16x16_msa.c
+endif  # !CONFIG_VP9_HIGHBITDEPTH
+
 VP9_COMMON_SRCS-$(HAVE_SSE2)  += common/x86/vp9_idct_intrin_sse2.c
+VP9_COMMON_SRCS-$(HAVE_VSX)   += common/ppc/vp9_idct_vsx.c
 VP9_COMMON_SRCS-$(HAVE_NEON)  += common/arm/neon/vp9_iht4x4_add_neon.c
 VP9_COMMON_SRCS-$(HAVE_NEON)  += common/arm/neon/vp9_iht8x8_add_neon.c
 VP9_COMMON_SRCS-$(HAVE_NEON)  += common/arm/neon/vp9_iht16x16_add_neon.c
@@ -85,6 +90,7 @@ VP9_COMMON_SRCS-$(HAVE_DSPR2) += common/mips/dspr2/vp9_itrans16_dspr2.c
 else
 VP9_COMMON_SRCS-$(HAVE_NEON)   += common/arm/neon/vp9_highbd_iht4x4_add_neon.c
 VP9_COMMON_SRCS-$(HAVE_NEON)   += common/arm/neon/vp9_highbd_iht8x8_add_neon.c
+VP9_COMMON_SRCS-$(HAVE_NEON)   += common/arm/neon/vp9_highbd_iht16x16_add_neon.c
 VP9_COMMON_SRCS-$(HAVE_SSE4_1) += common/x86/vp9_highbd_iht4x4_add_sse4.c
 VP9_COMMON_SRCS-$(HAVE_SSE4_1) += common/x86/vp9_highbd_iht8x8_add_sse4.c
 VP9_COMMON_SRCS-$(HAVE_SSE4_1) += common/x86/vp9_highbd_iht16x16_add_sse4.c

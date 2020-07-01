@@ -64,9 +64,9 @@ unsigned int b_modes[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
  * Eventually this should be replaced by custom no-reference routines,
  *  which will be faster.
  */
-static const unsigned char VP8_VAR_OFFS[16] = {
-  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128
-};
+static const unsigned char VP8_VAR_OFFS[16] = { 128, 128, 128, 128, 128, 128,
+                                                128, 128, 128, 128, 128, 128,
+                                                128, 128, 128, 128 };
 
 /* Original activity measure from Tim T's code. */
 static unsigned int tt_activity_measure(VP8_COMP *cpi, MACROBLOCK *x) {

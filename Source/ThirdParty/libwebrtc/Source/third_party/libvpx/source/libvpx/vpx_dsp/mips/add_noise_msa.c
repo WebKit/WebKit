@@ -9,7 +9,9 @@
  */
 
 #include <stdlib.h>
-#include "./macros_msa.h"
+
+#include "./vpx_dsp_rtcd.h"
+#include "vpx_dsp/mips/macros_msa.h"
 
 void vpx_plane_add_noise_msa(uint8_t *start_ptr, const int8_t *noise,
                              int blackclamp, int whiteclamp, int width,

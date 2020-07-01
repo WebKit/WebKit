@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_COMMON_H_
-#define VP9_COMMON_VP9_COMMON_H_
+#ifndef VPX_VP9_COMMON_VP9_COMMON_H_
+#define VPX_VP9_COMMON_VP9_COMMON_H_
 
 /* Interface header for common constant data structures and lookup tables */
 
@@ -33,14 +33,14 @@ extern "C" {
   }
 
 // Use this for variably-sized arrays.
-#define vp9_copy_array(dest, src, n)       \
-  {                                        \
-    assert(sizeof(*dest) == sizeof(*src)); \
-    memcpy(dest, src, n * sizeof(*src));   \
+#define vp9_copy_array(dest, src, n)           \
+  {                                            \
+    assert(sizeof(*(dest)) == sizeof(*(src))); \
+    memcpy(dest, src, (n) * sizeof(*(src)));   \
   }
 
 #define vp9_zero(dest) memset(&(dest), 0, sizeof(dest))
-#define vp9_zero_array(dest, n) memset(dest, 0, n * sizeof(*dest))
+#define vp9_zero_array(dest, n) memset(dest, 0, (n) * sizeof(*(dest)))
 
 static INLINE int get_unsigned_bits(unsigned int num_values) {
   return num_values > 0 ? get_msb(num_values) + 1 : 0;
@@ -49,8 +49,8 @@ static INLINE int get_unsigned_bits(unsigned int num_values) {
 #if CONFIG_DEBUG
 #define CHECK_MEM_ERROR(cm, lval, expr)                                     \
   do {                                                                      \
-    lval = (expr);                                                          \
-    if (!lval)                                                              \
+    (lval) = (expr);                                                        \
+    if (!(lval))                                                            \
       vpx_internal_error(&(cm)->error, VPX_CODEC_MEM_ERROR,                 \
                          "Failed to allocate " #lval " at %s:%d", __FILE__, \
                          __LINE__);                                         \
@@ -58,8 +58,8 @@ static INLINE int get_unsigned_bits(unsigned int num_values) {
 #else
 #define CHECK_MEM_ERROR(cm, lval, expr)                     \
   do {                                                      \
-    lval = (expr);                                          \
-    if (!lval)                                              \
+    (lval) = (expr);                                        \
+    if (!(lval))                                            \
       vpx_internal_error(&(cm)->error, VPX_CODEC_MEM_ERROR, \
                          "Failed to allocate " #lval);      \
   } while (0)
@@ -75,4 +75,4 @@ static INLINE int get_unsigned_bits(unsigned int num_values) {
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_COMMON_H_
+#endif  // VPX_VP9_COMMON_VP9_COMMON_H_

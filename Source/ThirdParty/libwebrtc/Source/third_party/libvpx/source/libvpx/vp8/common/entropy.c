@@ -28,9 +28,9 @@ DECLARE_ALIGNED(16, const unsigned char, vp8_norm[256]) = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-DECLARE_ALIGNED(16, const unsigned char, vp8_coef_bands[16]) = {
-  0, 1, 2, 3, 6, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7
-};
+DECLARE_ALIGNED(16, const unsigned char,
+                vp8_coef_bands[16]) = { 0, 1, 2, 3, 6, 4, 5, 6,
+                                        6, 6, 6, 6, 6, 6, 6, 7 };
 
 DECLARE_ALIGNED(16, const unsigned char,
                 vp8_prev_token_class[MAX_ENTROPY_TOKENS]) = {
@@ -41,9 +41,9 @@ DECLARE_ALIGNED(16, const int, vp8_default_zig_zag1d[16]) = {
   0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15,
 };
 
-DECLARE_ALIGNED(16, const short, vp8_default_inv_zig_zag[16]) = {
-  1, 2, 6, 7, 3, 5, 8, 13, 4, 9, 12, 14, 10, 11, 15, 16
-};
+DECLARE_ALIGNED(16, const short,
+                vp8_default_inv_zig_zag[16]) = { 1, 2, 6,  7,  3,  5,  8,  13,
+                                                 4, 9, 12, 14, 10, 11, 15, 16 };
 
 /* vp8_default_zig_zag_mask generated with:
 
@@ -129,9 +129,9 @@ static const vp8_tree_index cat2[4] = { 2, 2, 0, 0 };
 static const vp8_tree_index cat3[6] = { 2, 2, 4, 4, 0, 0 };
 static const vp8_tree_index cat4[8] = { 2, 2, 4, 4, 6, 6, 0, 0 };
 static const vp8_tree_index cat5[10] = { 2, 2, 4, 4, 6, 6, 8, 8, 0, 0 };
-static const vp8_tree_index cat6[22] = {
-  2, 2, 4, 4, 6, 6, 8, 8, 10, 10, 12, 12, 14, 14, 16, 16, 18, 18, 20, 20, 0, 0
-};
+static const vp8_tree_index cat6[22] = { 2,  2,  4,  4,  6,  6,  8,  8,
+                                         10, 10, 12, 12, 14, 14, 16, 16,
+                                         18, 18, 20, 20, 0,  0 };
 
 const vp8_extra_bit_struct vp8_extra_bits[12] = {
   { 0, 0, 0, 0 },         { 0, 0, 0, 1 },          { 0, 0, 0, 2 },

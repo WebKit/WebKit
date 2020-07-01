@@ -20,7 +20,7 @@
 #include "vpx_config.h"
 #include "vpx/internal/vpx_codec_internal.h"
 
-#define SAVE_STATUS(ctx, var) (ctx ? (ctx->err = var) : var)
+#define SAVE_STATUS(ctx, var) ((ctx) ? ((ctx)->err = (var)) : (var))
 
 static vpx_codec_alg_priv_t *get_alg_priv(vpx_codec_ctx_t *ctx) {
   return (vpx_codec_alg_priv_t *)ctx->priv;
@@ -82,6 +82,9 @@ vpx_codec_err_t vpx_codec_enc_init_multi_ver(
     res = VPX_CODEC_INCAPABLE;
   else {
     int i;
+#if CONFIG_MULTI_RES_ENCODING
+    int mem_loc_owned = 0;
+#endif
     void *mem_loc = NULL;
 
     if (iface->enc.mr_get_mem_loc == NULL) return VPX_CODEC_INCAPABLE;
@@ -100,12 +103,6 @@ vpx_codec_err_t vpx_codec_enc_init_multi_ver(
           mr_cfg.mr_encoder_id = num_enc - 1 - i;
           mr_cfg.mr_down_sampling_factor.num = dsf->num;
           mr_cfg.mr_down_sampling_factor.den = dsf->den;
-
-          /* Force Key-frame synchronization. Namely, encoder at higher
-           * resolution always use the same frame_type chosen by the
-           * lowest-resolution encoder.
-           */
-          if (mr_cfg.mr_encoder_id) cfg->kf_mode = VPX_KF_DISABLED;
 
           ctx->iface = iface;
           ctx->name = iface->name;
@@ -129,13 +126,17 @@ vpx_codec_err_t vpx_codec_enc_init_multi_ver(
             i--;
           }
 #if CONFIG_MULTI_RES_ENCODING
-          assert(mem_loc);
-          free(((LOWER_RES_FRAME_INFO *)mem_loc)->mb_info);
-          free(mem_loc);
+          if (!mem_loc_owned) {
+            assert(mem_loc);
+            free(((LOWER_RES_FRAME_INFO *)mem_loc)->mb_info);
+            free(mem_loc);
+          }
 #endif
           return SAVE_STATUS(ctx, res);
         }
-
+#if CONFIG_MULTI_RES_ENCODING
+        mem_loc_owned = 1;
+#endif
         ctx++;
         cfg++;
         dsf++;
@@ -154,7 +155,7 @@ vpx_codec_err_t vpx_codec_enc_config_default(vpx_codec_iface_t *iface,
   vpx_codec_enc_cfg_map_t *map;
   int i;
 
-  if (!iface || !cfg || usage > INT_MAX)
+  if (!iface || !cfg || usage != 0)
     res = VPX_CODEC_INVALID_PARAM;
   else if (!(iface->caps & VPX_CODEC_CAP_ENCODER))
     res = VPX_CODEC_INCAPABLE;
@@ -163,19 +164,16 @@ vpx_codec_err_t vpx_codec_enc_config_default(vpx_codec_iface_t *iface,
 
     for (i = 0; i < iface->enc.cfg_map_count; ++i) {
       map = iface->enc.cfg_maps + i;
-      if (map->usage == (int)usage) {
-        *cfg = map->cfg;
-        cfg->g_usage = usage;
-        res = VPX_CODEC_OK;
-        break;
-      }
+      *cfg = map->cfg;
+      res = VPX_CODEC_OK;
+      break;
     }
   }
 
   return res;
 }
 
-#if ARCH_X86 || ARCH_X86_64
+#if VPX_ARCH_X86 || VPX_ARCH_X86_64
 /* On X86, disable the x87 unit's internal 80 bit precision for better
  * consistency with the SSE unit's 64 bit precision.
  */

@@ -12,12 +12,6 @@
 #include "vp8_rtcd.h"
 #include "vpx_mem/vpx_mem.h"
 
-void vp8_dequant_idct_add_c(short *input, short *dq, unsigned char *dest,
-                            int stride);
-void vp8_dc_only_idct_add_c(short input_dc, unsigned char *pred,
-                            int pred_stride, unsigned char *dst_ptr,
-                            int dst_stride);
-
 void vp8_dequant_idct_add_y_block_c(short *q, short *dq, unsigned char *dst,
                                     int stride, char *eobs) {
   int i, j;
@@ -39,40 +33,40 @@ void vp8_dequant_idct_add_y_block_c(short *q, short *dq, unsigned char *dst,
   }
 }
 
-void vp8_dequant_idct_add_uv_block_c(short *q, short *dq, unsigned char *dstu,
-                                     unsigned char *dstv, int stride,
+void vp8_dequant_idct_add_uv_block_c(short *q, short *dq, unsigned char *dst_u,
+                                     unsigned char *dst_v, int stride,
                                      char *eobs) {
   int i, j;
 
   for (i = 0; i < 2; ++i) {
     for (j = 0; j < 2; ++j) {
       if (*eobs++ > 1) {
-        vp8_dequant_idct_add_c(q, dq, dstu, stride);
+        vp8_dequant_idct_add_c(q, dq, dst_u, stride);
       } else {
-        vp8_dc_only_idct_add_c(q[0] * dq[0], dstu, stride, dstu, stride);
+        vp8_dc_only_idct_add_c(q[0] * dq[0], dst_u, stride, dst_u, stride);
         memset(q, 0, 2 * sizeof(q[0]));
       }
 
       q += 16;
-      dstu += 4;
+      dst_u += 4;
     }
 
-    dstu += 4 * stride - 8;
+    dst_u += 4 * stride - 8;
   }
 
   for (i = 0; i < 2; ++i) {
     for (j = 0; j < 2; ++j) {
       if (*eobs++ > 1) {
-        vp8_dequant_idct_add_c(q, dq, dstv, stride);
+        vp8_dequant_idct_add_c(q, dq, dst_v, stride);
       } else {
-        vp8_dc_only_idct_add_c(q[0] * dq[0], dstv, stride, dstv, stride);
+        vp8_dc_only_idct_add_c(q[0] * dq[0], dst_v, stride, dst_v, stride);
         memset(q, 0, 2 * sizeof(q[0]));
       }
 
       q += 16;
-      dstv += 4;
+      dst_v += 4;
     }
 
-    dstv += 4 * stride - 8;
+    dst_v += 4 * stride - 8;
   }
 }

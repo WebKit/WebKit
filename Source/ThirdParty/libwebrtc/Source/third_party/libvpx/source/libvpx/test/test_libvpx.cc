@@ -12,7 +12,7 @@
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
 #include "./vpx_config.h"
-#if ARCH_X86 || ARCH_X86_64
+#if VPX_ARCH_X86 || VPX_ARCH_X86_64
 #include "vpx_ports/x86.h"
 #endif
 extern "C" {
@@ -26,7 +26,7 @@ extern void vpx_dsp_rtcd();
 extern void vpx_scale_rtcd();
 }
 
-#if ARCH_X86 || ARCH_X86_64
+#if VPX_ARCH_X86 || VPX_ARCH_X86_64
 static void append_negative_gtest_filter(const char *str) {
   std::string filter = ::testing::FLAGS_gtest_filter;
   // Negative patterns begin with one '-' followed by a ':' separated list.
@@ -34,12 +34,12 @@ static void append_negative_gtest_filter(const char *str) {
   filter += str;
   ::testing::FLAGS_gtest_filter = filter;
 }
-#endif  // ARCH_X86 || ARCH_X86_64
+#endif  // VPX_ARCH_X86 || VPX_ARCH_X86_64
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
-#if ARCH_X86 || ARCH_X86_64
+#if VPX_ARCH_X86 || VPX_ARCH_X86_64
   const int simd_caps = x86_simd_caps();
   if (!(simd_caps & HAS_MMX)) append_negative_gtest_filter(":MMX.*:MMX/*");
   if (!(simd_caps & HAS_SSE)) append_negative_gtest_filter(":SSE.*:SSE/*");
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
   if (!(simd_caps & HAS_AVX512)) {
     append_negative_gtest_filter(":AVX512.*:AVX512/*");
   }
-#endif  // ARCH_X86 || ARCH_X86_64
+#endif  // VPX_ARCH_X86 || VPX_ARCH_X86_64
 
 #if !CONFIG_SHARED
 // Shared library builds don't support whitebox tests

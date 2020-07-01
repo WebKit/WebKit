@@ -33,10 +33,11 @@
     sub += res_l0_m + res_l1_m;                                     \
   }
 
-#define VARIANCE_WxH(sse, diff, shift) sse - (((uint32_t)diff * diff) >> shift)
+#define VARIANCE_WxH(sse, diff, shift) \
+  (sse) - (((uint32_t)(diff) * (diff)) >> (shift))
 
 #define VARIANCE_LARGE_WxH(sse, diff, shift) \
-  sse - (((int64_t)diff * diff) >> shift)
+  (sse) - (((int64_t)(diff) * (diff)) >> (shift))
 
 static uint32_t sse_diff_4width_msa(const uint8_t *src_ptr, int32_t src_stride,
                                     const uint8_t *ref_ptr, int32_t ref_stride,

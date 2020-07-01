@@ -126,8 +126,10 @@ static double calc_psnrhvs(const unsigned char *src, int _systride,
   const uint8_t *_dst8 = dst;
   const uint16_t *_src16 = CONVERT_TO_SHORTPTR(src);
   const uint16_t *_dst16 = CONVERT_TO_SHORTPTR(dst);
-  int16_t dct_s[8 * 8], dct_d[8 * 8];
-  tran_low_t dct_s_coef[8 * 8], dct_d_coef[8 * 8];
+  DECLARE_ALIGNED(16, int16_t, dct_s[8 * 8]);
+  DECLARE_ALIGNED(16, int16_t, dct_d[8 * 8]);
+  DECLARE_ALIGNED(16, tran_low_t, dct_s_coef[8 * 8]);
+  DECLARE_ALIGNED(16, tran_low_t, dct_d_coef[8 * 8]);
   double mask[8][8];
   int pixels;
   int x;
@@ -142,7 +144,7 @@ static double calc_psnrhvs(const unsigned char *src, int _systride,
    been normalized and then squared." Their CSF matrix (from PSNR-HVS)
    was also constructed from the JPEG matrices. I can not find any obvious
    scheme of normalizing to produce their table, but if I multiply their
-   CSF by 0.38857 and square the result I get their masking table.
+   CSF by 0.3885746225901003 and square the result I get their masking table.
    I have no idea where this constant comes from, but deviating from it
    too greatly hurts MOS agreement.
 
@@ -150,11 +152,15 @@ static double calc_psnrhvs(const unsigned char *src, int _systride,
    Jaakko Astola, Vladimir Lukin, "On between-coefficient contrast masking
    of DCT basis functions", CD-ROM Proceedings of the Third
    International Workshop on Video Processing and Quality Metrics for Consumer
-   Electronics VPQM-07, Scottsdale, Arizona, USA, 25-26 January, 2007, 4 p.*/
+   Electronics VPQM-07, Scottsdale, Arizona, USA, 25-26 January, 2007, 4 p.
+
+   Suggested in aomedia issue #2363:
+   0.3885746225901003 is a reciprocal of the maximum coefficient (2.573509)
+   of the old JPEG based matrix from the paper. Since you are not using that,
+   divide by actual maximum coefficient. */
   for (x = 0; x < 8; x++)
     for (y = 0; y < 8; y++)
-      mask[x][y] =
-          (_csf[x][y] * 0.3885746225901003) * (_csf[x][y] * 0.3885746225901003);
+      mask[x][y] = (_csf[x][y] / _csf[1][0]) * (_csf[x][y] / _csf[1][0]);
   for (y = 0; y < _h - 7; y += _step) {
     for (x = 0; x < _w - 7; x += _step) {
       int i;

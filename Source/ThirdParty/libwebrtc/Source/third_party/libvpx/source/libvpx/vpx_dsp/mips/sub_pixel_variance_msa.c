@@ -27,13 +27,14 @@ static const uint8_t bilinear_filters_msa[8][2] = {
     HSUB_UB2_SH(src_l0_m, src_l1_m, res_l0_m, res_l1_m);            \
     DPADD_SH2_SW(res_l0_m, res_l1_m, res_l0_m, res_l1_m, var, var); \
                                                                     \
-    sub += res_l0_m + res_l1_m;                                     \
+    (sub) += res_l0_m + res_l1_m;                                   \
   }
 
-#define VARIANCE_WxH(sse, diff, shift) sse - (((uint32_t)diff * diff) >> shift)
+#define VARIANCE_WxH(sse, diff, shift) \
+  (sse) - (((uint32_t)(diff) * (diff)) >> (shift))
 
 #define VARIANCE_LARGE_WxH(sse, diff, shift) \
-  sse - (((int64_t)diff * diff) >> shift)
+  (sse) - (((int64_t)(diff) * (diff)) >> (shift))
 
 static uint32_t avg_sse_diff_4width_msa(const uint8_t *src_ptr,
                                         int32_t src_stride,
@@ -1619,16 +1620,16 @@ static uint32_t sub_pixel_avg_sse_diff_64width_hv_msa(
 
 #define VPX_SUB_PIXEL_VARIANCE_WDXHT_MSA(wd, ht)                              \
   uint32_t vpx_sub_pixel_variance##wd##x##ht##_msa(                           \
-      const uint8_t *src, int32_t src_stride, int32_t xoffset,                \
-      int32_t yoffset, const uint8_t *ref, int32_t ref_stride,                \
+      const uint8_t *src, int32_t src_stride, int32_t x_offset,               \
+      int32_t y_offset, const uint8_t *ref, int32_t ref_stride,               \
       uint32_t *sse) {                                                        \
     int32_t diff;                                                             \
     uint32_t var;                                                             \
-    const uint8_t *h_filter = bilinear_filters_msa[xoffset];                  \
-    const uint8_t *v_filter = bilinear_filters_msa[yoffset];                  \
+    const uint8_t *h_filter = bilinear_filters_msa[x_offset];                 \
+    const uint8_t *v_filter = bilinear_filters_msa[y_offset];                 \
                                                                               \
-    if (yoffset) {                                                            \
-      if (xoffset) {                                                          \
+    if (y_offset) {                                                           \
+      if (x_offset) {                                                         \
         *sse = sub_pixel_sse_diff_##wd##width_hv_msa(                         \
             src, src_stride, ref, ref_stride, h_filter, v_filter, ht, &diff); \
       } else {                                                                \
@@ -1638,7 +1639,7 @@ static uint32_t sub_pixel_avg_sse_diff_64width_hv_msa(
                                                                               \
       var = VARIANCE_##wd##Wx##ht##H(*sse, diff);                             \
     } else {                                                                  \
-      if (xoffset) {                                                          \
+      if (x_offset) {                                                         \
         *sse = sub_pixel_sse_diff_##wd##width_h_msa(                          \
             src, src_stride, ref, ref_stride, h_filter, ht, &diff);           \
                                                                               \
@@ -1672,15 +1673,15 @@ VPX_SUB_PIXEL_VARIANCE_WDXHT_MSA(64, 64);
 
 #define VPX_SUB_PIXEL_AVG_VARIANCE_WDXHT_MSA(wd, ht)                          \
   uint32_t vpx_sub_pixel_avg_variance##wd##x##ht##_msa(                       \
-      const uint8_t *src_ptr, int32_t src_stride, int32_t xoffset,            \
-      int32_t yoffset, const uint8_t *ref_ptr, int32_t ref_stride,            \
+      const uint8_t *src_ptr, int32_t src_stride, int32_t x_offset,           \
+      int32_t y_offset, const uint8_t *ref_ptr, int32_t ref_stride,           \
       uint32_t *sse, const uint8_t *sec_pred) {                               \
     int32_t diff;                                                             \
-    const uint8_t *h_filter = bilinear_filters_msa[xoffset];                  \
-    const uint8_t *v_filter = bilinear_filters_msa[yoffset];                  \
+    const uint8_t *h_filter = bilinear_filters_msa[x_offset];                 \
+    const uint8_t *v_filter = bilinear_filters_msa[y_offset];                 \
                                                                               \
-    if (yoffset) {                                                            \
-      if (xoffset) {                                                          \
+    if (y_offset) {                                                           \
+      if (x_offset) {                                                         \
         *sse = sub_pixel_avg_sse_diff_##wd##width_hv_msa(                     \
             src_ptr, src_stride, ref_ptr, ref_stride, sec_pred, h_filter,     \
             v_filter, ht, &diff);                                             \
@@ -1690,7 +1691,7 @@ VPX_SUB_PIXEL_VARIANCE_WDXHT_MSA(64, 64);
             &diff);                                                           \
       }                                                                       \
     } else {                                                                  \
-      if (xoffset) {                                                          \
+      if (x_offset) {                                                         \
         *sse = sub_pixel_avg_sse_diff_##wd##width_h_msa(                      \
             src_ptr, src_stride, ref_ptr, ref_stride, sec_pred, h_filter, ht, \
             &diff);                                                           \
@@ -1719,16 +1720,16 @@ VPX_SUB_PIXEL_AVG_VARIANCE_WDXHT_MSA(32, 32);
 
 uint32_t vpx_sub_pixel_avg_variance32x64_msa(const uint8_t *src_ptr,
                                              int32_t src_stride,
-                                             int32_t xoffset, int32_t yoffset,
+                                             int32_t x_offset, int32_t y_offset,
                                              const uint8_t *ref_ptr,
                                              int32_t ref_stride, uint32_t *sse,
                                              const uint8_t *sec_pred) {
   int32_t diff;
-  const uint8_t *h_filter = bilinear_filters_msa[xoffset];
-  const uint8_t *v_filter = bilinear_filters_msa[yoffset];
+  const uint8_t *h_filter = bilinear_filters_msa[x_offset];
+  const uint8_t *v_filter = bilinear_filters_msa[y_offset];
 
-  if (yoffset) {
-    if (xoffset) {
+  if (y_offset) {
+    if (x_offset) {
       *sse = sub_pixel_avg_sse_diff_32width_hv_msa(
           src_ptr, src_stride, ref_ptr, ref_stride, sec_pred, h_filter,
           v_filter, 64, &diff);
@@ -1738,7 +1739,7 @@ uint32_t vpx_sub_pixel_avg_variance32x64_msa(const uint8_t *src_ptr,
                                                   v_filter, 64, &diff);
     }
   } else {
-    if (xoffset) {
+    if (x_offset) {
       *sse = sub_pixel_avg_sse_diff_32width_h_msa(src_ptr, src_stride, ref_ptr,
                                                   ref_stride, sec_pred,
                                                   h_filter, 64, &diff);
@@ -1753,15 +1754,15 @@ uint32_t vpx_sub_pixel_avg_variance32x64_msa(const uint8_t *src_ptr,
 
 #define VPX_SUB_PIXEL_AVG_VARIANCE64XHEIGHT_MSA(ht)                           \
   uint32_t vpx_sub_pixel_avg_variance64x##ht##_msa(                           \
-      const uint8_t *src_ptr, int32_t src_stride, int32_t xoffset,            \
-      int32_t yoffset, const uint8_t *ref_ptr, int32_t ref_stride,            \
+      const uint8_t *src_ptr, int32_t src_stride, int32_t x_offset,           \
+      int32_t y_offset, const uint8_t *ref_ptr, int32_t ref_stride,           \
       uint32_t *sse, const uint8_t *sec_pred) {                               \
     int32_t diff;                                                             \
-    const uint8_t *h_filter = bilinear_filters_msa[xoffset];                  \
-    const uint8_t *v_filter = bilinear_filters_msa[yoffset];                  \
+    const uint8_t *h_filter = bilinear_filters_msa[x_offset];                 \
+    const uint8_t *v_filter = bilinear_filters_msa[y_offset];                 \
                                                                               \
-    if (yoffset) {                                                            \
-      if (xoffset) {                                                          \
+    if (y_offset) {                                                           \
+      if (x_offset) {                                                         \
         *sse = sub_pixel_avg_sse_diff_64width_hv_msa(                         \
             src_ptr, src_stride, ref_ptr, ref_stride, sec_pred, h_filter,     \
             v_filter, ht, &diff);                                             \
@@ -1771,7 +1772,7 @@ uint32_t vpx_sub_pixel_avg_variance32x64_msa(const uint8_t *src_ptr,
             &diff);                                                           \
       }                                                                       \
     } else {                                                                  \
-      if (xoffset) {                                                          \
+      if (x_offset) {                                                         \
         *sse = sub_pixel_avg_sse_diff_64width_h_msa(                          \
             src_ptr, src_stride, ref_ptr, ref_stride, sec_pred, h_filter, ht, \
             &diff);                                                           \

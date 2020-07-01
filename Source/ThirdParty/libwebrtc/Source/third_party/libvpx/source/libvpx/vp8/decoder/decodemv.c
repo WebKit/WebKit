@@ -485,10 +485,7 @@ static void read_mb_features(vp8_reader *r, MB_MODE_INFO *mi, MACROBLOCKD *x) {
   }
 }
 
-static void decode_mb_mode_mvs(VP8D_COMP *pbi, MODE_INFO *mi,
-                               MB_MODE_INFO *mbmi) {
-  (void)mbmi;
-
+static void decode_mb_mode_mvs(VP8D_COMP *pbi, MODE_INFO *mi) {
   /* Read the Macroblock segmentation map if it is being updated explicitly
    * this frame (reset to 0 above by default)
    * By default on a key frame reset all MBs to segment 0
@@ -537,7 +534,7 @@ void vp8_decode_mode_mvs(VP8D_COMP *pbi) {
       int mb_num = mb_row * pbi->common.mb_cols + mb_col;
 #endif
 
-      decode_mb_mode_mvs(pbi, mi, &mi->mbmi);
+      decode_mb_mode_mvs(pbi, mi);
 
 #if CONFIG_ERROR_CONCEALMENT
       /* look for corruption. set mvs_corrupt_from_mb to the current

@@ -17,17 +17,26 @@
 #include "vp9/common/vp9_entropymv.h"
 #include "vp9/common/vp9_onyxc_int.h"
 
-void vp9_set_mb_mi(VP9_COMMON *cm, int width, int height) {
+void vp9_set_mi_size(int *mi_rows, int *mi_cols, int *mi_stride, int width,
+                     int height) {
   const int aligned_width = ALIGN_POWER_OF_TWO(width, MI_SIZE_LOG2);
   const int aligned_height = ALIGN_POWER_OF_TWO(height, MI_SIZE_LOG2);
+  *mi_cols = aligned_width >> MI_SIZE_LOG2;
+  *mi_rows = aligned_height >> MI_SIZE_LOG2;
+  *mi_stride = calc_mi_size(*mi_cols);
+}
 
-  cm->mi_cols = aligned_width >> MI_SIZE_LOG2;
-  cm->mi_rows = aligned_height >> MI_SIZE_LOG2;
-  cm->mi_stride = calc_mi_size(cm->mi_cols);
+void vp9_set_mb_size(int *mb_rows, int *mb_cols, int *mb_num, int mi_rows,
+                     int mi_cols) {
+  *mb_cols = (mi_cols + 1) >> 1;
+  *mb_rows = (mi_rows + 1) >> 1;
+  *mb_num = (*mb_rows) * (*mb_cols);
+}
 
-  cm->mb_cols = (cm->mi_cols + 1) >> 1;
-  cm->mb_rows = (cm->mi_rows + 1) >> 1;
-  cm->MBs = cm->mb_rows * cm->mb_cols;
+void vp9_set_mb_mi(VP9_COMMON *cm, int width, int height) {
+  vp9_set_mi_size(&cm->mi_rows, &cm->mi_cols, &cm->mi_stride, width, height);
+  vp9_set_mb_size(&cm->mb_rows, &cm->mb_cols, &cm->MBs, cm->mi_rows,
+                  cm->mi_cols);
 }
 
 static int alloc_seg_map(VP9_COMMON *cm, int seg_map_size) {

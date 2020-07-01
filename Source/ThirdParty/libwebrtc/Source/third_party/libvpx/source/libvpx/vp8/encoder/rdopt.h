@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_RDOPT_H_
-#define VP8_ENCODER_RDOPT_H_
+#ifndef VPX_VP8_ENCODER_RDOPT_H_
+#define VPX_VP8_ENCODER_RDOPT_H_
 
 #include "./vpx_config.h"
 
@@ -63,12 +63,12 @@ static INLINE void insertsortsad(int arr[], int idx[], int len) {
   }
 }
 
-extern void vp8_initialize_rd_consts(VP8_COMP *cpi, MACROBLOCK *x, int Qvalue);
-extern void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x,
-                                   int recon_yoffset, int recon_uvoffset,
-                                   int *returnrate, int *returndistortion,
-                                   int *returnintra, int mb_row, int mb_col);
-extern void vp8_rd_pick_intra_mode(MACROBLOCK *x, int *rate);
+void vp8_initialize_rd_consts(VP8_COMP *cpi, MACROBLOCK *x, int Qvalue);
+void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
+                            int recon_uvoffset, int *returnrate,
+                            int *returndistortion, int *returnintra, int mb_row,
+                            int mb_col);
+void vp8_rd_pick_intra_mode(MACROBLOCK *x, int *rate);
 
 static INLINE void get_plane_pointers(const YV12_BUFFER_CONFIG *fb,
                                       unsigned char *plane[3],
@@ -110,9 +110,9 @@ static INLINE void get_reference_search_order(const VP8_COMP *cpi,
   for (; i < 4; ++i) ref_frame_map[i] = -1;
 }
 
-extern void vp8_mv_pred(VP8_COMP *cpi, MACROBLOCKD *xd, const MODE_INFO *here,
-                        int_mv *mvp, int refframe, int *ref_frame_sign_bias,
-                        int *sr, int near_sadidx[]);
+void vp8_mv_pred(VP8_COMP *cpi, MACROBLOCKD *xd, const MODE_INFO *here,
+                 int_mv *mvp, int refframe, int *ref_frame_sign_bias, int *sr,
+                 int near_sadidx[]);
 void vp8_cal_sad(VP8_COMP *cpi, MACROBLOCKD *xd, MACROBLOCK *x,
                  int recon_yoffset, int near_sadidx[]);
 int VP8_UVSSE(MACROBLOCK *x);
@@ -123,4 +123,4 @@ void vp8_set_mbmode_and_mvs(MACROBLOCK *x, MB_PREDICTION_MODE mb, int_mv *mv);
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_RDOPT_H_
+#endif  // VPX_VP8_ENCODER_RDOPT_H_

@@ -97,7 +97,7 @@ static vpx_codec_err_t decoder_peek_si_internal(
     const uint8_t *data, unsigned int data_sz, vpx_codec_stream_info_t *si,
     int *is_intra_only, vpx_decrypt_cb decrypt_cb, void *decrypt_state) {
   int intra_only_flag = 0;
-  uint8_t clear_buffer[10];
+  uint8_t clear_buffer[11];
 
   if (data + data_sz <= data) return VPX_CODEC_INVALID_PARAM;
 
@@ -158,6 +158,9 @@ static vpx_codec_err_t decoder_peek_si_internal(
         if (profile > PROFILE_0) {
           if (!parse_bitdepth_colorspace_sampling(profile, &rb))
             return VPX_CODEC_UNSUP_BITSTREAM;
+          // The colorspace info may cause vp9_read_frame_size() to need 11
+          // bytes.
+          if (data_sz < 11) return VPX_CODEC_UNSUP_BITSTREAM;
         }
         rb.bit_offset += REF_FRAMES;  // refresh_frame_flags
         vp9_read_frame_size(&rb, (int *)&si->w, (int *)&si->h);
@@ -235,6 +238,19 @@ static void set_ppflags(const vpx_codec_alg_priv_t *ctx, vp9_ppflags_t *flags) {
   flags->noise_level = ctx->postproc_cfg.noise_level;
 }
 
+#undef ERROR
+#define ERROR(str)                  \
+  do {                              \
+    ctx->base.err_detail = str;     \
+    return VPX_CODEC_INVALID_PARAM; \
+  } while (0)
+
+#define RANGE_CHECK(p, memb, lo, hi)                                     \
+  do {                                                                   \
+    if (!(((p)->memb == (lo) || (p)->memb > (lo)) && (p)->memb <= (hi))) \
+      ERROR(#memb " out of range [" #lo ".." #hi "]");                   \
+  } while (0)
+
 static vpx_codec_err_t init_decoder(vpx_codec_alg_priv_t *ctx) {
   ctx->last_show_frame = -1;
   ctx->need_resync = 1;
@@ -250,6 +266,12 @@ static vpx_codec_err_t init_decoder(vpx_codec_alg_priv_t *ctx) {
   }
   ctx->pbi->max_threads = ctx->cfg.threads;
   ctx->pbi->inv_tile_order = ctx->invert_tile_order;
+
+  RANGE_CHECK(ctx, row_mt, 0, 1);
+  ctx->pbi->row_mt = ctx->row_mt;
+
+  RANGE_CHECK(ctx, lpf_opt, 0, 1);
+  ctx->pbi->lpf_mt_opt = ctx->lpf_opt;
 
   // If postprocessing was enabled by the application and a
   // configuration has not been provided, default it.
@@ -452,11 +474,15 @@ static vpx_codec_err_t ctrl_get_reference(vpx_codec_alg_priv_t *ctx,
   vp9_ref_frame_t *data = va_arg(args, vp9_ref_frame_t *);
 
   if (data) {
-    YV12_BUFFER_CONFIG *fb;
-    fb = get_ref_frame(&ctx->pbi->common, data->idx);
-    if (fb == NULL) return VPX_CODEC_ERROR;
-    yuvconfig2image(&data->img, fb, NULL);
-    return VPX_CODEC_OK;
+    if (ctx->pbi) {
+      const int fb_idx = ctx->pbi->common.cur_show_frame_fb_idx;
+      YV12_BUFFER_CONFIG *fb = get_buf_frame(&ctx->pbi->common, fb_idx);
+      if (fb == NULL) return VPX_CODEC_ERROR;
+      yuvconfig2image(&data->img, fb, NULL);
+      return VPX_CODEC_OK;
+    } else {
+      return VPX_CODEC_ERROR;
+    }
   } else {
     return VPX_CODEC_INVALID_PARAM;
   }
@@ -632,6 +658,20 @@ static vpx_codec_err_t ctrl_set_spatial_layer_svc(vpx_codec_alg_priv_t *ctx,
     return VPX_CODEC_OK;
 }
 
+static vpx_codec_err_t ctrl_set_row_mt(vpx_codec_alg_priv_t *ctx,
+                                       va_list args) {
+  ctx->row_mt = va_arg(args, int);
+
+  return VPX_CODEC_OK;
+}
+
+static vpx_codec_err_t ctrl_enable_lpf_opt(vpx_codec_alg_priv_t *ctx,
+                                           va_list args) {
+  ctx->lpf_opt = va_arg(args, int);
+
+  return VPX_CODEC_OK;
+}
+
 static vpx_codec_ctrl_fn_map_t decoder_ctrl_maps[] = {
   { VP8_COPY_REFERENCE, ctrl_copy_reference },
 
@@ -643,6 +683,8 @@ static vpx_codec_ctrl_fn_map_t decoder_ctrl_maps[] = {
   { VP9_SET_BYTE_ALIGNMENT, ctrl_set_byte_alignment },
   { VP9_SET_SKIP_LOOP_FILTER, ctrl_set_skip_loop_filter },
   { VP9_DECODE_SVC_SPATIAL_LAYER, ctrl_set_spatial_layer_svc },
+  { VP9D_SET_ROW_MT, ctrl_set_row_mt },
+  { VP9D_SET_LOOP_FILTER_OPT, ctrl_enable_lpf_opt },
 
   // Getters
   { VPXD_GET_LAST_QUANTIZER, ctrl_get_quantizer },

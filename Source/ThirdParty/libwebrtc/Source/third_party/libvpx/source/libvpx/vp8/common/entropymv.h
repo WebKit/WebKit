@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_ENTROPYMV_H_
-#define VP8_COMMON_ENTROPYMV_H_
+#ifndef VPX_VP8_COMMON_ENTROPYMV_H_
+#define VPX_VP8_COMMON_ENTROPYMV_H_
 
 #include "treecoder.h"
 
@@ -46,4 +46,4 @@ extern const MV_CONTEXT vp8_mv_update_probs[2], vp8_default_mv_context[2];
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_ENTROPYMV_H_
+#endif  // VPX_VP8_COMMON_ENTROPYMV_H_

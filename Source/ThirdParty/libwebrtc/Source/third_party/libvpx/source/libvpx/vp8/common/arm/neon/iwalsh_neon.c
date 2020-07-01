@@ -10,6 +10,8 @@
 
 #include <arm_neon.h>
 
+#include "./vp8_rtcd.h"
+
 void vp8_short_inv_walsh4x4_neon(int16_t *input, int16_t *mb_dqcoeff) {
   int16x8_t q0s16, q1s16, q2s16, q3s16;
   int16x4_t d4s16, d5s16, d6s16, d7s16;

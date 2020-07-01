@@ -139,17 +139,22 @@ void vp9_setup_pc_tree(VP9_COMMON *cm, ThreadData *td) {
 }
 
 void vp9_free_pc_tree(ThreadData *td) {
-  const int tree_nodes = 64 + 16 + 4 + 1;
   int i;
 
-  // Set up all 4x4 mode contexts
-  for (i = 0; i < 64; ++i) free_mode_context(&td->leaf_tree[i]);
+  if (td == NULL) return;
 
-  // Sets up all the leaf nodes in the tree.
-  for (i = 0; i < tree_nodes; ++i) free_tree_contexts(&td->pc_tree[i]);
+  if (td->leaf_tree != NULL) {
+    // Set up all 4x4 mode contexts
+    for (i = 0; i < 64; ++i) free_mode_context(&td->leaf_tree[i]);
+    vpx_free(td->leaf_tree);
+    td->leaf_tree = NULL;
+  }
 
-  vpx_free(td->pc_tree);
-  td->pc_tree = NULL;
-  vpx_free(td->leaf_tree);
-  td->leaf_tree = NULL;
+  if (td->pc_tree != NULL) {
+    const int tree_nodes = 64 + 16 + 4 + 1;
+    // Sets up all the leaf nodes in the tree.
+    for (i = 0; i < tree_nodes; ++i) free_tree_contexts(&td->pc_tree[i]);
+    vpx_free(td->pc_tree);
+    td->pc_tree = NULL;
+  }
 }

@@ -179,32 +179,32 @@ static const vpx_prob default_if_uv_probs[INTRA_MODES][INTRA_MODES - 1] = {
   { 101, 21, 107, 181, 192, 103, 19, 67, 125 }  // y = tm
 };
 
-const vpx_prob vp9_kf_partition_probs[PARTITION_CONTEXTS][PARTITION_TYPES - 1] =
-    {
-      // 8x8 -> 4x4
-      { 158, 97, 94 },  // a/l both not split
-      { 93, 24, 99 },   // a split, l not split
-      { 85, 119, 44 },  // l split, a not split
-      { 62, 59, 67 },   // a/l both split
+const vpx_prob vp9_kf_partition_probs[PARTITION_CONTEXTS]
+                                     [PARTITION_TYPES - 1] = {
+                                       // 8x8 -> 4x4
+                                       { 158, 97, 94 },  // a/l both not split
+                                       { 93, 24, 99 },   // a split, l not split
+                                       { 85, 119, 44 },  // l split, a not split
+                                       { 62, 59, 67 },   // a/l both split
 
-      // 16x16 -> 8x8
-      { 149, 53, 53 },  // a/l both not split
-      { 94, 20, 48 },   // a split, l not split
-      { 83, 53, 24 },   // l split, a not split
-      { 52, 18, 18 },   // a/l both split
+                                       // 16x16 -> 8x8
+                                       { 149, 53, 53 },  // a/l both not split
+                                       { 94, 20, 48 },   // a split, l not split
+                                       { 83, 53, 24 },   // l split, a not split
+                                       { 52, 18, 18 },   // a/l both split
 
-      // 32x32 -> 16x16
-      { 150, 40, 39 },  // a/l both not split
-      { 78, 12, 26 },   // a split, l not split
-      { 67, 33, 11 },   // l split, a not split
-      { 24, 7, 5 },     // a/l both split
+                                       // 32x32 -> 16x16
+                                       { 150, 40, 39 },  // a/l both not split
+                                       { 78, 12, 26 },   // a split, l not split
+                                       { 67, 33, 11 },   // l split, a not split
+                                       { 24, 7, 5 },     // a/l both split
 
-      // 64x64 -> 32x32
-      { 174, 35, 49 },  // a/l both not split
-      { 68, 11, 27 },   // a split, l not split
-      { 57, 15, 9 },    // l split, a not split
-      { 12, 3, 3 },     // a/l both split
-    };
+                                       // 64x64 -> 32x32
+                                       { 174, 35, 49 },  // a/l both not split
+                                       { 68, 11, 27 },   // a split, l not split
+                                       { 57, 15, 9 },    // l split, a not split
+                                       { 12, 3, 3 },     // a/l both split
+                                     };
 
 static const vpx_prob
     default_partition_probs[PARTITION_CONTEXTS][PARTITION_TYPES - 1] = {
@@ -263,13 +263,13 @@ const vpx_tree_index vp9_partition_tree[TREE_SIZE(PARTITION_TYPES)] = {
   -PARTITION_NONE, 2, -PARTITION_HORZ, 4, -PARTITION_VERT, -PARTITION_SPLIT
 };
 
-static const vpx_prob default_intra_inter_p[INTRA_INTER_CONTEXTS] = {
-  9, 102, 187, 225
-};
+static const vpx_prob default_intra_inter_p[INTRA_INTER_CONTEXTS] = { 9, 102,
+                                                                      187,
+                                                                      225 };
 
-static const vpx_prob default_comp_inter_p[COMP_INTER_CONTEXTS] = {
-  239, 183, 119, 96, 41
-};
+static const vpx_prob default_comp_inter_p[COMP_INTER_CONTEXTS] = { 239, 183,
+                                                                    119, 96,
+                                                                    41 };
 
 static const vpx_prob default_comp_ref_p[REF_CONTEXTS] = { 50, 126, 123, 221,
                                                            226 };
@@ -334,8 +334,8 @@ static void init_mode_probs(FRAME_CONTEXT *fc) {
   vp9_copy(fc->inter_mode_probs, default_inter_mode_probs);
 }
 
-const vpx_tree_index vp9_switchable_interp_tree[TREE_SIZE(SWITCHABLE_FILTERS)] =
-    { -EIGHTTAP, 2, -EIGHTTAP_SMOOTH, -EIGHTTAP_SHARP };
+const vpx_tree_index vp9_switchable_interp_tree[TREE_SIZE(
+    SWITCHABLE_FILTERS)] = { -EIGHTTAP, 2, -EIGHTTAP_SMOOTH, -EIGHTTAP_SHARP };
 
 void vp9_adapt_mode_probs(VP9_COMMON *cm) {
   int i, j;

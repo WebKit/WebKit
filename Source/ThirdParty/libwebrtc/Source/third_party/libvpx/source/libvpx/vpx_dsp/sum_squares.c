@@ -10,8 +10,7 @@
 
 #include "./vpx_dsp_rtcd.h"
 
-uint64_t vpx_sum_squares_2d_i16_c(const int16_t *src, int src_stride,
-                                  int size) {
+uint64_t vpx_sum_squares_2d_i16_c(const int16_t *src, int stride, int size) {
   int r, c;
   uint64_t ss = 0;
 
@@ -20,7 +19,7 @@ uint64_t vpx_sum_squares_2d_i16_c(const int16_t *src, int src_stride,
       const int16_t v = src[c];
       ss += v * v;
     }
-    src += src_stride;
+    src += stride;
   }
 
   return ss;

@@ -7,8 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef VP8_ENCODER_ENCODEFRAME_H_
-#define VP8_ENCODER_ENCODEFRAME_H_
+#ifndef VPX_VP8_ENCODER_ENCODEFRAME_H_
+#define VPX_VP8_ENCODER_ENCODEFRAME_H_
 
 #include "vp8/encoder/tokenize.h"
 
@@ -37,4 +37,4 @@ int vp8cx_encode_intra_macroblock(struct VP8_COMP *cpi, struct macroblock *x,
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_ENCODEFRAME_H_
+#endif  // VPX_VP8_ENCODER_ENCODEFRAME_H_

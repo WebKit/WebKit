@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_TRANSPOSE_SSE2_H_
-#define VPX_DSP_X86_TRANSPOSE_SSE2_H_
+#ifndef VPX_VPX_DSP_X86_TRANSPOSE_SSE2_H_
+#define VPX_VPX_DSP_X86_TRANSPOSE_SSE2_H_
 
 #include <emmintrin.h>  // SSE2
 
@@ -364,4 +364,4 @@ static INLINE void transpose_32bit_8x4(const __m128i *const in,
   out[7] = _mm_unpackhi_epi64(a6, a7);
 }
 
-#endif  // VPX_DSP_X86_TRANSPOSE_SSE2_H_
+#endif  // VPX_VPX_DSP_X86_TRANSPOSE_SSE2_H_

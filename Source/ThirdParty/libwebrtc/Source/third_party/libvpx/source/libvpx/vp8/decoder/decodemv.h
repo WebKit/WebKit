@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_DECODER_DECODEMV_H_
-#define VP8_DECODER_DECODEMV_H_
+#ifndef VPX_VP8_DECODER_DECODEMV_H_
+#define VPX_VP8_DECODER_DECODEMV_H_
 
 #include "onyxd_int.h"
 
@@ -23,4 +23,4 @@ void vp8_decode_mode_mvs(VP8D_COMP *);
 }  // extern "C"
 #endif
 
-#endif  // VP8_DECODER_DECODEMV_H_
+#endif  // VPX_VP8_DECODER_DECODEMV_H_

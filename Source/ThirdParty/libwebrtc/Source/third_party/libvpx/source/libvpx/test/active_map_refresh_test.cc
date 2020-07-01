@@ -74,7 +74,7 @@ class ActiveMapRefreshTest
                                   ::libvpx_test::Encoder *encoder) {
     ::libvpx_test::Y4mVideoSource *y4m_video =
         static_cast<libvpx_test::Y4mVideoSource *>(video);
-    if (video->frame() == 1) {
+    if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
       encoder->Control(VP9E_SET_AQ_MODE, kAqModeCyclicRefresh);
     } else if (video->frame() >= 2 && video->img()) {

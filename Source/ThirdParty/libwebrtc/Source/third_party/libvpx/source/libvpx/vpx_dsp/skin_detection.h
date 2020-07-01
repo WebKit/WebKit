@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_SKIN_DETECTION_H_
-#define VPX_DSP_SKIN_DETECTION_H_
+#ifndef VPX_VPX_DSP_SKIN_DETECTION_H_
+#define VPX_VPX_DSP_SKIN_DETECTION_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,4 +21,4 @@ int vpx_skin_pixel(const int y, const int cb, const int cr, int motion);
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_SKIN_DETECTION_H_
+#endif  // VPX_VPX_DSP_SKIN_DETECTION_H_

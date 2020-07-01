@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_VPX_DSP_COMMON_H_
-#define VPX_DSP_VPX_DSP_COMMON_H_
+#ifndef VPX_VPX_DSP_VPX_DSP_COMMON_H_
+#define VPX_VPX_DSP_VPX_DSP_COMMON_H_
 
 #include "./vpx_config.h"
 #include "vpx/vpx_integer.h"
@@ -25,8 +25,8 @@ extern "C" {
 #define VPX_SWAP(type, a, b) \
   do {                       \
     type c = (b);            \
-    b = a;                   \
-    a = c;                   \
+    (b) = a;                 \
+    (a) = c;                 \
   } while (0)
 
 #if CONFIG_VP9_HIGHBITDEPTH
@@ -57,6 +57,10 @@ static INLINE double fclamp(double value, double low, double high) {
   return value < low ? low : (value > high ? high : value);
 }
 
+static INLINE int64_t lclamp(int64_t value, int64_t low, int64_t high) {
+  return value < low ? low : (value > high ? high : value);
+}
+
 static INLINE uint16_t clip_pixel_highbd(int val, int bd) {
   switch (bd) {
     case 8:
@@ -70,4 +74,4 @@ static INLINE uint16_t clip_pixel_highbd(int val, int bd) {
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_VPX_DSP_COMMON_H_
+#endif  // VPX_VPX_DSP_VPX_DSP_COMMON_H_

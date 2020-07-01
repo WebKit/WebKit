@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_VP9_DX_IFACE_H_
-#define VP9_VP9_DX_IFACE_H_
+#ifndef VPX_VP9_VP9_DX_IFACE_H_
+#define VPX_VP9_VP9_DX_IFACE_H_
 
 #include "vp9/decoder/vp9_decoder.h"
 
@@ -45,6 +45,8 @@ struct vpx_codec_alg_priv {
   // Allow for decoding up to a given spatial layer for SVC stream.
   int svc_decoding;
   int svc_spatial_layer;
+  int row_mt;
+  int lpf_opt;
 };
 
-#endif  // VP9_VP9_DX_IFACE_H_
+#endif  // VPX_VP9_VP9_DX_IFACE_H_

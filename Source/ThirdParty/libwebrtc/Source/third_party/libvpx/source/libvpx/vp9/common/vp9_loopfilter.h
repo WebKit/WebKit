@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_LOOPFILTER_H_
-#define VP9_COMMON_VP9_LOOPFILTER_H_
+#ifndef VPX_VP9_COMMON_VP9_LOOPFILTER_H_
+#define VPX_VP9_COMMON_VP9_LOOPFILTER_H_
 
 #include "vpx_ports/mem.h"
 #include "./vpx_config.h"
@@ -97,7 +97,7 @@ struct VP9LfSyncData;
 // This function sets up the bit masks for the entire 64x64 region represented
 // by mi_row, mi_col.
 void vp9_setup_mask(struct VP9Common *const cm, const int mi_row,
-                    const int mi_col, MODE_INFO **mi_8x8,
+                    const int mi_col, MODE_INFO **mi8x8,
                     const int mode_info_stride, LOOP_FILTER_MASK *lfm);
 
 void vp9_filter_block_plane_ss00(struct VP9Common *const cm,
@@ -120,7 +120,7 @@ void vp9_loop_filter_init(struct VP9Common *cm);
 void vp9_loop_filter_frame_init(struct VP9Common *cm, int default_filt_lvl);
 
 void vp9_loop_filter_frame(YV12_BUFFER_CONFIG *frame, struct VP9Common *cm,
-                           struct macroblockd *mbd, int filter_level,
+                           struct macroblockd *xd, int frame_filter_level,
                            int y_only, int partial_frame);
 
 // Get the superblock lfm for a given mi_row, mi_col.
@@ -157,4 +157,4 @@ int vp9_loop_filter_worker(void *arg1, void *unused);
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_LOOPFILTER_H_
+#endif  // VPX_VP9_COMMON_VP9_LOOPFILTER_H_

@@ -10,8 +10,8 @@
 
 #include "libyuv/rotate.h"
 
-#include "libyuv/cpu_id.h"
 #include "libyuv/convert.h"
+#include "libyuv/cpu_id.h"
 #include "libyuv/planar_functions.h"
 #include "libyuv/rotate_row.h"
 #include "libyuv/row.h"
@@ -22,12 +22,20 @@ extern "C" {
 #endif
 
 LIBYUV_API
-void TransposePlane(const uint8* src, int src_stride,
-                    uint8* dst, int dst_stride,
-                    int width, int height) {
+void TransposePlane(const uint8_t* src,
+                    int src_stride,
+                    uint8_t* dst,
+                    int dst_stride,
+                    int width,
+                    int height) {
   int i = height;
-  void (*TransposeWx8)(const uint8* src, int src_stride,
-                       uint8* dst, int dst_stride, int width) = TransposeWx8_C;
+#if defined(HAS_TRANSPOSEWX16_MSA)
+  void (*TransposeWx16)(const uint8_t* src, int src_stride, uint8_t* dst,
+                        int dst_stride, int width) = TransposeWx16_C;
+#else
+  void (*TransposeWx8)(const uint8_t* src, int src_stride, uint8_t* dst,
+                       int dst_stride, int width) = TransposeWx8_C;
+#endif
 #if defined(HAS_TRANSPOSEWX8_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     TransposeWx8 = TransposeWx8_NEON;
@@ -49,24 +57,32 @@ void TransposePlane(const uint8* src, int src_stride,
     }
   }
 #endif
-#if defined(HAS_TRANSPOSEWX8_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2)) {
-    if (IS_ALIGNED(width, 4) &&
-        IS_ALIGNED(src, 4) && IS_ALIGNED(src_stride, 4)) {
-      TransposeWx8 = TransposeWx8_Fast_DSPR2;
-    } else {
-      TransposeWx8 = TransposeWx8_DSPR2;
+#if defined(HAS_TRANSPOSEWX16_MSA)
+  if (TestCpuFlag(kCpuHasMSA)) {
+    TransposeWx16 = TransposeWx16_Any_MSA;
+    if (IS_ALIGNED(width, 16)) {
+      TransposeWx16 = TransposeWx16_MSA;
     }
   }
 #endif
 
+#if defined(HAS_TRANSPOSEWX16_MSA)
+  // Work across the source in 16x16 tiles
+  while (i >= 16) {
+    TransposeWx16(src, src_stride, dst, dst_stride, width);
+    src += 16 * src_stride;  // Go down 16 rows.
+    dst += 16;               // Move over 16 columns.
+    i -= 16;
+  }
+#else
   // Work across the source in 8x8 tiles
   while (i >= 8) {
     TransposeWx8(src, src_stride, dst, dst_stride, width);
-    src += 8 * src_stride;    // Go down 8 rows.
-    dst += 8;                 // Move over 8 columns.
+    src += 8 * src_stride;  // Go down 8 rows.
+    dst += 8;               // Move over 8 columns.
     i -= 8;
   }
+#endif
 
   if (i > 0) {
     TransposeWxH_C(src, src_stride, dst, dst_stride, width, i);
@@ -74,9 +90,12 @@ void TransposePlane(const uint8* src, int src_stride,
 }
 
 LIBYUV_API
-void RotatePlane90(const uint8* src, int src_stride,
-                   uint8* dst, int dst_stride,
-                   int width, int height) {
+void RotatePlane90(const uint8_t* src,
+                   int src_stride,
+                   uint8_t* dst,
+                   int dst_stride,
+                   int width,
+                   int height) {
   // Rotate by 90 is a transpose with the source read
   // from bottom to top. So set the source pointer to the end
   // of the buffer and flip the sign of the source stride.
@@ -86,9 +105,12 @@ void RotatePlane90(const uint8* src, int src_stride,
 }
 
 LIBYUV_API
-void RotatePlane270(const uint8* src, int src_stride,
-                    uint8* dst, int dst_stride,
-                    int width, int height) {
+void RotatePlane270(const uint8_t* src,
+                    int src_stride,
+                    uint8_t* dst,
+                    int dst_stride,
+                    int width,
+                    int height) {
   // Rotate by 270 is a transpose with the destination written
   // from bottom to top. So set the destination pointer to the end
   // of the buffer and flip the sign of the destination stride.
@@ -98,17 +120,20 @@ void RotatePlane270(const uint8* src, int src_stride,
 }
 
 LIBYUV_API
-void RotatePlane180(const uint8* src, int src_stride,
-                    uint8* dst, int dst_stride,
-                    int width, int height) {
+void RotatePlane180(const uint8_t* src,
+                    int src_stride,
+                    uint8_t* dst,
+                    int dst_stride,
+                    int width,
+                    int height) {
   // Swap first and last row and mirror the content. Uses a temporary row.
   align_buffer_64(row, width);
-  const uint8* src_bot = src + src_stride * (height - 1);
-  uint8* dst_bot = dst + dst_stride * (height - 1);
+  const uint8_t* src_bot = src + src_stride * (height - 1);
+  uint8_t* dst_bot = dst + dst_stride * (height - 1);
   int half_height = (height + 1) >> 1;
   int y;
-  void (*MirrorRow)(const uint8* src, uint8* dst, int width) = MirrorRow_C;
-  void (*CopyRow)(const uint8* src, uint8* dst, int width) = CopyRow_C;
+  void (*MirrorRow)(const uint8_t* src, uint8_t* dst, int width) = MirrorRow_C;
+  void (*CopyRow)(const uint8_t* src, uint8_t* dst, int width) = CopyRow_C;
 #if defined(HAS_MIRRORROW_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     MirrorRow = MirrorRow_Any_NEON;
@@ -133,12 +158,12 @@ void RotatePlane180(const uint8* src, int src_stride,
     }
   }
 #endif
-// TODO(fbarchard): Mirror on mips handle unaligned memory.
-#if defined(HAS_MIRRORROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) &&
-      IS_ALIGNED(src, 4) && IS_ALIGNED(src_stride, 4) &&
-      IS_ALIGNED(dst, 4) && IS_ALIGNED(dst_stride, 4)) {
-    MirrorRow = MirrorRow_DSPR2;
+#if defined(HAS_MIRRORROW_MSA)
+  if (TestCpuFlag(kCpuHasMSA)) {
+    MirrorRow = MirrorRow_Any_MSA;
+    if (IS_ALIGNED(width, 64)) {
+      MirrorRow = MirrorRow_MSA;
+    }
   }
 #endif
 #if defined(HAS_COPYROW_SSE2)
@@ -161,11 +186,6 @@ void RotatePlane180(const uint8* src, int src_stride,
     CopyRow = IS_ALIGNED(width, 32) ? CopyRow_NEON : CopyRow_Any_NEON;
   }
 #endif
-#if defined(HAS_COPYROW_MIPS)
-  if (TestCpuFlag(kCpuHasMIPS)) {
-    CopyRow = CopyRow_MIPS;
-  }
-#endif
 
   // Odd height will harmlessly mirror the middle row twice.
   for (y = 0; y < half_height; ++y) {
@@ -181,15 +201,24 @@ void RotatePlane180(const uint8* src, int src_stride,
 }
 
 LIBYUV_API
-void TransposeUV(const uint8* src, int src_stride,
-                 uint8* dst_a, int dst_stride_a,
-                 uint8* dst_b, int dst_stride_b,
-                 int width, int height) {
+void TransposeUV(const uint8_t* src,
+                 int src_stride,
+                 uint8_t* dst_a,
+                 int dst_stride_a,
+                 uint8_t* dst_b,
+                 int dst_stride_b,
+                 int width,
+                 int height) {
   int i = height;
-  void (*TransposeUVWx8)(const uint8* src, int src_stride,
-                         uint8* dst_a, int dst_stride_a,
-                         uint8* dst_b, int dst_stride_b,
+#if defined(HAS_TRANSPOSEUVWX16_MSA)
+  void (*TransposeUVWx16)(const uint8_t* src, int src_stride, uint8_t* dst_a,
+                          int dst_stride_a, uint8_t* dst_b, int dst_stride_b,
+                          int width) = TransposeUVWx16_C;
+#else
+  void (*TransposeUVWx8)(const uint8_t* src, int src_stride, uint8_t* dst_a,
+                         int dst_stride_a, uint8_t* dst_b, int dst_stride_b,
                          int width) = TransposeUVWx8_C;
+#endif
 #if defined(HAS_TRANSPOSEUVWX8_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     TransposeUVWx8 = TransposeUVWx8_NEON;
@@ -203,72 +232,90 @@ void TransposeUV(const uint8* src, int src_stride,
     }
   }
 #endif
-#if defined(HAS_TRANSPOSEUVWX8_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(width, 2) &&
-      IS_ALIGNED(src, 4) && IS_ALIGNED(src_stride, 4)) {
-    TransposeUVWx8 = TransposeUVWx8_DSPR2;
+#if defined(HAS_TRANSPOSEUVWX16_MSA)
+  if (TestCpuFlag(kCpuHasMSA)) {
+    TransposeUVWx16 = TransposeUVWx16_Any_MSA;
+    if (IS_ALIGNED(width, 8)) {
+      TransposeUVWx16 = TransposeUVWx16_MSA;
+    }
   }
 #endif
 
+#if defined(HAS_TRANSPOSEUVWX16_MSA)
+  // Work through the source in 8x8 tiles.
+  while (i >= 16) {
+    TransposeUVWx16(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,
+                    width);
+    src += 16 * src_stride;  // Go down 16 rows.
+    dst_a += 16;             // Move over 8 columns.
+    dst_b += 16;             // Move over 8 columns.
+    i -= 16;
+  }
+#else
   // Work through the source in 8x8 tiles.
   while (i >= 8) {
-    TransposeUVWx8(src, src_stride,
-                   dst_a, dst_stride_a,
-                   dst_b, dst_stride_b,
+    TransposeUVWx8(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,
                    width);
-    src += 8 * src_stride;    // Go down 8 rows.
-    dst_a += 8;               // Move over 8 columns.
-    dst_b += 8;               // Move over 8 columns.
+    src += 8 * src_stride;  // Go down 8 rows.
+    dst_a += 8;             // Move over 8 columns.
+    dst_b += 8;             // Move over 8 columns.
     i -= 8;
   }
+#endif
 
   if (i > 0) {
-    TransposeUVWxH_C(src, src_stride,
-                     dst_a, dst_stride_a,
-                     dst_b, dst_stride_b,
+    TransposeUVWxH_C(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,
                      width, i);
   }
 }
 
 LIBYUV_API
-void RotateUV90(const uint8* src, int src_stride,
-                uint8* dst_a, int dst_stride_a,
-                uint8* dst_b, int dst_stride_b,
-                int width, int height) {
+void RotateUV90(const uint8_t* src,
+                int src_stride,
+                uint8_t* dst_a,
+                int dst_stride_a,
+                uint8_t* dst_b,
+                int dst_stride_b,
+                int width,
+                int height) {
   src += src_stride * (height - 1);
   src_stride = -src_stride;
 
-  TransposeUV(src, src_stride,
-              dst_a, dst_stride_a,
-              dst_b, dst_stride_b,
-              width, height);
+  TransposeUV(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b, width,
+              height);
 }
 
 LIBYUV_API
-void RotateUV270(const uint8* src, int src_stride,
-                 uint8* dst_a, int dst_stride_a,
-                 uint8* dst_b, int dst_stride_b,
-                 int width, int height) {
+void RotateUV270(const uint8_t* src,
+                 int src_stride,
+                 uint8_t* dst_a,
+                 int dst_stride_a,
+                 uint8_t* dst_b,
+                 int dst_stride_b,
+                 int width,
+                 int height) {
   dst_a += dst_stride_a * (width - 1);
   dst_b += dst_stride_b * (width - 1);
   dst_stride_a = -dst_stride_a;
   dst_stride_b = -dst_stride_b;
 
-  TransposeUV(src, src_stride,
-              dst_a, dst_stride_a,
-              dst_b, dst_stride_b,
-              width, height);
+  TransposeUV(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b, width,
+              height);
 }
 
 // Rotate 180 is a horizontal and vertical flip.
 LIBYUV_API
-void RotateUV180(const uint8* src, int src_stride,
-                 uint8* dst_a, int dst_stride_a,
-                 uint8* dst_b, int dst_stride_b,
-                 int width, int height) {
+void RotateUV180(const uint8_t* src,
+                 int src_stride,
+                 uint8_t* dst_a,
+                 int dst_stride_a,
+                 uint8_t* dst_b,
+                 int dst_stride_b,
+                 int width,
+                 int height) {
   int i;
-  void (*MirrorUVRow)(const uint8* src, uint8* dst_u, uint8* dst_v, int width) =
-      MirrorUVRow_C;
+  void (*MirrorUVRow)(const uint8_t* src, uint8_t* dst_u, uint8_t* dst_v,
+                      int width) = MirrorUVRow_C;
 #if defined(HAS_MIRRORUVROW_NEON)
   if (TestCpuFlag(kCpuHasNEON) && IS_ALIGNED(width, 8)) {
     MirrorUVRow = MirrorUVRow_NEON;
@@ -279,10 +326,9 @@ void RotateUV180(const uint8* src, int src_stride,
     MirrorUVRow = MirrorUVRow_SSSE3;
   }
 #endif
-#if defined(HAS_MIRRORUVROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) &&
-      IS_ALIGNED(src, 4) && IS_ALIGNED(src_stride, 4)) {
-    MirrorUVRow = MirrorUVRow_DSPR2;
+#if defined(HAS_MIRRORUVROW_MSA)
+  if (TestCpuFlag(kCpuHasMSA) && IS_ALIGNED(width, 32)) {
+    MirrorUVRow = MirrorUVRow_MSA;
   }
 #endif
 
@@ -298,9 +344,12 @@ void RotateUV180(const uint8* src, int src_stride,
 }
 
 LIBYUV_API
-int RotatePlane(const uint8* src, int src_stride,
-                uint8* dst, int dst_stride,
-                int width, int height,
+int RotatePlane(const uint8_t* src,
+                int src_stride,
+                uint8_t* dst,
+                int dst_stride,
+                int width,
+                int height,
                 enum RotationMode mode) {
   if (!src || width <= 0 || height == 0 || !dst) {
     return -1;
@@ -316,24 +365,16 @@ int RotatePlane(const uint8* src, int src_stride,
   switch (mode) {
     case kRotate0:
       // copy frame
-      CopyPlane(src, src_stride,
-                dst, dst_stride,
-                width, height);
+      CopyPlane(src, src_stride, dst, dst_stride, width, height);
       return 0;
     case kRotate90:
-      RotatePlane90(src, src_stride,
-                    dst, dst_stride,
-                    width, height);
+      RotatePlane90(src, src_stride, dst, dst_stride, width, height);
       return 0;
     case kRotate270:
-      RotatePlane270(src, src_stride,
-                     dst, dst_stride,
-                     width, height);
+      RotatePlane270(src, src_stride, dst, dst_stride, width, height);
       return 0;
     case kRotate180:
-      RotatePlane180(src, src_stride,
-                     dst, dst_stride,
-                     width, height);
+      RotatePlane180(src, src_stride, dst, dst_stride, width, height);
       return 0;
     default:
       break;
@@ -342,18 +383,25 @@ int RotatePlane(const uint8* src, int src_stride,
 }
 
 LIBYUV_API
-int I420Rotate(const uint8* src_y, int src_stride_y,
-               const uint8* src_u, int src_stride_u,
-               const uint8* src_v, int src_stride_v,
-               uint8* dst_y, int dst_stride_y,
-               uint8* dst_u, int dst_stride_u,
-               uint8* dst_v, int dst_stride_v,
-               int width, int height,
+int I420Rotate(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_u,
+               int dst_stride_u,
+               uint8_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height,
                enum RotationMode mode) {
   int halfwidth = (width + 1) >> 1;
   int halfheight = (height + 1) >> 1;
-  if (!src_y || !src_u || !src_v || width <= 0 || height == 0 ||
-      !dst_y || !dst_u || !dst_v) {
+  if (!src_y || !src_u || !src_v || width <= 0 || height == 0 || !dst_y ||
+      !dst_u || !dst_v) {
     return -1;
   }
 
@@ -372,45 +420,29 @@ int I420Rotate(const uint8* src_y, int src_stride_y,
   switch (mode) {
     case kRotate0:
       // copy frame
-      return I420Copy(src_y, src_stride_y,
-                      src_u, src_stride_u,
-                      src_v, src_stride_v,
-                      dst_y, dst_stride_y,
-                      dst_u, dst_stride_u,
-                      dst_v, dst_stride_v,
-                      width, height);
+      return I420Copy(src_y, src_stride_y, src_u, src_stride_u, src_v,
+                      src_stride_v, dst_y, dst_stride_y, dst_u, dst_stride_u,
+                      dst_v, dst_stride_v, width, height);
     case kRotate90:
-      RotatePlane90(src_y, src_stride_y,
-                    dst_y, dst_stride_y,
-                    width, height);
-      RotatePlane90(src_u, src_stride_u,
-                    dst_u, dst_stride_u,
-                    halfwidth, halfheight);
-      RotatePlane90(src_v, src_stride_v,
-                    dst_v, dst_stride_v,
-                    halfwidth, halfheight);
+      RotatePlane90(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotatePlane90(src_u, src_stride_u, dst_u, dst_stride_u, halfwidth,
+                    halfheight);
+      RotatePlane90(src_v, src_stride_v, dst_v, dst_stride_v, halfwidth,
+                    halfheight);
       return 0;
     case kRotate270:
-      RotatePlane270(src_y, src_stride_y,
-                     dst_y, dst_stride_y,
-                     width, height);
-      RotatePlane270(src_u, src_stride_u,
-                     dst_u, dst_stride_u,
-                     halfwidth, halfheight);
-      RotatePlane270(src_v, src_stride_v,
-                     dst_v, dst_stride_v,
-                     halfwidth, halfheight);
+      RotatePlane270(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotatePlane270(src_u, src_stride_u, dst_u, dst_stride_u, halfwidth,
+                     halfheight);
+      RotatePlane270(src_v, src_stride_v, dst_v, dst_stride_v, halfwidth,
+                     halfheight);
       return 0;
     case kRotate180:
-      RotatePlane180(src_y, src_stride_y,
-                     dst_y, dst_stride_y,
-                     width, height);
-      RotatePlane180(src_u, src_stride_u,
-                     dst_u, dst_stride_u,
-                     halfwidth, halfheight);
-      RotatePlane180(src_v, src_stride_v,
-                     dst_v, dst_stride_v,
-                     halfwidth, halfheight);
+      RotatePlane180(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotatePlane180(src_u, src_stride_u, dst_u, dst_stride_u, halfwidth,
+                     halfheight);
+      RotatePlane180(src_v, src_stride_v, dst_v, dst_stride_v, halfwidth,
+                     halfheight);
       return 0;
     default:
       break;
@@ -419,17 +451,23 @@ int I420Rotate(const uint8* src_y, int src_stride_y,
 }
 
 LIBYUV_API
-int NV12ToI420Rotate(const uint8* src_y, int src_stride_y,
-                     const uint8* src_uv, int src_stride_uv,
-                     uint8* dst_y, int dst_stride_y,
-                     uint8* dst_u, int dst_stride_u,
-                     uint8* dst_v, int dst_stride_v,
-                     int width, int height,
+int NV12ToI420Rotate(const uint8_t* src_y,
+                     int src_stride_y,
+                     const uint8_t* src_uv,
+                     int src_stride_uv,
+                     uint8_t* dst_y,
+                     int dst_stride_y,
+                     uint8_t* dst_u,
+                     int dst_stride_u,
+                     uint8_t* dst_v,
+                     int dst_stride_v,
+                     int width,
+                     int height,
                      enum RotationMode mode) {
   int halfwidth = (width + 1) >> 1;
   int halfheight = (height + 1) >> 1;
-  if (!src_y || !src_uv || width <= 0 || height == 0 ||
-      !dst_y || !dst_u || !dst_v) {
+  if (!src_y || !src_uv || width <= 0 || height == 0 || !dst_y || !dst_u ||
+      !dst_v) {
     return -1;
   }
 
@@ -446,38 +484,23 @@ int NV12ToI420Rotate(const uint8* src_y, int src_stride_y,
   switch (mode) {
     case kRotate0:
       // copy frame
-      return NV12ToI420(src_y, src_stride_y,
-                        src_uv, src_stride_uv,
-                        dst_y, dst_stride_y,
-                        dst_u, dst_stride_u,
-                        dst_v, dst_stride_v,
+      return NV12ToI420(src_y, src_stride_y, src_uv, src_stride_uv, dst_y,
+                        dst_stride_y, dst_u, dst_stride_u, dst_v, dst_stride_v,
                         width, height);
     case kRotate90:
-      RotatePlane90(src_y, src_stride_y,
-                    dst_y, dst_stride_y,
-                    width, height);
-      RotateUV90(src_uv, src_stride_uv,
-                 dst_u, dst_stride_u,
-                 dst_v, dst_stride_v,
-                 halfwidth, halfheight);
+      RotatePlane90(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotateUV90(src_uv, src_stride_uv, dst_u, dst_stride_u, dst_v,
+                 dst_stride_v, halfwidth, halfheight);
       return 0;
     case kRotate270:
-      RotatePlane270(src_y, src_stride_y,
-                     dst_y, dst_stride_y,
-                     width, height);
-      RotateUV270(src_uv, src_stride_uv,
-                  dst_u, dst_stride_u,
-                  dst_v, dst_stride_v,
-                  halfwidth, halfheight);
+      RotatePlane270(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotateUV270(src_uv, src_stride_uv, dst_u, dst_stride_u, dst_v,
+                  dst_stride_v, halfwidth, halfheight);
       return 0;
     case kRotate180:
-      RotatePlane180(src_y, src_stride_y,
-                     dst_y, dst_stride_y,
-                     width, height);
-      RotateUV180(src_uv, src_stride_uv,
-                  dst_u, dst_stride_u,
-                  dst_v, dst_stride_v,
-                  halfwidth, halfheight);
+      RotatePlane180(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotateUV180(src_uv, src_stride_uv, dst_u, dst_stride_u, dst_v,
+                  dst_stride_v, halfwidth, halfheight);
       return 0;
     default:
       break;

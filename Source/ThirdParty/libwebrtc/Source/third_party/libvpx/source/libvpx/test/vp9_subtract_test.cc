@@ -14,9 +14,11 @@
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "test/acm_random.h"
+#include "test/bench.h"
 #include "test/clear_system_state.h"
 #include "test/register_state_check.h"
 #include "vp9/common/vp9_blockd.h"
+#include "vpx_ports/msvc.h"
 #include "vpx_mem/vpx_mem.h"
 
 typedef void (*SubtractFunc)(int rows, int cols, int16_t *diff_ptr,
@@ -26,62 +28,101 @@ typedef void (*SubtractFunc)(int rows, int cols, int16_t *diff_ptr,
 
 namespace vp9 {
 
-class VP9SubtractBlockTest : public ::testing::TestWithParam<SubtractFunc> {
+class VP9SubtractBlockTest : public AbstractBench,
+                             public ::testing::TestWithParam<SubtractFunc> {
  public:
   virtual void TearDown() { libvpx_test::ClearSystemState(); }
+
+ protected:
+  virtual void Run() {
+    GetParam()(block_height_, block_width_, diff_, block_width_, src_,
+               block_width_, pred_, block_width_);
+  }
+
+  void SetupBlocks(BLOCK_SIZE bsize) {
+    block_width_ = 4 * num_4x4_blocks_wide_lookup[bsize];
+    block_height_ = 4 * num_4x4_blocks_high_lookup[bsize];
+    diff_ = reinterpret_cast<int16_t *>(
+        vpx_memalign(16, sizeof(*diff_) * block_width_ * block_height_ * 2));
+    pred_ = reinterpret_cast<uint8_t *>(
+        vpx_memalign(16, block_width_ * block_height_ * 2));
+    src_ = reinterpret_cast<uint8_t *>(
+        vpx_memalign(16, block_width_ * block_height_ * 2));
+  }
+
+  int block_width_;
+  int block_height_;
+  int16_t *diff_;
+  uint8_t *pred_;
+  uint8_t *src_;
 };
 
 using libvpx_test::ACMRandom;
 
+TEST_P(VP9SubtractBlockTest, DISABLED_Speed) {
+  ACMRandom rnd(ACMRandom::DeterministicSeed());
+
+  for (BLOCK_SIZE bsize = BLOCK_4X4; bsize < BLOCK_SIZES;
+       bsize = static_cast<BLOCK_SIZE>(static_cast<int>(bsize) + 1)) {
+    SetupBlocks(bsize);
+
+    RunNTimes(100000000 / (block_height_ * block_width_));
+    char block_size[16];
+    snprintf(block_size, sizeof(block_size), "%dx%d", block_height_,
+             block_width_);
+    char title[100];
+    snprintf(title, sizeof(title), "%8s ", block_size);
+    PrintMedian(title);
+
+    vpx_free(diff_);
+    vpx_free(pred_);
+    vpx_free(src_);
+  }
+}
+
 TEST_P(VP9SubtractBlockTest, SimpleSubtract) {
   ACMRandom rnd(ACMRandom::DeterministicSeed());
 
-  // FIXME(rbultje) split in its own file
   for (BLOCK_SIZE bsize = BLOCK_4X4; bsize < BLOCK_SIZES;
        bsize = static_cast<BLOCK_SIZE>(static_cast<int>(bsize) + 1)) {
-    const int block_width = 4 * num_4x4_blocks_wide_lookup[bsize];
-    const int block_height = 4 * num_4x4_blocks_high_lookup[bsize];
-    int16_t *diff = reinterpret_cast<int16_t *>(
-        vpx_memalign(16, sizeof(*diff) * block_width * block_height * 2));
-    uint8_t *pred = reinterpret_cast<uint8_t *>(
-        vpx_memalign(16, block_width * block_height * 2));
-    uint8_t *src = reinterpret_cast<uint8_t *>(
-        vpx_memalign(16, block_width * block_height * 2));
+    SetupBlocks(bsize);
 
     for (int n = 0; n < 100; n++) {
-      for (int r = 0; r < block_height; ++r) {
-        for (int c = 0; c < block_width * 2; ++c) {
-          src[r * block_width * 2 + c] = rnd.Rand8();
-          pred[r * block_width * 2 + c] = rnd.Rand8();
+      for (int r = 0; r < block_height_; ++r) {
+        for (int c = 0; c < block_width_ * 2; ++c) {
+          src_[r * block_width_ * 2 + c] = rnd.Rand8();
+          pred_[r * block_width_ * 2 + c] = rnd.Rand8();
         }
       }
 
-      GetParam()(block_height, block_width, diff, block_width, src, block_width,
-                 pred, block_width);
+      GetParam()(block_height_, block_width_, diff_, block_width_, src_,
+                 block_width_, pred_, block_width_);
 
-      for (int r = 0; r < block_height; ++r) {
-        for (int c = 0; c < block_width; ++c) {
-          EXPECT_EQ(diff[r * block_width + c],
-                    (src[r * block_width + c] - pred[r * block_width + c]))
-              << "r = " << r << ", c = " << c << ", bs = " << bsize;
+      for (int r = 0; r < block_height_; ++r) {
+        for (int c = 0; c < block_width_; ++c) {
+          EXPECT_EQ(diff_[r * block_width_ + c],
+                    (src_[r * block_width_ + c] - pred_[r * block_width_ + c]))
+              << "r = " << r << ", c = " << c
+              << ", bs = " << static_cast<int>(bsize);
         }
       }
 
-      GetParam()(block_height, block_width, diff, block_width * 2, src,
-                 block_width * 2, pred, block_width * 2);
+      GetParam()(block_height_, block_width_, diff_, block_width_ * 2, src_,
+                 block_width_ * 2, pred_, block_width_ * 2);
 
-      for (int r = 0; r < block_height; ++r) {
-        for (int c = 0; c < block_width; ++c) {
-          EXPECT_EQ(
-              diff[r * block_width * 2 + c],
-              (src[r * block_width * 2 + c] - pred[r * block_width * 2 + c]))
-              << "r = " << r << ", c = " << c << ", bs = " << bsize;
+      for (int r = 0; r < block_height_; ++r) {
+        for (int c = 0; c < block_width_; ++c) {
+          EXPECT_EQ(diff_[r * block_width_ * 2 + c],
+                    (src_[r * block_width_ * 2 + c] -
+                     pred_[r * block_width_ * 2 + c]))
+              << "r = " << r << ", c = " << c
+              << ", bs = " << static_cast<int>(bsize);
         }
       }
     }
-    vpx_free(diff);
-    vpx_free(pred);
-    vpx_free(src);
+    vpx_free(diff_);
+    vpx_free(pred_);
+    vpx_free(src_);
   }
 }
 
@@ -104,6 +145,11 @@ INSTANTIATE_TEST_CASE_P(MSA, VP9SubtractBlockTest,
 #if HAVE_MMI
 INSTANTIATE_TEST_CASE_P(MMI, VP9SubtractBlockTest,
                         ::testing::Values(vpx_subtract_block_mmi));
+#endif
+
+#if HAVE_VSX
+INSTANTIATE_TEST_CASE_P(VSX, VP9SubtractBlockTest,
+                        ::testing::Values(vpx_subtract_block_vsx));
 #endif
 
 }  // namespace vp9

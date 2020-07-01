@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_MEM_OPS_ALIGNED_H_
-#define VPX_PORTS_MEM_OPS_ALIGNED_H_
+#ifndef VPX_VPX_PORTS_MEM_OPS_ALIGNED_H_
+#define VPX_VPX_PORTS_MEM_OPS_ALIGNED_H_
 
 #include "vpx/vpx_integer.h"
 
@@ -168,4 +168,4 @@ mem_put_le_aligned_generic(32)
 #undef swap_endian_32_se
 /* clang-format on */
 
-#endif  // VPX_PORTS_MEM_OPS_ALIGNED_H_
+#endif  // VPX_VPX_PORTS_MEM_OPS_ALIGNED_H_

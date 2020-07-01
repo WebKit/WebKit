@@ -641,7 +641,7 @@ void vpx_convolve8_vert_msa(const uint8_t *src, ptrdiff_t src_stride,
     filt_ver[cnt] = filter_y[cnt];
   }
 
-  if (((const int32_t *)filter_y)[0] == 0) {
+  if (vpx_get_filter_taps(filter_y) == 2) {
     switch (w) {
       case 4:
         common_vt_2t_4w_msa(src, (int32_t)src_stride, dst, (int32_t)dst_stride,

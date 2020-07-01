@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_MIPS_VPX_CONVOLVE_MSA_H_
-#define VPX_DSP_MIPS_VPX_CONVOLVE_MSA_H_
+#ifndef VPX_VPX_DSP_MIPS_VPX_CONVOLVE_MSA_H_
+#define VPX_VPX_DSP_MIPS_VPX_CONVOLVE_MSA_H_
 
 #include "vpx_dsp/mips/macros_msa.h"
 #include "vpx_dsp/vpx_filter.h"
@@ -119,4 +119,4 @@ extern const uint8_t mc_filt_mask_arr[16 * 3];
     AVER_UB2_UB(tmp0_m, dst0, tmp1_m, dst1, tmp0_m, tmp1_m);             \
     ST8x4_UB(tmp0_m, tmp1_m, pdst_m, stride);                            \
   }
-#endif /* VPX_DSP_MIPS_VPX_CONVOLVE_MSA_H_ */
+#endif  // VPX_VPX_DSP_MIPS_VPX_CONVOLVE_MSA_H_

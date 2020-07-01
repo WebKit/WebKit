@@ -196,6 +196,7 @@ void DecodeFiles(const FileList files[]) {
 // Note any worker that requires synchronization between other workers will
 // hang.
 namespace impl {
+namespace {
 
 void Init(VPxWorker *const worker) { memset(worker, 0, sizeof(*worker)); }
 int Reset(VPxWorker *const /*worker*/) { return 1; }
@@ -208,6 +209,7 @@ void Execute(VPxWorker *const worker) {
 void Launch(VPxWorker *const worker) { Execute(worker); }
 void End(VPxWorker *const /*worker*/) {}
 
+}  // namespace
 }  // namespace impl
 
 TEST(VPxWorkerThreadTest, TestSerialInterface) {

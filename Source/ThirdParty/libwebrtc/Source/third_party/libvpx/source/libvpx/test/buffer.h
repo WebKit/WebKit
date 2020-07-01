@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef TEST_BUFFER_H_
-#define TEST_BUFFER_H_
+#ifndef VPX_TEST_BUFFER_H_
+#define VPX_TEST_BUFFER_H_
 
 #include <stdio.h>
 
@@ -379,4 +379,4 @@ bool Buffer<T>::BufferSizesMatch(const Buffer<T> &a) const {
   return true;
 }
 }  // namespace libvpx_test
-#endif  // TEST_BUFFER_H_
+#endif  // VPX_TEST_BUFFER_H_

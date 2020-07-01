@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_PPC_TRANSPOSE_VSX_H_
-#define VPX_DSP_PPC_TRANSPOSE_VSX_H_
+#ifndef VPX_VPX_DSP_PPC_TRANSPOSE_VSX_H_
+#define VPX_VPX_DSP_PPC_TRANSPOSE_VSX_H_
 
 #include "./vpx_config.h"
 #include "vpx_dsp/ppc/types_vsx.h"
@@ -98,4 +98,36 @@ static INLINE void vpx_transpose_s16_8x8(int16x8_t v[8]) {
   // v[7]: 07 17 27 37 47 57 67 77
 }
 
-#endif  // VPX_DSP_PPC_TRANSPOSE_VSX_H_
+static INLINE void transpose_8x8(const int16x8_t *a, int16x8_t *b) {
+  // Stage 1
+  const int16x8_t s1_0 = vec_mergeh(a[0], a[4]);
+  const int16x8_t s1_1 = vec_mergel(a[0], a[4]);
+  const int16x8_t s1_2 = vec_mergeh(a[1], a[5]);
+  const int16x8_t s1_3 = vec_mergel(a[1], a[5]);
+  const int16x8_t s1_4 = vec_mergeh(a[2], a[6]);
+  const int16x8_t s1_5 = vec_mergel(a[2], a[6]);
+  const int16x8_t s1_6 = vec_mergeh(a[3], a[7]);
+  const int16x8_t s1_7 = vec_mergel(a[3], a[7]);
+
+  // Stage 2
+  const int16x8_t s2_0 = vec_mergeh(s1_0, s1_4);
+  const int16x8_t s2_1 = vec_mergel(s1_0, s1_4);
+  const int16x8_t s2_2 = vec_mergeh(s1_1, s1_5);
+  const int16x8_t s2_3 = vec_mergel(s1_1, s1_5);
+  const int16x8_t s2_4 = vec_mergeh(s1_2, s1_6);
+  const int16x8_t s2_5 = vec_mergel(s1_2, s1_6);
+  const int16x8_t s2_6 = vec_mergeh(s1_3, s1_7);
+  const int16x8_t s2_7 = vec_mergel(s1_3, s1_7);
+
+  // Stage 2
+  b[0] = vec_mergeh(s2_0, s2_4);
+  b[1] = vec_mergel(s2_0, s2_4);
+  b[2] = vec_mergeh(s2_1, s2_5);
+  b[3] = vec_mergel(s2_1, s2_5);
+  b[4] = vec_mergeh(s2_2, s2_6);
+  b[5] = vec_mergel(s2_2, s2_6);
+  b[6] = vec_mergeh(s2_3, s2_7);
+  b[7] = vec_mergel(s2_3, s2_7);
+}
+
+#endif  // VPX_VPX_DSP_PPC_TRANSPOSE_VSX_H_

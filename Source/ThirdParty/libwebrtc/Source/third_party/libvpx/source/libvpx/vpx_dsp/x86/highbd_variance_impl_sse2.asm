@@ -16,9 +16,9 @@ SECTION .text
 ;unsigned int vpx_highbd_calc16x16var_sse2
 ;(
 ;    unsigned char   *  src_ptr,
-;    int             source_stride,
+;    int             src_stride,
 ;    unsigned char   *  ref_ptr,
-;    int             recon_stride,
+;    int             ref_stride,
 ;    unsigned int    *  SSE,
 ;    int             *  Sum
 ;)
@@ -36,8 +36,8 @@ sym(vpx_highbd_calc16x16var_sse2):
         mov         rsi,            arg(0) ;[src_ptr]
         mov         rdi,            arg(2) ;[ref_ptr]
 
-        movsxd      rax,            DWORD PTR arg(1) ;[source_stride]
-        movsxd      rdx,            DWORD PTR arg(3) ;[recon_stride]
+        movsxd      rax,            DWORD PTR arg(1) ;[src_stride]
+        movsxd      rdx,            DWORD PTR arg(3) ;[ref_stride]
         add         rax,            rax ; source stride in bytes
         add         rdx,            rdx ; recon stride in bytes
 
@@ -169,9 +169,9 @@ sym(vpx_highbd_calc16x16var_sse2):
 ;unsigned int vpx_highbd_calc8x8var_sse2
 ;(
 ;    unsigned char   *  src_ptr,
-;    int             source_stride,
+;    int             src_stride,
 ;    unsigned char   *  ref_ptr,
-;    int             recon_stride,
+;    int             ref_stride,
 ;    unsigned int    *  SSE,
 ;    int             *  Sum
 ;)
@@ -189,8 +189,8 @@ sym(vpx_highbd_calc8x8var_sse2):
         mov         rsi,            arg(0) ;[src_ptr]
         mov         rdi,            arg(2) ;[ref_ptr]
 
-        movsxd      rax,            DWORD PTR arg(1) ;[source_stride]
-        movsxd      rdx,            DWORD PTR arg(3) ;[recon_stride]
+        movsxd      rax,            DWORD PTR arg(1) ;[src_stride]
+        movsxd      rdx,            DWORD PTR arg(3) ;[ref_stride]
         add         rax,            rax ; source stride in bytes
         add         rdx,            rdx ; recon stride in bytes
 

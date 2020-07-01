@@ -93,6 +93,7 @@ enum MkvId {
   kMkvDisplayHeight = 0x54BA,
   kMkvDisplayUnit = 0x54B2,
   kMkvAspectRatioType = 0x54B3,
+  kMkvColourSpace = 0x2EB524,
   kMkvFrameRate = 0x2383E3,
   // end video
   // colour

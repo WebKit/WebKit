@@ -114,7 +114,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
   // Work out the start point for the search
   const uint8_t *best_address = in_what;
   const uint8_t *new_best_address = best_address;
-#if ARCH_X86_64
+#if VPX_ARCH_X86_64
   __m128i v_ba_q = _mm_set1_epi64x((intptr_t)best_address);
 #else
   __m128i v_ba_d = _mm_set1_epi32((intptr_t)best_address);
@@ -138,7 +138,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
   for (i = 0, step = 0; step < tot_steps; step++) {
     for (j = 0; j < cfg->searches_per_step; j += 4, i += 4) {
       __m128i v_sad_d, v_cost_d, v_outside_d, v_inside_d, v_diff_mv_w;
-#if ARCH_X86_64
+#if VPX_ARCH_X86_64
       __m128i v_blocka[2];
 #else
       __m128i v_blocka[1];
@@ -160,7 +160,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
       }
 
       // The inverse mask indicates which of the MVs are outside
-      v_outside_d = _mm_xor_si128(v_inside_d, _mm_set1_epi8(0xff));
+      v_outside_d = _mm_xor_si128(v_inside_d, _mm_set1_epi8((int8_t)0xff));
       // Shift right to keep the sign bit clear, we will use this later
       // to set the cost to the maximum value.
       v_outside_d = _mm_srli_epi32(v_outside_d, 1);
@@ -175,7 +175,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
 
       // Compute the SIMD pointer offsets.
       {
-#if ARCH_X86_64  //  sizeof(intptr_t) == 8
+#if VPX_ARCH_X86_64  //  sizeof(intptr_t) == 8
         // Load the offsets
         __m128i v_bo10_q = _mm_loadu_si128((const __m128i *)&ss_os[i + 0]);
         __m128i v_bo32_q = _mm_loadu_si128((const __m128i *)&ss_os[i + 2]);
@@ -186,7 +186,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
         // Compute the candidate addresses
         v_blocka[0] = _mm_add_epi64(v_ba_q, v_bo10_q);
         v_blocka[1] = _mm_add_epi64(v_ba_q, v_bo32_q);
-#else  // ARCH_X86 //  sizeof(intptr_t) == 4
+#else  // VPX_ARCH_X86 //  sizeof(intptr_t) == 4
         __m128i v_bo_d = _mm_loadu_si128((const __m128i *)&ss_os[i]);
         v_bo_d = _mm_and_si128(v_bo_d, v_inside_d);
         v_blocka[0] = _mm_add_epi32(v_ba_d, v_bo_d);
@@ -294,7 +294,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
     best_address = new_best_address;
 
     v_bmv_w = _mm_set1_epi32(bmv.as_int);
-#if ARCH_X86_64
+#if VPX_ARCH_X86_64
     v_ba_q = _mm_set1_epi64x((intptr_t)best_address);
 #else
     v_ba_d = _mm_set1_epi32((intptr_t)best_address);

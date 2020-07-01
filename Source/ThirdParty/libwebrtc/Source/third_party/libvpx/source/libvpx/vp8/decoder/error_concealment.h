@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_DECODER_ERROR_CONCEALMENT_H_
-#define VP8_DECODER_ERROR_CONCEALMENT_H_
+#ifndef VPX_VP8_DECODER_ERROR_CONCEALMENT_H_
+#define VPX_VP8_DECODER_ERROR_CONCEALMENT_H_
 
 #include "onyxd_int.h"
 #include "ec_types.h"
@@ -38,4 +38,4 @@ void vp8_interpolate_motion(MACROBLOCKD *mb, int mb_row, int mb_col,
 }  // extern "C"
 #endif
 
-#endif  // VP8_DECODER_ERROR_CONCEALMENT_H_
+#endif  // VPX_VP8_DECODER_ERROR_CONCEALMENT_H_

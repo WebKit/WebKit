@@ -98,20 +98,41 @@ static const arg_def_t svcdecodingarg = ARG_DEF(
     NULL, "svc-decode-layer", 1, "Decode SVC stream up to given spatial layer");
 static const arg_def_t framestatsarg =
     ARG_DEF(NULL, "framestats", 1, "Output per-frame stats (.csv format)");
+static const arg_def_t rowmtarg =
+    ARG_DEF(NULL, "row-mt", 1, "Enable multi-threading to run row-wise in VP9");
+static const arg_def_t lpfoptarg =
+    ARG_DEF(NULL, "lpf-opt", 1,
+            "Do loopfilter without waiting for all threads to sync.");
 
-static const arg_def_t *all_args[] = {
-  &help,           &codecarg,          &use_yv12,
-  &use_i420,       &flipuvarg,         &rawvideo,
-  &noblitarg,      &progressarg,       &limitarg,
-  &skiparg,        &postprocarg,       &summaryarg,
-  &outputfile,     &threadsarg,        &frameparallelarg,
-  &verbosearg,     &scalearg,          &fb_arg,
-  &md5arg,         &error_concealment, &continuearg,
+static const arg_def_t *all_args[] = { &help,
+                                       &codecarg,
+                                       &use_yv12,
+                                       &use_i420,
+                                       &flipuvarg,
+                                       &rawvideo,
+                                       &noblitarg,
+                                       &progressarg,
+                                       &limitarg,
+                                       &skiparg,
+                                       &postprocarg,
+                                       &summaryarg,
+                                       &outputfile,
+                                       &threadsarg,
+                                       &frameparallelarg,
+                                       &verbosearg,
+                                       &scalearg,
+                                       &fb_arg,
+                                       &md5arg,
+                                       &error_concealment,
+                                       &continuearg,
 #if CONFIG_VP9_HIGHBITDEPTH
-  &outbitdeptharg,
+                                       &outbitdeptharg,
 #endif
-  &svcdecodingarg, &framestatsarg,     NULL
-};
+                                       &svcdecodingarg,
+                                       &framestatsarg,
+                                       &rowmtarg,
+                                       &lpfoptarg,
+                                       NULL };
 
 #if CONFIG_VP8_DECODER
 static const arg_def_t addnoise_level =
@@ -154,7 +175,7 @@ static INLINE int libyuv_scale(vpx_image_t *src, vpx_image_t *dst,
                    dst->d_h, mode);
 }
 #endif
-void show_help(FILE *fout, int shorthelp) {
+static void show_help(FILE *fout, int shorthelp) {
   int i;
 
   fprintf(fout, "Usage: %s <options> filename\n\n", exec_name);
@@ -238,13 +259,14 @@ static int raw_read_frame(FILE *infile, uint8_t **buffer, size_t *bytes_read,
       return 1;
     }
     *bytes_read = frame_size;
+    return 0;
   }
 
-  return 0;
+  return 1;
 }
 
-static int read_frame(struct VpxDecInputContext *input, uint8_t **buf,
-                      size_t *bytes_in_buffer, size_t *buffer_size) {
+static int dec_read_frame(struct VpxDecInputContext *input, uint8_t **buf,
+                          size_t *bytes_in_buffer, size_t *buffer_size) {
   switch (input->vpx_input_ctx->file_type) {
 #if CONFIG_WEBM_IO
     case FILE_TYPE_WEBM:
@@ -506,6 +528,8 @@ static int main_loop(int argc, const char **argv_) {
   int arg_skip = 0;
   int ec_enabled = 0;
   int keep_going = 0;
+  int enable_row_mt = 0;
+  int enable_lpf_opt = 0;
   const VpxInterface *interface = NULL;
   const VpxInterface *fourcc_interface = NULL;
   uint64_t dx_time = 0;
@@ -628,6 +652,10 @@ static int main_loop(int argc, const char **argv_) {
         die("Error: Could not open --framestats file (%s) for writing.\n",
             arg.val);
       }
+    } else if (arg_match(&arg, &rowmtarg, argi)) {
+      enable_row_mt = arg_parse_uint(&arg);
+    } else if (arg_match(&arg, &lpfoptarg, argi)) {
+      enable_lpf_opt = arg_parse_uint(&arg);
     }
 #if CONFIG_VP8_DECODER
     else if (arg_match(&arg, &addnoise_level, argi)) {
@@ -694,6 +722,7 @@ static int main_loop(int argc, const char **argv_) {
 #if !CONFIG_WEBM_IO
     fprintf(stderr, "vpxdec was built without WebM container support.\n");
 #endif
+    free(argv);
     return EXIT_FAILURE;
   }
 
@@ -753,6 +782,18 @@ static int main_loop(int argc, const char **argv_) {
       goto fail;
     }
   }
+  if (interface->fourcc == VP9_FOURCC &&
+      vpx_codec_control(&decoder, VP9D_SET_ROW_MT, enable_row_mt)) {
+    fprintf(stderr, "Failed to set decoder in row multi-thread mode: %s\n",
+            vpx_codec_error(&decoder));
+    goto fail;
+  }
+  if (interface->fourcc == VP9_FOURCC &&
+      vpx_codec_control(&decoder, VP9D_SET_LOOP_FILTER_OPT, enable_lpf_opt)) {
+    fprintf(stderr, "Failed to set decoder in optimized loopfilter mode: %s\n",
+            vpx_codec_error(&decoder));
+    goto fail;
+  }
   if (!quiet) fprintf(stderr, "%s\n", decoder.name);
 
 #if CONFIG_VP8_DECODER
@@ -766,7 +807,7 @@ static int main_loop(int argc, const char **argv_) {
 
   if (arg_skip) fprintf(stderr, "Skipping first %d frames.\n", arg_skip);
   while (arg_skip) {
-    if (read_frame(&input, &buf, &bytes_in_buffer, &buffer_size)) break;
+    if (dec_read_frame(&input, &buf, &bytes_in_buffer, &buffer_size)) break;
     arg_skip--;
   }
 
@@ -797,7 +838,7 @@ static int main_loop(int argc, const char **argv_) {
 
     frame_avail = 0;
     if (!stop_after || frame_in < stop_after) {
-      if (!read_frame(&input, &buf, &bytes_in_buffer, &buffer_size)) {
+      if (!dec_read_frame(&input, &buf, &bytes_in_buffer, &buffer_size)) {
         frame_avail = 1;
         frame_in++;
 

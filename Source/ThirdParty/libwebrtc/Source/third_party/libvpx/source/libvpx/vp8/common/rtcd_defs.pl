@@ -31,10 +31,10 @@ forward_decls qw/vp8_common_forward_decls/;
 #
 # Dequant
 #
-add_proto qw/void vp8_dequantize_b/, "struct blockd*, short *dqc";
+add_proto qw/void vp8_dequantize_b/, "struct blockd*, short *DQC";
 specialize qw/vp8_dequantize_b mmx neon msa mmi/;
 
-add_proto qw/void vp8_dequant_idct_add/, "short *input, short *dq, unsigned char *output, int stride";
+add_proto qw/void vp8_dequant_idct_add/, "short *input, short *dq, unsigned char *dest, int stride";
 specialize qw/vp8_dequant_idct_add mmx neon dspr2 msa mmi/;
 
 add_proto qw/void vp8_dequant_idct_add_y_block/, "short *q, short *dq, unsigned char *dst, int stride, char *eobs";
@@ -46,20 +46,20 @@ specialize qw/vp8_dequant_idct_add_uv_block sse2 neon dspr2 msa mmi/;
 #
 # Loopfilter
 #
-add_proto qw/void vp8_loop_filter_mbv/, "unsigned char *y, unsigned char *u, unsigned char *v, int ystride, int uv_stride, struct loop_filter_info *lfi";
+add_proto qw/void vp8_loop_filter_mbv/, "unsigned char *y_ptr, unsigned char *u_ptr, unsigned char *v_ptr, int y_stride, int uv_stride, struct loop_filter_info *lfi";
 specialize qw/vp8_loop_filter_mbv sse2 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_loop_filter_bv/, "unsigned char *y, unsigned char *u, unsigned char *v, int ystride, int uv_stride, struct loop_filter_info *lfi";
+add_proto qw/void vp8_loop_filter_bv/, "unsigned char *y_ptr, unsigned char *u_ptr, unsigned char *v_ptr, int y_stride, int uv_stride, struct loop_filter_info *lfi";
 specialize qw/vp8_loop_filter_bv sse2 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_loop_filter_mbh/, "unsigned char *y, unsigned char *u, unsigned char *v, int ystride, int uv_stride, struct loop_filter_info *lfi";
+add_proto qw/void vp8_loop_filter_mbh/, "unsigned char *y_ptr, unsigned char *u_ptr, unsigned char *v_ptr, int y_stride, int uv_stride, struct loop_filter_info *lfi";
 specialize qw/vp8_loop_filter_mbh sse2 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_loop_filter_bh/, "unsigned char *y, unsigned char *u, unsigned char *v, int ystride, int uv_stride, struct loop_filter_info *lfi";
+add_proto qw/void vp8_loop_filter_bh/, "unsigned char *y_ptr, unsigned char *u_ptr, unsigned char *v_ptr, int y_stride, int uv_stride, struct loop_filter_info *lfi";
 specialize qw/vp8_loop_filter_bh sse2 neon dspr2 msa mmi/;
 
 
-add_proto qw/void vp8_loop_filter_simple_mbv/, "unsigned char *y, int ystride, const unsigned char *blimit";
+add_proto qw/void vp8_loop_filter_simple_mbv/, "unsigned char *y_ptr, int y_stride, const unsigned char *blimit";
 specialize qw/vp8_loop_filter_simple_mbv sse2 neon msa mmi/;
 $vp8_loop_filter_simple_mbv_c=vp8_loop_filter_simple_vertical_edge_c;
 $vp8_loop_filter_simple_mbv_sse2=vp8_loop_filter_simple_vertical_edge_sse2;
@@ -67,7 +67,7 @@ $vp8_loop_filter_simple_mbv_neon=vp8_loop_filter_mbvs_neon;
 $vp8_loop_filter_simple_mbv_msa=vp8_loop_filter_simple_vertical_edge_msa;
 $vp8_loop_filter_simple_mbv_mmi=vp8_loop_filter_simple_vertical_edge_mmi;
 
-add_proto qw/void vp8_loop_filter_simple_mbh/, "unsigned char *y, int ystride, const unsigned char *blimit";
+add_proto qw/void vp8_loop_filter_simple_mbh/, "unsigned char *y_ptr, int y_stride, const unsigned char *blimit";
 specialize qw/vp8_loop_filter_simple_mbh sse2 neon msa mmi/;
 $vp8_loop_filter_simple_mbh_c=vp8_loop_filter_simple_horizontal_edge_c;
 $vp8_loop_filter_simple_mbh_sse2=vp8_loop_filter_simple_horizontal_edge_sse2;
@@ -75,7 +75,7 @@ $vp8_loop_filter_simple_mbh_neon=vp8_loop_filter_mbhs_neon;
 $vp8_loop_filter_simple_mbh_msa=vp8_loop_filter_simple_horizontal_edge_msa;
 $vp8_loop_filter_simple_mbh_mmi=vp8_loop_filter_simple_horizontal_edge_mmi;
 
-add_proto qw/void vp8_loop_filter_simple_bv/, "unsigned char *y, int ystride, const unsigned char *blimit";
+add_proto qw/void vp8_loop_filter_simple_bv/, "unsigned char *y_ptr, int y_stride, const unsigned char *blimit";
 specialize qw/vp8_loop_filter_simple_bv sse2 neon msa mmi/;
 $vp8_loop_filter_simple_bv_c=vp8_loop_filter_bvs_c;
 $vp8_loop_filter_simple_bv_sse2=vp8_loop_filter_bvs_sse2;
@@ -83,7 +83,7 @@ $vp8_loop_filter_simple_bv_neon=vp8_loop_filter_bvs_neon;
 $vp8_loop_filter_simple_bv_msa=vp8_loop_filter_bvs_msa;
 $vp8_loop_filter_simple_bv_mmi=vp8_loop_filter_bvs_mmi;
 
-add_proto qw/void vp8_loop_filter_simple_bh/, "unsigned char *y, int ystride, const unsigned char *blimit";
+add_proto qw/void vp8_loop_filter_simple_bh/, "unsigned char *y_ptr, int y_stride, const unsigned char *blimit";
 specialize qw/vp8_loop_filter_simple_bh sse2 neon msa mmi/;
 $vp8_loop_filter_simple_bh_c=vp8_loop_filter_bhs_c;
 $vp8_loop_filter_simple_bh_sse2=vp8_loop_filter_bhs_sse2;
@@ -95,31 +95,31 @@ $vp8_loop_filter_simple_bh_mmi=vp8_loop_filter_bhs_mmi;
 # IDCT
 #
 #idct16
-add_proto qw/void vp8_short_idct4x4llm/, "short *input, unsigned char *pred, int pitch, unsigned char *dst, int dst_stride";
+add_proto qw/void vp8_short_idct4x4llm/, "short *input, unsigned char *pred_ptr, int pred_stride, unsigned char *dst_ptr, int dst_stride";
 specialize qw/vp8_short_idct4x4llm mmx neon dspr2 msa mmi/;
 
 #iwalsh1
-add_proto qw/void vp8_short_inv_walsh4x4_1/, "short *input, short *output";
+add_proto qw/void vp8_short_inv_walsh4x4_1/, "short *input, short *mb_dqcoeff";
 specialize qw/vp8_short_inv_walsh4x4_1 dspr2/;
 
 #iwalsh16
-add_proto qw/void vp8_short_inv_walsh4x4/, "short *input, short *output";
+add_proto qw/void vp8_short_inv_walsh4x4/, "short *input, short *mb_dqcoeff";
 specialize qw/vp8_short_inv_walsh4x4 sse2 neon dspr2 msa mmi/;
 
 #idct1_scalar_add
-add_proto qw/void vp8_dc_only_idct_add/, "short input, unsigned char *pred, int pred_stride, unsigned char *dst, int dst_stride";
+add_proto qw/void vp8_dc_only_idct_add/, "short input_dc, unsigned char *pred_ptr, int pred_stride, unsigned char *dst_ptr, int dst_stride";
 specialize qw/vp8_dc_only_idct_add mmx neon dspr2 msa mmi/;
 
 #
 # RECON
 #
-add_proto qw/void vp8_copy_mem16x16/, "unsigned char *src, int src_pitch, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_copy_mem16x16/, "unsigned char *src, int src_stride, unsigned char *dst, int dst_stride";
 specialize qw/vp8_copy_mem16x16 sse2 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_copy_mem8x8/, "unsigned char *src, int src_pitch, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_copy_mem8x8/, "unsigned char *src, int src_stride, unsigned char *dst, int dst_stride";
 specialize qw/vp8_copy_mem8x8 mmx neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_copy_mem8x4/, "unsigned char *src, int src_pitch, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_copy_mem8x4/, "unsigned char *src, int src_stride, unsigned char *dst, int dst_stride";
 specialize qw/vp8_copy_mem8x4 mmx neon dspr2 msa mmi/;
 
 #
@@ -127,11 +127,11 @@ specialize qw/vp8_copy_mem8x4 mmx neon dspr2 msa mmi/;
 #
 if (vpx_config("CONFIG_POSTPROC") eq "yes") {
 
-    add_proto qw/void vp8_blend_mb_inner/, "unsigned char *y, unsigned char *u, unsigned char *v, int y1, int u1, int v1, int alpha, int stride";
+    add_proto qw/void vp8_blend_mb_inner/, "unsigned char *y, unsigned char *u, unsigned char *v, int y_1, int u_1, int v_1, int alpha, int stride";
 
-    add_proto qw/void vp8_blend_mb_outer/, "unsigned char *y, unsigned char *u, unsigned char *v, int y1, int u1, int v1, int alpha, int stride";
+    add_proto qw/void vp8_blend_mb_outer/, "unsigned char *y, unsigned char *u, unsigned char *v, int y_1, int u_1, int v_1, int alpha, int stride";
 
-    add_proto qw/void vp8_blend_b/, "unsigned char *y, unsigned char *u, unsigned char *v, int y1, int u1, int v1, int alpha, int stride";
+    add_proto qw/void vp8_blend_b/, "unsigned char *y, unsigned char *u, unsigned char *v, int y_1, int u_1, int v_1, int alpha, int stride";
 
     add_proto qw/void vp8_filter_by_weight16x16/, "unsigned char *src, int src_stride, unsigned char *dst, int dst_stride, int src_weight";
     specialize qw/vp8_filter_by_weight16x16 sse2 msa/;
@@ -145,29 +145,29 @@ if (vpx_config("CONFIG_POSTPROC") eq "yes") {
 #
 # Subpixel
 #
-add_proto qw/void vp8_sixtap_predict16x16/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_sixtap_predict16x16/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
 specialize qw/vp8_sixtap_predict16x16 sse2 ssse3 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_sixtap_predict8x8/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_sixtap_predict8x8/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
 specialize qw/vp8_sixtap_predict8x8 sse2 ssse3 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_sixtap_predict8x4/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_sixtap_predict8x4/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
 specialize qw/vp8_sixtap_predict8x4 sse2 ssse3 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_sixtap_predict4x4/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_sixtap_predict4x4/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
 specialize qw/vp8_sixtap_predict4x4 mmx ssse3 neon dspr2 msa mmi/;
 
-add_proto qw/void vp8_bilinear_predict16x16/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_bilinear_predict16x16/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
 specialize qw/vp8_bilinear_predict16x16 sse2 ssse3 neon msa/;
 
-add_proto qw/void vp8_bilinear_predict8x8/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
+add_proto qw/void vp8_bilinear_predict8x8/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
 specialize qw/vp8_bilinear_predict8x8 sse2 ssse3 neon msa/;
 
-add_proto qw/void vp8_bilinear_predict8x4/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
-specialize qw/vp8_bilinear_predict8x4 mmx neon msa/;
+add_proto qw/void vp8_bilinear_predict8x4/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
+specialize qw/vp8_bilinear_predict8x4 sse2 neon msa/;
 
-add_proto qw/void vp8_bilinear_predict4x4/, "unsigned char *src, int src_pitch, int xofst, int yofst, unsigned char *dst, int dst_pitch";
-specialize qw/vp8_bilinear_predict4x4 mmx neon msa/;
+add_proto qw/void vp8_bilinear_predict4x4/, "unsigned char *src_ptr, int src_pixels_per_line, int xoffset, int yoffset, unsigned char *dst_ptr, int dst_pitch";
+specialize qw/vp8_bilinear_predict4x4 sse2 neon msa/;
 
 #
 # Encoder functions below this point.
@@ -177,10 +177,8 @@ if (vpx_config("CONFIG_VP8_ENCODER") eq "yes") {
 #
 # Block copy
 #
-if ($opts{arch} =~ /x86/) {
-    add_proto qw/void vp8_copy32xn/, "const unsigned char *src_ptr, int source_stride, unsigned char *dst_ptr, int dst_stride, int n";
-    specialize qw/vp8_copy32xn sse2 sse3/;
-}
+add_proto qw/void vp8_copy32xn/, "const unsigned char *src_ptr, int src_stride, unsigned char *dst_ptr, int dst_stride, int height";
+specialize qw/vp8_copy32xn sse2 sse3/;
 
 #
 # Forward DCT
@@ -223,7 +221,7 @@ specialize qw/vp8_full_search_sad sse3 sse4_1/;
 $vp8_full_search_sad_sse3=vp8_full_search_sadx3;
 $vp8_full_search_sad_sse4_1=vp8_full_search_sadx8;
 
-add_proto qw/int vp8_refining_search_sad/, "struct macroblock *x, struct block *b, struct blockd *d, union int_mv *ref_mv, int sad_per_bit, int distance, struct variance_vtable *fn_ptr, int *mvcost[2], union int_mv *center_mv";
+add_proto qw/int vp8_refining_search_sad/, "struct macroblock *x, struct block *b, struct blockd *d, union int_mv *ref_mv, int error_per_bit, int search_range, struct variance_vtable *fn_ptr, int *mvcost[2], union int_mv *center_mv";
 specialize qw/vp8_refining_search_sad sse2 msa/;
 $vp8_refining_search_sad_sse2=vp8_refining_search_sadx4;
 $vp8_refining_search_sad_msa=vp8_refining_search_sadx4;

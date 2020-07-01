@@ -8,6 +8,8 @@
     \ref usage_deadline.
 
 
+    \if samples
     \ref samples
+    \endif
 
 */

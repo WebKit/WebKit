@@ -150,7 +150,7 @@ is_windows_target() {
 # empty string. Caller is responsible for testing the string once the function
 # returns.
 vpx_tool_path() {
-  local readonly tool_name="$1"
+  local tool_name="$1"
   local tool_path="${LIBVPX_BIN_PATH}/${tool_name}${VPX_TEST_EXE_SUFFIX}"
   if [ ! -x "${tool_path}" ]; then
     # Try one directory up: when running via examples.sh the tool could be in
@@ -404,12 +404,16 @@ VP9_WEBM_FILE="${LIBVPX_TEST_DATA_PATH}/vp90-2-00-quantizer-00.webm"
 VP9_FPM_WEBM_FILE="${LIBVPX_TEST_DATA_PATH}/vp90-2-07-frame_parallel-1.webm"
 VP9_LT_50_FRAMES_WEBM_FILE="${LIBVPX_TEST_DATA_PATH}/vp90-2-02-size-32x08.webm"
 
+VP9_RAW_FILE="${LIBVPX_TEST_DATA_PATH}/crbug-1539.rawfile"
+
 YUV_RAW_INPUT="${LIBVPX_TEST_DATA_PATH}/hantro_collage_w352h288.yuv"
 YUV_RAW_INPUT_WIDTH=352
 YUV_RAW_INPUT_HEIGHT=288
 
 Y4M_NOSQ_PAR_INPUT="${LIBVPX_TEST_DATA_PATH}/park_joy_90p_8_420_a10-1.y4m"
 Y4M_720P_INPUT="${LIBVPX_TEST_DATA_PATH}/niklas_1280_720_30.y4m"
+Y4M_720P_INPUT_WIDTH=1280
+Y4M_720P_INPUT_HEIGHT=720
 
 # Setup a trap function to clean up after tests complete.
 trap cleanup EXIT

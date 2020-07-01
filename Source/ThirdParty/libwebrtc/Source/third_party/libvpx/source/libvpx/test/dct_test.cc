@@ -11,6 +11,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <tuple>
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
@@ -28,8 +29,8 @@
 
 using libvpx_test::ACMRandom;
 using libvpx_test::Buffer;
-using std::tr1::make_tuple;
-using std::tr1::tuple;
+using std::make_tuple;
+using std::tuple;
 
 namespace {
 typedef void (*FdctFunc)(const int16_t *in, tran_low_t *out, int stride);
@@ -210,6 +211,7 @@ class TransTestBase : public ::testing::TestWithParam<DctParam> {
     Buffer<int16_t> test_input_block =
         Buffer<int16_t>(size_, size_, 8, size_ == 4 ? 0 : 16);
     ASSERT_TRUE(test_input_block.Init());
+    ASSERT_TRUE(test_input_block.TopLeftPixel() != NULL);
     Buffer<tran_low_t> test_temp_block =
         Buffer<tran_low_t>(size_, size_, 0, 16);
     ASSERT_TRUE(test_temp_block.Init());
@@ -314,6 +316,7 @@ class TransTestBase : public ::testing::TestWithParam<DctParam> {
       } else if (i == 1) {
         input_extreme_block.Set(-max_pixel_value_);
       } else {
+        ASSERT_TRUE(input_extreme_block.TopLeftPixel() != NULL);
         for (int h = 0; h < size_; ++h) {
           for (int w = 0; w < size_; ++w) {
             input_extreme_block
@@ -328,6 +331,7 @@ class TransTestBase : public ::testing::TestWithParam<DctParam> {
 
       // The minimum quant value is 4.
       EXPECT_TRUE(output_block.CheckValues(output_ref_block));
+      ASSERT_TRUE(output_block.TopLeftPixel() != NULL);
       for (int h = 0; h < size_; ++h) {
         for (int w = 0; w < size_; ++w) {
           EXPECT_GE(
@@ -365,6 +369,7 @@ class TransTestBase : public ::testing::TestWithParam<DctParam> {
 
     for (int i = 0; i < count_test_block; ++i) {
       InitMem();
+      ASSERT_TRUE(in.TopLeftPixel() != NULL);
       // Initialize a test block with input range [-max_pixel_value_,
       // max_pixel_value_].
       for (int h = 0; h < size_; ++h) {
@@ -401,8 +406,7 @@ class TransTestBase : public ::testing::TestWithParam<DctParam> {
           EXPECT_GE(static_cast<uint32_t>(limit), error)
               << "Error: " << size_ << "x" << size_
               << " inverse transform has error " << error << " at " << w << ","
-              << h << " org:" << (int)src_[h * stride_ + w]
-              << " opt:" << (int)dst_[h * stride_ + w];
+              << h;
           if (::testing::Test::HasFailure()) {
             printf("Size: %d Transform type: %d\n", size_, tx_type_);
             return;
@@ -510,7 +514,7 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(VPX_BITS_8, VPX_BITS_10, VPX_BITS_12)));
 #endif  // HAVE_SSE2
 
-#if HAVE_SSSE3 && !CONFIG_VP9_HIGHBITDEPTH && ARCH_X86_64
+#if HAVE_SSSE3 && !CONFIG_VP9_HIGHBITDEPTH && VPX_ARCH_X86_64
 // vpx_fdct8x8_ssse3 is only available in 64 bit builds.
 static const FuncInfo dct_ssse3_func_info = {
   &fdct_wrapper<vpx_fdct8x8_ssse3>, &idct_wrapper<vpx_idct8x8_64_add_sse2>, 8, 1
@@ -520,7 +524,7 @@ static const FuncInfo dct_ssse3_func_info = {
 INSTANTIATE_TEST_CASE_P(SSSE3, TransDCT,
                         ::testing::Values(make_tuple(0, &dct_ssse3_func_info, 0,
                                                      VPX_BITS_8)));
-#endif  // HAVE_SSSE3 && !CONFIG_VP9_HIGHBITDEPTH && ARCH_X86_64
+#endif  // HAVE_SSSE3 && !CONFIG_VP9_HIGHBITDEPTH && VPX_ARCH_X86_64
 
 #if HAVE_AVX2 && !CONFIG_VP9_HIGHBITDEPTH
 static const FuncInfo dct_avx2_func_info = {
@@ -629,22 +633,16 @@ INSTANTIATE_TEST_CASE_P(
 
 static const FuncInfo ht_neon_func_info[] = {
 #if CONFIG_VP9_HIGHBITDEPTH
-// TODO(linfengz): reenable these functions once test vector failures are
-// addressed.
-#if 0
   { &vp9_highbd_fht4x4_c, &highbd_iht_wrapper<vp9_highbd_iht4x4_16_add_neon>, 4,
     2 },
   { &vp9_highbd_fht8x8_c, &highbd_iht_wrapper<vp9_highbd_iht8x8_64_add_neon>, 8,
     2 },
-#endif
+  { &vp9_highbd_fht16x16_c,
+    &highbd_iht_wrapper<vp9_highbd_iht16x16_256_add_neon>, 16, 2 },
 #endif
   { &vp9_fht4x4_c, &iht_wrapper<vp9_iht4x4_16_add_neon>, 4, 1 },
-// TODO(linfengz): reenable these functions once test vector failures are
-// addressed.
-#if 0
   { &vp9_fht8x8_c, &iht_wrapper<vp9_iht8x8_64_add_neon>, 8, 1 },
   { &vp9_fht16x16_c, &iht_wrapper<vp9_iht16x16_256_add_neon>, 16, 1 }
-#endif
 };
 
 INSTANTIATE_TEST_CASE_P(
@@ -690,6 +688,19 @@ INSTANTIATE_TEST_CASE_P(
                                          VPX_BITS_12)));
 #endif  // HAVE_SSE4_1 && CONFIG_VP9_HIGHBITDEPTH
 
+#if HAVE_VSX && !CONFIG_EMULATE_HARDWARE && !CONFIG_VP9_HIGHBITDEPTH
+static const FuncInfo ht_vsx_func_info[3] = {
+  { &vp9_fht4x4_c, &iht_wrapper<vp9_iht4x4_16_add_vsx>, 4, 1 },
+  { &vp9_fht8x8_c, &iht_wrapper<vp9_iht8x8_64_add_vsx>, 8, 1 },
+  { &vp9_fht16x16_c, &iht_wrapper<vp9_iht16x16_256_add_vsx>, 16, 1 }
+};
+
+INSTANTIATE_TEST_CASE_P(VSX, TransHT,
+                        ::testing::Combine(::testing::Range(0, 3),
+                                           ::testing::Values(ht_vsx_func_info),
+                                           ::testing::Range(0, 4),
+                                           ::testing::Values(VPX_BITS_8)));
+#endif  // HAVE_VSX
 #endif  // !CONFIG_EMULATE_HARDWARE
 
 /* -------------------------------------------------------------------------- */
@@ -732,4 +743,14 @@ INSTANTIATE_TEST_CASE_P(SSE2, TransWHT,
                         ::testing::Values(make_tuple(0, &wht_sse2_func_info, 0,
                                                      VPX_BITS_8)));
 #endif  // HAVE_SSE2 && !CONFIG_EMULATE_HARDWARE
+
+#if HAVE_VSX && !CONFIG_EMULATE_HARDWARE && !CONFIG_VP9_HIGHBITDEPTH
+static const FuncInfo wht_vsx_func_info = {
+  &fdct_wrapper<vp9_fwht4x4_c>, &idct_wrapper<vpx_iwht4x4_16_add_vsx>, 4, 1
+};
+
+INSTANTIATE_TEST_CASE_P(VSX, TransWHT,
+                        ::testing::Values(make_tuple(0, &wht_vsx_func_info, 0,
+                                                     VPX_BITS_8)));
+#endif  // HAVE_VSX && !CONFIG_EMULATE_HARDWARE
 }  // namespace

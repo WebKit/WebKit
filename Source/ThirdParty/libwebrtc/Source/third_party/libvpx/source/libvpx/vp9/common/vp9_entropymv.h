@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_ENTROPYMV_H_
-#define VP9_COMMON_VP9_ENTROPYMV_H_
+#ifndef VPX_VP9_COMMON_VP9_ENTROPYMV_H_
+#define VPX_VP9_COMMON_VP9_ENTROPYMV_H_
 
 #include "./vpx_config.h"
 
@@ -25,7 +25,7 @@ struct VP9Common;
 
 void vp9_init_mv_probs(struct VP9Common *cm);
 
-void vp9_adapt_mv_probs(struct VP9Common *cm, int usehp);
+void vp9_adapt_mv_probs(struct VP9Common *cm, int allow_hp);
 
 static INLINE int use_mv_hp(const MV *ref) {
   const int kMvRefThresh = 64;  // threshold for use of high-precision 1/8 mv
@@ -127,10 +127,10 @@ typedef struct {
   nmv_component_counts comps[2];
 } nmv_context_counts;
 
-void vp9_inc_mv(const MV *mv, nmv_context_counts *mvctx);
+void vp9_inc_mv(const MV *mv, nmv_context_counts *counts);
 
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_ENTROPYMV_H_
+#endif  // VPX_VP9_COMMON_VP9_ENTROPYMV_H_

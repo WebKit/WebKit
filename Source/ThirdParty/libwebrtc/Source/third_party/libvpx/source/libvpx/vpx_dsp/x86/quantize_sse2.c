@@ -15,15 +15,15 @@
 #include "./vpx_dsp_rtcd.h"
 #include "vpx/vpx_integer.h"
 #include "vpx_dsp/x86/bitdepth_conversion_sse2.h"
-#include "vpx_dsp/x86/quantize_x86.h"
+#include "vpx_dsp/x86/quantize_sse2.h"
 
 void vpx_quantize_b_sse2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
                          int skip_block, const int16_t *zbin_ptr,
                          const int16_t *round_ptr, const int16_t *quant_ptr,
                          const int16_t *quant_shift_ptr, tran_low_t *qcoeff_ptr,
                          tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr,
-                         uint16_t *eob_ptr, const int16_t *scan_ptr,
-                         const int16_t *iscan_ptr) {
+                         uint16_t *eob_ptr, const int16_t *scan,
+                         const int16_t *iscan) {
   const __m128i zero = _mm_setzero_si128();
   int index = 16;
 
@@ -33,7 +33,7 @@ void vpx_quantize_b_sse2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   __m128i cmp_mask0, cmp_mask1;
   __m128i eob, eob0;
 
-  (void)scan_ptr;
+  (void)scan;
   (void)skip_block;
   assert(!skip_block);
 
@@ -74,15 +74,11 @@ void vpx_quantize_b_sse2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   store_tran_low(qcoeff0, qcoeff_ptr);
   store_tran_low(qcoeff1, qcoeff_ptr + 8);
 
-  coeff0 = calculate_dqcoeff(qcoeff0, dequant);
+  calculate_dqcoeff_and_store(qcoeff0, dequant, dqcoeff_ptr);
   dequant = _mm_unpackhi_epi64(dequant, dequant);
-  coeff1 = calculate_dqcoeff(qcoeff1, dequant);
+  calculate_dqcoeff_and_store(qcoeff1, dequant, dqcoeff_ptr + 8);
 
-  store_tran_low(coeff0, dqcoeff_ptr);
-  store_tran_low(coeff1, dqcoeff_ptr + 8);
-
-  eob =
-      scan_for_eob(&coeff0, &coeff1, cmp_mask0, cmp_mask1, iscan_ptr, 0, zero);
+  eob = scan_for_eob(&qcoeff0, &qcoeff1, cmp_mask0, cmp_mask1, iscan, 0, zero);
 
   // AC only loop.
   while (index < n_coeffs) {
@@ -109,14 +105,11 @@ void vpx_quantize_b_sse2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
     store_tran_low(qcoeff0, qcoeff_ptr + index);
     store_tran_low(qcoeff1, qcoeff_ptr + index + 8);
 
-    coeff0 = calculate_dqcoeff(qcoeff0, dequant);
-    coeff1 = calculate_dqcoeff(qcoeff1, dequant);
+    calculate_dqcoeff_and_store(qcoeff0, dequant, dqcoeff_ptr + index);
+    calculate_dqcoeff_and_store(qcoeff1, dequant, dqcoeff_ptr + index + 8);
 
-    store_tran_low(coeff0, dqcoeff_ptr + index);
-    store_tran_low(coeff1, dqcoeff_ptr + index + 8);
-
-    eob0 = scan_for_eob(&coeff0, &coeff1, cmp_mask0, cmp_mask1, iscan_ptr,
-                        index, zero);
+    eob0 = scan_for_eob(&qcoeff0, &qcoeff1, cmp_mask0, cmp_mask1, iscan, index,
+                        zero);
     eob = _mm_max_epi16(eob, eob0);
 
     index += 16;

@@ -11,7 +11,9 @@
     \ref usage_postproc based on the amount of free CPU time. For more
     information on the <code>deadline</code> parameter, see \ref usage_deadline.
 
+    \if samples
     \ref samples
+    \endif
 
 
     \section usage_cb Callback Based Decoding

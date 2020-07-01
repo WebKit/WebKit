@@ -634,7 +634,7 @@ void vpx_convolve8_horiz_msa(const uint8_t *src, ptrdiff_t src_stride,
     filt_hor[cnt] = filter_x[cnt];
   }
 
-  if (((const int32_t *)filter_x)[0] == 0) {
+  if (vpx_get_filter_taps(filter_x) == 2) {
     switch (w) {
       case 4:
         common_hz_2t_4w_msa(src, (int32_t)src_stride, dst, (int32_t)dst_stride,

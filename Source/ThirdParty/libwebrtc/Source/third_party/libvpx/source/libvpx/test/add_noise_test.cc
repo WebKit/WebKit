@@ -8,8 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include <math.h>
+#include <tuple>
+
 #include "test/clear_system_state.h"
 #include "test/register_state_check.h"
+#include "test/util.h"
 #include "third_party/googletest/src/include/gtest/gtest.h"
 #include "./vpx_dsp_rtcd.h"
 #include "vpx/vpx_integer.h"
@@ -25,7 +28,10 @@ typedef void (*AddNoiseFunc)(uint8_t *start, const int8_t *noise,
                              int blackclamp, int whiteclamp, int width,
                              int height, int pitch);
 
-class AddNoiseTest : public ::testing::TestWithParam<AddNoiseFunc> {
+typedef std::tuple<double, AddNoiseFunc> AddNoiseTestFPParam;
+
+class AddNoiseTest : public ::testing::Test,
+                     public ::testing::WithParamInterface<AddNoiseTestFPParam> {
  public:
   virtual void TearDown() { libvpx_test::ClearSystemState(); }
   virtual ~AddNoiseTest() {}
@@ -44,14 +50,14 @@ TEST_P(AddNoiseTest, CheckNoiseAdded) {
   const int height = 64;
   const int image_size = width * height;
   int8_t noise[kNoiseSize];
-  const int clamp = vpx_setup_noise(4.4, noise, kNoiseSize);
+  const int clamp = vpx_setup_noise(GET_PARAM(0), noise, kNoiseSize);
   uint8_t *const s =
       reinterpret_cast<uint8_t *>(vpx_calloc(image_size, sizeof(*s)));
   ASSERT_TRUE(s != NULL);
   memset(s, 99, image_size * sizeof(*s));
 
   ASM_REGISTER_STATE_CHECK(
-      GetParam()(s, noise, clamp, clamp, width, height, width));
+      GET_PARAM(1)(s, noise, clamp, clamp, width, height, width));
 
   // Check to make sure we don't end up having either the same or no added
   // noise either vertically or horizontally.
@@ -70,7 +76,7 @@ TEST_P(AddNoiseTest, CheckNoiseAdded) {
   memset(s, 255, image_size);
 
   ASM_REGISTER_STATE_CHECK(
-      GetParam()(s, noise, clamp, clamp, width, height, width));
+      GET_PARAM(1)(s, noise, clamp, clamp, width, height, width));
 
   // Check to make sure don't roll over.
   for (int i = 0; i < image_size; ++i) {
@@ -81,7 +87,7 @@ TEST_P(AddNoiseTest, CheckNoiseAdded) {
   memset(s, 0, image_size);
 
   ASM_REGISTER_STATE_CHECK(
-      GetParam()(s, noise, clamp, clamp, width, height, width));
+      GET_PARAM(1)(s, noise, clamp, clamp, width, height, width));
 
   // Check to make sure don't roll under.
   for (int i = 0; i < image_size; ++i) {
@@ -108,7 +114,7 @@ TEST_P(AddNoiseTest, CheckCvsAssembly) {
 
   srand(0);
   ASM_REGISTER_STATE_CHECK(
-      GetParam()(s, noise, clamp, clamp, width, height, width));
+      GET_PARAM(1)(s, noise, clamp, clamp, width, height, width));
   srand(0);
   ASM_REGISTER_STATE_CHECK(
       vpx_plane_add_noise_c(d, noise, clamp, clamp, width, height, width));
@@ -121,16 +127,24 @@ TEST_P(AddNoiseTest, CheckCvsAssembly) {
   vpx_free(s);
 }
 
-INSTANTIATE_TEST_CASE_P(C, AddNoiseTest,
-                        ::testing::Values(vpx_plane_add_noise_c));
+using std::make_tuple;
+
+INSTANTIATE_TEST_CASE_P(
+    C, AddNoiseTest,
+    ::testing::Values(make_tuple(3.25, vpx_plane_add_noise_c),
+                      make_tuple(4.4, vpx_plane_add_noise_c)));
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(SSE2, AddNoiseTest,
-                        ::testing::Values(vpx_plane_add_noise_sse2));
+INSTANTIATE_TEST_CASE_P(
+    SSE2, AddNoiseTest,
+    ::testing::Values(make_tuple(3.25, vpx_plane_add_noise_sse2),
+                      make_tuple(4.4, vpx_plane_add_noise_sse2)));
 #endif
 
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(MSA, AddNoiseTest,
-                        ::testing::Values(vpx_plane_add_noise_msa));
+INSTANTIATE_TEST_CASE_P(
+    MSA, AddNoiseTest,
+    ::testing::Values(make_tuple(3.25, vpx_plane_add_noise_msa),
+                      make_tuple(4.4, vpx_plane_add_noise_msa)));
 #endif
 }  // namespace

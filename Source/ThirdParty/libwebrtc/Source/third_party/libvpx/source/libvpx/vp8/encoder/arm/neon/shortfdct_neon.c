@@ -10,6 +10,8 @@
 
 #include <arm_neon.h>
 
+#include "./vp8_rtcd.h"
+
 void vp8_short_fdct4x4_neon(int16_t *input, int16_t *output, int pitch) {
   int16x4_t d0s16, d1s16, d2s16, d3s16, d4s16, d5s16, d6s16, d7s16;
   int16x4_t d16s16, d17s16, d26s16, dEmptys16;

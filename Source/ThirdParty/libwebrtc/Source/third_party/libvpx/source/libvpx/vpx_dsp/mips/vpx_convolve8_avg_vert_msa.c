@@ -625,7 +625,7 @@ void vpx_convolve8_avg_vert_msa(const uint8_t *src, ptrdiff_t src_stride,
     filt_ver[cnt] = filter_y[cnt];
   }
 
-  if (((const int32_t *)filter_y)[0] == 0) {
+  if (vpx_get_filter_taps(filter_y) == 2) {
     switch (w) {
       case 4:
         common_vt_2t_and_aver_dst_4w_msa(src, (int32_t)src_stride, dst,

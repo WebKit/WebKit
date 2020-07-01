@@ -13,6 +13,7 @@
 #include "vp9/encoder/vp9_encoder.h"
 #include "vp9/encoder/vp9_ethread.h"
 #include "vp9/encoder/vp9_multi_thread.h"
+#include "vp9/encoder/vp9_temporal_filter.h"
 
 void *vp9_enc_grp_get_next_job(MultiThreadHandle *multi_thread_ctxt,
                                int tile_id) {
@@ -50,6 +51,20 @@ void *vp9_enc_grp_get_next_job(MultiThreadHandle *multi_thread_ctxt,
   return job_info;
 }
 
+void vp9_row_mt_alloc_rd_thresh(VP9_COMP *const cpi,
+                                TileDataEnc *const this_tile) {
+  VP9_COMMON *const cm = &cpi->common;
+  const int sb_rows =
+      (mi_cols_aligned_to_sb(cm->mi_rows) >> MI_BLOCK_SIZE_LOG2) + 1;
+  int i;
+
+  this_tile->row_base_thresh_freq_fact =
+      (int *)vpx_calloc(sb_rows * BLOCK_SIZES * MAX_MODES,
+                        sizeof(*(this_tile->row_base_thresh_freq_fact)));
+  for (i = 0; i < sb_rows * BLOCK_SIZES * MAX_MODES; i++)
+    this_tile->row_base_thresh_freq_fact[i] = RD_THRESH_INIT_FACT;
+}
+
 void vp9_row_mt_mem_alloc(VP9_COMP *cpi) {
   struct VP9Common *cm = &cpi->common;
   MultiThreadHandle *multi_thread_ctxt = &cpi->multi_thread_ctxt;
@@ -59,6 +74,8 @@ void vp9_row_mt_mem_alloc(VP9_COMP *cpi) {
   const int sb_rows = mi_cols_aligned_to_sb(cm->mi_rows) >> MI_BLOCK_SIZE_LOG2;
   int jobs_per_tile_col, total_jobs;
 
+  // Allocate memory that is large enough for all row_mt stages. First pass
+  // uses 16x16 block size.
   jobs_per_tile_col = VPXMAX(cm->mb_rows, sb_rows);
   // Calculate the total number of jobs
   total_jobs = jobs_per_tile_col * tile_cols;
@@ -83,14 +100,11 @@ void vp9_row_mt_mem_alloc(VP9_COMP *cpi) {
     TileDataEnc *this_tile = &cpi->tile_data[tile_col];
     vp9_row_mt_sync_mem_alloc(&this_tile->row_mt_sync, cm, jobs_per_tile_col);
     if (cpi->sf.adaptive_rd_thresh_row_mt) {
-      const int sb_rows =
-          (mi_cols_aligned_to_sb(cm->mi_rows) >> MI_BLOCK_SIZE_LOG2) + 1;
-      int i;
-      this_tile->row_base_thresh_freq_fact =
-          (int *)vpx_calloc(sb_rows * BLOCK_SIZES * MAX_MODES,
-                            sizeof(*(this_tile->row_base_thresh_freq_fact)));
-      for (i = 0; i < sb_rows * BLOCK_SIZES * MAX_MODES; i++)
-        this_tile->row_base_thresh_freq_fact[i] = RD_THRESH_INIT_FACT;
+      if (this_tile->row_base_thresh_freq_fact != NULL) {
+        vpx_free(this_tile->row_base_thresh_freq_fact);
+        this_tile->row_base_thresh_freq_fact = NULL;
+      }
+      vp9_row_mt_alloc_rd_thresh(cpi, this_tile);
     }
   }
 
@@ -146,11 +160,9 @@ void vp9_row_mt_mem_dealloc(VP9_COMP *cpi) {
       TileDataEnc *this_tile =
           &cpi->tile_data[tile_row * multi_thread_ctxt->allocated_tile_cols +
                           tile_col];
-      if (cpi->sf.adaptive_rd_thresh_row_mt) {
-        if (this_tile->row_base_thresh_freq_fact != NULL) {
-          vpx_free(this_tile->row_base_thresh_freq_fact);
-          this_tile->row_base_thresh_freq_fact = NULL;
-        }
+      if (this_tile->row_base_thresh_freq_fact != NULL) {
+        vpx_free(this_tile->row_base_thresh_freq_fact);
+        this_tile->row_base_thresh_freq_fact = NULL;
       }
     }
   }
@@ -219,11 +231,19 @@ void vp9_prepare_job_queue(VP9_COMP *cpi, JOB_TYPE job_type) {
   MultiThreadHandle *multi_thread_ctxt = &cpi->multi_thread_ctxt;
   JobQueue *job_queue = multi_thread_ctxt->job_queue;
   const int tile_cols = 1 << cm->log2_tile_cols;
-  int job_row_num, jobs_per_tile, jobs_per_tile_col, total_jobs;
+  int job_row_num, jobs_per_tile, jobs_per_tile_col = 0, total_jobs;
   const int sb_rows = mi_cols_aligned_to_sb(cm->mi_rows) >> MI_BLOCK_SIZE_LOG2;
   int tile_col, i;
 
-  jobs_per_tile_col = (job_type != ENCODE_JOB) ? cm->mb_rows : sb_rows;
+  switch (job_type) {
+    case ENCODE_JOB: jobs_per_tile_col = sb_rows; break;
+    case FIRST_PASS_JOB: jobs_per_tile_col = cm->mb_rows; break;
+    case ARNR_JOB:
+      jobs_per_tile_col = ((cm->mi_rows + TF_ROUND) >> TF_SHIFT);
+      break;
+    default: assert(0);
+  }
+
   total_jobs = jobs_per_tile_col * tile_cols;
 
   multi_thread_ctxt->jobs_per_tile_col = jobs_per_tile_col;

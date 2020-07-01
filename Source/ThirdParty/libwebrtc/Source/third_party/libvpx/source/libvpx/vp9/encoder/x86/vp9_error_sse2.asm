@@ -58,7 +58,7 @@ cglobal block_error, 3, 3, 8, uqc, dqc, size, ssz
   movhlps   m7, m6
   paddq     m4, m5
   paddq     m6, m7
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
   movq    rax, m4
   movq [sszq], m6
 %else
@@ -105,7 +105,7 @@ cglobal block_error_fp, 3, 3, 6, uqc, dqc, size
   ; accumulate horizontally and store in return value
   movhlps   m5, m4
   paddq     m4, m5
-%if ARCH_X86_64
+%if VPX_ARCH_X86_64
   movq    rax, m4
 %else
   pshufd   m5, m4, 0x1

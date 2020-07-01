@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_INV_TXFM_SSSE3_H_
-#define VPX_DSP_X86_INV_TXFM_SSSE3_H_
+#ifndef VPX_VPX_DSP_X86_INV_TXFM_SSSE3_H_
+#define VPX_VPX_DSP_X86_INV_TXFM_SSSE3_H_
 
 #include <tmmintrin.h>
 
@@ -107,4 +107,4 @@ static INLINE void idct8x8_12_add_kernel_ssse3(__m128i *const io /* io[8] */) {
 
 void idct32_135_8x32_ssse3(const __m128i *const in, __m128i *const out);
 
-#endif  // VPX_DSP_X86_INV_TXFM_SSSE3_H_
+#endif  // VPX_VPX_DSP_X86_INV_TXFM_SSSE3_H_

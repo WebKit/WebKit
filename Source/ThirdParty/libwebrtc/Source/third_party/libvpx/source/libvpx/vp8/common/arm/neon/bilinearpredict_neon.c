@@ -10,7 +10,9 @@
 
 #include <arm_neon.h>
 #include <string.h>
+
 #include "./vpx_config.h"
+#include "./vp8_rtcd.h"
 #include "vpx_dsp/arm/mem_neon.h"
 
 static const uint8_t bifilter4_coeff[8][2] = { { 128, 0 }, { 112, 16 },

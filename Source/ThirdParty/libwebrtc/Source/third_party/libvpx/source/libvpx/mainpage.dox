@@ -25,8 +25,10 @@
     release.
   - The \ref readme contains instructions on recompiling the sample applications.
   - Read the \ref usage "usage" for a narrative on codec usage.
+  \if samples
   - Read the \ref samples "sample code" for examples of how to interact with the
     codec.
+  \endif
   - \ref codec reference
   \if encoder
   - \ref encoder reference

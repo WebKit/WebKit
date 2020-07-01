@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_ASMDEFS_MMI_H_
-#define VPX_PORTS_ASMDEFS_MMI_H_
+#ifndef VPX_VPX_PORTS_ASMDEFS_MMI_H_
+#define VPX_VPX_PORTS_ASMDEFS_MMI_H_
 
 #include "./vpx_config.h"
 #include "vpx/vpx_integer.h"
@@ -78,4 +78,4 @@
 
 #endif /* HAVE_MMI */
 
-#endif /* VPX_PORTS_ASMDEFS_MMI_H_ */
+#endif  // VPX_VPX_PORTS_ASMDEFS_MMI_H_

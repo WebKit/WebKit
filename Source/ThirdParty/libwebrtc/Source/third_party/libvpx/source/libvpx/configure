@@ -31,7 +31,6 @@ Advanced options:
   --libc=PATH                     path to alternate libc
   --size-limit=WxH                max size to allow in the decoder
   --as={yasm|nasm|auto}           use specified assembler [auto, yasm preferred]
-  --sdk-path=PATH                 path to root of sdk (android builds only)
   ${toggle_codec_srcs}            in/exclude codec library source code
   ${toggle_debug_libs}            in/exclude debug version of libraries
   ${toggle_static_msvcrt}         use static MSVCRT (VS builds only)
@@ -101,20 +100,20 @@ EOF
 all_platforms="${all_platforms} arm64-android-gcc"
 all_platforms="${all_platforms} arm64-darwin-gcc"
 all_platforms="${all_platforms} arm64-linux-gcc"
+all_platforms="${all_platforms} arm64-win64-gcc"
+all_platforms="${all_platforms} arm64-win64-vs15"
 all_platforms="${all_platforms} armv7-android-gcc"   #neon Cortex-A8
 all_platforms="${all_platforms} armv7-darwin-gcc"    #neon Cortex-A8
 all_platforms="${all_platforms} armv7-linux-rvct"    #neon Cortex-A8
 all_platforms="${all_platforms} armv7-linux-gcc"     #neon Cortex-A8
 all_platforms="${all_platforms} armv7-none-rvct"     #neon Cortex-A8
-all_platforms="${all_platforms} armv7-win32-vs11"
-all_platforms="${all_platforms} armv7-win32-vs12"
+all_platforms="${all_platforms} armv7-win32-gcc"
 all_platforms="${all_platforms} armv7-win32-vs14"
 all_platforms="${all_platforms} armv7-win32-vs15"
 all_platforms="${all_platforms} armv7s-darwin-gcc"
 all_platforms="${all_platforms} armv8-linux-gcc"
 all_platforms="${all_platforms} mips32-linux-gcc"
 all_platforms="${all_platforms} mips64-linux-gcc"
-all_platforms="${all_platforms} ppc64-linux-gcc"
 all_platforms="${all_platforms} ppc64le-linux-gcc"
 all_platforms="${all_platforms} sparc-solaris-gcc"
 all_platforms="${all_platforms} x86-android-gcc"
@@ -129,17 +128,16 @@ all_platforms="${all_platforms} x86-darwin13-gcc"
 all_platforms="${all_platforms} x86-darwin14-gcc"
 all_platforms="${all_platforms} x86-darwin15-gcc"
 all_platforms="${all_platforms} x86-darwin16-gcc"
+all_platforms="${all_platforms} x86-darwin17-gcc"
 all_platforms="${all_platforms} x86-iphonesimulator-gcc"
 all_platforms="${all_platforms} x86-linux-gcc"
 all_platforms="${all_platforms} x86-linux-icc"
 all_platforms="${all_platforms} x86-os2-gcc"
 all_platforms="${all_platforms} x86-solaris-gcc"
 all_platforms="${all_platforms} x86-win32-gcc"
-all_platforms="${all_platforms} x86-win32-vs10"
-all_platforms="${all_platforms} x86-win32-vs11"
-all_platforms="${all_platforms} x86-win32-vs12"
 all_platforms="${all_platforms} x86-win32-vs14"
 all_platforms="${all_platforms} x86-win32-vs15"
+all_platforms="${all_platforms} x86-win32-vs16"
 all_platforms="${all_platforms} x86_64-android-gcc"
 all_platforms="${all_platforms} x86_64-darwin9-gcc"
 all_platforms="${all_platforms} x86_64-darwin10-gcc"
@@ -149,16 +147,16 @@ all_platforms="${all_platforms} x86_64-darwin13-gcc"
 all_platforms="${all_platforms} x86_64-darwin14-gcc"
 all_platforms="${all_platforms} x86_64-darwin15-gcc"
 all_platforms="${all_platforms} x86_64-darwin16-gcc"
+all_platforms="${all_platforms} x86_64-darwin17-gcc"
+all_platforms="${all_platforms} x86_64-darwin18-gcc"
 all_platforms="${all_platforms} x86_64-iphonesimulator-gcc"
 all_platforms="${all_platforms} x86_64-linux-gcc"
 all_platforms="${all_platforms} x86_64-linux-icc"
 all_platforms="${all_platforms} x86_64-solaris-gcc"
 all_platforms="${all_platforms} x86_64-win64-gcc"
-all_platforms="${all_platforms} x86_64-win64-vs10"
-all_platforms="${all_platforms} x86_64-win64-vs11"
-all_platforms="${all_platforms} x86_64-win64-vs12"
 all_platforms="${all_platforms} x86_64-win64-vs14"
 all_platforms="${all_platforms} x86_64-win64-vs15"
+all_platforms="${all_platforms} x86_64-win64-vs16"
 all_platforms="${all_platforms} generic-gnu"
 
 # all_targets is a list of all targets that can be configured
@@ -273,9 +271,10 @@ HAVE_LIST="
     unistd_h
 "
 EXPERIMENT_LIST="
-    spatial_svc
     fp_mb_stats
     emulate_hardware
+    non_greedy_mv
+    rate_ctrl
 "
 CONFIG_LIST="
     dependency_tracking
@@ -325,12 +324,15 @@ CONFIG_LIST="
     multi_res_encoding
     temporal_denoising
     vp9_temporal_denoising
+    consistent_recode
     coefficient_range_checking
     vp9_highbitdepth
     better_hw_compatibility
     experimental
     size_limit
     always_adjust_bpm
+    bitstream_debug
+    mismatch_debug
     ${EXPERIMENT_LIST}
 "
 CMDLINE_SELECT="
@@ -386,11 +388,14 @@ CMDLINE_SELECT="
     multi_res_encoding
     temporal_denoising
     vp9_temporal_denoising
+    consistent_recode
     coefficient_range_checking
     better_hw_compatibility
     vp9_highbitdepth
     experimental
     always_adjust_bpm
+    bitstream_debug
+    mismatch_debug
 "
 
 process_cmdline() {
@@ -421,6 +426,12 @@ process_cmdline() {
 }
 
 post_process_cmdline() {
+    if enabled coefficient_range_checking; then
+      echo "coefficient-range-checking is for decoders only, disabling encoders:"
+      soft_disable vp8_encoder
+      soft_disable vp9_encoder
+    fi
+
     c=""
 
     # Enable all detected codecs, if they haven't been disabled
@@ -442,6 +453,7 @@ process_targets() {
     enabled child || write_common_config_banner
     write_common_target_config_h ${BUILD_PFX}vpx_config.h
     write_common_config_targets
+    enabled win_arm64_neon_h_workaround && write_win_arm64_neon_h_workaround ${BUILD_PFX}arm_neon.h
 
     # Calculate the default distribution name, based on the enabled features
     cf=""
@@ -518,7 +530,7 @@ process_detect() {
         # here rather than at option parse time because the target auto-detect
         # magic happens after the command line has been parsed.
         case "${tgt_os}" in
-        linux|os2|darwin*|iphonesimulator*)
+        linux|os2|solaris|darwin*|iphonesimulator*)
             # Supported platforms
             ;;
         *)
@@ -570,16 +582,30 @@ process_detect() {
         check_ld() {
             true
         }
+        check_lib() {
+            true
+        }
     fi
     check_header stdio.h || die "Unable to invoke compiler: ${CC} ${CFLAGS}"
     check_ld <<EOF || die "Toolchain is unable to link executables"
 int main(void) {return 0;}
 EOF
     # check system headers
-    check_header pthread.h
+
+    # Use both check_header and check_lib here, since check_lib
+    # could be a stub that always returns true.
+    check_header pthread.h && check_lib -lpthread <<EOF || disable_feature pthread_h
+#include <pthread.h>
+#include <stddef.h>
+int main(void) { return pthread_create(NULL, NULL, NULL, NULL); }
+EOF
     check_header unistd.h # for sysconf(3) and friends.
 
     check_header vpx/vpx_integer.h -I${source_path} && enable_feature vpx_ports
+
+    if enabled neon && ! enabled external_build; then
+      check_header arm_neon.h || die "Unable to find arm_neon.h"
+    fi
 }
 
 process_toolchain() {
@@ -598,22 +624,39 @@ process_toolchain() {
         check_add_cflags -Wcast-qual
         check_add_cflags -Wvla
         check_add_cflags -Wimplicit-function-declaration
+        check_add_cflags -Wmissing-declarations
+        check_add_cflags -Wmissing-prototypes
         check_add_cflags -Wuninitialized
         check_add_cflags -Wunused
-        # -Wextra has some tricky cases. Rather than fix them all now, get the
-        # flag for as many files as possible and fix the remaining issues
-        # piecemeal.
-        # https://bugs.chromium.org/p/webm/issues/detail?id=1069
         check_add_cflags -Wextra
         # check_add_cflags also adds to cxxflags. gtest does not do well with
-        # -Wundef so add it explicitly to CFLAGS only.
+        # these flags so add them explicitly to CFLAGS only.
         check_cflags -Wundef && add_cflags_only -Wundef
+        check_cflags -Wframe-larger-than=52000 && \
+          add_cflags_only -Wframe-larger-than=52000
         if enabled mips || [ -z "${INLINE}" ]; then
           enabled extra_warnings || check_add_cflags -Wno-unused-function
         fi
+        # Enforce c89 for c files. Don't be too strict about it though. Allow
+        # gnu extensions like "//" for comments.
+        check_cflags -std=gnu89 && add_cflags_only -std=gnu89
         # Avoid this warning for third_party C++ sources. Some reorganization
         # would be needed to apply this only to test/*.cc.
         check_cflags -Wshorten-64-to-32 && add_cflags_only -Wshorten-64-to-32
+
+        # Quiet gcc 6 vs 7 abi warnings:
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
+        if enabled arm; then
+          check_add_cxxflags -Wno-psabi
+        fi
+
+        # disable some warnings specific to libyuv.
+        check_cxxflags -Wno-missing-declarations \
+          && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-missing-declarations"
+        check_cxxflags -Wno-missing-prototypes \
+          && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-missing-prototypes"
+        check_cxxflags -Wno-unused-parameter \
+          && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-unused-parameter"
     fi
 
     if enabled icc; then
@@ -684,7 +727,7 @@ process_toolchain() {
             soft_enable libyuv
         ;;
         *-android-*)
-            soft_enable webm_io
+            check_add_cxxflags -std=c++11 && soft_enable webm_io
             soft_enable libyuv
             # GTestLog must be modified to use Android logging utilities.
         ;;
@@ -693,30 +736,23 @@ process_toolchain() {
             # x86 targets.
         ;;
         *-iphonesimulator-*)
-            soft_enable webm_io
+            check_add_cxxflags -std=c++11 && soft_enable webm_io
             soft_enable libyuv
         ;;
         *-win*)
             # Some mingw toolchains don't have pthread available by default.
             # Treat these more like visual studio where threading in gtest
             # would be disabled for the same reason.
-            check_cxx "$@" <<EOF && soft_enable unit_tests
-int z;
-EOF
-            check_cxx "$@" <<EOF && soft_enable webm_io
-int z;
-EOF
+            check_add_cxxflags -std=c++11 && soft_enable unit_tests \
+              && soft_enable webm_io
             check_cxx "$@" <<EOF && soft_enable libyuv
 int z;
 EOF
         ;;
         *)
-            enabled pthread_h && check_cxx "$@" <<EOF && soft_enable unit_tests
-int z;
-EOF
-            check_cxx "$@" <<EOF && soft_enable webm_io
-int z;
-EOF
+            enabled pthread_h && check_add_cxxflags -std=c++11 \
+              && soft_enable unit_tests
+            check_add_cxxflags -std=c++11 && soft_enable webm_io
             check_cxx "$@" <<EOF && soft_enable libyuv
 int z;
 EOF

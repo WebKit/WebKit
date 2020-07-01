@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_ARM_HIGHBD_IDCT_NEON_H_
-#define VPX_DSP_ARM_HIGHBD_IDCT_NEON_H_
+#ifndef VPX_VPX_DSP_ARM_HIGHBD_IDCT_NEON_H_
+#define VPX_VPX_DSP_ARM_HIGHBD_IDCT_NEON_H_
 
 #include <arm_neon.h>
 
@@ -359,4 +359,116 @@ static INLINE void idct8x8_64_half1d_bd12(
   *io7 = vsubq_s32(step1[0], step2[7]);
 }
 
-#endif  // VPX_DSP_ARM_HIGHBD_IDCT_NEON_H_
+static INLINE void highbd_idct16x16_store_pass1(const int32x4x2_t *const out,
+                                                int32_t *output) {
+  // Save the result into output
+  vst1q_s32(output + 0, out[0].val[0]);
+  vst1q_s32(output + 4, out[0].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[1].val[0]);
+  vst1q_s32(output + 4, out[1].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[2].val[0]);
+  vst1q_s32(output + 4, out[2].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[3].val[0]);
+  vst1q_s32(output + 4, out[3].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[4].val[0]);
+  vst1q_s32(output + 4, out[4].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[5].val[0]);
+  vst1q_s32(output + 4, out[5].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[6].val[0]);
+  vst1q_s32(output + 4, out[6].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[7].val[0]);
+  vst1q_s32(output + 4, out[7].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[8].val[0]);
+  vst1q_s32(output + 4, out[8].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[9].val[0]);
+  vst1q_s32(output + 4, out[9].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[10].val[0]);
+  vst1q_s32(output + 4, out[10].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[11].val[0]);
+  vst1q_s32(output + 4, out[11].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[12].val[0]);
+  vst1q_s32(output + 4, out[12].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[13].val[0]);
+  vst1q_s32(output + 4, out[13].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[14].val[0]);
+  vst1q_s32(output + 4, out[14].val[1]);
+  output += 16;
+  vst1q_s32(output + 0, out[15].val[0]);
+  vst1q_s32(output + 4, out[15].val[1]);
+}
+
+static INLINE void highbd_idct16x16_add_store(const int32x4x2_t *const out,
+                                              uint16_t *dest, const int stride,
+                                              const int bd) {
+  // Add the result to dest
+  const int16x8_t max = vdupq_n_s16((1 << bd) - 1);
+  int16x8_t o[16];
+  o[0] = vcombine_s16(vrshrn_n_s32(out[0].val[0], 6),
+                      vrshrn_n_s32(out[0].val[1], 6));
+  o[1] = vcombine_s16(vrshrn_n_s32(out[1].val[0], 6),
+                      vrshrn_n_s32(out[1].val[1], 6));
+  o[2] = vcombine_s16(vrshrn_n_s32(out[2].val[0], 6),
+                      vrshrn_n_s32(out[2].val[1], 6));
+  o[3] = vcombine_s16(vrshrn_n_s32(out[3].val[0], 6),
+                      vrshrn_n_s32(out[3].val[1], 6));
+  o[4] = vcombine_s16(vrshrn_n_s32(out[4].val[0], 6),
+                      vrshrn_n_s32(out[4].val[1], 6));
+  o[5] = vcombine_s16(vrshrn_n_s32(out[5].val[0], 6),
+                      vrshrn_n_s32(out[5].val[1], 6));
+  o[6] = vcombine_s16(vrshrn_n_s32(out[6].val[0], 6),
+                      vrshrn_n_s32(out[6].val[1], 6));
+  o[7] = vcombine_s16(vrshrn_n_s32(out[7].val[0], 6),
+                      vrshrn_n_s32(out[7].val[1], 6));
+  o[8] = vcombine_s16(vrshrn_n_s32(out[8].val[0], 6),
+                      vrshrn_n_s32(out[8].val[1], 6));
+  o[9] = vcombine_s16(vrshrn_n_s32(out[9].val[0], 6),
+                      vrshrn_n_s32(out[9].val[1], 6));
+  o[10] = vcombine_s16(vrshrn_n_s32(out[10].val[0], 6),
+                       vrshrn_n_s32(out[10].val[1], 6));
+  o[11] = vcombine_s16(vrshrn_n_s32(out[11].val[0], 6),
+                       vrshrn_n_s32(out[11].val[1], 6));
+  o[12] = vcombine_s16(vrshrn_n_s32(out[12].val[0], 6),
+                       vrshrn_n_s32(out[12].val[1], 6));
+  o[13] = vcombine_s16(vrshrn_n_s32(out[13].val[0], 6),
+                       vrshrn_n_s32(out[13].val[1], 6));
+  o[14] = vcombine_s16(vrshrn_n_s32(out[14].val[0], 6),
+                       vrshrn_n_s32(out[14].val[1], 6));
+  o[15] = vcombine_s16(vrshrn_n_s32(out[15].val[0], 6),
+                       vrshrn_n_s32(out[15].val[1], 6));
+  highbd_idct16x16_add8x1(o[0], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[1], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[2], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[3], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[4], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[5], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[6], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[7], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[8], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[9], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[10], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[11], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[12], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[13], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[14], max, &dest, stride);
+  highbd_idct16x16_add8x1(o[15], max, &dest, stride);
+}
+
+void vpx_highbd_idct16x16_256_add_half1d(const int32_t *input, int32_t *output,
+                                         uint16_t *dest, const int stride,
+                                         const int bd);
+
+#endif  // VPX_VPX_DSP_ARM_HIGHBD_IDCT_NEON_H_

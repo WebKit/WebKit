@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_ONYXC_INT_H_
-#define VP8_COMMON_ONYXC_INT_H_
+#ifndef VPX_VP8_COMMON_ONYXC_INT_H_
+#define VPX_VP8_COMMON_ONYXC_INT_H_
 
 #include "vpx_config.h"
 #include "vp8_rtcd.h"
@@ -174,4 +174,4 @@ typedef struct VP8Common {
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_ONYXC_INT_H_
+#endif  // VPX_VP8_COMMON_ONYXC_INT_H_

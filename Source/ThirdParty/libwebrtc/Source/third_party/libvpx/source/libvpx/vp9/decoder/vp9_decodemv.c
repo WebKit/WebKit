@@ -444,17 +444,6 @@ static int read_is_inter_block(VP9_COMMON *const cm, MACROBLOCKD *const xd,
   }
 }
 
-static void dec_find_best_ref_mvs(int allow_hp, int_mv *mvlist, int_mv *best_mv,
-                                  int refmv_count) {
-  int i;
-
-  // Make sure all the candidates are properly clamped etc
-  for (i = 0; i < refmv_count; ++i) {
-    lower_mv_precision(&mvlist[i].as_mv, allow_hp);
-    *best_mv = mvlist[i];
-  }
-}
-
 // This macro is used to add a motion vector mv_ref list if it isn't
 // already in the list.  If it's the second motion vector or early_break
 // it will also skip all additional processing and jump to Done!
@@ -494,7 +483,7 @@ static int dec_find_mv_refs(const VP9_COMMON *cm, const MACROBLOCKD *xd,
                             PREDICTION_MODE mode, MV_REFERENCE_FRAME ref_frame,
                             const POSITION *const mv_ref_search,
                             int_mv *mv_ref_list, int mi_row, int mi_col,
-                            int block, int is_sub8x8) {
+                            int block) {
   const int *ref_sign_bias = cm->ref_frame_sign_bias;
   int i, refmv_count = 0;
   int different_ref_found = 0;
@@ -511,7 +500,7 @@ static int dec_find_mv_refs(const VP9_COMMON *cm, const MACROBLOCKD *xd,
   memset(mv_ref_list, 0, sizeof(*mv_ref_list) * MAX_MV_REF_CANDIDATES);
 
   i = 0;
-  if (is_sub8x8) {
+  if (block >= 0) {
     // If the size < 8x8 we get the mv from the bmi substructure for the
     // nearest two blocks.
     for (i = 0; i < 2; ++i) {
@@ -628,19 +617,22 @@ static void append_sub8x8_mvs_for_idx(VP9_COMMON *cm, MACROBLOCKD *xd,
 
   assert(MAX_MV_REF_CANDIDATES == 2);
 
-  refmv_count =
-      dec_find_mv_refs(cm, xd, b_mode, mi->ref_frame[ref], mv_ref_search,
-                       mv_list, mi_row, mi_col, block, 1);
-
   switch (block) {
-    case 0: best_sub8x8->as_int = mv_list[refmv_count - 1].as_int; break;
+    case 0:
+      refmv_count =
+          dec_find_mv_refs(cm, xd, b_mode, mi->ref_frame[ref], mv_ref_search,
+                           mv_list, mi_row, mi_col, block);
+      best_sub8x8->as_int = mv_list[refmv_count - 1].as_int;
+      break;
     case 1:
     case 2:
       if (b_mode == NEARESTMV) {
         best_sub8x8->as_int = bmi[0].as_mv[ref].as_int;
       } else {
+        dec_find_mv_refs(cm, xd, b_mode, mi->ref_frame[ref], mv_ref_search,
+                         mv_list, mi_row, mi_col, block);
         best_sub8x8->as_int = 0;
-        for (n = 0; n < refmv_count; ++n)
+        for (n = 0; n < 2; ++n)
           if (bmi[0].as_mv[ref].as_int != mv_list[n].as_int) {
             best_sub8x8->as_int = mv_list[n].as_int;
             break;
@@ -651,15 +643,20 @@ static void append_sub8x8_mvs_for_idx(VP9_COMMON *cm, MACROBLOCKD *xd,
       if (b_mode == NEARESTMV) {
         best_sub8x8->as_int = bmi[2].as_mv[ref].as_int;
       } else {
-        int_mv candidates[2 + MAX_MV_REF_CANDIDATES];
-        candidates[0] = bmi[1].as_mv[ref];
-        candidates[1] = bmi[0].as_mv[ref];
-        candidates[2] = mv_list[0];
-        candidates[3] = mv_list[1];
         best_sub8x8->as_int = 0;
-        for (n = 0; n < 2 + MAX_MV_REF_CANDIDATES; ++n)
-          if (bmi[2].as_mv[ref].as_int != candidates[n].as_int) {
-            best_sub8x8->as_int = candidates[n].as_int;
+        if (bmi[2].as_mv[ref].as_int != bmi[1].as_mv[ref].as_int) {
+          best_sub8x8->as_int = bmi[1].as_mv[ref].as_int;
+          break;
+        }
+        if (bmi[2].as_mv[ref].as_int != bmi[0].as_mv[ref].as_int) {
+          best_sub8x8->as_int = bmi[0].as_mv[ref].as_int;
+          break;
+        }
+        dec_find_mv_refs(cm, xd, b_mode, mi->ref_frame[ref], mv_ref_search,
+                         mv_list, mi_row, mi_col, block);
+        for (n = 0; n < 2; ++n)
+          if (bmi[2].as_mv[ref].as_int != mv_list[n].as_int) {
+            best_sub8x8->as_int = mv_list[n].as_int;
             break;
           }
       }
@@ -696,7 +693,7 @@ static void read_inter_block_mode_info(VP9Decoder *const pbi,
   VP9_COMMON *const cm = &pbi->common;
   const BLOCK_SIZE bsize = mi->sb_type;
   const int allow_hp = cm->allow_high_precision_mv;
-  int_mv best_ref_mvs[2];
+  int_mv best_ref_mvs[2] = { { 0 }, { 0 } };
   int ref, is_compound;
   uint8_t inter_mode_ctx;
   const POSITION *const mv_ref_search = mv_ref_blocks[bsize];
@@ -715,26 +712,6 @@ static void read_inter_block_mode_info(VP9Decoder *const pbi,
   } else {
     if (bsize >= BLOCK_8X8)
       mi->mode = read_inter_mode(cm, xd, r, inter_mode_ctx);
-    else
-      // Sub 8x8 blocks use the nearestmv as a ref_mv if the b_mode is NEWMV.
-      // Setting mode to NEARESTMV forces the search to stop after the nearestmv
-      // has been found. After b_modes have been read, mode will be overwritten
-      // by the last b_mode.
-      mi->mode = NEARESTMV;
-
-    if (mi->mode != ZEROMV) {
-      for (ref = 0; ref < 1 + is_compound; ++ref) {
-        int_mv tmp_mvs[MAX_MV_REF_CANDIDATES];
-        const MV_REFERENCE_FRAME frame = mi->ref_frame[ref];
-        int refmv_count;
-
-        refmv_count = dec_find_mv_refs(cm, xd, mi->mode, frame, mv_ref_search,
-                                       tmp_mvs, mi_row, mi_col, -1, 0);
-
-        dec_find_best_ref_mvs(allow_hp, tmp_mvs, &best_ref_mvs[ref],
-                              refmv_count);
-      }
-    }
   }
 
   mi->interp_filter = (cm->interp_filter == SWITCHABLE)
@@ -746,6 +723,7 @@ static void read_inter_block_mode_info(VP9Decoder *const pbi,
     const int num_4x4_h = 1 << xd->bmode_blocks_hl;
     int idx, idy;
     PREDICTION_MODE b_mode;
+    int got_mv_refs_for_new = 0;
     int_mv best_sub8x8[2];
     const uint32_t invalid_mv = 0x80008000;
     // Initialize the 2nd element as even though it won't be used meaningfully
@@ -760,6 +738,18 @@ static void read_inter_block_mode_info(VP9Decoder *const pbi,
           for (ref = 0; ref < 1 + is_compound; ++ref)
             append_sub8x8_mvs_for_idx(cm, xd, mv_ref_search, b_mode, j, ref,
                                       mi_row, mi_col, &best_sub8x8[ref]);
+        } else if (b_mode == NEWMV && !got_mv_refs_for_new) {
+          for (ref = 0; ref < 1 + is_compound; ++ref) {
+            int_mv tmp_mvs[MAX_MV_REF_CANDIDATES];
+            const MV_REFERENCE_FRAME frame = mi->ref_frame[ref];
+
+            dec_find_mv_refs(cm, xd, NEWMV, frame, mv_ref_search, tmp_mvs,
+                             mi_row, mi_col, -1);
+
+            lower_mv_precision(&tmp_mvs[0].as_mv, allow_hp);
+            best_ref_mvs[ref] = tmp_mvs[0];
+            got_mv_refs_for_new = 1;
+          }
         }
 
         if (!assign_mv(cm, xd, b_mode, mi->bmi[j].as_mv, best_ref_mvs,
@@ -777,6 +767,17 @@ static void read_inter_block_mode_info(VP9Decoder *const pbi,
 
     copy_mv_pair(mi->mv, mi->bmi[3].as_mv);
   } else {
+    if (mi->mode != ZEROMV) {
+      for (ref = 0; ref < 1 + is_compound; ++ref) {
+        int_mv tmp_mvs[MAX_MV_REF_CANDIDATES];
+        const MV_REFERENCE_FRAME frame = mi->ref_frame[ref];
+        int refmv_count =
+            dec_find_mv_refs(cm, xd, mi->mode, frame, mv_ref_search, tmp_mvs,
+                             mi_row, mi_col, -1);
+        lower_mv_precision(&tmp_mvs[refmv_count - 1].as_mv, allow_hp);
+        best_ref_mvs[ref] = tmp_mvs[refmv_count - 1];
+      }
+    }
     xd->corrupted |= !assign_mv(cm, xd, mi->mode, mi->mv, best_ref_mvs,
                                 best_ref_mvs, is_compound, allow_hp, r);
   }
@@ -819,13 +820,21 @@ void vp9_read_mode_info(TileWorkerData *twd, VP9Decoder *const pbi, int mi_row,
   if (frame_is_intra_only(cm)) {
     read_intra_frame_mode_info(cm, xd, mi_row, mi_col, r, x_mis, y_mis);
   } else {
+    // Cache mi->ref_frame and mi->mv so that the compiler can prove that they
+    // are constant for the duration of the loop and avoids reloading them.
+    MV_REFERENCE_FRAME mi_ref_frame[2];
+    int_mv mi_mv[2];
+
     read_inter_frame_mode_info(pbi, xd, mi_row, mi_col, r, x_mis, y_mis);
+
+    copy_ref_frame_pair(mi_ref_frame, mi->ref_frame);
+    copy_mv_pair(mi_mv, mi->mv);
 
     for (h = 0; h < y_mis; ++h) {
       for (w = 0; w < x_mis; ++w) {
         MV_REF *const mv = frame_mvs + w;
-        copy_ref_frame_pair(mv->ref_frame, mi->ref_frame);
-        copy_mv_pair(mv->mv, mi->mv);
+        copy_ref_frame_pair(mv->ref_frame, mi_ref_frame);
+        copy_mv_pair(mv->mv, mi_mv);
       }
       frame_mvs += cm->mi_cols;
     }

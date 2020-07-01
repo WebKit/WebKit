@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_HIGHBD_INV_TXFM_SSE2_H_
-#define VPX_DSP_X86_HIGHBD_INV_TXFM_SSE2_H_
+#ifndef VPX_VPX_DSP_X86_HIGHBD_INV_TXFM_SSE2_H_
+#define VPX_VPX_DSP_X86_HIGHBD_INV_TXFM_SSE2_H_
 
 #include <emmintrin.h>  // SSE2
 
@@ -401,4 +401,4 @@ static INLINE void highbd_write_buffer_4(uint16_t *const dest, const __m128i in,
   recon_and_store_4(out, dest, bd);
 }
 
-#endif  // VPX_DSP_X86_HIGHBD_INV_TXFM_SSE2_H_
+#endif  // VPX_VPX_DSP_X86_HIGHBD_INV_TXFM_SSE2_H_

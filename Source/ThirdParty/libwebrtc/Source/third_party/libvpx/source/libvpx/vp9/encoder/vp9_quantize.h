@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_QUANTIZE_H_
-#define VP9_ENCODER_VP9_QUANTIZE_H_
+#ifndef VPX_VP9_ENCODER_VP9_QUANTIZE_H_
+#define VPX_VP9_ENCODER_VP9_QUANTIZE_H_
 
 #include "./vpx_config.h"
 #include "vp9/encoder/vp9_block.h"
@@ -49,7 +49,7 @@ void vp9_init_plane_quantizers(struct VP9_COMP *cpi, MACROBLOCK *x);
 
 void vp9_init_quantizer(struct VP9_COMP *cpi);
 
-void vp9_set_quantizer(struct VP9Common *cm, int q);
+void vp9_set_quantizer(struct VP9_COMP *cm, int q);
 
 int vp9_quantizer_to_qindex(int quantizer);
 
@@ -59,4 +59,4 @@ int vp9_qindex_to_quantizer(int qindex);
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_QUANTIZE_H_
+#endif  // VPX_VP9_ENCODER_VP9_QUANTIZE_H_

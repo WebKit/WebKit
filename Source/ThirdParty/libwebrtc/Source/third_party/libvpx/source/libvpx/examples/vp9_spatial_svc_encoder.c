@@ -25,13 +25,19 @@
 #include "../video_writer.h"
 
 #include "../vpx_ports/vpx_timer.h"
-#include "vpx/svc_context.h"
+#include "./svc_context.h"
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_encoder.h"
 #include "../vpxstats.h"
 #include "vp9/encoder/vp9_encoder.h"
+#include "./y4minput.h"
+
 #define OUTPUT_RC_STATS 1
 
+#define SIMULCAST_MODE 0
+
+static const arg_def_t outputfile =
+    ARG_DEF("o", "output", 1, "Output filename");
 static const arg_def_t skip_frames_arg =
     ARG_DEF("s", "skip-frames", 1, "input frames to skip");
 static const arg_def_t frames_arg =
@@ -86,6 +92,19 @@ static const arg_def_t aqmode_arg =
     ARG_DEF("aq", "aqmode", 1, "aq-mode off/on");
 static const arg_def_t bitrates_arg =
     ARG_DEF("bl", "bitrates", 1, "bitrates[sl * num_tl + tl]");
+static const arg_def_t dropframe_thresh_arg =
+    ARG_DEF(NULL, "drop-frame", 1, "Temporal resampling threshold (buf %)");
+static const struct arg_enum_list tune_content_enum[] = {
+  { "default", VP9E_CONTENT_DEFAULT },
+  { "screen", VP9E_CONTENT_SCREEN },
+  { "film", VP9E_CONTENT_FILM },
+  { NULL, 0 }
+};
+
+static const arg_def_t tune_content_arg = ARG_DEF_ENUM(
+    NULL, "tune-content", 1, "Tune content type", tune_content_enum);
+static const arg_def_t inter_layer_pred_arg = ARG_DEF(
+    NULL, "inter-layer-pred", 1, "0 - 3: On, Off, Key-frames, Constrained");
 
 #if CONFIG_VP9_HIGHBITDEPTH
 static const struct arg_enum_list bitdepth_enum[] = {
@@ -97,6 +116,7 @@ static const arg_def_t bitdepth_arg = ARG_DEF_ENUM(
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
 static const arg_def_t *svc_args[] = { &frames_arg,
+                                       &outputfile,
                                        &width_arg,
                                        &height_arg,
                                        &timebase_arg,
@@ -127,6 +147,9 @@ static const arg_def_t *svc_args[] = { &frames_arg,
                                        &speed_arg,
                                        &rc_end_usage_arg,
                                        &bitrates_arg,
+                                       &dropframe_thresh_arg,
+                                       &tune_content_arg,
+                                       &inter_layer_pred_arg,
                                        NULL };
 
 static const uint32_t default_frames_to_skip = 0;
@@ -145,7 +168,6 @@ static const int32_t default_speed = -1;    // -1 means use library default.
 static const uint32_t default_threads = 0;  // zero means use library default.
 
 typedef struct {
-  const char *input_filename;
   const char *output_filename;
   uint32_t frames_to_code;
   uint32_t frames_to_skip;
@@ -153,12 +175,14 @@ typedef struct {
   stats_io_t rc_stats;
   int passes;
   int pass;
+  int tune_content;
+  int inter_layer_pred;
 } AppInput;
 
 static const char *exec_name;
 
 void usage_exit(void) {
-  fprintf(stderr, "Usage: %s <options> input_filename output_filename\n",
+  fprintf(stderr, "Usage: %s <options> input_filename -o output_filename\n",
           exec_name);
   fprintf(stderr, "Options:\n");
   arg_show_usage(stderr, svc_args);
@@ -217,6 +241,8 @@ static void parse_command_line(int argc, const char **argv_,
 
     if (arg_match(&arg, &frames_arg, argi)) {
       app_input->frames_to_code = arg_parse_uint(&arg);
+    } else if (arg_match(&arg, &outputfile, argi)) {
+      app_input->output_filename = arg.val;
     } else if (arg_match(&arg, &width_arg, argi)) {
       enc_cfg->g_w = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &height_arg, argi)) {
@@ -237,6 +263,9 @@ static void parse_command_line(int argc, const char **argv_,
 #endif
     } else if (arg_match(&arg, &speed_arg, argi)) {
       svc_ctx->speed = arg_parse_uint(&arg);
+      if (svc_ctx->speed > 9) {
+        warn("Mapping speed %d to speed 9.\n", svc_ctx->speed);
+      }
     } else if (arg_match(&arg, &aqmode_arg, argi)) {
       svc_ctx->aqmode = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &threads_arg, argi)) {
@@ -251,11 +280,15 @@ static void parse_command_line(int argc, const char **argv_,
       enc_cfg->kf_min_dist = arg_parse_uint(&arg);
       enc_cfg->kf_max_dist = enc_cfg->kf_min_dist;
     } else if (arg_match(&arg, &scale_factors_arg, argi)) {
-      snprintf(string_options, sizeof(string_options), "%s scale-factors=%s",
-               string_options, arg.val);
+      strncat(string_options, " scale-factors=",
+              sizeof(string_options) - strlen(string_options) - 1);
+      strncat(string_options, arg.val,
+              sizeof(string_options) - strlen(string_options) - 1);
     } else if (arg_match(&arg, &bitrates_arg, argi)) {
-      snprintf(string_options, sizeof(string_options), "%s bitrates=%s",
-               string_options, arg.val);
+      strncat(string_options, " bitrates=",
+              sizeof(string_options) - strlen(string_options) - 1);
+      strncat(string_options, arg.val,
+              sizeof(string_options) - strlen(string_options) - 1);
     } else if (arg_match(&arg, &passes_arg, argi)) {
       passes = arg_parse_uint(&arg);
       if (passes < 1 || passes > 2) {
@@ -269,11 +302,15 @@ static void parse_command_line(int argc, const char **argv_,
     } else if (arg_match(&arg, &fpf_name_arg, argi)) {
       fpf_file_name = arg.val;
     } else if (arg_match(&arg, &min_q_arg, argi)) {
-      snprintf(string_options, sizeof(string_options), "%s min-quantizers=%s",
-               string_options, arg.val);
+      strncat(string_options, " min-quantizers=",
+              sizeof(string_options) - strlen(string_options) - 1);
+      strncat(string_options, arg.val,
+              sizeof(string_options) - strlen(string_options) - 1);
     } else if (arg_match(&arg, &max_q_arg, argi)) {
-      snprintf(string_options, sizeof(string_options), "%s max-quantizers=%s",
-               string_options, arg.val);
+      strncat(string_options, " max-quantizers=",
+              sizeof(string_options) - strlen(string_options) - 1);
+      strncat(string_options, arg.val,
+              sizeof(string_options) - strlen(string_options) - 1);
     } else if (arg_match(&arg, &min_bitrate_arg, argi)) {
       min_bitrate = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &max_bitrate_arg, argi)) {
@@ -303,6 +340,12 @@ static void parse_command_line(int argc, const char **argv_,
           break;
       }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
+    } else if (arg_match(&arg, &dropframe_thresh_arg, argi)) {
+      enc_cfg->rc_dropframe_thresh = arg_parse_uint(&arg);
+    } else if (arg_match(&arg, &tune_content_arg, argi)) {
+      app_input->tune_content = arg_parse_uint(&arg);
+    } else if (arg_match(&arg, &inter_layer_pred_arg, argi)) {
+      app_input->inter_layer_pred = arg_parse_uint(&arg);
     } else {
       ++argj;
     }
@@ -358,12 +401,17 @@ static void parse_command_line(int argc, const char **argv_,
     if (argi[0][0] == '-' && strlen(argi[0]) > 1)
       die("Error: Unrecognized option %s\n", *argi);
 
-  if (argv[0] == NULL || argv[1] == 0) {
+  if (argv[0] == NULL) {
     usage_exit();
   }
-  app_input->input_filename = argv[0];
-  app_input->output_filename = argv[1];
+  app_input->input_ctx.filename = argv[0];
   free(argv);
+
+  open_input_file(&app_input->input_ctx);
+  if (app_input->input_ctx.file_type == FILE_TYPE_Y4M) {
+    enc_cfg->g_w = app_input->input_ctx.width;
+    enc_cfg->g_h = app_input->input_ctx.height;
+  }
 
   if (enc_cfg->g_w < 16 || enc_cfg->g_w % 2 || enc_cfg->g_h < 16 ||
       enc_cfg->g_h % 2)
@@ -503,14 +551,13 @@ static void printout_rate_control_summary(struct RateControlStats *rc,
   printf("Average, rms-variance, and percent-fluct: %f %f %f \n",
          rc->avg_st_encoding_bitrate, sqrt(rc->variance_st_encoding_bitrate),
          perc_fluctuation);
-  if (frame_cnt != tot_num_frames)
-    die("Error: Number of input frames not equal to output encoded frames != "
-        "%d tot_num_frames = %d\n",
-        frame_cnt, tot_num_frames);
+  printf("Num of input, num of encoded (super) frames: %d %d \n", frame_cnt,
+         tot_num_frames);
 }
 
-vpx_codec_err_t parse_superframe_index(const uint8_t *data, size_t data_sz,
-                                       uint64_t sizes[8], int *count) {
+static vpx_codec_err_t parse_superframe_index(const uint8_t *data,
+                                              size_t data_sz, uint64_t sizes[8],
+                                              int *count) {
   // A chunk ending with a byte matching 0xc0 is an invalid chunk unless
   // it is a super frame index. If the last byte of real video compression
   // data is 0xc0 the encoder must add a 0 byte. If we have the marker but
@@ -562,39 +609,15 @@ vpx_codec_err_t parse_superframe_index(const uint8_t *data, size_t data_sz,
 // bypass/flexible mode. The pattern corresponds to the pattern
 // VP9E_TEMPORAL_LAYERING_MODE_0101 (temporal_layering_mode == 2) used in
 // non-flexible mode.
-void set_frame_flags_bypass_mode(int sl, int tl, int num_spatial_layers,
-                                 int is_key_frame,
-                                 vpx_svc_ref_frame_config_t *ref_frame_config) {
+static void set_frame_flags_bypass_mode_ex0(
+    int tl, int num_spatial_layers, int is_key_frame,
+    vpx_svc_ref_frame_config_t *ref_frame_config) {
+  int sl;
+  for (sl = 0; sl < num_spatial_layers; ++sl)
+    ref_frame_config->update_buffer_slot[sl] = 0;
+
   for (sl = 0; sl < num_spatial_layers; ++sl) {
-    if (!tl) {
-      if (!sl) {
-        ref_frame_config->frame_flags[sl] =
-            VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_GF |
-            VP8_EFLAG_NO_UPD_ARF;
-      } else {
-        if (is_key_frame) {
-          ref_frame_config->frame_flags[sl] =
-              VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
-              VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ARF;
-        } else {
-          ref_frame_config->frame_flags[sl] =
-              VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
-        }
-      }
-    } else if (tl == 1) {
-      if (!sl) {
-        ref_frame_config->frame_flags[sl] =
-            VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_LAST |
-            VP8_EFLAG_NO_UPD_GF;
-      } else {
-        ref_frame_config->frame_flags[sl] =
-            VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF;
-        if (sl == num_spatial_layers - 1)
-          ref_frame_config->frame_flags[sl] =
-              VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_REF_ARF |
-              VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF;
-      }
-    }
+    // Set the buffer idx.
     if (tl == 0) {
       ref_frame_config->lst_fb_idx[sl] = sl;
       if (sl) {
@@ -613,65 +636,359 @@ void set_frame_flags_bypass_mode(int sl, int tl, int num_spatial_layers,
       ref_frame_config->gld_fb_idx[sl] = num_spatial_layers + sl - 1;
       ref_frame_config->alt_fb_idx[sl] = num_spatial_layers + sl;
     }
+    // Set the reference and update flags.
+    if (!tl) {
+      if (!sl) {
+        // Base spatial and base temporal (sl = 0, tl = 0)
+        ref_frame_config->reference_last[sl] = 1;
+        ref_frame_config->reference_golden[sl] = 0;
+        ref_frame_config->reference_alt_ref[sl] = 0;
+        ref_frame_config->update_buffer_slot[sl] |=
+            1 << ref_frame_config->lst_fb_idx[sl];
+      } else {
+        if (is_key_frame) {
+          ref_frame_config->reference_last[sl] = 1;
+          ref_frame_config->reference_golden[sl] = 0;
+          ref_frame_config->reference_alt_ref[sl] = 0;
+          ref_frame_config->update_buffer_slot[sl] |=
+              1 << ref_frame_config->gld_fb_idx[sl];
+        } else {
+          // Non-zero spatiall layer.
+          ref_frame_config->reference_last[sl] = 1;
+          ref_frame_config->reference_golden[sl] = 1;
+          ref_frame_config->reference_alt_ref[sl] = 1;
+          ref_frame_config->update_buffer_slot[sl] |=
+              1 << ref_frame_config->lst_fb_idx[sl];
+        }
+      }
+    } else if (tl == 1) {
+      if (!sl) {
+        // Base spatial and top temporal (tl = 1)
+        ref_frame_config->reference_last[sl] = 1;
+        ref_frame_config->reference_golden[sl] = 0;
+        ref_frame_config->reference_alt_ref[sl] = 0;
+        ref_frame_config->update_buffer_slot[sl] |=
+            1 << ref_frame_config->alt_fb_idx[sl];
+      } else {
+        // Non-zero spatial.
+        if (sl < num_spatial_layers - 1) {
+          ref_frame_config->reference_last[sl] = 1;
+          ref_frame_config->reference_golden[sl] = 1;
+          ref_frame_config->reference_alt_ref[sl] = 0;
+          ref_frame_config->update_buffer_slot[sl] |=
+              1 << ref_frame_config->alt_fb_idx[sl];
+        } else if (sl == num_spatial_layers - 1) {
+          // Top spatial and top temporal (non-reference -- doesn't update any
+          // reference buffers)
+          ref_frame_config->reference_last[sl] = 1;
+          ref_frame_config->reference_golden[sl] = 1;
+          ref_frame_config->reference_alt_ref[sl] = 0;
+        }
+      }
+    }
   }
 }
+
+// Example pattern for 2 spatial layers and 2 temporal layers used in the
+// bypass/flexible mode, except only 1 spatial layer when temporal_layer_id = 1.
+static void set_frame_flags_bypass_mode_ex1(
+    int tl, int num_spatial_layers, int is_key_frame,
+    vpx_svc_ref_frame_config_t *ref_frame_config) {
+  int sl;
+  for (sl = 0; sl < num_spatial_layers; ++sl)
+    ref_frame_config->update_buffer_slot[sl] = 0;
+
+  if (tl == 0) {
+    if (is_key_frame) {
+      ref_frame_config->lst_fb_idx[1] = 0;
+      ref_frame_config->gld_fb_idx[1] = 1;
+    } else {
+      ref_frame_config->lst_fb_idx[1] = 1;
+      ref_frame_config->gld_fb_idx[1] = 0;
+    }
+    ref_frame_config->alt_fb_idx[1] = 0;
+
+    ref_frame_config->lst_fb_idx[0] = 0;
+    ref_frame_config->gld_fb_idx[0] = 0;
+    ref_frame_config->alt_fb_idx[0] = 0;
+  }
+  if (tl == 1) {
+    ref_frame_config->lst_fb_idx[0] = 0;
+    ref_frame_config->gld_fb_idx[0] = 1;
+    ref_frame_config->alt_fb_idx[0] = 2;
+
+    ref_frame_config->lst_fb_idx[1] = 1;
+    ref_frame_config->gld_fb_idx[1] = 2;
+    ref_frame_config->alt_fb_idx[1] = 3;
+  }
+  // Set the reference and update flags.
+  if (tl == 0) {
+    // Base spatial and base temporal (sl = 0, tl = 0)
+    ref_frame_config->reference_last[0] = 1;
+    ref_frame_config->reference_golden[0] = 0;
+    ref_frame_config->reference_alt_ref[0] = 0;
+    ref_frame_config->update_buffer_slot[0] |=
+        1 << ref_frame_config->lst_fb_idx[0];
+
+    if (is_key_frame) {
+      ref_frame_config->reference_last[1] = 1;
+      ref_frame_config->reference_golden[1] = 0;
+      ref_frame_config->reference_alt_ref[1] = 0;
+      ref_frame_config->update_buffer_slot[1] |=
+          1 << ref_frame_config->gld_fb_idx[1];
+    } else {
+      // Non-zero spatiall layer.
+      ref_frame_config->reference_last[1] = 1;
+      ref_frame_config->reference_golden[1] = 1;
+      ref_frame_config->reference_alt_ref[1] = 1;
+      ref_frame_config->update_buffer_slot[1] |=
+          1 << ref_frame_config->lst_fb_idx[1];
+    }
+  }
+  if (tl == 1) {
+    // Top spatial and top temporal (non-reference -- doesn't update any
+    // reference buffers)
+    ref_frame_config->reference_last[1] = 1;
+    ref_frame_config->reference_golden[1] = 0;
+    ref_frame_config->reference_alt_ref[1] = 0;
+  }
+}
+
+#if CONFIG_VP9_DECODER && !SIMULCAST_MODE
+static void test_decode(vpx_codec_ctx_t *encoder, vpx_codec_ctx_t *decoder,
+                        const int frames_out, int *mismatch_seen) {
+  vpx_image_t enc_img, dec_img;
+  struct vp9_ref_frame ref_enc, ref_dec;
+  if (*mismatch_seen) return;
+  /* Get the internal reference frame */
+  ref_enc.idx = 0;
+  ref_dec.idx = 0;
+  vpx_codec_control(encoder, VP9_GET_REFERENCE, &ref_enc);
+  enc_img = ref_enc.img;
+  vpx_codec_control(decoder, VP9_GET_REFERENCE, &ref_dec);
+  dec_img = ref_dec.img;
+#if CONFIG_VP9_HIGHBITDEPTH
+  if ((enc_img.fmt & VPX_IMG_FMT_HIGHBITDEPTH) !=
+      (dec_img.fmt & VPX_IMG_FMT_HIGHBITDEPTH)) {
+    if (enc_img.fmt & VPX_IMG_FMT_HIGHBITDEPTH) {
+      vpx_img_alloc(&enc_img, enc_img.fmt - VPX_IMG_FMT_HIGHBITDEPTH,
+                    enc_img.d_w, enc_img.d_h, 16);
+      vpx_img_truncate_16_to_8(&enc_img, &ref_enc.img);
+    }
+    if (dec_img.fmt & VPX_IMG_FMT_HIGHBITDEPTH) {
+      vpx_img_alloc(&dec_img, dec_img.fmt - VPX_IMG_FMT_HIGHBITDEPTH,
+                    dec_img.d_w, dec_img.d_h, 16);
+      vpx_img_truncate_16_to_8(&dec_img, &ref_dec.img);
+    }
+  }
+#endif
+
+  if (!compare_img(&enc_img, &dec_img)) {
+    int y[4], u[4], v[4];
+#if CONFIG_VP9_HIGHBITDEPTH
+    if (enc_img.fmt & VPX_IMG_FMT_HIGHBITDEPTH) {
+      find_mismatch_high(&enc_img, &dec_img, y, u, v);
+    } else {
+      find_mismatch(&enc_img, &dec_img, y, u, v);
+    }
+#else
+    find_mismatch(&enc_img, &dec_img, y, u, v);
+#endif
+    decoder->err = 1;
+    printf(
+        "Encode/decode mismatch on frame %d at"
+        " Y[%d, %d] {%d/%d},"
+        " U[%d, %d] {%d/%d},"
+        " V[%d, %d] {%d/%d}\n",
+        frames_out, y[0], y[1], y[2], y[3], u[0], u[1], u[2], u[3], v[0], v[1],
+        v[2], v[3]);
+    *mismatch_seen = frames_out;
+  }
+
+  vpx_img_free(&enc_img);
+  vpx_img_free(&dec_img);
+}
+#endif
+
+#if OUTPUT_RC_STATS
+static void svc_output_rc_stats(
+    vpx_codec_ctx_t *codec, vpx_codec_enc_cfg_t *enc_cfg,
+    vpx_svc_layer_id_t *layer_id, const vpx_codec_cx_pkt_t *cx_pkt,
+    struct RateControlStats *rc, VpxVideoWriter **outfile,
+    const uint32_t frame_cnt, const double framerate) {
+  int num_layers_encoded = 0;
+  unsigned int sl, tl;
+  uint64_t sizes[8];
+  uint64_t sizes_parsed[8];
+  int count = 0;
+  double sum_bitrate = 0.0;
+  double sum_bitrate2 = 0.0;
+  vp9_zero(sizes);
+  vp9_zero(sizes_parsed);
+  vpx_codec_control(codec, VP9E_GET_SVC_LAYER_ID, layer_id);
+  parse_superframe_index(cx_pkt->data.frame.buf, cx_pkt->data.frame.sz,
+                         sizes_parsed, &count);
+  if (enc_cfg->ss_number_layers == 1) sizes[0] = cx_pkt->data.frame.sz;
+  for (sl = 0; sl < enc_cfg->ss_number_layers; ++sl) {
+    sizes[sl] = 0;
+    if (cx_pkt->data.frame.spatial_layer_encoded[sl]) {
+      sizes[sl] = sizes_parsed[num_layers_encoded];
+      num_layers_encoded++;
+    }
+  }
+  for (sl = 0; sl < enc_cfg->ss_number_layers; ++sl) {
+    unsigned int sl2;
+    uint64_t tot_size = 0;
+#if SIMULCAST_MODE
+    for (sl2 = 0; sl2 < sl; ++sl2) {
+      if (cx_pkt->data.frame.spatial_layer_encoded[sl2]) tot_size += sizes[sl2];
+    }
+    vpx_video_writer_write_frame(outfile[sl],
+                                 (uint8_t *)(cx_pkt->data.frame.buf) + tot_size,
+                                 (size_t)(sizes[sl]), cx_pkt->data.frame.pts);
+#else
+    for (sl2 = 0; sl2 <= sl; ++sl2) {
+      if (cx_pkt->data.frame.spatial_layer_encoded[sl2]) tot_size += sizes[sl2];
+    }
+    if (tot_size > 0)
+      vpx_video_writer_write_frame(outfile[sl], cx_pkt->data.frame.buf,
+                                   (size_t)(tot_size), cx_pkt->data.frame.pts);
+#endif  // SIMULCAST_MODE
+  }
+  for (sl = 0; sl < enc_cfg->ss_number_layers; ++sl) {
+    if (cx_pkt->data.frame.spatial_layer_encoded[sl]) {
+      for (tl = layer_id->temporal_layer_id; tl < enc_cfg->ts_number_layers;
+           ++tl) {
+        const int layer = sl * enc_cfg->ts_number_layers + tl;
+        ++rc->layer_tot_enc_frames[layer];
+        rc->layer_encoding_bitrate[layer] += 8.0 * sizes[sl];
+        // Keep count of rate control stats per layer, for non-key
+        // frames.
+        if (tl == (unsigned int)layer_id->temporal_layer_id &&
+            !(cx_pkt->data.frame.flags & VPX_FRAME_IS_KEY)) {
+          rc->layer_avg_frame_size[layer] += 8.0 * sizes[sl];
+          rc->layer_avg_rate_mismatch[layer] +=
+              fabs(8.0 * sizes[sl] - rc->layer_pfb[layer]) /
+              rc->layer_pfb[layer];
+          ++rc->layer_enc_frames[layer];
+        }
+      }
+    }
+  }
+
+  // Update for short-time encoding bitrate states, for moving
+  // window of size rc->window, shifted by rc->window / 2.
+  // Ignore first window segment, due to key frame.
+  if (frame_cnt > (unsigned int)rc->window_size) {
+    for (sl = 0; sl < enc_cfg->ss_number_layers; ++sl) {
+      if (cx_pkt->data.frame.spatial_layer_encoded[sl])
+        sum_bitrate += 0.001 * 8.0 * sizes[sl] * framerate;
+    }
+    if (frame_cnt % rc->window_size == 0) {
+      rc->window_count += 1;
+      rc->avg_st_encoding_bitrate += sum_bitrate / rc->window_size;
+      rc->variance_st_encoding_bitrate +=
+          (sum_bitrate / rc->window_size) * (sum_bitrate / rc->window_size);
+    }
+  }
+
+  // Second shifted window.
+  if (frame_cnt > (unsigned int)(rc->window_size + rc->window_size / 2)) {
+    for (sl = 0; sl < enc_cfg->ss_number_layers; ++sl) {
+      sum_bitrate2 += 0.001 * 8.0 * sizes[sl] * framerate;
+    }
+
+    if (frame_cnt > (unsigned int)(2 * rc->window_size) &&
+        frame_cnt % rc->window_size == 0) {
+      rc->window_count += 1;
+      rc->avg_st_encoding_bitrate += sum_bitrate2 / rc->window_size;
+      rc->variance_st_encoding_bitrate +=
+          (sum_bitrate2 / rc->window_size) * (sum_bitrate2 / rc->window_size);
+    }
+  }
+}
+#endif
 
 int main(int argc, const char **argv) {
   AppInput app_input;
   VpxVideoWriter *writer = NULL;
   VpxVideoInfo info;
-  vpx_codec_ctx_t codec;
+  vpx_codec_ctx_t encoder;
   vpx_codec_enc_cfg_t enc_cfg;
   SvcContext svc_ctx;
+  vpx_svc_frame_drop_t svc_drop_frame;
   uint32_t i;
   uint32_t frame_cnt = 0;
   vpx_image_t raw;
   vpx_codec_err_t res;
   int pts = 0;            /* PTS starts at 0 */
   int frame_duration = 1; /* 1 timebase tick per frame */
-  FILE *infile = NULL;
   int end_of_stream = 0;
   int frames_received = 0;
 #if OUTPUT_RC_STATS
-  VpxVideoWriter *outfile[VPX_TS_MAX_LAYERS] = { NULL };
+  VpxVideoWriter *outfile[VPX_SS_MAX_LAYERS] = { NULL };
   struct RateControlStats rc;
   vpx_svc_layer_id_t layer_id;
   vpx_svc_ref_frame_config_t ref_frame_config;
-  unsigned int sl, tl;
-  double sum_bitrate = 0.0;
-  double sum_bitrate2 = 0.0;
+  unsigned int sl;
   double framerate = 30.0;
 #endif
   struct vpx_usec_timer timer;
   int64_t cx_time = 0;
+#if CONFIG_INTERNAL_STATS
+  FILE *f = fopen("opsnr.stt", "a");
+#endif
+#if CONFIG_VP9_DECODER && !SIMULCAST_MODE
+  int mismatch_seen = 0;
+  vpx_codec_ctx_t decoder;
+#endif
   memset(&svc_ctx, 0, sizeof(svc_ctx));
-  svc_ctx.log_print = 1;
+  memset(&app_input, 0, sizeof(AppInput));
+  memset(&info, 0, sizeof(VpxVideoInfo));
+  memset(&layer_id, 0, sizeof(vpx_svc_layer_id_t));
+  memset(&rc, 0, sizeof(struct RateControlStats));
   exec_name = argv[0];
+
+  /* Setup default input stream settings */
+  app_input.input_ctx.framerate.numerator = 30;
+  app_input.input_ctx.framerate.denominator = 1;
+  app_input.input_ctx.only_i420 = 1;
+  app_input.input_ctx.bit_depth = 0;
+
   parse_command_line(argc, argv, &app_input, &svc_ctx, &enc_cfg);
 
+  // Y4M reader handles its own allocation.
+  if (app_input.input_ctx.file_type != FILE_TYPE_Y4M) {
 // Allocate image buffer
 #if CONFIG_VP9_HIGHBITDEPTH
-  if (!vpx_img_alloc(&raw,
-                     enc_cfg.g_input_bit_depth == 8 ? VPX_IMG_FMT_I420
-                                                    : VPX_IMG_FMT_I42016,
-                     enc_cfg.g_w, enc_cfg.g_h, 32)) {
-    die("Failed to allocate image %dx%d\n", enc_cfg.g_w, enc_cfg.g_h);
-  }
+    if (!vpx_img_alloc(&raw,
+                       enc_cfg.g_input_bit_depth == 8 ? VPX_IMG_FMT_I420
+                                                      : VPX_IMG_FMT_I42016,
+                       enc_cfg.g_w, enc_cfg.g_h, 32)) {
+      die("Failed to allocate image %dx%d\n", enc_cfg.g_w, enc_cfg.g_h);
+    }
 #else
-  if (!vpx_img_alloc(&raw, VPX_IMG_FMT_I420, enc_cfg.g_w, enc_cfg.g_h, 32)) {
-    die("Failed to allocate image %dx%d\n", enc_cfg.g_w, enc_cfg.g_h);
-  }
+    if (!vpx_img_alloc(&raw, VPX_IMG_FMT_I420, enc_cfg.g_w, enc_cfg.g_h, 32)) {
+      die("Failed to allocate image %dx%d\n", enc_cfg.g_w, enc_cfg.g_h);
+    }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-
-  if (!(infile = fopen(app_input.input_filename, "rb")))
-    die("Failed to open %s for reading\n", app_input.input_filename);
+  }
 
   // Initialize codec
-  if (vpx_svc_init(&svc_ctx, &codec, vpx_codec_vp9_cx(), &enc_cfg) !=
+  if (vpx_svc_init(&svc_ctx, &encoder, vpx_codec_vp9_cx(), &enc_cfg) !=
       VPX_CODEC_OK)
     die("Failed to initialize encoder\n");
+#if CONFIG_VP9_DECODER && !SIMULCAST_MODE
+  if (vpx_codec_dec_init(
+          &decoder, get_vpx_decoder_by_name("vp9")->codec_interface(), NULL, 0))
+    die("Failed to initialize decoder\n");
+#endif
 
 #if OUTPUT_RC_STATS
+  rc.window_count = 1;
+  rc.window_size = 15;  // Silence a static analysis warning.
+  rc.avg_st_encoding_bitrate = 0.0;
+  rc.variance_st_encoding_bitrate = 0.0;
   if (svc_ctx.output_rc_stat) {
     set_rate_control_stats(&rc, &enc_cfg);
     framerate = enc_cfg.g_timebase.den / enc_cfg.g_timebase.num;
@@ -679,6 +996,8 @@ int main(int argc, const char **argv) {
 #endif
 
   info.codec_fourcc = VP9_FOURCC;
+  info.frame_width = enc_cfg.g_w;
+  info.frame_height = enc_cfg.g_h;
   info.time_base.numerator = enc_cfg.g_timebase.num;
   info.time_base.denominator = enc_cfg.g_timebase.den;
 
@@ -690,43 +1009,65 @@ int main(int argc, const char **argv) {
       die("Failed to open %s for writing\n", app_input.output_filename);
   }
 #if OUTPUT_RC_STATS
-  // For now, just write temporal layer streams.
-  // TODO(marpan): do spatial by re-writing superframe.
+  // Write out spatial layer stream.
+  // TODO(marpan/jianj): allow for writing each spatial and temporal stream.
   if (svc_ctx.output_rc_stat) {
-    for (tl = 0; tl < enc_cfg.ts_number_layers; ++tl) {
+    for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
       char file_name[PATH_MAX];
 
-      snprintf(file_name, sizeof(file_name), "%s_t%d.ivf",
-               app_input.output_filename, tl);
-      outfile[tl] = vpx_video_writer_open(file_name, kContainerIVF, &info);
-      if (!outfile[tl]) die("Failed to open %s for writing", file_name);
+      snprintf(file_name, sizeof(file_name), "%s_s%d.ivf",
+               app_input.output_filename, sl);
+      outfile[sl] = vpx_video_writer_open(file_name, kContainerIVF, &info);
+      if (!outfile[sl]) die("Failed to open %s for writing", file_name);
     }
   }
 #endif
 
   // skip initial frames
-  for (i = 0; i < app_input.frames_to_skip; ++i) vpx_img_read(&raw, infile);
+  for (i = 0; i < app_input.frames_to_skip; ++i)
+    read_frame(&app_input.input_ctx, &raw);
 
   if (svc_ctx.speed != -1)
-    vpx_codec_control(&codec, VP8E_SET_CPUUSED, svc_ctx.speed);
+    vpx_codec_control(&encoder, VP8E_SET_CPUUSED, svc_ctx.speed);
   if (svc_ctx.threads) {
-    vpx_codec_control(&codec, VP9E_SET_TILE_COLUMNS, (svc_ctx.threads >> 1));
+    vpx_codec_control(&encoder, VP9E_SET_TILE_COLUMNS,
+                      get_msb(svc_ctx.threads));
     if (svc_ctx.threads > 1)
-      vpx_codec_control(&codec, VP9E_SET_ROW_MT, 1);
+      vpx_codec_control(&encoder, VP9E_SET_ROW_MT, 1);
     else
-      vpx_codec_control(&codec, VP9E_SET_ROW_MT, 0);
+      vpx_codec_control(&encoder, VP9E_SET_ROW_MT, 0);
   }
   if (svc_ctx.speed >= 5 && svc_ctx.aqmode == 1)
-    vpx_codec_control(&codec, VP9E_SET_AQ_MODE, 3);
+    vpx_codec_control(&encoder, VP9E_SET_AQ_MODE, 3);
   if (svc_ctx.speed >= 5)
-    vpx_codec_control(&codec, VP8E_SET_STATIC_THRESHOLD, 1);
-  vpx_codec_control(&codec, VP8E_SET_MAX_INTRA_BITRATE_PCT, 900);
+    vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, 1);
+  vpx_codec_control(&encoder, VP8E_SET_MAX_INTRA_BITRATE_PCT, 900);
+
+  vpx_codec_control(&encoder, VP9E_SET_SVC_INTER_LAYER_PRED,
+                    app_input.inter_layer_pred);
+
+  vpx_codec_control(&encoder, VP9E_SET_NOISE_SENSITIVITY, 0);
+
+  vpx_codec_control(&encoder, VP9E_SET_TUNE_CONTENT, app_input.tune_content);
+
+  svc_drop_frame.framedrop_mode = FULL_SUPERFRAME_DROP;
+  for (sl = 0; sl < (unsigned int)svc_ctx.spatial_layers; ++sl)
+    svc_drop_frame.framedrop_thresh[sl] = enc_cfg.rc_dropframe_thresh;
+  svc_drop_frame.max_consec_drop = INT_MAX;
+  vpx_codec_control(&encoder, VP9E_SET_SVC_FRAME_DROP_LAYER, &svc_drop_frame);
 
   // Encode frames
   while (!end_of_stream) {
     vpx_codec_iter_t iter = NULL;
     const vpx_codec_cx_pkt_t *cx_pkt;
-    if (frame_cnt >= app_input.frames_to_code || !vpx_img_read(&raw, infile)) {
+    // Example patterns for bypass/flexible mode:
+    // example_pattern = 0: 2 temporal layers, and spatial_layers = 1,2,3. Exact
+    // to fixed SVC patterns. example_pattern = 1: 2 spatial and 2 temporal
+    // layers, with SL0 only has TL0, and SL1 has both TL0 and TL1. This example
+    // uses the extended API.
+    int example_pattern = 0;
+    if (frame_cnt >= app_input.frames_to_code ||
+        !read_frame(&app_input.input_ctx, &raw)) {
       // We need one extra vpx_svc_encode call at end of stream to flush
       // encoder and get remaining data
       end_of_stream = 1;
@@ -734,142 +1075,97 @@ int main(int argc, const char **argv) {
 
     // For BYPASS/FLEXIBLE mode, set the frame flags (reference and updates)
     // and the buffer indices for each spatial layer of the current
-    // (super)frame to be encoded. The temporal layer_id for the current frame
-    // also needs to be set.
+    // (super)frame to be encoded. The spatial and temporal layer_id for the
+    // current frame also needs to be set.
     // TODO(marpan): Should rename the "VP9E_TEMPORAL_LAYERING_MODE_BYPASS"
     // mode to "VP9E_LAYERING_MODE_BYPASS".
     if (svc_ctx.temporal_layering_mode == VP9E_TEMPORAL_LAYERING_MODE_BYPASS) {
       layer_id.spatial_layer_id = 0;
       // Example for 2 temporal layers.
-      if (frame_cnt % 2 == 0)
+      if (frame_cnt % 2 == 0) {
         layer_id.temporal_layer_id = 0;
-      else
+        for (i = 0; i < VPX_SS_MAX_LAYERS; i++)
+          layer_id.temporal_layer_id_per_spatial[i] = 0;
+      } else {
         layer_id.temporal_layer_id = 1;
-      // Note that we only set the temporal layer_id, since we are calling
-      // the encode for the whole superframe. The encoder will internally loop
-      // over all the spatial layers for the current superframe.
-      vpx_codec_control(&codec, VP9E_SET_SVC_LAYER_ID, &layer_id);
+        for (i = 0; i < VPX_SS_MAX_LAYERS; i++)
+          layer_id.temporal_layer_id_per_spatial[i] = 1;
+      }
+      if (example_pattern == 1) {
+        // example_pattern 1 is hard-coded for 2 spatial and 2 temporal layers.
+        assert(svc_ctx.spatial_layers == 2);
+        assert(svc_ctx.temporal_layers == 2);
+        if (frame_cnt % 2 == 0) {
+          // Spatial layer 0 and 1 are encoded.
+          layer_id.temporal_layer_id_per_spatial[0] = 0;
+          layer_id.temporal_layer_id_per_spatial[1] = 0;
+          layer_id.spatial_layer_id = 0;
+        } else {
+          // Only spatial layer 1 is encoded here.
+          layer_id.temporal_layer_id_per_spatial[1] = 1;
+          layer_id.spatial_layer_id = 1;
+        }
+      }
+      vpx_codec_control(&encoder, VP9E_SET_SVC_LAYER_ID, &layer_id);
       // TODO(jianj): Fix the parameter passing for "is_key_frame" in
       // set_frame_flags_bypass_model() for case of periodic key frames.
-      set_frame_flags_bypass_mode(sl, layer_id.temporal_layer_id,
-                                  svc_ctx.spatial_layers, frame_cnt == 0,
-                                  &ref_frame_config);
-      vpx_codec_control(&codec, VP9E_SET_SVC_REF_FRAME_CONFIG,
+      if (example_pattern == 0) {
+        set_frame_flags_bypass_mode_ex0(layer_id.temporal_layer_id,
+                                        svc_ctx.spatial_layers, frame_cnt == 0,
+                                        &ref_frame_config);
+      } else if (example_pattern == 1) {
+        set_frame_flags_bypass_mode_ex1(layer_id.temporal_layer_id,
+                                        svc_ctx.spatial_layers, frame_cnt == 0,
+                                        &ref_frame_config);
+      }
+      ref_frame_config.duration[0] = frame_duration * 1;
+      ref_frame_config.duration[1] = frame_duration * 1;
+
+      vpx_codec_control(&encoder, VP9E_SET_SVC_REF_FRAME_CONFIG,
                         &ref_frame_config);
       // Keep track of input frames, to account for frame drops in rate control
       // stats/metrics.
-      for (sl = 0; sl < (unsigned int)enc_cfg.ss_number_layers; ++sl) {
+      for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
         ++rc.layer_input_frames[sl * enc_cfg.ts_number_layers +
                                 layer_id.temporal_layer_id];
       }
+    } else {
+      // For the fixed pattern SVC, temporal layer is given by superframe count.
+      unsigned int tl = 0;
+      if (enc_cfg.ts_number_layers == 2)
+        tl = (frame_cnt % 2 != 0);
+      else if (enc_cfg.ts_number_layers == 3) {
+        if (frame_cnt % 2 != 0) tl = 2;
+        if ((frame_cnt > 1) && ((frame_cnt - 2) % 4 == 0)) tl = 1;
+      }
+      for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl)
+        ++rc.layer_input_frames[sl * enc_cfg.ts_number_layers + tl];
     }
 
     vpx_usec_timer_start(&timer);
     res = vpx_svc_encode(
-        &svc_ctx, &codec, (end_of_stream ? NULL : &raw), pts, frame_duration,
+        &svc_ctx, &encoder, (end_of_stream ? NULL : &raw), pts, frame_duration,
         svc_ctx.speed >= 5 ? VPX_DL_REALTIME : VPX_DL_GOOD_QUALITY);
     vpx_usec_timer_mark(&timer);
     cx_time += vpx_usec_timer_elapsed(&timer);
 
-    printf("%s", vpx_svc_get_message(&svc_ctx));
     fflush(stdout);
     if (res != VPX_CODEC_OK) {
-      die_codec(&codec, "Failed to encode frame");
+      die_codec(&encoder, "Failed to encode frame");
     }
 
-    while ((cx_pkt = vpx_codec_get_cx_data(&codec, &iter)) != NULL) {
+    while ((cx_pkt = vpx_codec_get_cx_data(&encoder, &iter)) != NULL) {
       switch (cx_pkt->kind) {
         case VPX_CODEC_CX_FRAME_PKT: {
           SvcInternal_t *const si = (SvcInternal_t *)svc_ctx.internal;
           if (cx_pkt->data.frame.sz > 0) {
-#if OUTPUT_RC_STATS
-            uint64_t sizes[8];
-            int count = 0;
-#endif
             vpx_video_writer_write_frame(writer, cx_pkt->data.frame.buf,
                                          cx_pkt->data.frame.sz,
                                          cx_pkt->data.frame.pts);
 #if OUTPUT_RC_STATS
-            // TODO(marpan): Put this (to line728) in separate function.
             if (svc_ctx.output_rc_stat) {
-              vpx_codec_control(&codec, VP9E_GET_SVC_LAYER_ID, &layer_id);
-              parse_superframe_index(cx_pkt->data.frame.buf,
-                                     cx_pkt->data.frame.sz, sizes, &count);
-              if (enc_cfg.ss_number_layers == 1)
-                sizes[0] = cx_pkt->data.frame.sz;
-              // Note computing input_layer_frames here won't account for frame
-              // drops in rate control stats.
-              // TODO(marpan): Fix this for non-bypass mode so we can get stats
-              // for dropped frames.
-              if (svc_ctx.temporal_layering_mode !=
-                  VP9E_TEMPORAL_LAYERING_MODE_BYPASS) {
-                for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
-                  ++rc.layer_input_frames[sl * enc_cfg.ts_number_layers +
-                                          layer_id.temporal_layer_id];
-                }
-              }
-              for (tl = layer_id.temporal_layer_id;
-                   tl < enc_cfg.ts_number_layers; ++tl) {
-                vpx_video_writer_write_frame(
-                    outfile[tl], cx_pkt->data.frame.buf, cx_pkt->data.frame.sz,
-                    cx_pkt->data.frame.pts);
-              }
-
-              for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
-                for (tl = layer_id.temporal_layer_id;
-                     tl < enc_cfg.ts_number_layers; ++tl) {
-                  const int layer = sl * enc_cfg.ts_number_layers + tl;
-                  ++rc.layer_tot_enc_frames[layer];
-                  rc.layer_encoding_bitrate[layer] += 8.0 * sizes[sl];
-                  // Keep count of rate control stats per layer, for non-key
-                  // frames.
-                  if (tl == (unsigned int)layer_id.temporal_layer_id &&
-                      !(cx_pkt->data.frame.flags & VPX_FRAME_IS_KEY)) {
-                    rc.layer_avg_frame_size[layer] += 8.0 * sizes[sl];
-                    rc.layer_avg_rate_mismatch[layer] +=
-                        fabs(8.0 * sizes[sl] - rc.layer_pfb[layer]) /
-                        rc.layer_pfb[layer];
-                    ++rc.layer_enc_frames[layer];
-                  }
-                }
-              }
-
-              // Update for short-time encoding bitrate states, for moving
-              // window of size rc->window, shifted by rc->window / 2.
-              // Ignore first window segment, due to key frame.
-              if (frame_cnt > (unsigned int)rc.window_size) {
-                tl = layer_id.temporal_layer_id;
-                for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
-                  sum_bitrate += 0.001 * 8.0 * sizes[sl] * framerate;
-                }
-                if (frame_cnt % rc.window_size == 0) {
-                  rc.window_count += 1;
-                  rc.avg_st_encoding_bitrate += sum_bitrate / rc.window_size;
-                  rc.variance_st_encoding_bitrate +=
-                      (sum_bitrate / rc.window_size) *
-                      (sum_bitrate / rc.window_size);
-                  sum_bitrate = 0.0;
-                }
-              }
-
-              // Second shifted window.
-              if (frame_cnt >
-                  (unsigned int)(rc.window_size + rc.window_size / 2)) {
-                tl = layer_id.temporal_layer_id;
-                for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
-                  sum_bitrate2 += 0.001 * 8.0 * sizes[sl] * framerate;
-                }
-
-                if (frame_cnt > (unsigned int)(2 * rc.window_size) &&
-                    frame_cnt % rc.window_size == 0) {
-                  rc.window_count += 1;
-                  rc.avg_st_encoding_bitrate += sum_bitrate2 / rc.window_size;
-                  rc.variance_st_encoding_bitrate +=
-                      (sum_bitrate2 / rc.window_size) *
-                      (sum_bitrate2 / rc.window_size);
-                  sum_bitrate2 = 0.0;
-                }
-              }
+              svc_output_rc_stats(&encoder, &enc_cfg, &layer_id, cx_pkt, &rc,
+                                  outfile, frame_cnt, framerate);
             }
 #endif
           }
@@ -881,6 +1177,11 @@ int main(int argc, const char **argv) {
           if (enc_cfg.ss_number_layers == 1 && enc_cfg.ts_number_layers == 1)
             si->bytes_sum[0] += (int)cx_pkt->data.frame.sz;
           ++frames_received;
+#if CONFIG_VP9_DECODER && !SIMULCAST_MODE
+          if (vpx_codec_decode(&decoder, cx_pkt->data.frame.buf,
+                               (unsigned int)cx_pkt->data.frame.sz, NULL, 0))
+            die_codec(&decoder, "Failed to decode frame.");
+#endif
           break;
         }
         case VPX_CODEC_STATS_PKT: {
@@ -890,6 +1191,19 @@ int main(int argc, const char **argv) {
         }
         default: { break; }
       }
+
+#if CONFIG_VP9_DECODER && !SIMULCAST_MODE
+      vpx_codec_control(&encoder, VP9E_GET_SVC_LAYER_ID, &layer_id);
+      // Don't look for mismatch on top spatial and top temporal layers as they
+      // are non reference frames.
+      if ((enc_cfg.ss_number_layers > 1 || enc_cfg.ts_number_layers > 1) &&
+          !(layer_id.temporal_layer_id > 0 &&
+            layer_id.temporal_layer_id == (int)enc_cfg.ts_number_layers - 1 &&
+            cx_pkt->data.frame
+                .spatial_layer_encoded[enc_cfg.ss_number_layers - 1])) {
+        test_decode(&encoder, &decoder, frame_cnt, &mismatch_seen);
+      }
+#endif
     }
 
     if (!end_of_stream) {
@@ -898,41 +1212,45 @@ int main(int argc, const char **argv) {
     }
   }
 
-  // Compensate for the extra frame count for the bypass mode.
-  if (svc_ctx.temporal_layering_mode == VP9E_TEMPORAL_LAYERING_MODE_BYPASS) {
-    for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
-      const int layer =
-          sl * enc_cfg.ts_number_layers + layer_id.temporal_layer_id;
-      --rc.layer_input_frames[layer];
-    }
-  }
-
   printf("Processed %d frames\n", frame_cnt);
-  fclose(infile);
+
+  close_input_file(&app_input.input_ctx);
+
 #if OUTPUT_RC_STATS
   if (svc_ctx.output_rc_stat) {
     printout_rate_control_summary(&rc, &enc_cfg, frame_cnt);
     printf("\n");
   }
 #endif
-  if (vpx_codec_destroy(&codec)) die_codec(&codec, "Failed to destroy codec");
+  if (vpx_codec_destroy(&encoder))
+    die_codec(&encoder, "Failed to destroy codec");
   if (app_input.passes == 2) stats_close(&app_input.rc_stats, 1);
   if (writer) {
     vpx_video_writer_close(writer);
   }
 #if OUTPUT_RC_STATS
   if (svc_ctx.output_rc_stat) {
-    for (tl = 0; tl < enc_cfg.ts_number_layers; ++tl) {
-      vpx_video_writer_close(outfile[tl]);
+    for (sl = 0; sl < enc_cfg.ss_number_layers; ++sl) {
+      vpx_video_writer_close(outfile[sl]);
     }
   }
+#endif
+#if CONFIG_INTERNAL_STATS
+  if (mismatch_seen) {
+    fprintf(f, "First mismatch occurred in frame %d\n", mismatch_seen);
+  } else {
+    fprintf(f, "No mismatch detected in recon buffers\n");
+  }
+  fclose(f);
 #endif
   printf("Frame cnt and encoding time/FPS stats for encoding: %d %f %f \n",
          frame_cnt, 1000 * (float)cx_time / (double)(frame_cnt * 1000000),
          1000000 * (double)frame_cnt / (double)cx_time);
-  vpx_img_free(&raw);
+  if (app_input.input_ctx.file_type != FILE_TYPE_Y4M) {
+    vpx_img_free(&raw);
+  }
   // display average size, psnr
-  printf("%s", vpx_svc_dump_statistics(&svc_ctx));
+  vpx_svc_dump_statistics(&svc_ctx);
   vpx_svc_release(&svc_ctx);
   return EXIT_SUCCESS;
 }

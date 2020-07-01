@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_CONVOLVE_AVX2_H_
-#define VPX_DSP_X86_CONVOLVE_AVX2_H_
+#ifndef VPX_VPX_DSP_X86_CONVOLVE_AVX2_H_
+#define VPX_VPX_DSP_X86_CONVOLVE_AVX2_H_
 
 #include <immintrin.h>  // AVX2
 
@@ -100,6 +100,63 @@ static INLINE __m128i convolve8_8_avx2(const __m256i *const s,
   return sum1;
 }
 
+static INLINE __m256i mm256_loadu2_si128(const void *lo, const void *hi) {
+  const __m256i tmp =
+      _mm256_castsi128_si256(_mm_loadu_si128((const __m128i *)lo));
+  return _mm256_inserti128_si256(tmp, _mm_loadu_si128((const __m128i *)hi), 1);
+}
+
+static INLINE __m256i mm256_loadu2_epi64(const void *lo, const void *hi) {
+  const __m256i tmp =
+      _mm256_castsi128_si256(_mm_loadl_epi64((const __m128i *)lo));
+  return _mm256_inserti128_si256(tmp, _mm_loadl_epi64((const __m128i *)hi), 1);
+}
+
+static INLINE void mm256_store2_si128(__m128i *const dst_ptr_1,
+                                      __m128i *const dst_ptr_2,
+                                      const __m256i *const src) {
+  _mm_store_si128(dst_ptr_1, _mm256_castsi256_si128(*src));
+  _mm_store_si128(dst_ptr_2, _mm256_extractf128_si256(*src, 1));
+}
+
+static INLINE void mm256_storeu2_epi64(__m128i *const dst_ptr_1,
+                                       __m128i *const dst_ptr_2,
+                                       const __m256i *const src) {
+  _mm_storel_epi64(dst_ptr_1, _mm256_castsi256_si128(*src));
+  _mm_storel_epi64(dst_ptr_2, _mm256_extractf128_si256(*src, 1));
+}
+
+static INLINE void mm256_storeu2_epi32(__m128i *const dst_ptr_1,
+                                       __m128i *const dst_ptr_2,
+                                       const __m256i *const src) {
+  *((uint32_t *)(dst_ptr_1)) = _mm_cvtsi128_si32(_mm256_castsi256_si128(*src));
+  *((uint32_t *)(dst_ptr_2)) =
+      _mm_cvtsi128_si32(_mm256_extractf128_si256(*src, 1));
+}
+
+static INLINE __m256i mm256_round_epi32(const __m256i *const src,
+                                        const __m256i *const half_depth,
+                                        const int depth) {
+  const __m256i nearest_src = _mm256_add_epi32(*src, *half_depth);
+  return _mm256_srai_epi32(nearest_src, depth);
+}
+
+static INLINE __m256i mm256_round_epi16(const __m256i *const src,
+                                        const __m256i *const half_depth,
+                                        const int depth) {
+  const __m256i nearest_src = _mm256_adds_epi16(*src, *half_depth);
+  return _mm256_srai_epi16(nearest_src, depth);
+}
+
+static INLINE __m256i mm256_madd_add_epi32(const __m256i *const src_0,
+                                           const __m256i *const src_1,
+                                           const __m256i *const ker_0,
+                                           const __m256i *const ker_1) {
+  const __m256i tmp_0 = _mm256_madd_epi16(*src_0, *ker_0);
+  const __m256i tmp_1 = _mm256_madd_epi16(*src_1, *ker_1);
+  return _mm256_add_epi32(tmp_0, tmp_1);
+}
+
 #undef MM256_BROADCASTSI128_SI256
 
-#endif  // VPX_DSP_X86_CONVOLVE_AVX2_H_
+#endif  // VPX_VPX_DSP_X86_CONVOLVE_AVX2_H_

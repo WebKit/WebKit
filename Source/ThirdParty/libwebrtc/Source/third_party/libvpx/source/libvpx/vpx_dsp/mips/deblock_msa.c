@@ -10,7 +10,8 @@
 
 #include <stdlib.h>
 
-#include "./macros_msa.h"
+#include "./vpx_dsp_rtcd.h"
+#include "vpx_dsp/mips/macros_msa.h"
 
 extern const int16_t vpx_rv[];
 
@@ -508,11 +509,11 @@ void vpx_post_proc_down_and_across_mb_row_msa(uint8_t *src, uint8_t *dst,
   }
 }
 
-void vpx_mbpost_proc_across_ip_msa(uint8_t *src_ptr, int32_t pitch,
-                                   int32_t rows, int32_t cols, int32_t flimit) {
+void vpx_mbpost_proc_across_ip_msa(uint8_t *src, int32_t pitch, int32_t rows,
+                                   int32_t cols, int32_t flimit) {
   int32_t row, col, cnt;
-  uint8_t *src_dup = src_ptr;
-  v16u8 src0, src, tmp_orig;
+  uint8_t *src_dup = src;
+  v16u8 src0, src1, tmp_orig;
   v16u8 tmp = { 0 };
   v16i8 zero = { 0 };
   v8u16 sum_h, src_r_h, src_l_h;
@@ -531,13 +532,13 @@ void vpx_mbpost_proc_across_ip_msa(uint8_t *src_ptr, int32_t pitch,
     src_dup[cols + 16] = src_dup[cols - 1];
     tmp_orig = (v16u8)__msa_ldi_b(0);
     tmp_orig[15] = tmp[15];
-    src = LD_UB(src_dup - 8);
-    src[15] = 0;
-    ILVRL_B2_UH(zero, src, src_r_h, src_l_h);
+    src1 = LD_UB(src_dup - 8);
+    src1[15] = 0;
+    ILVRL_B2_UH(zero, src1, src_r_h, src_l_h);
     src_r_w = __msa_dotp_u_w(src_r_h, src_r_h);
     src_r_w += __msa_dotp_u_w(src_l_h, src_l_h);
     sum_sq = HADD_SW_S32(src_r_w) + 16;
-    sum_h = __msa_hadd_u_h(src, src);
+    sum_h = __msa_hadd_u_h(src1, src1);
     sum = HADD_UH_U32(sum_h);
     {
       v16u8 src7, src8, src_r, src_l;
@@ -566,8 +567,8 @@ void vpx_mbpost_proc_across_ip_msa(uint8_t *src_ptr, int32_t pitch,
           sum_l[cnt + 1] = sum_l[cnt] + sub_l[cnt + 1];
         }
         sum = sum_l[7];
-        src = LD_UB(src_dup + 16 * col);
-        ILVRL_B2_UH(zero, src, src_r_h, src_l_h);
+        src1 = LD_UB(src_dup + 16 * col);
+        ILVRL_B2_UH(zero, src1, src_r_h, src_l_h);
         src7 = (v16u8)((const8 + sum_r + (v8i16)src_r_h) >> 4);
         src8 = (v16u8)((const8 + sum_l + (v8i16)src_l_h) >> 4);
         tmp = (v16u8)__msa_pckev_b((v16i8)src8, (v16i8)src7);
@@ -613,7 +614,7 @@ void vpx_mbpost_proc_across_ip_msa(uint8_t *src_ptr, int32_t pitch,
         total3 = (total3 < flimit_vec);
         PCKEV_H2_SH(total1, total0, total3, total2, mask0, mask1);
         mask = __msa_pckev_b((v16i8)mask1, (v16i8)mask0);
-        tmp = __msa_bmz_v(tmp, src, (v16u8)mask);
+        tmp = __msa_bmz_v(tmp, src1, (v16u8)mask);
 
         if (col == 0) {
           uint64_t src_d;

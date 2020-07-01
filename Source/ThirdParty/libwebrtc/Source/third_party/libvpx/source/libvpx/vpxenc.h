@@ -7,8 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef VPXENC_H_
-#define VPXENC_H_
+#ifndef VPX_VPXENC_H_
+#define VPX_VPXENC_H_
 
 #include "vpx/vpx_encoder.h"
 
@@ -61,4 +61,4 @@ struct VpxEncoderConfig {
 }  // extern "C"
 #endif
 
-#endif  // VPXENC_H_
+#endif  // VPX_VPXENC_H_

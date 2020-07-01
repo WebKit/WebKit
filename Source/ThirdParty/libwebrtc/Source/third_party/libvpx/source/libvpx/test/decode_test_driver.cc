@@ -52,9 +52,10 @@ void DecoderTest::HandlePeekResult(Decoder *const decoder,
     /* Vp8's implementation of PeekStream returns an error if the frame you
      * pass it is not a keyframe, so we only expect VPX_CODEC_OK on the first
      * frame, which must be a keyframe. */
-    if (video->frame_number() == 0)
+    if (video->frame_number() == 0) {
       ASSERT_EQ(VPX_CODEC_OK, res_peek)
           << "Peek return failed: " << vpx_codec_err_to_string(res_peek);
+    }
   } else {
     /* The Vp9 implementation of PeekStream returns an error only if the
      * data passed to it isn't a valid Vp9 chunk. */
@@ -97,7 +98,7 @@ void DecoderTest::RunLoop(CompressedVideoSource *video,
     const vpx_image_t *img = NULL;
 
     // Get decompressed data
-    while ((img = dec_iter.Next())) {
+    while (!::testing::Test::HasFailure() && (img = dec_iter.Next())) {
       DecompressedFrameHook(*img, video->frame_number());
     }
   }

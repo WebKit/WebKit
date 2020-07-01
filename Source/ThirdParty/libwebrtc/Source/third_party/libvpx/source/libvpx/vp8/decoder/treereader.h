@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_DECODER_TREEREADER_H_
-#define VP8_DECODER_TREEREADER_H_
+#ifndef VPX_VP8_DECODER_TREEREADER_H_
+#define VPX_VP8_DECODER_TREEREADER_H_
 
 #include "./vpx_config.h"
 #include "vp8/common/treecoder.h"
@@ -30,7 +30,7 @@ typedef BOOL_DECODER vp8_reader;
 static INLINE int vp8_treed_read(
     vp8_reader *const r, /* !!! must return a 0 or 1 !!! */
     vp8_tree t, const vp8_prob *const p) {
-  register vp8_tree_index i = 0;
+  vp8_tree_index i = 0;
 
   while ((i = t[i + vp8_read(r, p[i >> 1])]) > 0) {
   }
@@ -42,4 +42,4 @@ static INLINE int vp8_treed_read(
 }  // extern "C"
 #endif
 
-#endif  // VP8_DECODER_TREEREADER_H_
+#endif  // VPX_VP8_DECODER_TREEREADER_H_

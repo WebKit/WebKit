@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_DCT_VALUE_TOKENS_H_
-#define VP8_ENCODER_DCT_VALUE_TOKENS_H_
+#ifndef VPX_VP8_ENCODER_DCT_VALUE_TOKENS_H_
+#define VPX_VP8_ENCODER_DCT_VALUE_TOKENS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -845,4 +845,4 @@ static const TOKENVALUE dct_value_tokens[2048 * 2] = {
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_DCT_VALUE_TOKENS_H_
+#endif  // VPX_VP8_ENCODER_DCT_VALUE_TOKENS_H_

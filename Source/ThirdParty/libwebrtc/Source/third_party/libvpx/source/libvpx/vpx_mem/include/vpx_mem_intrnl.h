@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_
-#define VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_
+#ifndef VPX_VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_
+#define VPX_VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_
 #include "./vpx_config.h"
 
 #define ADDRESS_STORAGE_SIZE sizeof(size_t)
@@ -28,4 +28,4 @@
 #define align_addr(addr, align) \
   (void *)(((size_t)(addr) + ((align)-1)) & ~(size_t)((align)-1))
 
-#endif  // VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_
+#endif  // VPX_VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_

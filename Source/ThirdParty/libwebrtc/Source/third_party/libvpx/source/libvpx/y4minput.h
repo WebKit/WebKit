@@ -1,4 +1,3 @@
-
 /*
  *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
  *
@@ -12,8 +11,8 @@
  *  Copyright (C) 2002-2010 The Xiph.Org Foundation and contributors.
  */
 
-#ifndef Y4MINPUT_H_
-#define Y4MINPUT_H_
+#ifndef VPX_Y4MINPUT_H_
+#define VPX_Y4MINPUT_H_
 
 #include <stdio.h>
 #include "vpx/vpx_image.h"
@@ -66,4 +65,4 @@ int y4m_input_fetch_frame(y4m_input *_y4m, FILE *_fin, vpx_image_t *img);
 }  // extern "C"
 #endif
 
-#endif  // Y4MINPUT_H_
+#endif  // VPX_Y4MINPUT_H_

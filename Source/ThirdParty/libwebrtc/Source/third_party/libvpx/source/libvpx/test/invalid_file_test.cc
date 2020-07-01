@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <memory>
 #include <string>
 #include <vector>
 #include "third_party/googletest/src/include/gtest/gtest.h"
@@ -89,7 +90,7 @@ class InvalidFileTest : public ::libvpx_test::DecoderTest,
     const std::string filename = input.filename;
 
     // Open compressed video file.
-    testing::internal::scoped_ptr<libvpx_test::CompressedVideoSource> video;
+    std::unique_ptr<libvpx_test::CompressedVideoSource> video;
     if (filename.substr(filename.length() - 3, 3) == "ivf") {
       video.reset(new libvpx_test::IVFVideoSource(filename));
     } else if (filename.substr(filename.length() - 4, 4) == "webm") {
@@ -123,7 +124,9 @@ TEST_P(InvalidFileTest, ReturnCode) { RunTest(); }
 #if CONFIG_VP8_DECODER
 const DecodeParam kVP8InvalidFileTests[] = {
   { 1, "invalid-bug-1443.ivf" },
+  { 1, "invalid-bug-148271109.ivf" },
   { 1, "invalid-token-partition.ivf" },
+  { 1, "invalid-vp80-00-comprehensive-s17661_r01-05_b6-.ivf" },
 };
 
 VP8_INSTANTIATE_TEST_CASE(InvalidFileTest,
@@ -145,7 +148,7 @@ const DecodeParam kVP9InvalidFileTests[] = {
 // This file will cause a large allocation which is expected to fail in 32-bit
 // environments. Test x86 for coverage purposes as the allocation failure will
 // be in platform agnostic code.
-#if ARCH_X86
+#if VPX_ARCH_X86
   { 1, "invalid-vp90-2-00-quantizer-63.ivf.kf_65527x61446.ivf" },
 #endif
   { 1, "invalid-vp90-2-12-droppable_1.ivf.s3676_r01-05_b6-.ivf" },
@@ -203,6 +206,8 @@ const DecodeParam kMultiThreadedVP9InvalidFileTests[] = {
   { 2, "invalid-vp90-2-09-aq2.webm.ivf.s3984_r01-05_b6-.v2.ivf" },
   { 4, "invalid-vp90-2-09-subpixel-00.ivf.s19552_r01-05_b6-.v2.ivf" },
   { 2, "invalid-crbug-629481.webm" },
+  { 3, "invalid-crbug-1558.ivf" },
+  { 4, "invalid-crbug-1562.ivf" },
 };
 
 INSTANTIATE_TEST_CASE_P(

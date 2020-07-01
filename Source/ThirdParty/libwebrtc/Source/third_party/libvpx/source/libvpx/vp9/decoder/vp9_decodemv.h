@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_DECODER_VP9_DECODEMV_H_
-#define VP9_DECODER_VP9_DECODEMV_H_
+#ifndef VPX_VP9_DECODER_VP9_DECODEMV_H_
+#define VPX_VP9_DECODER_VP9_DECODEMV_H_
 
 #include "vpx_dsp/bitreader.h"
 
@@ -26,4 +26,4 @@ void vp9_read_mode_info(TileWorkerData *twd, VP9Decoder *const pbi, int mi_row,
 }  // extern "C"
 #endif
 
-#endif  // VP9_DECODER_VP9_DECODEMV_H_
+#endif  // VPX_VP9_DECODER_VP9_DECODEMV_H_

@@ -9,6 +9,7 @@
  */
 
 #include <limits.h>
+#include <math.h>
 
 #include "vpx_mem/vpx_mem.h"
 
@@ -44,6 +45,59 @@ void vp9_disable_segfeature(struct segmentation *seg, int segment_id,
 void vp9_clear_segdata(struct segmentation *seg, int segment_id,
                        SEG_LVL_FEATURES feature_id) {
   seg->feature_data[segment_id][feature_id] = 0;
+}
+
+void vp9_psnr_aq_mode_setup(struct segmentation *seg) {
+  int i;
+
+  vp9_enable_segmentation(seg);
+  vp9_clearall_segfeatures(seg);
+  seg->abs_delta = SEGMENT_DELTADATA;
+
+  for (i = 0; i < MAX_SEGMENTS; ++i) {
+    vp9_set_segdata(seg, i, SEG_LVL_ALT_Q, 2 * (i - (MAX_SEGMENTS / 2)));
+    vp9_enable_segfeature(seg, i, SEG_LVL_ALT_Q);
+  }
+}
+
+void vp9_perceptual_aq_mode_setup(struct VP9_COMP *cpi,
+                                  struct segmentation *seg) {
+  const VP9_COMMON *cm = &cpi->common;
+  const int seg_counts = cpi->kmeans_ctr_num;
+  const int base_qindex = cm->base_qindex;
+  const double base_qstep = vp9_convert_qindex_to_q(base_qindex, cm->bit_depth);
+  const double mid_ctr = cpi->kmeans_ctr_ls[seg_counts / 2];
+  const double var_diff_scale = 4.0;
+  int i;
+
+  assert(seg_counts <= MAX_SEGMENTS);
+
+  vp9_enable_segmentation(seg);
+  vp9_clearall_segfeatures(seg);
+  seg->abs_delta = SEGMENT_DELTADATA;
+
+  for (i = 0; i < seg_counts / 2; ++i) {
+    double wiener_var_diff = mid_ctr - cpi->kmeans_ctr_ls[i];
+    double target_qstep = base_qstep / (1.0 + wiener_var_diff / var_diff_scale);
+    int target_qindex = vp9_convert_q_to_qindex(target_qstep, cm->bit_depth);
+    assert(wiener_var_diff >= 0.0);
+
+    vp9_set_segdata(seg, i, SEG_LVL_ALT_Q, target_qindex - base_qindex);
+    vp9_enable_segfeature(seg, i, SEG_LVL_ALT_Q);
+  }
+
+  vp9_set_segdata(seg, i, SEG_LVL_ALT_Q, 0);
+  vp9_enable_segfeature(seg, i, SEG_LVL_ALT_Q);
+
+  for (; i < seg_counts; ++i) {
+    double wiener_var_diff = cpi->kmeans_ctr_ls[i] - mid_ctr;
+    double target_qstep = base_qstep * (1.0 + wiener_var_diff / var_diff_scale);
+    int target_qindex = vp9_convert_q_to_qindex(target_qstep, cm->bit_depth);
+    assert(wiener_var_diff >= 0.0);
+
+    vp9_set_segdata(seg, i, SEG_LVL_ALT_Q, target_qindex - base_qindex);
+    vp9_enable_segfeature(seg, i, SEG_LVL_ALT_Q);
+  }
 }
 
 // Based on set of segment counts calculate a probability tree

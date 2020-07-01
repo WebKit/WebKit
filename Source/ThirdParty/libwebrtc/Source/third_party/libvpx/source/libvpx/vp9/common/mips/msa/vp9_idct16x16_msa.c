@@ -10,6 +10,7 @@
 
 #include <assert.h>
 
+#include "./vp9_rtcd.h"
 #include "vp9/common/vp9_enums.h"
 #include "vpx_dsp/mips/inv_txfm_msa.h"
 

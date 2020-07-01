@@ -28,7 +28,7 @@ const uint8_t num_8x8_blocks_wide_lookup[BLOCK_SIZES] = { 1, 1, 1, 1, 1, 2, 2,
 const uint8_t num_8x8_blocks_high_lookup[BLOCK_SIZES] = { 1, 1, 1, 1, 2, 1, 2,
                                                           4, 2, 4, 8, 4, 8 };
 
-// VPXMIN(3, VPXMIN(b_width_log2(bsize), b_height_log2(bsize)))
+// VPXMIN(3, VPXMIN(b_width_log2_lookup(bsize), b_height_log2_lookup(bsize)))
 const uint8_t size_group_lookup[BLOCK_SIZES] = { 0, 0, 0, 1, 1, 1, 2,
                                                  2, 2, 3, 3, 3, 3 };
 

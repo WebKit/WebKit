@@ -7,8 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef VPX_DSP_X86_BITDEPTH_CONVERSION_SSE2_H_
-#define VPX_DSP_X86_BITDEPTH_CONVERSION_SSE2_H_
+#ifndef VPX_VPX_DSP_X86_BITDEPTH_CONVERSION_SSE2_H_
+#define VPX_VPX_DSP_X86_BITDEPTH_CONVERSION_SSE2_H_
 
 #include <xmmintrin.h>
 
@@ -53,4 +53,4 @@ static INLINE void store_zero_tran_low(tran_low_t *a) {
   _mm_store_si128((__m128i *)(a), zero);
 #endif
 }
-#endif  // VPX_DSP_X86_BITDEPTH_CONVERSION_SSE2_H_
+#endif  // VPX_VPX_DSP_X86_BITDEPTH_CONVERSION_SSE2_H_

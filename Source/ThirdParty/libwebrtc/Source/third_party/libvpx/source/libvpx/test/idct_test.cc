@@ -72,6 +72,7 @@ TEST_P(IDCTTest, TestAllZeros) {
 
 TEST_P(IDCTTest, TestAllOnes) {
   input->Set(0);
+  ASSERT_TRUE(input->TopLeftPixel() != NULL);
   // When the first element is '4' it will fill the output buffer with '1'.
   input->TopLeftPixel()[0] = 4;
   predict->Set(0);
@@ -89,6 +90,7 @@ TEST_P(IDCTTest, TestAddOne) {
   // Set the transform output to '1' and make sure it gets added to the
   // prediction buffer.
   input->Set(0);
+  ASSERT_TRUE(input->TopLeftPixel() != NULL);
   input->TopLeftPixel()[0] = 4;
   output->Set(0);
 

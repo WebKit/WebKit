@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_POSTPROC_H_
-#define VP9_COMMON_VP9_POSTPROC_H_
+#ifndef VPX_VP9_COMMON_VP9_POSTPROC_H_
+#define VPX_VP9_COMMON_VP9_POSTPROC_H_
 
 #include "vpx_ports/mem.h"
 #include "vpx_scale/yv12config.h"
@@ -38,16 +38,16 @@ struct VP9Common;
 #define MFQE_PRECISION 4
 
 int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
-                        vp9_ppflags_t *flags);
+                        vp9_ppflags_t *ppflags, int unscaled_width);
 
-void vp9_denoise(const YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst, int q,
-                 uint8_t *limits);
+void vp9_denoise(struct VP9Common *cm, const YV12_BUFFER_CONFIG *src,
+                 YV12_BUFFER_CONFIG *dst, int q, uint8_t *limits);
 
-void vp9_deblock(const YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *dst, int q,
-                 uint8_t *limits);
+void vp9_deblock(struct VP9Common *cm, const YV12_BUFFER_CONFIG *src,
+                 YV12_BUFFER_CONFIG *dst, int q, uint8_t *limits);
 
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_POSTPROC_H_
+#endif  // VPX_VP9_COMMON_VP9_POSTPROC_H_

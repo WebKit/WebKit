@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_MEM_VPX_MEM_H_
-#define VPX_MEM_VPX_MEM_H_
+#ifndef VPX_VPX_MEM_VPX_MEM_H_
+#define VPX_VPX_MEM_VPX_MEM_H_
 
 #include "vpx_config.h"
 #if defined(__uClinux__)
@@ -49,4 +49,4 @@ static INLINE void *vpx_memset16(void *dest, int val, size_t length) {
 }
 #endif
 
-#endif  // VPX_MEM_VPX_MEM_H_
+#endif  // VPX_VPX_MEM_VPX_MEM_H_

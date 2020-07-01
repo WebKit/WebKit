@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_ETHREADING_H_
-#define VP8_ENCODER_ETHREADING_H_
+#ifndef VPX_VP8_ENCODER_ETHREADING_H_
+#define VPX_VP8_ENCODER_ETHREADING_H_
 
 #include "vp8/encoder/onyx_int.h"
 
@@ -29,4 +29,4 @@ void vp8cx_remove_encoder_threads(struct VP8_COMP *cpi);
 }
 #endif
 
-#endif  // VP8_ENCODER_ETHREADING_H_
+#endif  // VPX_VP8_ENCODER_ETHREADING_H_

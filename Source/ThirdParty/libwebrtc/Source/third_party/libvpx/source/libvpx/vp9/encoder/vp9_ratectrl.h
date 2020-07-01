@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_ENCODER_VP9_RATECTRL_H_
-#define VP9_ENCODER_VP9_RATECTRL_H_
+#ifndef VPX_VP9_ENCODER_VP9_RATECTRL_H_
+#define VPX_VP9_ENCODER_VP9_RATECTRL_H_
 
 #include "vpx/vpx_codec.h"
 #include "vpx/vpx_integer.h"
@@ -175,15 +175,34 @@ typedef struct {
   uint64_t avg_source_sad[MAX_LAG_BUFFERS];
   uint64_t prev_avg_source_sad_lag;
   int high_source_sad_lagindex;
+  int high_num_blocks_with_motion;
   int alt_ref_gf_group;
   int last_frame_is_src_altref;
   int high_source_sad;
   int count_last_scene_change;
+  int hybrid_intra_scene_change;
+  int re_encode_maxq_scene_change;
   int avg_frame_low_motion;
   int af_ratio_onepass_vbr;
   int force_qpmin;
   int reset_high_source_sad;
   double perc_arf_usage;
+  int force_max_q;
+  // Last frame was dropped post encode on scene change.
+  int last_post_encode_dropped_scene_change;
+  // Enable post encode frame dropping for screen content. Only enabled when
+  // ext_use_post_encode_drop is enabled by user.
+  int use_post_encode_drop;
+  // External flag to enable post encode frame dropping, controlled by user.
+  int ext_use_post_encode_drop;
+
+  int damped_adjustment[RATE_FACTOR_LEVELS];
+  double arf_active_best_quality_adjustment_factor;
+  int arf_increase_active_best_quality;
+
+  int preserve_arf_as_gld;
+  int preserve_next_arf_as_gld;
+  int show_arf_as_gld;
 } RATE_CONTROL;
 
 struct VP9_COMP;
@@ -192,7 +211,7 @@ struct VP9EncoderConfig;
 void vp9_rc_init(const struct VP9EncoderConfig *oxcf, int pass,
                  RATE_CONTROL *rc);
 
-int vp9_estimate_bits_at_q(FRAME_TYPE frame_kind, int q, int mbs,
+int vp9_estimate_bits_at_q(FRAME_TYPE frame_type, int q, int mbs,
                            double correction_factor, vpx_bit_depth_t bit_depth);
 
 double vp9_convert_qindex_to_q(int qindex, vpx_bit_depth_t bit_depth);
@@ -203,9 +222,9 @@ void vp9_rc_init_minq_luts(void);
 
 int vp9_rc_get_default_min_gf_interval(int width, int height, double framerate);
 // Note vp9_rc_get_default_max_gf_interval() requires the min_gf_interval to
-// be passed in to ensure that the max_gf_interval returned is at least as bis
+// be passed in to ensure that the max_gf_interval returned is at least as big
 // as that.
-int vp9_rc_get_default_max_gf_interval(double framerate, int min_frame_rate);
+int vp9_rc_get_default_max_gf_interval(double framerate, int min_gf_interval);
 
 // Generally at the high level, the following flow is expected
 // to be enforced for rate control:
@@ -245,13 +264,18 @@ void vp9_rc_postencode_update_drop_frame(struct VP9_COMP *cpi);
 // Changes only the rate correction factors in the rate control structure.
 void vp9_rc_update_rate_correction_factors(struct VP9_COMP *cpi);
 
+// Post encode drop for CBR mode.
+int post_encode_drop_cbr(struct VP9_COMP *cpi, size_t *size);
+
+int vp9_test_drop(struct VP9_COMP *cpi);
+
 // Decide if we should drop this frame: For 1-pass CBR.
 // Changes only the decimation count in the rate control structure
 int vp9_rc_drop_frame(struct VP9_COMP *cpi);
 
 // Computes frame size bounds.
 void vp9_rc_compute_frame_size_bounds(const struct VP9_COMP *cpi,
-                                      int this_frame_target,
+                                      int frame_target,
                                       int *frame_under_shoot_limit,
                                       int *frame_over_shoot_limit);
 
@@ -302,8 +326,12 @@ void vp9_scene_detection_onepass(struct VP9_COMP *cpi);
 
 int vp9_encodedframe_overshoot(struct VP9_COMP *cpi, int frame_size, int *q);
 
+void vp9_configure_buffer_updates(struct VP9_COMP *cpi, int gf_group_index);
+
+void vp9_estimate_qp_gop(struct VP9_COMP *cpi);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif  // VP9_ENCODER_VP9_RATECTRL_H_
+#endif  // VPX_VP9_ENCODER_VP9_RATECTRL_H_

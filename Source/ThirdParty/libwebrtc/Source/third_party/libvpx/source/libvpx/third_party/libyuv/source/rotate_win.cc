@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "libyuv/row.h"
 #include "libyuv/rotate_row.h"
+#include "libyuv/row.h"
 
 #ifdef __cplusplus
 namespace libyuv {
@@ -17,17 +17,19 @@ extern "C" {
 #endif
 
 // This module is for 32 bit Visual C x86 and clangcl
-#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86)
+#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER)
 
-__declspec(naked)
-void TransposeWx8_SSSE3(const uint8* src, int src_stride,
-                        uint8* dst, int dst_stride, int width) {
+__declspec(naked) void TransposeWx8_SSSE3(const uint8_t* src,
+                                          int src_stride,
+                                          uint8_t* dst,
+                                          int dst_stride,
+                                          int width) {
   __asm {
     push      edi
     push      esi
     push      ebp
-    mov       eax, [esp + 12 + 4]   // src
-    mov       edi, [esp + 12 + 8]   // src_stride
+    mov       eax, [esp + 12 + 4]  // src
+    mov       edi, [esp + 12 + 8]  // src_stride
     mov       edx, [esp + 12 + 12]  // dst
     mov       esi, [esp + 12 + 16]  // dst_stride
     mov       ecx, [esp + 12 + 20]  // width
@@ -110,18 +112,20 @@ void TransposeWx8_SSSE3(const uint8* src, int src_stride,
   }
 }
 
-__declspec(naked)
-void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
-                         uint8* dst_a, int dst_stride_a,
-                         uint8* dst_b, int dst_stride_b,
-                         int w) {
+__declspec(naked) void TransposeUVWx8_SSE2(const uint8_t* src,
+                                           int src_stride,
+                                           uint8_t* dst_a,
+                                           int dst_stride_a,
+                                           uint8_t* dst_b,
+                                           int dst_stride_b,
+                                           int w) {
   __asm {
     push      ebx
     push      esi
     push      edi
     push      ebp
-    mov       eax, [esp + 16 + 4]   // src
-    mov       edi, [esp + 16 + 8]   // src_stride
+    mov       eax, [esp + 16 + 4]  // src
+    mov       edi, [esp + 16 + 8]  // src_stride
     mov       edx, [esp + 16 + 12]  // dst_a
     mov       esi, [esp + 16 + 16]  // dst_stride_a
     mov       ebx, [esp + 16 + 20]  // dst_b
@@ -133,9 +137,9 @@ void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
     mov       ecx, [ecx + 16 + 28]  // w
 
     align      4
- convertloop:
     // Read in the data from the source pointer.
     // First round of bit swap.
+  convertloop:
     movdqu    xmm0, [eax]
     movdqu    xmm1, [eax + edi]
     lea       eax, [eax + 2 * edi]
@@ -162,13 +166,13 @@ void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
     lea       eax, [eax + 2 * edi]
     movdqu    [esp], xmm5  // backup xmm5
     neg       edi
-    movdqa    xmm5, xmm6   // use xmm5 as temp register.
+    movdqa    xmm5, xmm6  // use xmm5 as temp register.
     punpcklbw xmm6, xmm7
     punpckhbw xmm5, xmm7
     movdqa    xmm7, xmm5
     lea       eax, [eax + 8 * edi + 16]
     neg       edi
-    // Second round of bit swap.
+        // Second round of bit swap.
     movdqa    xmm5, xmm0
     punpcklwd xmm0, xmm2
     punpckhwd xmm5, xmm2
@@ -183,12 +187,13 @@ void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
     movdqa    xmm6, xmm5
     movdqu    xmm5, [esp]  // restore xmm5
     movdqu    [esp], xmm6  // backup xmm6
-    movdqa    xmm6, xmm5    // use xmm6 as temp register.
+    movdqa    xmm6, xmm5  // use xmm6 as temp register.
     punpcklwd xmm5, xmm7
     punpckhwd xmm6, xmm7
     movdqa    xmm7, xmm6
-    // Third round of bit swap.
-    // Write to the destination pointer.
+
+        // Third round of bit swap.
+        // Write to the destination pointer.
     movdqa    xmm6, xmm0
     punpckldq xmm0, xmm4
     punpckhdq xmm6, xmm4
@@ -200,7 +205,7 @@ void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
     lea       edx, [edx + 2 * esi]
     movhpd    qword ptr [ebx + ebp], xmm4
     lea       ebx, [ebx + 2 * ebp]
-    movdqa    xmm0, xmm2   // use xmm0 as the temp register.
+    movdqa    xmm0, xmm2  // use xmm0 as the temp register.
     punpckldq xmm2, xmm6
     movlpd    qword ptr [edx], xmm2
     movhpd    qword ptr [ebx], xmm2
@@ -209,7 +214,7 @@ void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
     lea       edx, [edx + 2 * esi]
     movhpd    qword ptr [ebx + ebp], xmm0
     lea       ebx, [ebx + 2 * ebp]
-    movdqa    xmm0, xmm1   // use xmm0 as the temp register.
+    movdqa    xmm0, xmm1  // use xmm0 as the temp register.
     punpckldq xmm1, xmm5
     movlpd    qword ptr [edx], xmm1
     movhpd    qword ptr [ebx], xmm1
@@ -218,7 +223,7 @@ void TransposeUVWx8_SSE2(const uint8* src, int src_stride,
     lea       edx, [edx + 2 * esi]
     movhpd    qword ptr [ebx + ebp], xmm0
     lea       ebx, [ebx + 2 * ebp]
-    movdqa    xmm0, xmm3   // use xmm0 as the temp register.
+    movdqa    xmm0, xmm3  // use xmm0 as the temp register.
     punpckldq xmm3, xmm7
     movlpd    qword ptr [edx], xmm3
     movhpd    qword ptr [ebx], xmm3

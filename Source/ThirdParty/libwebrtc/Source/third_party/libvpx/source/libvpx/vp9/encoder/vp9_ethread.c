@@ -270,19 +270,19 @@ void vp9_row_mt_sync_mem_alloc(VP9RowMTSync *row_mt_sync, VP9_COMMON *cm,
   {
     int i;
 
-    CHECK_MEM_ERROR(cm, row_mt_sync->mutex_,
-                    vpx_malloc(sizeof(*row_mt_sync->mutex_) * rows));
-    if (row_mt_sync->mutex_) {
+    CHECK_MEM_ERROR(cm, row_mt_sync->mutex,
+                    vpx_malloc(sizeof(*row_mt_sync->mutex) * rows));
+    if (row_mt_sync->mutex) {
       for (i = 0; i < rows; ++i) {
-        pthread_mutex_init(&row_mt_sync->mutex_[i], NULL);
+        pthread_mutex_init(&row_mt_sync->mutex[i], NULL);
       }
     }
 
-    CHECK_MEM_ERROR(cm, row_mt_sync->cond_,
-                    vpx_malloc(sizeof(*row_mt_sync->cond_) * rows));
-    if (row_mt_sync->cond_) {
+    CHECK_MEM_ERROR(cm, row_mt_sync->cond,
+                    vpx_malloc(sizeof(*row_mt_sync->cond) * rows));
+    if (row_mt_sync->cond) {
       for (i = 0; i < rows; ++i) {
-        pthread_cond_init(&row_mt_sync->cond_[i], NULL);
+        pthread_cond_init(&row_mt_sync->cond[i], NULL);
       }
     }
   }
@@ -301,17 +301,17 @@ void vp9_row_mt_sync_mem_dealloc(VP9RowMTSync *row_mt_sync) {
 #if CONFIG_MULTITHREAD
     int i;
 
-    if (row_mt_sync->mutex_ != NULL) {
+    if (row_mt_sync->mutex != NULL) {
       for (i = 0; i < row_mt_sync->rows; ++i) {
-        pthread_mutex_destroy(&row_mt_sync->mutex_[i]);
+        pthread_mutex_destroy(&row_mt_sync->mutex[i]);
       }
-      vpx_free(row_mt_sync->mutex_);
+      vpx_free(row_mt_sync->mutex);
     }
-    if (row_mt_sync->cond_ != NULL) {
+    if (row_mt_sync->cond != NULL) {
       for (i = 0; i < row_mt_sync->rows; ++i) {
-        pthread_cond_destroy(&row_mt_sync->cond_[i]);
+        pthread_cond_destroy(&row_mt_sync->cond[i]);
       }
-      vpx_free(row_mt_sync->cond_);
+      vpx_free(row_mt_sync->cond);
     }
 #endif  // CONFIG_MULTITHREAD
     vpx_free(row_mt_sync->cur_col);
@@ -327,11 +327,11 @@ void vp9_row_mt_sync_read(VP9RowMTSync *const row_mt_sync, int r, int c) {
   const int nsync = row_mt_sync->sync_range;
 
   if (r && !(c & (nsync - 1))) {
-    pthread_mutex_t *const mutex = &row_mt_sync->mutex_[r - 1];
+    pthread_mutex_t *const mutex = &row_mt_sync->mutex[r - 1];
     pthread_mutex_lock(mutex);
 
     while (c > row_mt_sync->cur_col[r - 1] - nsync + 1) {
-      pthread_cond_wait(&row_mt_sync->cond_[r - 1], mutex);
+      pthread_cond_wait(&row_mt_sync->cond[r - 1], mutex);
     }
     pthread_mutex_unlock(mutex);
   }
@@ -365,12 +365,12 @@ void vp9_row_mt_sync_write(VP9RowMTSync *const row_mt_sync, int r, int c,
   }
 
   if (sig) {
-    pthread_mutex_lock(&row_mt_sync->mutex_[r]);
+    pthread_mutex_lock(&row_mt_sync->mutex[r]);
 
     row_mt_sync->cur_col[r] = cur;
 
-    pthread_cond_signal(&row_mt_sync->cond_[r]);
-    pthread_mutex_unlock(&row_mt_sync->mutex_[r]);
+    pthread_cond_signal(&row_mt_sync->cond[r]);
+    pthread_mutex_unlock(&row_mt_sync->mutex[r]);
   }
 #else
   (void)row_mt_sync;
@@ -510,8 +510,8 @@ static int temporal_filter_worker_hook(void *arg1, void *arg2) {
       tile_col = proc_job->tile_col_id;
       tile_row = proc_job->tile_row_id;
       this_tile = &cpi->tile_data[tile_row * tile_cols + tile_col];
-      mb_col_start = (this_tile->tile_info.mi_col_start) >> 1;
-      mb_col_end = (this_tile->tile_info.mi_col_end + 1) >> 1;
+      mb_col_start = (this_tile->tile_info.mi_col_start) >> TF_SHIFT;
+      mb_col_end = (this_tile->tile_info.mi_col_end + TF_ROUND) >> TF_SHIFT;
       mb_row = proc_job->vert_unit_row_num;
 
       vp9_temporal_filter_iterate_row_c(cpi, thread_data->td, mb_row,

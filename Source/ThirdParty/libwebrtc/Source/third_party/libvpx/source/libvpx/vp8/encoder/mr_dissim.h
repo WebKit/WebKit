@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_MR_DISSIM_H_
-#define VP8_ENCODER_MR_DISSIM_H_
+#ifndef VPX_VP8_ENCODER_MR_DISSIM_H_
+#define VPX_VP8_ENCODER_MR_DISSIM_H_
 #include "vpx_config.h"
 
 #ifdef __cplusplus
@@ -24,4 +24,4 @@ extern void vp8_store_drop_frame_info(VP8_COMP *cpi);
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_MR_DISSIM_H_
+#endif  // VPX_VP8_ENCODER_MR_DISSIM_H_

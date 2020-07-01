@@ -16,7 +16,7 @@
 #include "blockd.h"
 #include "reconintra4x4.h"
 #include "vp8/common/common.h"
-#include "vpx_ports/mem.h"
+#include "vpx_ports/compiler_attributes.h"
 
 typedef void (*intra_pred_fn)(uint8_t *dst, ptrdiff_t stride,
                               const uint8_t *above, const uint8_t *left);

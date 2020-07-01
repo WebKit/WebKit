@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_MEM_OPS_H_
-#define VPX_PORTS_MEM_OPS_H_
+#ifndef VPX_VPX_PORTS_MEM_OPS_H_
+#define VPX_VPX_PORTS_MEM_OPS_H_
 
 /* \file
  * \brief Provides portable memory access primitives
@@ -224,4 +224,4 @@ static VPX_INLINE void mem_put_le32(void *vmem, MEM_VALUE_T val) {
   mem[3] = (MAU_T)((val >> 24) & 0xff);
 }
 /* clang-format on */
-#endif  // VPX_PORTS_MEM_OPS_H_
+#endif  // VPX_VPX_PORTS_MEM_OPS_H_

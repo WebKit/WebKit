@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef TEST_DECODE_TEST_DRIVER_H_
-#define TEST_DECODE_TEST_DRIVER_H_
+#ifndef VPX_TEST_DECODE_TEST_DRIVER_H_
+#define VPX_TEST_DECODE_TEST_DRIVER_H_
 #include <cstring>
 #include "third_party/googletest/src/include/gtest/gtest.h"
 #include "./vpx_config.h"
@@ -159,4 +159,4 @@ class DecoderTest {
 
 }  // namespace libvpx_test
 
-#endif  // TEST_DECODE_TEST_DRIVER_H_
+#endif  // VPX_TEST_DECODE_TEST_DRIVER_H_

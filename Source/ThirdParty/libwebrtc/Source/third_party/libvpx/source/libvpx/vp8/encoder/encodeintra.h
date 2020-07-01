@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_ENCODEINTRA_H_
-#define VP8_ENCODER_ENCODEINTRA_H_
+#ifndef VPX_VP8_ENCODER_ENCODEINTRA_H_
+#define VPX_VP8_ENCODER_ENCODEINTRA_H_
 #include "onyx_int.h"
 
 #ifdef __cplusplus
@@ -25,4 +25,4 @@ void vp8_encode_intra4x4block(MACROBLOCK *x, int ib);
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_ENCODEINTRA_H_
+#endif  // VPX_VP8_ENCODER_ENCODEINTRA_H_

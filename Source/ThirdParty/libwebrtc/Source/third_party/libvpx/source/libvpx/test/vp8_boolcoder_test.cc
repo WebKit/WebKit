@@ -93,6 +93,9 @@ TEST(VP8, TestBitIO) {
         }
 
         vp8_stop_encode(&bw);
+        // vp8dx_bool_decoder_fill() may read into uninitialized data that
+        // isn't used meaningfully, but may trigger an MSan warning.
+        memset(bw_buffer + bw.pos, 0, sizeof(VP8_BD_VALUE) - 1);
 
         BOOL_DECODER br;
         encrypt_buffer(bw_buffer, kBufferSize);

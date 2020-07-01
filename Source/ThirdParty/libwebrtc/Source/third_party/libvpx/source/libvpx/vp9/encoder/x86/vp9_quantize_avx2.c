@@ -15,7 +15,7 @@
 #include "vpx/vpx_integer.h"
 #include "vpx_dsp/vpx_dsp_common.h"
 #include "vpx_dsp/x86/bitdepth_conversion_avx2.h"
-#include "vpx_dsp/x86/quantize_x86.h"
+#include "vpx_dsp/x86/quantize_sse2.h"
 
 // Zero fill 8 positions in the output buffer.
 static INLINE void store_zero_tran_low(tran_low_t *a) {
@@ -50,18 +50,18 @@ void vp9_quantize_fp_avx2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
                           int skip_block, const int16_t *round_ptr,
                           const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
                           tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr,
-                          uint16_t *eob_ptr, const int16_t *scan_ptr,
-                          const int16_t *iscan_ptr) {
+                          uint16_t *eob_ptr, const int16_t *scan,
+                          const int16_t *iscan) {
   __m128i eob;
   __m256i round256, quant256, dequant256;
   __m256i eob256, thr256;
 
-  (void)scan_ptr;
+  (void)scan;
   (void)skip_block;
   assert(!skip_block);
 
   coeff_ptr += n_coeffs;
-  iscan_ptr += n_coeffs;
+  iscan += n_coeffs;
   qcoeff_ptr += n_coeffs;
   dqcoeff_ptr += n_coeffs;
   n_coeffs = -n_coeffs;
@@ -97,7 +97,7 @@ void vp9_quantize_fp_avx2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
       store_tran_low(coeff256, dqcoeff_ptr + n_coeffs);
     }
 
-    eob256 = scan_eob_256((const __m256i *)(iscan_ptr + n_coeffs), &coeff256);
+    eob256 = scan_eob_256((const __m256i *)(iscan + n_coeffs), &coeff256);
     n_coeffs += 8 * 2;
   }
 
@@ -124,8 +124,7 @@ void vp9_quantize_fp_avx2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
       coeff256 = _mm256_mullo_epi16(qcoeff256, dequant256);
       store_tran_low(coeff256, dqcoeff_ptr + n_coeffs);
       eob256 = _mm256_max_epi16(
-          eob256,
-          scan_eob_256((const __m256i *)(iscan_ptr + n_coeffs), &coeff256));
+          eob256, scan_eob_256((const __m256i *)(iscan + n_coeffs), &coeff256));
     } else {
       store_zero_tran_low(qcoeff_ptr + n_coeffs);
       store_zero_tran_low(dqcoeff_ptr + n_coeffs);

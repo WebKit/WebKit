@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_ENCODER_FIRSTPASS_H_
-#define VP8_ENCODER_FIRSTPASS_H_
+#ifndef VPX_VP8_ENCODER_FIRSTPASS_H_
+#define VPX_VP8_ENCODER_FIRSTPASS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,4 +28,4 @@ extern size_t vp8_firstpass_stats_sz(unsigned int mb_count);
 }  // extern "C"
 #endif
 
-#endif  // VP8_ENCODER_FIRSTPASS_H_
+#endif  // VPX_VP8_ENCODER_FIRSTPASS_H_

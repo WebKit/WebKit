@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_MIPS_MACROS_MSA_H_
-#define VPX_DSP_MIPS_MACROS_MSA_H_
+#ifndef VPX_VPX_DSP_MIPS_MACROS_MSA_H_
+#define VPX_VPX_DSP_MIPS_MACROS_MSA_H_
 
 #include <msa.h>
 
@@ -1966,4 +1966,4 @@
                                                                 \
     tmp1_m;                                                     \
   })
-#endif /* VPX_DSP_MIPS_MACROS_MSA_H_ */
+#endif  // VPX_VPX_DSP_MIPS_MACROS_MSA_H_

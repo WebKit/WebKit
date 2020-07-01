@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_MIPS_INV_TXFM_MSA_H_
-#define VPX_DSP_MIPS_INV_TXFM_MSA_H_
+#ifndef VPX_VPX_DSP_MIPS_INV_TXFM_MSA_H_
+#define VPX_VPX_DSP_MIPS_INV_TXFM_MSA_H_
 
 #include "vpx_dsp/mips/macros_msa.h"
 #include "vpx_dsp/mips/txfm_macros_msa.h"
@@ -408,4 +408,4 @@ void vpx_idct16_1d_rows_msa(const int16_t *input, int16_t *output);
 void vpx_iadst16_1d_columns_addblk_msa(int16_t *input, uint8_t *dst,
                                        int32_t dst_stride);
 void vpx_iadst16_1d_rows_msa(const int16_t *input, int16_t *output);
-#endif  // VPX_DSP_MIPS_INV_TXFM_MSA_H_
+#endif  // VPX_VPX_DSP_MIPS_INV_TXFM_MSA_H_

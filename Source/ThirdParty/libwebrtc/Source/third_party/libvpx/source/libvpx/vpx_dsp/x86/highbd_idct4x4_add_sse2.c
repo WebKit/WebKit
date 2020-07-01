@@ -112,8 +112,8 @@ void vpx_highbd_idct4x4_16_add_sse2(const tran_low_t *input, uint16_t *dest,
     min_input = _mm_min_epi16(min_input, _mm_srli_si128(min_input, 4));
     max_input = _mm_max_epi16(max_input, _mm_srli_si128(max_input, 2));
     min_input = _mm_min_epi16(min_input, _mm_srli_si128(min_input, 2));
-    max = _mm_extract_epi16(max_input, 0);
-    min = _mm_extract_epi16(min_input, 0);
+    max = (int16_t)_mm_extract_epi16(max_input, 0);
+    min = (int16_t)_mm_extract_epi16(min_input, 0);
   }
 
   if (bd == 8 || (max < 4096 && min >= -4096)) {

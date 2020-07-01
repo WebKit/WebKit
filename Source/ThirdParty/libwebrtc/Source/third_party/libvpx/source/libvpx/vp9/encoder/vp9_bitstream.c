@@ -18,6 +18,9 @@
 #include "vpx_mem/vpx_mem.h"
 #include "vpx_ports/mem_ops.h"
 #include "vpx_ports/system_state.h"
+#if CONFIG_BITSTREAM_DEBUG
+#include "vpx_util/vpx_debug_util.h"
+#endif  // CONFIG_BITSTREAM_DEBUG
 
 #include "vp9/common/vp9_entropy.h"
 #include "vp9/common/vp9_entropymode.h"
@@ -39,8 +42,10 @@ static const struct vp9_token intra_mode_encodings[INTRA_MODES] = {
   { 0, 1 },  { 6, 3 },   { 28, 5 },  { 30, 5 }, { 58, 6 },
   { 59, 6 }, { 126, 7 }, { 127, 7 }, { 62, 6 }, { 2, 2 }
 };
-static const struct vp9_token switchable_interp_encodings[SWITCHABLE_FILTERS] =
-    { { 0, 1 }, { 2, 2 }, { 3, 2 } };
+static const struct vp9_token
+    switchable_interp_encodings[SWITCHABLE_FILTERS] = { { 0, 1 },
+                                                        { 2, 2 },
+                                                        { 3, 2 } };
 static const struct vp9_token partition_encodings[PARTITION_TYPES] = {
   { 0, 1 }, { 2, 2 }, { 6, 3 }, { 7, 3 }
 };
@@ -86,7 +91,7 @@ static void write_selected_tx_size(const VP9_COMMON *cm,
   BLOCK_SIZE bsize = xd->mi[0]->sb_type;
   const TX_SIZE max_tx_size = max_txsize_lookup[bsize];
   const vpx_prob *const tx_probs =
-      get_tx_probs2(max_tx_size, xd, &cm->fc->tx_probs);
+      get_tx_probs(max_tx_size, get_tx_size_context(xd), &cm->fc->tx_probs);
   vpx_write(w, tx_size != TX_4X4, tx_probs[0]);
   if (tx_size != TX_4X4 && max_tx_size >= TX_16X16) {
     vpx_write(w, tx_size != TX_8X8, tx_probs[1]);
@@ -217,7 +222,8 @@ static void write_ref_frames(const VP9_COMMON *cm, const MACROBLOCKD *const xd,
     }
 
     if (is_compound) {
-      vpx_write(w, mi->ref_frame[0] == GOLDEN_FRAME,
+      const int idx = cm->ref_frame_sign_bias[cm->comp_fixed_ref];
+      vpx_write(w, mi->ref_frame[!idx] == cm->comp_var_ref[1],
                 vp9_get_pred_prob_comp_ref_p(cm, xd));
     } else {
       const int bit0 = mi->ref_frame[0] != LAST_FRAME;
@@ -459,7 +465,8 @@ static void write_modes_sb(
           write_modes_b(cpi, xd, tile, w, tok, tok_end, mi_row, mi_col + bs,
                         max_mv_magnitude, interp_filter_selected);
         break;
-      case PARTITION_SPLIT:
+      default:
+        assert(partition == PARTITION_SPLIT);
         write_modes_sb(cpi, xd, tile, w, tok, tok_end, mi_row, mi_col, subsize,
                        max_mv_magnitude, interp_filter_selected);
         write_modes_sb(cpi, xd, tile, w, tok, tok_end, mi_row, mi_col + bs,
@@ -469,7 +476,6 @@ static void write_modes_sb(
         write_modes_sb(cpi, xd, tile, w, tok, tok_end, mi_row + bs, mi_col + bs,
                        subsize, max_mv_magnitude, interp_filter_selected);
         break;
-      default: assert(0);
     }
   }
 
@@ -618,9 +624,10 @@ static void update_coef_probs_common(vpx_writer *const bc, VP9_COMP *cpi,
       return;
     }
 
-    case ONE_LOOP_REDUCED: {
+    default: {
       int updates = 0;
       int noupdates_before_first = 0;
+      assert(cpi->sf.use_fast_coef_updates == ONE_LOOP_REDUCED);
       for (i = 0; i < PLANE_TYPES; ++i) {
         for (j = 0; j < REF_TYPES; ++j) {
           for (k = 0; k < COEF_BANDS; ++k) {
@@ -670,7 +677,6 @@ static void update_coef_probs_common(vpx_writer *const bc, VP9_COMP *cpi,
       }
       return;
     }
-    default: assert(0);
   }
 }
 
@@ -909,10 +915,24 @@ int vp9_get_refresh_mask(VP9_COMP *cpi) {
            (cpi->refresh_golden_frame << cpi->alt_fb_idx);
   } else {
     int arf_idx = cpi->alt_fb_idx;
-    if ((cpi->oxcf.pass == 2) && cpi->multi_arf_allowed) {
-      const GF_GROUP *const gf_group = &cpi->twopass.gf_group;
-      arf_idx = gf_group->arf_update_idx[gf_group->index];
+    GF_GROUP *const gf_group = &cpi->twopass.gf_group;
+
+    if (cpi->multi_layer_arf) {
+      for (arf_idx = 0; arf_idx < REF_FRAMES; ++arf_idx) {
+        if (arf_idx != cpi->alt_fb_idx && arf_idx != cpi->lst_fb_idx &&
+            arf_idx != cpi->gld_fb_idx) {
+          int idx;
+          for (idx = 0; idx < gf_group->stack_size; ++idx)
+            if (arf_idx == gf_group->arf_index_stack[idx]) break;
+          if (idx == gf_group->stack_size) break;
+        }
+      }
     }
+    cpi->twopass.gf_group.top_arf_idx = arf_idx;
+
+    if (cpi->use_svc && cpi->svc.use_set_ref_frame_config &&
+        cpi->svc.temporal_layering_mode == VP9E_TEMPORAL_LAYERING_MODE_BYPASS)
+      return cpi->svc.update_buffer_slot[cpi->svc.spatial_layer_id];
     return (cpi->refresh_last_frame << cpi->lst_fb_idx) |
            (cpi->refresh_golden_frame << cpi->gld_fb_idx) |
            (cpi->refresh_alt_ref_frame << arf_idx);
@@ -1117,11 +1137,7 @@ static void write_frame_size_with_refs(VP9_COMP *cpi,
         ((cpi->svc.number_temporal_layers > 1 &&
           cpi->oxcf.rc_mode == VPX_CBR) ||
          (cpi->svc.number_spatial_layers > 1 &&
-          cpi->svc.layer_context[cpi->svc.spatial_layer_id].is_key_frame) ||
-         (is_two_pass_svc(cpi) &&
-          cpi->svc.encode_empty_frame_state == ENCODING &&
-          cpi->svc.layer_context[0].frames_from_key_frame <
-              cpi->svc.number_temporal_layers + 1))) {
+          cpi->svc.layer_context[cpi->svc.spatial_layer_id].is_key_frame))) {
       found = 0;
     } else if (cfg != NULL) {
       found =
@@ -1153,8 +1169,10 @@ static void write_profile(BITSTREAM_PROFILE profile,
     case PROFILE_0: vpx_wb_write_literal(wb, 0, 2); break;
     case PROFILE_1: vpx_wb_write_literal(wb, 2, 2); break;
     case PROFILE_2: vpx_wb_write_literal(wb, 1, 2); break;
-    case PROFILE_3: vpx_wb_write_literal(wb, 6, 3); break;
-    default: assert(0);
+    default:
+      assert(profile == PROFILE_3);
+      vpx_wb_write_literal(wb, 6, 3);
+      break;
   }
 }
 
@@ -1191,7 +1209,13 @@ static void write_uncompressed_header(VP9_COMP *cpi,
 
   write_profile(cm->profile, wb);
 
-  vpx_wb_write_bit(wb, 0);  // show_existing_frame
+  // If to use show existing frame.
+  vpx_wb_write_bit(wb, cm->show_existing_frame);
+  if (cm->show_existing_frame) {
+    vpx_wb_write_literal(wb, cpi->alt_fb_idx, 3);
+    return;
+  }
+
   vpx_wb_write_bit(wb, cm->frame_type);
   vpx_wb_write_bit(wb, cm->show_frame);
   vpx_wb_write_bit(wb, cm->error_resilient_mode);
@@ -1201,14 +1225,6 @@ static void write_uncompressed_header(VP9_COMP *cpi,
     write_bitdepth_colorspace_sampling(cm, wb);
     write_frame_size(cm, wb);
   } else {
-    // In spatial svc if it's not error_resilient_mode then we need to code all
-    // visible frames as invisible. But we need to keep the show_frame flag so
-    // that the publisher could know whether it is supposed to be visible.
-    // So we will code the show_frame flag as it is. Then code the intra_only
-    // bit here. This will make the bitstream incompatible. In the player we
-    // will change to show_frame flag to 0, then add an one byte frame with
-    // show_existing_frame flag which tells the decoder which frame we want to
-    // show.
     if (!cm->show_frame) vpx_wb_write_bit(wb, cm->intra_only);
 
     if (!cm->error_resilient_mode)
@@ -1340,7 +1356,20 @@ void vp9_pack_bitstream(VP9_COMP *cpi, uint8_t *dest, size_t *size) {
   struct vpx_write_bit_buffer wb = { data, 0 };
   struct vpx_write_bit_buffer saved_wb;
 
+#if CONFIG_BITSTREAM_DEBUG
+  bitstream_queue_reset_write();
+#endif
+
   write_uncompressed_header(cpi, &wb);
+
+  // Skip the rest coding process if use show existing frame.
+  if (cpi->common.show_existing_frame) {
+    uncompressed_hdr_size = vpx_wb_bytes_written(&wb);
+    data += uncompressed_hdr_size;
+    *size = data - dest;
+    return;
+  }
+
   saved_wb = wb;
   vpx_wb_write_literal(&wb, 0, 16);  // don't know in advance first part. size
 

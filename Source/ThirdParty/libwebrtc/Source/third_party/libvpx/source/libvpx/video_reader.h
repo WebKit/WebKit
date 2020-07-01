@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VIDEO_READER_H_
-#define VIDEO_READER_H_
+#ifndef VPX_VIDEO_READER_H_
+#define VPX_VIDEO_READER_H_
 
 #include "./video_common.h"
 
@@ -48,4 +48,4 @@ const VpxVideoInfo *vpx_video_reader_get_info(VpxVideoReader *reader);
 }  // extern "C"
 #endif
 
-#endif  // VIDEO_READER_H_
+#endif  // VPX_VIDEO_READER_H_

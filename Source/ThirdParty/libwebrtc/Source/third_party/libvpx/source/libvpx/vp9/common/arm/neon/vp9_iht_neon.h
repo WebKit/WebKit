@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_ARM_NEON_VP9_IHT_NEON_H_
-#define VP9_COMMON_ARM_NEON_VP9_IHT_NEON_H_
+#ifndef VPX_VP9_COMMON_ARM_NEON_VP9_IHT_NEON_H_
+#define VPX_VP9_COMMON_ARM_NEON_VP9_IHT_NEON_H_
 
 #include <arm_neon.h>
 
@@ -59,34 +59,55 @@ static INLINE void iadst4(int16x8_t *const io) {
 
 static INLINE void iadst_half_butterfly_neon(int16x8_t *const x,
                                              const int16x4_t c) {
-  const int16x8_t sum = vaddq_s16(x[0], x[1]);
-  const int16x8_t sub = vsubq_s16(x[0], x[1]);
+  // Don't add/sub before multiply, which will overflow in iadst8.
+  const int32x4_t x0_lo = vmull_lane_s16(vget_low_s16(x[0]), c, 0);
+  const int32x4_t x0_hi = vmull_lane_s16(vget_high_s16(x[0]), c, 0);
+  const int32x4_t x1_lo = vmull_lane_s16(vget_low_s16(x[1]), c, 0);
+  const int32x4_t x1_hi = vmull_lane_s16(vget_high_s16(x[1]), c, 0);
   int32x4_t t0[2], t1[2];
 
-  t0[0] = vmull_lane_s16(vget_low_s16(sum), c, 0);
-  t0[1] = vmull_lane_s16(vget_high_s16(sum), c, 0);
-  t1[0] = vmull_lane_s16(vget_low_s16(sub), c, 0);
-  t1[1] = vmull_lane_s16(vget_high_s16(sub), c, 0);
+  t0[0] = vaddq_s32(x0_lo, x1_lo);
+  t0[1] = vaddq_s32(x0_hi, x1_hi);
+  t1[0] = vsubq_s32(x0_lo, x1_lo);
+  t1[1] = vsubq_s32(x0_hi, x1_hi);
   x[0] = dct_const_round_shift_low_8(t0);
   x[1] = dct_const_round_shift_low_8(t1);
 }
 
-static INLINE int16x8_t iadst_half_butterfly_neg_neon(const int16x8_t in,
-                                                      const int16x4_t c) {
-  int32x4_t t[2];
+static INLINE void iadst_half_butterfly_neg_neon(int16x8_t *const x0,
+                                                 int16x8_t *const x1,
+                                                 const int16x4_t c) {
+  // Don't add/sub before multiply, which will overflow in iadst8.
+  const int32x4_t x0_lo = vmull_lane_s16(vget_low_s16(*x0), c, 1);
+  const int32x4_t x0_hi = vmull_lane_s16(vget_high_s16(*x0), c, 1);
+  const int32x4_t x1_lo = vmull_lane_s16(vget_low_s16(*x1), c, 1);
+  const int32x4_t x1_hi = vmull_lane_s16(vget_high_s16(*x1), c, 1);
+  int32x4_t t0[2], t1[2];
 
-  t[0] = vmull_lane_s16(vget_low_s16(in), c, 1);
-  t[1] = vmull_lane_s16(vget_high_s16(in), c, 1);
-  return dct_const_round_shift_low_8(t);
+  t0[0] = vaddq_s32(x0_lo, x1_lo);
+  t0[1] = vaddq_s32(x0_hi, x1_hi);
+  t1[0] = vsubq_s32(x0_lo, x1_lo);
+  t1[1] = vsubq_s32(x0_hi, x1_hi);
+  *x1 = dct_const_round_shift_low_8(t0);
+  *x0 = dct_const_round_shift_low_8(t1);
 }
 
-static INLINE int16x8_t iadst_half_butterfly_pos_neon(const int16x8_t in,
-                                                      const int16x4_t c) {
-  int32x4_t t[2];
+static INLINE void iadst_half_butterfly_pos_neon(int16x8_t *const x0,
+                                                 int16x8_t *const x1,
+                                                 const int16x4_t c) {
+  // Don't add/sub before multiply, which will overflow in iadst8.
+  const int32x4_t x0_lo = vmull_lane_s16(vget_low_s16(*x0), c, 0);
+  const int32x4_t x0_hi = vmull_lane_s16(vget_high_s16(*x0), c, 0);
+  const int32x4_t x1_lo = vmull_lane_s16(vget_low_s16(*x1), c, 0);
+  const int32x4_t x1_hi = vmull_lane_s16(vget_high_s16(*x1), c, 0);
+  int32x4_t t0[2], t1[2];
 
-  t[0] = vmull_lane_s16(vget_low_s16(in), c, 0);
-  t[1] = vmull_lane_s16(vget_high_s16(in), c, 0);
-  return dct_const_round_shift_low_8(t);
+  t0[0] = vaddq_s32(x0_lo, x1_lo);
+  t0[1] = vaddq_s32(x0_hi, x1_hi);
+  t1[0] = vsubq_s32(x0_lo, x1_lo);
+  t1[1] = vsubq_s32(x0_hi, x1_hi);
+  *x1 = dct_const_round_shift_low_8(t0);
+  *x0 = dct_const_round_shift_low_8(t1);
 }
 
 static INLINE void iadst_butterfly_lane_0_1_neon(const int16x8_t in0,
@@ -236,4 +257,16 @@ static INLINE void iadst8(int16x8_t *const io) {
   io[7] = vnegq_s16(x[1]);
 }
 
-#endif  // VP9_COMMON_ARM_NEON_VP9_IHT_NEON_H_
+void vpx_iadst16x16_256_add_half1d(const void *const input, int16_t *output,
+                                   void *const dest, const int stride,
+                                   const int highbd_flag);
+
+typedef void (*iht_1d)(const void *const input, int16_t *output,
+                       void *const dest, const int stride,
+                       const int highbd_flag);
+
+typedef struct {
+  iht_1d cols, rows;  // vertical and horizontal
+} iht_2d;
+
+#endif  // VPX_VP9_COMMON_ARM_NEON_VP9_IHT_NEON_H_

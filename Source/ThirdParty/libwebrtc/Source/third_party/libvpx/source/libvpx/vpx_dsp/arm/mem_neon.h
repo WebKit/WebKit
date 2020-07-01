@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_ARM_MEM_NEON_H_
-#define VPX_DSP_ARM_MEM_NEON_H_
+#ifndef VPX_VPX_DSP_ARM_MEM_NEON_H_
+#define VPX_VPX_DSP_ARM_MEM_NEON_H_
 
 #include <arm_neon.h>
 #include <assert.h>
@@ -101,9 +101,9 @@ static INLINE uint8x8_t load_unaligned_u8(const uint8_t *buf, int stride) {
   if (stride == 4) return vld1_u8(buf);
   memcpy(&a, buf, 4);
   buf += stride;
-  a_u32 = vld1_lane_u32(&a, a_u32, 0);
+  a_u32 = vset_lane_u32(a, a_u32, 0);
   memcpy(&a, buf, 4);
-  a_u32 = vld1_lane_u32(&a, a_u32, 1);
+  a_u32 = vset_lane_u32(a, a_u32, 1);
   return vreinterpret_u8_u32(a_u32);
 }
 
@@ -127,16 +127,16 @@ static INLINE uint8x16_t load_unaligned_u8q(const uint8_t *buf, int stride) {
   if (stride == 4) return vld1q_u8(buf);
   memcpy(&a, buf, 4);
   buf += stride;
-  a_u32 = vld1q_lane_u32(&a, a_u32, 0);
+  a_u32 = vsetq_lane_u32(a, a_u32, 0);
   memcpy(&a, buf, 4);
   buf += stride;
-  a_u32 = vld1q_lane_u32(&a, a_u32, 1);
+  a_u32 = vsetq_lane_u32(a, a_u32, 1);
   memcpy(&a, buf, 4);
   buf += stride;
-  a_u32 = vld1q_lane_u32(&a, a_u32, 2);
+  a_u32 = vsetq_lane_u32(a, a_u32, 2);
   memcpy(&a, buf, 4);
   buf += stride;
-  a_u32 = vld1q_lane_u32(&a, a_u32, 3);
+  a_u32 = vsetq_lane_u32(a, a_u32, 3);
   return vreinterpretq_u8_u32(a_u32);
 }
 
@@ -181,4 +181,4 @@ static INLINE void store_u8(uint8_t *buf, int stride, const uint8x8_t a) {
   buf += stride;
   vst1_lane_u32((uint32_t *)buf, a_u32, 1);
 }
-#endif  // VPX_DSP_ARM_MEM_NEON_H_
+#endif  // VPX_VPX_DSP_ARM_MEM_NEON_H_

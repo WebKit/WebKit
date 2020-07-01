@@ -32,7 +32,7 @@ class AltRefAqSegmentTest
 
   virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
                                   ::libvpx_test::Encoder *encoder) {
-    if (video->frame() == 1) {
+    if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, set_cpu_used_);
       encoder->Control(VP9E_SET_ALT_REF_AQ, alt_ref_aq_mode_);
       encoder->Control(VP9E_SET_AQ_MODE, aq_mode_);

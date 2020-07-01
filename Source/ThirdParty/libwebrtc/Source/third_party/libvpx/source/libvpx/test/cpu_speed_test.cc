@@ -44,7 +44,7 @@ class CpuSpeedTest
 
   virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
                                   ::libvpx_test::Encoder *encoder) {
-    if (video->frame() == 1) {
+    if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, set_cpu_used_);
       encoder->Control(VP9E_SET_TUNE_CONTENT, tune_content_);
       if (encoding_mode_ != ::libvpx_test::kRealTime) {
@@ -152,5 +152,5 @@ VP9_INSTANTIATE_TEST_CASE(CpuSpeedTest,
                           ::testing::Values(::libvpx_test::kTwoPassGood,
                                             ::libvpx_test::kOnePassGood,
                                             ::libvpx_test::kRealTime),
-                          ::testing::Range(0, 9));
+                          ::testing::Range(0, 10));
 }  // namespace

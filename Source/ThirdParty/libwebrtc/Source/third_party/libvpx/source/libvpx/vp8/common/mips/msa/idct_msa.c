@@ -134,7 +134,7 @@ static void idct4x4_addconst_msa(int16_t in_dc, uint8_t *pred,
   ST4x4_UB(dst0, dst0, 0, 1, 2, 3, dest, dest_stride);
 }
 
-void vp8_short_inv_walsh4x4_msa(int16_t *input, int16_t *mb_dq_coeff) {
+void vp8_short_inv_walsh4x4_msa(int16_t *input, int16_t *mb_dqcoeff) {
   v8i16 input0, input1, tmp0, tmp1, tmp2, tmp3, out0, out1;
   const v8i16 mask0 = { 0, 1, 2, 3, 8, 9, 10, 11 };
   const v8i16 mask1 = { 4, 5, 6, 7, 12, 13, 14, 15 };
@@ -157,22 +157,22 @@ void vp8_short_inv_walsh4x4_msa(int16_t *input, int16_t *mb_dq_coeff) {
   ADD2(tmp0, 3, tmp1, 3, out0, out1);
   out0 >>= 3;
   out1 >>= 3;
-  mb_dq_coeff[0] = __msa_copy_s_h(out0, 0);
-  mb_dq_coeff[16] = __msa_copy_s_h(out0, 4);
-  mb_dq_coeff[32] = __msa_copy_s_h(out1, 0);
-  mb_dq_coeff[48] = __msa_copy_s_h(out1, 4);
-  mb_dq_coeff[64] = __msa_copy_s_h(out0, 1);
-  mb_dq_coeff[80] = __msa_copy_s_h(out0, 5);
-  mb_dq_coeff[96] = __msa_copy_s_h(out1, 1);
-  mb_dq_coeff[112] = __msa_copy_s_h(out1, 5);
-  mb_dq_coeff[128] = __msa_copy_s_h(out0, 2);
-  mb_dq_coeff[144] = __msa_copy_s_h(out0, 6);
-  mb_dq_coeff[160] = __msa_copy_s_h(out1, 2);
-  mb_dq_coeff[176] = __msa_copy_s_h(out1, 6);
-  mb_dq_coeff[192] = __msa_copy_s_h(out0, 3);
-  mb_dq_coeff[208] = __msa_copy_s_h(out0, 7);
-  mb_dq_coeff[224] = __msa_copy_s_h(out1, 3);
-  mb_dq_coeff[240] = __msa_copy_s_h(out1, 7);
+  mb_dqcoeff[0] = __msa_copy_s_h(out0, 0);
+  mb_dqcoeff[16] = __msa_copy_s_h(out0, 4);
+  mb_dqcoeff[32] = __msa_copy_s_h(out1, 0);
+  mb_dqcoeff[48] = __msa_copy_s_h(out1, 4);
+  mb_dqcoeff[64] = __msa_copy_s_h(out0, 1);
+  mb_dqcoeff[80] = __msa_copy_s_h(out0, 5);
+  mb_dqcoeff[96] = __msa_copy_s_h(out1, 1);
+  mb_dqcoeff[112] = __msa_copy_s_h(out1, 5);
+  mb_dqcoeff[128] = __msa_copy_s_h(out0, 2);
+  mb_dqcoeff[144] = __msa_copy_s_h(out0, 6);
+  mb_dqcoeff[160] = __msa_copy_s_h(out1, 2);
+  mb_dqcoeff[176] = __msa_copy_s_h(out1, 6);
+  mb_dqcoeff[192] = __msa_copy_s_h(out0, 3);
+  mb_dqcoeff[208] = __msa_copy_s_h(out0, 7);
+  mb_dqcoeff[224] = __msa_copy_s_h(out1, 3);
+  mb_dqcoeff[240] = __msa_copy_s_h(out1, 7);
 }
 
 static void dequant_idct4x4_addblk_msa(int16_t *input, int16_t *dequant_input,
@@ -359,27 +359,27 @@ void vp8_dequant_idct_add_y_block_msa(int16_t *q, int16_t *dq, uint8_t *dst,
   }
 }
 
-void vp8_dequant_idct_add_uv_block_msa(int16_t *q, int16_t *dq, uint8_t *dstu,
-                                       uint8_t *dstv, int32_t stride,
+void vp8_dequant_idct_add_uv_block_msa(int16_t *q, int16_t *dq, uint8_t *dst_u,
+                                       uint8_t *dst_v, int32_t stride,
                                        char *eobs) {
   int16_t *eobs_h = (int16_t *)eobs;
 
   if (eobs_h[0]) {
     if (eobs_h[0] & 0xfefe) {
-      dequant_idct4x4_addblk_2x_msa(q, dq, dstu, stride);
+      dequant_idct4x4_addblk_2x_msa(q, dq, dst_u, stride);
     } else {
-      dequant_idct_addconst_2x_msa(q, dq, dstu, stride);
+      dequant_idct_addconst_2x_msa(q, dq, dst_u, stride);
     }
   }
 
   q += 32;
-  dstu += (stride * 4);
+  dst_u += (stride * 4);
 
   if (eobs_h[1]) {
     if (eobs_h[1] & 0xfefe) {
-      dequant_idct4x4_addblk_2x_msa(q, dq, dstu, stride);
+      dequant_idct4x4_addblk_2x_msa(q, dq, dst_u, stride);
     } else {
-      dequant_idct_addconst_2x_msa(q, dq, dstu, stride);
+      dequant_idct_addconst_2x_msa(q, dq, dst_u, stride);
     }
   }
 
@@ -387,20 +387,20 @@ void vp8_dequant_idct_add_uv_block_msa(int16_t *q, int16_t *dq, uint8_t *dstu,
 
   if (eobs_h[2]) {
     if (eobs_h[2] & 0xfefe) {
-      dequant_idct4x4_addblk_2x_msa(q, dq, dstv, stride);
+      dequant_idct4x4_addblk_2x_msa(q, dq, dst_v, stride);
     } else {
-      dequant_idct_addconst_2x_msa(q, dq, dstv, stride);
+      dequant_idct_addconst_2x_msa(q, dq, dst_v, stride);
     }
   }
 
   q += 32;
-  dstv += (stride * 4);
+  dst_v += (stride * 4);
 
   if (eobs_h[3]) {
     if (eobs_h[3] & 0xfefe) {
-      dequant_idct4x4_addblk_2x_msa(q, dq, dstv, stride);
+      dequant_idct4x4_addblk_2x_msa(q, dq, dst_v, stride);
     } else {
-      dequant_idct_addconst_2x_msa(q, dq, dstv, stride);
+      dequant_idct_addconst_2x_msa(q, dq, dst_v, stride);
     }
   }
 }

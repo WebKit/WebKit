@@ -387,7 +387,7 @@ TEST_P(VPxEncoderThreadTest, EncoderResultTest) {
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
   const double multi_thr_psnr = GetAveragePsnr();
 
-  EXPECT_NEAR(single_thr_psnr, multi_thr_psnr, 0.1);
+  EXPECT_NEAR(single_thr_psnr, multi_thr_psnr, 0.2);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -409,7 +409,7 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(::libvpx_test::kTwoPassGood,
                           ::libvpx_test::kOnePassGood,
                           ::libvpx_test::kRealTime),
-        ::testing::Range(3, 9),    // cpu_used
+        ::testing::Range(3, 10),   // cpu_used
         ::testing::Range(0, 3),    // tile_columns
         ::testing::Range(2, 5)));  // threads
 

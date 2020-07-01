@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_VP8_ENTROPYMODEDATA_H_
-#define VP8_COMMON_VP8_ENTROPYMODEDATA_H_
+#ifndef VPX_VP8_COMMON_VP8_ENTROPYMODEDATA_H_
+#define VPX_VP8_COMMON_VP8_ENTROPYMODEDATA_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -169,4 +169,4 @@ const vp8_prob
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_VP8_ENTROPYMODEDATA_H_
+#endif  // VPX_VP8_COMMON_VP8_ENTROPYMODEDATA_H_

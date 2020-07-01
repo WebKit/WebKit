@@ -11,6 +11,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include <tuple>
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
@@ -127,7 +128,7 @@ class ConsistencyTestBase : public ::testing::Test {
 };
 
 #if CONFIG_VP9_ENCODER
-typedef std::tr1::tuple<int, int> ConsistencyParam;
+typedef std::tuple<int, int> ConsistencyParam;
 class ConsistencyVP9Test
     : public ConsistencyTestBase,
       public ::testing::WithParamInterface<ConsistencyParam> {
@@ -198,15 +199,15 @@ TEST_P(ConsistencyVP9Test, ConsistencyIsZero) {
 }
 #endif  // CONFIG_VP9_ENCODER
 
-using std::tr1::make_tuple;
+using std::make_tuple;
 
 //------------------------------------------------------------------------------
 // C functions
 
 #if CONFIG_VP9_ENCODER
-const ConsistencyParam c_vp9_tests[] = {
-  make_tuple(320, 240), make_tuple(318, 242), make_tuple(318, 238)
-};
+const ConsistencyParam c_vp9_tests[] = { make_tuple(320, 240),
+                                         make_tuple(318, 242),
+                                         make_tuple(318, 238) };
 INSTANTIATE_TEST_CASE_P(C, ConsistencyVP9Test,
                         ::testing::ValuesIn(c_vp9_tests));
 #endif

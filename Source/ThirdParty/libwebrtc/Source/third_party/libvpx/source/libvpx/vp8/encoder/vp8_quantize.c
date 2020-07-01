@@ -174,8 +174,6 @@ static void invert_quant(int improved_quant, short *quant, short *shift,
   } else {
     *quant = (1 << 16) / d;
     *shift = 0;
-    /* use multiplication and constant shift by 16 */
-    *shift = 1 << (16 - *shift);
   }
 }
 

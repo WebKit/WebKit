@@ -23,6 +23,7 @@
 #include <string.h> /* for memcpy() */
 
 #include "md5_utils.h"
+#include "vpx_ports/compiler_attributes.h"
 
 static void byteSwap(UWORD32 *buf, unsigned words) {
   md5byte *p;
@@ -145,17 +146,6 @@ void MD5Final(md5byte digest[16], struct MD5Context *ctx) {
 #define MD5STEP(f, w, x, y, z, in, s) \
   (w += f(x, y, z) + in, w = (w << s | w >> (32 - s)) + x)
 
-#if defined(__clang__) && defined(__has_attribute)
-#if __has_attribute(no_sanitize)
-#define VPX_NO_UNSIGNED_OVERFLOW_CHECK \
-  __attribute__((no_sanitize("unsigned-integer-overflow")))
-#endif
-#endif
-
-#ifndef VPX_NO_UNSIGNED_OVERFLOW_CHECK
-#define VPX_NO_UNSIGNED_OVERFLOW_CHECK
-#endif
-
 /*
  * The core of the MD5 algorithm, this alters an existing MD5 hash to
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
@@ -163,7 +153,7 @@ void MD5Final(md5byte digest[16], struct MD5Context *ctx) {
  */
 VPX_NO_UNSIGNED_OVERFLOW_CHECK void MD5Transform(UWORD32 buf[4],
                                                  UWORD32 const in[16]) {
-  register UWORD32 a, b, c, d;
+  UWORD32 a, b, c, d;
 
   a = buf[0];
   b = buf[1];
@@ -243,7 +233,5 @@ VPX_NO_UNSIGNED_OVERFLOW_CHECK void MD5Transform(UWORD32 buf[4],
   buf[2] += c;
   buf[3] += d;
 }
-
-#undef VPX_NO_UNSIGNED_OVERFLOW_CHECK
 
 #endif

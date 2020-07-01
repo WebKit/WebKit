@@ -81,11 +81,11 @@ static INLINE void filter4(int8_t mask, uint8_t thresh, uint8_t *op1,
                            uint8_t *op0, uint8_t *oq0, uint8_t *oq1) {
   int8_t filter1, filter2;
 
-  const int8_t ps1 = (int8_t)*op1 ^ 0x80;
-  const int8_t ps0 = (int8_t)*op0 ^ 0x80;
-  const int8_t qs0 = (int8_t)*oq0 ^ 0x80;
-  const int8_t qs1 = (int8_t)*oq1 ^ 0x80;
-  const uint8_t hev = hev_mask(thresh, *op1, *op0, *oq0, *oq1);
+  const int8_t ps1 = (int8_t)(*op1 ^ 0x80);
+  const int8_t ps0 = (int8_t)(*op0 ^ 0x80);
+  const int8_t qs0 = (int8_t)(*oq0 ^ 0x80);
+  const int8_t qs1 = (int8_t)(*oq1 ^ 0x80);
+  const int8_t hev = hev_mask(thresh, *op1, *op0, *oq0, *oq1);
 
   // add outer taps if we have high edge variance
   int8_t filter = signed_char_clamp(ps1 - qs1) & hev;
@@ -99,39 +99,40 @@ static INLINE void filter4(int8_t mask, uint8_t thresh, uint8_t *op1,
   filter1 = signed_char_clamp(filter + 4) >> 3;
   filter2 = signed_char_clamp(filter + 3) >> 3;
 
-  *oq0 = signed_char_clamp(qs0 - filter1) ^ 0x80;
-  *op0 = signed_char_clamp(ps0 + filter2) ^ 0x80;
+  *oq0 = (uint8_t)(signed_char_clamp(qs0 - filter1) ^ 0x80);
+  *op0 = (uint8_t)(signed_char_clamp(ps0 + filter2) ^ 0x80);
 
   // outer tap adjustments
   filter = ROUND_POWER_OF_TWO(filter1, 1) & ~hev;
 
-  *oq1 = signed_char_clamp(qs1 - filter) ^ 0x80;
-  *op1 = signed_char_clamp(ps1 + filter) ^ 0x80;
+  *oq1 = (uint8_t)(signed_char_clamp(qs1 - filter) ^ 0x80);
+  *op1 = (uint8_t)(signed_char_clamp(ps1 + filter) ^ 0x80);
 }
 
-void vpx_lpf_horizontal_4_c(uint8_t *s, int p /* pitch */,
-                            const uint8_t *blimit, const uint8_t *limit,
-                            const uint8_t *thresh) {
+void vpx_lpf_horizontal_4_c(uint8_t *s, int pitch, const uint8_t *blimit,
+                            const uint8_t *limit, const uint8_t *thresh) {
   int i;
 
   // loop filter designed to work using chars so that we can make maximum use
   // of 8 bit simd instructions.
   for (i = 0; i < 8; ++i) {
-    const uint8_t p3 = s[-4 * p], p2 = s[-3 * p], p1 = s[-2 * p], p0 = s[-p];
-    const uint8_t q0 = s[0 * p], q1 = s[1 * p], q2 = s[2 * p], q3 = s[3 * p];
+    const uint8_t p3 = s[-4 * pitch], p2 = s[-3 * pitch], p1 = s[-2 * pitch],
+                  p0 = s[-pitch];
+    const uint8_t q0 = s[0 * pitch], q1 = s[1 * pitch], q2 = s[2 * pitch],
+                  q3 = s[3 * pitch];
     const int8_t mask =
         filter_mask(*limit, *blimit, p3, p2, p1, p0, q0, q1, q2, q3);
-    filter4(mask, *thresh, s - 2 * p, s - 1 * p, s, s + 1 * p);
+    filter4(mask, *thresh, s - 2 * pitch, s - 1 * pitch, s, s + 1 * pitch);
     ++s;
   }
 }
 
-void vpx_lpf_horizontal_4_dual_c(uint8_t *s, int p, const uint8_t *blimit0,
+void vpx_lpf_horizontal_4_dual_c(uint8_t *s, int pitch, const uint8_t *blimit0,
                                  const uint8_t *limit0, const uint8_t *thresh0,
                                  const uint8_t *blimit1, const uint8_t *limit1,
                                  const uint8_t *thresh1) {
-  vpx_lpf_horizontal_4_c(s, p, blimit0, limit0, thresh0);
-  vpx_lpf_horizontal_4_c(s + 8, p, blimit1, limit1, thresh1);
+  vpx_lpf_horizontal_4_c(s, pitch, blimit0, limit0, thresh0);
+  vpx_lpf_horizontal_4_c(s + 8, pitch, blimit1, limit1, thresh1);
 }
 
 void vpx_lpf_vertical_4_c(uint8_t *s, int pitch, const uint8_t *blimit,
@@ -178,31 +179,33 @@ static INLINE void filter8(int8_t mask, uint8_t thresh, uint8_t flat,
   }
 }
 
-void vpx_lpf_horizontal_8_c(uint8_t *s, int p, const uint8_t *blimit,
+void vpx_lpf_horizontal_8_c(uint8_t *s, int pitch, const uint8_t *blimit,
                             const uint8_t *limit, const uint8_t *thresh) {
   int i;
 
   // loop filter designed to work using chars so that we can make maximum use
   // of 8 bit simd instructions.
   for (i = 0; i < 8; ++i) {
-    const uint8_t p3 = s[-4 * p], p2 = s[-3 * p], p1 = s[-2 * p], p0 = s[-p];
-    const uint8_t q0 = s[0 * p], q1 = s[1 * p], q2 = s[2 * p], q3 = s[3 * p];
+    const uint8_t p3 = s[-4 * pitch], p2 = s[-3 * pitch], p1 = s[-2 * pitch],
+                  p0 = s[-pitch];
+    const uint8_t q0 = s[0 * pitch], q1 = s[1 * pitch], q2 = s[2 * pitch],
+                  q3 = s[3 * pitch];
 
     const int8_t mask =
         filter_mask(*limit, *blimit, p3, p2, p1, p0, q0, q1, q2, q3);
     const int8_t flat = flat_mask4(1, p3, p2, p1, p0, q0, q1, q2, q3);
-    filter8(mask, *thresh, flat, s - 4 * p, s - 3 * p, s - 2 * p, s - 1 * p, s,
-            s + 1 * p, s + 2 * p, s + 3 * p);
+    filter8(mask, *thresh, flat, s - 4 * pitch, s - 3 * pitch, s - 2 * pitch,
+            s - 1 * pitch, s, s + 1 * pitch, s + 2 * pitch, s + 3 * pitch);
     ++s;
   }
 }
 
-void vpx_lpf_horizontal_8_dual_c(uint8_t *s, int p, const uint8_t *blimit0,
+void vpx_lpf_horizontal_8_dual_c(uint8_t *s, int pitch, const uint8_t *blimit0,
                                  const uint8_t *limit0, const uint8_t *thresh0,
                                  const uint8_t *blimit1, const uint8_t *limit1,
                                  const uint8_t *thresh1) {
-  vpx_lpf_horizontal_8_c(s, p, blimit0, limit0, thresh0);
-  vpx_lpf_horizontal_8_c(s + 8, p, blimit1, limit1, thresh1);
+  vpx_lpf_horizontal_8_c(s, pitch, blimit0, limit0, thresh0);
+  vpx_lpf_horizontal_8_c(s + 8, pitch, blimit1, limit1, thresh1);
 }
 
 void vpx_lpf_vertical_8_c(uint8_t *s, int pitch, const uint8_t *blimit,
@@ -283,7 +286,8 @@ static INLINE void filter16(int8_t mask, uint8_t thresh, uint8_t flat,
   }
 }
 
-static void mb_lpf_horizontal_edge_w(uint8_t *s, int p, const uint8_t *blimit,
+static void mb_lpf_horizontal_edge_w(uint8_t *s, int pitch,
+                                     const uint8_t *blimit,
                                      const uint8_t *limit,
                                      const uint8_t *thresh, int count) {
   int i;
@@ -291,34 +295,37 @@ static void mb_lpf_horizontal_edge_w(uint8_t *s, int p, const uint8_t *blimit,
   // loop filter designed to work using chars so that we can make maximum use
   // of 8 bit simd instructions.
   for (i = 0; i < 8 * count; ++i) {
-    const uint8_t p3 = s[-4 * p], p2 = s[-3 * p], p1 = s[-2 * p], p0 = s[-p];
-    const uint8_t q0 = s[0 * p], q1 = s[1 * p], q2 = s[2 * p], q3 = s[3 * p];
+    const uint8_t p3 = s[-4 * pitch], p2 = s[-3 * pitch], p1 = s[-2 * pitch],
+                  p0 = s[-pitch];
+    const uint8_t q0 = s[0 * pitch], q1 = s[1 * pitch], q2 = s[2 * pitch],
+                  q3 = s[3 * pitch];
     const int8_t mask =
         filter_mask(*limit, *blimit, p3, p2, p1, p0, q0, q1, q2, q3);
     const int8_t flat = flat_mask4(1, p3, p2, p1, p0, q0, q1, q2, q3);
-    const int8_t flat2 =
-        flat_mask5(1, s[-8 * p], s[-7 * p], s[-6 * p], s[-5 * p], p0, q0,
-                   s[4 * p], s[5 * p], s[6 * p], s[7 * p]);
+    const int8_t flat2 = flat_mask5(
+        1, s[-8 * pitch], s[-7 * pitch], s[-6 * pitch], s[-5 * pitch], p0, q0,
+        s[4 * pitch], s[5 * pitch], s[6 * pitch], s[7 * pitch]);
 
-    filter16(mask, *thresh, flat, flat2, s - 8 * p, s - 7 * p, s - 6 * p,
-             s - 5 * p, s - 4 * p, s - 3 * p, s - 2 * p, s - 1 * p, s,
-             s + 1 * p, s + 2 * p, s + 3 * p, s + 4 * p, s + 5 * p, s + 6 * p,
-             s + 7 * p);
+    filter16(mask, *thresh, flat, flat2, s - 8 * pitch, s - 7 * pitch,
+             s - 6 * pitch, s - 5 * pitch, s - 4 * pitch, s - 3 * pitch,
+             s - 2 * pitch, s - 1 * pitch, s, s + 1 * pitch, s + 2 * pitch,
+             s + 3 * pitch, s + 4 * pitch, s + 5 * pitch, s + 6 * pitch,
+             s + 7 * pitch);
     ++s;
   }
 }
 
-void vpx_lpf_horizontal_16_c(uint8_t *s, int p, const uint8_t *blimit,
+void vpx_lpf_horizontal_16_c(uint8_t *s, int pitch, const uint8_t *blimit,
                              const uint8_t *limit, const uint8_t *thresh) {
-  mb_lpf_horizontal_edge_w(s, p, blimit, limit, thresh, 1);
+  mb_lpf_horizontal_edge_w(s, pitch, blimit, limit, thresh, 1);
 }
 
-void vpx_lpf_horizontal_16_dual_c(uint8_t *s, int p, const uint8_t *blimit,
+void vpx_lpf_horizontal_16_dual_c(uint8_t *s, int pitch, const uint8_t *blimit,
                                   const uint8_t *limit, const uint8_t *thresh) {
-  mb_lpf_horizontal_edge_w(s, p, blimit, limit, thresh, 2);
+  mb_lpf_horizontal_edge_w(s, pitch, blimit, limit, thresh, 2);
 }
 
-static void mb_lpf_vertical_edge_w(uint8_t *s, int p, const uint8_t *blimit,
+static void mb_lpf_vertical_edge_w(uint8_t *s, int pitch, const uint8_t *blimit,
                                    const uint8_t *limit, const uint8_t *thresh,
                                    int count) {
   int i;
@@ -335,18 +342,18 @@ static void mb_lpf_vertical_edge_w(uint8_t *s, int p, const uint8_t *blimit,
     filter16(mask, *thresh, flat, flat2, s - 8, s - 7, s - 6, s - 5, s - 4,
              s - 3, s - 2, s - 1, s, s + 1, s + 2, s + 3, s + 4, s + 5, s + 6,
              s + 7);
-    s += p;
+    s += pitch;
   }
 }
 
-void vpx_lpf_vertical_16_c(uint8_t *s, int p, const uint8_t *blimit,
+void vpx_lpf_vertical_16_c(uint8_t *s, int pitch, const uint8_t *blimit,
                            const uint8_t *limit, const uint8_t *thresh) {
-  mb_lpf_vertical_edge_w(s, p, blimit, limit, thresh, 8);
+  mb_lpf_vertical_edge_w(s, pitch, blimit, limit, thresh, 8);
 }
 
-void vpx_lpf_vertical_16_dual_c(uint8_t *s, int p, const uint8_t *blimit,
+void vpx_lpf_vertical_16_dual_c(uint8_t *s, int pitch, const uint8_t *blimit,
                                 const uint8_t *limit, const uint8_t *thresh) {
-  mb_lpf_vertical_edge_w(s, p, blimit, limit, thresh, 16);
+  mb_lpf_vertical_edge_w(s, pitch, blimit, limit, thresh, 16);
 }
 
 #if CONFIG_VP9_HIGHBITDEPTH
@@ -416,7 +423,7 @@ static INLINE void highbd_filter4(int8_t mask, uint8_t thresh, uint16_t *op1,
   const int16_t ps0 = (int16_t)*op0 - (0x80 << shift);
   const int16_t qs0 = (int16_t)*oq0 - (0x80 << shift);
   const int16_t qs1 = (int16_t)*oq1 - (0x80 << shift);
-  const uint16_t hev = highbd_hev_mask(thresh, *op1, *op0, *oq0, *oq1, bd);
+  const int16_t hev = highbd_hev_mask(thresh, *op1, *op0, *oq0, *oq1, bd);
 
   // Add outer taps if we have high edge variance.
   int16_t filter = signed_char_clamp_high(ps1 - qs1, bd) & hev;
@@ -440,7 +447,7 @@ static INLINE void highbd_filter4(int8_t mask, uint8_t thresh, uint16_t *op1,
   *op1 = signed_char_clamp_high(ps1 + filter, bd) + (0x80 << shift);
 }
 
-void vpx_highbd_lpf_horizontal_4_c(uint16_t *s, int p /* pitch */,
+void vpx_highbd_lpf_horizontal_4_c(uint16_t *s, int pitch,
                                    const uint8_t *blimit, const uint8_t *limit,
                                    const uint8_t *thresh, int bd) {
   int i;
@@ -448,27 +455,28 @@ void vpx_highbd_lpf_horizontal_4_c(uint16_t *s, int p /* pitch */,
   // loop filter designed to work using chars so that we can make maximum use
   // of 8 bit simd instructions.
   for (i = 0; i < 8; ++i) {
-    const uint16_t p3 = s[-4 * p];
-    const uint16_t p2 = s[-3 * p];
-    const uint16_t p1 = s[-2 * p];
-    const uint16_t p0 = s[-p];
-    const uint16_t q0 = s[0 * p];
-    const uint16_t q1 = s[1 * p];
-    const uint16_t q2 = s[2 * p];
-    const uint16_t q3 = s[3 * p];
+    const uint16_t p3 = s[-4 * pitch];
+    const uint16_t p2 = s[-3 * pitch];
+    const uint16_t p1 = s[-2 * pitch];
+    const uint16_t p0 = s[-pitch];
+    const uint16_t q0 = s[0 * pitch];
+    const uint16_t q1 = s[1 * pitch];
+    const uint16_t q2 = s[2 * pitch];
+    const uint16_t q3 = s[3 * pitch];
     const int8_t mask =
         highbd_filter_mask(*limit, *blimit, p3, p2, p1, p0, q0, q1, q2, q3, bd);
-    highbd_filter4(mask, *thresh, s - 2 * p, s - 1 * p, s, s + 1 * p, bd);
+    highbd_filter4(mask, *thresh, s - 2 * pitch, s - 1 * pitch, s,
+                   s + 1 * pitch, bd);
     ++s;
   }
 }
 
 void vpx_highbd_lpf_horizontal_4_dual_c(
-    uint16_t *s, int p, const uint8_t *blimit0, const uint8_t *limit0,
+    uint16_t *s, int pitch, const uint8_t *blimit0, const uint8_t *limit0,
     const uint8_t *thresh0, const uint8_t *blimit1, const uint8_t *limit1,
     const uint8_t *thresh1, int bd) {
-  vpx_highbd_lpf_horizontal_4_c(s, p, blimit0, limit0, thresh0, bd);
-  vpx_highbd_lpf_horizontal_4_c(s + 8, p, blimit1, limit1, thresh1, bd);
+  vpx_highbd_lpf_horizontal_4_c(s, pitch, blimit0, limit0, thresh0, bd);
+  vpx_highbd_lpf_horizontal_4_c(s + 8, pitch, blimit1, limit1, thresh1, bd);
 }
 
 void vpx_highbd_lpf_vertical_4_c(uint16_t *s, int pitch, const uint8_t *blimit,
@@ -517,33 +525,36 @@ static INLINE void highbd_filter8(int8_t mask, uint8_t thresh, uint8_t flat,
   }
 }
 
-void vpx_highbd_lpf_horizontal_8_c(uint16_t *s, int p, const uint8_t *blimit,
-                                   const uint8_t *limit, const uint8_t *thresh,
-                                   int bd) {
+void vpx_highbd_lpf_horizontal_8_c(uint16_t *s, int pitch,
+                                   const uint8_t *blimit, const uint8_t *limit,
+                                   const uint8_t *thresh, int bd) {
   int i;
 
   // loop filter designed to work using chars so that we can make maximum use
   // of 8 bit simd instructions.
   for (i = 0; i < 8; ++i) {
-    const uint16_t p3 = s[-4 * p], p2 = s[-3 * p], p1 = s[-2 * p], p0 = s[-p];
-    const uint16_t q0 = s[0 * p], q1 = s[1 * p], q2 = s[2 * p], q3 = s[3 * p];
+    const uint16_t p3 = s[-4 * pitch], p2 = s[-3 * pitch], p1 = s[-2 * pitch],
+                   p0 = s[-pitch];
+    const uint16_t q0 = s[0 * pitch], q1 = s[1 * pitch], q2 = s[2 * pitch],
+                   q3 = s[3 * pitch];
 
     const int8_t mask =
         highbd_filter_mask(*limit, *blimit, p3, p2, p1, p0, q0, q1, q2, q3, bd);
     const int8_t flat =
         highbd_flat_mask4(1, p3, p2, p1, p0, q0, q1, q2, q3, bd);
-    highbd_filter8(mask, *thresh, flat, s - 4 * p, s - 3 * p, s - 2 * p,
-                   s - 1 * p, s, s + 1 * p, s + 2 * p, s + 3 * p, bd);
+    highbd_filter8(mask, *thresh, flat, s - 4 * pitch, s - 3 * pitch,
+                   s - 2 * pitch, s - 1 * pitch, s, s + 1 * pitch,
+                   s + 2 * pitch, s + 3 * pitch, bd);
     ++s;
   }
 }
 
 void vpx_highbd_lpf_horizontal_8_dual_c(
-    uint16_t *s, int p, const uint8_t *blimit0, const uint8_t *limit0,
+    uint16_t *s, int pitch, const uint8_t *blimit0, const uint8_t *limit0,
     const uint8_t *thresh0, const uint8_t *blimit1, const uint8_t *limit1,
     const uint8_t *thresh1, int bd) {
-  vpx_highbd_lpf_horizontal_8_c(s, p, blimit0, limit0, thresh0, bd);
-  vpx_highbd_lpf_horizontal_8_c(s + 8, p, blimit1, limit1, thresh1, bd);
+  vpx_highbd_lpf_horizontal_8_c(s, pitch, blimit0, limit0, thresh0, bd);
+  vpx_highbd_lpf_horizontal_8_c(s + 8, pitch, blimit1, limit1, thresh1, bd);
 }
 
 void vpx_highbd_lpf_vertical_8_c(uint16_t *s, int pitch, const uint8_t *blimit,
@@ -639,7 +650,7 @@ static INLINE void highbd_filter16(int8_t mask, uint8_t thresh, uint8_t flat,
   }
 }
 
-static void highbd_mb_lpf_horizontal_edge_w(uint16_t *s, int p,
+static void highbd_mb_lpf_horizontal_edge_w(uint16_t *s, int pitch,
                                             const uint8_t *blimit,
                                             const uint8_t *limit,
                                             const uint8_t *thresh, int count,
@@ -649,44 +660,45 @@ static void highbd_mb_lpf_horizontal_edge_w(uint16_t *s, int p,
   // loop filter designed to work using chars so that we can make maximum use
   // of 8 bit simd instructions.
   for (i = 0; i < 8 * count; ++i) {
-    const uint16_t p3 = s[-4 * p];
-    const uint16_t p2 = s[-3 * p];
-    const uint16_t p1 = s[-2 * p];
-    const uint16_t p0 = s[-p];
-    const uint16_t q0 = s[0 * p];
-    const uint16_t q1 = s[1 * p];
-    const uint16_t q2 = s[2 * p];
-    const uint16_t q3 = s[3 * p];
+    const uint16_t p3 = s[-4 * pitch];
+    const uint16_t p2 = s[-3 * pitch];
+    const uint16_t p1 = s[-2 * pitch];
+    const uint16_t p0 = s[-pitch];
+    const uint16_t q0 = s[0 * pitch];
+    const uint16_t q1 = s[1 * pitch];
+    const uint16_t q2 = s[2 * pitch];
+    const uint16_t q3 = s[3 * pitch];
     const int8_t mask =
         highbd_filter_mask(*limit, *blimit, p3, p2, p1, p0, q0, q1, q2, q3, bd);
     const int8_t flat =
         highbd_flat_mask4(1, p3, p2, p1, p0, q0, q1, q2, q3, bd);
-    const int8_t flat2 =
-        highbd_flat_mask5(1, s[-8 * p], s[-7 * p], s[-6 * p], s[-5 * p], p0, q0,
-                          s[4 * p], s[5 * p], s[6 * p], s[7 * p], bd);
+    const int8_t flat2 = highbd_flat_mask5(
+        1, s[-8 * pitch], s[-7 * pitch], s[-6 * pitch], s[-5 * pitch], p0, q0,
+        s[4 * pitch], s[5 * pitch], s[6 * pitch], s[7 * pitch], bd);
 
-    highbd_filter16(mask, *thresh, flat, flat2, s - 8 * p, s - 7 * p, s - 6 * p,
-                    s - 5 * p, s - 4 * p, s - 3 * p, s - 2 * p, s - 1 * p, s,
-                    s + 1 * p, s + 2 * p, s + 3 * p, s + 4 * p, s + 5 * p,
-                    s + 6 * p, s + 7 * p, bd);
+    highbd_filter16(mask, *thresh, flat, flat2, s - 8 * pitch, s - 7 * pitch,
+                    s - 6 * pitch, s - 5 * pitch, s - 4 * pitch, s - 3 * pitch,
+                    s - 2 * pitch, s - 1 * pitch, s, s + 1 * pitch,
+                    s + 2 * pitch, s + 3 * pitch, s + 4 * pitch, s + 5 * pitch,
+                    s + 6 * pitch, s + 7 * pitch, bd);
     ++s;
   }
 }
 
-void vpx_highbd_lpf_horizontal_16_c(uint16_t *s, int p, const uint8_t *blimit,
-                                    const uint8_t *limit, const uint8_t *thresh,
-                                    int bd) {
-  highbd_mb_lpf_horizontal_edge_w(s, p, blimit, limit, thresh, 1, bd);
+void vpx_highbd_lpf_horizontal_16_c(uint16_t *s, int pitch,
+                                    const uint8_t *blimit, const uint8_t *limit,
+                                    const uint8_t *thresh, int bd) {
+  highbd_mb_lpf_horizontal_edge_w(s, pitch, blimit, limit, thresh, 1, bd);
 }
 
-void vpx_highbd_lpf_horizontal_16_dual_c(uint16_t *s, int p,
+void vpx_highbd_lpf_horizontal_16_dual_c(uint16_t *s, int pitch,
                                          const uint8_t *blimit,
                                          const uint8_t *limit,
                                          const uint8_t *thresh, int bd) {
-  highbd_mb_lpf_horizontal_edge_w(s, p, blimit, limit, thresh, 2, bd);
+  highbd_mb_lpf_horizontal_edge_w(s, pitch, blimit, limit, thresh, 2, bd);
 }
 
-static void highbd_mb_lpf_vertical_edge_w(uint16_t *s, int p,
+static void highbd_mb_lpf_vertical_edge_w(uint16_t *s, int pitch,
                                           const uint8_t *blimit,
                                           const uint8_t *limit,
                                           const uint8_t *thresh, int count,
@@ -712,20 +724,20 @@ static void highbd_mb_lpf_vertical_edge_w(uint16_t *s, int p,
     highbd_filter16(mask, *thresh, flat, flat2, s - 8, s - 7, s - 6, s - 5,
                     s - 4, s - 3, s - 2, s - 1, s, s + 1, s + 2, s + 3, s + 4,
                     s + 5, s + 6, s + 7, bd);
-    s += p;
+    s += pitch;
   }
 }
 
-void vpx_highbd_lpf_vertical_16_c(uint16_t *s, int p, const uint8_t *blimit,
+void vpx_highbd_lpf_vertical_16_c(uint16_t *s, int pitch, const uint8_t *blimit,
                                   const uint8_t *limit, const uint8_t *thresh,
                                   int bd) {
-  highbd_mb_lpf_vertical_edge_w(s, p, blimit, limit, thresh, 8, bd);
+  highbd_mb_lpf_vertical_edge_w(s, pitch, blimit, limit, thresh, 8, bd);
 }
 
-void vpx_highbd_lpf_vertical_16_dual_c(uint16_t *s, int p,
+void vpx_highbd_lpf_vertical_16_dual_c(uint16_t *s, int pitch,
                                        const uint8_t *blimit,
                                        const uint8_t *limit,
                                        const uint8_t *thresh, int bd) {
-  highbd_mb_lpf_vertical_edge_w(s, p, blimit, limit, thresh, 16, bd);
+  highbd_mb_lpf_vertical_edge_w(s, pitch, blimit, limit, thresh, 16, bd);
 }
 #endif  // CONFIG_VP9_HIGHBITDEPTH

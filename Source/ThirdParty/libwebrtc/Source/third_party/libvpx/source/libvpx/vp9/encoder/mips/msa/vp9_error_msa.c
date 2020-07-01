@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "./vpx_config.h"
 #include "./vp9_rtcd.h"
 #include "vpx_dsp/mips/macros_msa.h"
 
@@ -79,6 +80,7 @@
     return err;                                                              \
   }
 
+#if !CONFIG_VP9_HIGHBITDEPTH
 BLOCK_ERROR_BLOCKSIZE_MSA(16);
 BLOCK_ERROR_BLOCKSIZE_MSA(64);
 BLOCK_ERROR_BLOCKSIZE_MSA(256);
@@ -103,3 +105,4 @@ int64_t vp9_block_error_msa(const tran_low_t *coeff_ptr,
 
   return err;
 }
+#endif  // !CONFIG_VP9_HIGHBITDEPTH

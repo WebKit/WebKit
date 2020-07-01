@@ -61,7 +61,7 @@ void usage_exit(void) { exit(EXIT_FAILURE); }
 
 int (*read_frame_p)(FILE *f, vpx_image_t *img);
 
-static int read_frame(FILE *f, vpx_image_t *img) {
+static int mulres_read_frame(FILE *f, vpx_image_t *img) {
   size_t nbytes, to_read;
   int res = 1;
 
@@ -75,7 +75,7 @@ static int read_frame(FILE *f, vpx_image_t *img) {
   return res;
 }
 
-static int read_frame_by_row(FILE *f, vpx_image_t *img) {
+static int mulres_read_frame_by_row(FILE *f, vpx_image_t *img) {
   size_t nbytes, to_read;
   int res = 1;
   int plane;
@@ -471,9 +471,9 @@ int main(int argc, char **argv) {
       die("Failed to allocate image", cfg[i].g_w, cfg[i].g_h);
 
   if (raw[0].stride[VPX_PLANE_Y] == (int)raw[0].d_w)
-    read_frame_p = read_frame;
+    read_frame_p = mulres_read_frame;
   else
-    read_frame_p = read_frame_by_row;
+    read_frame_p = mulres_read_frame_by_row;
 
   for (i = 0; i < NUM_ENCODERS; i++)
     if (outfile[i]) write_ivf_file_header(outfile[i], &cfg[i], 0);

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_RECONINTRA4X4_H_
-#define VP8_COMMON_RECONINTRA4X4_H_
+#ifndef VPX_VP8_COMMON_RECONINTRA4X4_H_
+#define VPX_VP8_COMMON_RECONINTRA4X4_H_
 #include "vp8/common/blockd.h"
 
 #ifdef __cplusplus
@@ -31,7 +31,7 @@ static INLINE void intra_prediction_down_copy(MACROBLOCKD *xd,
   *dst_ptr2 = *src_ptr;
 }
 
-void vp8_intra4x4_predict(unsigned char *Above, unsigned char *yleft,
+void vp8_intra4x4_predict(unsigned char *above, unsigned char *yleft,
                           int left_stride, B_PREDICTION_MODE b_mode,
                           unsigned char *dst, int dst_stride,
                           unsigned char top_left);
@@ -42,4 +42,4 @@ void vp8_init_intra4x4_predictors_internal(void);
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_RECONINTRA4X4_H_
+#endif  // VPX_VP8_COMMON_RECONINTRA4X4_H_

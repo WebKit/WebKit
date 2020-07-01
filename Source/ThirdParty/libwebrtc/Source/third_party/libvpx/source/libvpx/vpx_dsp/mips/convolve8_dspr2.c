@@ -1322,7 +1322,7 @@ void vpx_convolve8_dspr2(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
   if (filter_x[3] == 0x80) {
     copy_horiz_transposed(src - src_stride * 3, src_stride, temp,
                           intermediate_height, w, intermediate_height);
-  } else if (((const int32_t *)filter_x)[0] == 0) {
+  } else if (vpx_get_filter_taps(filter_x) == 2) {
     vpx_convolve2_dspr2(src - src_stride * 3, src_stride, temp,
                         intermediate_height, filter_x, w, intermediate_height);
   } else {
@@ -1365,7 +1365,7 @@ void vpx_convolve8_dspr2(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
   /* copy the src to dst */
   if (filter_y[3] == 0x80) {
     copy_horiz_transposed(temp + 3, intermediate_height, dst, dst_stride, h, w);
-  } else if (((const int32_t *)filter_y)[0] == 0) {
+  } else if (vpx_get_filter_taps(filter_y) == 2) {
     vpx_convolve2_dspr2(temp + 3, intermediate_height, dst, dst_stride,
                         filter_y, h, w);
   } else {

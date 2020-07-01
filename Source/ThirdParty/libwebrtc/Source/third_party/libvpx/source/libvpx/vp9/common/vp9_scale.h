@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP9_COMMON_VP9_SCALE_H_
-#define VP9_COMMON_VP9_SCALE_H_
+#ifndef VPX_VP9_COMMON_VP9_SCALE_H_
+#define VPX_VP9_COMMON_VP9_SCALE_H_
 
 #include "vp9/common/vp9_mv.h"
 #include "vpx_dsp/vpx_convolve.h"
@@ -20,7 +20,7 @@ extern "C" {
 
 #define REF_SCALE_SHIFT 14
 #define REF_NO_SCALE (1 << REF_SCALE_SHIFT)
-#define REF_INVALID_SCALE -1
+#define REF_INVALID_SCALE (-1)
 
 struct scale_factors {
   int x_scale_fp;  // horizontal fixed point scale factor
@@ -42,7 +42,7 @@ MV32 vp9_scale_mv(const MV *mv, int x, int y, const struct scale_factors *sf);
 #if CONFIG_VP9_HIGHBITDEPTH
 void vp9_setup_scale_factors_for_frame(struct scale_factors *sf, int other_w,
                                        int other_h, int this_w, int this_h,
-                                       int use_high);
+                                       int use_highbd);
 #else
 void vp9_setup_scale_factors_for_frame(struct scale_factors *sf, int other_w,
                                        int other_h, int this_w, int this_h);
@@ -68,4 +68,4 @@ static INLINE int valid_ref_frame_size(int ref_width, int ref_height,
 }  // extern "C"
 #endif
 
-#endif  // VP9_COMMON_VP9_SCALE_H_
+#endif  // VPX_VP9_COMMON_VP9_SCALE_H_

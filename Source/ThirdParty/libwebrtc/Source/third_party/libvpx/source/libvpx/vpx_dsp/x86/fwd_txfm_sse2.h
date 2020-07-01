@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_DSP_X86_FWD_TXFM_SSE2_H_
-#define VPX_DSP_X86_FWD_TXFM_SSE2_H_
+#ifndef VPX_VPX_DSP_X86_FWD_TXFM_SSE2_H_
+#define VPX_VPX_DSP_X86_FWD_TXFM_SSE2_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +36,7 @@ static INLINE __m128i k_packs_epi64(__m128i a, __m128i b) {
 static INLINE int check_epi16_overflow_x2(const __m128i *preg0,
                                           const __m128i *preg1) {
   const __m128i max_overflow = _mm_set1_epi16(0x7fff);
-  const __m128i min_overflow = _mm_set1_epi16(0x8000);
+  const __m128i min_overflow = _mm_set1_epi16((short)0x8000);
   __m128i cmp0 = _mm_or_si128(_mm_cmpeq_epi16(*preg0, max_overflow),
                               _mm_cmpeq_epi16(*preg0, min_overflow));
   __m128i cmp1 = _mm_or_si128(_mm_cmpeq_epi16(*preg1, max_overflow),
@@ -50,7 +50,7 @@ static INLINE int check_epi16_overflow_x4(const __m128i *preg0,
                                           const __m128i *preg2,
                                           const __m128i *preg3) {
   const __m128i max_overflow = _mm_set1_epi16(0x7fff);
-  const __m128i min_overflow = _mm_set1_epi16(0x8000);
+  const __m128i min_overflow = _mm_set1_epi16((short)0x8000);
   __m128i cmp0 = _mm_or_si128(_mm_cmpeq_epi16(*preg0, max_overflow),
                               _mm_cmpeq_epi16(*preg0, min_overflow));
   __m128i cmp1 = _mm_or_si128(_mm_cmpeq_epi16(*preg1, max_overflow),
@@ -368,4 +368,4 @@ static INLINE void transpose_and_output8x8(
 }  // extern "C"
 #endif
 
-#endif  // VPX_DSP_X86_FWD_TXFM_SSE2_H_
+#endif  // VPX_VPX_DSP_X86_FWD_TXFM_SSE2_H_

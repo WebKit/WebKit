@@ -60,20 +60,17 @@ static void vp8_de_mblock(YV12_BUFFER_CONFIG *post, int q) {
 }
 
 void vp8_deblock(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
-                 YV12_BUFFER_CONFIG *post, int q, int low_var_thresh,
-                 int flag) {
+                 YV12_BUFFER_CONFIG *post, int q) {
   double level = 6.0e-05 * q * q * q - .0067 * q * q + .306 * q + .0065;
   int ppl = (int)(level + .5);
 
-  const MODE_INFO *mode_info_context = cm->show_frame_mi;
+  const MODE_INFO *mode_info_context = cm->mi;
   int mbr, mbc;
 
   /* The pixel thresholds are adjusted according to if or not the macroblock
    * is a skipped block.  */
   unsigned char *ylimits = cm->pp_limits_buffer;
   unsigned char *uvlimits = cm->pp_limits_buffer + 16 * cm->mb_cols;
-  (void)low_var_thresh;
-  (void)flag;
 
   if (ppl > 0) {
     for (mbr = 0; mbr < cm->mb_rows; ++mbr) {
@@ -116,8 +113,7 @@ void vp8_deblock(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
   }
 }
 
-void vp8_de_noise(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
-                  YV12_BUFFER_CONFIG *post, int q, int low_var_thresh, int flag,
+void vp8_de_noise(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source, int q,
                   int uvfilter) {
   int mbr;
   double level = 6.0e-05 * q * q * q - .0067 * q * q + .306 * q + .0065;
@@ -125,9 +121,6 @@ void vp8_de_noise(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
   int mb_rows = cm->mb_rows;
   int mb_cols = cm->mb_cols;
   unsigned char *limits = cm->pp_limits_buffer;
-  (void)post;
-  (void)low_var_thresh;
-  (void)flag;
 
   memset(limits, (unsigned char)ppl, 16 * mb_cols);
 
@@ -150,124 +143,6 @@ void vp8_de_noise(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
   }
 }
 #endif  // CONFIG_POSTPROC
-
-/* Blend the macro block with a solid colored square.  Leave the
- * edges unblended to give distinction to macro blocks in areas
- * filled with the same color block.
- */
-void vp8_blend_mb_inner_c(unsigned char *y, unsigned char *u, unsigned char *v,
-                          int y_1, int u_1, int v_1, int alpha, int stride) {
-  int i, j;
-  int y1_const = y_1 * ((1 << 16) - alpha);
-  int u1_const = u_1 * ((1 << 16) - alpha);
-  int v1_const = v_1 * ((1 << 16) - alpha);
-
-  y += 2 * stride + 2;
-  for (i = 0; i < 12; ++i) {
-    for (j = 0; j < 12; ++j) {
-      y[j] = (y[j] * alpha + y1_const) >> 16;
-    }
-    y += stride;
-  }
-
-  stride >>= 1;
-
-  u += stride + 1;
-  v += stride + 1;
-
-  for (i = 0; i < 6; ++i) {
-    for (j = 0; j < 6; ++j) {
-      u[j] = (u[j] * alpha + u1_const) >> 16;
-      v[j] = (v[j] * alpha + v1_const) >> 16;
-    }
-    u += stride;
-    v += stride;
-  }
-}
-
-/* Blend only the edge of the macro block.  Leave center
- * unblended to allow for other visualizations to be layered.
- */
-void vp8_blend_mb_outer_c(unsigned char *y, unsigned char *u, unsigned char *v,
-                          int y_1, int u_1, int v_1, int alpha, int stride) {
-  int i, j;
-  int y1_const = y_1 * ((1 << 16) - alpha);
-  int u1_const = u_1 * ((1 << 16) - alpha);
-  int v1_const = v_1 * ((1 << 16) - alpha);
-
-  for (i = 0; i < 2; ++i) {
-    for (j = 0; j < 16; ++j) {
-      y[j] = (y[j] * alpha + y1_const) >> 16;
-    }
-    y += stride;
-  }
-
-  for (i = 0; i < 12; ++i) {
-    y[0] = (y[0] * alpha + y1_const) >> 16;
-    y[1] = (y[1] * alpha + y1_const) >> 16;
-    y[14] = (y[14] * alpha + y1_const) >> 16;
-    y[15] = (y[15] * alpha + y1_const) >> 16;
-    y += stride;
-  }
-
-  for (i = 0; i < 2; ++i) {
-    for (j = 0; j < 16; ++j) {
-      y[j] = (y[j] * alpha + y1_const) >> 16;
-    }
-    y += stride;
-  }
-
-  stride >>= 1;
-
-  for (j = 0; j < 8; ++j) {
-    u[j] = (u[j] * alpha + u1_const) >> 16;
-    v[j] = (v[j] * alpha + v1_const) >> 16;
-  }
-  u += stride;
-  v += stride;
-
-  for (i = 0; i < 6; ++i) {
-    u[0] = (u[0] * alpha + u1_const) >> 16;
-    v[0] = (v[0] * alpha + v1_const) >> 16;
-
-    u[7] = (u[7] * alpha + u1_const) >> 16;
-    v[7] = (v[7] * alpha + v1_const) >> 16;
-
-    u += stride;
-    v += stride;
-  }
-
-  for (j = 0; j < 8; ++j) {
-    u[j] = (u[j] * alpha + u1_const) >> 16;
-    v[j] = (v[j] * alpha + v1_const) >> 16;
-  }
-}
-
-void vp8_blend_b_c(unsigned char *y, unsigned char *u, unsigned char *v,
-                   int y_1, int u_1, int v_1, int alpha, int stride) {
-  int i, j;
-  int y1_const = y_1 * ((1 << 16) - alpha);
-  int u1_const = u_1 * ((1 << 16) - alpha);
-  int v1_const = v_1 * ((1 << 16) - alpha);
-
-  for (i = 0; i < 4; ++i) {
-    for (j = 0; j < 4; ++j) {
-      y[j] = (y[j] * alpha + y1_const) >> 16;
-    }
-    y += stride;
-  }
-
-  stride >>= 1;
-
-  for (i = 0; i < 2; ++i) {
-    for (j = 0; j < 2; ++j) {
-      u[j] = (u[j] * alpha + u1_const) >> 16;
-      v[j] = (v[j] * alpha + v1_const) >> 16;
-    }
-    u += stride;
-    v += stride;
-  }
-}
 
 #if CONFIG_POSTPROC
 int vp8_post_proc_frame(VP8_COMMON *oci, YV12_BUFFER_CONFIG *dest,
@@ -325,7 +200,7 @@ int vp8_post_proc_frame(VP8_COMMON *oci, YV12_BUFFER_CONFIG *dest,
   vpx_clear_system_state();
 
   if ((flags & VP8D_MFQE) && oci->postproc_state.last_frame_valid &&
-      oci->current_video_frame >= 2 &&
+      oci->current_video_frame > 10 &&
       oci->postproc_state.last_base_qindex < 60 &&
       oci->base_qindex - oci->postproc_state.last_base_qindex >= 20) {
     vp8_multiframe_quality_enhance(oci);
@@ -334,11 +209,10 @@ int vp8_post_proc_frame(VP8_COMMON *oci, YV12_BUFFER_CONFIG *dest,
       vp8_yv12_copy_frame(&oci->post_proc_buffer, &oci->post_proc_buffer_int);
       if (flags & VP8D_DEMACROBLOCK) {
         vp8_deblock(oci, &oci->post_proc_buffer_int, &oci->post_proc_buffer,
-                    q + (deblock_level - 5) * 10, 1, 0);
+                    q + (deblock_level - 5) * 10);
         vp8_de_mblock(&oci->post_proc_buffer, q + (deblock_level - 5) * 10);
       } else if (flags & VP8D_DEBLOCK) {
-        vp8_deblock(oci, &oci->post_proc_buffer_int, &oci->post_proc_buffer, q,
-                    1, 0);
+        vp8_deblock(oci, &oci->post_proc_buffer_int, &oci->post_proc_buffer, q);
       }
     }
     /* Move partially towards the base q of the previous frame */
@@ -346,12 +220,12 @@ int vp8_post_proc_frame(VP8_COMMON *oci, YV12_BUFFER_CONFIG *dest,
         (3 * oci->postproc_state.last_base_qindex + oci->base_qindex) >> 2;
   } else if (flags & VP8D_DEMACROBLOCK) {
     vp8_deblock(oci, oci->frame_to_show, &oci->post_proc_buffer,
-                q + (deblock_level - 5) * 10, 1, 0);
+                q + (deblock_level - 5) * 10);
     vp8_de_mblock(&oci->post_proc_buffer, q + (deblock_level - 5) * 10);
 
     oci->postproc_state.last_base_qindex = oci->base_qindex;
   } else if (flags & VP8D_DEBLOCK) {
-    vp8_deblock(oci, oci->frame_to_show, &oci->post_proc_buffer, q, 1, 0);
+    vp8_deblock(oci, oci->frame_to_show, &oci->post_proc_buffer, q);
     oci->postproc_state.last_base_qindex = oci->base_qindex;
   } else {
     vp8_yv12_copy_frame(oci->frame_to_show, &oci->post_proc_buffer);

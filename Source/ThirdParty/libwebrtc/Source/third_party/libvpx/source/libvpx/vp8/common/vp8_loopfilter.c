@@ -219,13 +219,11 @@ void vp8_loop_filter_row_normal(VP8_COMMON *cm, MODE_INFO *mode_info_context,
 }
 
 void vp8_loop_filter_row_simple(VP8_COMMON *cm, MODE_INFO *mode_info_context,
-                                int mb_row, int post_ystride, int post_uvstride,
-                                unsigned char *y_ptr, unsigned char *u_ptr,
-                                unsigned char *v_ptr) {
+                                int mb_row, int post_ystride,
+                                unsigned char *y_ptr) {
   int mb_col;
   int filter_level;
   loop_filter_info_n *lfi_n = &cm->lf_info;
-  (void)post_uvstride;
 
   for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
     int skip_lf = (mode_info_context->mbmi.mode != B_PRED &&
@@ -258,8 +256,6 @@ void vp8_loop_filter_row_simple(VP8_COMMON *cm, MODE_INFO *mode_info_context,
     }
 
     y_ptr += 16;
-    u_ptr += 8;
-    v_ptr += 8;
 
     mode_info_context++; /* step to next MB */
   }

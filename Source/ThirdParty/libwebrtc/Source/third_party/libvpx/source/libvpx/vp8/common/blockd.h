@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VP8_COMMON_BLOCKD_H_
-#define VP8_COMMON_BLOCKD_H_
+#ifndef VPX_VP8_COMMON_BLOCKD_H_
+#define VPX_VP8_COMMON_BLOCKD_H_
 
 void vpx_log(const char *format, ...);
 
+#include "vpx/internal/vpx_codec_internal.h"
 #include "vpx_config.h"
 #include "vpx_scale/yv12config.h"
 #include "mv.h"
@@ -201,8 +202,9 @@ typedef struct blockd {
   union b_mode_info bmi;
 } BLOCKD;
 
-typedef void (*vp8_subpix_fn_t)(unsigned char *src, int src_pitch, int xofst,
-                                int yofst, unsigned char *dst, int dst_pitch);
+typedef void (*vp8_subpix_fn_t)(unsigned char *src_ptr, int src_pixels_per_line,
+                                int xoffset, int yoffset,
+                                unsigned char *dst_ptr, int dst_pitch);
 
 typedef struct macroblockd {
   DECLARE_ALIGNED(16, unsigned char, predictor[384]);
@@ -288,7 +290,9 @@ typedef struct macroblockd {
 
   int corrupted;
 
-#if ARCH_X86 || ARCH_X86_64
+  struct vpx_internal_error_info error_info;
+
+#if VPX_ARCH_X86 || VPX_ARCH_X86_64
   /* This is an intermediate buffer currently used in sub-pixel motion search
    * to keep a copy of the reference area. This buffer can be used for other
    * purpose.
@@ -304,4 +308,4 @@ extern void vp8_setup_block_dptrs(MACROBLOCKD *x);
 }  // extern "C"
 #endif
 
-#endif  // VP8_COMMON_BLOCKD_H_
+#endif  // VPX_VP8_COMMON_BLOCKD_H_

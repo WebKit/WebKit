@@ -147,8 +147,8 @@ static void calculate_overlaps_mb(B_OVERLAP *b_overlaps, union b_mode_info *bmi,
   }
 }
 
-void vp8_calculate_overlaps(MB_OVERLAP *overlap_ul, int mb_rows, int mb_cols,
-                            union b_mode_info *bmi, int b_row, int b_col) {
+static void calculate_overlaps(MB_OVERLAP *overlap_ul, int mb_rows, int mb_cols,
+                               union b_mode_info *bmi, int b_row, int b_col) {
   MB_OVERLAP *mb_overlap;
   int row, col, rel_row, rel_col;
   int new_row, new_col;
@@ -280,9 +280,9 @@ static void calc_prev_mb_overlaps(MB_OVERLAP *overlaps, MODE_INFO *prev_mi,
   int sub_col;
   for (sub_row = 0; sub_row < 4; ++sub_row) {
     for (sub_col = 0; sub_col < 4; ++sub_col) {
-      vp8_calculate_overlaps(overlaps, mb_rows, mb_cols,
-                             &(prev_mi->bmi[sub_row * 4 + sub_col]),
-                             4 * mb_row + sub_row, 4 * mb_col + sub_col);
+      calculate_overlaps(overlaps, mb_rows, mb_cols,
+                         &(prev_mi->bmi[sub_row * 4 + sub_col]),
+                         4 * mb_row + sub_row, 4 * mb_col + sub_col);
     }
   }
 }

@@ -73,7 +73,7 @@ string DecodeFile(const string &filename) {
         CheckUserPrivateData(img->user_priv, &frame_num);
 
         // Also test ctrl_get_reference api.
-        struct vp9_ref_frame ref;
+        struct vp9_ref_frame ref = vp9_ref_frame();
         // Randomly fetch a reference frame.
         ref.idx = rnd.Rand8() % 3;
         decoder.Control(VP9_GET_REFERENCE, &ref);

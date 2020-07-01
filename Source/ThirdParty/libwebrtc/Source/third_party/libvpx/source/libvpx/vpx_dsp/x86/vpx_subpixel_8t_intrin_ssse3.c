@@ -12,19 +12,16 @@
 
 #include <string.h>
 
+#include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "vpx_dsp/vpx_filter.h"
 #include "vpx_dsp/x86/convolve.h"
+#include "vpx_dsp/x86/convolve_sse2.h"
 #include "vpx_dsp/x86/convolve_ssse3.h"
 #include "vpx_dsp/x86/mem_sse2.h"
 #include "vpx_dsp/x86/transpose_sse2.h"
 #include "vpx_mem/vpx_mem.h"
 #include "vpx_ports/mem.h"
-
-// These are reused by the avx2 intrinsics.
-// vpx_filter_block1d8_v8_intrin_ssse3()
-// vpx_filter_block1d8_h8_intrin_ssse3()
-// vpx_filter_block1d4_h8_intrin_ssse3()
 
 static INLINE __m128i shuffle_filter_convolve8_8_ssse3(
     const __m128i *const s, const int16_t *const filter) {
@@ -33,6 +30,23 @@ static INLINE __m128i shuffle_filter_convolve8_8_ssse3(
   return convolve8_8_ssse3(s, f);
 }
 
+// Used by the avx2 implementation.
+#if VPX_ARCH_X86_64
+// Use the intrinsics below
+filter8_1dfunction vpx_filter_block1d4_h8_intrin_ssse3;
+filter8_1dfunction vpx_filter_block1d8_h8_intrin_ssse3;
+filter8_1dfunction vpx_filter_block1d8_v8_intrin_ssse3;
+#define vpx_filter_block1d4_h8_ssse3 vpx_filter_block1d4_h8_intrin_ssse3
+#define vpx_filter_block1d8_h8_ssse3 vpx_filter_block1d8_h8_intrin_ssse3
+#define vpx_filter_block1d8_v8_ssse3 vpx_filter_block1d8_v8_intrin_ssse3
+#else  // VPX_ARCH_X86
+// Use the assembly in vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm.
+filter8_1dfunction vpx_filter_block1d4_h8_ssse3;
+filter8_1dfunction vpx_filter_block1d8_h8_ssse3;
+filter8_1dfunction vpx_filter_block1d8_v8_ssse3;
+#endif
+
+#if VPX_ARCH_X86_64
 void vpx_filter_block1d4_h8_intrin_ssse3(
     const uint8_t *src_ptr, ptrdiff_t src_pitch, uint8_t *output_ptr,
     ptrdiff_t output_pitch, uint32_t output_height, const int16_t *filter) {
@@ -184,13 +198,490 @@ void vpx_filter_block1d8_v8_intrin_ssse3(
     output_ptr += out_pitch;
   }
 }
+#endif  // VPX_ARCH_X86_64
 
+static void vpx_filter_block1d16_h4_ssse3(const uint8_t *src_ptr,
+                                          ptrdiff_t src_stride,
+                                          uint8_t *dst_ptr,
+                                          ptrdiff_t dst_stride, uint32_t height,
+                                          const int16_t *kernel) {
+  // We will cast the kernel from 16-bit words to 8-bit words, and then extract
+  // the middle four elements of the kernel into two registers in the form
+  // ... k[3] k[2] k[3] k[2]
+  // ... k[5] k[4] k[5] k[4]
+  // Then we shuffle the source into
+  // ... s[1] s[0] s[0] s[-1]
+  // ... s[3] s[2] s[2] s[1]
+  // Calling multiply and add gives us half of the sum. Calling add gives us
+  // first half of the output. Repeat again to get the second half of the
+  // output. Finally we shuffle again to combine the two outputs.
+
+  __m128i kernel_reg;                         // Kernel
+  __m128i kernel_reg_23, kernel_reg_45;       // Segments of the kernel used
+  const __m128i reg_32 = _mm_set1_epi16(32);  // Used for rounding
+  int h;
+
+  __m128i src_reg, src_reg_shift_0, src_reg_shift_2;
+  __m128i dst_first, dst_second;
+  __m128i tmp_0, tmp_1;
+  __m128i idx_shift_0 =
+      _mm_setr_epi8(0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8);
+  __m128i idx_shift_2 =
+      _mm_setr_epi8(2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10);
+
+  // Start one pixel before as we need tap/2 - 1 = 1 sample from the past
+  src_ptr -= 1;
+
+  // Load Kernel
+  kernel_reg = _mm_loadu_si128((const __m128i *)kernel);
+  kernel_reg = _mm_srai_epi16(kernel_reg, 1);
+  kernel_reg = _mm_packs_epi16(kernel_reg, kernel_reg);
+  kernel_reg_23 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0302u));
+  kernel_reg_45 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0504u));
+
+  for (h = height; h > 0; --h) {
+    // Load the source
+    src_reg = _mm_loadu_si128((const __m128i *)src_ptr);
+    src_reg_shift_0 = _mm_shuffle_epi8(src_reg, idx_shift_0);
+    src_reg_shift_2 = _mm_shuffle_epi8(src_reg, idx_shift_2);
+
+    // Partial result for first half
+    tmp_0 = _mm_maddubs_epi16(src_reg_shift_0, kernel_reg_23);
+    tmp_1 = _mm_maddubs_epi16(src_reg_shift_2, kernel_reg_45);
+    dst_first = _mm_adds_epi16(tmp_0, tmp_1);
+
+    // Do again to get the second half of dst
+    // Load the source
+    src_reg = _mm_loadu_si128((const __m128i *)(src_ptr + 8));
+    src_reg_shift_0 = _mm_shuffle_epi8(src_reg, idx_shift_0);
+    src_reg_shift_2 = _mm_shuffle_epi8(src_reg, idx_shift_2);
+
+    // Partial result for first half
+    tmp_0 = _mm_maddubs_epi16(src_reg_shift_0, kernel_reg_23);
+    tmp_1 = _mm_maddubs_epi16(src_reg_shift_2, kernel_reg_45);
+    dst_second = _mm_adds_epi16(tmp_0, tmp_1);
+
+    // Round each result
+    dst_first = mm_round_epi16_sse2(&dst_first, &reg_32, 6);
+    dst_second = mm_round_epi16_sse2(&dst_second, &reg_32, 6);
+
+    // Finally combine to get the final dst
+    dst_first = _mm_packus_epi16(dst_first, dst_second);
+    _mm_store_si128((__m128i *)dst_ptr, dst_first);
+
+    src_ptr += src_stride;
+    dst_ptr += dst_stride;
+  }
+}
+
+static void vpx_filter_block1d16_v4_ssse3(const uint8_t *src_ptr,
+                                          ptrdiff_t src_stride,
+                                          uint8_t *dst_ptr,
+                                          ptrdiff_t dst_stride, uint32_t height,
+                                          const int16_t *kernel) {
+  // We will load two rows of pixels as 8-bit words, rearrange them into the
+  // form
+  // ... s[0,1] s[-1,1] s[0,0] s[-1,0]
+  // ... s[0,9] s[-1,9] s[0,8] s[-1,8]
+  // so that we can call multiply and add with the kernel to get 16-bit words of
+  // the form
+  // ... s[0,1]k[3]+s[-1,1]k[2] s[0,0]k[3]+s[-1,0]k[2]
+  // Finally, we can add multiple rows together to get the desired output.
+
+  // Register for source s[-1:3, :]
+  __m128i src_reg_m1, src_reg_0, src_reg_1, src_reg_2, src_reg_3;
+  // Interleaved rows of the source. lo is first half, hi second
+  __m128i src_reg_m10_lo, src_reg_m10_hi, src_reg_01_lo, src_reg_01_hi;
+  __m128i src_reg_12_lo, src_reg_12_hi, src_reg_23_lo, src_reg_23_hi;
+
+  __m128i kernel_reg;                    // Kernel
+  __m128i kernel_reg_23, kernel_reg_45;  // Segments of the kernel used
+
+  // Result after multiply and add
+  __m128i res_reg_m10_lo, res_reg_01_lo, res_reg_12_lo, res_reg_23_lo;
+  __m128i res_reg_m10_hi, res_reg_01_hi, res_reg_12_hi, res_reg_23_hi;
+  __m128i res_reg_m1012, res_reg_0123;
+  __m128i res_reg_m1012_lo, res_reg_0123_lo, res_reg_m1012_hi, res_reg_0123_hi;
+
+  const __m128i reg_32 = _mm_set1_epi16(32);  // Used for rounding
+
+  // We will compute the result two rows at a time
+  const ptrdiff_t src_stride_unrolled = src_stride << 1;
+  const ptrdiff_t dst_stride_unrolled = dst_stride << 1;
+  int h;
+
+  // Load Kernel
+  kernel_reg = _mm_loadu_si128((const __m128i *)kernel);
+  kernel_reg = _mm_srai_epi16(kernel_reg, 1);
+  kernel_reg = _mm_packs_epi16(kernel_reg, kernel_reg);
+  kernel_reg_23 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0302u));
+  kernel_reg_45 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0504u));
+
+  // First shuffle the data
+  src_reg_m1 = _mm_loadu_si128((const __m128i *)src_ptr);
+  src_reg_0 = _mm_loadu_si128((const __m128i *)(src_ptr + src_stride));
+  src_reg_m10_lo = _mm_unpacklo_epi8(src_reg_m1, src_reg_0);
+  src_reg_m10_hi = _mm_unpackhi_epi8(src_reg_m1, src_reg_0);
+
+  // More shuffling
+  src_reg_1 = _mm_loadu_si128((const __m128i *)(src_ptr + src_stride * 2));
+  src_reg_01_lo = _mm_unpacklo_epi8(src_reg_0, src_reg_1);
+  src_reg_01_hi = _mm_unpackhi_epi8(src_reg_0, src_reg_1);
+
+  for (h = height; h > 1; h -= 2) {
+    src_reg_2 = _mm_loadu_si128((const __m128i *)(src_ptr + src_stride * 3));
+
+    src_reg_12_lo = _mm_unpacklo_epi8(src_reg_1, src_reg_2);
+    src_reg_12_hi = _mm_unpackhi_epi8(src_reg_1, src_reg_2);
+
+    src_reg_3 = _mm_loadu_si128((const __m128i *)(src_ptr + src_stride * 4));
+
+    src_reg_23_lo = _mm_unpacklo_epi8(src_reg_2, src_reg_3);
+    src_reg_23_hi = _mm_unpackhi_epi8(src_reg_2, src_reg_3);
+
+    // Partial output from first half
+    res_reg_m10_lo = _mm_maddubs_epi16(src_reg_m10_lo, kernel_reg_23);
+    res_reg_01_lo = _mm_maddubs_epi16(src_reg_01_lo, kernel_reg_23);
+
+    res_reg_12_lo = _mm_maddubs_epi16(src_reg_12_lo, kernel_reg_45);
+    res_reg_23_lo = _mm_maddubs_epi16(src_reg_23_lo, kernel_reg_45);
+
+    // Add to get first half of the results
+    res_reg_m1012_lo = _mm_adds_epi16(res_reg_m10_lo, res_reg_12_lo);
+    res_reg_0123_lo = _mm_adds_epi16(res_reg_01_lo, res_reg_23_lo);
+
+    // Partial output for second half
+    res_reg_m10_hi = _mm_maddubs_epi16(src_reg_m10_hi, kernel_reg_23);
+    res_reg_01_hi = _mm_maddubs_epi16(src_reg_01_hi, kernel_reg_23);
+
+    res_reg_12_hi = _mm_maddubs_epi16(src_reg_12_hi, kernel_reg_45);
+    res_reg_23_hi = _mm_maddubs_epi16(src_reg_23_hi, kernel_reg_45);
+
+    // Second half of the results
+    res_reg_m1012_hi = _mm_adds_epi16(res_reg_m10_hi, res_reg_12_hi);
+    res_reg_0123_hi = _mm_adds_epi16(res_reg_01_hi, res_reg_23_hi);
+
+    // Round the words
+    res_reg_m1012_lo = mm_round_epi16_sse2(&res_reg_m1012_lo, &reg_32, 6);
+    res_reg_0123_lo = mm_round_epi16_sse2(&res_reg_0123_lo, &reg_32, 6);
+    res_reg_m1012_hi = mm_round_epi16_sse2(&res_reg_m1012_hi, &reg_32, 6);
+    res_reg_0123_hi = mm_round_epi16_sse2(&res_reg_0123_hi, &reg_32, 6);
+
+    // Combine to get the result
+    res_reg_m1012 = _mm_packus_epi16(res_reg_m1012_lo, res_reg_m1012_hi);
+    res_reg_0123 = _mm_packus_epi16(res_reg_0123_lo, res_reg_0123_hi);
+
+    _mm_store_si128((__m128i *)dst_ptr, res_reg_m1012);
+    _mm_store_si128((__m128i *)(dst_ptr + dst_stride), res_reg_0123);
+
+    // Update the source by two rows
+    src_ptr += src_stride_unrolled;
+    dst_ptr += dst_stride_unrolled;
+
+    src_reg_m10_lo = src_reg_12_lo;
+    src_reg_m10_hi = src_reg_12_hi;
+    src_reg_01_lo = src_reg_23_lo;
+    src_reg_01_hi = src_reg_23_hi;
+    src_reg_1 = src_reg_3;
+  }
+}
+
+static void vpx_filter_block1d8_h4_ssse3(const uint8_t *src_ptr,
+                                         ptrdiff_t src_stride, uint8_t *dst_ptr,
+                                         ptrdiff_t dst_stride, uint32_t height,
+                                         const int16_t *kernel) {
+  // We will cast the kernel from 16-bit words to 8-bit words, and then extract
+  // the middle four elements of the kernel into two registers in the form
+  // ... k[3] k[2] k[3] k[2]
+  // ... k[5] k[4] k[5] k[4]
+  // Then we shuffle the source into
+  // ... s[1] s[0] s[0] s[-1]
+  // ... s[3] s[2] s[2] s[1]
+  // Calling multiply and add gives us half of the sum. Calling add gives us
+  // first half of the output. Repeat again to get the second half of the
+  // output. Finally we shuffle again to combine the two outputs.
+
+  __m128i kernel_reg;                         // Kernel
+  __m128i kernel_reg_23, kernel_reg_45;       // Segments of the kernel used
+  const __m128i reg_32 = _mm_set1_epi16(32);  // Used for rounding
+  int h;
+
+  __m128i src_reg, src_reg_shift_0, src_reg_shift_2;
+  __m128i dst_first;
+  __m128i tmp_0, tmp_1;
+  __m128i idx_shift_0 =
+      _mm_setr_epi8(0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8);
+  __m128i idx_shift_2 =
+      _mm_setr_epi8(2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10);
+
+  // Start one pixel before as we need tap/2 - 1 = 1 sample from the past
+  src_ptr -= 1;
+
+  // Load Kernel
+  kernel_reg = _mm_loadu_si128((const __m128i *)kernel);
+  kernel_reg = _mm_srai_epi16(kernel_reg, 1);
+  kernel_reg = _mm_packs_epi16(kernel_reg, kernel_reg);
+  kernel_reg_23 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0302u));
+  kernel_reg_45 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0504u));
+
+  for (h = height; h > 0; --h) {
+    // Load the source
+    src_reg = _mm_loadu_si128((const __m128i *)src_ptr);
+    src_reg_shift_0 = _mm_shuffle_epi8(src_reg, idx_shift_0);
+    src_reg_shift_2 = _mm_shuffle_epi8(src_reg, idx_shift_2);
+
+    // Get the result
+    tmp_0 = _mm_maddubs_epi16(src_reg_shift_0, kernel_reg_23);
+    tmp_1 = _mm_maddubs_epi16(src_reg_shift_2, kernel_reg_45);
+    dst_first = _mm_adds_epi16(tmp_0, tmp_1);
+
+    // Round round result
+    dst_first = mm_round_epi16_sse2(&dst_first, &reg_32, 6);
+
+    // Pack to 8-bits
+    dst_first = _mm_packus_epi16(dst_first, _mm_setzero_si128());
+    _mm_storel_epi64((__m128i *)dst_ptr, dst_first);
+
+    src_ptr += src_stride;
+    dst_ptr += dst_stride;
+  }
+}
+
+static void vpx_filter_block1d8_v4_ssse3(const uint8_t *src_ptr,
+                                         ptrdiff_t src_stride, uint8_t *dst_ptr,
+                                         ptrdiff_t dst_stride, uint32_t height,
+                                         const int16_t *kernel) {
+  // We will load two rows of pixels as 8-bit words, rearrange them into the
+  // form
+  // ... s[0,1] s[-1,1] s[0,0] s[-1,0]
+  // so that we can call multiply and add with the kernel to get 16-bit words of
+  // the form
+  // ... s[0,1]k[3]+s[-1,1]k[2] s[0,0]k[3]+s[-1,0]k[2]
+  // Finally, we can add multiple rows together to get the desired output.
+
+  // Register for source s[-1:3, :]
+  __m128i src_reg_m1, src_reg_0, src_reg_1, src_reg_2, src_reg_3;
+  // Interleaved rows of the source. lo is first half, hi second
+  __m128i src_reg_m10, src_reg_01;
+  __m128i src_reg_12, src_reg_23;
+
+  __m128i kernel_reg;                    // Kernel
+  __m128i kernel_reg_23, kernel_reg_45;  // Segments of the kernel used
+
+  // Result after multiply and add
+  __m128i res_reg_m10, res_reg_01, res_reg_12, res_reg_23;
+  __m128i res_reg_m1012, res_reg_0123;
+
+  const __m128i reg_32 = _mm_set1_epi16(32);  // Used for rounding
+
+  // We will compute the result two rows at a time
+  const ptrdiff_t src_stride_unrolled = src_stride << 1;
+  const ptrdiff_t dst_stride_unrolled = dst_stride << 1;
+  int h;
+
+  // Load Kernel
+  kernel_reg = _mm_loadu_si128((const __m128i *)kernel);
+  kernel_reg = _mm_srai_epi16(kernel_reg, 1);
+  kernel_reg = _mm_packs_epi16(kernel_reg, kernel_reg);
+  kernel_reg_23 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0302u));
+  kernel_reg_45 = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi16(0x0504u));
+
+  // First shuffle the data
+  src_reg_m1 = _mm_loadl_epi64((const __m128i *)src_ptr);
+  src_reg_0 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride));
+  src_reg_m10 = _mm_unpacklo_epi8(src_reg_m1, src_reg_0);
+
+  // More shuffling
+  src_reg_1 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride * 2));
+  src_reg_01 = _mm_unpacklo_epi8(src_reg_0, src_reg_1);
+
+  for (h = height; h > 1; h -= 2) {
+    src_reg_2 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride * 3));
+
+    src_reg_12 = _mm_unpacklo_epi8(src_reg_1, src_reg_2);
+
+    src_reg_3 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride * 4));
+
+    src_reg_23 = _mm_unpacklo_epi8(src_reg_2, src_reg_3);
+
+    // Partial output
+    res_reg_m10 = _mm_maddubs_epi16(src_reg_m10, kernel_reg_23);
+    res_reg_01 = _mm_maddubs_epi16(src_reg_01, kernel_reg_23);
+
+    res_reg_12 = _mm_maddubs_epi16(src_reg_12, kernel_reg_45);
+    res_reg_23 = _mm_maddubs_epi16(src_reg_23, kernel_reg_45);
+
+    // Add to get entire output
+    res_reg_m1012 = _mm_adds_epi16(res_reg_m10, res_reg_12);
+    res_reg_0123 = _mm_adds_epi16(res_reg_01, res_reg_23);
+
+    // Round the words
+    res_reg_m1012 = mm_round_epi16_sse2(&res_reg_m1012, &reg_32, 6);
+    res_reg_0123 = mm_round_epi16_sse2(&res_reg_0123, &reg_32, 6);
+
+    // Pack from 16-bit to 8-bit
+    res_reg_m1012 = _mm_packus_epi16(res_reg_m1012, _mm_setzero_si128());
+    res_reg_0123 = _mm_packus_epi16(res_reg_0123, _mm_setzero_si128());
+
+    _mm_storel_epi64((__m128i *)dst_ptr, res_reg_m1012);
+    _mm_storel_epi64((__m128i *)(dst_ptr + dst_stride), res_reg_0123);
+
+    // Update the source by two rows
+    src_ptr += src_stride_unrolled;
+    dst_ptr += dst_stride_unrolled;
+
+    src_reg_m10 = src_reg_12;
+    src_reg_01 = src_reg_23;
+    src_reg_1 = src_reg_3;
+  }
+}
+
+static void vpx_filter_block1d4_h4_ssse3(const uint8_t *src_ptr,
+                                         ptrdiff_t src_stride, uint8_t *dst_ptr,
+                                         ptrdiff_t dst_stride, uint32_t height,
+                                         const int16_t *kernel) {
+  // We will cast the kernel from 16-bit words to 8-bit words, and then extract
+  // the middle four elements of the kernel into a single register in the form
+  // k[5:2] k[5:2] k[5:2] k[5:2]
+  // Then we shuffle the source into
+  // s[5:2] s[4:1] s[3:0] s[2:-1]
+  // Calling multiply and add gives us half of the sum next to each other.
+  // Calling horizontal add then gives us the output.
+
+  __m128i kernel_reg;                         // Kernel
+  const __m128i reg_32 = _mm_set1_epi16(32);  // Used for rounding
+  int h;
+
+  __m128i src_reg, src_reg_shuf;
+  __m128i dst_first;
+  __m128i shuf_idx =
+      _mm_setr_epi8(0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6);
+
+  // Start one pixel before as we need tap/2 - 1 = 1 sample from the past
+  src_ptr -= 1;
+
+  // Load Kernel
+  kernel_reg = _mm_loadu_si128((const __m128i *)kernel);
+  kernel_reg = _mm_srai_epi16(kernel_reg, 1);
+  kernel_reg = _mm_packs_epi16(kernel_reg, kernel_reg);
+  kernel_reg = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi32(0x05040302u));
+
+  for (h = height; h > 0; --h) {
+    // Load the source
+    src_reg = _mm_loadu_si128((const __m128i *)src_ptr);
+    src_reg_shuf = _mm_shuffle_epi8(src_reg, shuf_idx);
+
+    // Get the result
+    dst_first = _mm_maddubs_epi16(src_reg_shuf, kernel_reg);
+    dst_first = _mm_hadds_epi16(dst_first, _mm_setzero_si128());
+
+    // Round result
+    dst_first = mm_round_epi16_sse2(&dst_first, &reg_32, 6);
+
+    // Pack to 8-bits
+    dst_first = _mm_packus_epi16(dst_first, _mm_setzero_si128());
+    *((uint32_t *)(dst_ptr)) = _mm_cvtsi128_si32(dst_first);
+
+    src_ptr += src_stride;
+    dst_ptr += dst_stride;
+  }
+}
+
+static void vpx_filter_block1d4_v4_ssse3(const uint8_t *src_ptr,
+                                         ptrdiff_t src_stride, uint8_t *dst_ptr,
+                                         ptrdiff_t dst_stride, uint32_t height,
+                                         const int16_t *kernel) {
+  // We will load two rows of pixels as 8-bit words, rearrange them into the
+  // form
+  // ... s[2,0] s[1,0] s[0,0] s[-1,0]
+  // so that we can call multiply and add with the kernel partial output. Then
+  // we can call horizontal add to get the output.
+  // Finally, we can add multiple rows together to get the desired output.
+  // This is done two rows at a time
+
+  // Register for source s[-1:3, :]
+  __m128i src_reg_m1, src_reg_0, src_reg_1, src_reg_2, src_reg_3;
+  // Interleaved rows of the source.
+  __m128i src_reg_m10, src_reg_01;
+  __m128i src_reg_12, src_reg_23;
+  __m128i src_reg_m1001, src_reg_1223;
+  __m128i src_reg_m1012_1023_lo, src_reg_m1012_1023_hi;
+
+  __m128i kernel_reg;  // Kernel
+
+  // Result after multiply and add
+  __m128i reg_0, reg_1;
+
+  const __m128i reg_32 = _mm_set1_epi16(32);  // Used for rounding
+
+  // We will compute the result two rows at a time
+  const ptrdiff_t src_stride_unrolled = src_stride << 1;
+  const ptrdiff_t dst_stride_unrolled = dst_stride << 1;
+  int h;
+
+  // Load Kernel
+  kernel_reg = _mm_loadu_si128((const __m128i *)kernel);
+  kernel_reg = _mm_srai_epi16(kernel_reg, 1);
+  kernel_reg = _mm_packs_epi16(kernel_reg, kernel_reg);
+  kernel_reg = _mm_shuffle_epi8(kernel_reg, _mm_set1_epi32(0x05040302u));
+
+  // First shuffle the data
+  src_reg_m1 = _mm_loadl_epi64((const __m128i *)src_ptr);
+  src_reg_0 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride));
+  src_reg_m10 = _mm_unpacklo_epi32(src_reg_m1, src_reg_0);
+
+  // More shuffling
+  src_reg_1 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride * 2));
+  src_reg_01 = _mm_unpacklo_epi32(src_reg_0, src_reg_1);
+
+  // Put three rows next to each other
+  src_reg_m1001 = _mm_unpacklo_epi8(src_reg_m10, src_reg_01);
+
+  for (h = height; h > 1; h -= 2) {
+    src_reg_2 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride * 3));
+    src_reg_12 = _mm_unpacklo_epi32(src_reg_1, src_reg_2);
+
+    src_reg_3 = _mm_loadl_epi64((const __m128i *)(src_ptr + src_stride * 4));
+    src_reg_23 = _mm_unpacklo_epi32(src_reg_2, src_reg_3);
+
+    // Put three rows next to each other
+    src_reg_1223 = _mm_unpacklo_epi8(src_reg_12, src_reg_23);
+
+    // Put all four rows next to each other
+    src_reg_m1012_1023_lo = _mm_unpacklo_epi16(src_reg_m1001, src_reg_1223);
+    src_reg_m1012_1023_hi = _mm_unpackhi_epi16(src_reg_m1001, src_reg_1223);
+
+    // Get the results
+    reg_0 = _mm_maddubs_epi16(src_reg_m1012_1023_lo, kernel_reg);
+    reg_1 = _mm_maddubs_epi16(src_reg_m1012_1023_hi, kernel_reg);
+    reg_0 = _mm_hadds_epi16(reg_0, _mm_setzero_si128());
+    reg_1 = _mm_hadds_epi16(reg_1, _mm_setzero_si128());
+
+    // Round the words
+    reg_0 = mm_round_epi16_sse2(&reg_0, &reg_32, 6);
+    reg_1 = mm_round_epi16_sse2(&reg_1, &reg_32, 6);
+
+    // Pack from 16-bit to 8-bit and put them in the right order
+    reg_0 = _mm_packus_epi16(reg_0, reg_0);
+    reg_1 = _mm_packus_epi16(reg_1, reg_1);
+
+    // Save the result
+    *((uint32_t *)(dst_ptr)) = _mm_cvtsi128_si32(reg_0);
+    *((uint32_t *)(dst_ptr + dst_stride)) = _mm_cvtsi128_si32(reg_1);
+
+    // Update the source by two rows
+    src_ptr += src_stride_unrolled;
+    dst_ptr += dst_stride_unrolled;
+
+    src_reg_m1001 = src_reg_1223;
+    src_reg_1 = src_reg_3;
+  }
+}
+
+// From vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm
 filter8_1dfunction vpx_filter_block1d16_v8_ssse3;
 filter8_1dfunction vpx_filter_block1d16_h8_ssse3;
-filter8_1dfunction vpx_filter_block1d8_v8_ssse3;
-filter8_1dfunction vpx_filter_block1d8_h8_ssse3;
 filter8_1dfunction vpx_filter_block1d4_v8_ssse3;
-filter8_1dfunction vpx_filter_block1d4_h8_ssse3;
 filter8_1dfunction vpx_filter_block1d16_v8_avg_ssse3;
 filter8_1dfunction vpx_filter_block1d16_h8_avg_ssse3;
 filter8_1dfunction vpx_filter_block1d8_v8_avg_ssse3;
@@ -198,6 +689,15 @@ filter8_1dfunction vpx_filter_block1d8_h8_avg_ssse3;
 filter8_1dfunction vpx_filter_block1d4_v8_avg_ssse3;
 filter8_1dfunction vpx_filter_block1d4_h8_avg_ssse3;
 
+// Use the [vh]8 version because there is no [vh]4 implementation.
+#define vpx_filter_block1d16_v4_avg_ssse3 vpx_filter_block1d16_v8_avg_ssse3
+#define vpx_filter_block1d16_h4_avg_ssse3 vpx_filter_block1d16_h8_avg_ssse3
+#define vpx_filter_block1d8_v4_avg_ssse3 vpx_filter_block1d8_v8_avg_ssse3
+#define vpx_filter_block1d8_h4_avg_ssse3 vpx_filter_block1d8_h8_avg_ssse3
+#define vpx_filter_block1d4_v4_avg_ssse3 vpx_filter_block1d4_v8_avg_ssse3
+#define vpx_filter_block1d4_h4_avg_ssse3 vpx_filter_block1d4_h8_avg_ssse3
+
+// From vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
 filter8_1dfunction vpx_filter_block1d16_v2_ssse3;
 filter8_1dfunction vpx_filter_block1d16_h2_ssse3;
 filter8_1dfunction vpx_filter_block1d8_v2_ssse3;
@@ -231,10 +731,12 @@ filter8_1dfunction vpx_filter_block1d4_h2_avg_ssse3;
 //                                   const InterpKernel *filter, int x0_q4,
 //                                   int32_t x_step_q4, int y0_q4,
 //                                   int y_step_q4, int w, int h);
-FUN_CONV_1D(horiz, x0_q4, x_step_q4, h, src, , ssse3);
-FUN_CONV_1D(vert, y0_q4, y_step_q4, v, src - src_stride * 3, , ssse3);
-FUN_CONV_1D(avg_horiz, x0_q4, x_step_q4, h, src, avg_, ssse3);
-FUN_CONV_1D(avg_vert, y0_q4, y_step_q4, v, src - src_stride * 3, avg_, ssse3);
+FUN_CONV_1D(horiz, x0_q4, x_step_q4, h, src, , ssse3, 0);
+FUN_CONV_1D(vert, y0_q4, y_step_q4, v, src - src_stride * (num_taps / 2 - 1), ,
+            ssse3, 0);
+FUN_CONV_1D(avg_horiz, x0_q4, x_step_q4, h, src, avg_, ssse3, 1);
+FUN_CONV_1D(avg_vert, y0_q4, y_step_q4, v,
+            src - src_stride * (num_taps / 2 - 1), avg_, ssse3, 1);
 
 static void filter_horiz_w8_ssse3(const uint8_t *const src,
                                   const ptrdiff_t src_stride,
@@ -571,7 +1073,7 @@ void vpx_scaled_2d_ssse3(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
   }
 }
 
-// void vp9_convolve8_ssse3(const uint8_t *src, ptrdiff_t src_stride,
+// void vpx_convolve8_ssse3(const uint8_t *src, ptrdiff_t src_stride,
 //                          uint8_t *dst, ptrdiff_t dst_stride,
 //                          const InterpKernel *filter, int x0_q4,
 //                          int32_t x_step_q4, int y0_q4, int y_step_q4,
@@ -581,5 +1083,5 @@ void vpx_scaled_2d_ssse3(const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
 //                              const InterpKernel *filter, int x0_q4,
 //                              int32_t x_step_q4, int y0_q4, int y_step_q4,
 //                              int w, int h);
-FUN_CONV_2D(, ssse3);
-FUN_CONV_2D(avg_, ssse3);
+FUN_CONV_2D(, ssse3, 0);
+FUN_CONV_2D(avg_, ssse3, 1);
