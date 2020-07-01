@@ -7800,8 +7800,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.smartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
     parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes();
 #endif
-#if ENABLE(TINT_COLOR_SUPPORT)
-    parameters.tintColor = pageClient().tintColor();
+#if HAVE(APP_ACCENT_COLORS)
+    parameters.accentColor = pageClient().accentColor();
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
     parameters.userInterfaceLayoutDirection = pageClient().userInterfaceLayoutDirection();

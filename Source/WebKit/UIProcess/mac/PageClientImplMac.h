@@ -257,6 +257,10 @@ private:
 
     void takeFocus(WebCore::FocusDirection) override;
 
+#if HAVE(APP_ACCENT_COLORS)
+    WebCore::Color accentColor() override;
+#endif
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)

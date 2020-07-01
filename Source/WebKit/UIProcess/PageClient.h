@@ -350,8 +350,8 @@ public:
     virtual void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) = 0;
 #endif
 
-#if ENABLE(TINT_COLOR_SUPPORT)
-    virtual WebCore::Color tintColor() = 0;
+#if HAVE(APP_ACCENT_COLORS)
+    virtual WebCore::Color accentColor() = 0;
 #endif
 
     virtual bool effectiveAppearanceIsDark() const { return false; }

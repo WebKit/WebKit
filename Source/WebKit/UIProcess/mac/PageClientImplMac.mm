@@ -62,6 +62,7 @@
 #import "_WKThumbnailView.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/BitmapImage.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
@@ -78,6 +79,7 @@
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -935,6 +937,13 @@ void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, 
 {
     m_impl->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completion));
 }
+
+#if HAVE(APP_ACCENT_COLORS)
+WebCore::Color PageClientImpl::accentColor()
+{
+    return WebCore::colorFromNSColor([NSApp _accentColor]);
+}
+#endif
 
 } // namespace WebKit
 

@@ -174,8 +174,8 @@ struct WebPageCreationParameters {
     bool smartInsertDeleteEnabled;
     Vector<String> additionalSupportedImageTypes;
 #endif
-#if ENABLE(TINT_COLOR_SUPPORT)
-    WebCore::Color tintColor;
+#if HAVE(APP_ACCENT_COLORS)
+    WebCore::Color accentColor;
 #endif
 #if USE(WPE_RENDERER)
     IPC::Attachment hostFileDescriptor;

@@ -57,6 +57,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/BackForwardController.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editing.h>
@@ -91,6 +92,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/SetForScope.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1045,6 +1047,15 @@ void WebPage::didEndMagnificationGesture()
     m_page->mainFrame().eventHandler().didEndMagnificationGesture();
 #endif
 }
+
+#if HAVE(APP_ACCENT_COLORS)
+
+void WebPage::setAccentColor(WebCore::Color color)
+{
+    [NSApp _setAccentColor:color.isValid() ? WebCore::nsColor(color) : nil];
+}
+
+#endif
 
 } // namespace WebKit
 

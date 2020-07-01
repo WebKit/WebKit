@@ -726,8 +726,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
 #endif
 
-#if ENABLE(TINT_COLOR_SUPPORT)
-    setTintColor(parameters.tintColor);
+#if HAVE(APP_ACCENT_COLORS)
+    setAccentColor(parameters.accentColor);
 #endif
 
     m_needsFontAttributes = parameters.needsFontAttributes;

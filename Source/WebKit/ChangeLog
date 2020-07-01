@@ -1,3 +1,29 @@
+2020-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Upstream application accent color support
+        https://bugs.webkit.org/show_bug.cgi?id=213859
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::accentColor):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setAccentColor):
+        Plumb accent color to the Web Content process so that it is used when
+        deciding the colors of selection and form controls.
+
 2020-07-01  Keith Miller  <keith_miller@apple.com>
 
         Add WebXR to WebKit.plist preferences, off by default
