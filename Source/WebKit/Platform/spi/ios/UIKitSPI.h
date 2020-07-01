@@ -1225,6 +1225,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
+#define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
 
 @interface UITextInteractionAssistant (IPI)
 @property (nonatomic, readonly) BOOL inGesture;

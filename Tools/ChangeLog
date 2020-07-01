@@ -1,3 +1,20 @@
+2020-07-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Implement support for UIWKDocumentRequestSpatialAndCurrentSelection
+        https://bugs.webkit.org/show_bug.cgi?id=213704
+        <rdar://problem/59738878>
+
+        Reviewed by Wenson Hsieh.
+
+        Add some tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h: Define the enumerator using a macro just like what was done for
+        UIWKDocumentRequestMarkedTextRects. The reason for the macro instead of modifying the enumeration
+        definition in this file is to 1) avoid breaking the build for Apple engineers that haven't picked
+        up <rdar://problem/64867540> and to 2) avoid breaking the OpenSource build.
+
 2020-07-01  Kate Cheney  <katherine_cheney@apple.com>
 
         WKUserScripts injecting into all frames seem to violate app-bound domains

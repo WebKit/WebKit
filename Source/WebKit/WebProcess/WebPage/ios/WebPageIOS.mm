@@ -4137,7 +4137,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     VisiblePosition selectionStart = selection.visibleStart();
     VisiblePosition selectionEnd = selection.visibleEnd();
 
-    bool isSpatialRequest = request.options.contains(DocumentEditingContextRequest::Options::Spatial);
+    bool isSpatialRequest = request.options.containsAny({ DocumentEditingContextRequest::Options::Spatial, DocumentEditingContextRequest::Options::SpatialAndCurrentSelection });
     bool wantsRects = request.options.contains(DocumentEditingContextRequest::Options::Rects);
     bool wantsMarkedTextRects = request.options.contains(DocumentEditingContextRequest::Options::MarkedTextRects);
 
@@ -4161,6 +4161,12 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         rangeOfInterestEnd = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.maxXMaxYCorner());
         if (rangeOfInterestEnd < rangeOfInterestStart)
             std::exchange(rangeOfInterestStart, rangeOfInterestEnd);
+        if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
+            if (selectionStart < rangeOfInterestStart)
+                rangeOfInterestStart = selectionStart;
+            if (selectionEnd > rangeOfInterestEnd)
+                rangeOfInterestEnd = selectionEnd;
+        }
     } else if (!selection.isNone()) {
         rangeOfInterestStart = selectionStart;
         rangeOfInterestEnd = selectionEnd;

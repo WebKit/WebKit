@@ -223,6 +223,7 @@ IGNORE_WARNINGS_END
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
+#define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
 
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;

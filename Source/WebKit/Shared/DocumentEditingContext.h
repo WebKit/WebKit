@@ -48,6 +48,7 @@ struct DocumentEditingContextRequest {
         Spatial = 1 << 3,
         Annotation = 1 << 4,
         MarkedTextRects = 1 << 5,
+        SpatialAndCurrentSelection = 1 << 6,
     };
 
     OptionSet<Options> options;
@@ -118,7 +119,8 @@ template<> struct EnumTraits<WebKit::DocumentEditingContextRequest::Options> {
         WebKit::DocumentEditingContextRequest::Options::Rects,
         WebKit::DocumentEditingContextRequest::Options::Spatial,
         WebKit::DocumentEditingContextRequest::Options::Annotation,
-        WebKit::DocumentEditingContextRequest::Options::MarkedTextRects
+        WebKit::DocumentEditingContextRequest::Options::MarkedTextRects,
+        WebKit::DocumentEditingContextRequest::Options::SpatialAndCurrentSelection
     >;
 };
 

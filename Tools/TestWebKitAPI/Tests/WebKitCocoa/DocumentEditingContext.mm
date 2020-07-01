@@ -458,6 +458,128 @@ TEST(DocumentEditingContext, SpatialRequestInTextField)
     }
 }
 
+static CGRect CGRectFromJSONEncodedDOMRectJSValue(id jsValue)
+{
+    if (![jsValue isKindOfClass:NSDictionary.class])
+        return CGRectNull;
+    NSDictionary *domRect = jsValue;
+    return CGRectMake([domRect[@"left"] floatValue], [domRect[@"top"] floatValue], [domRect[@"width"] floatValue], [domRect[@"height"] floatValue]);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeRangeSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<span id='spatialBox'>The</span> quick brown fox <span id='jumps'>jumps</span> over the dog.")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
+
+    // Hit testing below the last line is treated as if the line was hit. So, use height of 1
+    // to ensure we aren't even close to the line height.
+    auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
+    spatialBoxRect.size.height = 1;
+    EXPECT_EQ(CGRectMake(0, 0, 3 * glyphWidth, 1), spatialBoxRect);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("The quick brown fox ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("jumps", context.selectedText);
+    EXPECT_NSSTRING_EQ(" over the", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterRangeSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"The quick brown fox <span id='jumps'>jumps</span> over the dog.<span id='spatialBox'></span>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
+
+    // Hit testing below the last line is treated as if the line was hit. So, use height of 1
+    // to ensure we aren't even close to the line height.
+    auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
+    spatialBoxRect.size.height = 1;
+    EXPECT_EQ(CGRectMake(39 * glyphWidth, 0, 0, 1), spatialBoxRect);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("brown fox ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("jumps", context.selectedText);
+    EXPECT_NSSTRING_EQ(" over the dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAroundRangeSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"The quick brown <span id='spatialBox'>fox <span id='jumps'>jumps</span> </span>over the dog.")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];
+
+    // Hit testing below the last line is treated as if the line was hit. So, use height of 1
+    // to ensure we aren't even close to the line height.
+    auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
+    spatialBoxRect.size.height = 1;
+    EXPECT_EQ(CGRectMake(16 * glyphWidth, 0, 10 * glyphWidth, 1), spatialBoxRect);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("quick brown fox ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("jumps", context.selectedText);
+    EXPECT_NSSTRING_EQ(" over the", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeCaretSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<body contenteditable='true'><span id='spatialBox'>The</span> quick brown fox <span id='jumps'>jumps</span> over the dog.</body>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 0)"];
+
+    // Hit testing below the last line is treated as if the line was hit. So, use height of 1
+    // to ensure we aren't even close to the line height.
+    auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
+    spatialBoxRect.size.height = 1;
+    EXPECT_EQ(CGRectMake(0, 0, 3 * glyphWidth, 1), spatialBoxRect);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("The quick brown fox ", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("jumps over", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterCaretSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<body contenteditable='true'>The quick brown fox <span id='jumps'>jumps</span> over the dog.<span id='spatialBox'></span></body>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 0)"];
+
+    // Hit testing below the last line is treated as if the line was hit. So, use height of 1
+    // to ensure we aren't even close to the line height.
+    auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
+    spatialBoxRect.size.height = 1;
+    EXPECT_EQ(CGRectMake(39 * glyphWidth, 0, 0, 1), spatialBoxRect);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("brown fox ", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("jumps over the dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAroundCaretSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:applyAhemStyle(@"<body contenteditable='true'>The quick brown <span id='spatialBox'>fox <span id='jumps'>jumps</span> </span>over the dog.</body>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 0)"];
+
+    // Hit testing below the last line is treated as if the line was hit. So, use height of 1
+    // to ensure we aren't even close to the line height.
+    auto spatialBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"spatialBox.getBoundingClientRect().toJSON()"]);
+    spatialBoxRect.size.height = 1;
+    EXPECT_EQ(CGRectMake(16 * glyphWidth, 0, 10 * glyphWidth, 1), spatialBoxRect);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 2, spatialBoxRect)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("quick brown fox ", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("jumps over the", context.contextAfter);
+}
+
 TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
