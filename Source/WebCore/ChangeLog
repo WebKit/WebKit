@@ -1,3 +1,17 @@
+2020-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for non-baseline aligned cell height
+        https://bugs.webkit.org/show_bug.cgi?id=213845
+
+        Reviewed by Antti Koivisto.
+
+        Adjust max ascent/descent only when the cell is basline aligned.
+
+        Test: fast/layoutformattingcontext/table-cell-height-middle-align-simple.html
+
+        * layout/tableformatting/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+
 2020-07-01  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] Tracks panel can show text tracks with mode "hidden" as selected

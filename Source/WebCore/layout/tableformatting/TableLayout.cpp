@@ -276,11 +276,15 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
             auto& cell = slot.cell();
-            maximumColumnAscent = std::max(maximumColumnAscent, cell.baselineOffset());
-            maximumColumnDescent = std::max(maximumColumnDescent, formattingContext().geometryForBox(cell.box()).height() - cell.baselineOffset());
+            auto& cellBox = cell.box();
+            auto height = formattingContext().geometryForBox(cellBox).height();
+            if (cellBox.style().verticalAlign() == VerticalAlign::Baseline) {
+                maximumColumnAscent = std::max(maximumColumnAscent, cell.baselineOffset());
+                maximumColumnDescent = std::max(maximumColumnDescent, height - cell.baselineOffset());
+                rowHeight[rowIndex] = std::max(rowHeight[rowIndex], LayoutUnit { maximumColumnAscent + maximumColumnDescent });
+            } else
+                rowHeight[rowIndex] = std::max(rowHeight[rowIndex], height);
         }
-        // <tr style="height: 10px"> is considered as min height.
-        rowHeight[rowIndex] = maximumColumnAscent + maximumColumnDescent;
         tableUsedHeight += rowHeight[rowIndex];
     }
     // FIXME: Collect spanning row maximum heights.
