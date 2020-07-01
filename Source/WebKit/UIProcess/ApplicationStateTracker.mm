@@ -53,8 +53,6 @@ namespace WebKit {
 
 ApplicationType applicationType(UIWindow *window)
 {
-    ASSERT(window);
-
     if (_UIApplicationIsExtension())
         return ApplicationType::Extension;
 

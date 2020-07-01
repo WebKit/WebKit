@@ -1,3 +1,27 @@
+2020-07-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r259242) WebKit no longer does client navigations at foreground priority for extensions
+        https://bugs.webkit.org/show_bug.cgi?id=213852
+        <rdar://problem/63300428>
+
+        Reviewed by Alex Christensen.
+
+        r259242 tried to address a ASSERT(window) debug assertion hit in applicationType()
+        by only calling applicationType() when the window is non-null and assuming the
+        process is an application when the window is null. However, this is not correct
+        for extensions. The first thing isApplicationVisible() does is call 
+         _UIApplicationIsExtension() to determine if we are an extension. It does not need
+        the window to make this determination. As a result, I have reverted r259242 and
+        simply dropped the ASSERT(window) assertion in isApplicationVisible() instead.
+
+        This fixes the regression tracked by <rdar://problem/63300428> by reverting the
+        change that caused it (r259242) and drops the assertion that was hit before r259242.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::applicationType):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isApplicationVisible):
+
 2020-07-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Implement support for UIWKDocumentRequestSpatialAndCurrentSelection

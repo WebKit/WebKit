@@ -150,9 +150,10 @@ bool PageClientImpl::isViewVisible()
 
 bool PageClientImpl::isApplicationVisible()
 {
-    auto* window = [m_webView window];
-    if (!window || applicationType(window) == ApplicationType::Application)
+    if (applicationType([m_webView window]) == ApplicationType::Application) {
+        ASSERT(!_UIApplicationIsExtension());
         return [[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground;
+    }
 
     // Complex code path for extensions and view services.
     UIViewController *serviceViewController = nil;
