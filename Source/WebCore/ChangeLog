@@ -1,3 +1,25 @@
+2020-06-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Remove death code paths when evaluating percentage resolution
+        https://bugs.webkit.org/show_bug.cgi?id=213809
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Both crossSizeForPercentageResolution() and mainSizeForPercentageResolution() are only called from
+        childLogicalHeightForPercentageResolution(). The former is called whenever hasOrthogonalFlow(child)
+        is false and the latter when it's true. However crossSizeForPercentageResolution() has a path for
+        hasOrthogonalFlow(child)==true which is impossible to reach. The same happens to
+        mainSizeForPercentageResolution() which has a path for hasOrthogonalFlow(child)==false which is
+        also impossible to reach.
+
+        Remove both death code paths and replace them by assertions. We're also making both methods
+        private since are not meant to be used from the outside.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::crossSizeForPercentageResolution): Remove death code path.
+        (WebCore::RenderFlexibleBox::mainSizeForPercentageResolution): Ditto.
+        * rendering/RenderFlexibleBox.h: Make both calls private.
+
 2020-06-30  Sam Weinig  <weinig@apple.com>
 
         Split Color serialization out of Color classes

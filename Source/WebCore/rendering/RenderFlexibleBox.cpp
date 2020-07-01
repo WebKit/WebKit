@@ -1161,13 +1161,12 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     
 Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const RenderBox& child)
 {
+    ASSERT(!hasOrthogonalFlow(child));
     if (alignmentForChild(child) != ItemPosition::Stretch)
         return WTF::nullopt;
 
     // Here we implement https://drafts.csswg.org/css-flexbox/#algo-stretch
-    if (hasOrthogonalFlow(child) && child.hasOverrideContentLogicalWidth())
-        return child.overrideContentLogicalWidth();
-    if (!hasOrthogonalFlow(child) && child.hasOverrideContentLogicalHeight())
+    if (child.hasOverrideContentLogicalHeight())
         return child.overrideContentLogicalHeight();
     
     // We don't currently implement the optimization from
@@ -1181,15 +1180,14 @@ Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const R
 
 Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const RenderBox& child)
 {
+    ASSERT(hasOrthogonalFlow(child));
     // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
     // If the flex container has a definite main size the flex item post-flexing main size is also treated
     // as definite. We make up a percentage to check whether we have a definite size.
     if (!mainAxisLengthIsDefinite(child, Length(0, Percent)))
         return WTF::nullopt;
 
-    if (hasOrthogonalFlow(child))
-        return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight()) : WTF::nullopt;
-    return child.hasOverrideContentLogicalWidth() ? Optional<LayoutUnit>(child.overrideContentLogicalWidth()) : WTF::nullopt;
+    return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight()) : WTF::nullopt;
 }
 
 Optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
