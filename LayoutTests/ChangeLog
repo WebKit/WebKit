@@ -1,3 +1,9 @@
+2020-07-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Remove unnecessary baseline after r263797.
+
+        * platform/glib/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt:
+
 2020-07-01  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/events/before-input-prevent-cut.html as they are passing. 
