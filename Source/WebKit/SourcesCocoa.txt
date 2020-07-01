@@ -55,7 +55,6 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCResolver.cpp
 NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp
-NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 GPUProcess/ios/GPUProcessIOS.mm

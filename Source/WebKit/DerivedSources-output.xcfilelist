@@ -97,9 +97,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCMonitorMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCProviderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCProviderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCProviderMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCSocketMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCSocketMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCSocketMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkResourceLoaderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkResourceLoaderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkResourceLoaderMessagesReplies.h

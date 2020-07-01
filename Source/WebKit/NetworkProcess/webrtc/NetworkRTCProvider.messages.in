@@ -30,6 +30,10 @@ messages -> NetworkRTCProvider {
 
     CreateResolver(WebKit::LibWebRTCResolverIdentifier identifier, String address)
     StopResolver(WebKit::LibWebRTCResolverIdentifier identifier)
+
+    void SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, IPC::DataReference data, WebKit::RTCNetwork::SocketAddress address, struct WebKit::RTCPacketOptions options)
+    void CloseSocket(WebCore::LibWebRTCSocketIdentifier identifier)
+    void SetSocketOption(WebCore::LibWebRTCSocketIdentifier identifier, int option, int value)
 }
 
 #endif // USE(LIBWEBRTC)

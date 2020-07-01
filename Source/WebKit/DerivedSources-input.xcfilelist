@@ -56,7 +56,6 @@ $(PROJECT_DIR)/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCProvider.messages.in
-$(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCSocket.messages.in
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in
 $(PROJECT_DIR)/PluginProcess/PluginProcess.messages.in
 $(PROJECT_DIR)/PluginProcess/WebProcessConnection.messages.in

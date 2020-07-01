@@ -126,7 +126,6 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/NetworkProcess \
 	NetworkProcess/NetworkResourceLoader \
 	NetworkProcess/webrtc/NetworkMDNSRegister \
-	NetworkProcess/webrtc/NetworkRTCSocket \
 	NetworkProcess/webrtc/NetworkRTCProvider \
 	NetworkProcess/webrtc/NetworkRTCMonitor \
 	NetworkProcess/Cookies/WebCookieManager \

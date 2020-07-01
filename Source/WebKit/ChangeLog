@@ -1,3 +1,53 @@
+2020-07-01  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkRTCProvider receive IPC messages from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=213557
+
+        Reviewed by Geoffrey Garen.
+
+        To ensure webrtc packets do not get blocked on the main thread,
+        we process WebProcess IPC message directly in the socket thread.
+        For new sockets, we still go through the main thread, to check suspension or proxy values.
+        For sending packets/setting options/closing sockets, we stay in the background thread.
+
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::sendTo):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::close):
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        (WebKit::NetworkRTCProvider::sendToSocket):
+        (WebKit::NetworkRTCProvider::closeSocket):
+        (WebKit::NetworkRTCProvider::setSocketOption):
+        (WebKit::NetworkRTCProvider::addSocket):
+        (WebKit::NetworkRTCProvider::takeSocket):
+        (WebKit::NetworkRTCProvider::newConnection):
+        (WebKit::NetworkRTCProvider::dispatchToThread):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::didReceiveNetworkRTCMonitorMessage):
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCSocket.cpp: Removed.
+        * NetworkProcess/webrtc/NetworkRTCSocket.h: Removed.
+        * NetworkProcess/webrtc/NetworkRTCSocket.messages.in: Removed.
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::SendTo):
+        (WebKit::LibWebRTCSocket::Close):
+        (WebKit::LibWebRTCSocket::SetOption):
+        (WebKit::LibWebRTCSocket::suspend):
+
 2020-06-30  Sam Weinig  <weinig@apple.com>
 
         Split Color serialization out of Color classes

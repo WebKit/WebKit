@@ -49,7 +49,7 @@ private:
     void close() final;
 
     void setOption(int option, int value) final;
-    void sendTo(const WebCore::SharedBuffer&, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
+    void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
 
     void signalReadPacket(rtc::AsyncPacketSocket*, const char*, size_t, const rtc::SocketAddress&, const rtc::PacketTime&);
     void signalSentPacket(rtc::AsyncPacketSocket*, const rtc::SentPacket&);

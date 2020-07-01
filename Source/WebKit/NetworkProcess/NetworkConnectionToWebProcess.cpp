@@ -39,7 +39,6 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkRTCMonitorMessages.h"
 #include "NetworkRTCProviderMessages.h"
-#include "NetworkRTCSocketMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkResourceLoaderMessages.h"
@@ -215,16 +214,12 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
 #if USE(LIBWEBRTC)
-    if (decoder.messageReceiverName() == Messages::NetworkRTCSocket::messageReceiverName()) {
-        rtcProvider().didReceiveNetworkRTCSocketMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::NetworkRTCProvider::messageReceiverName()) {
+        rtcProvider().didReceiveMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::NetworkRTCMonitor::messageReceiverName()) {
         rtcProvider().didReceiveNetworkRTCMonitorMessage(connection, decoder);
-        return;
-    }
-    if (decoder.messageReceiverName() == Messages::NetworkRTCProvider::messageReceiverName()) {
-        rtcProvider().didReceiveMessage(connection, decoder);
         return;
     }
 #endif

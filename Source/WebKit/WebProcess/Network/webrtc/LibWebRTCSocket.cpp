@@ -31,7 +31,7 @@
 #include "DataReference.h"
 #include "LibWebRTCSocketFactory.h"
 #include "NetworkProcessConnection.h"
-#include "NetworkRTCSocketMessages.h"
+#include "NetworkRTCProviderMessages.h"
 #include "RTCPacketOptions.h"
 #include "WebProcess.h"
 #include <WebCore/SharedBuffer.h>
@@ -136,7 +136,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
         return size;
 
     IPC::DataReference data(static_cast<const uint8_t*>(value), size);
-    connection->send(Messages::NetworkRTCSocket::SendTo { data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, m_identifier);
+    connection->send(Messages::NetworkRTCProvider::SendToSocket { m_identifier, data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, 0);
 
     return size;
 }
@@ -149,7 +149,7 @@ int LibWebRTCSocket::Close()
 
     m_state = STATE_CLOSED;
 
-    connection->send(Messages::NetworkRTCSocket::Close(), m_identifier);
+    connection->send(Messages::NetworkRTCProvider::CloseSocket { m_identifier }, 0);
 
     return 0;
 }
@@ -171,7 +171,7 @@ int LibWebRTCSocket::SetOption(rtc::Socket::Option option, int value)
     m_options[option] = value;
 
     if (auto* connection = m_factory.connection())
-        connection->send(Messages::NetworkRTCSocket::SetOption(option, value), m_identifier);
+        connection->send(Messages::NetworkRTCProvider::SetSocketOption { m_identifier, option, value }, 0);
 
     return 0;
 }
@@ -201,7 +201,7 @@ void LibWebRTCSocket::suspend()
         return;
 
     if (auto* connection = m_factory.connection())
-        connection->send(Messages::NetworkRTCSocket::Close { }, m_identifier);
+        connection->send(Messages::NetworkRTCProvider::CloseSocket { m_identifier }, 0);
 }
 
 } // namespace WebKit
