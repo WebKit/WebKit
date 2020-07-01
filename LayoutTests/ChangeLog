@@ -1,3 +1,12 @@
+2020-07-01  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for fast/events/before-input-prevent-cut.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213849
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-07-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for non-baseline aligned cell height
