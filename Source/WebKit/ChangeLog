@@ -1,3 +1,16 @@
+2020-07-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow the WebContent sandbox to check the 'hw.product' sysctl
+        https://bugs.webkit.org/show_bug.cgi?id=213861
+        <rdar://problem/64988957>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry shows that we need to read the 'hw.product' sysctl in the font subsystem,
+        primarily to enable certain font features (for various products) in different locales.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Upstream application accent color support

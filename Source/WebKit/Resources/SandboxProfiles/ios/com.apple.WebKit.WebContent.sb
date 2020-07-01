@@ -823,6 +823,7 @@
         "hw.pagesize_compat"
         "hw.physicalcpu"
         "hw.physicalcpu_max"
+        "hw.product"
         "kern.bootargs"
         "kern.hostname"
         "kern.memorystatus_level"
