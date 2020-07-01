@@ -262,7 +262,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             if (isStack)
                 jit.store32(scratchGPR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));
             else
-                jit.zeroExtend32ToPtr(scratchGPR, wasmCallInfo.params[i].gpr());
+                jit.zeroExtend32ToWord(scratchGPR, wasmCallInfo.params[i].gpr());
             break;
         }
         case Wasm::Funcref: {

@@ -208,7 +208,7 @@ public:
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         if (!imm.m_value) {
-            zeroExtend32ToPtr(src, dest);
+            zeroExtend32ToWord(src, dest);
             return;
         }
 
@@ -333,7 +333,7 @@ public:
     void and32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
         if (op1 == op2)
-            zeroExtend32ToPtr(op1, dest);
+            zeroExtend32ToWord(op1, dest);
         else if (op1 == dest)
             and32(op2, dest);
         else {
@@ -350,7 +350,7 @@ public:
             load32(op1, dest);
             and32(op2, dest);
         } else {
-            zeroExtend32ToPtr(op2, dest);
+            zeroExtend32ToWord(op2, dest);
             and32(op1, dest);
         }
     }
@@ -494,7 +494,7 @@ public:
             load32(op1, dest);
             mul32(op2, dest);
         } else {
-            zeroExtend32ToPtr(op2, dest);
+            zeroExtend32ToWord(op2, dest);
             mul32(op1, dest);
         }
     }
@@ -669,7 +669,7 @@ public:
     void or32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
         if (op1 == op2)
-            zeroExtend32ToPtr(op1, dest);
+            zeroExtend32ToWord(op1, dest);
         else if (op1 == dest)
             or32(op2, dest);
         else {
@@ -686,7 +686,7 @@ public:
             load32(op1, dest);
             or32(op2, dest);
         } else {
-            zeroExtend32ToPtr(op2, dest);
+            zeroExtend32ToWord(op2, dest);
             or32(op1, dest);
         }
     }
@@ -1029,7 +1029,7 @@ public:
             load32(op1, dest);
             xor32(op2, dest);
         } else {
-            zeroExtend32ToPtr(op2, dest);
+            zeroExtend32ToWord(op2, dest);
             xor32(op1, dest);
         }
     }
@@ -2287,12 +2287,12 @@ public:
         m_assembler.movsxd_rr(src, dest);
     }
 
-    void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
+    void zeroExtend32ToWord(RegisterID src, RegisterID dest)
     {
         m_assembler.movl_rr(src, dest);
     }
 
-    void zeroExtend32ToPtr(TrustedImm32 src, RegisterID dest)
+    void zeroExtend32ToWord(TrustedImm32 src, RegisterID dest)
     {
         m_assembler.movl_i32r(src.m_value, dest);
     }
@@ -2375,7 +2375,7 @@ public:
         move(src, dest);
     }
 
-    void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
+    void zeroExtend32ToWord(RegisterID src, RegisterID dest)
     {
         move(src, dest);
     }
@@ -2822,7 +2822,7 @@ public:
             load32(op1, dest);
             return branchAdd32(cond, op2, dest);
         }
-        zeroExtend32ToPtr(op2, dest);
+        zeroExtend32ToWord(op2, dest);
         return branchAdd32(cond, op1, dest);
     }
 

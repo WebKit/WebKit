@@ -1023,7 +1023,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
                 info.fillInt32(*m_stream, gpr);
                 result = gpr;
             }
-            m_jit.zeroExtend32ToPtr(gpr, result);
+            m_jit.zeroExtend32ToWord(gpr, result);
             returnFormat = DataFormatInt32;
             return result;
         }
@@ -5087,7 +5087,7 @@ void SpeculativeJIT::compile(Node* node)
 
         DataViewData data = node->dataViewData();
 
-        m_jit.zeroExtend32ToPtr(indexGPR, t2);
+        m_jit.zeroExtend32ToWord(indexGPR, t2);
         if (data.byteSize > 1)
             m_jit.add64(TrustedImm32(data.byteSize - 1), t2);
         m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
@@ -5097,7 +5097,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.loadPtr(JITCompiler::Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
         cageTypedArrayStorage(dataViewGPR, t2);
 
-        m_jit.zeroExtend32ToPtr(indexGPR, t1);
+        m_jit.zeroExtend32ToWord(indexGPR, t1);
         auto baseIndex = JITCompiler::BaseIndex(t2, t1, MacroAssembler::TimesOne);
 
         if (node->op() == DataViewGetInt) {
@@ -5288,7 +5288,7 @@ void SpeculativeJIT::compile(Node* node)
             isLittleEndianOperand.emplace(this, m_graph.varArgChild(node, 3));
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
 
-        m_jit.zeroExtend32ToPtr(indexGPR, t2);
+        m_jit.zeroExtend32ToWord(indexGPR, t2);
         if (data.byteSize > 1)
             m_jit.add64(TrustedImm32(data.byteSize - 1), t2);
         m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
@@ -5298,7 +5298,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.loadPtr(JITCompiler::Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
         cageTypedArrayStorage(dataViewGPR, t2);
 
-        m_jit.zeroExtend32ToPtr(indexGPR, t1);
+        m_jit.zeroExtend32ToWord(indexGPR, t1);
         auto baseIndex = JITCompiler::BaseIndex(t2, t1, MacroAssembler::TimesOne);
 
         if (data.isFloatingPoint) {
@@ -5400,7 +5400,7 @@ void SpeculativeJIT::compile(Node* node)
                 };
 
                 auto emitBigEndianCode = [&] {
-                    m_jit.zeroExtend32ToPtr(valueGPR, t3);
+                    m_jit.zeroExtend32ToWord(valueGPR, t3);
                     m_jit.byteSwap32(t3);
                     m_jit.store32(t3, baseIndex);
                 };

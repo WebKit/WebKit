@@ -52,7 +52,7 @@ static void reboxAccordingToFormat(
 {
     switch (format) {
     case DataFormatInt32: {
-        jit.zeroExtend32ToPtr(value, value);
+        jit.zeroExtend32ToWord(value, value);
         jit.or64(GPRInfo::numberTagRegister, value);
         break;
     }
@@ -73,7 +73,7 @@ static void reboxAccordingToFormat(
     }
 
     case DataFormatBoolean: {
-        jit.zeroExtend32ToPtr(value, value);
+        jit.zeroExtend32ToWord(value, value);
         jit.or32(MacroAssembler::TrustedImm32(JSValue::ValueFalse), value);
         break;
     }

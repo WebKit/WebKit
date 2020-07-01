@@ -145,7 +145,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 }
                 ++marshalledGPRs;
                 if (argType == I32) {
-                    jit.zeroExtend32ToPtr(gprReg, gprReg); // Clear non-int32 and non-tag bits.
+                    jit.zeroExtend32ToWord(gprReg, gprReg); // Clear non-int32 and non-tag bits.
                     jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
                 }
                 jit.store64(gprReg, calleeFrame.withOffset(calleeFrameOffset));
@@ -294,7 +294,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
             slowPath.append(jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters));
             slowPath.append(jit.branchIfNotInt32(JSValueRegs(GPRInfo::returnValueGPR), DoNotHaveTagRegisters));
-            jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, dest);
+            jit.zeroExtend32ToWord(GPRInfo::returnValueGPR, dest);
             done.append(jit.jump());
 
             slowPath.link(&jit);

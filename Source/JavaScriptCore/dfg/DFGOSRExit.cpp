@@ -734,7 +734,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case Int32DisplacedInJSStack:
 #if USE(JSVALUE64)
             jit.load64(scratch + index, GPRInfo::regT0);
-            jit.zeroExtend32ToPtr(GPRInfo::regT0, GPRInfo::regT0);
+            jit.zeroExtend32ToWord(GPRInfo::regT0, GPRInfo::regT0);
             jit.or64(GPRInfo::numberTagRegister, GPRInfo::regT0);
             jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
 #else

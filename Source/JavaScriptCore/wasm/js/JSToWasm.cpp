@@ -49,7 +49,7 @@ inline void boxWasmResult(CCallHelpers& jit, Wasm::Type type, Reg src, JSValueRe
         jit.move(src.gpr(), dst.payloadGPR());
         break;
     case Wasm::I32:
-        jit.zeroExtend32ToPtr(src.gpr(), dst.payloadGPR());
+        jit.zeroExtend32ToWord(src.gpr(), dst.payloadGPR());
         jit.boxInt32(dst.payloadGPR(), dst, DoNotHaveTagRegisters);
         break;
     case Wasm::F32:

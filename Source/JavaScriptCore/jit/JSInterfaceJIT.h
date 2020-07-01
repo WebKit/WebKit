@@ -111,7 +111,7 @@ namespace JSC {
     {
         load64(addressFor(virtualRegister), dst);
         Jump notInt32 = branchIfNotInt32(dst);
-        zeroExtend32ToPtr(dst, dst);
+        zeroExtend32ToWord(dst, dst);
         return notInt32;
     }
 

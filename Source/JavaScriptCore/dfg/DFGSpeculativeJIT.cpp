@@ -1710,7 +1710,7 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     m_jit.loadPtr(MacroAssembler::Address(temp2GPR, StringImpl::dataOffset()), tempGPR);
 
     // Load the character into scratchReg
-    m_jit.zeroExtend32ToPtr(startIndexGPR, startIndexGPR);
+    m_jit.zeroExtend32ToWord(startIndexGPR, startIndexGPR);
     auto is16Bit = m_jit.branchTest32(MacroAssembler::Zero, MacroAssembler::Address(temp2GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
     m_jit.load8(MacroAssembler::BaseIndex(tempGPR, startIndexGPR, MacroAssembler::TimesOne, 0), tempGPR);
@@ -2518,7 +2518,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         GPRTemporary result(this, Reuse, op1);
         GPRReg op1GPR = op1.gpr();
         GPRReg resultGPR = result.gpr();
-        m_jit.zeroExtend32ToPtr(op1GPR, resultGPR);
+        m_jit.zeroExtend32ToWord(op1GPR, resultGPR);
         strictInt32Result(resultGPR, node, DataFormatInt32);
         return;
     }
@@ -2603,7 +2603,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             converted.append(m_jit.jump());
 
             isInteger.link(&m_jit);
-            m_jit.zeroExtend32ToPtr(gpr, resultGpr);
+            m_jit.zeroExtend32ToWord(gpr, resultGpr);
 
             converted.link(&m_jit);
 #else
@@ -2690,7 +2690,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         if (enableInt52()) {
             SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, Reuse, op1);
-            m_jit.zeroExtend32ToPtr(op1.gpr(), result.gpr());
+            m_jit.zeroExtend32ToWord(op1.gpr(), result.gpr());
             strictInt52Result(result.gpr(), node);
             return;
         }
@@ -3110,7 +3110,7 @@ void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, GPRReg resultReg, Ty
 #if USE(JSVALUE64)
     if (node->shouldSpeculateInt52()) {
         ASSERT(enableInt52());
-        m_jit.zeroExtend32ToPtr(resultReg, resultReg);
+        m_jit.zeroExtend32ToWord(resultReg, resultReg);
         strictInt52Result(resultReg, node);
         return;
     }
@@ -5560,7 +5560,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
             notZero.link(&m_jit);
             JITCompiler::Jump notNeg2ToThe31 =
                 m_jit.branch32(JITCompiler::NotEqual, op1GPR, TrustedImm32(-2147483647-1));
-            m_jit.zeroExtend32ToPtr(op1GPR, eax.gpr());
+            m_jit.zeroExtend32ToWord(op1GPR, eax.gpr());
             done.append(m_jit.jump());
         
             notNeg2ToThe31.link(&m_jit);
@@ -8285,7 +8285,7 @@ void SpeculativeJIT::compileCreateRest(Node* node)
         m_jit.loadPtr(MacroAssembler::Address(arrayResultGPR, JSObject::butterflyOffset()), butterflyGPR);
 
         CCallHelpers::Jump skipLoop = m_jit.branch32(MacroAssembler::Equal, arrayLengthGPR, TrustedImm32(0));
-        m_jit.zeroExtend32ToPtr(arrayLengthGPR, currentLengthGPR);
+        m_jit.zeroExtend32ToWord(arrayLengthGPR, currentLengthGPR);
         m_jit.addPtr(Imm32(sizeof(Register) * node->numberOfArgumentsToSkip()), argumentsStartGPR);
 
         auto loop = m_jit.label();
@@ -8955,8 +8955,8 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     GPRReg resultButterfly = temp2.gpr();
 
     m_jit.loadPtr(MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()), resultButterfly);
-    m_jit.zeroExtend32ToPtr(tempGPR, tempGPR);
-    m_jit.zeroExtend32ToPtr(loadIndex, loadIndex);
+    m_jit.zeroExtend32ToWord(tempGPR, tempGPR);
+    m_jit.zeroExtend32ToWord(loadIndex, loadIndex);
     auto done = m_jit.branchPtr(MacroAssembler::AboveOrEqual, loadIndex, tempGPR);
 
     auto loop = m_jit.label();
@@ -9013,8 +9013,8 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             m_jit.clearRegisterAllocationOffsets();
 #endif
 
-            m_jit.zeroExtend32ToPtr(lengthGPR, lengthGPR);
-            m_jit.zeroExtend32ToPtr(indexGPR, indexGPR);
+            m_jit.zeroExtend32ToWord(lengthGPR, lengthGPR);
+            m_jit.zeroExtend32ToWord(indexGPR, indexGPR);
 
             auto loop = m_jit.label();
             auto notFound = m_jit.branch32(CCallHelpers::Equal, indexGPR, lengthGPR);
@@ -9121,8 +9121,8 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         m_jit.clearRegisterAllocationOffsets();
 #endif
 
-        m_jit.zeroExtend32ToPtr(lengthGPR, lengthGPR);
-        m_jit.zeroExtend32ToPtr(indexGPR, indexGPR);
+        m_jit.zeroExtend32ToWord(lengthGPR, lengthGPR);
+        m_jit.zeroExtend32ToWord(indexGPR, indexGPR);
 
         auto loop = m_jit.label();
         auto notFound = m_jit.branch32(CCallHelpers::Equal, indexGPR, lengthGPR);
@@ -10434,7 +10434,7 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     done.link(&m_jit);
 #if CPU(ARM64E)
     // sizeGPR is still boxed as a number and there is no 32-bit variant of the PAC instructions.
-    m_jit.zeroExtend32ToPtr(sizeGPR, scratchGPR);
+    m_jit.zeroExtend32ToWord(sizeGPR, scratchGPR);
     m_jit.tagArrayPtr(scratchGPR, storageGPR);
 #endif
 
@@ -12471,7 +12471,7 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
 {
     RELEASE_ASSERT(RegisterSet(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
     ASSERT((1 << 3) == sizeof(JSValue));
-    m_jit.zeroExtend32ToPtr(sizeGPR, scratch1);
+    m_jit.zeroExtend32ToWord(sizeGPR, scratch1);
     m_jit.lshift32(TrustedImm32(3), scratch1);
     m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
 #if ASSERT_ENABLED
@@ -13787,13 +13787,13 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
     m_jit.and32(maskGPR, indexGPR);
     if (node->child1().useKind() == WeakSetObjectUse) {
         static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == sizeof(void*), "");
-        m_jit.zeroExtend32ToPtr(indexGPR, bucketGPR);
+        m_jit.zeroExtend32ToWord(indexGPR, bucketGPR);
         m_jit.lshiftPtr(MacroAssembler::Imm32(sizeof(void*) == 4 ? 2 : 3), bucketGPR);
         m_jit.addPtr(bufferGPR, bucketGPR);
     } else {
         ASSERT(node->child1().useKind() == WeakMapObjectUse);
         static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16, "");
-        m_jit.zeroExtend32ToPtr(indexGPR, bucketGPR);
+        m_jit.zeroExtend32ToWord(indexGPR, bucketGPR);
         m_jit.lshiftPtr(MacroAssembler::Imm32(4), bucketGPR);
         m_jit.addPtr(bufferGPR, bucketGPR);
     }
@@ -14036,7 +14036,7 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 
 void SpeculativeJIT::emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, JSValueRegs emptyValueRegs, GPRReg scratchGPR)
 {
-    m_jit.zeroExtend32ToPtr(sizeGPR, scratchGPR);
+    m_jit.zeroExtend32ToWord(sizeGPR, scratchGPR);
     MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratchGPR);
     MacroAssembler::Label loop = m_jit.label();
     m_jit.sub32(TrustedImm32(1), scratchGPR);

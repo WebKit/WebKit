@@ -124,7 +124,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
         notIndex = emitPatchableJumpIfNotInt(regT1);
         addSlowCase(notIndex);
         // See comment in op_get_by_val.
-        zeroExtend32ToPtr(regT1, regT1);
+        zeroExtend32ToWord(regT1, regT1);
     }
     emitArrayProfilingSiteWithCell(regT0, regT2, profile);
 

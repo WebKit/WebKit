@@ -642,12 +642,12 @@ x86_64: Swap64 UD:G:64, UD:G:64
     Tmp, Addr
 
 Move32 U:G:32, ZD:G:32
-    Tmp, Tmp as zeroExtend32ToPtr
+    Tmp, Tmp as zeroExtend32ToWord
     Addr, Tmp as load32
     Index, Tmp as load32
     Tmp, Addr as store32
     Tmp, Index as store32
-    x86: Imm, Tmp as zeroExtend32ToPtr
+    x86: Imm, Tmp as zeroExtend32ToWord
     x86: Imm, Addr as store32
     x86: Imm, Index as store32
 

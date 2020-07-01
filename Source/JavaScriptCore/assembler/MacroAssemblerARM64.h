@@ -1899,7 +1899,7 @@ public:
     {
         // Truncate to a 64-bit integer in dataTempRegister, copy the low 32-bit to dest.
         m_assembler.fcvtzs<64, 64>(getCachedDataTempRegisterIDAndInvalidate(), src);
-        zeroExtend32ToPtr(dataTempRegister, dest);
+        zeroExtend32ToWord(dataTempRegister, dest);
         // Check the low 32-bits sign extend to be equal to the full value.
         m_assembler.cmp<64>(dataTempRegister, dataTempRegister, Assembler::SXTW, 0);
         return Jump(makeBranch(branchType == BranchIfTruncateSuccessful ? Equal : NotEqual));
@@ -2515,7 +2515,7 @@ public:
         m_assembler.sxtw(dest, src);
     }
 
-    void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
+    void zeroExtend32ToWord(RegisterID src, RegisterID dest)
     {
         m_assembler.uxtw(dest, src);
     }
@@ -3195,7 +3195,7 @@ public:
         // Splat bit 31 of the result to bits 31..0 of scratch2.
         m_assembler.asr<32>(scratch2, dest, 31);
         // After a mul32 the top 32 bits of the register should be clear.
-        zeroExtend32ToPtr(dest, dest);
+        zeroExtend32ToWord(dest, dest);
         // Check that bits 31..63 of the original result were all equal.
         return branch32(NotEqual, scratch2, scratch1);
     }

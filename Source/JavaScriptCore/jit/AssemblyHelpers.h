@@ -1480,7 +1480,7 @@ public:
         Jump done = jump();
         
         isInt32.link(this);
-        zeroExtend32ToPtr(source, target);
+        zeroExtend32ToWord(source, target);
         or64(GPRInfo::numberTagRegister, target);
         
         done.link(this);
