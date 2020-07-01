@@ -1621,8 +1621,13 @@ webkit.org/b/177940 webkit.org/b/186638 workers/wasm-hashset-many.html [ Crash T
 
 # Tests failing on the EWS queue.
 webkit.org/b/186638 fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 fast/preloader/document-write.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https.html [ Crash Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-reused.html [ Failure Pass ]
+webkit.org/b/186638 js/stringimpl-to-jsstring-on-large-strings-3.html [ Timeout Pass ]
+webkit.org/b/186638 pageoverlay/overlay-small-frame-mouse-events.html [ Crash Pass ]
+webkit.org/b/186638 storage/indexeddb/cursor-overloads.html [ Timeout Pass ]
 webkit.org/b/186638 svg/W3C-SVG-1.1/animate-elem-02-t.svg [ Crash Pass ]
 
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass Crash ]
@@ -1901,7 +1906,9 @@ webkit.org/b/198830 [ Release ] media/video-autoplay.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-canvas-source.html [ Pass Crash ]
 
 webkit.org/b/198830 [ Release ] webrtc/ephemeral-certificates-and-cnames.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/getUserMedia-webaudio-autoplay.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/remoteAudio-never-played.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/rtcpeerconnection-error-messages.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay2.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay3.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay4.html [ Pass Crash ]
@@ -2482,6 +2489,7 @@ webkit.org/b/210796 http/tests/resourceLoadStatistics/operating-dates-all-websit
 webkit.org/b/210796 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Timeout Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Timeout Pass ]
@@ -3582,6 +3590,7 @@ webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
 
 webkit.org/b/201982 fast/images/exif-orientation-background.html [ ImageOnlyFailure ]

@@ -1,3 +1,10 @@
+2020-07-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Garden flaky failures in EWS GTK-WK2 queue.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-06-30  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Garden some failures and add new section to expectation

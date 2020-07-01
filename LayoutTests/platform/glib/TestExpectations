@@ -234,8 +234,9 @@ webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadow
 webkit.org/b/152908 pageoverlay/overlay-installation.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
-webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Pass Failure ]
+webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Failure Pass ]
 webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PageOverlay-related bugs
@@ -355,6 +356,9 @@ webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
 webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html [ Failure ]
 webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html [ Failure ]
+# TODO: This failure exists in the general TestExpectations, I got in a GTK run.
+# I think marking the whole folder as 'Slow' makes the expected result for this test 'Pass'.
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Failure Pass ]
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
