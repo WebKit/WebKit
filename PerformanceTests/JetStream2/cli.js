@@ -28,6 +28,10 @@ console = {
     log: print
 }
 
+const isD8 = typeof Realm !== "undefined";
+if (isD8)
+    readFile = read;
+
 if (typeof testList === "undefined")
     testList = undefined;
 

@@ -284,7 +284,18 @@ class Driver {
     {
         if (!isInBrowser) {
             let scripts = string;
-            let globalObject = runString("");
+            let globalObject;
+            let realm;
+            if (isD8) {
+                realm = Realm.createAllowCrossRealmAccess();
+                globalObject = Realm.global(realm);
+                globalObject.loadString = function(s) {
+                    return Realm.eval(realm, s);
+                };
+                globalObject.readFile = read;
+            } else
+                globalObject = runString("");
+
             globalObject.console = {log:globalObject.print}
             globalObject.top = {
                 currentResolve,
@@ -292,7 +303,8 @@ class Driver {
             };
             for (let script of scripts)
                 globalObject.loadString(script);
-            return globalObject;
+
+            return isD8 ? realm : globalObject;
         }
 
         var magic = document.getElementById("magic");
@@ -581,6 +593,8 @@ class Benchmark {
         this.processResults(results);
         if (isInBrowser)
             magicFrame.contentDocument.close();
+        else if (isD8)
+            Realm.dispose(magicFrame);
     }
 
     fetchResources() {
