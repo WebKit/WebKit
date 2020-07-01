@@ -1,3 +1,25 @@
+2020-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        [Cocoa] [GTK] RunLoop::Timer::isActive() is incorrect for timers while they are firing
+        https://bugs.webkit.org/show_bug.cgi?id=213771
+
+        Reviewed by Darin Adler.
+
+        I noticed this because it triggered an assertion failure in
+        BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck().
+
+        In WebKit timer parlance "isActive()" means "will fire again", so a
+        one-shot timer should report inactive right when it fires. Otherwise,
+        there's no way to check if it needs to be rescheduled.
+
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::TimerBase::timerFired): For one-shot timers, stop our
+        timer before it fires, so that we know it is not active.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::TimerBase): For repeating timers, reschedule
+        our timer before it fires, so that we know it is active.
+
 2020-06-30  Mark Lam  <mark.lam@apple.com>
 
         Add handling for a case of OOME in CSSTokenizer and CSSParser.

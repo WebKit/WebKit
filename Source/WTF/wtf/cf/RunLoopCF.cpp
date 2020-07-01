@@ -83,11 +83,15 @@ void RunLoop::stop()
 
 // RunLoop::Timer
 
-void RunLoop::TimerBase::timerFired(CFRunLoopTimerRef, void* context)
+void RunLoop::TimerBase::timerFired(CFRunLoopTimerRef cfTimer, void* context)
 {
     TimerBase* timer = static_cast<TimerBase*>(context);
 
     AutodrainedPool pool;
+
+    if (!CFRunLoopTimerDoesRepeat(cfTimer))
+        timer->stop();
+
     timer->fired();
 }
 

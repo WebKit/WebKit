@@ -174,11 +174,11 @@ RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
         // before it is safe to dereference timer again.
         RunLoop::TimerBase* timer = static_cast<RunLoop::TimerBase*>(userData);
         GSource* source = timer->m_source.get();
+        if (timer->m_isRepeating)
+            timer->updateReadyTime();
         timer->fired();
         if (g_source_is_destroyed(source))
             return G_SOURCE_REMOVE;
-        if (timer->m_isRepeating)
-            timer->updateReadyTime();
         return G_SOURCE_CONTINUE;
     }, this, nullptr);
     g_source_attach(m_source.get(), m_runLoop->m_mainContext.get());

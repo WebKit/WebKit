@@ -65,6 +65,9 @@ public:
 
     void fired()
     {
+        EXPECT_FALSE(isActive());
+        EXPECT_EQ(secondsUntilFire(), Seconds(0));
+
         m_testFinished = true;
         stop();
     }
@@ -94,9 +97,14 @@ public:
 
     void fired()
     {
+        EXPECT_TRUE(isActive());
+
         if (++m_count == 10) {
             m_testFinished = true;
             stop();
+
+            EXPECT_FALSE(isActive());
+            EXPECT_EQ(secondsUntilFire(), Seconds(0));
         }
     }
 
