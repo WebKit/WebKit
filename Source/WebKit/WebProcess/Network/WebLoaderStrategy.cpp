@@ -337,8 +337,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     auto* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : nullptr;
     auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
-    if (webPage)
-        loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
+    if (webFrame)
+        loadParameters.isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (document) {
@@ -603,9 +603,8 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     }
     loadParameters.originalRequestHeaders = originalRequestHeaders;
     
-    if (webPage)
-        loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
-
+    if (webFrame)
+        loadParameters.isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain();
     addParametersShared(webFrame->coreFrame(), loadParameters);
 
     data.shrink(0);
@@ -685,7 +684,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     }
     addParametersShared(&frame, loadParameters);
     
-    loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
+    loadParameters.isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain();
     
 #if ENABLE(CONTENT_EXTENSIONS)
     loadParameters.mainDocumentURL = document->topDocument().url();
@@ -753,7 +752,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
     // FIXME: Use the proper destination once all fetch options are passed.
     parameters.options.destination = FetchOptions::Destination::EmptyString;
-    parameters.isNavigatingToAppBoundDomain = webPage.isNavigatingToAppBoundDomain();
+    parameters.isNavigatingToAppBoundDomain = webFrame.isTopFrameNavigatingToAppBoundDomain();
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreconnectTo(preconnectionIdentifier, WTFMove(parameters)), 0);
 }

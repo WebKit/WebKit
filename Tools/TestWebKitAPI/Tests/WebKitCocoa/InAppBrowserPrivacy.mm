@@ -34,6 +34,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKUserContentWorld.h>
@@ -83,6 +84,8 @@ static bool isDone;
 @end
 
 static NSString * const userScriptSource = @"window.wkUserScriptInjected = true";
+static bool mainFrameReceivedScriptSource = false;
+static bool subFrameReceivedScriptSource = false;
 
 @interface InAppBrowserSchemeHandler : NSObject <WKURLSchemeHandler>
 @end
@@ -93,7 +96,7 @@ static NSString * const userScriptSource = @"window.wkUserScriptInjected = true"
 {
     NSString *response = nil;
     if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-script"])
-        response = @"<script>window.wkUserScriptInjected = false;</script>";
+        response = @"<body id = 'body'><script>window.wkUserScriptInjected = false;</script>";
     else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-agent-script"])
         response = @"<script> window.wkUserScriptInjected = true; </script>";
     else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-style-sheets"])
@@ -104,6 +107,14 @@ static NSString * const userScriptSource = @"window.wkUserScriptInjected = true"
         response = @"<body style='background-color: green;'></body><script>if (window.webkit.messageHandlers)\nwindow.webkit.messageHandlers.testHandler.postMessage('Failed'); \nelse \n document.body.style.background = 'red';</script>";
     else if ([task.request.URL.path isEqualToString:@"/app-bound-domain-load"])
         response = @"<body></body>";
+    else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-script-iframe"])
+        response = @"<body id = 'body'></body><iframe src='in-app-browser://apple.com/in-app-browser-privacy-test-user-script' id='nestedFrame'></iframe></body>";
+    else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-script-nested-iframe"])
+        response = @"<body id = 'body'></body><iframe src='in-app-browser://nonAppBoundDomain/in-app-browser-privacy-test-user-script-iframe' id='iframe'></iframe></body>";
+    else if (((id<WKURLSchemeTaskPrivate>)task)._frame.isMainFrame && [task.request.URL.path isEqualToString:@"/should-load-for-main-frame-only"])
+        mainFrameReceivedScriptSource = true;
+    else if ([task.request.URL.path isEqualToString:@"/should-load-for-main-frame-only"])
+        subFrameReceivedScriptSource = true;
 
     [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil] autorelease]];
     [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1055,6 +1066,115 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
     EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
+}
+
+TEST(InAppBrowserPrivacy, InjectScriptInNonAppBoundSubframeAppBoundMainframeFails)
+{
+    isDone = false;
+    initializeInAppBrowserPrivacyTestSettings();
+
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"var img = document.createElement('img'); img.src = 'in-app-browser:///should-load-for-main-frame-only'; document.getElementById('body').appendChild(img);" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:NO];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto delegate = adoptNS([AppBoundDomainDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Load an app-bound domain with an iframe that is not app-bound.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser://apple.com/in-app-browser-privacy-test-user-script-nested-iframe"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(mainFrameReceivedScriptSource);
+    EXPECT_FALSE(subFrameReceivedScriptSource);
+    cleanUpInAppBrowserPrivacyTestSettings();
+}
+
+static NSMutableSet<WKFrameInfo *> *allFrames;
+
+TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
+{
+    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+
+    isDone = false;
+    initializeInAppBrowserPrivacyTestSettings();
+
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"var img = document.createElement('img'); img.src = 'in-app-browser:///should-load-for-main-frame-only'; document.getElementById('body').appendChild(img);" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:NO];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    __block bool didFinishNavigation = false;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+
+    [navigationDelegate setDecidePolicyForNavigationAction:[&] (WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if (action.targetFrame)
+            [allFrames addObject:action.targetFrame];
+
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }];
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    
+    // Load an app-bound domain with an iframe that is not app-bound.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser://apple.com/in-app-browser-privacy-test-user-script-nested-iframe"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    EXPECT_EQ(allFrames.count, 3u);
+
+    static size_t finishedFrames = 0;
+    static bool isDone = false;
+
+    for (WKFrameInfo *frame in allFrames) {
+        bool isMainFrame = frame.isMainFrame;
+        [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
+            if (isMainFrame) {
+                EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+                EXPECT_FALSE(!!error);
+                EXPECT_TRUE([result isEqualToString:@"in-app-browser://apple.com/in-app-browser-privacy-test-user-script-nested-iframe"]);
+            } else {
+                EXPECT_TRUE(!!error);
+                EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
+            }
+
+            if (++finishedFrames == allFrames.count * 2)
+                isDone = true;
+        }];
+
+
+        [webView evaluateJavaScript:@"location.href;" inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
+            if (isMainFrame) {
+                EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+                EXPECT_FALSE(!!error);
+                EXPECT_TRUE([result isEqualToString:@"in-app-browser://apple.com/in-app-browser-privacy-test-user-script-nested-iframe"]);
+            } else {
+                EXPECT_TRUE(!!error);
+                EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
+            }
+
+            if (++finishedFrames == allFrames.count * 2)
+                isDone = true;
+        }];
+    }
+    
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 TEST(InAppBrowserPrivacy, WebViewCategory)

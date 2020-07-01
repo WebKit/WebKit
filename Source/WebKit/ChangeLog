@@ -1,3 +1,62 @@
+2020-07-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKUserScripts injecting into all frames seem to violate app-bound domains
+        https://bugs.webkit.org/show_bug.cgi?id=213816
+        <rdar://problem/64872296>
+
+        Reviewed by Brady Eidson.
+
+        Patch to make app-bound domain checks on a per-frame basis instead
+        of per-page-based-on-main-frame. This will prevent WKUserScripts from
+        being injected in subframes when the main frame is app-bound. Now, all
+        ancestors of a frame must be app-bound in order for a frame to
+        evaluate user script.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        Move 'isMainFrame' check to be inside of the check for
+        m_limitsNavigationsToAppBoundDomains. The navigation should fail if
+        the main frame is not app-bound and the WKWebView is marked with the
+        limitsNavigationToAppBoundDomains flag, but non-app-bound subframe
+        loads are allowed to continue.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isTopFrameNavigatingToAppBoundDomain const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        For reporting loads to the Network Process, we only care if the main
+        frame is app bound, so we need to store that info in the WebPage and
+        WebPageProxy.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections const):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        (WebKit::WebFrame::shouldEnableInAppBrowserPrivacyProtections):
+        (WebKit::WebFrame::isTopFrameNavigatingToAppBoundDomain const):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebFrame::isNavigatingToAppBoundDomain const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPage::shouldEnableInAppBrowserPrivacyProtections): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::needsInAppBrowserPrivacyQuirks):
+        (WebKit::WebPage::isNavigatingToAppBoundDomain const): Deleted.
+        Move all app-bound domain logic from the WebPage to the WebFrame now
+        that checks are on a per-frame basis.
+
 2020-07-01  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkSendQueue use CString instead of String for UTF-8 data

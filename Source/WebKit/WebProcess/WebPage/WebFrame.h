@@ -172,6 +172,10 @@ public:
 #endif
 
     WebFrameLoaderClient* frameLoaderClient() const;
+    bool shouldEnableInAppBrowserPrivacyProtections();
+    void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; };
+    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
+    Optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
 
 private:
     WebFrame();
@@ -192,6 +196,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;
 #endif
+    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
+
 };
 
 } // namespace WebKit

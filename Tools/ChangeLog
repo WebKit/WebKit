@@ -1,3 +1,21 @@
+2020-07-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKUserScripts injecting into all frames seem to violate app-bound domains
+        https://bugs.webkit.org/show_bug.cgi?id=213816
+        <rdar://problem/64872296>
+
+        Reviewed by Brady Eidson.
+
+        Added API test coverage. Sets up a tree like so: [app-bound domain,
+        non-app-bound domain, app-bound domain]. Script injection should only
+        be successful in the top frame. Since message handlers are disabled for non-
+        app-bound domains, this test injects script which loads an image using a
+        custom url scheme. If the load succeeds, we increment a counter, and
+        expect only one successful script load (the main frame).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+
 2020-06-30  Sam Weinig  <weinig@apple.com>
 
         Split Color serialization out of Color classes

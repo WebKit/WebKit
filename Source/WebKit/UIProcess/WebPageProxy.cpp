@@ -3143,31 +3143,34 @@ static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL)
 bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL& requestURL, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (isMainFrame) {
-        if (WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN)
-            return true;
-        if (!isNavigatingToAppBoundDomain) {
-            m_isNavigatingToAppBoundDomain = WTF::nullopt;
-            return true;
-        }
-        if (m_ignoresAppBoundDomains)
-            return true;
-        
-        if (shouldTreatURLProtocolAsAppBound(requestURL)) {
-            isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
-            m_limitsNavigationsToAppBoundDomains = true;
-        }
-        if (m_limitsNavigationsToAppBoundDomains) {
-            if (*isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No)
-                return false;
-            m_configuration->setWebViewCategory(WebViewCategory::AppBoundDomain);
-            m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
-        } else {
-            if (m_hasExecutedAppBoundBehaviorBeforeNavigation)
+    if (WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN)
+        return true;
+    if (!isNavigatingToAppBoundDomain) {
+        m_isNavigatingToAppBoundDomain = WTF::nullopt;
+        return true;
+    }
+    if (m_ignoresAppBoundDomains)
+        return true;
+
+    if (shouldTreatURLProtocolAsAppBound(requestURL)) {
+        isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
+        m_limitsNavigationsToAppBoundDomains = true;
+    }
+    if (m_limitsNavigationsToAppBoundDomains) {
+        if (*isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
+            if (isMainFrame)
                 return false;
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
+            return true;
         }
+        m_configuration->setWebViewCategory(WebViewCategory::AppBoundDomain);
+        m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
+    } else {
+        if (m_hasExecutedAppBoundBehaviorBeforeNavigation)
+            return false;
+        m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
+        m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
     }
 #else
     UNUSED_PARAM(isMainFrame);
@@ -5214,6 +5217,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 completionHandler(PolicyAction::Ignore);
                 return;
             }
+            if (frame->isMainFrame())
+                m_isTopFrameNavigatingToAppBoundDomain = m_isNavigatingToAppBoundDomain;
         }
 #endif
 

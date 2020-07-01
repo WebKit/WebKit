@@ -1389,7 +1389,7 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
     Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     if (initiatingPage) {
         initiatingPage->handleDownloadRequest(downloadProxy);
-        isAppBound = initiatingPage->isNavigatingToAppBoundDomain();
+        isAppBound = initiatingPage->isTopFrameNavigatingToAppBoundDomain();
     }
 
     if (networkProcess()) {

@@ -1759,6 +1759,7 @@ public:
     void isForcedIntoAppBoundModeTesting(CompletionHandler<void(bool)>&&);
 
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
+    Optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const { return m_isTopFrameNavigatingToAppBoundDomain; }
 
 #if PLATFORM(COCOA)
     WebCore::ResourceError errorForUnpermittedAppBoundDomainNavigation(const URL&);
@@ -2837,6 +2838,7 @@ private:
 #endif
         
     Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
+    Optional<NavigatingToAppBoundDomain> m_isTopFrameNavigatingToAppBoundDomain;
     bool m_ignoresAppBoundDomains { false };
     bool m_userScriptsNotified { false };
     bool m_limitsNavigationsToAppBoundDomains { false };

@@ -1326,10 +1326,9 @@ public:
     void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
     void notifyPageOfAppBoundBehavior();
-    bool shouldEnableInAppBrowserPrivacyProtections();
-    void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain>);
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
-    
+    void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain>, WebFrame*);
+    bool needsInAppBrowserPrivacyQuirks() { return m_needsInAppBrowserPrivacyQuirks; }
+
     bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
 
 #if ENABLE(MEDIA_USAGE)
@@ -2130,7 +2129,6 @@ private:
     String m_themeName;
 #endif
     
-    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
 };

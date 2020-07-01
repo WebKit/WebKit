@@ -288,9 +288,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
     m_policyDownloadID = { };
 
     Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
-    if (page())
-        isAppBound = page()->isNavigatingToAppBoundDomain();
-    
+    isAppBound = m_isNavigatingToAppBoundDomain;
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::StartDownload(policyDownloadID, request,  isAppBound, suggestedName), 0);
 }
 
@@ -314,9 +312,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         mainResourceLoadIdentifier = 0;
 
     Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
-    if (page())
-        isAppBound = page()->isNavigatingToAppBoundDomain();
-        
+    isAppBound = m_isNavigatingToAppBoundDomain;
     webProcess.ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, response, isAppBound), 0);
 }
 
@@ -858,5 +854,28 @@ RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
 
     return sharedSnapshot;
 }
+
+bool WebFrame::shouldEnableInAppBrowserPrivacyProtections()
+{
+    if (page() && page()->needsInAppBrowserPrivacyQuirks())
+        return false;
+
+    bool treeHasNonAppBoundFrame = m_isNavigatingToAppBoundDomain && m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No;
+    if (!treeHasNonAppBoundFrame) {
+        for (WebFrame* frame = this; !frame->isMainFrame(); frame = frame->parentFrame()) {
+            if (frame->isNavigatingToAppBoundDomain() && frame->isNavigatingToAppBoundDomain() == NavigatingToAppBoundDomain::No) {
+                treeHasNonAppBoundFrame = true;
+                break;
+            }
+        }
+    }
+    return treeHasNonAppBoundFrame;
+}
+
+Optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBoundDomain() const
+{
+    return fromCoreFrame(m_coreFrame->mainFrame())->isNavigatingToAppBoundDomain();
+}
+
     
 } // namespace WebKit

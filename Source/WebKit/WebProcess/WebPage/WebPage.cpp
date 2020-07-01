@@ -1534,7 +1534,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
-    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain);
+    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
 
     SendStopResponsivenessTimer stopper;
 
@@ -1572,7 +1572,7 @@ NO_RETURN void WebPage::loadRequestWaitingForProcessLaunch(LoadParameters&&, URL
 
 void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies, Ref<SharedBuffer>&& sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, const UserData& userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
-    setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain);
+    setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain, &m_mainFrame.get());
 
     SendStopResponsivenessTimer stopper;
 
@@ -3284,11 +3284,11 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 
 void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision)
 {
-    setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain);
-
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
+
+    setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, frame);
     frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
 }
 
@@ -3457,7 +3457,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
         send(Messages::WebPageProxy::ScriptValueCallback(dataReference, details, callbackID));
     };
-    if (shouldEnableInAppBrowserPrivacyProtections()) {
+    if (frame->shouldEnableInAppBrowserPrivacyProtections()) {
         send(Messages::WebPageProxy::ScriptValueCallback({ }, ExceptionDetails { "Unable to execute JavaScript in a frame that is not in an app-bound domain"_s, 0, 0, ExceptionDetails::Type::AppBoundDomain }, callbackID));
         if (auto* document = m_page->mainFrame().document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain.");
@@ -7162,9 +7162,9 @@ void WebPage::animationDidFinishForElement(const WebCore::Element&)
 
 #endif
 
-void WebPage::setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+void WebPage::setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WebFrame* frame)
 {
-    m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+    frame->setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain);
     
     m_navigationHasOccured = true;
 }
@@ -7173,14 +7173,6 @@ void WebPage::notifyPageOfAppBoundBehavior()
 {
     if (!m_navigationHasOccured && !m_limitsNavigationsToAppBoundDomains)
         send(Messages::WebPageProxy::SetHasExecutedAppBoundBehaviorBeforeNavigation());
-}
-
-bool WebPage::shouldEnableInAppBrowserPrivacyProtections()
-{
-    if (m_needsInAppBrowserPrivacyQuirks)
-        return false;
-
-    return isNavigatingToAppBoundDomain() && isNavigatingToAppBoundDomain() == NavigatingToAppBoundDomain::No;
 }
 
 } // namespace WebKit

@@ -1912,14 +1912,7 @@ void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackI
 
 bool WebFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections() const
 {
-    if (!m_frame->isMainFrame())
-        return false;
-
-    auto* webPage = m_frame->page();
-    if (!webPage)
-        return false;
-
-    return webPage->shouldEnableInAppBrowserPrivacyProtections();
+    return m_frame->shouldEnableInAppBrowserPrivacyProtections();
 }
 
 void WebFrameLoaderClient::notifyPageOfAppBoundBehavior()
