@@ -29,6 +29,7 @@
 #include "config.h"
 #include "SVGRenderTreeAsText.h"
 
+#include "ColorSerialization.h"
 #include "GraphicsTypes.h"
 #include "NodeRenderStyle.h"
 #include "RenderImage.h"
@@ -300,7 +301,7 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
     ts << " contains 1 chunk(s)";
 
     if (text.parent() && (text.parent()->style().visitedDependentColor(CSSPropertyColor) != text.style().visitedDependentColor(CSSPropertyColor)))
-        writeNameValuePair(ts, "color", text.style().visitedDependentColor(CSSPropertyColor).nameForRenderTreeAsText());
+        writeNameValuePair(ts, "color", serializationForRenderTreeAsText(text.style().visitedDependentColor(CSSPropertyColor)));
 }
 
 static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textBox)

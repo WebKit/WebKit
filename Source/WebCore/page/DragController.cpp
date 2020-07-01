@@ -32,6 +32,7 @@
 #if ENABLE(DRAG_SUPPORT)
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "ColorSerialization.h"
 #include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -558,7 +559,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
 #if ENABLE(INPUT_TYPE_COLOR)
         if (isEnabledColorInput(*element)) {
             auto& input = downcast<HTMLInputElement>(*element);
-            input.setValue(color.serialized(), DispatchInputAndChangeEvent);
+            input.setValue(serializationForHTML(color), DispatchInputAndChangeEvent);
             return true;
         }
 #endif
@@ -566,7 +567,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         if (!innerRange)
             return false;
         auto style = MutableStyleProperties::create();
-        style->setProperty(CSSPropertyColor, color.serialized(), false);
+        style->setProperty(CSSPropertyColor, serializationForHTML(color), false);
         if (!innerFrame->editor().shouldApplyStyle(style.ptr(), createLiveRange(innerRange).get()))
             return false;
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
@@ -1444,7 +1445,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
         image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(size.width()));
         image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(size.height()));
         image->setInlineStyleProperty(CSSPropertyMaxWidth, 100, CSSUnitType::CSS_PERCENTAGE);
-        image->setInlineStyleProperty(CSSPropertyBackgroundColor, Color(Color::black).colorWithAlpha(0.05).cssText());
+        image->setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForCSS(Color::black.colorWithAlpha(13)));
         image->setIsDroppedImagePlaceholder();
         fragment->appendChild(WTFMove(image));
     }

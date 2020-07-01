@@ -28,6 +28,7 @@
 #include "Test.h"
 #include "WTFStringUtilities.h"
 #include <WebCore/Color.h>
+#include <WebCore/ColorSerialization.h>
 #include <wtf/MathExtras.h>
 
 using namespace WebCore;
@@ -46,7 +47,7 @@ TEST(ExtendedColor, Constructor)
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(1u, c1.asExtended().refCount());
-    EXPECT_EQ(c1.cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c1), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, CopyConstructor)
@@ -64,7 +65,7 @@ TEST(ExtendedColor, CopyConstructor)
     EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(2u, c1.asExtended().refCount());
     EXPECT_EQ(2u, c2.asExtended().refCount());
-    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, Assignment)
@@ -82,7 +83,7 @@ TEST(ExtendedColor, Assignment)
     EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(2u, c1.asExtended().refCount());
     EXPECT_EQ(2u, c2.asExtended().refCount());
-    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, Equality)
@@ -166,7 +167,7 @@ TEST(ExtendedColor, MoveConstructor)
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(1u, c2.asExtended().refCount());
-    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, MoveAssignment)
@@ -188,7 +189,7 @@ TEST(ExtendedColor, MoveAssignment)
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(1u, c2.asExtended().refCount());
-    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, BasicReferenceCounting)
@@ -206,7 +207,7 @@ TEST(ExtendedColor, BasicReferenceCounting)
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(3u, c2->asExtended().refCount());
-    EXPECT_EQ(c2->cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(*c2), "color(display-p3 1 0.5 0.25)");
 
     delete c1;
     EXPECT_EQ(2u, c2->asExtended().refCount());
@@ -232,7 +233,7 @@ TEST(ExtendedColor, ReturnValues)
     EXPECT_TRUE(c2.isExtended());
 
     EXPECT_EQ(1u, c2.asExtended().refCount());
-    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, P3ConversionToSRGB)

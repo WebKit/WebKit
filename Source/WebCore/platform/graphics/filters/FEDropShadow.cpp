@@ -20,6 +20,7 @@
 #include "config.h"
 #include "FEDropShadow.h"
 
+#include "ColorSerialization.h"
 #include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
@@ -131,7 +132,7 @@ TextStream& FEDropShadow::externalRepresentation(TextStream& ts, RepresentationT
 {
     ts << indent <<"[feDropShadow";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\" dx=\"" << m_dx << "\" dy=\"" << m_dy << "\" flood-color=\"" << m_shadowColor.nameForRenderTreeAsText() <<"\" flood-opacity=\"" << m_shadowOpacity << "]\n";
+    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\" dx=\"" << m_dx << "\" dy=\"" << m_dy << "\" flood-color=\"" << serializationForRenderTreeAsText(m_shadowColor) <<"\" flood-opacity=\"" << m_shadowOpacity << "]\n";
 
     TextStream::IndentScope indentScope(ts);
     inputEffect(0)->externalRepresentation(ts, representation);

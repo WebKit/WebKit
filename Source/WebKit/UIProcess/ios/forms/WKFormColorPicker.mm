@@ -35,6 +35,7 @@
 #import "WebPageProxy.h"
 
 #import <WebCore/Color.h>
+#import <WebCore/ColorSerialization.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PencilKit)
@@ -278,7 +279,7 @@ using namespace WebKit;
 - (void)setControlValueFromUIColor:(UIColor *)uiColor
 {
     WebCore::Color color(uiColor.CGColor);
-    [_view page]->setFocusedElementValue(color.serialized());
+    [_view page]->setFocusedElementValue(WebCore::serializationForHTML(color));
 }
 
 #pragma mark WKFormControl

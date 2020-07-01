@@ -32,6 +32,7 @@
 #include "CaptionUserPreferencesMediaAF.h"
 
 #include "AudioTrackList.h"
+#include "ColorSerialization.h"
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
@@ -356,7 +357,8 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
 String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const Color& color, bool important) const
 {
     StringBuilder builder;
-    appendCSS(builder, id, color.serialized(), important);
+    // FIXME: Seems like this should be using serializationForCSS instead?
+    appendCSS(builder, id, serializationForHTML(color), important);
     return builder.toString();
 }
 

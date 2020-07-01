@@ -26,11 +26,6 @@
 #include "config.h"
 #include "SimpleColor.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/HexNumber.h>
-#include <wtf/MathExtras.h>
-#include <wtf/text/StringBuilder.h>
-
 namespace WebCore {
 
 SimpleColor premultiplyFlooring(SimpleColor color)
@@ -62,47 +57,5 @@ SimpleColor unpremultiply(SimpleColor color)
     return makeSimpleColor(unpremultiplyChannel(r, a), unpremultiplyChannel(g, a), unpremultiplyChannel(b, a), a);
 }
 
-String SimpleColor::serializationForHTML() const
-{
-    if (isOpaque())
-        return makeString('#', hex(redComponent(), 2, Lowercase), hex(greenComponent(), 2, Lowercase), hex(blueComponent(), 2, Lowercase));
-    return serializationForCSS();
-}
-
-static char decimalDigit(unsigned number)
-{
-    ASSERT(number < 10);
-    return '0' + number;
-}
-
-static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
-{
-    ASSERT(alpha > 0);
-    ASSERT(alpha < 0xFF);
-    if (((alpha * 100 + 0x7F) / 0xFF * 0xFF + 50) / 100 != alpha)
-        return { { decimalDigit(alpha * 10 / 0xFF % 10), decimalDigit(alpha * 100 / 0xFF % 10), decimalDigit((alpha * 1000 + 0x7F) / 0xFF % 10), '\0' } };
-    if (int thirdDigit = (alpha * 100 + 0x7F) / 0xFF % 10)
-        return { { decimalDigit(alpha * 10 / 0xFF), decimalDigit(thirdDigit), '\0', '\0' } };
-    return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
-}
-
-String SimpleColor::serializationForCSS() const
-{
-    switch (alphaComponent()) {
-    case 0:
-        return makeString("rgba(", redComponent(), ", ", greenComponent(), ", ", blueComponent(), ", 0)");
-    case 0xFF:
-        return makeString("rgb(", redComponent(), ", ", greenComponent(), ", ", blueComponent(), ')');
-    default:
-        return makeString("rgba(", redComponent(), ", ", greenComponent(), ", ", blueComponent(), ", 0.", fractionDigitsForFractionalAlphaValue(alphaComponent()).data(), ')');
-    }
-}
-
-String SimpleColor::serializationForRenderTreeAsText() const
-{
-    if (alphaComponent() < 0xFF)
-        return makeString('#', hex(redComponent(), 2), hex(greenComponent(), 2), hex(blueComponent(), 2), hex(alphaComponent(), 2));
-    return makeString('#', hex(redComponent(), 2), hex(greenComponent(), 2), hex(blueComponent(), 2));
-}
 
 } // namespace WebCore

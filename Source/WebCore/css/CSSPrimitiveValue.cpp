@@ -32,6 +32,7 @@
 #include "CSSValueKeywords.h"
 #include "CalculationValue.h"
 #include "Color.h"
+#include "ColorSerialization.h"
 #include "Counter.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "FontCascade.h"
@@ -1086,7 +1087,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSSUnitType::CSS_QUAD:
         return quadValue()->cssText();
     case CSSUnitType::CSS_RGBCOLOR:
-        return color().cssText();
+        return serializationForCSS(color());
     case CSSUnitType::CSS_PAIR:
         return pairValue()->cssText();
     case CSSUnitType::CSS_CALC:

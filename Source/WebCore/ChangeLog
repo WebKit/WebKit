@@ -1,3 +1,95 @@
+2020-06-30  Sam Weinig  <weinig@apple.com>
+
+        Split Color serialization out of Color classes
+        https://bugs.webkit.org/show_bug.cgi?id=213820
+
+        Reviewed by Darin Adler.
+
+        Move all color serialization related functions out of the Color family
+        of classes, and into a standalone ColorSerialization.h
+        
+        Now all color serialization calls one of the following three functions, depending on need:
+
+            - serializationForCSS(...)
+            - serializationForHTML(...)
+            - serializationForRenderTreeAsText(...)
+
+        These are overload for all three Color classes (Color, SimpleColor and ExtendedColor) to
+        allow easy use without necessarily needing to construct another type.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+    
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::inverseTransformColorIfNeeded):
+        (WebCore::StyleChange::extractTextStyles):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::didChooseColor):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::shadowColor const):
+        * html/canvas/CanvasStyle.h:
+        (WebCore::CanvasStyle::color const):
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        (WebCore::TextTrackCueGeneric::toJSON const):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::colorPropertyCSS const):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+        * platform/graphics/Color.cpp:
+        (WebCore::operator<<):
+        (WebCore::Color::serialized const): Deleted.
+        (WebCore::Color::cssText const): Deleted.
+        (WebCore::Color::nameForRenderTreeAsText const): Deleted.
+        * platform/graphics/Color.h:
+        * platform/graphics/ColorSerialization.cpp: Added.
+        (WebCore::decimalDigit):
+        (WebCore::fractionDigitsForFractionalAlphaValue):
+        (WebCore::serializationForCSS):
+        (WebCore::serializationForHTML):
+        (WebCore::serializationForRenderTreeAsText):
+        (WebCore::serialization):
+        * platform/graphics/ColorSerialization.h: Added.
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::cssText const): Deleted.
+        * platform/graphics/ExtendedColor.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/InbandGenericCue.cpp:
+        (WebCore::InbandGenericCue::toJSONString const):
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::SimpleColor::serializationForHTML const): Deleted.
+        (WebCore::decimalDigit): Deleted.
+        (WebCore::fractionDigitsForFractionalAlphaValue): Deleted.
+        (WebCore::SimpleColor::serializationForCSS const): Deleted.
+        (WebCore::SimpleColor::serializationForRenderTreeAsText const): Deleted.
+        * platform/graphics/SimpleColor.h:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::externalRepresentation const):
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::externalRepresentation const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox):
+        * svg/properties/SVGPropertyTraits.h:
+        (WebCore::SVGPropertyTraits<Color>::toString):
+        * testing/Internals.cpp:
+        (WebCore::Internals::viewBaseBackgroundColor):
+        (WebCore::Internals::highlightPseudoElementColor):
+        (WebCore::Internals::systemColorForCSSValue):
+        (WebCore::Internals::focusRingColor):
+        Adopt new serialization functions.
+
 2020-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed build fix after r263776

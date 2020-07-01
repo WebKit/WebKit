@@ -51,6 +51,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientOrigin.h"
+#include "ColorSerialization.h"
 #include "ComposedTreeIterator.h"
 #include "CookieJar.h"
 #include "Cursor.h"
@@ -1955,7 +1956,7 @@ ExceptionOr<String> Internals::viewBaseBackgroundColor()
     Document* document = contextDocument();
     if (!document || !document->view())
         return Exception { InvalidAccessError };
-    return document->view()->baseBackgroundColor().cssText();
+    return serializationForCSS(document->view()->baseBackgroundColor());
 }
 
 ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue)
@@ -5660,7 +5661,7 @@ String Internals::highlightPseudoElementColor(const String& highlightName, Eleme
     if (!style)
         return { };
 
-    return style->color().cssText();
+    return serializationForCSS(style->color());
 }
     
 Internals::TextIndicatorInfo::TextIndicatorInfo()
@@ -5772,7 +5773,7 @@ String Internals::systemColorForCSSValue(const String& cssValue, bool useDarkMod
     if (useElevatedUserInterfaceLevel)
         options.add(StyleColor::Options::UseElevatedUserInterfaceLevel);
     
-    return RenderTheme::singleton().systemColor(id, options).cssText();
+    return serializationForCSS(RenderTheme::singleton().systemColor(id, options));
 }
 
 bool Internals::systemHasBattery() const
@@ -5827,8 +5828,7 @@ bool Internals::supportsPictureInPicture()
 
 String Internals::focusRingColor()
 {
-    OptionSet<StyleColor::Options> options;
-    return RenderTheme::singleton().focusRingColor(options).cssText();
+    return serializationForCSS(RenderTheme::singleton().focusRingColor({ }));
 }
 
 unsigned Internals::createSleepDisabler(const String& reason, bool display)

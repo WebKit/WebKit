@@ -29,6 +29,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "Color.h"
+#include "ColorSerialization.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -108,8 +109,7 @@ inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 
 inline String CanvasStyle::color() const
 {
-    auto& color = WTF::holds_alternative<Color>(m_style) ? WTF::get<Color>(m_style) : WTF::get<CMYKAColor>(m_style).colorConvertedToSRGBA;
-    return color.serialized();
+    return serializationForHTML(WTF::holds_alternative<Color>(m_style) ? WTF::get<Color>(m_style) : WTF::get<CMYKAColor>(m_style).colorConvertedToSRGBA);
 }
 
 } // namespace WebCore

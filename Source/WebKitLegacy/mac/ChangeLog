@@ -1,3 +1,15 @@
+2020-06-30  Sam Weinig  <weinig@apple.com>
+
+        Split Color serialization out of Color classes
+        https://bugs.webkit.org/show_bug.cgi?id=213820
+
+        Reviewed by Darin Adler.
+
+        Adopt ColorSerialization.h serialization functions.
+
+        * WebView/WebView.mm:
+        (-[WebTextTouchBarItemController _webChangeColor:]):
+
 2020-06-30  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove NeedsInAppBrowserPrivacyQuirks flag from WebKitLegacy

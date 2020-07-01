@@ -36,6 +36,7 @@
 #include "CSSStyleRule.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "ColorSerialization.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "FontCache.h"
@@ -1631,7 +1632,7 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
     auto invertedColor = [&](CSSPropertyID propertyID) {
         Color newColor = cssValueToColor(extractPropertyValue(*m_mutableStyle, propertyID).get());
         colorFilter.inverseTransformColor(newColor);
-        styleWithInvertedColors->m_mutableStyle->setProperty(propertyID, newColor.cssText());
+        styleWithInvertedColors->m_mutableStyle->setProperty(propertyID, serializationForCSS(newColor));
     };
 
     if (color)
@@ -1807,7 +1808,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     if (style.getPropertyCSSValue(CSSPropertyColor)) {
         auto color = textColorFromStyle(style);
         if (color.isOpaque()) {
-            m_applyFontColor = color.serialized();
+            m_applyFontColor = serializationForHTML(color);
             style.removeProperty(CSSPropertyColor);
         }
     }

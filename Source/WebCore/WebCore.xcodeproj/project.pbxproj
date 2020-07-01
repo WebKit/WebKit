@@ -2344,6 +2344,7 @@
 		7CCEBFC01DD8F6AB002C40B8 /* SVGLengthValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D531DD7B09300128552 /* SVGLengthValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0E2B51F80A4820016A4CE /* AbortController.h */; };
 		7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */; };
+		7CD1E69324ABF6240089C419 /* ColorSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD1E69124ABF6240089C419 /* ColorSerialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD58DFB1F9565A500112791 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CEB57E91F95651500097AEC /* Settings.h */; };
 		7CD58DFD1F9565A800112791 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB57EA1F95651500097AEC /* Settings.cpp */; };
@@ -10193,6 +10194,8 @@
 		7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortSignal.h; sourceTree = "<group>"; };
 		7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortSignal.cpp; sourceTree = "<group>"; };
 		7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AbortSignal.idl; sourceTree = "<group>"; };
+		7CD1E69124ABF6240089C419 /* ColorSerialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorSerialization.h; sourceTree = "<group>"; };
+		7CD1E69224ABF6240089C419 /* ColorSerialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorSerialization.cpp; sourceTree = "<group>"; };
 		7CD3440D1F310836000DCD49 /* MutationCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationCallback.idl; sourceTree = "<group>"; };
 		7CD344111F3108DD000DCD49 /* JSMutationCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		7CD344121F3108E2000DCD49 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
@@ -25500,6 +25503,8 @@
 				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,
+				7CD1E69224ABF6240089C419 /* ColorSerialization.cpp */,
+				7CD1E69124ABF6240089C419 /* ColorSerialization.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
 				7C029C6D2493C8F800268204 /* ColorTypes.h */,
 				0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */,
@@ -30079,6 +30084,7 @@
 				CE5169E721F1B84700EA4F78 /* ColorIOS.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
 				7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */,
+				7CD1E69324ABF6240089C419 /* ColorSerialization.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */,
 				0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */,

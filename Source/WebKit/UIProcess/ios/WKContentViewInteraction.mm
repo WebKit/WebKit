@@ -97,6 +97,7 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/Color.h>
 #import <WebCore/ColorIOS.h>
+#import <WebCore/ColorSerialization.h>
 #import <WebCore/CompositionHighlight.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
@@ -3196,7 +3197,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_setTextColorForWebView:(UIColor *)color sender:(id)sender
 {
-    _page->executeEditCommand("ForeColor"_s, WebCore::Color(color.CGColor).serialized());
+    _page->executeEditCommand("ForeColor"_s, WebCore::serializationForHTML(WebCore::Color(color.CGColor)));
 }
 
 - (void)toggleStrikeThroughForWebView:(id)sender

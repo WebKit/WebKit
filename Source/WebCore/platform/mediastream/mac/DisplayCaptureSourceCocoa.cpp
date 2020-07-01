@@ -48,6 +48,11 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(MAC)
+#include "ScreenDisplayCapturerMac.h"
+#include "WindowDisplayCapturerMac.h"
+#endif
+
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {

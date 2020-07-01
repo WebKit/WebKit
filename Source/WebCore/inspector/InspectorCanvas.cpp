@@ -32,6 +32,7 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
+#include "ColorSerialization.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatPoint.h"
@@ -1188,7 +1189,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
     for (auto& colorStop : gradient.stops()) {
         auto stop = JSON::ArrayOf<JSON::Value>::create();
         stop->addItem(colorStop.offset);
-        stop->addItem(indexForData(colorStop.color.cssText()));
+        stop->addItem(indexForData(serializationForCSS(colorStop.color)));
         stops->addItem(WTFMove(stop));
     }
 

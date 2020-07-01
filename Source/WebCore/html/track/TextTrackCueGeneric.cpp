@@ -32,6 +32,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSValueKeywords.h"
+#include "ColorSerialization.h"
 #include "HTMLSpanElement.h"
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
@@ -125,9 +126,9 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     }
 
     if (cue->foregroundColor().isValid())
-        cueElement->setInlineStyleProperty(CSSPropertyColor, cue->foregroundColor().serialized());
+        cueElement->setInlineStyleProperty(CSSPropertyColor, serializationForHTML(cue->foregroundColor()));
     if (cue->highlightColor().isValid())
-        cueElement->setInlineStyleProperty(CSSPropertyBackgroundColor, cue->highlightColor().serialized());
+        cueElement->setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(cue->highlightColor()));
 
     if (cue->getWritingDirection() == VTTCue::Horizontal)
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
@@ -145,7 +146,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyTextAlign, CSSValueStart);
 
     if (cue->backgroundColor().isValid())
-        setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
+        setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(cue->backgroundColor()));
     setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode(), false);
     setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
 
@@ -245,11 +246,11 @@ bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
 void TextTrackCueGeneric::toJSON(JSON::Object& object) const
 {
     if (m_foregroundColor.isValid())
-        object.setString("foregroundColor"_s, m_foregroundColor.serialized());
+        object.setString("foregroundColor"_s, serializationForHTML(m_foregroundColor));
     if (m_backgroundColor.isValid())
-        object.setString("backgroundColor"_s, m_backgroundColor.serialized());
+        object.setString("backgroundColor"_s, serializationForHTML(m_backgroundColor));
     if (m_highlightColor.isValid())
-        object.setString("highlightColor"_s, m_highlightColor.serialized());
+        object.setString("highlightColor"_s, serializationForHTML(m_highlightColor));
     if (m_baseFontSizeRelativeToVideoHeight)
         object.setDouble("relativeFontSize"_s, m_baseFontSizeRelativeToVideoHeight);
     if (m_fontSizeMultiplier)

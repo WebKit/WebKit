@@ -29,7 +29,6 @@
 #include "ColorSpace.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -46,8 +45,6 @@ public:
     ColorSpace colorSpace() const { return m_colorSpace; }
 
     WEBCORE_EXPORT unsigned hash() const;
-
-    WEBCORE_EXPORT String cssText() const;
 
     Ref<ExtendedColor> colorWithAlpha(float) const;
     Ref<ExtendedColor> invertedColorWithAlpha(float) const;

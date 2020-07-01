@@ -1,3 +1,25 @@
+2020-06-30  Sam Weinig  <weinig@apple.com>
+
+        Split Color serialization out of Color classes
+        https://bugs.webkit.org/show_bug.cgi?id=213820
+
+        Reviewed by Darin Adler.
+
+        Adopt ColorSerialization.h serialization functions.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (dictionaryRepresentationForEditorState):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextTouchBarItemController _wkChangeColor:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _setTextColorForWebView:sender:]):
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorPicker setControlValueFromUIColor:]):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+
 2020-06-30  Geoffrey Garen  <ggaren@apple.com>
 
         [Cocoa] [GTK] RunLoop::Timer::isActive() is incorrect for timers while they are firing

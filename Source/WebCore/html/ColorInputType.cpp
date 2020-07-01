@@ -38,6 +38,7 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "Color.h"
+#include "ColorSerialization.h"
 #include "Event.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
@@ -219,7 +220,7 @@ void ColorInputType::didChooseColor(const Color& color)
     if (element()->isDisabledFormControl() || color == valueAsColor())
         return;
     EventQueueScope scope;
-    element()->setValueFromRenderer(color.serialized());
+    element()->setValueFromRenderer(serializationForHTML(color));
     updateColorSwatch();
     element()->dispatchFormControlChangeEvent();
 }

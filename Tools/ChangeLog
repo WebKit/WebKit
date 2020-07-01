@@ -1,3 +1,14 @@
+2020-06-30  Sam Weinig  <weinig@apple.com>
+
+        Split Color serialization out of Color classes
+        https://bugs.webkit.org/show_bug.cgi?id=213820
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update tests to use ColorSerialization.h
+
 2020-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Several key event tests in fast/events/ios are failing after <rdar://problem/62197116>

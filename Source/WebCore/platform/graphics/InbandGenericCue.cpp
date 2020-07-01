@@ -28,6 +28,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "ColorSerialization.h"
+
 
 namespace WebCore {
 
@@ -94,13 +96,13 @@ String InbandGenericCue::toJSONString() const
     }
 
     if (m_cueData.m_foregroundColor.isValid())
-        object->setString("foregroundColor"_s, m_cueData.m_foregroundColor.serialized());
+        object->setString("foregroundColor"_s, serializationForHTML(m_cueData.m_foregroundColor));
 
     if (m_cueData.m_backgroundColor.isValid())
-        object->setString("backgroundColor"_s, m_cueData.m_backgroundColor.serialized());
+        object->setString("backgroundColor"_s, serializationForHTML(m_cueData.m_backgroundColor));
 
     if (m_cueData.m_highlightColor.isValid())
-        object->setString("highlightColor"_s, m_cueData.m_highlightColor.serialized());
+        object->setString("highlightColor"_s, serializationForHTML(m_cueData.m_highlightColor));
 
     if (m_cueData.m_baseFontSize)
         object->setDouble("baseFontSize"_s, m_cueData.m_baseFontSize);

@@ -52,10 +52,6 @@ public:
     constexpr bool isOpaque() const { return alphaComponent() == 0xFF; }
     constexpr bool isVisible() const { return alphaComponent(); }
 
-    String serializationForHTML() const;
-    String serializationForCSS() const;
-    String serializationForRenderTreeAsText() const;
-
     constexpr SimpleColor colorWithAlpha(uint8_t alpha) const
     {
         return { (m_value & 0x00FFFFFF) | alpha << 24 };

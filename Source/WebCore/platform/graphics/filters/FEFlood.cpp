@@ -23,6 +23,7 @@
 #include "config.h"
 #include "FEFlood.h"
 
+#include "ColorSerialization.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
@@ -71,7 +72,7 @@ TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType r
 {
     ts << indent << "[feFlood";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " flood-color=\"" << floodColor().nameForRenderTreeAsText() << "\" "
+    ts << " flood-color=\"" << serializationForRenderTreeAsText(floodColor()) << "\" "
        << "flood-opacity=\"" << floodOpacity() << "\"]\n";
     return ts;
 }

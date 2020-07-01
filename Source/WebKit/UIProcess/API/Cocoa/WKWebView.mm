@@ -116,6 +116,7 @@
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/AttributedString.h>
+#import <WebCore/ColorSerialization.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
@@ -1382,7 +1383,7 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
         @"italic": postLayoutData.typingAttributes & WebKit::AttributeItalics ? @YES : @NO,
         @"underline": postLayoutData.typingAttributes & WebKit::AttributeUnderline ? @YES : @NO,
         @"text-alignment": @(nsTextAlignment(static_cast<WebKit::TextAlignment>(postLayoutData.textAlignment))),
-        @"text-color": (NSString *)postLayoutData.textColor.cssText()
+        @"text-color": (NSString *)serializationForCSS(postLayoutData.textColor)
     };
 }
 

@@ -27,6 +27,7 @@
 #include "Color.h"
 
 #include "AnimationUtilities.h"
+#include "ColorSerialization.h"
 #include "ColorUtilities.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
@@ -77,27 +78,6 @@ Color& Color::operator=(Color&& other)
     other.m_colorData.simpleColorAndFlags = invalidSimpleColor;
 
     return *this;
-}
-
-String Color::serialized() const
-{
-    if (isExtended())
-        return asExtended().cssText();
-    return asSimple().serializationForHTML();
-}
-
-String Color::cssText() const
-{
-    if (isExtended())
-        return asExtended().cssText();
-    return asSimple().serializationForCSS();
-}
-
-String Color::nameForRenderTreeAsText() const
-{
-    if (isExtended())
-        return asExtended().cssText();
-    return asSimple().serializationForRenderTreeAsText();
 }
 
 Color Color::lightened() const
@@ -195,7 +175,7 @@ SRGBA<float> Color::toSRGBALossy() const
 
 TextStream& operator<<(TextStream& ts, const Color& color)
 {
-    return ts << color.nameForRenderTreeAsText();
+    return ts << serializationForRenderTreeAsText(color);
 }
 
 TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)

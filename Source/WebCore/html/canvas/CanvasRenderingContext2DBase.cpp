@@ -40,6 +40,7 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
+#include "ColorSerialization.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
 #include "DisplayListDrawingContext.h"
@@ -626,7 +627,7 @@ void CanvasRenderingContext2DBase::setShadowBlur(float blur)
 
 String CanvasRenderingContext2DBase::shadowColor() const
 {
-    return state().shadowColor.serialized();
+    return serializationForHTML(state().shadowColor);
 }
 
 void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)

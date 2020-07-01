@@ -108,15 +108,6 @@ public:
             m_colorData.extendedColor->deref();
     }
 
-    // Returns the color serialized according to HTML5
-    // <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
-    WEBCORE_EXPORT String serialized() const;
-
-    WEBCORE_EXPORT String cssText() const;
-
-    // Returns the color serialized as either #RRGGBB or #RRGGBBAA
-    String nameForRenderTreeAsText() const;
-
     bool isValid() const { return isExtended() || (m_colorData.simpleColorAndFlags & validSimpleColorBit); }
 
     bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asSimple().isOpaque(); }

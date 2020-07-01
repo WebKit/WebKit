@@ -31,7 +31,6 @@
 #include "ColorUtilities.h"
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -44,29 +43,6 @@ unsigned ExtendedColor::hash() const
 {
     auto [c1, c2, c3, alpha] = components();
     return computeHash(c1, c2, c3, alpha, m_colorSpace);
-}
-
-String ExtendedColor::cssText() const
-{
-    const char* colorSpace;
-    switch (m_colorSpace) {
-    case ColorSpace::SRGB:
-        colorSpace = "srgb";
-        break;
-    case ColorSpace::DisplayP3:
-        colorSpace = "display-p3";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        return WTF::emptyString();
-    }
-
-    auto [c1, c2, c3, existingAlpha] = components();
-
-    if (WTF::areEssentiallyEqual(alpha(), 1.0f))
-        return makeString("color(", colorSpace, ' ', c1, ' ', c2, ' ', c3, ')');
-
-    return makeString("color(", colorSpace, ' ', c1, ' ', c2, ' ', c3, " / ", existingAlpha, ')');
 }
 
 Ref<ExtendedColor> ExtendedColor::colorWithAlpha(float overrideAlpha) const

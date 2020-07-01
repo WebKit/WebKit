@@ -23,6 +23,7 @@
 
 #include "CSSParser.h"
 #include "Color.h"
+#include "ColorSerialization.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "QualifiedName.h"
@@ -52,7 +53,7 @@ struct SVGPropertyTraits<Color> {
             return WTF::nullopt;
         return color;
     }
-    static String toString(const Color& type) { return type.serialized(); }
+    static String toString(const Color& type) { return serializationForHTML(type); }
 };
 
 template<>
