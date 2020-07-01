@@ -104,14 +104,15 @@ class TracksSupport extends MediaControllerSupport
         const textTracks = this._textTracks();
         const trackItem = textTracks[trackIndex];
         const host = this.mediaController.host;
-        const allTracksDisabled = textTracks.every(track => track.mode === "disabled");
+        const trackIsShowing = track => track.mode === "showing";
+        const allTracksDisabled = !textTracks.some(trackIsShowing);
         const usesAutomaticTrack = host ? (host.captionDisplayMode === "automatic" && allTracksDisabled) : false;
 
         if (allTracksDisabled && host && trackItem === host.captionMenuOffItem && (host.captionDisplayMode === "forced-only" || host.captionDisplayMode === "manual"))
             return true;
         if (host && trackItem === host.captionMenuAutomaticItem && usesAutomaticTrack)
             return true;
-        return !usesAutomaticTrack && trackItem.mode !== "disabled";
+        return !usesAutomaticTrack && trackIsShowing(trackItem);
     }
 
     tracksPanelSelectionDidChange(trackIndex, sectionIndex)

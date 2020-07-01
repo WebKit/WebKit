@@ -1,3 +1,17 @@
+2020-07-01  Antoine Quint  <graouts@webkit.org>
+
+        [Media Controls] Tracks panel can show text tracks with mode "hidden" as selected
+        https://bugs.webkit.org/show_bug.cgi?id=213839
+        <rdar://problem/57989325>
+
+        Reviewed by Jer Noble.
+
+        Add a new test that dumps the selection state of tracks in the tracks panel when all of media.textTracks
+        have been set to mode = "hidden".
+
+        * media/modern-media-controls/tracks-support/tracks-support-hidden-tracks-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-hidden-tracks.html: Added.
+
 2020-07-01  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/css/replaced-element-implicit-size.html as they are passing. 

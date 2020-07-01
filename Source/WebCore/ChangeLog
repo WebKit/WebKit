@@ -1,3 +1,20 @@
+2020-07-01  Antoine Quint  <graouts@webkit.org>
+
+        [Media Controls] Tracks panel can show text tracks with mode "hidden" as selected
+        https://bugs.webkit.org/show_bug.cgi?id=213839
+        <rdar://problem/57989325>
+
+        Reviewed by Jer Noble.
+
+        We only considered text tracks that had their "mode" set to "disabled" as tracks that weren't selected,
+        but there is also the "hidden" mode which should share the same UI state. We now check for "mode" to
+        be set to "showing" to consider a text track as selected in the tracks panel.
+
+        Test: media/modern-media-controls/tracks-support/tracks-support-hidden-tracks.html
+
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport.prototype.tracksPanelIsTrackInSectionSelected):
+
 2020-07-01  Sam Weinig  <weinig@apple.com>
 
         Regression (r263788): Windows build broken: nameForRenderTreeAsText is not a member of WebCore::Color
