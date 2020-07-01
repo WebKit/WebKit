@@ -1,3 +1,12 @@
+2020-07-01  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for fast/events/fire-scroll-event.html as it is passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213850
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2020-07-01  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Remove unnecessary baseline after r263797.

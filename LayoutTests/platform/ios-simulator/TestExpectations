@@ -32,7 +32,6 @@ fast/events/input-events-ime-composition.html [ Failure ]
 fast/events/input-events-selection-forecolor-data.html [ Failure ]
 fast/events/input-events-spell-checking-datatransfer.html [ Failure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-fast/events/fire-scroll-event.html [ Failure ]
 
 media/track/track-in-band-legacy-api.html [ Failure ]
 media/track/video-track-alternate-groups.html [ Failure ]
