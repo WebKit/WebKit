@@ -10,6 +10,27 @@ scrollingcoordinator/ios/ [ Skip ]
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Triaged Expectations
+# * KEEP THE SECTIONS SORTED ALPHABETICALLY.
+# * ALWAYS WITH BUG ENTRIES for things like Timeout, Failure and Crash.
+#
+# For more info, check the glib/TestExpectations file
+# If unsure of where to put the expectations, add the test to the end of the file and
+# ask for triaging.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# CSS3
+webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure ]
+
+# Paint Timing
+webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End of Triaged Expectations
+# Legacy Expectations sections below
+#//////////////////////////////////////////////////////////////////////////////////////////
+
 # This list is divided into several sections to make it easy for us to triage and close issues.
 
 # 1. TESTS THAT REQUIRE NEW RESULTS

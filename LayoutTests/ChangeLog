@@ -1,3 +1,13 @@
+2020-06-30  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Garden some failures and add new section to expectation
+
+        Start new sections for triaged tests like GTK and GLib.
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-06-30  Mark Lam  <mark.lam@apple.com>
 
         Add handling for a case of OOME in CSSTokenizer and CSSParser.
