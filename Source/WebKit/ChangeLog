@@ -1,3 +1,17 @@
+2020-07-01  James Savage  <james.savage@apple.com>
+
+        Fix Swift overlay build after r263727.
+        https://bugs.webkit.org/show_bug.cgi?id=213823.
+
+        Unreviewed, follow up build fix.
+
+        * SwiftOverlay/Tests/WebKitTests.swift:
+        (WebKitTests.testAPI): Fix tests to refer to new parameter name.
+        * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+        (callAsyncJavaScript(_:arguments:in:in:completionHandler:Error:)): Use
+        the imported ObjC name that the compiler expects.
+        (evaluateJavaScript(_:in:in:completionHandler:Error:)): Ditto.
+
 2020-07-01  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkRTCProvider receive IPC messages from a background thread

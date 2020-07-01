@@ -30,10 +30,10 @@ class WebKitTests: XCTestCase {
     /// This is a compile-time test that ensures the function names are what we expect.
     func testAPI() {
         _ = WKContentWorld.world(name:)
-        _ = WKWebView.callAsyncJavaScript(_:arguments:in:completionHandler:)
+        _ = WKWebView.callAsyncJavaScript(_:arguments:in:in:completionHandler:)
         _ = WKWebView.createPDF(configuration:completionHandler:)
         _ = WKWebView.createWebArchiveData(completionHandler:)
-        _ = WKWebView.evaluateJavaScript(_:in:completionHandler:)
+        _ = WKWebView.evaluateJavaScript(_:in:in:completionHandler:)
         _ = WKWebView.find(_:configuration:completionHandler:)
     }
 
