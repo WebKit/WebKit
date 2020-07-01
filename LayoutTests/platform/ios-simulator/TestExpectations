@@ -23,9 +23,6 @@ fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ S
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 fast/canvas/canvas-blending-global-alpha.html [ Failure ]
-fast/events/before-input-delete-empty-list-target-ranges.html [ Failure ]
-fast/events/before-input-events-prevent-insert-composition.html [ Failure ]
-fast/events/before-input-events-prevent-recomposition.html [ Failure ]
 fast/events/document-elementFromPoint.html [ Failure ]
 fast/events/input-events-forecolor-data.html [ Failure ]
 fast/events/input-events-ime-composition.html [ Failure ]
