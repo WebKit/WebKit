@@ -185,13 +185,12 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
     m_channel.didClose(code, reason);
 }
 
-void WebSocketTask::sendString(const String& text, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendString(const IPC::DataReference& utf8, CompletionHandler<void()>&& callback)
 {
     if (m_connection && soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN) {
-        CString utf8 = text.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
 #if SOUP_CHECK_VERSION(2, 67, 3)
         // Soup is going to copy the data immediately, so we can use g_bytes_new_static() here to avoid more data copies.
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.length()));
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.size()));
         soup_websocket_connection_send_message(m_connection.get(), SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
 #else
         soup_websocket_connection_send_text(m_connection.get(), utf8.data());

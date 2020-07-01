@@ -56,10 +56,9 @@ void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, const char
 
 NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSocketChannel& channel)
 {
-    return { document, [&channel](auto& string) {
-        auto byteLength = string.sizeInBytes();
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, string.utf8().data(), byteLength);
-        channel.sendMessage(Messages::NetworkSocketChannel::SendString { string }, byteLength);
+    return { document, [&channel](auto& utf8String) {
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, utf8String.data(), utf8String.length());
+        channel.sendMessage(Messages::NetworkSocketChannel::SendString { IPC::DataReference { reinterpret_cast<const uint8_t*>(utf8String.data()), utf8String.length() } }, utf8String.length());
     }, [&channel](const char* data, size_t byteLength) {
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, data, byteLength);
         channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { reinterpret_cast<const uint8_t*>(data), byteLength } }, byteLength);
@@ -162,11 +161,11 @@ template<typename T> void WebSocketChannel::sendMessage(T&& message, size_t byte
 
 WebSocketChannel::SendResult WebSocketChannel::send(const String& message)
 {
-    auto byteLength = message.sizeInBytes();
-    if (!increaseBufferedAmount(byteLength))
+    auto utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
+    if (!increaseBufferedAmount(utf8.length()))
         return SendFail;
 
-    m_messageQueue.enqueue(message);
+    m_messageQueue.enqueue(WTFMove(utf8));
     return SendSuccess;
 }
 

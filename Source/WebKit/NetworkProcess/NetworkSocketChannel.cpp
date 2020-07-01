@@ -71,7 +71,7 @@ NetworkSocketChannel::~NetworkSocketChannel()
         m_socket->cancel();
 }
 
-void NetworkSocketChannel::sendString(const String& message, CompletionHandler<void()>&& callback)
+void NetworkSocketChannel::sendString(const IPC::DataReference& message, CompletionHandler<void()>&& callback)
 {
     m_socket->sendString(message, WTFMove(callback));
 }

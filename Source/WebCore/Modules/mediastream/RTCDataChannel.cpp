@@ -66,8 +66,8 @@ Ref<RTCDataChannel> RTCDataChannel::create(Document& document, std::unique_ptr<R
 
 NetworkSendQueue RTCDataChannel::createMessageQueue(Document& document, RTCDataChannel& channel)
 {
-    return { document, [&channel](const String& data) {
-        if (!channel.m_handler->sendStringData(data))
+    return { document, [&channel](auto& utf8) {
+        if (!channel.m_handler->sendStringData(utf8))
             channel.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
     }, [&channel](auto* data, size_t length) {
         if (!channel.m_handler->sendRawData(data, length))
@@ -121,8 +121,10 @@ ExceptionOr<void> RTCDataChannel::send(const String& data)
     if (m_readyState != RTCDataChannelState::Open)
         return Exception { InvalidStateError };
 
-    m_bufferedAmount += data.utf8().length();
-    m_messageQueue.enqueue(data);
+    // FIXME: We might want to use strict conversion like WebSocket.
+    auto utf8 = data.utf8();
+    m_bufferedAmount += utf8.length();
+    m_messageQueue.enqueue(WTFMove(utf8));
     return { };
 }
 

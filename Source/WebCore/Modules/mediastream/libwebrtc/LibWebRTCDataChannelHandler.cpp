@@ -89,15 +89,14 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client)
     checkState();
 }
 
-bool LibWebRTCDataChannelHandler::sendStringData(const String& text)
+bool LibWebRTCDataChannelHandler::sendStringData(const CString& utf8Text)
 {
-    auto utf8Text = text.utf8();
     return m_channel->Send({ rtc::CopyOnWriteBuffer(utf8Text.data(), utf8Text.length()), false });
 }
 
 bool LibWebRTCDataChannelHandler::sendRawData(const char* data, size_t length)
 {
-    return m_channel->Send({rtc::CopyOnWriteBuffer(data, length), true});
+    return m_channel->Send({ rtc::CopyOnWriteBuffer(data, length), true });
 }
 
 void LibWebRTCDataChannelHandler::close()

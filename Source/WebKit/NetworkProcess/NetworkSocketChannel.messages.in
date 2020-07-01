@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NetworkSocketChannel NotRefCounted {
-    SendString(String message) -> () Async
+    SendString(IPC::DataReference message) -> () Async
     SendData(IPC::DataReference data) -> () Async
     Close(int32_t code, String reason)
 }

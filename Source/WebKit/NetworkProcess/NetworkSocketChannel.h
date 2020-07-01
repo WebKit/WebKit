@@ -70,7 +70,7 @@ private:
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);
     void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
-    void sendString(const String&, CompletionHandler<void()>&&);
+    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
 

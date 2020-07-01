@@ -1,3 +1,28 @@
+2020-07-01  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkSendQueue use CString instead of String for UTF-8 data
+        https://bugs.webkit.org/show_bug.cgi?id=213714
+
+        Reviewed by Darin Adler.
+
+        Update code to use CString/DataReference to transmit WebSocket text messages.
+
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::sendString):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/NetworkSocketChannel.messages.in:
+        * NetworkProcess/WebSocketTask.h:
+        (WebKit::WebSocketTask::sendString):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::sendString):
+        * NetworkProcess/soup/WebSocketTaskSoup.h:
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::sendString):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::createMessageQueue):
+        (WebKit::WebSocketChannel::send):
+
 2020-07-01  James Savage  <james.savage@apple.com>
 
         Fix Swift overlay build after r263727.

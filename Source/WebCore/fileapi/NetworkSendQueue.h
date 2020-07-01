@@ -31,6 +31,7 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -45,14 +46,14 @@ class SharedBuffer;
 
 class WEBCORE_EXPORT NetworkSendQueue {
 public:
-    using WriteString = Function<void(const String&)>;
+    using WriteString = Function<void(const CString& utf8)>;
     using WriteRawData = Function<void(const char*, size_t)>;
     enum class Continue { No, Yes };
     using ProcessError = Function<Continue(ExceptionCode)>;
     NetworkSendQueue(Document&, WriteString&&, WriteRawData&&, ProcessError&&);
     ~NetworkSendQueue();
 
-    void enqueue(const String&);
+    void enqueue(CString&& utf8);
     void enqueue(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
     void enqueue(Blob&);
 
@@ -61,7 +62,7 @@ public:
 private:
     void processMessages();
 
-    using Message = Variant<String, Ref<SharedBuffer>, UniqueRef<BlobLoader>>;
+    using Message = Variant<CString, Ref<SharedBuffer>, UniqueRef<BlobLoader>>;
     Deque<Message> m_queue;
 
     WTF::WeakPtr<Document> m_document;
