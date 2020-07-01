@@ -1,3 +1,17 @@
+2020-06-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Remove whitelistedRpId
+        https://bugs.webkit.org/show_bug.cgi?id=213817
+        <rdar://problem/60108131>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the whitelist such that we can test the attestation service in a wider range.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticatorInternal::whitelistedRpId): Deleted.
+
 2020-06-30  Brady Eidson  <beidson@apple.com>
 
         Fix Swift overlay build after r263727.

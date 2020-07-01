@@ -106,17 +106,6 @@ static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
     return ArrayBuffer::create(data.data(), data.size());
 }
 
-// FIXME(<rdar://problem/60108131>): Remove this whitelist once testing is complete.
-static const HashSet<String>& whitelistedRpId()
-{
-    static NeverDestroyed<HashSet<String>> whitelistedRpId = std::initializer_list<String> {
-        "",
-        "localhost",
-        "tlstestwebkit.org",
-    };
-    return whitelistedRpId;
-}
-
 static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId)
 {
     // Search Keychain for existing credential matched the RP ID.
@@ -373,8 +362,8 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     // Step 12.
     auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, attestedCredentialData);
 
-    // Skip Apple Attestation for none attestation, and non whitelisted RP ID for now.
-    if (creationOptions.attestation == AttestationConveyancePreference::None || !whitelistedRpId().contains(creationOptions.rp.id)) {
+    // Skip Apple Attestation for none attestation.
+    if (creationOptions.attestation == AttestationConveyancePreference::None) {
         deleteDuplicateCredential();
 
         auto attestationObject = buildAttestationObject(WTFMove(authData), "", { }, AttestationConveyancePreference::None);
