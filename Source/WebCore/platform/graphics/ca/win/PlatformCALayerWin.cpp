@@ -30,6 +30,7 @@
 #if USE(CA)
 
 #include "AbstractCACFLayerTreeHost.h"
+#include "ColorSerialization.h"
 #include "FontCascade.h"
 #include "GDIUtilities.h"
 #include "GraphicsContext.h"
@@ -740,11 +741,7 @@ static void printColor(StringBuilder& builder, int indent, const String& label, 
 
     builder.append('\n');
     printIndent(builder, indent);
-    builder.append('(');
-    builder.append(label);
-    builder.append(' ');
-    builder.append(layerColor.nameForRenderTreeAsText());
-    builder.append(')');
+    builder.append('(', label, ' ', serializationForRenderTreeAsText(layerColor), ')');
 }
 
 static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int indent)

@@ -1,3 +1,14 @@
+2020-07-01  Sam Weinig  <weinig@apple.com>
+
+        Regression (r263788): Windows build broken: nameForRenderTreeAsText is not a member of WebCore::Color
+        https://bugs.webkit.org/show_bug.cgi?id=213841
+        <rdar://problem/64985276>
+
+        Fix Windows build.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (printColor):
+
 2020-07-01  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkSendQueue use CString instead of String for UTF-8 data
