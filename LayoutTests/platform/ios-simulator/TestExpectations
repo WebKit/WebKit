@@ -22,7 +22,6 @@ fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ S
 # -webkit-flex off-by-one px
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
-fast/block/positioning/rtl-fixed-positioning.html [ Failure ]
 fast/canvas/canvas-blending-global-alpha.html [ Failure ]
 fast/dom/Window/open-invalid-url.html [ Failure ]
 fast/events/before-input-delete-empty-list-target-ranges.html [ Failure ]
