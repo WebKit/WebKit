@@ -32,8 +32,9 @@
 extern "C" {
 #endif
 
-typedef struct _WKObject WKObject;
-typedef struct _WKObject *WKObjectRef;
+// This is named WAKObject to avoid a name conflict with WebKit's WKObject.
+typedef struct _WAKObject WAKObject;
+typedef struct _WAKObject *WAKObjectRef;
 typedef struct WKControl* WKControlRef;
 typedef struct _WKView* WKViewRef;
 

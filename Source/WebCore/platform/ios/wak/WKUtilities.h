@@ -39,7 +39,7 @@ extern const CFArrayCallBacks WKCollectionArrayCallBacks;
 extern const CFSetCallBacks WKCollectionSetCallBacks;
 
 
-typedef void(*WKDeallocCallback)(WKObjectRef object);
+typedef void(*WKDeallocCallback)(WAKObjectRef object);
 
 typedef struct _WKClassInfo WKClassInfo;
 
@@ -50,9 +50,9 @@ struct _WKClassInfo
     WKDeallocCallback dealloc;
 };
 
-extern WKClassInfo WKObjectClass;
+extern WKClassInfo WAKObjectClass;
 
-struct _WKObject
+struct _WAKObject
 {
     unsigned referenceCount;
     WKClassInfo *classInfo;
@@ -70,7 +70,7 @@ void WKReportError(const char *file, int line, const char *function, const char 
 
 CFIndex WKArrayIndexOfValue (CFArrayRef array, const void *value);
 
-WKClassInfo *WKGetClassInfo (WKObjectRef object);
+WKClassInfo *WKGetClassInfo(WAKObjectRef);
 
 #ifdef __cplusplus
 }

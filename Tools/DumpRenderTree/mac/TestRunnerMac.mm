@@ -1257,16 +1257,16 @@ void TestRunner::simulateLegacyWebNotificationClick(JSStringRef jsTitle)
 {
 }
 
-static NSString * const WebArchivePboardType = @"Apple Web Archive pasteboard type";
 static NSString * const WebSubresourcesKey = @"WebSubresources";
 static NSString * const WebSubframeArchivesKey = @"WebResourceMIMEType like 'image*'";
 
 unsigned TestRunner::imageCountInGeneralPasteboard() const
 {
+    NSString *webArchivePboardType = @"Apple Web Archive pasteboard type";
 #if PLATFORM(MAC)
-    NSData *data = [[NSPasteboard generalPasteboard] dataForType:WebArchivePboardType];
+    NSData *data = [[NSPasteboard generalPasteboard] dataForType:webArchivePboardType];
 #elif PLATFORM(IOS_FAMILY)
-    NSData *data = [[UIPasteboard generalPasteboard] valueForPasteboardType:WebArchivePboardType];
+    NSData *data = [[UIPasteboard generalPasteboard] valueForPasteboardType:webArchivePboardType];
 #endif
     if (!data)
         return 0;

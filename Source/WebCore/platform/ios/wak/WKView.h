@@ -65,7 +65,7 @@ typedef struct _WKViewContext {
 } WKViewContext;
 
 struct _WKView {
-    WKObject isa;
+    WAKObject isa;
     
     WKViewContext *context;
     

@@ -1,3 +1,16 @@
+2020-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix the WebKit build after <rdar://problem/64288191>
+        https://bugs.webkit.org/show_bug.cgi?id=213832
+
+        Reviewed by Tim Horton.
+
+        Additionally, fix a naming conflict that will result from `WebArchivePboardType` being declared in both
+        `<WebKitLegacy/WebArchive.h>` and DumpRenderTree, by making the latter a local variable instead.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::imageCountInGeneralPasteboard const):
+
 2020-07-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Implement support for UIWKDocumentRequestSpatialAndCurrentSelection

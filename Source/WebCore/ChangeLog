@@ -1,3 +1,28 @@
+2020-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix the WebKit build after <rdar://problem/64288191>
+        https://bugs.webkit.org/show_bug.cgi?id=213832
+
+        Reviewed by Tim Horton.
+
+        Upcoming changes to <UIKit/UIWebDocumentView.h> will cause the WebKit build to break, due to conflicting
+        declarations of WKObject in both WebCore (WAK) code and the WebKit API. Avoid this by renaming the WAK version
+        to WAKObject, rather than WKObject.
+
+        Additionally, fix some minor style issues along the way.
+
+        * platform/ios/wak/WKTypes.h:
+        * platform/ios/wak/WKUtilities.c:
+        (WKRetain):
+        (WKRelease):
+        (_WAKObjectDealloc):
+        (WKGetClassInfo):
+        (_WKObjectDealloc): Deleted.
+        * platform/ios/wak/WKUtilities.h:
+        * platform/ios/wak/WKView.h:
+        * platform/ios/wak/WKView.mm:
+        (_WKViewDealloc):
+
 2020-07-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for non-baseline aligned cell height

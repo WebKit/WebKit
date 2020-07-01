@@ -76,7 +76,7 @@ static void _WKViewClearSuperview(const void *value, void *context)
     _WKViewSetSuperview(static_cast<WKViewRef>(const_cast<void*>(value)), 0);
 }
 
-static void _WKViewDealloc (WKObjectRef v)
+static void _WKViewDealloc(WAKObjectRef v)
 {
     WKViewRef view = (WKViewRef)v;
     
@@ -101,7 +101,7 @@ void WKViewInitialize (WKViewRef view, CGRect frame, WKViewContext *context)
     view->scale = 1.0f;
 }
 
-WKClassInfo WKViewClassInfo = { &WKObjectClass, "WKView", _WKViewDealloc };
+WKClassInfo WKViewClassInfo = { &WAKObjectClass, "WKView", _WKViewDealloc };
 
 WKViewRef WKViewCreateWithFrame (CGRect frame, WKViewContext *context)
 {

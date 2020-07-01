@@ -41,7 +41,7 @@ const void *WKCollectionRetain (CFAllocatorRef allocator, const void *value)
 
 const void *WKRetain(const void *o)
 {
-    WKObjectRef object = (WKObjectRef)(uintptr_t)o;
+    WAKObjectRef object = (WAKObjectRef)(uintptr_t)o;
     
     object->referenceCount++;
     
@@ -56,7 +56,7 @@ void WKCollectionRelease (CFAllocatorRef allocator, const void *value)
 
 void WKRelease(const void *o)
 {
-    WKObjectRef object = (WKObjectRef)(uintptr_t)o;
+    WAKObjectRef object = (WAKObjectRef)(uintptr_t)o;
 
     if (object->referenceCount == 0) {
         WKError ("attempt to release invalid object");
@@ -75,16 +75,16 @@ void WKRelease(const void *o)
     }
 }
 
-static void _WKObjectDealloc (WKObjectRef v)
+static void WAKObjectDealloc(WAKObjectRef v)
 {
     free (v);
 }
 
-WKClassInfo WKObjectClass = { 0, "WKObject", _WKObjectDealloc };
+WKClassInfo WAKObjectClass = { 0, "WAKObject", WAKObjectDealloc };
 
 const void *WKCreateObjectWithSize (size_t size, WKClassInfo *info)
 {
-    WKObjectRef object = (WKObjectRef)calloc (size, 1);
+    WAKObjectRef object = (WAKObjectRef)calloc(size, 1);
     if (!object)
         return 0;
 
@@ -121,7 +121,7 @@ CFIndex WKArrayIndexOfValue (CFArrayRef array, const void *value)
     return index;
 }
 
-WKClassInfo *WKGetClassInfo (WKObjectRef object)
+WKClassInfo *WKGetClassInfo(WAKObjectRef object)
 {
     return object->classInfo;
 }
