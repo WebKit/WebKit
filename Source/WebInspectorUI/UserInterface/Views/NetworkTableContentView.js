@@ -148,14 +148,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harImportNavigationItem, this._harExportNavigationItem, new WI.DividerNavigationItem]);
         this._buttonsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        let toolTipForDisableResourceCache = WI.UIString("Ignore the resource cache when loading resources");
-        let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
-        this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
-        this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
-        this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-        this._disableResourceCacheNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
+        // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+        if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled")) {
+            let toolTipForDisableResourceCache = WI.UIString("Ignore the resource cache when loading resources");
+            let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
+            this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
+            this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
+            this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+            this._disableResourceCacheNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
 
-        WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+            WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+        }
 
         this._clearNetworkItemsNavigationItem = new WI.ButtonNavigationItem("clear-network-items", WI.UIString("Clear Network Items (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearNetworkItemsNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {

@@ -48,6 +48,12 @@ WI.NetworkObserver = class NetworkObserver extends InspectorBackend.Dispatcher
         WI.networkManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, walltime, initiator, targetId);
     }
 
+    requestServedFromCache(requestId)
+    {
+        // COMPATIBILITY (iOS 10.3): The backend no longer sends this.
+        WI.networkManager.markResourceRequestAsServedFromMemoryCache(requestId);
+    }
+
     responseReceived(requestId, frameId, loaderId, timestamp, type, response)
     {
         WI.networkManager.resourceRequestDidReceiveResponse(requestId, frameId, loaderId, type, response, timestamp);
