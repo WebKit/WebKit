@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 
 #include <JavaScriptCore/BuiltinUtils.h>
 #include <JavaScriptCore/Identifier.h>
@@ -172,7 +172,7 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 ### End File: xmlCasingTestBuiltins.h
 
 ### Begin File: xmlCasingTestBuiltins.cpp
@@ -209,7 +209,7 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 #include "config.h"
 #include "xmlCasingTestBuiltins.h"
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -289,6 +289,6 @@ WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 
 ### End File: xmlCasingTestBuiltins.cpp

@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API) || USE(CF)
+#if ENABLE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_A) || USE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_B)
 
 #include <JavaScriptCore/BuiltinUtils.h>
 #include <JavaScriptCore/Identifier.h>
@@ -124,7 +124,7 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API) || USE(CF)
+#endif // ENABLE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_A) || USE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_B)
 ### End File: ArbitraryConditionalGuardBuiltins.h
 
 ### Begin File: ArbitraryConditionalGuardBuiltins.cpp
@@ -161,7 +161,7 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 #include "config.h"
 #include "ArbitraryConditionalGuardBuiltins.h"
 
-#if ENABLE(STREAMS_API) || USE(CF)
+#if ENABLE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_A) || USE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_B)
 
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -200,6 +200,6 @@ WEBCORE_FOREACH_ARBITRARYCONDITIONALGUARD_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API) || USE(CF)
+#endif // ENABLE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_A) || USE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_B)
 
 ### End File: ArbitraryConditionalGuardBuiltins.cpp

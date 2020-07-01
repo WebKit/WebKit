@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
 
 #include <JavaScriptCore/BuiltinUtils.h>
 #include <JavaScriptCore/Identifier.h>
@@ -156,7 +156,7 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 
 } // namespace WebCore
 
-#endif // ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
 ### End File: GuardedInternalBuiltinBuiltins.h
 
 ### Begin File: GuardedInternalBuiltinBuiltins.cpp
@@ -193,7 +193,7 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 #include "config.h"
 #include "GuardedInternalBuiltinBuiltins.h"
 
-#if ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
 
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -232,6 +232,6 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 } // namespace WebCore
 
-#endif // ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
 
 ### End File: GuardedInternalBuiltinBuiltins.cpp

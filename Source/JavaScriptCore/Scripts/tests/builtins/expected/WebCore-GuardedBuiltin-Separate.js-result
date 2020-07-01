@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(TEST_GURDED_BUILTIN_SEPARATE)
 
 #include <JavaScriptCore/BuiltinUtils.h>
 #include <JavaScriptCore/Identifier.h>
@@ -124,7 +124,7 @@ inline void GuardedBuiltinBuiltinsWrapper::exportNames()
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(TEST_GURDED_BUILTIN_SEPARATE)
 ### End File: GuardedBuiltinBuiltins.h
 
 ### Begin File: GuardedBuiltinBuiltins.cpp
@@ -161,7 +161,7 @@ inline void GuardedBuiltinBuiltinsWrapper::exportNames()
 #include "config.h"
 #include "GuardedBuiltinBuiltins.h"
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(TEST_GURDED_BUILTIN_SEPARATE)
 
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -200,6 +200,6 @@ WEBCORE_FOREACH_GUARDEDBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(TEST_GURDED_BUILTIN_SEPARATE)
 
 ### End File: GuardedBuiltinBuiltins.cpp

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(STREAMS_API)
+// @conditional=ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 // @internal
 
 function xmlCasingTest(stream)

@@ -1,3 +1,25 @@
+2020-07-01  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Use properly flag names for tests of Tools/Scripts/run-builtins-generator-tests
+        https://bugs.webkit.org/show_bug.cgi?id=213733
+
+        Reviewed by Youenn Fablet.
+
+        Test cases under Source/JavaScriptCore/Scripts/tests/builtins/ uses exist compilation flags.
+        But they can take an arbitary flag name and don't have to use an exist flag.
+        I think it's better to rename them to more proper ones.
+
+        * Scripts/tests/builtins/WebCore-ArbitraryConditionalGuard-Separate.js:
+        * Scripts/tests/builtins/WebCore-DuplicateKeyValueAnnotation-Separate.js:
+        * Scripts/tests/builtins/WebCore-GuardedBuiltin-Separate.js:
+        * Scripts/tests/builtins/WebCore-GuardedInternalBuiltin-Separate.js:
+        * Scripts/tests/builtins/WebCore-xmlCasingTest-Separate.js:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
 2020-06-30  Peng Liu  <peng.liu6@apple.com>
 
         Enable the support of FULLSCREEN_API in WebKitTestRunner
