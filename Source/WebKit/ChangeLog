@@ -1,5 +1,22 @@
 2020-06-30  Brady Eidson  <beidson@apple.com>
 
+        Fix Swift overlay build after r263727.
+        <rdar://problem/64962370> and https://bugs.webkit.org/show_bug.cgi?id=213823
+
+        Reviewed by Darin Adler.
+
+        No new tests (No behavior change).
+        
+        Adapt the Swift overlay refinemnt to handle the inFrame: argument for these methods.
+
+        * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+        (callAsyncJavaScript(_:arguments:in:in:completionHandler:Error:)):
+        (evaluateJavaScript(_:in:in:completionHandler:Error:)):
+        (callAsyncJavaScript(_:arguments:in:completionHandler:Error:)): Deleted.
+        (evaluateJavaScript(_:in:completionHandler:Error:)): Deleted.
+
+2020-06-30  Brady Eidson  <beidson@apple.com>
+
         App-bound JavaScript and Navigation failures should have specific error codes.
         <rdar://problem/64940268> and https://bugs.webkit.org/show_bug.cgi?id=213808
 
