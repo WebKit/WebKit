@@ -1,0 +1,47 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="slider"
+           role="slider"
+           tabindex="0"
+           aria-valuemin="0"
+           aria-valuenow="0"
+           aria-valuemax="255"
+           aria-labelledby="idRed"></div>
+
+<p id="description"></p>
+<div id="console"></div>
+     
+<script>
+    function handleKeyUp(event) {
+        debug("Key up should NOT be reached");
+    }
+
+    function handleKeyDown(event) {
+        debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key);
+        document.getElementById("body").removeChild(document.getElementById("slider"));
+        event.preventDefault();
+        event.stopPropagation();
+        finishJSTest();
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        description("This test makes sure if a keydown event removes the node, bad things don't happen.");
+
+        document.getElementById("slider").addEventListener('keydown', handleKeyDown);
+        document.getElementById("slider").addEventListener('keyup', handleKeyUp);
+
+        // Get the parent element.
+        var axSlider = accessibilityController.accessibleElementById("slider");
+        axSlider.increment();
+    }
+ </script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

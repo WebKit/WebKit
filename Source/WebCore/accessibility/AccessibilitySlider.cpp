@@ -126,14 +126,15 @@ float AccessibilitySlider::minValueForRange() const
     return static_cast<float>(inputElement()->minimum());
 }
 
-void AccessibilitySlider::setValue(const String& value)
+bool AccessibilitySlider::setValue(const String& value)
 {
     HTMLInputElement* input = inputElement();
     
     if (input->value() == value)
-        return;
+        return true;
 
     input->setValue(value, DispatchChangeEvent);
+    return true;
 }
 
 HTMLInputElement* AccessibilitySlider::inputElement() const

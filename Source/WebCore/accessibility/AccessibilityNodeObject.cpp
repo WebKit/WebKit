@@ -57,6 +57,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
+#include "KeyboardEvent.h"
 #include "LabelableElement.h"
 #include "LocalizedStrings.h"
 #include "MathMLElement.h"
@@ -1094,18 +1095,45 @@ void AccessibilityNodeObject::decrement()
     alterSliderValue(false);
 }
 
+// Fire a keyboard event if we were not able to set this value natively.
+void AccessibilityNodeObject::postKeyboardKeysForValueChange(bool increase)
+{
+    // In case the keyboard event causes this element to be removed.
+    Ref<AccessibilityObject> protectedThis(*this);
+
+    auto keyInit = KeyboardEvent::Init();
+    bool vertical = orientation() == AccessibilityOrientation::Vertical;
+    bool isLTR = page()->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
+    
+    keyInit.key = increase ? vertical ? "ArrowUp"_s : isLTR ? "ArrowRight"_s : "ArrowLeft"_s : vertical ? "ArrowDown"_s : isLTR ? "ArrowLeft"_s : "ArrowRight"_s;
+    keyInit.keyIdentifier = increase ? vertical ? "up"_s : isLTR ? "right"_s : "left"_s : vertical ? "down"_s : isLTR ? "left"_s : "right"_s;
+
+    if (auto* node = this->node())
+        node->dispatchEvent(KeyboardEvent::create(eventNames().keydownEvent, keyInit));
+
+    // Ensure node is still valid and wasn't removed after the keydown.
+    if (auto* node = this->node())
+        node->dispatchEvent(KeyboardEvent::create(eventNames().keyupEvent, keyInit));
+}
+
+void AccessibilityNodeObject::setNodeValue(bool increase, float value)
+{
+    bool didSet = setValue(String::number(value));
+    
+    if (didSet) {
+        if (auto* cache = axObjectCache())
+            cache->postNotification(this, document(), AXObjectCache::AXValueChanged);
+    } else
+        postKeyboardKeysForValueChange(increase);
+}
+
 void AccessibilityNodeObject::changeValueByStep(bool increase)
 {
     float step = stepValueForRange();
     float value = valueForRange();
 
     value += increase ? step : -step;
-
-    setValue(String::number(value));
-
-    auto objectCache = axObjectCache();
-    if (objectCache)
-        objectCache->postNotification(node(), AXObjectCache::AXValueChanged);
+    setNodeValue(increase, value);
 }
 
 void AccessibilityNodeObject::changeValueByPercent(float percentChange)
@@ -1119,11 +1147,7 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
         step = std::abs(percentChange) * (1 / percentChange);
 
     value += step;
-    setValue(String::number(value));
-
-    auto objectCache = axObjectCache();
-    if (objectCache)
-        objectCache->postNotification(node(), AXObjectCache::AXValueChanged);
+    setNodeValue(percentChange > 0, value);
 }
 
 bool AccessibilityNodeObject::isGenericFocusableElement() const

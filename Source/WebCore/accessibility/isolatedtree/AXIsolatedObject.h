@@ -703,13 +703,13 @@ private:
     // Attribute setters.
     void setARIAGrabbed(bool) override;
     void setIsExpanded(bool) override;
-    void setValue(float) override;
+    bool setValue(float) override;
     void setSelected(bool) override;
     void setSelectedRows(AccessibilityChildrenVector&) override;
     void setFocused(bool) override;
     void setSelectedText(const String&) override;
     void setSelectedTextRange(const PlainTextRange&) override;
-    void setValue(const String&) override;
+    bool setValue(const String&) override;
 #if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
     void setCaretBrowsingEnabled(bool) override;
 #endif

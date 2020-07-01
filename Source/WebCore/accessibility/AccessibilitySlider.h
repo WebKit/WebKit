@@ -57,7 +57,7 @@ private:
     bool canSetValueAttribute() const override { return true; }
     const AtomString& getAttribute(const QualifiedName&) const override;
     
-    void setValue(const String&) override;
+    bool setValue(const String&) override;
     float valueForRange() const override;
     float maxValueForRange() const override;
     float minValueForRange() const override;

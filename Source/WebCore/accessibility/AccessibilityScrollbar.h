@@ -55,7 +55,7 @@ private:
     bool isEnabled() const override;
     
     // Assumes float [0..1]
-    void setValue(float) override;
+    bool setValue(float) override;
     float valueForRange() const override;
 
     RefPtr<Scrollbar> m_scrollbar;

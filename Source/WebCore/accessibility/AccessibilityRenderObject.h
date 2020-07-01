@@ -146,7 +146,7 @@ public:
     
     void setFocused(bool) override;
     void setSelectedTextRange(const PlainTextRange&) override;
-    void setValue(const String&) override;
+    bool setValue(const String&) override;
     void setSelectedRows(AccessibilityChildrenVector&) override;
     AccessibilityOrientation orientation() const override;
 

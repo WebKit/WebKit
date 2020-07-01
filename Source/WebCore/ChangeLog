@@ -1,3 +1,39 @@
+2020-07-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement relevant simulated key presses for custom ARIA widgets for increment/decrement
+        https://bugs.webkit.org/show_bug.cgi?id=213744
+
+        Reviewed by Darin Adler.
+
+        In order to allow custom ARIA widgets to work, we can post keyboard events for specific ax actions
+        that are not handled natively.
+
+        Spec: https://github.com/WICG/aom/blob/gh-pages/explainer.md#user-action-events-from-assistive-technology
+
+        Test: accessibility/keyevents-posted-for-increment-actions.html
+              accessibility/keyevents-for-increment-actions-with-node-removal.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::postKeyboardKeysForValueChange):
+        (WebCore::AccessibilityNodeObject::setNodeValue):
+        (WebCore::AccessibilityNodeObject::changeValueByStep):
+        (WebCore::AccessibilityNodeObject::changeValueByPercent):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setValue):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::setValue):
+        * accessibility/AccessibilityScrollbar.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::setValue):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::setValue):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix the WebKit build after <rdar://problem/64288191>

@@ -1381,6 +1381,10 @@ accessibility/children-changed-sends-notification.html [ Skip ]
 accessibility/menu-list-sends-change-notification.html [ Skip ]
 accessibility/multiselect-list-reports-active-option.html [ Skip ]
 
+# increment/decrement not implemented in test runner
+accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
+accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
+
 webkit.org/b/140796 accessibility/alt-tag-on-image-with-nonimage-role.html [ Skip ]
 webkit.org/b/140798 accessibility/aria-controls-with-tabs.html [ Skip ]
 

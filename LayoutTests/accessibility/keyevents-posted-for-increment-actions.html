@@ -1,0 +1,63 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="slider"
+           role="slider"
+           tabindex="0"
+           aria-valuemin="0"
+           aria-valuenow="0"
+           aria-valuemax="255"
+           aria-labelledby="idRed"></div>
+
+<p id="description"></p>
+<div id="console"></div>
+     
+<script>
+    var keyCount = 0;
+    function handleKeyDown(event) {
+        debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key);
+        event.preventDefault();
+        event.stopPropagation();
+        keyCount++;
+        if (keyCount == 4) {
+            finishJSTest();
+        }
+     }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        description("This test verifies that the increment/decrement actions post keyboard events that are correct for LTR and orientation.");
+
+        document.getElementById("slider").addEventListener('keydown', handleKeyDown);
+
+        // Get the parent element.
+        var axSlider = accessibilityController.accessibleElementById("slider");
+        
+        debug("Increment/Decrement - LTR");    
+        incrementDecrement();
+
+        debug("Increment/Decrement - RTL");
+        window.internals.setUserInterfaceLayoutDirection("RTL");
+        incrementDecrement();
+
+        function incrementDecrement() {
+            debug("Horizontal orientation");
+            document.getElementById("slider").setAttribute("aria-orientation", "horizontal");
+            axSlider.increment();
+            axSlider.decrement();
+
+            debug("Vertical orientation");
+            document.getElementById("slider").setAttribute("aria-orientation", "vertical");
+            axSlider.increment();
+            axSlider.decrement();
+        }
+    }
+ </script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

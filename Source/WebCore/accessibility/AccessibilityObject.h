@@ -463,11 +463,11 @@ public:
     void setFocused(bool) override { }
     void setSelectedText(const String&) override { }
     void setSelectedTextRange(const PlainTextRange&) override { }
-    void setValue(const String&) override { }
+    bool setValue(const String&) override { return false; }
     bool replaceTextInRange(const String&, const PlainTextRange&) override;
     bool insertText(const String&) override;
 
-    void setValue(float) override { }
+    bool setValue(float) override { return false; }
     void setSelected(bool) override { }
     void setSelectedRows(AccessibilityChildrenVector&) override { }
 

@@ -1663,8 +1663,15 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
     } else {
         auto node = this->node();
         ASSERT(node);
+        auto elementRange = this->elementRange();
         VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(*node, range.start);
+        if (!elementRange->contains(start))
+            start = VisiblePosition(elementRange->startPosition());
+        
         VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(*node, range.start + range.length);
+        if (!elementRange->contains(end))
+            end = VisiblePosition(elementRange->endPosition());
+        
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
     
@@ -1860,10 +1867,10 @@ void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& sel
         selectedRow->setSelected(true);
 }
     
-void AccessibilityRenderObject::setValue(const String& string)
+bool AccessibilityRenderObject::setValue(const String& string)
 {
     if (!m_renderer || !is<Element>(m_renderer->node()))
-        return;
+        return false;
     
     Element& element = downcast<Element>(*m_renderer->node());
     RenderObject& renderer = *m_renderer;
@@ -1875,14 +1882,20 @@ void AccessibilityRenderObject::setValue(const String& string)
         if (element.shouldUseInputMethod()) {
             editor.clearText();
             editor.insertText(string, nullptr);
-            return;
+            return true;
         }
     }
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (renderer.isTextField() && is<HTMLInputElement>(element))
+    if (renderer.isTextField() && is<HTMLInputElement>(element)) {
         downcast<HTMLInputElement>(element).setValue(string);
-    else if (renderer.isTextArea() && is<HTMLTextAreaElement>(element))
+        return true;
+    }
+    if (renderer.isTextArea() && is<HTMLTextAreaElement>(element)) {
         downcast<HTMLTextAreaElement>(element).setValue(string);
+        return true;
+    }
+    
+    return false;
 }
 
 bool AccessibilityRenderObject::supportsARIAOwns() const

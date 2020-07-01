@@ -896,11 +896,11 @@ public:
     virtual void setFocused(bool) = 0;
     virtual void setSelectedText(const String&) = 0;
     virtual void setSelectedTextRange(const PlainTextRange&) = 0;
-    virtual void setValue(const String&) = 0;
+    virtual bool setValue(const String&) = 0;
     virtual bool replaceTextInRange(const String&, const PlainTextRange&) = 0;
     virtual bool insertText(const String&) = 0;
 
-    virtual void setValue(float) = 0;
+    virtual bool setValue(float) = 0;
     virtual void setSelected(bool) = 0;
     virtual void setSelectedRows(AccessibilityChildrenVector&) = 0;
 

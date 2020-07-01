@@ -1,3 +1,15 @@
+2020-07-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement relevant simulated key presses for custom ARIA widgets for increment/decrement
+        https://bugs.webkit.org/show_bug.cgi?id=213744
+
+        Reviewed by Darin Adler.
+
+        * accessibility/keyevents-posted-for-increment-actions-expected.txt: Added.
+        * accessibility/keyevents-posted-for-increment-actions.html: Added.
+        * accessibility/keyevents-for-increment-actions-with-node-removal-expected.txt: Added.
+        * accessibility/keyevents-for-increment-actions-with-node-removal.htmk: Added.
+
 2020-07-01  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Debug and Mojave Debug ] http/tests/storage/storage-map-leaking.html is flaky timing out.

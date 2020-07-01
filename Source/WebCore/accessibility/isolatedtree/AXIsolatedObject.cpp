@@ -629,10 +629,22 @@ void AXIsolatedObject::setIsExpanded(bool value)
         object->setIsExpanded(value);
     });
 }
-void AXIsolatedObject::setValue(float value)
+
+bool AXIsolatedObject::setValue(float value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
-        object->setValue(value);
+    return Accessibility::retrieveValueFromMainThread<bool>([&value, this] () -> bool {
+        if (auto* axObject = associatedAXObject())
+            return axObject->setValue(value);
+        return false;
+    });
+}
+
+bool AXIsolatedObject::setValue(const String& value)
+{
+    return Accessibility::retrieveValueFromMainThread<bool>([&value, this] () -> bool {
+        if (auto* axObject = associatedAXObject())
+            return axObject->setValue(value);
+        return false;
     });
 }
 
@@ -668,13 +680,6 @@ void AXIsolatedObject::setSelectedTextRange(const PlainTextRange& value)
 {
     performFunctionOnMainThread([&value](AXCoreObject* object) {
         object->setSelectedTextRange(value);
-    });
-}
-
-void AXIsolatedObject::setValue(const String& value)
-{
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
-        object->setValue(value);
     });
 }
 
