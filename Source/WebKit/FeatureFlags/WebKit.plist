@@ -37,6 +37,11 @@
         <key>Enabled</key>
         <false/>
     </dict>
+    <key>WebXR</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
     <key>webrtc_in_gpu_process</key>
     <dict>
         <key>Enabled</key>

@@ -1,3 +1,20 @@
+2020-07-01  Keith Miller  <keith_miller@apple.com>
+
+        Add WebXR to WebKit.plist preferences, off by default
+        https://bugs.webkit.org/show_bug.cgi?id=213860
+        <rdar://64411568>
+
+        Reviewed by Tim Horton.
+
+        Right now we look for "WebXR" in the plist, however, it's not in
+        the file. It so happens that, *I think*, we fall back to false for
+        missing keys. We should have an entry for readability and
+        consistency, though.
+
+        No tests needed because this shouldn't change behavior.
+
+        * FeatureFlags/WebKit.plist:
+
 2020-07-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r259242) WebKit no longer does client navigations at foreground priority for extensions
