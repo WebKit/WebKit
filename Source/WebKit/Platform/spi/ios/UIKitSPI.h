@@ -1064,6 +1064,7 @@ WTF_EXTERN_C_END
 + (UIKeyboardPreferencesController *)sharedPreferencesController;
 - (void)setValue:(id)value forPreferenceKey:(NSString *)key;
 - (BOOL)boolForPreferenceKey:(NSString *)key;
+- (id)valueForPreferenceKey:(NSString *)key;
 @end
 
 @interface UIMenuItem (UIMenuController_SPI)

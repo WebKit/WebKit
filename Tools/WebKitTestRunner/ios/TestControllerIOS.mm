@@ -159,10 +159,19 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
     UIKeyboardPreferencesController *keyboardPreferences = UIKeyboardPreferencesController.sharedPreferencesController;
-    NSString *automaticMinimizationEnabledPreferenceKey = @"AutomaticMinimizationEnabled";
+    auto globalPreferencesDomainName = CFSTR("com.apple.Preferences");
+    auto automaticMinimizationEnabledPreferenceKey = @"AutomaticMinimizationEnabled";
     if (![keyboardPreferences boolForPreferenceKey:automaticMinimizationEnabledPreferenceKey]) {
         [keyboardPreferences setValue:@YES forPreferenceKey:automaticMinimizationEnabledPreferenceKey];
-        CFPreferencesSetAppValue((__bridge CFStringRef)automaticMinimizationEnabledPreferenceKey, kCFBooleanTrue, CFSTR("com.apple.Preferences"));
+        CFPreferencesSetAppValue((__bridge CFStringRef)automaticMinimizationEnabledPreferenceKey, kCFBooleanTrue, globalPreferencesDomainName);
+    }
+
+    // Disables the dictation keyboard shortcut for testing.
+    auto dictationKeyboardShortcutPreferenceKey = @"HWKeyboardDictationShortcut";
+    auto dictationKeyboardShortcutValueForTesting = @(-1);
+    if (![dictationKeyboardShortcutValueForTesting isEqual:[keyboardPreferences valueForPreferenceKey:dictationKeyboardShortcutPreferenceKey]]) {
+        [keyboardPreferences setValue:dictationKeyboardShortcutValueForTesting forPreferenceKey:dictationKeyboardShortcutPreferenceKey];
+        CFPreferencesSetAppValue((__bridge CFStringRef)dictationKeyboardShortcutPreferenceKey, (__bridge CFNumberRef)dictationKeyboardShortcutValueForTesting, globalPreferencesDomainName);
     }
 
     GSEventSetHardwareKeyboardAttached(true, 0);

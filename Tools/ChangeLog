@@ -1,3 +1,22 @@
+2020-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Several key event tests in fast/events/ios are failing after <rdar://problem/62197116>
+        https://bugs.webkit.org/show_bug.cgi?id=213821
+        <rdar://problem/64821309>
+
+        Reviewed by Megan Gardner.
+
+        After the UIKit changes in <rdar://problem/62197116>, double tapping the Option key now enters dictation mode
+        by default, and additionally displays a modal popup prompting the user to set up dictation. Both of these
+        behaviors interfere with layout tests that attempt to press the option key twice in rapid succession, causing
+        them to time out or fail.
+
+        Fix this by setting the default that determines the modifier key to use as the dictation shortcut to -1, which
+        disables the dictation keyboard shortcut altogether.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2020-06-30  Geoffrey Garen  <ggaren@apple.com>
 
         [Cocoa] [GTK] RunLoop::Timer::isActive() is incorrect for timers while they are firing
