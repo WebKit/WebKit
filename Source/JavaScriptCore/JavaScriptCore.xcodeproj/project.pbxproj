@@ -10598,7 +10598,6 @@
 				14BD59BC0A3E8F9000BAF59C /* Sources */,
 				14BD59BD0A3E8F9000BAF59C /* Frameworks */,
 				5366FDB222D5485B00BF94AF /* Copy Support Scripts */,
-				5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */,
 			);
 			buildRules = (
 			);
@@ -10898,7 +10897,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [[ -f \"${BUILT_PRODUCTS_DIR}/libWTF.a\" ]]; then\n    ln -s -f -h \"${BUILT_PRODUCTS_DIR}/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nelse\n    ln -s -f -h \"${SDK_DIR}${WK_ALTERNATE_WEBKIT_SDK_PATH}/usr/local/lib/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nfi";
+			shellScript = "set -e\n\nif [[ -f \"${BUILT_PRODUCTS_DIR}/libWTF.a\" ]]; then\n    ln -s -f -h \"${BUILT_PRODUCTS_DIR}/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nelse\n    ln -s -f -h \"${SDK_DIR}${WK_ALTERNATE_WEBKIT_SDK_PATH}/usr/local/lib/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nfi\n";
 		};
 		5325BDC521DFF2BA00A0DEE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11039,22 +11038,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" && \"${WK_USE_ALTERNATE_FRAMEWORKS_DIR}\" == \"NO\" ]]; then\n    mkdir -p \"${DSTROOT}/usr/local/bin\"\n    cd \"${DSTROOT}/usr/local/bin\"\n    if [ -L jsc ]; then\n        rm -f jsc\n    fi\n    ln -s \"../../..${INSTALL_PATH}/jsc\" jsc\n    exit\nfi\n";
-		};
-		5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/API/tests/testapi.js",
-			);
-			name = "Install Support Script";
-			outputPaths = (
-				"$(DSTROOT)$(INSTALL_PATH)/testapi.js",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    cp \"${SRCROOT}/API/tests/testapiScripts/testapi.js\" \"${DSTROOT}${INSTALL_PATH}/testapi.js\"\nfi\n";
 		};
 		5DF7E1CC188E6B87003F9A46 /* Copy jsc into JavaScriptCore.framework */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -1,3 +1,15 @@
+2020-07-01  Saam Barati  <sbarati@apple.com>
+
+        Script to copy over testapi.js is redundant in xcodebuild
+        https://bugs.webkit.org/show_bug.cgi?id=213824
+
+        Reviewed by Keith Miller.
+
+        We're already copying over the entire testapiScripts directory.
+        No need to manually copy just one file from it, too.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2020-07-01  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Use properly flag names for tests of Tools/Scripts/run-builtins-generator-tests
