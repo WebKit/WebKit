@@ -1,3 +1,13 @@
+2020-07-01  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for fast/dom/Window/open-invalid-url.html and fast/dom/Range/simple-line-layout-getclientrects.html and fast/dom/attr_dead_doc.html and fast/dom/horizontal-scrollbar-when-dir-change.html and fast/dom/vertical-scrollbar-when-dir-change.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213847
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-07-01  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] Tracks panel can show text tracks with mode "hidden" as selected
