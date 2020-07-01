@@ -1,3 +1,14 @@
+2020-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        [Cocoa] [GTK] RunLoop::Timer::isActive() is incorrect for timers while they are firing
+        https://bugs.webkit.org/show_bug.cgi?id=213771
+
+        Unreviewed assertion fix.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::timeOutTimerFired): Removed this ASSERT.
+        One-shot timers are not active while they are firing.
+
 2020-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Several key event tests in fast/events/ios are failing after <rdar://problem/62197116>

@@ -345,7 +345,6 @@ void AuthenticatorManager::initTimeOutTimer()
 
 void AuthenticatorManager::timeOutTimerFired()
 {
-    ASSERT(m_requestTimeOutTimer.isActive());
     invokePendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
     clearState();
 }
