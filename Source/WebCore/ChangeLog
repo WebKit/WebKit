@@ -1,3 +1,27 @@
+2020-07-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use more efficient makeString() instead of StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=213708
+
+        Reviewed by Sam Weinig.
+
+        This patch refactors throwRequiredMemberTypeError() and throwArgument*Error()
+        methods, replacing all StringBuilder usages with more efficient makeString().
+
+        Extracts makeArgumentTypeErrorMessage(), similiar to existing helpers,
+        which can be reused if neccessary.
+
+        No new tests, no behavior change.
+
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::makeArgumentTypeErrorMessage):
+        (WebCore::throwArgumentMustBeEnumError):
+        (WebCore::throwArgumentMustBeFunctionError):
+        (WebCore::throwArgumentMustBeObjectError):
+        (WebCore::throwArgumentTypeError):
+        (WebCore::throwRequiredMemberTypeError):
+        (WebCore::appendArgumentMustBe): Deleted.
+
 2020-06-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Don't include scrollbar extents when computing sizes for percentage resolution

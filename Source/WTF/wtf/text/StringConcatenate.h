@@ -197,6 +197,44 @@ public:
     }
 };
 
+template<typename... StringTypes> class StringTypeAdapter<std::tuple<StringTypes...>, void> {
+public:
+    StringTypeAdapter(std::tuple<StringTypes...> tuple)
+        : m_tuple { tuple }
+        , m_length { std::apply(computeLength, tuple) }
+        , m_is8Bit { std::apply(computeIs8Bit, tuple) }
+    {
+    }
+
+    unsigned length() const { return m_length; }
+    bool is8Bit() const { return m_is8Bit; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        std::apply([&](StringTypes... strings) {
+            unsigned offset = 0;
+            (..., (
+                StringTypeAdapter<StringTypes>(strings).writeTo(destination + (offset * sizeof(CharacterType))),
+                offset += StringTypeAdapter<StringTypes>(strings).length()
+            ));
+        }, m_tuple);
+    }
+
+private:
+    static unsigned computeLength(StringTypes... strings)
+    {
+        return (... + StringTypeAdapter<StringTypes>(strings).length());
+    }
+
+    static bool computeIs8Bit(StringTypes... strings)
+    {
+        return (... && StringTypeAdapter<StringTypes>(strings).is8Bit());
+    }
+
+    std::tuple<StringTypes...> m_tuple;
+    unsigned m_length;
+    bool m_is8Bit;
+};
+
 template<typename UnderlyingElementType> struct PaddingSpecification {
     LChar character;
     unsigned length;

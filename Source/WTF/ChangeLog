@@ -1,3 +1,16 @@
+2020-07-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use more efficient makeString() instead of StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=213708
+
+        Reviewed by Sam Weinig.
+
+        Introduces StringTypeAdapter<std::tuple> overload, which enables using
+        makeString() instead of StringBuilder in more cases.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::StringTypeAdapter<std::tuple<StringTypes...>, void>): Added.
+
 2020-06-30  Geoffrey Garen  <ggaren@apple.com>
 
         [Cocoa] [GTK] RunLoop::Timer::isActive() is incorrect for timers while they are firing
