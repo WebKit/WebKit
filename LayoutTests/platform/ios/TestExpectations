@@ -1312,7 +1312,6 @@ webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-inset-003.htm
 webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 
-webkit.org/b/178952 fast/css/font-calculated-value.html [ Failure ]
 webkit.org/b/178955 fast/css/font-shorthand-line-height.html [ Failure ]
 webkit.org/b/178957 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
 
