@@ -1,3 +1,12 @@
+2020-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the arm64 iOS simulator build
+        https://bugs.webkit.org/show_bug.cgi?id=213868
+        <rdar://problem/64901603>
+
+        * Configurations/libvpx.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+
 2020-07-01  Youenn Fablet  <youenn@apple.com>
 
         Add a functional WebRTC VP9 codec
