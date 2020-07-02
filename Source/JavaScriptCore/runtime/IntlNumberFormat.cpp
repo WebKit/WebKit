@@ -42,6 +42,7 @@ const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, nullptr, n
 
 namespace IntlNumberFormatInternal {
 constexpr const char* relevantExtensionKeys[1] = { "nu" };
+constexpr bool verbose = false;
 }
 
 struct IntlNumberFormatField {
@@ -310,8 +311,11 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         ASSERT_NOT_REACHED();
     }
 
+    CString dataLocaleWithExtensions = makeString(result.get("dataLocale"_s), "-u-nu-", m_numberingSystem).utf8();
+    dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
+
     UErrorCode status = U_ZERO_ERROR;
-    m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(style, nullptr, 0, m_locale.utf8().data(), nullptr, &status));
+    m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(style, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize NumberFormat"_s);
         return;

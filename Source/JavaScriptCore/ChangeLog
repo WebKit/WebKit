@@ -1,3 +1,17 @@
+2020-07-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Configure option-offered numberingSystem in Intl.NumberFormat through locale
+        https://bugs.webkit.org/show_bug.cgi?id=213872
+
+        Reviewed by Ross Kirsling.
+
+        We need to pass numberingSystem option to ICU through locale when constructing UNumberFormat.
+        We are passing it when we get "en-US-u-nu-hanidec" locale, but we are not passing it when
+        we are getting `new Intl.NumberFormat("en-US", { numberingSystem: "hanidec" })`.
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+
 2020-07-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl.Collator should set usage:"search" option through ICU locale
