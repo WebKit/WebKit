@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<style>
+  body {
+    height: 2000px;
+    width: 2000px;
+  }
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+    function getUIScript() {
+        const pageScaleFactor = 2;
+        return `(function() {
+            uiController.zoomToScale(${pageScaleFactor}, function() {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            });
+        })();`;
+    }
+
+    let numScrollEvents = 0;
+    window.visualViewport.addEventListener("scroll", event => numScrollEvents++);
+
+    promise_test(async () => {
+        await new Promise(resolve => window.addEventListener("load", resolve));
+        await new Promise(resolve => testRunner.runUIScript(getUIScript(), resolve));
+
+        window.scrollTo(1000, 1000);
+        await new Promise(requestAnimationFrame);
+        assert_not_equals(numScrollEvents, 0, "Calling window.scrollTo() caused 'scroll' events to be dispatched.");
+
+        const numScrollEventsAfterScroll = numScrollEvents;
+        await new Promise(requestAnimationFrame);
+        assert_equals(numScrollEventsAfterScroll, numScrollEvents, "There were no additional scroll events after scrolling.");
+    }, "Verify that a scroll event gets fired on window.visualViewport when its offset changes but not after the scroll has completed.");
+
+</script>

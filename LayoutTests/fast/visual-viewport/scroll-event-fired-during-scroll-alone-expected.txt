@@ -1,0 +1,3 @@
+
+PASS Verify that a scroll event gets fired on window.visualViewport when its offset changes but not after the scroll has completed. 
+

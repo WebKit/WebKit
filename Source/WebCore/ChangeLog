@@ -1,3 +1,18 @@
+2020-07-02  Antoine Quint  <graouts@webkit.org>
+
+        visualViewport.addEventListener("scroll"*** fires permanently after zoom or orientation change
+        https://bugs.webkit.org/show_bug.cgi?id=211522
+        <rdar://problem/62939371>
+
+        Reviewed by Simon Fraser.
+
+        Correctly set the flag indicating that a scroll event has been dispatched on the visual viewport.
+
+        Test: fast/visual-viewport/scroll-event-fired-during-scroll-alone.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::runScrollSteps):
+
 2020-07-02  Zalan Bujtas  <zalan@apple.com>
 
         Overlapping content on earny.co
