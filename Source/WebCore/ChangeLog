@@ -1,3 +1,18 @@
+2020-07-02  Zalan Bujtas  <zalan@apple.com>
+
+        Overlapping content on earny.co
+        https://bugs.webkit.org/show_bug.cgi?id=213864
+        <rdar://problem/61011802>
+
+        Reviewed by Simon Fraser.
+
+        Do not use a 1px value for initial min/max content width.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout): I found 2 places where we rely on the initial 1px value for min/max width. This might cause some "regression".
+
 2020-07-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r263633, r263651, and r263671.

@@ -19,13 +19,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 541x18
           text run at (0,0) width 541: "You should see two identical green squares, 100x100 pixels each, next to each other."
-      RenderTable {TABLE} at (0,86) size 107x156
-        RenderTableSection {TBODY} at (0,0) size 107x156
-          RenderTableRow {TR} at (0,2) size 107x50
-            RenderTableCell {TD} at (2,26) size 103x2 [r=0 c=0 rs=1 cs=2]
-          RenderTableRow {TR} at (0,54) size 107x100
+      RenderTable {TABLE} at (0,86) size 106x156
+        RenderTableSection {TBODY} at (0,0) size 106x156
+          RenderTableRow {TR} at (0,2) size 106x50
+            RenderTableCell {TD} at (2,26) size 102x2 [r=0 c=0 rs=1 cs=2]
+          RenderTableRow {TR} at (0,54) size 106x100
             RenderTableCell {TD} at (2,54) size 100x2 [bgcolor=#008000] [r=1 c=0 rs=1 cs=1]
-            RenderTableCell (anonymous) at (104,54) size 1x0 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell (anonymous) at (104,54) size 0x0 [r=1 c=1 rs=1 cs=1]
 layer at (11,149) size 98x98
   RenderBlock (positioned) {DIV} at (11,149) size 98x98
 layer at (112,148) size 102x102

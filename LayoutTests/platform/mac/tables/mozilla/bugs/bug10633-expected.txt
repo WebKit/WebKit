@@ -6,53 +6,53 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 468x103
         RenderTableSection {TBODY} at (0,0) size 468x103
           RenderTableRow {TR} at (0,0) size 468x1
-            RenderTableCell {TD} at (0,0) size 19x0 [r=0 c=0 rs=1 cs=3]
-            RenderTableCell {TD} at (18,0) size 188x1 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 18x0 [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (18,0) size 187x1 [r=0 c=3 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 187x1
-            RenderTableCell {TD} at (205,0) size 21x1 [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (205,0) size 20x1 [r=0 c=4 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x1
-            RenderTableCell {TD} at (225,0) size 19x1 [r=0 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (225,0) size 18x1 [r=0 c=5 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 18x1
-            RenderTableCell {TD} at (243,0) size 19x0 [r=0 c=6 rs=1 cs=3]
-            RenderTableCell {TD} at (261,0) size 188x1 [r=0 c=9 rs=1 cs=1]
+            RenderTableCell {TD} at (243,0) size 18x0 [r=0 c=6 rs=1 cs=3]
+            RenderTableCell {TD} at (261,0) size 187x1 [r=0 c=9 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 187x1
-            RenderTableCell {TD} at (448,0) size 21x1 [r=0 c=10 rs=1 cs=1]
+            RenderTableCell {TD} at (448,0) size 20x1 [r=0 c=10 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x1
           RenderTableRow {TR} at (0,1) size 468x22
-            RenderTableCell {TD} at (0,1) size 19x22 [r=1 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (0,1) size 18x22 [r=1 c=0 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
-            RenderTableCell {TD} at (18,3) size 188x18 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (18,3) size 187x18 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
               RenderInline {A} at (0,0) size 121x18 [color=#0000EE]
                 RenderInline {B} at (0,0) size 121x18
                   RenderInline {FONT} at (0,0) size 121x17
                     RenderText {#text} at (33,0) size 121x17
                       text run at (33,0) width 121: "Detailed Search"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (205,1) size 21x22 [r=1 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (205,1) size 20x22 [r=1 c=4 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x22
-            RenderTableCell {TD} at (225,3) size 19x18 [r=1 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (225,3) size 18x18 [r=1 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (243,1) size 19x22 [r=1 c=6 rs=1 cs=3]
+            RenderTableCell {TD} at (243,1) size 18x22 [r=1 c=6 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
-            RenderTableCell {TD} at (261,3) size 188x18 [bgcolor=#FFCC00] [r=1 c=9 rs=1 cs=1]
+            RenderTableCell {TD} at (261,3) size 187x18 [bgcolor=#FFCC00] [r=1 c=9 rs=1 cs=1]
               RenderInline {A} at (0,0) size 151x18 [color=#0000EE]
                 RenderInline {B} at (0,0) size 151x18
                   RenderInline {FONT} at (0,0) size 151x17
                     RenderText {#text} at (18,0) size 151x17
                       text run at (18,0) width 151: "Search By Distance"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (448,1) size 21x22 [r=1 c=10 rs=1 cs=1]
+            RenderTableCell {TD} at (448,1) size 20x22 [r=1 c=10 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x22
           RenderTableRow {TR} at (0,23) size 468x80
-            RenderTableCell {TD} at (0,54) size 7x18 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,54) size 9x18 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (6,54) size 7x18 [bgcolor=#EBEBE4] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (9,54) size 9x18 [bgcolor=#EBEBE4] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (12,23) size 214x80 [bgcolor=#EBEBE4] [r=2 c=2 rs=1 cs=3]
-              RenderBlock {P} at (0,0) size 213x80
+            RenderTableCell {TD} at (18,23) size 207x80 [bgcolor=#EBEBE4] [r=2 c=2 rs=1 cs=3]
+              RenderBlock {P} at (0,0) size 207x80
                 RenderImage {IMG} at (0,0) size 1x5
                 RenderBR {BR} at (1,5) size 0x0
                 RenderInline {FONT} at (0,0) size 204x60
@@ -67,16 +67,16 @@ layer at (0,0) size 800x600
                   RenderBR {BR} at (127,62) size 1x0
                   RenderText {#text} at (0,65) size 4x15
                     text run at (0,65) width 4: " "
-            RenderTableCell {TD} at (225,54) size 19x18 [r=2 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (225,54) size 18x18 [r=2 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (243,54) size 8x18 [r=2 c=6 rs=1 cs=1]
+            RenderTableCell {TD} at (243,54) size 9x18 [r=2 c=6 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (250,54) size 8x18 [bgcolor=#EBEBE4] [r=2 c=7 rs=1 cs=1]
+            RenderTableCell {TD} at (252,54) size 9x18 [bgcolor=#EBEBE4] [r=2 c=7 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (257,23) size 212x50 [bgcolor=#EBEBE4] [r=2 c=8 rs=1 cs=3]
+            RenderTableCell {TD} at (261,23) size 207x50 [bgcolor=#EBEBE4] [r=2 c=8 rs=1 cs=3]
               RenderInline {FONT} at (0,0) size 205x57
                 RenderImage {IMG} at (0,0) size 1x5
                 RenderBR {BR} at (1,5) size 0x0

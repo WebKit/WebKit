@@ -34,14 +34,14 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,152) size 784x20
-        RenderInline {SPAN} at (0,0) size 147x19
+        RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderTable at (40,0) size 107x20
-            RenderTableSection (anonymous) at (0,0) size 106x20
-              RenderTableRow (anonymous) at (0,0) size 106x20
+          RenderTable at (40,0) size 106x20
+            RenderTableSection (anonymous) at (0,0) size 105x20
+              RenderTableRow (anonymous) at (0,0) size 105x20
                 RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
-                RenderTableCell {DIV} at (0,0) size 106x20 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {DIV} at (0,0) size 105x20 [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,172) size 784x25

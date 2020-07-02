@@ -222,13 +222,13 @@ layer at (0,0) size 785x2496
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 408x18
             text run at (0,0) width 408: "this table should be about 8 pixels wide (nested without border)"
-        RenderTable {TABLE} at (0,18) size 10x4 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 8x2
-            RenderTableRow {TR} at (0,0) size 8x2
-              RenderTableCell {TD} at (0,0) size 8x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (1,1) size 6x0 [bgcolor=#FFA500]
-                  RenderTableSection {TBODY} at (0,0) size 6x0
-                    RenderTableRow {TR} at (0,0) size 6x0
+        RenderTable {TABLE} at (0,18) size 4x4 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 2x2
+            RenderTableRow {TR} at (0,0) size 2x2
+              RenderTableCell {TD} at (0,0) size 2x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (1,1) size 0x0 [bgcolor=#FFA500]
+                  RenderTableSection {TBODY} at (0,0) size 0x0
+                    RenderTableRow {TR} at (0,0) size 0x0
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=1 rs=1 cs=1]
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=2 rs=1 cs=1]
@@ -548,24 +548,24 @@ layer at (0,0) size 785x2496
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 457x18
             text run at (0,0) width 457: "this table should be about 92 pixels wide (nested, colspan=15 with BR)"
-        RenderTable {TABLE} at (0,18) size 10x22 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 8x20
-            RenderTableRow {TR} at (0,0) size 8x20
-              RenderTableCell {TD} at (0,0) size 8x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (1,1) size 6x18 [bgcolor=#FFA500]
-                  RenderTableSection {TBODY} at (0,0) size 6x18
-                    RenderTableRow {TR} at (0,0) size 6x18
-                      RenderTableCell {TD} at (0,0) size 1x18 [r=0 c=0 rs=1 cs=15]
+        RenderTable {TABLE} at (0,18) size 4x22 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 2x20
+            RenderTableRow {TR} at (0,0) size 2x20
+              RenderTableCell {TD} at (0,0) size 2x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (1,1) size 0x18 [bgcolor=#FFA500]
+                  RenderTableSection {TBODY} at (0,0) size 0x18
+                    RenderTableRow {TR} at (0,0) size 0x18
+                      RenderTableCell {TD} at (0,0) size 0x18 [r=0 c=0 rs=1 cs=15]
                         RenderBR {BR} at (0,0) size 0x18
-                      RenderTableCell {TD} at (1,0) size 1x18 [r=0 c=15 rs=1 cs=15]
+                      RenderTableCell {TD} at (0,0) size 0x18 [r=0 c=15 rs=1 cs=15]
                         RenderBR {BR} at (0,0) size 0x18
-                      RenderTableCell {TD} at (2,0) size 1x18 [r=0 c=30 rs=1 cs=15]
+                      RenderTableCell {TD} at (0,0) size 0x18 [r=0 c=30 rs=1 cs=15]
                         RenderBR {BR} at (0,0) size 0x18
-                      RenderTableCell {TD} at (3,0) size 1x18 [r=0 c=45 rs=1 cs=15]
+                      RenderTableCell {TD} at (0,0) size 0x18 [r=0 c=45 rs=1 cs=15]
                         RenderBR {BR} at (0,0) size 0x18
-                      RenderTableCell {TD} at (4,0) size 1x18 [r=0 c=60 rs=1 cs=15]
+                      RenderTableCell {TD} at (0,0) size 0x18 [r=0 c=60 rs=1 cs=15]
                         RenderBR {BR} at (0,0) size 0x18
-                      RenderTableCell {TD} at (5,0) size 1x18 [r=0 c=75 rs=1 cs=15]
+                      RenderTableCell {TD} at (0,0) size 0x18 [r=0 c=75 rs=1 cs=15]
                         RenderBR {BR} at (0,0) size 0x18
         RenderBlock (anonymous) at (0,40) size 769x18
           RenderBR {BR} at (0,0) size 0x18

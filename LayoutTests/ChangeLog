@@ -1,3 +1,40 @@
+2020-07-02  Zalan Bujtas  <zalan@apple.com>
+
+        Overlapping content on earny.co
+        https://bugs.webkit.org/show_bug.cgi?id=213864
+        <rdar://problem/61011802>
+
+        Reviewed by Simon Fraser.
+
+        Progressions. Some of them are visually observable and they match Chrome/FF. 
+
+        * css2.1/20110323/abspos-containing-block-initial-004e-expected.txt:
+        * css2.1/20110323/abspos-containing-block-initial-004f-expected.txt:
+        * fast/table/auto-100-percent-width-expected.txt:
+        * fast/table/large-shrink-wrapped-width.html:
+        * fast/table/table-section-split-with-after-content-expected.txt:
+        * platform/mac/fast/css/acid2-expected.txt:
+        * platform/mac/fast/css/acid2-pixel-expected.txt:
+        * platform/mac/fast/css/percentage-non-integer-expected.txt:
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/mac/fast/repaint/table-cell-move-expected.txt:
+        * platform/mac/fast/table/cell-absolute-child-expected.txt:
+        * platform/mac/fast/table/empty-cells-expected.txt:
+        * platform/mac/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/mac/fast/table/table-cell-split-expected.txt:
+        * platform/mac/fast/table/table-insert-before-non-anonymous-block-expected.txt:
+        * platform/mac/http/tests/misc/acid2-expected.txt:
+        * platform/mac/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/mac/http/tests/misc/acid3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug100334-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug10633-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1302-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug16012-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug222336-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/other/empty_cells-expected.txt:
+
 2020-07-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r263633, r263651, and r263671.

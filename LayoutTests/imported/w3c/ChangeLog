@@ -1,3 +1,17 @@
+2020-07-02  Zalan Bujtas  <zalan@apple.com>
+
+        Overlapping content on earny.co
+        https://bugs.webkit.org/show_bug.cgi?id=213864
+        <rdar://problem/61011802>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001-expected.txt:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001q-expected.txt:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001r-expected.txt:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001u-expected.txt:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001v-expected.txt:
+
 2020-07-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop some outdated tests in WebCrypto API.
