@@ -43,6 +43,7 @@ constexpr const char* relevantExtensionKeys[3] = { "co", "kf", "kn" };
 constexpr size_t collationIndex = 0;
 constexpr size_t caseFirstIndex = 1;
 constexpr size_t numericIndex = 2;
+constexpr bool verbose = false;
 }
 
 void IntlCollator::UCollatorDeleter::operator()(UCollator* collator) const
@@ -240,8 +241,23 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     RETURN_IF_EXCEPTION(scope, void());
     m_ignorePunctuation = (ignorePunctuation == TriState::True);
 
+    // UCollator does not offer an option to configure "usage" via ucol_setAttribute. So we need to pass this option via locale.
+    CString dataLocaleWithExtensions;
+    switch (m_usage) {
+    case Usage::Sort:
+        dataLocaleWithExtensions = m_locale.utf8();
+        break;
+    case Usage::Search:
+        // searchLocaleData filters out "co" unicode extension. However, we need to pass "co" to ICU when Usage::Search is specified.
+        // So we need to pass "co" unicode extension through locale. Since the other relevant extensions are handled via ucol_setAttribute,
+        // we can just use dataLocale
+        dataLocaleWithExtensions = makeString(result.get("dataLocale"_s), "-u-co-search").utf8();
+        break;
+    }
+    dataLogLnIf(IntlCollatorInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions, ")");
+
     UErrorCode status = U_ZERO_ERROR;
-    m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(m_locale.utf8().data(), &status));
+    m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(dataLocaleWithExtensions.data(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize Collator"_s);
         return;

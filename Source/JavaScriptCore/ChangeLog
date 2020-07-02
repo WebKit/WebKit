@@ -1,3 +1,17 @@
+2020-07-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Collator should set usage:"search" option through ICU locale
+        https://bugs.webkit.org/show_bug.cgi?id=213869
+
+        Reviewed by Ross Kirsling.
+
+        Intl.Collator has usage:"search" option, and it affects on collation. However, UCollator does not have an interface to set this collation option,
+        and only way to configure UCollator is setting "-u-co-search" unicode extension to passed locale string. This patch adds "-u-co-search" unicode
+        extension if Usage::Search is specified.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+
 2020-07-01  Keith Miller  <keith_miller@apple.com>
 
         Rename zeroExtend32ToPtr to zeroExtend32ToWord

@@ -1,3 +1,16 @@
+2020-07-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Collator should set usage:"search" option through ICU locale
+        https://bugs.webkit.org/show_bug.cgi?id=213869
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-collator-co-extension.js: Added.
+        (shouldBe):
+        (shouldBeArray):
+        (explicitTrueBeforeICU67):
+        * test262/expectations.yaml:
+
 2020-06-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Update test262
