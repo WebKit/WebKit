@@ -1,3 +1,14 @@
+2020-07-02  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r263625): run-minibrowser fails on mac
+        https://bugs.webkit.org/show_bug.cgi?id=213876
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.run_minibrowser): _run_script() expects a string as first argument. Command-line args
+        are passed through a keyword.
+
 2020-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build
