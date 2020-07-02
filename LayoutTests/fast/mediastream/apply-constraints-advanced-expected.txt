@@ -12,7 +12,7 @@ PASS video.audioTracks.length is 0
 PASS settings['width'] is 640
 PASS settings['height'] is 480
 
-** Constraint: {"width":{"min":320},"height":{"min":240},"advanced":[{"width":1920,"height":1280}]} - advanced width and height are not supported, minimums are less than current, nothing is changed.
+** Constraint: {"width":{"min":320},"height":{"min":240},"advanced":[{"width":3000,"height":2000}]} - advanced width and height are not supported, minimums are less than current, nothing is changed.
 PASS settings['width'] is 640
 PASS settings['height'] is 480
 

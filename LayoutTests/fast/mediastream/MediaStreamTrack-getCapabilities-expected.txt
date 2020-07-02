@@ -8,8 +8,8 @@ video track capabilities:
   capabilities.deviceId = <UUID>
   capabilities.facingMode = [ user ]
   capabilities.frameRate = { max: 30, min: 5 }
-  capabilities.height = { max: 720, min: 1 }
-  capabilities.width = { max: 1280, min: 1 }
+  capabilities.height = { max: 1440, min: 1 }
+  capabilities.width = { max: 2560, min: 1 }
 
 audio track capabilities:
   capabilities.deviceId = <UUID>

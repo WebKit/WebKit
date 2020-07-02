@@ -18,7 +18,7 @@
                 },
                 {
                     message: "the 'exact' constraint can't be satisfied, promise should reject and no settings should change.",
-                    constraint: { width: { exact: 2000 } }, 
+                    constraint: { width: { exact: 3000 } },
                     expected: { width: 320, height: 240, frameRate: 30 },
                     error: "width",
                 },
@@ -42,7 +42,7 @@
                 {
                     message: "the 'ideal' constraint can't be satisfied but the 'min' can, maximum value should be chosen.",
                     constraint: { width: {min: 300, ideal: 5000} }, 
-                    expected: { width: 1280, height: 720 },
+                    expected: { width: 2560, height: 1440 },
                 },
                 {
                     message: "'ideal' and 'min' constraints can be satisfied, 'ideal' should be chosen.",
@@ -52,7 +52,7 @@
                 {
                     message: "ideal width is greater than track capability, should be clamped to the maximum value.",
                     constraint: { width: 5000 },
-                    expected: { width: 1280},
+                    expected: { width: 2560},
                 },
                 {
                     message: "frameRate value is less than track capabilities, should be clamped to the minimum values.",

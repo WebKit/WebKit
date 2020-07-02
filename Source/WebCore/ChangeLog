@@ -1,3 +1,32 @@
+2020-07-02  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia returns OverConstrained on Jitsi
+        https://bugs.webkit.org/show_bug.cgi?id=210932
+        <rdar://problem/64403675>
+
+        Reviewed by Philippe Normand.
+
+        We compute the max width, max height and max frame rate across all presets.
+        In case a preset for the max resolution is different from the preset for the max frame rate,
+        we were selecting capture parameters that no preset can match.
+
+        To fix the issue, in case the frame rate constraint is not mandatory, and we do not find a preset
+        when starting to capture, we remove the frame rate constraint, pick the preset and choose the max frame rate from that preset.
+
+        Update mock sources to have a high resolution preset with low frame rate to enable writing a test.
+
+        Test: fast/mediastream/get-user-media-ideal-constraints.html
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::supportsSizeAndFrameRate):
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::bestSupportedSizeAndFrameRate):
+        (WebCore::RealtimeVideoCaptureSource::setSizeAndFrameRate):
+        * platform/mediastream/VideoPreset.h:
+        (WebCore::VideoPreset::maxFrameRate const):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices):
+
 2020-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build

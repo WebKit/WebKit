@@ -234,6 +234,13 @@ bool RealtimeVideoCaptureSource::shouldUsePreset(VideoPreset& current, VideoPres
     return candidate.size.width() <= current.size.width() && candidate.size.height() <= current.size.height() && prefersPreset(candidate);
 }
 
+static inline double frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
+{
+    auto minFrameRate = preset.minFrameRate();
+    auto maxFrameRate = preset.maxFrameRate();
+    return currentFrameRate >= minFrameRate && currentFrameRate <= maxFrameRate ? currentFrameRate : maxFrameRate;
+}
+
 Optional<RealtimeVideoCaptureSource::CaptureSizeAndFrameRate> RealtimeVideoCaptureSource::bestSupportedSizeAndFrameRate(Optional<int> requestedWidth, Optional<int> requestedHeight, Optional<double> requestedFrameRate)
 {
     if (!requestedWidth && !requestedHeight && !requestedFrameRate)
@@ -243,10 +250,7 @@ Optional<RealtimeVideoCaptureSource::CaptureSizeAndFrameRate> RealtimeVideoCaptu
         requestedWidth = size().width();
         requestedHeight = size().height();
     }
-    if (!requestedFrameRate)
-        requestedFrameRate = frameRate();
 
-    CaptureSizeAndFrameRate result;
     RefPtr<VideoPreset> exactSizePreset;
     RefPtr<VideoPreset> aspectRatioPreset;
     IntSize aspectRatioMatchSize;
@@ -256,12 +260,12 @@ Optional<RealtimeVideoCaptureSource::CaptureSizeAndFrameRate> RealtimeVideoCaptu
     for (const auto& preset : presets()) {
         const auto& presetSize = preset->size;
 
-        if (!presetSupportsFrameRate(&preset.get(), requestedFrameRate.value()))
+        if (requestedFrameRate && !presetSupportsFrameRate(&preset.get(), requestedFrameRate.value()))
             continue;
 
         if (!requestedWidth && !requestedHeight) {
-            result.requestedFrameRate = requestedFrameRate.value();
-            return result;
+            exactSizePreset = preset.ptr();
+            break;
         }
 
         // Don't look at presets smaller than the requested resolution because we never want to resize larger.
@@ -337,22 +341,19 @@ Optional<RealtimeVideoCaptureSource::CaptureSizeAndFrameRate> RealtimeVideoCaptu
         return { };
     }
 
-    result.requestedFrameRate = requestedFrameRate.value();
     if (exactSizePreset) {
-        result.encodingPreset = exactSizePreset;
-        result.requestedSize = exactSizePreset->size;
-        return result;
+        auto size = exactSizePreset->size;
+        auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*exactSizePreset, frameRate());
+        return CaptureSizeAndFrameRate { WTFMove(exactSizePreset), size, captureFrameRate };
     }
 
     if (aspectRatioPreset) {
-        result.encodingPreset = aspectRatioPreset;
-        result.requestedSize = aspectRatioMatchSize;
-        return result;
+        auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*aspectRatioPreset, frameRate());
+        return CaptureSizeAndFrameRate { WTFMove(aspectRatioPreset), aspectRatioMatchSize, captureFrameRate };
     }
 
-    result.encodingPreset = resizePreset;
-    result.requestedSize = resizeSize;
-    return result;
+    auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*resizePreset, frameRate());
+    return CaptureSizeAndFrameRate { WTFMove(resizePreset), resizeSize, captureFrameRate };
 }
 
 void RealtimeVideoCaptureSource::setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
@@ -365,10 +366,13 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(Optional<int> width, Option
         height = size.height();
     }
 
-    Optional<RealtimeVideoCaptureSource::CaptureSizeAndFrameRate> match = bestSupportedSizeAndFrameRate(width, height, frameRate);
-    ASSERT(match);
-    if (!match)
-        return;
+    auto match = bestSupportedSizeAndFrameRate(width, height, frameRate);
+    if (!match) {
+        match = bestSupportedSizeAndFrameRate(width, height, { });
+        ASSERT(match);
+        if (!match)
+            return;
+    }
 
     setFrameRateWithPreset(match->requestedFrameRate, match->encodingPreset);
 

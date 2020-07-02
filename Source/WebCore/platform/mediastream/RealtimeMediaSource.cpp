@@ -360,6 +360,10 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(Optional<IntConstraint> width
 
     // Each of the non-null values is supported individually, see if they all can be applied at the same time.
     if (!supportsSizeAndFrameRate(WTFMove(width), WTFMove(height), WTFMove(frameRate))) {
+        // Let's try without frame rate constraint if not mandatory.
+        if (frameRateConstraint && !frameRateConstraint->isMandatory() && supportsSizeAndFrameRate(WTFMove(width), WTFMove(height), { }))
+            return true;
+
         if (widthConstraint)
             badConstraint = widthConstraint->name();
         else if (heightConstraint)
