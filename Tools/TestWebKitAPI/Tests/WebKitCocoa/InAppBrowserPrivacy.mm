@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/RegistrableDomain.h>
@@ -277,6 +278,26 @@ TEST(InAppBrowserPrivacy, AppBoundDomains)
         EXPECT_EQ(length, 8);
         for (int i = 0; i < length; i++)
             EXPECT_WK_STREQ([sortedDomains objectAtIndex:i], [domainsToCompare objectAtIndex:i]);
+
+        cleanUpInAppBrowserPrivacyTestSettings();
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, AppBoundSchemes)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+    [[WKWebsiteDataStore defaultDataStore] _appBoundSchemes:^(NSArray<NSString *> *schemes) {
+        NSArray *schemesToCompare = @[@"app-bound-custom-scheme", @"test"];
+
+        NSArray *sortedSchemes = [schemes sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+
+        int length = [sortedSchemes count];
+        EXPECT_EQ(length, 2);
+        for (int i = 0; i < length; i++)
+            EXPECT_WK_STREQ([sortedSchemes objectAtIndex:i], [schemesToCompare objectAtIndex:i]);
 
         cleanUpInAppBrowserPrivacyTestSettings();
         isDone = true;
@@ -1269,6 +1290,51 @@ TEST(InAppBrowserPrivacy, LoadFromHTMLStringsFailsIfNotAppBound)
         cleanUpInAppBrowserPrivacyTestSettings();
         isDone = true;
     }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, AppBoundCustomScheme)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host/main.html"]];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    isDone = false;
+    [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
+        EXPECT_TRUE(isAppBound);
+        cleanUpInAppBrowserPrivacyTestSettings();
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    
+    // Make sure app-bound behavior works for this webview.
+    isDone = false;
+    [webView evaluateJavaScript:@"location.href;" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_FALSE(!!error);
+        EXPECT_TRUE([result isEqualToString:@"test://host/main.html"]);
+
+        isDone = true;
+    }];
+    
     TestWebKitAPI::Util::run(&isDone);
 }
 

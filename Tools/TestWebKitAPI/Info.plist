@@ -4,6 +4,9 @@
 <dict>
 	<key>WKAppBoundDomains</key>
 	<array>
+		<string>test:</string>
+		<string>:</string>
+		<string>test:</string>
 		<string>testDomain1</string>
 		<string>apple.com</string>
 		<string>sub.domain.webkit.org/road/to/nowhere/</string>
@@ -21,6 +24,8 @@
 		<string>http://www.example.com/</string>
 		<string>http://bar.com/</string>
 		<string>http://foo.com/</string>
+		<string>app-bound-custom-scheme:</string>
+		<string>should-not-be-included:</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>

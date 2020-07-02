@@ -301,7 +301,8 @@ public:
 
     void beginAppBoundDomainCheck(const URL&, WebFramePolicyListenerProxy&);
     void getAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
-    void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
+    void getAppBoundSchemes(CompletionHandler<void(const HashSet<String>&)>&&) const;
+    void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&&) const;
     void reinitializeAppBoundDomains();
     static void setAppBoundDomainsForTesting(HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
     void updateBundleIdentifierInNetworkProcess(const String&, CompletionHandler<void()>&&);

@@ -642,4 +642,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+- (void)_appBoundSchemes:(void (^)(NSArray<NSString *> *))completionHandler
+{
+    _websiteDataStore->getAppBoundSchemes([completionHandler = makeBlockPtr(completionHandler)](auto& schemes) mutable {
+        Vector<RefPtr<API::Object>> apiSchemes;
+        apiSchemes.reserveInitialCapacity(schemes.size());
+        for (auto& scheme : schemes)
+            apiSchemes.uncheckedAppend(API::String::create(scheme));
+        completionHandler(wrapper(API::Array::create(WTFMove(apiSchemes))));
+    });
+}
+
 @end

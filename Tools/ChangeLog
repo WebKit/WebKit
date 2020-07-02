@@ -1,3 +1,21 @@
+2020-07-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        Custom URL schemes should be treated as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=213889
+        <rdar://problem/64804671>
+
+        Reviewed by Brent Fulgham.
+
+        Added custom schemes to TestWebKitAPI's Info.plist for testing
+        duplicate values and the max of 10 domains/schemes. Added
+        two API tests to check that schemes are properly read from the
+        Info.plist and that content loaded using a specified app-bound scheme
+        has restricted API use.
+
+        * TestWebKitAPI/Info.plist:
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+
 2020-07-02  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r263625): run-minibrowser fails on mac

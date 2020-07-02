@@ -405,6 +405,13 @@ static HashSet<WebCore::RegistrableDomain>& appBoundDomains()
     return appBoundDomains;
 }
 
+static HashSet<String>& appBoundSchemes()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<HashSet<String>> appBoundSchemes;
+    return appBoundSchemes;
+}
+
 void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceReinitialization)
 {
     ASSERT(RunLoop::isMain());
@@ -418,18 +425,28 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
         if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         
-        NSArray<NSString *> *domains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
-        keyExists = domains ? true : false;
+        NSArray<NSString *> *appBoundData = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
+        keyExists = appBoundData ? true : false;
         
-        RunLoop::main().dispatch([forceReinitialization, domains = retainPtr(domains)] {
+        RunLoop::main().dispatch([forceReinitialization, appBoundData = retainPtr(appBoundData)] {
             if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
             if (forceReinitialization == ForceReinitialization::Yes)
                 appBoundDomains().clear();
 
-            for (NSString *domain in domains.get()) {
-                URL url { URL(), domain };
+            for (NSString *data in appBoundData.get()) {
+                if (appBoundDomains().size() + appBoundSchemes().size() >= maxAppBoundDomainCount)
+                    break;
+                if ([data hasSuffix:@":"]) {
+                    auto appBoundScheme = String([data substringToIndex:[data length] - 1]);
+                    if (!appBoundScheme.isEmpty()) {
+                        appBoundSchemes().add(appBoundScheme);
+                        continue;
+                    }
+                }
+
+                URL url { URL(), data };
                 if (url.protocol().isEmpty())
                     url.setProtocol("https");
                 if (!url.isValid())
@@ -438,8 +455,6 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 if (appBoundDomain.isEmpty())
                     continue;
                 appBoundDomains().add(appBoundDomain);
-                if (appBoundDomains().size() >= maxAppBoundDomainCount)
-                    break;
             }
             hasInitializedAppBoundDomains = true;
             if (isAppBoundITPRelaxationEnabled)
@@ -448,13 +463,13 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
     });
 }
 
-void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
+void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&& completionHandler) const
 {
     if (hasInitializedAppBoundDomains) {
         if (m_isInAppBrowserPrivacyTestModeEnabled) {
             WEBSITE_DATA_STORE_ADDITIONS;
         }
-        completionHandler(appBoundDomains());
+        completionHandler(appBoundDomains(), appBoundSchemes());
         return;
     }
 
@@ -466,16 +481,24 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
             if (m_isInAppBrowserPrivacyTestModeEnabled) {
                 WEBSITE_DATA_STORE_ADDITIONS;
             }
-            completionHandler(appBoundDomains());
+            completionHandler(appBoundDomains(), appBoundSchemes());
         });
     });
+}
+
+static NavigatingToAppBoundDomain schemeOrDomainIsAppBound(const URL& requestURL, const HashSet<WebCore::RegistrableDomain>& domains, const HashSet<String>& schemes)
+{
+    auto protocol = requestURL.protocol().toString();
+    auto schemeIsAppBound = !protocol.isNull() && schemes.contains(protocol);
+    auto domainIsAppBound = domains.contains(WebCore::RegistrableDomain(requestURL));
+    return schemeIsAppBound || domainIsAppBound ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No;
 }
 
 void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFramePolicyListenerProxy& listener)
 {
     ASSERT(RunLoop::isMain());
 
-    ensureAppBoundDomains([&requestURL, listener = makeRef(listener)] (auto& domains) mutable {
+    ensureAppBoundDomains([&requestURL, listener = makeRef(listener)] (auto& domains, auto& schemes) mutable {
         // Must check for both an empty app bound domains list and an empty key before returning nullopt
         // because test cases may have app bound domains but no key.
         bool hasAppBoundDomains = keyExists || !domains.isEmpty();
@@ -483,7 +506,7 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFrameP
             listener->didReceiveAppBoundDomainResult(WTF::nullopt);
             return;
         }
-        listener->didReceiveAppBoundDomainResult(domains.contains(WebCore::RegistrableDomain(requestURL)) ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No);
+        listener->didReceiveAppBoundDomainResult(schemeOrDomainIsAppBound(requestURL, domains, schemes));
     });
 }
 
@@ -491,8 +514,17 @@ void WebsiteDataStore::getAppBoundDomains(CompletionHandler<void(const HashSet<W
 {
     ASSERT(RunLoop::isMain());
 
-    ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
+    ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains, auto& schemes) mutable {
         completionHandler(domains);
+    });
+}
+
+void WebsiteDataStore::getAppBoundSchemes(CompletionHandler<void(const HashSet<String>&)>&& completionHandler) const
+{
+    ASSERT(RunLoop::isMain());
+
+    ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains, auto& schemes) mutable {
+        completionHandler(schemes);
     });
 }
 

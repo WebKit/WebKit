@@ -1,3 +1,39 @@
+2020-07-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        Custom URL schemes should be treated as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=213889
+        <rdar://problem/64804671>
+
+        Reviewed by Brent Fulgham.
+
+        For applications which opt-in to App-Bound Domains, allow
+        specification of app-bound custom URL schemes. All content loaded
+        using an app-bound scheme will have access to otherwise restricted
+        APIs. A custom scheme is specified by a colon at the end of a string
+        in the WKAppBoundDomains list. Custom schemes are included in the
+        count of 10 app-bound domains.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _appBoundSchemes:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        SPI for testing.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::appBoundSchemes):
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        Change variable name from appBoundDomains to appBoundData now that
+        more than domains can be specified in the Info.plist. 
+
+        (WebKit::WebsiteDataStore::ensureAppBoundDomains const):
+        Return both domains and schemes to avoid code duplication, at the expense
+        of occasionally returning an unused parameter if only domains or only 
+        schemes are needed.
+
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        (WebKit::WebsiteDataStore::getAppBoundDomains const):
+        (WebKit::WebsiteDataStore::getAppBoundSchemes const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-07-02  Austin Blackwood  <ablackwoood@apple.com>
 
         Crash in +[UIViewController _viewControllerForFullScreenPresentationFromView:] when WKContentView is deallocated
