@@ -267,6 +267,8 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto maximumColumnAscent = InlineLayoutUnit { };
         auto maximumColumnDescent = InlineLayoutUnit { };
+        // Initial minimum height is the computed height if available <tr style="height: 100px"><td></td></tr>
+        rowHeight[rowIndex] = formattingContext().geometry().computedHeight(rows.list()[rowIndex].box(), availableVerticalSpace).valueOr(0_lu);
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& slot = *m_grid.slot({ columnIndex, rowIndex });
             if (slot.isRowSpanned())

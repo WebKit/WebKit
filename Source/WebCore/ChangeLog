@@ -1,3 +1,15 @@
+2020-07-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use <tr> computed height as minimum height for the row
+        https://bugs.webkit.org/show_bug.cgi?id=213880
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/table-fixed-row-height-simple.html
+
+        * layout/tableformatting/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+
 2020-07-02  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia returns OverConstrained on Jitsi
