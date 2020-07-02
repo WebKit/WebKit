@@ -14,7 +14,7 @@
 # (like WebAnimation, PageOverlay, WebGL) will mirror their top-level LayoutTests/
 # folders, but others like CSS and GStreamer may have entries from multiple folders.
 #
-# * Accessibilty
+# * Accessibility
 # * CSS
 # * GStreamer
 # * HiDPI
@@ -48,6 +48,10 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
+
+# Added in r263823. Both tests are timing out.
+webkit.org/b/newbug accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
+webkit.org/b/newbug accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs

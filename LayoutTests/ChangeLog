@@ -1,3 +1,9 @@
+2020-07-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip AX tests added in r263823 as they're timing out.
+
+        * platform/glib/TestExpectations:
+
 2020-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Swipe snapshot is removed too early when swiping away from a page that is still loading
