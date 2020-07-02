@@ -1,3 +1,20 @@
+2020-07-02  Austin Blackwood  <ablackwoood@apple.com>
+
+        Crash in +[UIViewController _viewControllerForFullScreenPresentationFromView:] when WKContentView is deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=213867
+
+        Reviewed by Darin Adler.
+
+        +[UIViewController _viewControllerForFullScreenPresentationFromView:]
+        asserts that the view parameter is non-nil. WKFileUploadPanel
+        passes its view (a weak pointer to the WKContentView), which may
+        have already been nil'd out when the content view tries to dismiss
+        the panel in its own dealloc.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel dismiss]):
+        Check for nil.
+
 2020-07-02  Chris Dumez  <cdumez@apple.com>
 
         FloatingPointEnvironment::saveMainThreadEnvironment() is not called for macOS Catalyst apps on Apple Silicon
