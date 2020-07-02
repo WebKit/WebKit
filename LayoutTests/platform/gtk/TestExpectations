@@ -3307,7 +3307,7 @@ webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Failure ]
 
-webkit.org/b/183611 webkit.org/b/198830 media/context-menu-actions.html [ Failure Crash ]
+webkit.org/b/198830 media/context-menu-actions.html [ Crash ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 

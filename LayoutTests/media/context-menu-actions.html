@@ -1,10 +1,10 @@
 <html>
 <head>
         <script src="media-file.js"></script>
-        <script src=video-test.js></script>
+        <script src="video-test.js"></script>
         <script>
 
-            function playing()
+            async function playing()
             {
                 if (window.testRunner) {
                     if (!window.eventSender) {
@@ -64,7 +64,7 @@
                        testExpected("video.webkitDisplayingFullscreen", false, '==');
                        consoleWrite("Toggling fullscreen state");
                        items[i].click();
-                       testExpected("video.webkitDisplayingFullscreen", true, '==');
+                       await testExpectedEventually("video.webkitDisplayingFullscreen", true, "==", 1000);
                        consoleWrite("");
                     }
 
@@ -74,7 +74,7 @@
                  endTest();
             }
 
-            function start()
+            async function start()
             {
                 findMediaElement();
                 waitForEvent('play', playing);

@@ -1,3 +1,26 @@
+2020-07-02  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Layout test media/context-menu-actions.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=183611
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Changing to fullscreen is an async operation, so we now use testExpectedEventually() to wait for
+        the final value.
+        Simply setting an event handler on video.onwebkitfullscreenchange wouldn't have been enough, since the
+        event is triggered before the fullscreen operation has been completed and checking for
+        video.webkitDisplayingFullscreen == true would still fail by then.
+        Using the 'webkitbeginfullscreen' event isn't possible either, because it's never triggered when
+        FULLSCREEN_API is enabled.
+
+        * media/context-menu-actions.html: Use asynchronous testing.
+        * media/video-test.js:
+        (testExpectedEventually): Add an optional "timeout" parameter to avoid a test timeout (all the output
+        would be lost) in case we wait forever for the comparison to evaluate to the expected value.
+        (reportExpected): Add an optional "explanation" parameter for extra reporting.
+        * platform/gtk-wayland/TestExpectations: Unskipped the test.
+        * platform/gtk/TestExpectations: Ditto.
+
 2020-07-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Skip AX tests added in r263823 as they're timing out.

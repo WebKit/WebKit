@@ -87,7 +87,6 @@ webkit.org/b/183365 fast/selectors/selection-window-inactive-text-shadow.html [ 
 webkit.org/b/183365 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/183365 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ ImageOnlyFailure ]
 
-webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure Timeout ]
 webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Failure ]
 webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
