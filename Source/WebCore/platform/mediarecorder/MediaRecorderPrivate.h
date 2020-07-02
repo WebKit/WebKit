@@ -60,15 +60,12 @@ public:
     virtual void fetchData(FetchDataCallback&&) = 0;
     virtual void stopRecording() = 0;
 
-    using ErrorCallback = Function<void(Optional<Exception>&&)>;
-    void setErrorCallback(ErrorCallback&& errorCallback) { m_errorCallback = WTFMove(errorCallback); }
+    using ErrorCallback = CompletionHandler<void(Optional<Exception>&&)>;
+    virtual void startRecording(ErrorCallback&& callback) { callback({ }); }
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
     void setVideoSource(RefPtr<RealtimeMediaSource>&&);
-
-protected:
-    ErrorCallback m_errorCallback;
 
 private:
     RefPtr<RealtimeMediaSource> m_audioSource;

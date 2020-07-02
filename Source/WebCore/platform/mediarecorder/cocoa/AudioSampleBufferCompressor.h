@@ -60,13 +60,13 @@ private:
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
 
     dispatch_queue_t m_serialDispatchQueue;
-    CMTime m_lowWaterTime;
+    CMTime m_lowWaterTime { kCMTimeInvalid };
 
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
     RetainPtr<CMBufferQueueRef> m_inputBufferQueue;
     bool m_isEncoding { false };
 
-    RetainPtr<AudioConverterRef> m_converter;
+    AudioConverterRef m_converter { nullptr };
     AudioStreamBasicDescription m_sourceFormat;
     AudioStreamBasicDescription m_destinationFormat;
     RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription;
@@ -74,9 +74,9 @@ private:
     UInt32 m_maxOutputPacketSize { 0 };
     Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions;
 
-    CMTime m_currentNativePresentationTimeStamp;
-    CMTime m_currentOutputPresentationTimeStamp;
-    CMTime m_remainingPrimeDuration;
+    CMTime m_currentNativePresentationTimeStamp { kCMTimeInvalid };
+    CMTime m_currentOutputPresentationTimeStamp { kCMTimeInvalid };
+    CMTime m_remainingPrimeDuration { kCMTimeInvalid };
 
     Vector<char> m_sourceBuffer;
     Vector<char> m_destinationBuffer;

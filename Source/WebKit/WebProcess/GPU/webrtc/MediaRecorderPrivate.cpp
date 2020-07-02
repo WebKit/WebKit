@@ -45,12 +45,17 @@ using namespace WebCore;
 
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream)
     : m_identifier(MediaRecorderIdentifier::generate())
+    , m_stream(makeRef(stream))
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
+{
+}
+
+void MediaRecorderPrivate::startRecording(ErrorCallback&& errorCallback)
 {
     // FIXME: we will need to implement support for multiple audio/video tracks
     // Currently we only choose the first track as the recorded track.
 
-    auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
+    auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
     if (selectedTracks.audioTrack) {
         m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
         m_recordedAudioTrackID = selectedTracks.audioTrack->id();
@@ -64,15 +69,20 @@ MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream)
         width = selectedTracks.videoTrack->settings().width();
     }
 
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, width, height }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack)](auto&& exception) {
-        if (!weakThis)
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, width, height }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), errorCallback = WTFMove(errorCallback)](auto&& exception) mutable {
+        if (!weakThis) {
+            errorCallback({ });
             return;
-        if (exception)
-            return m_errorCallback(Exception { exception->code, WTFMove(exception->message) });
+        }
+        if (exception) {
+            errorCallback(Exception { exception->code, WTFMove(exception->message) });
+            return;
+        }
         if (audioTrack)
             setAudioSource(&audioTrack->source());
         if (videoTrack)
             setVideoSource(&videoTrack->source());
+        errorCallback({ });
     }, 0);
 }
 
