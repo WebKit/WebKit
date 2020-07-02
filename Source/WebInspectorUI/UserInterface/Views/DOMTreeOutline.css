@@ -45,6 +45,10 @@
     --sublist-border-width-start: 9px;
 }
 
+.tree-outline.dom.non-selectable {
+    -webkit-user-select: text;
+}
+
 .tree-outline.dom li .selection-area {
     position: absolute;
     left: 0;
