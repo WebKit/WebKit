@@ -4301,12 +4301,12 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
 }
 #endif
 
-void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files)
+void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files, const Vector<String>& replacementFiles)
 {
     if (!m_activeOpenPanelResultListener)
         return;
 
-    m_activeOpenPanelResultListener->didChooseFiles(files);
+    m_activeOpenPanelResultListener->didChooseFiles(files, replacementFiles);
     m_activeOpenPanelResultListener = nullptr;
 }
 

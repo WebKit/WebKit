@@ -46,18 +46,13 @@ class FileChooser;
 class Icon;
 
 struct FileChooserFileInfo {
-    FileChooserFileInfo(const String& path, const String& displayName = String())
-        : path(path)
-        , displayName(displayName)
-    {
-    }
-
     FileChooserFileInfo isolatedCopy() const
     {
-        return { path.isolatedCopy(), displayName.isolatedCopy() };
+        return { path.isolatedCopy(), replacementPath.isolatedCopy(), displayName.isolatedCopy() };
     }
 
     const String path;
+    const String replacementPath;
     const String displayName;
 };
 
@@ -87,7 +82,7 @@ public:
     void invalidate();
 
     WEBCORE_EXPORT void chooseFile(const String& path);
-    WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths);
+    WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths, const Vector<String>& replacementPaths = { });
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this
     // function with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS_FAMILY)-guard.

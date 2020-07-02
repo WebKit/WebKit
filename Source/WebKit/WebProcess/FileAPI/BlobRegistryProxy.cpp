@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void BlobRegistryProxy::registerFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryProxy::registerFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& path, const String& contentType)
 {
     SandboxExtension::Handle extensionHandle;
 
@@ -44,7 +44,8 @@ void BlobRegistryProxy::registerFileBlobURL(const URL& url, Ref<BlobDataFileRefe
     if (!file->path().isEmpty())
         SandboxExtension::createHandle(file->path(), SandboxExtension::Type::ReadOnly, extensionHandle);
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, file->path(), extensionHandle, contentType), 0);
+    String replacementPath = path == file->path() ? nullString() : file->path();
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, path, replacementPath, extensionHandle, contentType), 0);
 }
 
 void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)

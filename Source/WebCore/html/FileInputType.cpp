@@ -115,12 +115,8 @@ Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormC
     Vector<FileChooserFileInfo> files;
     size_t size = state.size();
     files.reserveInitialCapacity(size / 2);
-    for (size_t i = 0; i < size; i += 2) {
-        if (!state[i + 1].isEmpty())
-            files.uncheckedAppend({ state[i], state[i + 1] });
-        else
-            files.uncheckedAppend({ state[i] });
-    }
+    for (size_t i = 0; i < size; i += 2)
+        files.uncheckedAppend({ state[i], { }, state[i + 1] });
     return files;
 }
 
@@ -414,7 +410,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
 
     if (!allowsDirectories()) {
         auto files = paths.map([](auto& fileInfo) {
-            return File::create(fileInfo.path, fileInfo.displayName);
+            return File::create(fileInfo.path, fileInfo.replacementPath, fileInfo.displayName);
         });
         didCreateFileList(FileList::create(WTFMove(files)), icon);
         return;
@@ -469,11 +465,11 @@ bool FileInputType::receiveDroppedFiles(const DragData& dragData)
         Vector<FileChooserFileInfo> files;
         files.reserveInitialCapacity(paths.size());
         for (auto& path : paths)
-            files.uncheckedAppend({ path });
+            files.uncheckedAppend({ path, { }, { } });
 
         filesChosen(files);
     } else
-        filesChosen({ FileChooserFileInfo { paths[0] } });
+        filesChosen({ { paths[0], { }, { } } });
 
     return true;
 }

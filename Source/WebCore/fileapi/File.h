@@ -42,7 +42,7 @@ public:
     };
 
     // Create a file with an optional name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    WEBCORE_EXPORT static Ref<File> create(const String& path, const String& nameOverride = { });
+    WEBCORE_EXPORT static Ref<File> create(const String& path, const String& replacementPath = { }, const String& nameOverride = { });
 
     // Create a File using the 'new File' constructor.
     static Ref<File> create(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)

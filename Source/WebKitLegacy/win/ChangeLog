@@ -1,3 +1,12 @@
+2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Allow the File object to be created with a replacement file
+        https://bugs.webkit.org/show_bug.cgi?id=213825
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2020-06-28  Geoffrey Garen  <ggaren@apple.com>
 
         Rename initializeThreading to initialize

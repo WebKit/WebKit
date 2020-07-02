@@ -58,7 +58,7 @@ void FileChooser::chooseFile(const String& filename)
     chooseFiles(filenames);
 }
 
-void FileChooser::chooseFiles(const Vector<String>& filenames)
+void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<String>& replacementNames)
 {
     // FIXME: This is inelegant. We should not be looking at settings here.
     if (m_settings.selectedFiles == filenames)
@@ -68,8 +68,8 @@ void FileChooser::chooseFiles(const Vector<String>& filenames)
         return;
 
     Vector<FileChooserFileInfo> files;
-    for (auto& filename : filenames)
-        files.append(FileChooserFileInfo(filename));
+    for (size_t i = 0, size = filenames.size(); i < size; ++i)
+        files.append({ filenames[i], i < replacementNames.size() ? replacementNames[i] : nullString(), { } });
     m_client->filesChosen(files);
 }
 
@@ -88,7 +88,7 @@ void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String
 
     Vector<FileChooserFileInfo> files;
     for (auto& filename : filenames)
-        files.append(FileChooserFileInfo(filename));
+        files.append({ filename, { }, { } });
     m_client->filesChosen(files, displayString, icon);
 }
 

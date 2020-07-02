@@ -47,7 +47,7 @@ class WEBCORE_EXPORT BlobRegistry {
 public:
 
     // Registers a blob URL referring to the specified file.
-    virtual void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) = 0;
+    virtual void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) = 0;
 
     // Registers a blob URL referring to the specified blob data.
     virtual void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) = 0;

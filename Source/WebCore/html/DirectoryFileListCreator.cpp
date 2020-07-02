@@ -64,7 +64,7 @@ static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>& paths)
         if (FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
             appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), fileObjects);
         else
-            fileObjects.append(File::create(info.path, info.displayName));
+            fileObjects.append(File::create(info.path, { }, info.displayName));
     }
     return FileList::create(WTFMove(fileObjects));
 }

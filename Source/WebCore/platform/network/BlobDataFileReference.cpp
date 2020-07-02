@@ -32,17 +32,16 @@
 
 namespace WebCore {
 
-BlobDataFileReference::BlobDataFileReference(const String& path)
+BlobDataFileReference::BlobDataFileReference(const String& path, const String& replacementPath)
     : m_path(path)
+    , m_replacementPath(replacementPath)
 {
 }
 
 BlobDataFileReference::~BlobDataFileReference()
 {
-#if ENABLE(FILE_REPLACEMENT)
     if (!m_replacementPath.isNull())
         FileSystem::deleteFile(m_replacementPath);
-#endif
 }
 
 const String& BlobDataFileReference::path()
@@ -50,10 +49,9 @@ const String& BlobDataFileReference::path()
 #if ENABLE(FILE_REPLACEMENT)
     if (m_replacementShouldBeGenerated)
         generateReplacementFile();
-
+#endif
     if (!m_replacementPath.isNull())
         return m_replacementPath;
-#endif
 
     return m_path;
 }
@@ -100,6 +98,13 @@ void BlobDataFileReference::startTrackingModifications()
     if (m_replacementShouldBeGenerated)
         return;
 #endif
+
+    // This is a registered blob with a replacement file. Get the Metadata of the replacement file.
+    if (!m_replacementPath.isNull()) {
+        metadata = FileSystem::fileMetadataFollowingSymlinks(m_replacementPath);
+        if (!metadata)
+            return;
+    }
 
     m_size = metadata.value().length;
 }

@@ -6700,7 +6700,7 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
     send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
 #endif
 
-    send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs));
+    send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }));
 
     m_openPanelResultListener->invalidate();
     m_openPanelResultListener = nullptr;

@@ -1,3 +1,46 @@
+2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Allow the File object to be created with a replacement file
+        https://bugs.webkit.org/show_bug.cgi?id=213825
+
+        Reviewed by Darin Adler.
+
+        The UIProcess passes a list of strings which represents the replacement
+        paths along with a list to the original paths to the WebProcess. The 
+        WebProcess passes these two list to FileChooser which creates the File
+        objects and register the Blobs.
+
+        The WebProcess registers the Blobs in the NetworkProcess which creates
+        BlobDataFileReference objects with both the original path and the
+        replacement path.
+
+        The WebProcess unregisters the Blobs from the NetworkProcess which deletes
+        the corresponding BlobDataFileReference from its registry. Upon destroying
+        the BlobDataFileReference, the replacement file should be deleted.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerFileBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createBlobRegistry):
+        * Shared/BlobDataFileReferenceWithSandboxExtension.cpp:
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::BlobDataFileReferenceWithSandboxExtension):
+        * Shared/BlobDataFileReferenceWithSandboxExtension.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+        * WebProcess/WebPage/WebOpenPanelResultListener.cpp:
+        (WebKit::WebOpenPanelResultListener::didChooseFiles):
+        * WebProcess/WebPage/WebOpenPanelResultListener.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChooseFilesForOpenPanel):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Swipe snapshot is removed too early when swiping away from a page that is still loading

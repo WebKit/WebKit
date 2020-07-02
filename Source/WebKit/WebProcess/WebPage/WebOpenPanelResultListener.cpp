@@ -46,9 +46,9 @@ WebOpenPanelResultListener::~WebOpenPanelResultListener()
 {
 }
 
-void WebOpenPanelResultListener::didChooseFiles(const Vector<String>& files)
+void WebOpenPanelResultListener::didChooseFiles(const Vector<String>& files, const Vector<String>& replacementFiles)
 {
-    m_fileChooser->chooseFiles(files);
+    m_fileChooser->chooseFiles(files, replacementFiles);
 }
 
 #if PLATFORM(IOS_FAMILY)

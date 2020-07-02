@@ -1,3 +1,51 @@
+2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Allow the File object to be created with a replacement file
+        https://bugs.webkit.org/show_bug.cgi?id=213825
+
+        Reviewed by Darin Adler.
+
+        Working towards webkit.org/b/213347, it needs to be possible to create 
+        the File object with an optional replacement file. Only the registered
+        BlobDataFileReference will be created with both the original file path
+        and the replacement file path. So it can delete the replacement file when
+        it is destroyed. Otherwise BlobDataFileReference will be created with the
+        replacement file path.
+
+        It is important to create the File object with the replacement file because
+        it needs to get the meta-data and the bytes of the replacement file not
+        the original file.
+
+        * fileapi/File.cpp:
+        (WebCore::File::create):
+        * fileapi/File.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::createFileList):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::filesFromFormControlState):
+        When the Files are created from a FormControlState, they will be created
+        without replacement files since they might have been deleted.
+
+        (WebCore::FileInputType::filesChosen):
+        (WebCore::FileInputType::receiveDroppedFiles):
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::chooseFiles):
+        (WebCore::FileChooser::chooseMediaFiles):
+        * platform/FileChooser.h:
+        (WebCore::FileChooserFileInfo::isolatedCopy const):
+        (WebCore::FileChooser::chooseFiles):
+        (WebCore::FileChooserFileInfo::FileChooserFileInfo): Deleted.
+        * platform/network/BlobDataFileReference.cpp:
+        (WebCore::BlobDataFileReference::BlobDataFileReference):
+        (WebCore::BlobDataFileReference::~BlobDataFileReference):
+        (WebCore::BlobDataFileReference::path):
+        (WebCore::BlobDataFileReference::startTrackingModifications):
+        * platform/network/BlobDataFileReference.h:
+        * platform/network/BlobRegistry.h:
+
 2020-07-01  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WOFF2 targets

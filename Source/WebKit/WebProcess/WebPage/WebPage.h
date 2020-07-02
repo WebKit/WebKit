@@ -1602,7 +1602,7 @@ private:
     void failedToShowPopupMenu();
 #endif
 
-    void didChooseFilesForOpenPanel(const Vector<String>&);
+    void didChooseFilesForOpenPanel(const Vector<String>& files, const Vector<String>& replacementFiles);
     void didCancelForOpenPanel();
 
 #if PLATFORM(IOS_FAMILY)

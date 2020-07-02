@@ -64,15 +64,17 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
     return *map;
 }
 
-void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
+void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& replacementPath, const String& contentType)
 {
+    String effectivePath = !replacementPath.isNull() ? replacementPath : path;
+
     if (isMainThread()) {
-        blobRegistry().registerFileBlobURL(url, BlobDataFileReference::create(path), contentType);
+        blobRegistry().registerFileBlobURL(url, BlobDataFileReference::create(effectivePath), path, contentType);
         return;
     }
 
-    callOnMainThread([url = url.isolatedCopy(), path = path.isolatedCopy(), contentType = contentType.isolatedCopy()] {
-        blobRegistry().registerFileBlobURL(url, BlobDataFileReference::create(path), contentType);
+    callOnMainThread([url = url.isolatedCopy(), effectivePath = effectivePath.isolatedCopy(), path = path.isolatedCopy(), contentType = contentType.isolatedCopy()] {
+        blobRegistry().registerFileBlobURL(url, BlobDataFileReference::create(effectivePath), path, contentType);
     });
 }
 
