@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-access/cross_origin_intermediate_access.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-access/cross_origin_intermediate_access_remote.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-access/document_access_parent_access.tentative.html

@@ -3,7 +3,7 @@ CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from access
 CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
 
 
-FAIL failed setting of document.domain assert_throws: function "function () { document.domain = SUFFIX_HOST; }" did not throw
+FAIL failed setting of document.domain assert_throws_dom: function "function () { document.domain = SUFFIX_HOST; }" did not throw
 FAIL same-origin-domain iframe null is not an object (evaluating 'iframe.contentDocument.domain')
 PASS failed setting of document.domain for documents without browsing context 
 

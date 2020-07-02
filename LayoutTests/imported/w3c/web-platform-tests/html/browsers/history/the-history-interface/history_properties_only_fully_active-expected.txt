@@ -1,3 +1,3 @@
 
-FAIL history properties should throw SecurityError when not in a fully active Document assert_throws: function "function () { cached_history.length; }" did not throw
+FAIL history properties should throw SecurityError when not in a fully active Document assert_throws_dom: function "function () { cached_history.length; }" did not throw
 

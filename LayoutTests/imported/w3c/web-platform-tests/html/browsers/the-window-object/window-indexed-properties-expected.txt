@@ -1,7 +1,7 @@
 
 PASS Indexed properties of the window object (non-strict mode) 
 PASS Ensure indexed properties have the correct configuration 
-FAIL Indexed properties of the window object (non-strict mode) 1 assert_throws: function "() => Object.defineProperty(window, 0, { value: "bar" })" did not throw
-FAIL Indexed properties of the window object (non-strict mode) 2 assert_throws: function "() => Object.defineProperty(window, 1, { value: "bar" })" did not throw
+FAIL Indexed properties of the window object (non-strict mode) 1 assert_throws_js: function "() => Object.defineProperty(window, 0, { value: "bar" })" did not throw
+FAIL Indexed properties of the window object (non-strict mode) 2 assert_throws_js: function "() => Object.defineProperty(window, 1, { value: "bar" })" did not throw
 PASS Indexed properties of the window object (non-strict mode) 3 
 

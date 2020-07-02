@@ -202,6 +202,7 @@
     "web-platform-tests/html-imports": "skip", 
     "web-platform-tests/html-longdesc": "skip", 
     "web-platform-tests/html-media-capture": "skip", 
+    "web-platform-tests/html/browsers": "import", 
     "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name.html": "skip", 
     "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_2.html": "skip", 
     "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_3.html": "skip", 

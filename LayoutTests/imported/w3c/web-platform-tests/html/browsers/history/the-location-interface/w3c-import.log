@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_protocol.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_reload-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_reload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_reload_javascript_url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_replace.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_search.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/no-browsing-context.window.js

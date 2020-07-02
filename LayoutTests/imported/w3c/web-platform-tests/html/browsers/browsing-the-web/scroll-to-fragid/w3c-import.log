@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/navigate-helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/replacement-enabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-non-utf8-encoded-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-percent-encoded.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-lr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-rl.html

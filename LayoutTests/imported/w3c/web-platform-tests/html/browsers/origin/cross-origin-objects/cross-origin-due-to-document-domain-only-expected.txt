@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame being accessed set "document.domain" to "localhost", but the frame requesting access did not. Both must set "document.domain" to the same value to allow access.
+
+PASS Cross-origin due to document.domain 
+

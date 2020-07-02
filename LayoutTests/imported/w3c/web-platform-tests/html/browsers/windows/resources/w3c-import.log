@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/browsing-context-window.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/document-domain-setter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/echo-window-name.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/message-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/nested-post-to-opener.html

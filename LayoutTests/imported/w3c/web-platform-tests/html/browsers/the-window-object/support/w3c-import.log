@@ -18,4 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/support/closed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/support/noopener-target.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/support/noreferrer-target.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/support/same-origin-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/support/sizing-target.html

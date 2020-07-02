@@ -9,9 +9,9 @@
 <div id="&#x586f" style="position:absolute; top:100px;"></div>
 <div style="height:200vh;"></div>
 <script>
-assert_equals(document.characterSet, "GBK", "Document should be GBK encoded");
-assert_equals(location.hash, "", "Page must be loaded with no hash");
 async_test(test => {
+  assert_equals(document.characterSet, "GBK", "Document should be GBK encoded");
+  assert_equals(location.hash, "", "Page must be loaded with no hash");
   location.hash = '%89g';
   test.step_timeout(() => {
     assert_equals( document.scrollingElement.scrollTop, 0 );
