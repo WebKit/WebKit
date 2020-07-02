@@ -1,4 +1,0 @@
-
-PASS Make sure that MediaRecorder timeSlice triggers regular ondataavailable events 
-PASS Make sure that MediaRecorder fires onstart on successful start call 
-

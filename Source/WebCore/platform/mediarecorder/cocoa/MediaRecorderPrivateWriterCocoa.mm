@@ -435,18 +435,16 @@ void MediaRecorderPrivateWriter::stopRecording()
     m_isStopping = true;
     // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
     callOnMainThread([this, weakThis = makeWeakPtr(this)]() mutable {
-        auto whenFinished = [this, weakThis] {
-            if (!weakThis)
-                return;
-
+        auto whenFinished = [this] {
             m_isStopping = false;
+            if (m_fetchDataCompletionHandler) {
+                auto buffer = WTFMove(m_data);
+                m_fetchDataCompletionHandler(WTFMove(buffer));
+            }
+
             m_isStopped = false;
             m_hasStartedWriting = false;
-
-            if (m_writer)
-                m_writer.clear();
-            if (m_fetchDataCompletionHandler)
-                m_fetchDataCompletionHandler(std::exchange(m_data, nullptr));
+            clear();
         };
 
         if (!m_hasStartedWriting) {
@@ -463,8 +461,12 @@ void MediaRecorderPrivateWriter::stopRecording()
             [m_writer flush];
             ALLOW_DEPRECATED_DECLARATIONS_END
 
-            [m_writer finishWritingWithCompletionHandler:[whenFinished = WTFMove(whenFinished)]() mutable {
-                callOnMainThread(WTFMove(whenFinished));
+            [m_writer finishWritingWithCompletionHandler:[weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
+                callOnMainThread([weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
+                    if (!weakThis)
+                        return;
+                    whenFinished();
+                });
             }];
         });
     });

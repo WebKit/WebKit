@@ -1,3 +1,26 @@
+2020-07-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r263633, r263651, and r263671.
+
+        Still seeing MediaRecorder test crashes after re-landing
+        r263633
+
+        Reverted changesets:
+
+        "MediaRecorder stopRecorder() returns empty Blob after first
+        use"
+        https://bugs.webkit.org/show_bug.cgi?id=212274
+        https://trac.webkit.org/changeset/263633
+
+        "MediaRecorder.start() Method is Ignoring the "timeslice"
+        Parameter"
+        https://bugs.webkit.org/show_bug.cgi?id=202233
+        https://trac.webkit.org/changeset/263651
+
+        "Support MediaRecorder.onstart"
+        https://bugs.webkit.org/show_bug.cgi?id=213720
+        https://trac.webkit.org/changeset/263671
+
 2020-07-02  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: Comments section at dpreview has overlapping names with comment on phone
