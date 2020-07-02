@@ -1,0 +1,3 @@
+
+PASS Fragment Navigation: fragment id should not be found in non UTF8 document 
+

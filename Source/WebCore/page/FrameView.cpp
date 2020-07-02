@@ -2181,11 +2181,8 @@ bool FrameView::scrollToFragment(const URL& url)
     if (scrollToFragmentInternal(fragmentIdentifier.toString()))
         return true;
 
-    // Try again after decoding the ref, based on the document's encoding.
-    if (TextResourceDecoder* decoder = frame().document()->decoder()) {
-        if (scrollToFragmentInternal(decodeURLEscapeSequences(fragmentIdentifier, decoder->encoding())))
-            return true;
-    }
+    if (scrollToFragmentInternal(decodeURLEscapeSequences(fragmentIdentifier)))
+        return true;
 
     resetScrollAnchor();
     return false;

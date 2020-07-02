@@ -1,3 +1,18 @@
+2020-07-02  Rob Buis  <rbuis@igalia.com>
+
+        Fragment navigation involving fragment identifiers does not match specification
+        https://bugs.webkit.org/show_bug.cgi?id=83930
+
+        Reviewed by Darin Adler.
+
+        Update improved test results and import scroll-frag-non-utf8-encoded-document.html.
+
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding-2-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-non-utf8-encoded-document-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-non-utf8-encoded-document.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name-expected.txt:
+
 2020-06-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r263626): 2 imported/w3c/web-platform-tests/cors/ tests failing constantly

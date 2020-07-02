@@ -1,3 +1,25 @@
+2020-07-02  Rob Buis  <rbuis@igalia.com>
+
+        Fragment navigation involving fragment identifiers does not match specification
+        https://bugs.webkit.org/show_bug.cgi?id=83930
+
+        Reviewed by Darin Adler.
+
+        Implement step 5 and 6 of [1] to allow fragment identifier lookup
+        using percent-decoding, after normal lookup failed.
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://html.spec.whatwg.org/multipage/browsing-the-web.html#the-indicated-part-of-the-document
+
+        Tests: imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html
+               imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding-2.html
+               imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding.html
+               imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-non-utf8-encoded-document.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragmentInternal):
+
 2020-07-02  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Kinetic scrolling is still triggered if you wait before lifting fingers
