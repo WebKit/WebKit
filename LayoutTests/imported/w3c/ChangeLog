@@ -1,3 +1,20 @@
+2020-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop some outdated tests in WebCrypto API.
+
+        Those tests failed to get removed during the recent re-sync from upstream in r263598.
+        They are actually still present but under different names so we have duplicate
+        copies right now.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/getRandomValues.js: Removed.
+        * web-platform-tests/WebCryptoAPI/getRandomValues.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/getRandomValues.worker.html: Removed.
+        * web-platform-tests/WebCryptoAPI/getRandomValues.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/test_getRandomValues-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/test_getRandomValues.html: Removed.
+
 2020-07-02  Rob Buis  <rbuis@igalia.com>
 
         Fragment navigation involving fragment identifiers does not match specification
