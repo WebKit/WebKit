@@ -1,3 +1,14 @@
+2020-07-01  Lauro Moura  <lmoura@igalia.com>
+
+        [SOUP] Build fix after r263797 for older soup versions.
+
+        Build was failing in LTS distributions due to -fpermissive
+
+        Unreviewed build fix.
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::sendString):
+
 2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Allow the File object to be created with a replacement file

@@ -193,7 +193,7 @@ void WebSocketTask::sendString(const IPC::DataReference& utf8, CompletionHandler
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.size()));
         soup_websocket_connection_send_message(m_connection.get(), SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
 #else
-        soup_websocket_connection_send_text(m_connection.get(), utf8.data());
+        soup_websocket_connection_send_text(m_connection.get(), reinterpret_cast<const char*>(utf8.data()));
 #endif
     }
     callback();
