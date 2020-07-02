@@ -154,7 +154,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
-        newParentStyle.setLineHeight(Length(lineHeight, Fixed));
+        newParentStyle.setLineHeight(lineHeightLength.isNegative() ? Length(lineHeightLength) : Length(lineHeight, Fixed));
         newParentStyle.setSpecifiedLineHeight(Length { lineHeightLength });
         newParentStyle.setFontDescription(WTFMove(fontDescription));
         newParentStyle.fontCascade().update(&node->document().fontSelector());

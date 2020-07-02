@@ -1,3 +1,13 @@
+2020-07-02  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: Comments section at dpreview has overlapping names with comment on phone
+        https://bugs.webkit.org/show_bug.cgi?id=213890
+
+        Reviewed by Simon Fraser.
+
+        * fast/text-autosizing/ios/float-miscomputed-line-height-expected.html: Added.
+        * fast/text-autosizing/ios/float-miscomputed-line-height.html: Added.
+
 2020-07-02  Karl Rackler  <rackler@apple.com>
 
         Remove expectation for fast/canvas/canvas-radial-gradient-spreadMethod.html as it is passing. Added back imported/w3c/canvas/2d.gradient.radial.cone.bottom.html as it is failing.
