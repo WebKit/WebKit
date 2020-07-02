@@ -1,5 +1,19 @@
 2020-07-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Remove redundant margin-border-padding when computing the intrinsic width
+        https://bugs.webkit.org/show_bug.cgi?id=213882
+
+        Reviewed by Antti Koivisto.
+
+        The child intrinsic width already includes the margin-border-padding values.
+
+        Test: fast/layoutformattingcontext/table-with-margin-content-simple.html
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+
+2020-07-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Use <tr> computed height as minimum height for the row
         https://bugs.webkit.org/show_bug.cgi?id=213880
 

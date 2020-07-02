@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+table {
+    width: 100px;
+    font-size: 20px;
+    border-spacing: 0px;
+    background-color: green;
+    color: green;
+}
+
+td {
+    padding: 0px;
+}
+
+div {
+    margin-left: 10px;
+    margin-right: 20px;
+    background-color: blue;
+    color: blue;
+    width: 50px;
+}
+</style>
+<table>
+<td><span><div>XXX</div></span></td><td>XXX</td>
+</table>
