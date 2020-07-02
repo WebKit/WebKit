@@ -1,3 +1,59 @@
+2020-07-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Rewrite mediastreamsrc element
+        https://bugs.webkit.org/show_bug.cgi?id=213777
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The underlying functionality remains the same, design-wise. This is mostly a refactoring
+        switching to smart pointers as much as possible and trying to comply with WebKit code style
+        guidelines.
+
+        The previous version of this element was leaking pad templates and sticky stream-start
+        events (in webkitMediaStreamSrcTrackEnded).
+
+        The LIBWEBRTC ifdef guards were removed as well, because there's no actual libwebrtc
+        dependency involved in this code.
+
+        No new tests, existing webrtc and fast/mediastream tests cover this patch.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (mediaStreamTrackPrivateGetTags):
+        (webkitMediaStreamNew):
+        (WebKitMediaStreamTrackObserver::WebKitMediaStreamTrackObserver):
+        (WebKitMediaStreamObserver::WebKitMediaStreamObserver):
+        (InternalSource::InternalSource):
+        (InternalSource::~InternalSource):
+        (InternalSource::src const):
+        (InternalSource::pushSample):
+        (webkitMediaStreamSrcUriGetType):
+        (webkitMediaStreamSrcUriGetProtocols):
+        (webkitMediaStreamSrcUriGetUri):
+        (webkitMediaStreamSrcUriSetUri):
+        (webkitMediaStreamSrcUriHandlerInit):
+        (webkitMediaStreamSrcSetProperty):
+        (webkitMediaStreamSrcGetProperty):
+        (webkitMediaStreamSrcConstructed):
+        (stopObservingTracks):
+        (webkitMediaStreamSrcFinalize):
+        (webkitMediaStreamSrcChangeState):
+        (webkit_media_stream_src_class_init):
+        (webkitMediaStreamSrcChain):
+        (webkitMediaStreamSrcAddPad):
+        (ProbeData::ProbeData):
+        (webkitMediaStreamSrcPadProbeCb):
+        (webkitMediaStreamSrcSetupSrc):
+        (webkitMediaStreamSrcPostStreamCollection):
+        (webkitMediaStreamSrcAddTrack):
+        (webkitMediaStreamSrcRemoveTrackByType):
+        (webkitMediaStreamSrcSetStream):
+        (webkitMediaStreamSrcPushVideoSample):
+        (webkitMediaStreamSrcPushAudioSample):
+        (webkitMediaStreamSrcTrackEnded):
+        (webkitMediaStreamSrcNew):
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.h:
+
 2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         MIMETypeRegistry::getExtensionsForMIMEType() needs to handle wildcard MIME types

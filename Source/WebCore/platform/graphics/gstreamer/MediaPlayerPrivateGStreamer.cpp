@@ -53,6 +53,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
+#include "MediaStreamPrivate.h"
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
