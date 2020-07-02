@@ -1,3 +1,24 @@
+2020-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebKit::NetworkProcessProxy::updateProcessAssertion()
+        https://bugs.webkit.org/show_bug.cgi?id=213891
+        <rdar://problem/65017909>
+
+        Reviewed by Alex Christensen.
+
+        The crash was due to NetworkProcessProxy::updateProcessAssertion() re-entering while
+        in the middle of the `m_activityFromWebProcesses = nullptr;` assignment. Calling
+        the ProcessThrottler::BackgroundActivity destructor, could cause updateProcessAssertion()
+        to get called again, in which case we may dereference m_activityFromWebProcesses and
+        crash. To address the issue, use `std::exchange(m_activityFromWebProcesses, nullptr);`
+        instead, so that m_activityFromWebProcesses becomes null BEFORE the BackgroundActivity
+        destructor gets called. updateProcessAssertion() will still re-enter but
+        m_activityFromWebProcesses will be nullptr and updateProcessAssertion() will do the
+        right thing.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updateProcessAssertion):
+
 2020-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build
