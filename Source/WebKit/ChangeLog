@@ -1,5 +1,37 @@
 2020-07-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r263793. rdar://problem/65011200
+
+    Fix Swift overlay build after r263727.
+    https://bugs.webkit.org/show_bug.cgi?id=213823.
+    
+    Unreviewed, follow up build fix.
+    
+    * SwiftOverlay/Tests/WebKitTests.swift:
+    (WebKitTests.testAPI): Fix tests to refer to new parameter name.
+    * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+    (callAsyncJavaScript(_:arguments:in:in:completionHandler:Error:)): Use
+    the imported ObjC name that the compiler expects.
+    (evaluateJavaScript(_:in:in:completionHandler:Error:)): Ditto.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@263793 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-07-01  James Savage  <james.savage@apple.com>
+
+            Fix Swift overlay build after r263727.
+            https://bugs.webkit.org/show_bug.cgi?id=213823.
+
+            Unreviewed, follow up build fix.
+
+            * SwiftOverlay/Tests/WebKitTests.swift:
+            (WebKitTests.testAPI): Fix tests to refer to new parameter name.
+            * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+            (callAsyncJavaScript(_:arguments:in:in:completionHandler:Error:)): Use
+            the imported ObjC name that the compiler expects.
+            (evaluateJavaScript(_:in:in:completionHandler:Error:)): Ditto.
+
+2020-07-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r263781. rdar://problem/65011200
 
     Fix Swift overlay build after r263727.
