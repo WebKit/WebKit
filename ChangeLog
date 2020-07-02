@@ -1,3 +1,21 @@
+2020-07-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WOFF2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=213865
+
+        Reviewed by Fujii Hironori.
+
+        Rework the Find module for WOFF2 to provide targets for libwoff2common and
+        libwoff2dec. Previously only libwoff2dec was specified in the find module. This
+        is because pkg-config works on that platform and because shared libraries are
+        supported. Neither is true for Windows so the module was expanded in anticipation
+        of support for WinCairo.
+
+        * Source/cmake/FindWOFF2.cmake: Added.
+        * Source/cmake/FindWOFF2Dec.cmake: Removed.
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-06-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Code cleanup in AccessibilityMenuList.cpp and AXIsolatedTree.h.

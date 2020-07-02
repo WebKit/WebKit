@@ -1,3 +1,14 @@
+2020-07-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WOFF2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=213865
+
+        Reviewed by Fujii Hironori.
+
+        Use the WOFF:: targets when USE_WOFF2 is set.
+
+        * CMakeLists.txt:
+
 2020-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement relevant simulated key presses for custom ARIA widgets for increment/decrement
