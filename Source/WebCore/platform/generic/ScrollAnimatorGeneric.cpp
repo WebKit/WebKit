@@ -112,8 +112,9 @@ bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
     m_kineticAnimation->stop();
 
 #if ENABLE(KINETIC_SCROLLING)
+    m_kineticAnimation->appendToScrollHistory(event);
+
     if (event.isEndOfNonMomentumScroll()) {
-        // We don't need to add the event to the history as its delta will be (0, 0).
         m_kineticAnimation->start(m_currentPosition, m_kineticAnimation->computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
         return true;
     }
@@ -122,8 +123,6 @@ bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
         m_kineticAnimation->start(m_currentPosition, event.swipeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
         return true;
     }
-
-    m_kineticAnimation->appendToScrollHistory(event);
 #endif
 
     return ScrollAnimator::handleWheelEvent(event);

@@ -1,3 +1,30 @@
+2020-07-02  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Kinetic scrolling is still triggered if you wait before lifting fingers
+        https://bugs.webkit.org/show_bug.cgi?id=213789
+
+        Reviewed by Carlos Garcia Campos.
+
+        The intended behavior for kinetic scrolling is that it's possible to not trigger it by
+        stopping moving fingers before lifting them, as opposed to doing a fling/swipe. However,
+        right now it's broken and trying to do this triggers kinetic scrolling as well.
+
+        Currently, the last scroll event with (0, 0) deltas isn't added to the scroll history for
+        kinetic scrolling. However, this is wrong, because the last event, or rather the timespan
+        between it and the previous scroll event, actually determines the kinetic scrolling velocity:
+        if this event follows the previous one quickly, the velocity is large, but if there was a long
+        pause, the velocity would be close to 0.
+
+        See https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/1902 and
+        https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/1903 for the equivalent GTK fixes.
+
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent):
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::handleWheelEvent):
+
 2020-07-02  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Rewrite mediastreamsrc element

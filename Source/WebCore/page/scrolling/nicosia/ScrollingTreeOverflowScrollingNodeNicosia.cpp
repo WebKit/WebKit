@@ -111,11 +111,11 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelE
 
         auto updateScope = compositionLayer.createUpdateScope();
         scrollBy({ -wheelEvent.deltaX(), -wheelEvent.deltaY() });
+    }
 
 #if ENABLE(KINETIC_SCROLLING)
-        m_kineticAnimation->appendToScrollHistory(wheelEvent);
+    m_kineticAnimation->appendToScrollHistory(wheelEvent);
 #endif
-    }
 
 #if ENABLE(KINETIC_SCROLLING)
     m_kineticAnimation->stop();
