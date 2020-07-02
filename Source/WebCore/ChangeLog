@@ -1,3 +1,10 @@
+2020-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build
+
+        * platform/gtk/GtkVersioning.h:
+        (gtk_scrolled_window_new):
+
 2020-07-02  Rob Buis  <rbuis@igalia.com>
 
         Fragment navigation involving fragment identifiers does not match specification

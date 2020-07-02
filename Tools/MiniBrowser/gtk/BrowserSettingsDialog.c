@@ -135,7 +135,11 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
     gtk_dialog_add_button(GTK_DIALOG(dialog), "_Close", GTK_RESPONSE_CLOSE);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkWidget *scrolledWindow = gtk_scrolled_window_new();
+#else
     GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_widget_set_margin_start(scrolledWindow, 5);
     gtk_widget_set_margin_end(scrolledWindow, 5);
     gtk_widget_set_margin_top(scrolledWindow, 5);

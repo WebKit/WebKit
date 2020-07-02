@@ -234,7 +234,7 @@ void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, in
         return !isGroup && isEnabled;
     }, nullptr, nullptr);
 
-    auto* swindow = gtk_scrolled_window_new(nullptr, nullptr);
+    auto* swindow = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 #if USE(GTK4)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swindow), m_treeView);

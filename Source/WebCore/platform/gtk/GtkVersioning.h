@@ -252,4 +252,10 @@ gtk_window_unminimize(GtkWindow* window)
     gtk_window_deiconify(window);
 }
 
+static inline GtkWidget*
+gtk_scrolled_window_new()
+{
+    return gtk_scrolled_window_new(nullptr, nullptr);
+}
+
 #endif // USE(GTK4)

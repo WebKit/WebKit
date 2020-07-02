@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -63,7 +64,7 @@ WebDataListSuggestionsDropdownGtk::WebDataListSuggestionsDropdownGtk(GtkWidget* 
     g_signal_connect_object(selection, "changed", G_CALLBACK(firstTimeItemSelectedCallback), treeView, static_cast<GConnectFlags>(0));
     gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
 
-    auto* swindow = gtk_scrolled_window_new(nullptr, nullptr);
+    auto* swindow = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 #if USE(GTK4)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swindow), m_treeView);

@@ -153,7 +153,7 @@ static void webkitScriptDialogImplConstructed(GObject* object)
     gtk_widget_show(messageArea);
 #endif
 
-    priv->swindow = gtk_scrolled_window_new(nullptr, nullptr);
+    priv->swindow = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(priv->swindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if USE(GTK4)
     gtk_box_append(GTK_BOX(messageArea), priv->swindow);
