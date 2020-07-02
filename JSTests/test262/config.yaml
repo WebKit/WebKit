@@ -128,3 +128,6 @@ skip:
     # requires ICU 65 (https://unicode-org.atlassian.net/browse/ICU-20654)
     - test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-auto.js
     - test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-auto.js
+
+    # Do not work with ICU 64, and work with ICU 66 or later.
+    - test/intl402/NumberFormat/prototype/format/numbering-systems.js
