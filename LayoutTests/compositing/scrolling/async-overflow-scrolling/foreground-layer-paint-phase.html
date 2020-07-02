@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    #scroller {
+        width: 500px;
+        height: 500px;
+        border: 1px solid black;
+        padding: 10px;
+        overflow-y: scroll;
+        will-change: transform;
+    }
+
+    .filler {
+        height: 1800px;
+    }
+
+    .behind {
+        position: absolute;
+        top: 10px;
+        width: 50px;
+        height: 50px;
+        z-index: -1;
+    }
+
+    footer {
+        background-color: red;
+        width: 100%;
+        height: 300px;
+    }
+    
+    body.changed footer {
+        background-color: green;
+    }
+    
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.addEventListener('load', async () => {
+        await UIHelper.animationFrame();
+        scroller.scrollTo(0, 1000);
+
+        await UIHelper.animationFrame();
+        document.body.classList.add('changed');
+
+        await UIHelper.animationFrame();
+        scroller.scrollTo(0, 1500);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+
+    }, false);
+</script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="behind">&nbsp;</div>
+        <div class="filler"></div>
+        <footer>&nbsp;</footer>
+    </div>
+</body>
+</html>
+

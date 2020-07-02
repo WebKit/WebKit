@@ -4615,7 +4615,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         if ((paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint) && isRenderViewLayer())
             paintBehavior.add(PaintBehavior::TileFirstPaint);
 
-        if (isPaintingScrollingContent && isPaintingOverflowContents)
+        if (isPaintingOverflowContents)
             paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
         return paintBehavior;

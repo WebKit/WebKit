@@ -1,3 +1,21 @@
+2020-07-02  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r260276): menu items in footer of https://salo.ai are invisible until you hover or resize
+        https://bugs.webkit.org/show_bug.cgi?id=213712
+        <rdar://problem/64893190>
+
+        Reviewed by Zalan Bujtas.
+
+        A negative z-index child triggers a foreground layer inside overflow scroll. This foreground layer
+        gets the PaintingOverflowContents flag but not the PaintingCompositingScrollingPhase flag, but we still need
+        to avoid the clip check that happens in RenderBlock::paint(), so change RenderLayer::paintLayerContents()
+        to just check for isPaintingOverflowContents.
+
+        Test: compositing/scrolling/async-overflow-scrolling/foreground-layer-paint-phase.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
 2020-07-02  Antoine Quint  <graouts@webkit.org>
 
         visualViewport.addEventListener("scroll"*** fires permanently after zoom or orientation change
