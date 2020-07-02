@@ -56,10 +56,6 @@ VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType output
 VideoSampleBufferCompressor::~VideoSampleBufferCompressor()
 {
     dispatch_release(m_serialDispatchQueue);
-    if (m_vtSession) {
-        VTCompressionSessionInvalidate(m_vtSession.get());
-        m_vtSession = nullptr;
-    }
 }
 
 bool VideoSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callback, void* callbackObject)
