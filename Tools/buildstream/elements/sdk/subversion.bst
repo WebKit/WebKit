@@ -13,6 +13,7 @@ depends:
 - test-infra/apr.bst
 - test-infra/apr-util.bst
 - sdk/libserf.bst
+- sdk/perl-term-readkey.bst
 
 sources:
 - kind: tar

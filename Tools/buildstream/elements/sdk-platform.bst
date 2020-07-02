@@ -48,6 +48,7 @@ depends:
 - sdk/openjpeg.bst
 - sdk/openxr.bst
 - sdk/os-release.bst
+- sdk/perl-term-readkey.bst
 - sdk/psmisc.bst
 - sdk/pycairo.bst
 - sdk/pygobject.bst

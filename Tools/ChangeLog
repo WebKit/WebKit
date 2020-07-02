@@ -1,3 +1,15 @@
+2020-07-02  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add perl-term-readkey
+        https://bugs.webkit.org/show_bug.cgi?id=213787
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is yet another git-svn runtime dependency.
+
+        * buildstream/elements/sdk-platform.bst:
+        * buildstream/elements/sdk/perl-term-readkey.bst: Added.
+
 2020-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix the WebKit build after <rdar://problem/64288191>
