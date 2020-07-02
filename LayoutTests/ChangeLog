@@ -1,3 +1,16 @@
+2020-07-02  Karl Rackler  <rackler@apple.com>
+
+        Remove expectation for fast/events/input-events-forecolor-data.html and fast/events/input-events-ime-composition.html and fast/events/input-events-selection-forecolor-data.html and fast/events/input-events-spell-checking-datatransfer.html and fast/events/offsetX-offsetY.html and fast/events/scale-and-scroll-iframe-body.html and fast/events/scale-and-scroll-iframe-window.html and fast/events/scroll-to-anchor-vertical-lr-writing-mode.html and fast/events/scroll-to-anchor-vertical-writing-mode.html and fast/forms/range/slider-transformed.html and fast/forms/range/slider-zoomed.html and fast/frames/content-opacity-1.html and fast/frames/content-opacity-2.html and fast/frames/iframe-text-contents.html and fast/frames/onlyCommentInIFrame.html and fast/frames/paint-iframe-background.html and fast/frames/sandboxed-iframe-close-top-noclose.html and fast/hidpi/image-srcset-invalid-descriptor.html and fast/hidpi/image-srcset-png-canvas.html and fast/html/listing.html as they are passing. 
+        https://bugs.webkit.org/show_bug.cgi?id=213863
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-07-02  Rob Buis  <rbuis@igalia.com>
 
         Fragment navigation involving fragment identifiers does not match specification

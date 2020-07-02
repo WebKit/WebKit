@@ -7,7 +7,6 @@ accessibility/insert-newline.html [ Pass ]
 accessibility/misspelling-range.html [ Pass ]
 accessibility/url-test.html [ Pass ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
 fast/multicol/flexbox-rows.html [ Skip ]
 workers/wasm-mem-post-message.html [ Failure ]
 
@@ -24,10 +23,6 @@ webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 
 fast/canvas/canvas-blending-global-alpha.html [ Failure ]
 fast/events/document-elementFromPoint.html [ Failure ]
-fast/events/input-events-forecolor-data.html [ Failure ]
-fast/events/input-events-ime-composition.html [ Failure ]
-fast/events/input-events-selection-forecolor-data.html [ Failure ]
-fast/events/input-events-spell-checking-datatransfer.html [ Failure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
 media/track/track-in-band-legacy-api.html [ Failure ]

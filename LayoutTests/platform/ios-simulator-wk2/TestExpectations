@@ -3,14 +3,10 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
-fast/events/offsetX-offsetY.html [ Failure ]
-fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
 http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 
-fast/events/scroll-to-anchor-vertical-lr-writing-mode.html [ ImageOnlyFailure ]
-fast/events/scroll-to-anchor-vertical-writing-mode.html [ ImageOnlyFailure ]
 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
