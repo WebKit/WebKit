@@ -207,8 +207,11 @@ void ViewGestureController::didRestoreScrollPosition()
     m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::ScrollPositionRestoration);
 }
 
-void ViewGestureController::didReachMainFrameLoadTerminalState()
+void ViewGestureController::didReachNavigationTerminalState(API::Navigation* navigation)
 {
+    if (!m_pendingNavigation || navigation != m_pendingNavigation)
+        return;
+
     if (m_snapshotRemovalTracker.isPaused() && m_snapshotRemovalTracker.hasRemovalCallback()) {
         removeSwipeSnapshot();
         return;
@@ -576,7 +579,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
     auto renderTreeSizeThreshold = renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
     m_didStartProvisionalLoad = false;
-    m_webPageProxy.goToBackForwardItem(targetItem);
+    m_pendingNavigation = m_webPageProxy.goToBackForwardItem(targetItem);
 
     auto* currentItem = m_webPageProxy.backForwardList().currentItem();
     // The main frame will not be navigated so hide the snapshot right away.

@@ -101,8 +101,8 @@ bool webkitWebViewBaseCompleteBackSwipeForTesting(WebKitWebViewBase*);
 
 void webkitWebViewBaseDidStartProvisionalLoadForMainFrame(WebKitWebViewBase*);
 void webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame(WebKitWebViewBase*);
-void webkitWebViewBaseDidFinishLoadForMainFrame(WebKitWebViewBase*);
-void webkitWebViewBaseDidFailLoadForMainFrame(WebKitWebViewBase*);
+void webkitWebViewBaseDidFinishNavigation(WebKitWebViewBase*, API::Navigation*);
+void webkitWebViewBaseDidFailNavigation(WebKitWebViewBase*, API::Navigation*);
 void webkitWebViewBaseDidSameDocumentNavigationForMainFrame(WebKitWebViewBase*, WebKit::SameDocumentNavigationType);
 void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase*);
 

@@ -790,18 +790,18 @@ void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
         gestureController->didFirstVisuallyNonEmptyLayoutForMainFrame();
 }
 
-void PageClientImpl::didFinishLoadForMainFrame()
+void PageClientImpl::didFinishNavigation(API::Navigation* navigation)
 {
     if (auto gestureController = m_impl->gestureController())
-        gestureController->didFinishLoadForMainFrame();
+        gestureController->didFinishNavigation(navigation);
 
     NSAccessibilityPostNotification(NSAccessibilityUnignoredAncestor(m_view), kAXLoadCompleteNotification);
 }
 
-void PageClientImpl::didFailLoadForMainFrame()
+void PageClientImpl::didFailNavigation(API::Navigation* navigation)
 {
     if (auto gestureController = m_impl->gestureController())
-        gestureController->didFailLoadForMainFrame();
+        gestureController->didFailNavigation(navigation);
 
     NSAccessibilityPostNotification(NSAccessibilityUnignoredAncestor(m_view), kAXLoadCompleteNotification);
 }

@@ -1,3 +1,91 @@
+2020-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe snapshot is removed too early when swiping away from a page that is still loading
+        https://bugs.webkit.org/show_bug.cgi?id=213763
+        <rdar://problem/64576811>
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/swipe/swipe-back-with-outstanding-load-cancellation.html
+
+        When swiping back from a page that is still loading, when the swipe commits,
+        and we start navigating back to the previous page, the unfinished forward navigation
+        is cancelled.
+
+        This cancellation resulted in a "didFailLoadForMainFrame" making it to ViewGestureController,
+        which took it as an indication that the navigation *it* was interested in (the back navigation)
+        had failed, and immediately removed the snapshot.
+
+        Instead of listening to any random navigation's load notifications, keep track of the navigation
+        started by goToBackForwardItem, and only listen to notifications from it, ignoring the others.
+
+        This requires a bunch of plumbing to get the navigation from WebPageProxy to ViewGestureController,
+        but is otherwise fairly trivial.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didFinishNavigation):
+        (WebKit::PageClientImpl::didFailNavigation):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame): Deleted.
+        (WebKit::PageClientImpl::didFailLoadForMainFrame): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDidFinishLoadForMainFrame):
+        (webkitWebViewBaseDidFailLoadForMainFrame):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _didFinishNavigation:]):
+        (-[WKWebView _didFailNavigation:]):
+        (-[WKWebView _didFinishLoadForMainFrame]): Deleted.
+        (-[WKWebView _didFailLoadForMainFrame]): Deleted.
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didFinishNavigation):
+        (WebKit::PageClientImpl::didFailNavigation):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame): Deleted.
+        (WebKit::PageClientImpl::didFailLoadForMainFrame): Deleted.
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didReachNavigationTerminalState):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState): Deleted.
+        * UIProcess/ViewGestureController.h:
+        (WebKit::ViewGestureController::didFinishNavigation):
+        (WebKit::ViewGestureController::didFailNavigation):
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame): Deleted.
+        (WebKit::ViewGestureController::didFailLoadForMainFrame): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didFinishNavigation):
+        (WebKit::PageClientImpl::didFailNavigation):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame): Deleted.
+        (WebKit::PageClientImpl::didFailLoadForMainFrame): Deleted.
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        (WebKit::ViewGestureController::resetState):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didFinishNavigation):
+        (WebKit::PageClientImpl::didFailNavigation):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame): Deleted.
+        (WebKit::PageClientImpl::didFailLoadForMainFrame): Deleted.
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::resetState):
+        * UIProcess/playstation/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didFinishNavigation):
+        (WebKit::PageClientImpl::didFailNavigation):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame): Deleted.
+        (WebKit::PageClientImpl::didFailLoadForMainFrame): Deleted.
+        * UIProcess/playstation/PageClientImpl.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didFinishNavigation):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame): Deleted.
+        * UIProcess/win/PageClientImpl.h:
+
 2020-07-01  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Allow the WebContent sandbox to check the 'hw.product' sysctl

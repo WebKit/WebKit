@@ -791,14 +791,14 @@ void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
 }
 
-void PageClientImpl::didFinishLoadForMainFrame()
+void PageClientImpl::didFinishNavigation(API::Navigation* navigation)
 {
-    [m_webView _didFinishLoadForMainFrame];
+    [m_webView _didFinishNavigation:navigation];
 }
 
-void PageClientImpl::didFailLoadForMainFrame()
+void PageClientImpl::didFailNavigation(API::Navigation* navigation)
 {
-    [m_webView _didFailLoadForMainFrame];
+    [m_webView _didFailNavigation:navigation];
 }
 
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType navigationType)

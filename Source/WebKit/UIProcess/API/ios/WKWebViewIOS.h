@@ -84,8 +84,8 @@
 - (void)_didCompleteAnimatedResize;
 
 - (void)_didStartProvisionalLoadForMainFrame;
-- (void)_didFinishLoadForMainFrame;
-- (void)_didFailLoadForMainFrame;
+- (void)_didFinishNavigation:(API::Navigation*)navigation;
+- (void)_didFailNavigation:(API::Navigation*)navigation;
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType;
 
 - (BOOL)_isShowingVideoPictureInPicture;

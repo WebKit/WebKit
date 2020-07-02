@@ -124,8 +124,8 @@ private:
     void didRemoveNavigationGestureSnapshot() final;
 
     void didFirstVisuallyNonEmptyLayoutForMainFrame() final;
-    void didFinishLoadForMainFrame() final;
-    void didFailLoadForMainFrame() final;
+    void didFinishNavigation(API::Navigation*) final;
+    void didFailNavigation(API::Navigation*) final;
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) final;
 
     void didChangeBackgroundColor() final;

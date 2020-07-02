@@ -2146,16 +2146,16 @@ static int32_t activeOrientation(WKWebView *webView)
         _callbacksDeferredDuringResize.takeLast()();
 }
 
-- (void)_didFinishLoadForMainFrame
+- (void)_didFinishNavigation:(API::Navigation*)navigation
 {
     if (_gestureController)
-        _gestureController->didFinishLoadForMainFrame();
+        _gestureController->didFinishNavigation(navigation);
 }
 
-- (void)_didFailLoadForMainFrame
+- (void)_didFailNavigation:(API::Navigation*)navigation
 {
     if (_gestureController)
-        _gestureController->didFailLoadForMainFrame();
+        _gestureController->didFailNavigation(navigation);
 }
 
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType

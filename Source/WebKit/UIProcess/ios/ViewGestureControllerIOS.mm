@@ -292,7 +292,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
         m_snapshotRemovalTargetRenderTreeSize = snapshot->renderTreeSize() * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
     m_didStartProvisionalLoad = false;
-    m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
+    m_pendingNavigation = m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
 
     auto* currentItem = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList().currentItem();
     // The main frame will not be navigated so hide the snapshot right away.
@@ -436,6 +436,8 @@ void ViewGestureController::resetState()
     m_swipeTransitionContext = nullptr;
 
     m_backgroundColorForCurrentSnapshot = WebCore::Color();
+
+    m_pendingNavigation = nullptr;
 
     didEndGesture();
 }

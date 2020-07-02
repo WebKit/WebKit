@@ -4875,7 +4875,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     if (isMainFrame) {
         reportPageLoadResult();
-        pageClient().didFinishLoadForMainFrame();
+        pageClient().didFinishNavigation(navigation.get());
 
         if (navigation)
             navigation->setClientNavigationActivity(nullptr);
@@ -4929,7 +4929,7 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
 
     if (isMainFrame) {
         reportPageLoadResult(error);
-        pageClient().didFailLoadForMainFrame();
+        pageClient().didFailNavigation(navigation.get());
         if (navigation)
             navigation->setClientNavigationActivity(nullptr);
     }

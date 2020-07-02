@@ -67,6 +67,7 @@ OBJC_CLASS WKView;
 namespace API {
 class Attachment;
 class HitTestResult;
+class Navigation;
 class Object;
 class OpenPanelParameters;
 class SecurityOrigin;
@@ -461,8 +462,8 @@ public:
     virtual void didRemoveNavigationGestureSnapshot() = 0;
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
-    virtual void didFinishLoadForMainFrame() = 0;
-    virtual void didFailLoadForMainFrame() = 0;
+    virtual void didFinishNavigation(API::Navigation*) = 0;
+    virtual void didFailNavigation(API::Navigation*) = 0;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
     virtual void didChangeBackgroundColor() = 0;

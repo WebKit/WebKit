@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APINavigation.h"
 #import "DrawingAreaProxy.h"
 #import "FrameLoadState.h"
 #import "Logging.h"
@@ -642,6 +643,8 @@ void ViewGestureController::resetState()
     m_webPageProxy.navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
+
+    m_pendingNavigation = nullptr;
 
     didEndGesture();
 }

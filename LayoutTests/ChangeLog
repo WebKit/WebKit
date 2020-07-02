@@ -1,3 +1,17 @@
+2020-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe snapshot is removed too early when swiping away from a page that is still loading
+        https://bugs.webkit.org/show_bug.cgi?id=213763
+        <rdar://problem/64576811>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/swipe/resources/swipe-test.js: Added.
+        * http/tests/swipe/swipe-back-with-outstanding-load-cancellation-expected.txt: Added.
+        * http/tests/swipe/swipe-back-with-outstanding-load-cancellation.html: Added.
+        Add a test that ensures that we don't remove the swipe snapshot before the "back" page is loaded.
+        Before this fix, this test fails the assertion that we're on the first page in didRemoveSwipeSnapshotCallback.
+
 2020-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement relevant simulated key presses for custom ARIA widgets for increment/decrement

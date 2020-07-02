@@ -330,7 +330,7 @@ void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
     notImplemented();
 }
 
-void PageClientImpl::didFinishLoadForMainFrame()
+void PageClientImpl::didFinishNavigation(API::Navigation*)
 {
     notImplemented();
 }

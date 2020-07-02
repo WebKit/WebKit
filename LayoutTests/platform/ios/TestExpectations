@@ -15,6 +15,7 @@ http/tests/quicklook [ Pass ]
 media/ios [ Pass ]
 quicklook [ Pass ]
 swipe [ Pass ]
+http/tests/swipe [ Pass ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]

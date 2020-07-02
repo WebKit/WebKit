@@ -67,6 +67,10 @@ class IOSurface;
 }
 #endif
 
+namespace API {
+class Navigation;
+}
+
 #if PLATFORM(MAC)
 typedef NSEvent* PlatformScrollEvent;
 #elif PLATFORM(GTK)
@@ -150,13 +154,13 @@ public:
     WebCore::Color backgroundColorForCurrentSnapshot() const { return m_backgroundColorForCurrentSnapshot; }
 
     void didStartProvisionalLoadForMainFrame();
-    void didFinishLoadForMainFrame() { didReachMainFrameLoadTerminalState(); }
-    void didFailLoadForMainFrame() { didReachMainFrameLoadTerminalState(); }
+    void didFinishNavigation(API::Navigation* navigation) { didReachNavigationTerminalState(navigation); }
+    void didFailNavigation(API::Navigation* navigation) { didReachNavigationTerminalState(navigation); }
     void didFirstVisuallyNonEmptyLayoutForMainFrame();
     void didRepaintAfterNavigation();
     void didHitRenderTreeSizeThreshold();
     void didRestoreScrollPosition();
-    void didReachMainFrameLoadTerminalState();
+    void didReachNavigationTerminalState(API::Navigation*);
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType);
 
     void checkForActiveLoads();
@@ -326,6 +330,8 @@ private:
 
     WeakPtr<WebPageProxy> m_alternateBackForwardListSourcePage;
     RefPtr<WebPageProxy> m_webPageProxyForBackForwardListForCurrentSwipe;
+
+    RefPtr<API::Navigation> m_pendingNavigation;
 
     GestureID m_currentGestureID;
 

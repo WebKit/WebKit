@@ -522,14 +522,14 @@ void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
     webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
-void PageClientImpl::didFinishLoadForMainFrame()
+void PageClientImpl::didFinishNavigation(API::Navigation* navigation)
 {
-    webkitWebViewBaseDidFinishLoadForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    webkitWebViewBaseDidFinishNavigation(WEBKIT_WEB_VIEW_BASE(m_viewWidget), navigation);
 }
 
-void PageClientImpl::didFailLoadForMainFrame()
+void PageClientImpl::didFailNavigation(API::Navigation* navigation)
 {
-    webkitWebViewBaseDidFailLoadForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    webkitWebViewBaseDidFailNavigation(WEBKIT_WEB_VIEW_BASE(m_viewWidget), navigation);
 }
 
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)

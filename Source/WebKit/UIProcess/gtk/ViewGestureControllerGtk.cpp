@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ViewGestureController.h"
 
+#include "APINavigation.h"
 #include "DrawingAreaProxy.h"
 #include "WebBackForwardList.h"
 #include <WebCore/GRefPtrGtk.h>
@@ -505,6 +506,8 @@ void ViewGestureController::removeSwipeSnapshot()
     m_webPageProxy.navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
+
+    m_pendingNavigation = nullptr;
 
     didEndGesture();
 
