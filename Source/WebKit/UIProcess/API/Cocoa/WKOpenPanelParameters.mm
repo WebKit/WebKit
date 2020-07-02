@@ -25,59 +25,11 @@
 
 #import "config.h"
 #import "WKOpenPanelParametersInternal.h"
-#import <pal/spi/cocoa/CoreServicesSPI.h>
+#import <WebCore/MIMETypeRegistry.h>
 
 #if PLATFORM(MAC)
 
 #import "WKNSArray.h"
-
-static NSDictionary<NSString *, NSSet<NSString *> *> *extensionsForMIMETypeMap()
-{
-    static auto extensionsForMIMETypeMap = makeNeverDestroyed([] {
-        auto extensionsForMIMETypeMap = adoptNS([[NSMutableDictionary alloc] init]);
-        auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
-
-        auto addExtensionForMIMEType = ^(NSString *mimeType, NSString *extension) {
-            if (!extensionsForMIMETypeMap.get()[mimeType])
-                extensionsForMIMETypeMap.get()[mimeType] = [NSMutableSet set];
-            [extensionsForMIMETypeMap.get()[mimeType] addObject:extension];
-        };
-
-        auto addExtensionsForMIMEType = ^(NSString *mimeType, NSArray<NSString *> *extensions) {
-            auto wildcardMIMEType = [[mimeType componentsSeparatedByString:@"/"][0] stringByAppendingString:@"/*"];
-
-            for (NSString *extension in extensions) {
-                if (!extension)
-                    continue;
-                // Add extension to wildcardMIMEType, for example add "png" to "image/*"
-                addExtensionForMIMEType(wildcardMIMEType, extension);
-                // Add extension to itsmimeType, for example add "png" to "image/png"
-                addExtensionForMIMEType(mimeType, extension);
-            }
-        };
-
-        for (CFIndex i = 0, count = CFArrayGetCount(allUTIs.get()); i < count; ++i) {
-            auto uti = static_cast<CFStringRef>(CFArrayGetValueAtIndex(allUTIs.get(), i));
-            auto mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
-            if (!mimeType)
-                continue;
-            auto extensions = adoptCF(UTTypeCopyAllTagsWithClass(uti, kUTTagClassFilenameExtension));
-            addExtensionsForMIMEType((__bridge NSString *)mimeType.get(), (__bridge NSArray<NSString *> *)extensions.get());
-        }
-
-        // Add additional mime types which _UTCopyDeclaredTypeIdentifiers() may not return.
-        addExtensionForMIMEType(@"image/webp", @"webp");
-
-        return extensionsForMIMETypeMap;
-    }());
-
-    return extensionsForMIMETypeMap.get().get();
-}
-
-static NSSet<NSString *> *extensionsForMIMEType(NSString *mimetype)
-{
-    return [extensionsForMIMETypeMap() objectForKey:mimetype];
-}
 
 @implementation WKOpenPanelParameters
 
@@ -122,7 +74,8 @@ static NSSet<NSString *> *extensionsForMIMEType(NSString *mimetype)
 
     [acceptedMIMETypes enumerateObjectsUsingBlock:^(NSString *mimeType, NSUInteger index, BOOL* stop) {
         ASSERT([mimeType containsString:@"/"]);
-        [allowedFileExtensions unionSet:extensionsForMIMEType(mimeType)];
+        auto extensions = API::Array::createStringArray(WebCore::MIMETypeRegistry::getExtensionsForMIMEType(mimeType));
+        [allowedFileExtensions addObjectsFromArray:wrapper(extensions)];
     }];
 
     auto additionalAllowedFileExtensions = adoptNS([[NSMutableArray alloc] init]);

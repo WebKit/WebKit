@@ -1,5 +1,37 @@
 2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        MIMETypeRegistry::getExtensionsForMIMEType() needs to handle wildcard MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=213826
+
+        Reviewed by Darin Adler.
+
+        Working towards webkit.org/b/213347, it needs to be possible for WebCore
+        to get the file extensions for wildcard MIME types, e.g. "image/*" or "video/*".
+
+        For Cocoa platforms, we will enumerate the UTIs of the system. Get the
+        MIMEType and the extensions of each UTI. Add the following pairs to a
+        singleton HashMap:
+
+            { MIMEType, extension }
+            { Type(MIMEType)/*, extension }
+
+        Change MIMETypeRegistry::getExtensionsForMIMEType() such that it calls
+        extensionsForWildcardMIMEType() if the MIMEType ends with "*".
+
+        * platform/MIMETypeRegistry.h:
+        * platform/cocoa/MIMETypeRegistryCocoa.mm:
+        (WebCore::extensionsForMIMETypeMap):
+        (WebCore::extensionsForWildcardMIMEType):
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+        * platform/playstation/MIMETypeRegistryPlayStation.cpp:
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+        * platform/xdg/MIMETypeRegistryXdg.cpp:
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+
+2020-07-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Allow the File object to be created with a replacement file
         https://bugs.webkit.org/show_bug.cgi?id=213825
 

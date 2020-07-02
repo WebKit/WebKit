@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT static String getMIMETypeForExtension(const String& extension);
 
     // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
-    static Vector<String> getExtensionsForMIMEType(const String& type);
+    WEBCORE_EXPORT static Vector<String> getExtensionsForMIMEType(const String& type);
     WEBCORE_EXPORT static String getPreferredExtensionForMIMEType(const String& type);
     WEBCORE_EXPORT static String getMediaMIMETypeForExtension(const String& extension);
     static Vector<String> getMediaMIMETypesForExtension(const String& extension);

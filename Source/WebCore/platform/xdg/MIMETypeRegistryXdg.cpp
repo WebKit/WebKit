@@ -66,4 +66,10 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeType
     return returnValue;
 }
 
+Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String&)
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
+
 }

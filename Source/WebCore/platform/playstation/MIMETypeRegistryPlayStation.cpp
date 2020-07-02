@@ -80,4 +80,10 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeType
     return emptyString();
 }
 
+Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String&)
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
+
 } // namespace WebCore
