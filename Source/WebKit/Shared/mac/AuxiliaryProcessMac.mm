@@ -36,6 +36,7 @@
 #import "WKFoundation.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FileHandle.h>
+#import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/SystemVersion.h>
 #import <mach-o/dyld.h>
 #import <mach/mach.h>
@@ -161,6 +162,9 @@ void AuxiliaryProcess::launchServicesCheckIn()
 void AuxiliaryProcess::platformInitialize()
 {
     initializeTimerCoalescingPolicy();
+
+    FloatingPointEnvironment::singleton().saveMainThreadEnvironment();
+
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 

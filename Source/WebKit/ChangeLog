@@ -1,3 +1,27 @@
+2020-07-02  Chris Dumez  <cdumez@apple.com>
+
+        FloatingPointEnvironment::saveMainThreadEnvironment() is not called for macOS Catalyst apps on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=213897
+        <rdar://problem/64607098>
+
+        Reviewed by Darin Adler.
+
+        FloatingPointEnvironment::saveMainThreadEnvironment() is not called for macOS Catalyst apps on Apple Silicon
+        This causes crashes because FloatingPointEnvironment::propagateMainThreadEnvironment() is called for worker
+        threads for such apps on this platform.
+
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        Drop some dead code for PLATFORM(MACCATALYST) since the whole file is protected with !PLATFORM(MACCATALYST).
+        Mac Catalyst uses AuxiliaryProcessMac.mm instead.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        Call FloatingPointEnvironment::saveMainThreadEnvironment() on AuxiliaryProcessMac.mm since this
+        platformInitialize() is used for Mac Catalyst and Catalyst apps may now run on Apple Silicon / ARM.
+        Note that FloatingPointEnvironment::saveMainThreadEnvironment() is a no-op on platforms where it is
+        not needed.
+
 2020-07-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r263633, r263651, and r263671.
