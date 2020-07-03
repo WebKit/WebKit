@@ -116,6 +116,9 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
     ASSERT(layoutBox.isBlockLevelBox());
 
+    if (formattingContext().quirks().shouldCollapseMarginBeforeWithParentMarginBefore(layoutBox))
+        return true;
+
     // Margins between a floated box and any other box do not collapse.
     if (layoutBox.isFloatingPositioned())
         return false;
@@ -250,6 +253,9 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
 bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isBlockLevelBox());
+
+    if (formattingContext().quirks().shouldCollapseMarginAfterWithParentMarginAfter(layoutBox))
+        return true;
 
     // Margins between a floated box and any other box do not collapse.
     if (layoutBox.isFloatingPositioned())
@@ -592,7 +598,9 @@ BlockFormattingContext::MarginCollapse::CollapsedAndPositiveNegativeValues Block
         return { { marginValue(positiveAndNegativeVerticalMargin.before), marginValue(positiveAndNegativeVerticalMargin.after), marginsCollapseThrough }, positiveAndNegativeVerticalMargin };
     if (hasCollapsedMarginBefore)
         return { { marginValue(positiveAndNegativeVerticalMargin.before), { }, false }, positiveAndNegativeVerticalMargin };
-    return { { { }, marginValue(positiveAndNegativeVerticalMargin.after), false }, positiveAndNegativeVerticalMargin };
+    if (hasCollapsedMarginAfter)
+        return { { { }, marginValue(positiveAndNegativeVerticalMargin.after), false }, positiveAndNegativeVerticalMargin };
+    return { { { }, { }, false }, positiveAndNegativeVerticalMargin };
 }
 
 }

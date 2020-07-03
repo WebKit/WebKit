@@ -363,7 +363,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     }
 
     // 1. Compute collapsed margins.
-    // 2. Adjust vertical position using the collapsed values
+    // 2. Adjust vertical position using the collapsed values.
     // 3. Adjust previous in-flow sibling margin after using this margin.
     auto marginCollapse = this->marginCollapse();
     auto collapsedAndPositiveNegativeValues = marginCollapse.collapsedVerticalValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin);

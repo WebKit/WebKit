@@ -155,8 +155,8 @@ protected:
         LayoutUnit stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
 
         bool shouldIgnoreCollapsedQuirkMargin(const Box&) const;
-        bool shouldIgnoreMarginBefore(const Box&) const;
-        bool shouldIgnoreMarginAfter(const Box&) const;
+        bool shouldCollapseMarginBeforeWithParentMarginBefore(const Box&) const;
+        bool shouldCollapseMarginAfterWithParentMarginAfter(const Box&) const;
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Quirks::formattingContext()); }
         BlockFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }

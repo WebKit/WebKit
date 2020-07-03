@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+table {
+    width: 100px;
+    font-size: 10px;
+    border-spacing: 0px;
+}
+
+p {
+    height: 50px;
+    color: green;
+}
+
+td {
+    padding: 0px;
+    background-color: green;
+}
+
+div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: blue;
+    color: blue;
+    width: 100px;
+    height: 60px;
+}
+</style>
+
+<table><tr><td><p>collapse quirk margins</td></tr></table>
+<table><tr><td><p>collapse quirk margins only with the cell<div></div></td></tr></table>

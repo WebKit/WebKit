@@ -104,6 +104,16 @@ bool BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin(const Box&
     return layoutState().inQuirksMode() && isQuirkContainer(layoutBox);
 }
 
+bool BlockFormattingContext::Quirks::shouldCollapseMarginBeforeWithParentMarginBefore(const Box& layoutBox) const
+{
+    return layoutState().inQuirksMode() && layoutBox.style().hasMarginBeforeQuirk() && isQuirkContainer(layoutBox.containingBlock());
+}
+
+bool BlockFormattingContext::Quirks::shouldCollapseMarginAfterWithParentMarginAfter(const Box& layoutBox) const
+{
+    return layoutState().inQuirksMode() && layoutBox.style().hasMarginAfterQuirk() && isQuirkContainer(layoutBox.containingBlock());
+}
+
 }
 }
 
