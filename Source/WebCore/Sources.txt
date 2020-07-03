@@ -3152,6 +3152,7 @@ JSKeyframeEffect.cpp
 JSKeyframeEffectOptions.cpp
 JSLocation.cpp
 JSLongRange.cpp
+JSMediaEncryptedEvent.cpp
 JSMediaCapabilities.cpp
 JSMediaCapabilitiesDecodingInfo.cpp
 JSMediaCapabilitiesEncodingInfo.cpp
@@ -3166,6 +3167,16 @@ JSMediaElementAudioSourceNode.cpp
 JSMediaEncodingConfiguration.cpp
 JSMediaEncodingType.cpp
 JSMediaError.cpp
+JSMediaKeyEncryptionScheme.cpp
+JSMediaKeyMessageEvent.cpp
+JSMediaKeySession.cpp
+JSMediaKeySessionType.cpp
+JSMediaKeyStatusMap.cpp
+JSMediaKeySystemAccess.cpp
+JSMediaKeySystemConfiguration.cpp
+JSMediaKeySystemMediaCapability.cpp
+JSMediaKeys.cpp
+JSMediaKeysRequirement.cpp
 JSMediaList.cpp
 JSMediaQueryList.cpp
 JSMediaQueryListEvent.cpp
@@ -3196,6 +3207,7 @@ JSNavigator.cpp
 JSNavigatorBeacon.cpp
 JSNavigatorClipboard.cpp
 JSNavigatorCredentials.cpp
+JSNavigatorEME.cpp
 JSNavigatorGeolocation.cpp
 JSNavigatorGPU.cpp
 JSNavigatorGamepad.cpp
@@ -3668,24 +3680,6 @@ JSXRVisibilityState.cpp
 JSWebXRLayer.cpp
 JSWebXRWebGLLayer.cpp
 JSXRWebGLLayerInit.cpp
-
-#endif
-
-#if ENABLE_ENCRYPTED_MEDIA
-
-JSMediaKeyEncryptionScheme.cpp
-JSMediaKeyMessageEvent.cpp
-JSMediaKeySession.cpp
-JSMediaKeySessionType.cpp
-JSMediaKeyStatusMap.cpp
-JSMediaKeySystemAccess.cpp
-JSMediaKeySystemConfiguration.cpp
-JSMediaKeySystemMediaCapability.cpp
-JSMediaKeys.cpp
-JSMediaKeysRequirement.cpp
-JSNavigatorEME.cpp
-
-JSMediaEncryptedEvent.cpp
 
 #endif
 
