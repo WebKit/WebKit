@@ -1,3 +1,24 @@
+2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Builtin internal wrapper implementation files wrap static global initialization code with incorrect guards
+        https://bugs.webkit.org/show_bug.cgi?id=213792
+
+        Reviewed by Youenn Fablet.
+
+        Streams API hadn't worked since r263700 for AppleWin and WinCairo
+        ports. r263700 removed the unused ENABLE_STREAMS_API.
+
+        Before r263700, the static global initialization code was wrapped
+        by "ENABLE(WEB_RTC) || ENABLE(STREAMS_API)". After r263700, it was
+        wrapped by "ENABLE(WEB_RTC)". AppleWin and WinCairo doesn't turn
+        on ENABLE_WEB_RTC. So, builtins for Streams API weren't properly
+        initialized for them.
+
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result: Rebaselined.
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_initialize_method):
+        Removed calling wrap_with_guard for the value of _generate_initialize_static_globals().
+
 2020-07-02  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac CMake build

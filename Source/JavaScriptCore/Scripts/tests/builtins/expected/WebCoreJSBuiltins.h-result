@@ -313,7 +313,6 @@ void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)
     m_xmlCasingTest.init(globalObject);
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 
-#if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B) || ENABLE(FETCH_API) || ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(m_vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
 #if ENABLE(FETCH_API)
@@ -340,7 +339,6 @@ void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)
     };
     globalObject.addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     UNUSED_PARAM(clientData);
-#endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B) || ENABLE(FETCH_API) || ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 }
 
 } // namespace WebCore
