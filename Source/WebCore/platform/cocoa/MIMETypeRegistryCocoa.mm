@@ -46,12 +46,9 @@ static HashMap<String, HashSet<String>>& extensionsForMIMETypeMap()
             size_t pos = type.reverseFind('/');
 
             ASSERT(pos != notFound);
-            auto wildcardMIMEType = makeString(type.left(pos), "/*"_s);
+            auto wildcardMIMEType = makeString(StringView(type).left(pos), "/*"_s);
 
             for (NSString *extension in extensions) {
-                if (!extension)
-                    continue;
-
                 // Add extension to wildcardMIMEType, for example add "png" to "image/*"
                 addExtension(wildcardMIMEType, extension);
                 // Add extension to its mimeType, for example add "png" to "image/png"
@@ -59,9 +56,9 @@ static HashMap<String, HashSet<String>>& extensionsForMIMETypeMap()
             }
         };
 
-        auto allUTIs = adoptNS((__bridge NSArray<NSString *> *)_UTCopyDeclaredTypeIdentifiers());
+        auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
 
-        for (NSString *uti in allUTIs.get()) {
+        for (NSString *uti in (__bridge NSArray<NSString *> *)allUTIs.get()) {
             auto type = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)uti, kUTTagClassMIMEType));
             if (!type)
                 continue;

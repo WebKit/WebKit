@@ -1,3 +1,15 @@
+2020-07-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        MIMETypeRegistry::getExtensionsForMIMEType() needs to handle wildcard MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=213826
+
+        Reviewed by Darin Adler.
+
+        Addressing post commit review comments for r263832.
+
+        * platform/cocoa/MIMETypeRegistryCocoa.mm:
+        (WebCore::extensionsForMIMETypeMap):
+
 2020-07-02  Brady Eidson  <beidson@apple.com>
 
         GameController.framework soft linking refactoring
