@@ -1,3 +1,18 @@
+2020-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Enable threaded rendering by default
+        https://bugs.webkit.org/show_bug.cgi?id=213883
+
+        Reviewed by Adrian Perez de Castro.
+
+        When building with GTK4 we no longer use the cairo context to render directly, so we can always enable the
+        threaded rendering. In WPE port threaded rendering is only enabled when env var WEBKIT_NICOSIA_PAINTING_THREADS
+        is present. This patch changes a bit the meaning of the env var, so that when 0 is passed the feature is
+        disabled too, instead of setting the number of threads to 4.
+
+        * platform/graphics/nicosia/NicosiaPaintingEngine.cpp:
+        (Nicosia::PaintingEngine::create):
+
 2020-07-02  Mark Lam  <mark.lam@apple.com>
 
         ReadableStream::create() should handle any exceptions that may be thrown during construction.

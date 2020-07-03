@@ -36,18 +36,23 @@ namespace Nicosia {
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {
-#if ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)
+#if (ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)) || USE(GTK4)
+#if USE(GTK4)
+    unsigned numThreads = 4;
+#else
+    unsigned numThreads = 0;
+#endif
     if (const char* numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS")) {
-        unsigned numThreads = 0;
         if (sscanf(numThreadsEnv, "%u", &numThreads) == 1) {
-            if (numThreads < 1 || numThreads > 8) {
+            if (numThreads > 8) {
                 WTFLogAlways("The number of Nicosia painting threads is not between 1 and 8. Using the default value 4\n");
                 numThreads = 4;
             }
-
-            return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
         }
     }
+
+    if (numThreads)
+        return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
 #endif
 
     return std::unique_ptr<PaintingEngine>(new PaintingEngineBasic);
