@@ -1,3 +1,14 @@
+2020-07-03  Darin Adler  <darin@apple.com>
+
+        WebCore/Sources.txt: Remove #if ENABLE_MEDIA_SOURCE
+        https://bugs.webkit.org/show_bug.cgi?id=213940
+
+        Reviewed by Sam Weinig.
+
+        * Sources.txt: Remove #if ENABLE_MEDIA_SOURCE and sort files in with the others.
+        The IDL files themselves have conditionals, we don't need conditionals in Sources.txt,
+        and we are moving towards removing the capability for #if ENABLE in the Sources.txt file.
+
 2020-07-03  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Fix build with clang after r263898

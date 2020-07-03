@@ -2760,6 +2760,7 @@ JSAudioListener.cpp
 JSAudioNode.cpp
 JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
+JSAudioTrackMediaSource.cpp
 JSAttestationConveyancePreference.cpp
 JSAuthenticationExtensionsClientInputs.cpp
 JSAuthenticationExtensionsClientOutputs.cpp
@@ -3530,6 +3531,7 @@ JSTextDecoder.cpp
 JSTextEncoder.cpp
 JSTextEvent.cpp
 JSTextMetrics.cpp
+JSTextTrackMediaSource.cpp
 JSTimeRanges.cpp
 JSTransferFunction.cpp
 JSTransitionEvent.cpp
@@ -3543,6 +3545,7 @@ JSUserVerificationRequirement.cpp
 JSValidityState.cpp
 JSVideoConfiguration.cpp
 JSVideoPlaybackQuality.cpp
+JSVideoTrackMediaSource.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp
@@ -3754,12 +3757,6 @@ JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
-
-#if ENABLE_MEDIA_SOURCE
-JSAudioTrackMediaSource.cpp
-JSTextTrackMediaSource.cpp
-JSVideoTrackMediaSource.cpp
-#endif
 
 #if ENABLE_QUOTA
 
