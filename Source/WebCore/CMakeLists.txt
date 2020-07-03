@@ -1308,15 +1308,16 @@ if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCoreTestSupport_SOURCES
         testing/LegacyMockCDM.cpp
     )
-    list(APPEND WebCore_IDL_FILES
-        Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl
-        Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl
-        Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl
-        Modules/encryptedmedia/legacy/WebKitMediaKeys.idl
-
-        html/WebKitMediaKeyError.idl
-    )
 endif ()
+
+list(APPEND WebCore_IDL_FILES
+    Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl
+    Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl
+    Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl
+    Modules/encryptedmedia/legacy/WebKitMediaKeys.idl
+
+    html/WebKitMediaKeyError.idl
+)
 
 if (ENABLE_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES

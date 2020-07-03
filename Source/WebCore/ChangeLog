@@ -1,5 +1,21 @@
 2020-07-03  Darin Adler  <darin@apple.com>
 
+        WebCore/Sources.txt: Remove #if ENABLE_LEGACY_ENCRYPTED_MEDIA
+        https://bugs.webkit.org/show_bug.cgi?id=213937
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Move IDL-related ENABLE_LEGACY_ENCRYPTED_MEDIA items out of if blocks.
+        Longer term, I think our direction should be to remove most feature conditionals from
+        CMakeLists.txt too, just like I am doing for Sources.txt. But for now, doing just enough
+        of this to keep the build working. Someone can tidy this later as desired.
+
+        * Sources.txt: Remove #if ENABLE_LEGACY_ENCRYPTED_MEDIA and sort files in with the others.
+        The IDL files themselves have conditionals, we don't need conditionals in Sources.txt,
+        and we are moving towards removing the capability for #if ENABLE in the Sources.txt file.
+
+2020-07-03  Darin Adler  <darin@apple.com>
+
         WebCore/Sources.txt: Remove #if ENABLE_QUOTA
         https://bugs.webkit.org/show_bug.cgi?id=213941
 

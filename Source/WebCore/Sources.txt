@@ -3598,6 +3598,11 @@ JSWebKitAnimationEvent.cpp
 JSWebKitAudioContext.cpp
 JSWebKitAudioPannerNode.cpp
 JSWebKitCSSMatrix.cpp
+JSWebKitMediaKeyError.cpp
+JSWebKitMediaKeyMessageEvent.cpp
+JSWebKitMediaKeyNeededEvent.cpp
+JSWebKitMediaKeySession.cpp
+JSWebKitMediaKeys.cpp
 JSWebKitOfflineAudioContext.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
@@ -3663,16 +3668,6 @@ JSXRVisibilityState.cpp
 JSWebXRLayer.cpp
 JSWebXRWebGLLayer.cpp
 JSXRWebGLLayerInit.cpp
-
-#endif
-
-#if ENABLE_LEGACY_ENCRYPTED_MEDIA
-
-JSWebKitMediaKeyMessageEvent.cpp
-JSWebKitMediaKeyNeededEvent.cpp
-JSWebKitMediaKeySession.cpp
-JSWebKitMediaKeys.cpp
-JSWebKitMediaKeyError.cpp
 
 #endif
 
