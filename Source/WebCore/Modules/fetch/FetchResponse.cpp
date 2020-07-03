@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -176,8 +177,11 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
     ASSERT(scriptExecutionContext());
 
     // If loading, let's create a stream so that data is teed on both clones.
-    if (isLoading() && !m_readableStreamSource)
-        createReadableStream(*context.execState());
+    if (isLoading() && !m_readableStreamSource) {
+        auto voidOrException = createReadableStream(*context.execState());
+        if (UNLIKELY(voidOrException.hasException()))
+            return voidOrException.releaseException();
+    }
 
     // Synthetic responses do not store headers in m_internalResponse.
     if (m_internalResponse.type() == ResourceResponse::Type::Default)

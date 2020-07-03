@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ReadableStream.h"
 
+#include "Exception.h"
+#include "ExceptionCode.h"
 #include "JSDOMConvertSequences.h"
 #include "JSReadableStreamSink.h"
 #include "JSReadableStreamSource.h"
@@ -35,10 +37,10 @@
 namespace WebCore {
 using namespace JSC;
 
-Ref<ReadableStream> ReadableStream::create(JSC::JSGlobalObject& lexicalGlobalObject, RefPtr<ReadableStreamSource>&& source)
+ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSC::JSGlobalObject& lexicalGlobalObject, RefPtr<ReadableStreamSource>&& source)
 {
     VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
@@ -52,10 +54,11 @@ Ref<ReadableStream> ReadableStream::create(JSC::JSGlobalObject& lexicalGlobalObj
     args.append(source ? toJSNewlyCreated(&lexicalGlobalObject, &globalObject, source.releaseNonNull()) : JSC::jsUndefined());
     ASSERT(!args.hasOverflowed());
 
-    auto newReadableStream = jsDynamicCast<JSReadableStream*>(vm, JSC::construct(&lexicalGlobalObject, constructor, constructData, args));
-    scope.assertNoException();
+    JSObject* object = JSC::construct(&lexicalGlobalObject, constructor, constructData, args);
+    ASSERT(!!scope.exception() == !object);
+    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    return create(globalObject, *newReadableStream);
+    return create(globalObject, *jsCast<JSReadableStream*>(object));
 }
 
 namespace ReadableStreamInternal {

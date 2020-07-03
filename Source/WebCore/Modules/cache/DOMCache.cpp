@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -365,8 +365,13 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
 
     // FIXME: for efficiency, we should load blobs directly instead of going through the readableStream path.
-    if (response->isBlobBody())
-        response->readableStream(*scriptExecutionContext()->execState());
+    if (response->isBlobBody()) {
+        auto streamOrException = response->readableStream(*scriptExecutionContext()->execState());
+        if (UNLIKELY(streamOrException.hasException())) {
+            promise.reject(streamOrException.releaseException());
+            return;
+        }
+    }
 
     if (response->isBodyReceivedByChunk()) {
         auto& responseRef = response.get();
