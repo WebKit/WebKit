@@ -196,7 +196,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/mac/AudioDestinationMac.cpp
     platform/audio/mac/AudioFileReaderMac.cpp
     platform/audio/mac/AudioHardwareListenerMac.cpp
-    platform/audio/mac/AudioSessionMac.cpp
     platform/audio/mac/CARingBuffer.cpp
     platform/audio/mac/FFTFrameMac.cpp
 
@@ -357,10 +356,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeCG.cpp
     platform/graphics/opentype/OpenTypeMathData.cpp
 
-    platform/mac/BlacklistUpdater.mm
     platform/mac/CursorMac.mm
-    platform/mac/DragDataMac.mm
-    platform/mac/DragImageMac.mm
     platform/mac/KeyEventMac.mm
     platform/mac/LocalCurrentGraphicsContextMac.mm
     platform/mac/LoggingMac.mm
@@ -372,7 +368,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
     platform/mac/PlatformSpeechSynthesizerMac.mm
-    platform/mac/PluginBlacklist.mm
     platform/mac/PowerObserverMac.cpp
     platform/mac/PublicSuffixMac.mm
     platform/mac/RemoteCommandListenerMac.mm
@@ -392,7 +387,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreFullScreenWindow.mm
     platform/mac/WebCoreNSURLExtras.mm
     platform/mac/WebCoreObjCExtras.mm
-    platform/mac/WebGLBlacklist.mm
     platform/mac/WebNSAttributedStringExtras.mm
     platform/mac/WidgetMac.mm
 
@@ -519,7 +513,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/LocalCurrentGraphicsContext.h
     platform/cocoa/NetworkExtensionContentFilter.h
     platform/cocoa/PlatformView.h
-    platform/cocoa/PlaybackSessionInterface.h
     platform/cocoa/PlaybackSessionModel.h
     platform/cocoa/PlaybackSessionModelMediaElement.h
     platform/cocoa/ScrollController.h
@@ -581,7 +574,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mac/PasteboardWriter.h
     platform/mac/PlatformEventFactoryMac.h
     platform/mac/PlaybackSessionInterfaceMac.h
-    platform/mac/PluginBlacklist.h
     platform/mac/ScrollbarThemeMac.h
     platform/mac/StringUtilities.h
     platform/mac/VideoFullscreenInterfaceMac.h
@@ -591,7 +583,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mac/WebCoreNSURLExtras.h
     platform/mac/WebCoreObjCExtras.h
     platform/mac/WebCoreView.h
-    platform/mac/WebGLBlacklist.h
     platform/mac/WebNSAttributedStringExtras.h
     platform/mac/WebPlaybackControlsManager.h
 
@@ -633,6 +624,10 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayError.idl
     Modules/applepay/ApplePayErrorCode.idl
     Modules/applepay/ApplePayErrorContactField.idl
+    Modules/applepay/ApplePayInstallmentItem.idl
+    Modules/applepay/ApplePayInstallmentItemType.idl
+    Modules/applepay/ApplePayInstallmentConfiguration.idl
+    Modules/applepay/ApplePayInstallmentRetailChannel.idl
     Modules/applepay/ApplePayLineItem.idl
     Modules/applepay/ApplePayMerchantCapability.idl
     Modules/applepay/ApplePayPayment.idl
@@ -648,6 +643,11 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayRequestBase.idl
     Modules/applepay/ApplePaySession.idl
     Modules/applepay/ApplePaySessionError.idl
+    Modules/applepay/ApplePaySetup.idl
+    Modules/applepay/ApplePaySetupConfiguration.idl
+    Modules/applepay/ApplePaySetupFeature.idl
+    Modules/applepay/ApplePaySetupFeatureState.idl
+    Modules/applepay/ApplePaySetupFeatureType.idl
     Modules/applepay/ApplePayShippingContactSelectedEvent.idl
     Modules/applepay/ApplePayShippingContactUpdate.idl
     Modules/applepay/ApplePayShippingMethod.idl

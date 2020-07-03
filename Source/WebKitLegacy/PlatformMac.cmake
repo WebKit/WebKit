@@ -680,7 +680,6 @@ WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacy
     FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES}
     FLATTENED
 )
-add_dependencies(WebKitLegacyFrameworkHeaders WebCorePrivateFrameworkHeaders)
 
 set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
 

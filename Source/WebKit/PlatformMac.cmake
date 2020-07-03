@@ -163,23 +163,7 @@ set(WebKit_FORWARDING_HEADERS_FILES
 )
 
 list(APPEND WebKit_MESSAGES_IN_FILES
-    GPUProcess/GPUConnectionToWebProcess.messages.in
-    GPUProcess/GPUProcess.messages.in
-
-    GPUProcess/media/RemoteAudioDestinationManager.messages.in
-    GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
-    GPUProcess/media/RemoteMediaPlayerProxy.messages.in
-    GPUProcess/media/RemoteMediaResourceManager.messages.in
-
-    GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
-    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
-    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in
-    GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
-    GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
-    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
-    GPUProcess/webrtc/RemoteMediaRecorder.messages.in
-    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
-    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+    GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
@@ -192,8 +176,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
     UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
     UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
-
-    UIProcess/GPU/GPUProcessProxy.messages.in
 
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 
@@ -212,10 +194,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/cocoa/UserMediaCaptureManager.messages.in
     WebProcess/cocoa/VideoFullscreenManager.messages.in
 
-    WebProcess/GPU/GPUProcessConnection.messages.in
-
-    WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
-    WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
+    WebProcess/GPU/media/ios/RemoteMediaSessionHelper.messages.in
 
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
     WebProcess/WebPage/ViewUpdateDispatcher.messages.in

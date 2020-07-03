@@ -26,34 +26,32 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}
     ${WEBCORE_DIR}/testing/cocoa
     ${WEBKITLEGACY_DIR}
-    ${WEBKIT_TESTRUNNER_DIR}/cf
-    ${WEBKIT_TESTRUNNER_DIR}/cg
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa
-    ${WEBKIT_TESTRUNNER_DIR}/mac
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/mac
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/spi
+    ${WebKitTestRunner_DIR}/cf
+    ${WebKitTestRunner_DIR}/cg
+    ${WebKitTestRunner_DIR}/cocoa
+    ${WebKitTestRunner_DIR}/mac
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac
+    ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac
+    ${WebKitTestRunner_SHARED_DIR}/cocoa
+    ${WebKitTestRunner_SHARED_DIR}/mac
+    ${WebKitTestRunner_SHARED_DIR}/spi
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa/CrashReporterInfo.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/ActivateFontsCocoa.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm
 
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/cocoa/ActivateFontsCocoa.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/cocoa/InjectedBundlePageCocoa.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityControllerMac.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityNotificationHandler.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityTextMarkerRangeMac.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/InjectedBundleMac.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityCommonMac.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityTextMarkerMac.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityUIElementMac.mm
+    ${WebKitTestRunner_DIR}/InjectedBundle/mac/TestRunnerMac.mm
 
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityControllerMac.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityNotificationHandler.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityTextMarkerRangeMac.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/InjectedBundleMac.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityCommonMac.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityTextMarkerMac.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityUIElementMac.mm
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/TestRunnerMac.mm
-
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm
+    ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm
+    ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
@@ -66,30 +64,27 @@ list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-framework Cocoa")
 
 list(APPEND WebKitTestRunner_SOURCES
-    ${WEBKIT_TESTRUNNER_DIR}/cg/TestInvocationCG.cpp
+    ${WebKitTestRunner_DIR}/cocoa/TestControllerCocoa.mm
+    ${WebKitTestRunner_DIR}/cocoa/TestRunnerWKWebView.mm
+    ${WebKitTestRunner_DIR}/cocoa/TestWebsiteDataStoreDelegate.mm
+    ${WebKitTestRunner_DIR}/cocoa/UIScriptControllerCocoa.mm
 
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa/CrashReporterInfo.mm
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa/TestControllerCocoa.mm
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa/TestRunnerWKWebView.mm
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa/TestWebsiteDataStoreDelegate.mm
-    ${WEBKIT_TESTRUNNER_DIR}/cocoa/UIScriptControllerCocoa.mm
-
-    ${WEBKIT_TESTRUNNER_DIR}/mac/EventSenderProxy.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/PlatformWebViewMac.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/PoseAsClass.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/TestControllerMac.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/UIScriptControllerMac.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerDraggingInfo.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerEvent.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerPasteboard.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerWindow.mm
-    ${WEBKIT_TESTRUNNER_DIR}/mac/main.mm
+    ${WebKitTestRunner_DIR}/mac/EventSenderProxy.mm
+    ${WebKitTestRunner_DIR}/mac/PlatformWebViewMac.mm
+    ${WebKitTestRunner_DIR}/mac/PoseAsClass.mm
+    ${WebKitTestRunner_DIR}/mac/TestControllerMac.mm
+    ${WebKitTestRunner_DIR}/mac/UIScriptControllerMac.mm
+    ${WebKitTestRunner_DIR}/mac/WebKitTestRunnerDraggingInfo.mm
+    ${WebKitTestRunner_DIR}/mac/WebKitTestRunnerEvent.mm
+    ${WebKitTestRunner_DIR}/mac/WebKitTestRunnerPasteboard.mm
+    ${WebKitTestRunner_DIR}/mac/WebKitTestRunnerWindow.mm
+    ${WebKitTestRunner_DIR}/mac/main.mm
     
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa/ClassMethodSwizzler.mm
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa/PlatformViewHelpers.mm
+    ${WebKitTestRunner_SHARED_DIR}/cocoa/ClassMethodSwizzler.mm
+    ${WebKitTestRunner_SHARED_DIR}/cocoa/PlatformViewHelpers.mm
 
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm
+    ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm
+    ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm
 )
 
 link_directories(../../WebKitLibraries)

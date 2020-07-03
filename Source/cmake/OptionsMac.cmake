@@ -117,3 +117,5 @@ set(WebCore_LIBRARY_TYPE SHARED)
 set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
 
 find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
+find_package(LibXml2 2.8.0 REQUIRED)
+find_package(LibXslt 1.1.7 REQUIRED)

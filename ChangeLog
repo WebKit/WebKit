@@ -1,3 +1,9 @@
+2020-07-02  Alex Christensen  <achristensen@webkit.org>
+
+        Update Mac CMake build
+
+        * Source/cmake/OptionsMac.cmake:
+
 2020-07-01  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WOFF2 targets
