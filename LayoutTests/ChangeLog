@@ -1,5 +1,16 @@
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorder.start() Method is Ignoring the "timeslice" Parameter
+        https://bugs.webkit.org/show_bug.cgi?id=202233
+        <rdar://problem/55720555>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/MediaRecorder-start-timeSlice-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-start-timeSlice.html: Added.
+
+2020-07-03  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder stopRecorder() returns empty Blob after first use
         https://bugs.webkit.org/show_bug.cgi?id=212274
         <rdar://problem/63601298>
