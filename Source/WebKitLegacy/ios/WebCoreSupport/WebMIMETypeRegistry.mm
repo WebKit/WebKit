@@ -35,12 +35,12 @@ using WebCore::MIMETypeRegistry;
 
 + (NSString *)mimeTypeForExtension:(NSString *)extension
 {
-    return MIMETypeRegistry::getMIMETypeForExtension(extension);
+    return MIMETypeRegistry::mimeTypeForExtension(extension);
 }
 
 + (NSString *)preferredExtensionForMIMEType:(NSString *)mimeType
 {
-    return MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
+    return MIMETypeRegistry::preferredExtensionForMIMEType(mimeType);
 }
 
 + (BOOL)isSupportedImageMIMEType:(NSString *)mimeType

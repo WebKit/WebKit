@@ -861,7 +861,7 @@ static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<Str
     if (allowedFileExtensions.contains(extension))
         return true;
 
-    String mappedMIMEType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(extension).convertToASCIILowercase();
+    String mappedMIMEType = WebCore::MIMETypeRegistry::mimeTypeForExtension(extension).convertToASCIILowercase();
     if (mappedMIMEType.isEmpty())
         return false;
     

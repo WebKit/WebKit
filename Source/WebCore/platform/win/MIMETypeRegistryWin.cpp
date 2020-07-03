@@ -48,7 +48,7 @@ static String mimeTypeForExtension(const String& extension)
     return String();
 }
 
-String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
+String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
 {
     String path = "MIME\\Database\\Content Type\\" + type;
     WCHAR extStr[MAX_PATH];
@@ -63,7 +63,7 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     return String();
 }
 
-String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::mimeTypeForExtension(const String &ext)
 {
     ASSERT(isMainThread());
 
@@ -114,7 +114,7 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
     return false;
 }
 
-Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String&)
+Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String&)
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };

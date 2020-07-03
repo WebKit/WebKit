@@ -1,3 +1,70 @@
+2020-07-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the names of MIMETypeRegistry methods to comply with webkit naming style
+        https://bugs.webkit.org/show_bug.cgi?id=213912
+
+        Reviewed by Youenn Fablet.
+
+        Remove the verb 'get' from the name of some of the methods of MIMETypeRegistry.
+
+        * editing/cocoa/WebArchiveResourceFromNSAttributedString.mm:
+        (WebCore::if):
+        * fileapi/File.cpp:
+        (WebCore::File::computeNameAndContentType):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::pluginReplacementForType):
+        * loader/mac/LoaderNSURLExtras.mm:
+        (suggestedFilenameWithMIMEType):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::commonMimeTypesMap):
+        (WebCore::MIMETypeRegistry::mediaMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::mimeTypeForPath):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::normalizedMIMEType):
+        (WebCore::MIMETypeRegistry::appendFileExtensionIfNecessary):
+        (WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension): Deleted.
+        (WebCore::MIMETypeRegistry::getMediaMIMETypesForExtension): Deleted.
+        Delete this function since it is not used.
+
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath): Deleted.
+        (WebCore::MIMETypeRegistry::getNormalizedMIMEType): Deleted.
+        * platform/MIMETypeRegistry.h:
+        * platform/cocoa/MIMETypeRegistryCocoa.mm:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        (WebCore::MIMETypeRegistry::extensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::preferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Deleted.
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType): Deleted.
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Deleted.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::filenameExtension const):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+        * platform/playstation/MIMETypeRegistryPlayStation.cpp:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        (WebCore::MIMETypeRegistry::preferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::extensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Deleted.
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Deleted.
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType): Deleted.
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::preferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        (WebCore::MIMETypeRegistry::extensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Deleted.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Deleted.
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType): Deleted.
+        * platform/xdg/MIMETypeRegistryXdg.cpp:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        (WebCore::MIMETypeRegistry::preferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::extensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Deleted.
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Deleted.
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType): Deleted.
+
 2020-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Enable threaded rendering by default

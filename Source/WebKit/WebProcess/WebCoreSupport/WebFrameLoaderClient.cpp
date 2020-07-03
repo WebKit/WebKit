@@ -1677,7 +1677,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
         auto extension = path.substring(dotPosition + 1).convertToASCIILowercase();
 
         // Try to guess the MIME type from the extension.
-        mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+        mimeType = MIMETypeRegistry::mimeTypeForExtension(extension);
         if (mimeType.isEmpty()) {
             // Check if there's a plug-in around that can handle the extension.
             if (auto* webPage = m_frame->page()) {

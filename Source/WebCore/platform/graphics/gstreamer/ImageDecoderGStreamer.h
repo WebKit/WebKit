@@ -55,7 +55,7 @@ public:
     size_t frameCount() const final { return m_sampleData.size(); }
     RepetitionCount repetitionCount() const final;
     String uti() const final;
-    String filenameExtension() const final { return MIMETypeRegistry::getPreferredExtensionForMIMEType(m_mimeType); }
+    String filenameExtension() const final { return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType); }
     Optional<IntPoint> hotSpot() const final { return WTF::nullopt; }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final { return size(); }

@@ -376,7 +376,7 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     if (type.isEmpty()) {
         if (extension.isEmpty())
             return nullptr;
-        type = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
+        type = MIMETypeRegistry::mediaMIMETypeForExtension(extension);
     }
 
     if (type.isEmpty())

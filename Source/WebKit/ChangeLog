@@ -1,3 +1,28 @@
+2020-07-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the names of MIMETypeRegistry methods to comply with webkit naming style
+        https://bugs.webkit.org/show_bug.cgi?id=213912
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didSendRequest):
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::mimeTypeInferredFromFileExtension):
+        (API::Attachment::setFileWrapperAndUpdateContentType):
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm:
+        (-[WKOpenPanelParameters _allowedFileExtensions]):
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::fileCanBeAcceptedForUpload):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPlugin):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+
 2020-07-03  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Support kinetic scrolling

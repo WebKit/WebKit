@@ -85,19 +85,19 @@ static Vector<String> extensionsForWildcardMIMEType(const String& type)
     return extensions;
 }
 
-String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
+String MIMETypeRegistry::mimeTypeForExtension(const String& extension)
 {
     return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:(NSString *)extension];
 }
 
-Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String& type)
+Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& type)
 {
     if (type.endsWith('*'))
         return extensionsForWildcardMIMEType(type);
     return makeVector<String>([[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:type]);
 }
 
-String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
+String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
 {
     // System Previews accept some non-standard MIMETypes, so we can't rely on
     // the file type mappings.

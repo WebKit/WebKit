@@ -183,7 +183,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(priv->contentType.data()), priv->streamLength, emptyString());
         response.setTextEncodingName(extractCharsetFromMediaType(priv->contentType.data()));
         if (response.mimeType().isEmpty())
-            response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(response.url().path().toString()));
+            response.setMimeType(MIMETypeRegistry::mimeTypeForPath(response.url().path().toString()));
         priv->task->didReceiveResponse(response);
     }
 

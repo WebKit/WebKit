@@ -190,7 +190,7 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, P
             return plugin;
         
         // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
-        String extensionMimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+        String extensionMimeType = MIMETypeRegistry::mimeTypeForExtension(extension);
         if (!extensionMimeType.isNull()) {
             PluginModuleInfo plugin = findPluginForMIMEType(extensionMimeType, allowedPluginTypes);
             if (!plugin.path.isNull()) {

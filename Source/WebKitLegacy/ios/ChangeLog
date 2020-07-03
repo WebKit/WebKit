@@ -1,3 +1,14 @@
+2020-07-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the names of MIMETypeRegistry methods to comply with webkit naming style
+        https://bugs.webkit.org/show_bug.cgi?id=213912
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebMIMETypeRegistry.mm:
+        (+[WebMIMETypeRegistry mimeTypeForExtension:]):
+        (+[WebMIMETypeRegistry preferredExtensionForMIMEType:]):
+
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Use enum serialization instead of casting to/from uint32_t

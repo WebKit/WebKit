@@ -5707,7 +5707,7 @@ HRESULT WebView::MIMETypeForExtension(_In_ BSTR extension, _Deref_opt_out_ BSTR*
     if (!mimeType)
         return E_POINTER;
 
-    *mimeType = BString(MIMETypeRegistry::getMIMETypeForExtension(toString(extension))).release();
+    *mimeType = BString(MIMETypeRegistry::mimeTypeForExtension(toString(extension))).release();
 
     return S_OK;
 }

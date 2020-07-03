@@ -369,10 +369,10 @@ static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMi
             ASCIILiteral type = pair.type;
             ASCIILiteral extension = pair.extension;
             map.ensure(extension, [type, extension] {
-                // First type in the vector must always be the one from getMIMETypeForExtension,
-                // so we can use the map without also calling getMIMETypeForExtension each time.
+                // First type in the vector must always be the one from mimeTypeForExtension,
+                // so we can use the map without also calling mimeTypeForExtension each time.
                 Vector<String> synonyms;
-                String systemType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+                String systemType = MIMETypeRegistry::mimeTypeForExtension(extension);
                 if (!systemType.isEmpty() && type != systemType)
                     synonyms.append(systemType);
                 return synonyms;
@@ -391,31 +391,20 @@ static const Vector<String>* typesForCommonExtension(const String& extension)
     return &mapEntry->value;
 }
 
-String MIMETypeRegistry::getMediaMIMETypeForExtension(const String& extension)
+String MIMETypeRegistry::mediaMIMETypeForExtension(const String& extension)
 {
     auto* vector = typesForCommonExtension(extension);
     if (vector)
         return (*vector)[0];
-    return getMIMETypeForExtension(extension);
+    return mimeTypeForExtension(extension);
 }
 
-Vector<String> MIMETypeRegistry::getMediaMIMETypesForExtension(const String& extension)
-{
-    auto* vector = typesForCommonExtension(extension);
-    if (vector)
-        return *vector;
-    String type = getMIMETypeForExtension(extension);
-    if (!type.isNull())
-        return { { type } };
-    return { };
-}
-
-String MIMETypeRegistry::getMIMETypeForPath(const String& path)
+String MIMETypeRegistry::mimeTypeForPath(const String& path)
 {
     size_t pos = path.reverseFind('.');
     if (pos != notFound) {
         String extension = path.substring(pos + 1);
-        String result = getMIMETypeForExtension(extension);
+        String result = mimeTypeForExtension(extension);
         if (result.length())
             return result;
     }
@@ -426,7 +415,7 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
-    String normalizedMIMEType = getNormalizedMIMEType(mimeType);
+    String normalizedMIMEType = MIMETypeRegistry::normalizedMIMEType(mimeType);
     return supportedImageMIMETypes().contains(normalizedMIMEType) || additionalSupportedImageMIMETypes().contains(normalizedMIMEType);
 }
 
@@ -714,14 +703,14 @@ bool MIMETypeRegistry::isSystemPreviewMIMEType(const String& mimeType)
 
 // FIXME: Not sure why it makes sense to have a cross-platform function when only CURL has the concept
 // of a "normalized" MIME type.
-String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
+String MIMETypeRegistry::normalizedMIMEType(const String& mimeType)
 {
     return mimeType;
 }
 
 #else
 
-String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
+String MIMETypeRegistry::normalizedMIMEType(const String& mimeType)
 {
     static const auto mimeTypeAssociationMap = makeNeverDestroyed([] {
         static const std::pair<ASCIILiteral, ASCIILiteral> mimeTypeAssociations[] = {
@@ -792,7 +781,7 @@ String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, 
     if (filename.isEmpty() || filename.contains('.') || equalIgnoringASCIICase(mimeType, defaultMIMEType()))
         return filename;
 
-    auto preferredExtension = getPreferredExtensionForMIMEType(mimeType);
+    auto preferredExtension = preferredExtensionForMIMEType(mimeType);
     if (preferredExtension.isEmpty())
         return filename;
 

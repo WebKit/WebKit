@@ -54,15 +54,12 @@ private:
 
 class MIMETypeRegistry {
 public:
-    WEBCORE_EXPORT static String getMIMETypeForExtension(const String& extension);
+    WEBCORE_EXPORT static String mimeTypeForExtension(const String& extension);
+    WEBCORE_EXPORT static Vector<String> extensionsForMIMEType(const String& type);
+    WEBCORE_EXPORT static String preferredExtensionForMIMEType(const String& type);
+    WEBCORE_EXPORT static String mediaMIMETypeForExtension(const String& extension);
 
-    // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
-    WEBCORE_EXPORT static Vector<String> getExtensionsForMIMEType(const String& type);
-    WEBCORE_EXPORT static String getPreferredExtensionForMIMEType(const String& type);
-    WEBCORE_EXPORT static String getMediaMIMETypeForExtension(const String& extension);
-    static Vector<String> getMediaMIMETypesForExtension(const String& extension);
-
-    static String getMIMETypeForPath(const String& path);
+    static String mimeTypeForPath(const String& path);
 
     static std::unique_ptr<MIMETypeRegistryThreadGlobalData> createMIMETypeRegistryThreadGlobalData();
 
@@ -140,9 +137,8 @@ public:
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& unsupportedTextMIMETypes();
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& systemPreviewMIMETypes();
 
-    // FIXME: WebKit coding style says we should not have the word "get" in the name of this function.
     // FIXME: Unclear what the concept of a normalized MIME type is; currently it's a platform-specific notion.
-    static String getNormalizedMIMEType(const String&);
+    static String normalizedMIMEType(const String&);
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 

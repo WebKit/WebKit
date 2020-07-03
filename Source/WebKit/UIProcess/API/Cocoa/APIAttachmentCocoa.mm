@@ -41,7 +41,7 @@ namespace API {
 static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& attachment)
 {
     if (NSString *fileExtension = [(NSString *)attachment.fileName() pathExtension])
-        return WebCore::MIMETypeRegistry::getMIMETypeForExtension(fileExtension);
+        return WebCore::MIMETypeRegistry::mimeTypeForExtension(fileExtension);
 
     return { };
 }
@@ -104,7 +104,7 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
             contentType = (NSString *)kUTTypeDirectory;
         else if (fileWrapper.regularFile) {
             if (NSString *pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
-                contentType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(pathExtension);
+                contentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(pathExtension);
             if (!contentType.length)
                 contentType = (NSString *)kUTTypeData;
         }

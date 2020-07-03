@@ -74,7 +74,7 @@
 
     [acceptedMIMETypes enumerateObjectsUsingBlock:^(NSString *mimeType, NSUInteger index, BOOL* stop) {
         ASSERT([mimeType containsString:@"/"]);
-        auto extensions = API::Array::createStringArray(WebCore::MIMETypeRegistry::getExtensionsForMIMEType(mimeType));
+        auto extensions = API::Array::createStringArray(WebCore::MIMETypeRegistry::extensionsForMIMEType(mimeType));
         [allowedFileExtensions addObjectsFromArray:wrapper(extensions)];
     }];
 

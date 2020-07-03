@@ -516,7 +516,7 @@ String ImageDecoderAVFObjC::uti() const
 
 String ImageDecoderAVFObjC::filenameExtension() const
 {
-    return MIMETypeRegistry::getPreferredExtensionForMIMEType(m_mimeType);
+    return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType);
 }
 
 IntSize ImageDecoderAVFObjC::frameSizeAtIndex(size_t, SubsamplingLevel) const
