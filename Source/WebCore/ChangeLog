@@ -1,3 +1,19 @@
+2020-07-03  Darin Adler  <darin@apple.com>
+
+        WebCore/Sources.txt: Remove #if ENABLE_WIRELESS_PLAYBACK_TARGET
+        https://bugs.webkit.org/show_bug.cgi?id=213945
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Moved items from the pictureinpicture and remoteplayback module here
+        from PlatformMac.cmake. Even if these are currently only implemented on Mac, they are
+        not intrinsically Mac-specific, so they belong here.
+        * PlatformMac.cmake: Ditto.
+
+        * Sources.txt: Remove #if ENABLE_WIRELESS_PLAYBACK_TARGET and sort files in with the others.
+        The source files themselves have conditionals, we don't need conditionals in Sources.txt,
+        and we are moving towards removing the capability for #if ENABLE in the Sources.txt file.
+
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Remove support for ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE

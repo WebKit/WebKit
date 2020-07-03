@@ -3345,6 +3345,8 @@ JSReadableStreamDefaultReader.cpp
 JSReadableStreamSink.cpp
 JSReadableStreamSource.cpp
 JSRemoteDOMWindow.cpp
+JSRemotePlayback.cpp
+JSRemotePlaybackAvailabilityCallback.cpp
 JSRequestAnimationFrameCallback.cpp
 JSResizeObserver.cpp
 JSResizeObserverCallback.cpp
@@ -3751,10 +3753,3 @@ JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
-
-#if ENABLE_WIRELESS_PLAYBACK_TARGET
-
-JSRemotePlayback.cpp
-JSRemotePlaybackAvailabilityCallback.cpp
-
-#endif

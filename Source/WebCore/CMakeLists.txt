@@ -50,8 +50,10 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/paymentrequest"
+    "${WEBCORE_DIR}/Modules/pictureinpicture"
     "${WEBCORE_DIR}/Modules/plugins"
     "${WEBCORE_DIR}/Modules/quota"
+    "${WEBCORE_DIR}/Modules/remoteplayback"
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/streams"
     "${WEBCORE_DIR}/Modules/webaudio"
@@ -409,6 +411,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/pictureinpicture/EnterPictureInPictureEvent.idl
     Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
+
+    Modules/remoteplayback/RemotePlayback.idl
+    Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 
     Modules/speech/DOMWindowSpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl

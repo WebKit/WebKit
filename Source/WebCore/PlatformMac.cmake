@@ -72,8 +72,6 @@ if (NOT LOOKUP_FRAMEWORK-NOTFOUND)
 endif ()
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/Modules/pictureinpicture"
-    "${WEBCORE_DIR}/Modules/remoteplayback"
     "${WEBCORE_DIR}/Modules/webauthn/apdu"
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL/Metal"
     "${WEBCORE_DIR}/accessibility/isolatedtree/mac"
@@ -659,9 +657,6 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/paymentrequest/ApplePayRequest.idl
 
     Modules/plugins/QuickTimePluginReplacement.idl
-
-    Modules/remoteplayback/RemotePlayback.idl
-    Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 )
 
 set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
