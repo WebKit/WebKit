@@ -1536,12 +1536,13 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
     )
 endif ()
 
+list(APPEND WebCore_IDL_FILES
+    page/UserMessageHandler.idl
+    page/UserMessageHandlersNamespace.idl
+    page/WebKitNamespace.idl
+)
+
 if (ENABLE_USER_MESSAGE_HANDLERS)
-    list(APPEND WebCore_IDL_FILES
-        page/UserMessageHandler.idl
-        page/UserMessageHandlersNamespace.idl
-        page/WebKitNamespace.idl
-    )
     list(APPEND WebCore_SOURCES
         page/UserMessageHandler.cpp
         page/UserMessageHandlerDescriptor.cpp

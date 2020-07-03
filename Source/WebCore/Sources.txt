@@ -3564,6 +3564,8 @@ JSUndoManager.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp
+JSUserMessageHandler.cpp
+JSUserMessageHandlersNamespace.cpp
 JSUserVerificationRequirement.cpp
 JSValidityState.cpp
 JSVideoConfiguration.cpp
@@ -3615,6 +3617,7 @@ JSWebKitMediaKeyMessageEvent.cpp
 JSWebKitMediaKeyNeededEvent.cpp
 JSWebKitMediaKeySession.cpp
 JSWebKitMediaKeys.cpp
+JSWebKitNamespace.cpp
 JSWebKitOfflineAudioContext.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
@@ -3749,14 +3752,6 @@ JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
-
-#if ENABLE_USER_MESSAGE_HANDLERS
-
-JSUserMessageHandler.cpp
-JSUserMessageHandlersNamespace.cpp
-JSWebKitNamespace.cpp
-
-#endif
 
 #if ENABLE_WIRELESS_PLAYBACK_TARGET
 
