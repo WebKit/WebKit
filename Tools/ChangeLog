@@ -1,3 +1,19 @@
+2020-07-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][webkitpy] Use headless driver instead of wayland driver
+        https://bugs.webkit.org/show_bug.cgi?id=213914
+
+        Reviewed by Philippe Normand.
+
+        WPE now supports running tests completely headless, but we are
+        still using the webkitpy WaylandDriver to run the tests.
+        This causes an error if the environment doesn't have defined the
+        WAYLAND_DISPLAY or WAYLAND_SOCKET environment variables.
+        Switch the driver to HeadlessDriver.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._driver_class):
+
 2020-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r261779): [GTK][WPE] http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html is failing

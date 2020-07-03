@@ -32,7 +32,6 @@ from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.headlessdriver import HeadlessDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
-from webkitpy.port.waylanddriver import WaylandDriver
 
 
 class WPEPort(Port):
@@ -70,7 +69,7 @@ class WPEPort(Port):
 
     @memoized
     def _driver_class(self):
-        return WaylandDriver
+        return HeadlessDriver
 
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
