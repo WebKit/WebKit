@@ -23,15 +23,7 @@
 
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 
-#if ENABLE_APPLICATION_MANIFEST
-
 Modules/applicationmanifest/ApplicationManifestParser.cpp
-
-loader/ApplicationManifestLoader.cpp
-
-loader/cache/CachedApplicationManifest.cpp
-
-#endif
 
 Modules/async-clipboard/Clipboard.cpp
 Modules/async-clipboard/ClipboardImageReader.cpp
@@ -1531,6 +1523,7 @@ layout/tableformatting/TableFormattingState.cpp
 layout/tableformatting/TableGrid.cpp
 layout/tableformatting/TableLayout.cpp
 
+loader/ApplicationManifestLoader.cpp
 loader/AdClickAttribution.cpp
 loader/CanvasActivityRecord.cpp
 loader/ContentFilter.cpp
@@ -1603,6 +1596,7 @@ loader/archive/ArchiveResourceCollection.cpp
 loader/archive/mhtml/MHTMLArchive.cpp
 loader/archive/mhtml/MHTMLParser.cpp
 
+loader/cache/CachedApplicationManifest.cpp
 loader/cache/CachedCSSStyleSheet.cpp
 loader/cache/CachedFont.cpp
 loader/cache/CachedImage.cpp
