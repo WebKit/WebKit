@@ -1,3 +1,19 @@
+2020-07-03  Sam Weinig  <weinig@apple.com>
+
+        Add "-Wliteral-conversion" warning to Xcode based builds and fix the issues it finds
+        https://bugs.webkit.org/show_bug.cgi?id=213931
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        Add -Wliteral-conversion.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        Fix error due to passing a double when a uint8_t was expected. This probably means
+        that the debug borders looked wrong for a little bit, but should now be back to 
+        their transparent splendor.
+
 2020-07-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC][Quirk] Inflow child box quirk vertical margins should collapse with table cell.
