@@ -272,6 +272,8 @@ webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Failure
 # not be removed, but moved to the expected passes section of this file.
 webkit.org/b/186665 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Scrolling-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

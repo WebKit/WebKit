@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 100x17
                 text run at (0,0) width 100: "Correct Display"
           RenderTableRow {TR} at (0,18) size 150x0
-            RenderTableCell {TD} at (0,18) size 126x0 [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (125,18) size 25x0 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (0,18) size 150x0 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (150,18) size 0x0 [r=1 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,34) size 784x0
       RenderTable {TABLE} at (0,34) size 150x18 [bgcolor=#FFCCCC]
         RenderTableCol {COLGROUP} at (0,0) size 0x0

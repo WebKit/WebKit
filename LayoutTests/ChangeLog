@@ -1,3 +1,47 @@
+2020-07-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed test gardening. Update test expectations and baselines after r263858.
+
+        Baselines need to be updated after r263856. Some PNG images moved to
+        GLIB as their text output was on GLIB as well.
+
+        Filed a test crashing after r263858.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/css/percentage-non-integer-expected.png: Added.
+        * platform/glib/fast/css/percentage-non-integer-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug100334-expected.png: Added.
+        * platform/glib/tables/mozilla/bugs/bug100334-expected.txt:
+        * platform/glib/tables/mozilla/bugs/bug3037-1-expected.png: Added.
+        * platform/glib/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * platform/glib/tables/mozilla_expected_failures/other/empty_cells-expected.png: Added.
+        * platform/glib/tables/mozilla_expected_failures/other/empty_cells-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/percentage-non-integer-expected.png: Removed.
+        * platform/gtk/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/gtk/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/gtk/fast/repaint/table-cell-move-expected.png:
+        * platform/gtk/fast/repaint/table-cell-move-expected.txt:
+        * platform/gtk/fast/table/cell-absolute-child-expected.png:
+        * platform/gtk/fast/table/cell-absolute-child-expected.txt:
+        * platform/gtk/fast/table/empty-cells-expected.png:
+        * platform/gtk/fast/table/empty-cells-expected.txt:
+        * platform/gtk/fast/table/prepend-in-anonymous-table-expected.png:
+        * platform/gtk/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug100334-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug10633-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug10633-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1302-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug1302-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug16012-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug16012-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug222336-expected.png: Added.
+        * platform/gtk/tables/mozilla/bugs/bug222336-expected.txt: Added.
+        * platform/gtk/tables/mozilla/bugs/bug3037-1-expected.png: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/other/empty_cells-expected.png: Removed.
+
 2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
