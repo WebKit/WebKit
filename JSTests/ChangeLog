@@ -1,3 +1,14 @@
+2020-07-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add exception checks in JSStringBuilder and Array#join
+        https://bugs.webkit.org/show_bug.cgi?id=213915
+        <rdar://problem/64878225>
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        * stress/out-of-memory-handle-in-join.js: Added.
+        (shouldThrow):
+
 2020-07-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, mark JSTests/test262/test/intl402/NumberFormat/prototype/format/numbering-systems.js fail since it requires ICU 66

@@ -652,6 +652,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(JSGlobalObject* globalObject
 
         bool sawHoles = false;
         JSValue result = fastJoin(globalObject, thisArray, { &comma, 1 }, length, &sawHoles);
+        RETURN_IF_EXCEPTION(scope, { });
 
         if (!sawHoles && result && isJSString(result) && isCoW) {
             ASSERT(JSImmutableButterfly::fromButterfly(thisArray->butterfly()) == immutableButterfly);

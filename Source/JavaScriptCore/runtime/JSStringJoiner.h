@@ -156,9 +156,15 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
 
 ALWAYS_INLINE void JSStringJoiner::append(JSGlobalObject* globalObject, JSValue value)
 {
-    if (!appendWithoutSideEffects(globalObject, value)) {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool success = appendWithoutSideEffects(globalObject, value);
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!success) {
         JSString* jsString = value.toString(globalObject);
-        append(jsString->viewWithUnderlyingString(globalObject));
+        RETURN_IF_EXCEPTION(scope, void());
+        RELEASE_AND_RETURN(scope, append(jsString->viewWithUnderlyingString(globalObject)));
     }
 }
 

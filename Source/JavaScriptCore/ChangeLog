@@ -1,3 +1,18 @@
+2020-07-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add exception checks in JSStringBuilder and Array#join
+        https://bugs.webkit.org/show_bug.cgi?id=213915
+        <rdar://problem/64878225>
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        This patch adds missing exception checks into Array#join's certain place and JSStringBuilder.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::append):
+
 2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Builtin internal wrapper implementation files wrap static global initialization code with incorrect guards
