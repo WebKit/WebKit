@@ -1466,18 +1466,18 @@ if (ENABLE_QUOTA)
         Modules/quota/StorageQuota.cpp
         Modules/quota/WorkerNavigatorStorageQuota.cpp
     )
-
-    list(APPEND WebCore_IDL_FILES
-        Modules/quota/DOMWindowQuota.idl
-        Modules/quota/NavigatorStorageQuota.idl
-        Modules/quota/StorageErrorCallback.idl
-        Modules/quota/StorageInfo.idl
-        Modules/quota/StorageQuota.idl
-        Modules/quota/StorageQuotaCallback.idl
-        Modules/quota/StorageUsageCallback.idl
-        Modules/quota/WorkerNavigatorStorageQuota.idl
-    )
 endif ()
+
+list(APPEND WebCore_IDL_FILES
+    Modules/quota/DOMWindowQuota.idl
+    Modules/quota/NavigatorStorageQuota.idl
+    Modules/quota/StorageErrorCallback.idl
+    Modules/quota/StorageInfo.idl
+    Modules/quota/StorageQuota.idl
+    Modules/quota/StorageQuotaCallback.idl
+    Modules/quota/StorageUsageCallback.idl
+    Modules/quota/WorkerNavigatorStorageQuota.idl
+)
 
 if (ENABLE_GRAPHICS_CONTEXT_GL)
     list(APPEND WebCore_SOURCES

@@ -2908,6 +2908,7 @@ JSDOMWindow.cpp
 JSDOMWindowCaches.cpp
 JSDOMWindowFetch.cpp
 JSDOMWindowIndexedDatabase.cpp
+JSDOMWindowQuota.cpp
 JSDOMWindowSpeechSynthesis.cpp
 JSDOMWindowWebDatabase.cpp
 JSDataTransfer.cpp
@@ -3205,6 +3206,7 @@ JSNavigatorMediaCapabilities.cpp
 JSNavigatorMediaDevices.cpp
 JSNavigatorOnLine.cpp
 JSNavigatorShare.cpp
+JSNavigatorStorageQuota.cpp
 JSShareData.cpp
 JSNavigatorServiceWorker.cpp
 JSNavigatorWebDriver.cpp
@@ -3522,7 +3524,12 @@ JSSpeechSynthesisUtterance.cpp
 JSSpeechSynthesisVoice.cpp
 JSStaticRange.cpp
 JSStorage.cpp
+JSStorageErrorCallback.cpp
 JSStorageEvent.cpp
+JSStorageInfo.cpp
+JSStorageQuota.cpp
+JSStorageQuotaCallback.cpp
+JSStorageUsageCallback.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp
 JSStylePropertyMap.cpp
@@ -3607,6 +3614,7 @@ JSWorkerGlobalScopeIndexedDatabase.cpp
 JSWorkerLocation.cpp
 JSWorkerNavigator.cpp
 JSWorkerNavigatorGPU.cpp
+JSWorkerNavigatorStorageQuota.cpp
 JSWorkerType.cpp
 JSWritableStream.cpp
 JSXMLDocument.cpp
@@ -3752,19 +3760,6 @@ JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
-
-#if ENABLE_QUOTA
-
-JSDOMWindowQuota.cpp
-JSNavigatorStorageQuota.cpp
-JSStorageErrorCallback.cpp
-JSStorageInfo.cpp
-JSStorageQuota.cpp
-JSStorageQuotaCallback.cpp
-JSStorageUsageCallback.cpp
-JSWorkerNavigatorStorageQuota.cpp
-
-#endif
 
 #if ENABLE_USER_MESSAGE_HANDLERS
 
