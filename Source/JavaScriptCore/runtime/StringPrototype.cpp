@@ -979,10 +979,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(JSGlobalObject* globalObject,
     JSValue thisValue = callFrame->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(globalObject, scope);
-    auto viewWithString = thisValue.toString(globalObject)->viewWithUnderlyingString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto* thisString = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto viewWithString = thisString->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
     StringView view = viewWithString.view;
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSValue a0 = callFrame->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
@@ -991,7 +992,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(JSGlobalObject* globalObject,
         return JSValue::encode(jsEmptyString(vm));
     }
     double dpos = a0.toInteger(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     if (dpos >= 0 && dpos < view.length())
         return JSValue::encode(jsSingleCharacterString(vm, view[static_cast<unsigned>(dpos)]));
     return JSValue::encode(jsEmptyString(vm));
@@ -1005,8 +1006,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(JSGlobalObject* globalObj
     JSValue thisValue = callFrame->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(globalObject, scope);
-    auto viewWithString = thisValue.toString(globalObject)->viewWithUnderlyingString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto* thisString = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto viewWithString = thisString->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
     StringView view = viewWithString.view;
     JSValue a0 = callFrame->argument(0);
     if (a0.isUInt32()) {
@@ -1016,7 +1019,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(JSGlobalObject* globalObj
         return JSValue::encode(jsNaN());
     }
     double dpos = a0.toInteger(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     if (dpos >= 0 && dpos < view.length())
         return JSValue::encode(jsNumber(view[static_cast<int>(dpos)]));
     return JSValue::encode(jsNaN());

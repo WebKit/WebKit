@@ -117,11 +117,15 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
         builder.append(prefix, functionName.string(), '(');
 
-        auto viewWithString = args.at(0).toString(globalObject)->viewWithUnderlyingString(globalObject);
+        auto* jsString = args.at(0).toString(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
         builder.append(viewWithString.view);
         for (size_t i = 1; !builder.hasOverflowed() && i < args.size() - 1; i++) {
-            auto viewWithString = args.at(i).toString(globalObject)->viewWithUnderlyingString(globalObject);
+            auto* jsString = args.at(i).toString(globalObject);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
             builder.append(", ", viewWithString.view);
         }
@@ -132,7 +136,9 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
 
         functionConstructorParametersEndPosition = builder.length() + 1;
 
-        auto body = args.at(args.size() - 1).toString(globalObject)->viewWithUnderlyingString(globalObject);
+        auto* bodyString = args.at(args.size() - 1).toString(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        auto body = bodyString->viewWithUnderlyingString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
         builder.append(") {\n", body.view, "\n}");
         if (UNLIKELY(builder.hasOverflowed())) {

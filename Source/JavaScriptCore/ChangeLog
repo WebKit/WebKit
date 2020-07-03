@@ -1,5 +1,28 @@
 2020-07-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add exception checks before and after viewWithUnderlyingString
+        https://bugs.webkit.org/show_bug.cgi?id=213923
+        <rdar://problem/65068473>
+
+        Reviewed by Sam Weinig.
+
+        This patch inserts missing exception checks before and after viewWithUnderlyingString.
+
+        * jsc.cpp:
+        (printInternal):
+        (functionDebug):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseFloat):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+
+2020-07-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add exception checks in JSStringBuilder and Array#join
         https://bugs.webkit.org/show_bug.cgi?id=213915
         <rdar://problem/64878225>
