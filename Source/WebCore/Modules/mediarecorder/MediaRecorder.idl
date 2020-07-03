@@ -32,11 +32,12 @@ enum RecordingState { "inactive", "recording", "paused" };
 ] interface MediaRecorder : EventTarget {
     [CallWith=Document, MayThrowException] constructor(MediaStream stream, optional MediaRecorderOptions options);
 
-    readonly attribute RecordingState state;
+    // FIXME: Implement commented out methods/attributes.
+
     readonly attribute MediaStream stream;
-    // FIXME: Implement these:
     // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
+    readonly attribute RecordingState state;
+    attribute EventHandler onstart;
     attribute EventHandler onstop;
     attribute EventHandler ondataavailable;
     // attribute EventHandler onpause;
@@ -44,8 +45,9 @@ enum RecordingState { "inactive", "recording", "paused" };
     attribute EventHandler onerror;
     // readonly attribute unsigned long videoBitsPerSecond;
     // readonly attribute unsigned long audioBitsPerSecond;
+    // readonly attribute BitrateMode audioBitrateMode;
 
-    [MayThrowException, ImplementedAs=startRecording] void start(optional long timeslice);
+    [MayThrowException, ImplementedAs=startRecording] void start(optional unsigned long timeslice);
     [ImplementedAs=stopRecording] void stop();
     // void pause();
     // void resume();

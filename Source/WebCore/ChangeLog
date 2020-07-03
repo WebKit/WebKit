@@ -1,5 +1,21 @@
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
+        Support MediaRecorder.onstart
+        https://bugs.webkit.org/show_bug.cgi?id=213720
+
+        Reviewed by Darin Adler.
+
+        Fire start event if MediaRecorder.start is successful.
+        Do some WebIDL clean-up, in particular change timeSlice from long to unsigned long, as per spec.
+        Covered by added test.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::startRecording):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+
+2020-07-03  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder.start() Method is Ignoring the "timeslice" Parameter
         https://bugs.webkit.org/show_bug.cgi?id=202233
         <rdar://problem/55720555>
