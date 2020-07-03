@@ -1277,6 +1277,11 @@ static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double d
 
     return GDK_EVENT_STOP;
 }
+
+static void webkitWebViewBaseScrollEnd(WebKitWebViewBase* webViewBase, GtkEventController* controller)
+{
+    webkitWebViewBaseScroll(webViewBase, 0, 0, controller);
+}
 #endif
 
 #if !USE(GTK4)
@@ -1916,6 +1921,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
 #if USE(GTK4)
     auto* controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES);
     g_signal_connect_object(controller, "scroll", G_CALLBACK(webkitWebViewBaseScroll), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(controller, "scroll-end", G_CALLBACK(webkitWebViewBaseScrollEnd), viewWidget, G_CONNECT_SWAPPED);
     gtk_widget_add_controller(viewWidget, controller);
 
     controller = gtk_event_controller_motion_new();

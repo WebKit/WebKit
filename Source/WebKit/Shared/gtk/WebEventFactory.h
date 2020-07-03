@@ -43,6 +43,7 @@ public:
     static WebMouseEvent createWebMouseEvent(const WebCore::IntPoint&);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+    static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatSize&);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
     static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const String&, bool handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, Vector<String>&& commands);

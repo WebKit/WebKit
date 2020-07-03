@@ -265,6 +265,14 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
     return createWebWheelEvent(event, position, globalPosition, wheelTicks.value(), phase, momentumPhase);
 }
 
+WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& wheelTicks)
+{
+    WebWheelEvent::Phase phase = gdk_event_is_scroll_stop_event(event) ?
+        WebWheelEvent::Phase::PhaseEnded :
+        WebWheelEvent::Phase::PhaseChanged;
+    return createWebWheelEvent(event, position, globalPosition, wheelTicks, phase, WebWheelEvent::Phase::PhaseNone);
+}
+
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
 {
     // FIXME: [GTK] Add a setting to change the pixels per line used for scrolling

@@ -1,3 +1,24 @@
+2020-07-03  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Support kinetic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=213791
+
+        Reviewed by Carlos Garcia Campos.
+
+        GtkEventControllerScroll skips the last event and exposes it in a separate signal.
+        Normally one would add the KINETIC flag and listen to decelerate signal, but since
+        WebKit already has code for calculating the velocity for GTK3, just use the same
+        code path as scroll signal handler.
+
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScrollEnd):
+        (webkitWebViewBaseConstructed):
+
 2020-07-02  Alex Christensen  <achristensen@webkit.org>
 
         Make _WKWebsiteDataStoreConfiguration SPI for HSTS storage to replace _WKProcessPoolConfiguration.hstsStorageDirectory
