@@ -73,7 +73,7 @@ public:
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource);
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id = createCanonicalUUIDString()) { return adoptRef(*new MediaStreamPrivate(WTFMove(logger), tracks, WTFMove(id))); }
 
-    WEBCORE_EXPORT virtual ~MediaStreamPrivate();
+    virtual ~MediaStreamPrivate();
 
     void addObserver(Observer&);
     void removeObserver(Observer&);

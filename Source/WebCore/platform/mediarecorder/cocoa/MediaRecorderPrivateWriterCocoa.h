@@ -114,8 +114,8 @@ private:
     RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription;
     std::unique_ptr<VideoSampleBufferCompressor> m_videoCompressor;
     RetainPtr<AVAssetWriterInput> m_videoAssetWriterInput;
-    CMTime m_lastVideoPresentationTime { kCMTimeInvalid };
-    CMTime m_lastVideoDecodingTime { kCMTimeInvalid };
+    CMTime m_lastVideoPresentationTime;
+    CMTime m_lastVideoDecodingTime;
     bool m_hasEncodedVideoSamples { false };
 
     RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
