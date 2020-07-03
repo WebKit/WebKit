@@ -1,5 +1,19 @@
 2020-07-03  Darin Adler  <darin@apple.com>
 
+        WebCore/SourcesCocoa.txt: Remove #if ENABLE_APPLE_PAY
+        https://bugs.webkit.org/show_bug.cgi?id=213943
+
+        Reviewed by Sam Weinig.
+
+        * SourcesCocoa.txt: Remove #if ENABLE_APPLE_PAY and sort files in with the others.
+        The source files themselves have conditionals, we don't need conditionals in Sources.txt,
+        and we are moving towards removing the capability for #if ENABLE in the Sources.txt file.
+        Also, sort the files and remove the separate per-directory paragraphs, making this closer
+        to just a sorted list of filenames with less "editorial" content. Also added comments
+        about the USE_INTERNAL_SDK part of the file.
+
+2020-07-03  Darin Adler  <darin@apple.com>
+
         WebCore/Sources.txt: Remove #if ENABLE_ENCRYPTED_MEDIA
         https://bugs.webkit.org/show_bug.cgi?id=213939
 
