@@ -1,3 +1,14 @@
+2020-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r261779): [GTK][WPE] http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212017
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expectations for tests that are now passing.
+
+        * platform/gtk/TestExpectations:
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         Allow registering VP9 as a VT decoder

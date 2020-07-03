@@ -1,3 +1,15 @@
+2020-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r261779): [GTK][WPE] http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212017
+
+        Reviewed by Michael Catanzaro.
+
+        Use the ephemeral data store when useEphemeralSession option is enabled.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::platformInitializeDataStore):
+
 2020-07-02  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac CMake build
