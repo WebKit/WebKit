@@ -15,28 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-
-
-def testShouldImplementReprForWebDriver(driver):
-    driver_repr = repr(driver)
-    assert type(driver).__name__ in driver_repr
-    assert driver.session_id in driver_repr
+import pytest
+import urllib3
+from selenium import webdriver
 
 
-def testShouldImplementReprForWebElement(driver, pages):
-    pages.load('simpleTest.html')
-    elem = driver.find_element(By.ID, "validImgTag")
-    elem_repr = repr(elem)
-    assert type(elem).__name__ in elem_repr
-    assert driver.session_id in elem_repr
-    assert elem._id in elem_repr
-
-
-def testShouldImplementReprForWait(driver):
-    wait = WebDriverWait(driver, 30)
-    wait_repr = repr(wait)
-    assert type(wait).__name__ in wait_repr
-    assert driver.session_id in wait_repr
+def test_command_executor_ssl_certificate_is_verified():
+    with pytest.raises(urllib3.exceptions.MaxRetryError) as excinfo:
+        webdriver.Remote(command_executor='https://wrong.host.badssl.com/')
+    assert isinstance(excinfo.value.reason, urllib3.exceptions.SSLError)
+    assert "doesn't match" in str(excinfo.value)

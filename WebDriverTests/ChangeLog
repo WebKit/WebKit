@@ -1,3 +1,102 @@
+2020-07-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Update imported selenium to a version that enables WPE WebDriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=213916
+
+        Reviewed by Carlos Garcia Campos.
+
+        Also updated the importer.json file with more paths to be skipped.
+
+        * imported/selenium/common/.classpath: Removed.
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_diagonals-thick_18_b81900_40x40.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_glass_100_f6f6f6_1x400.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_glass_100_fdf5ce_1x400.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_glass_65_ffffff_1x400.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-bg_highlight-soft_75_ffe45c_1x100.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-icons_222222_256x240.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-icons_228ef1_256x240.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-icons_ef8c08_256x240.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-icons_ffd27a_256x240.png:
+        * imported/selenium/common/src/web/css/ui-lightness/images/ui-icons_ffffff_256x240.png:
+        * imported/selenium/common/src/web/css/ui-lightness/jquery-ui-1.12.1.min.css: Added.
+        * imported/selenium/common/src/web/css/ui-lightness/jquery-ui-1.8.10.custom.css: Removed.
+        * imported/selenium/common/src/web/draggableLists.html:
+        * imported/selenium/common/src/web/droppableItems.html:
+        * imported/selenium/common/src/web/jquery-1.3.2.js: Removed.
+        * imported/selenium/common/src/web/js/jquery-1.4.4.min.js: Removed.
+        * imported/selenium/common/src/web/js/jquery-3.5.1.min.js: Added.
+        * imported/selenium/common/src/web/js/jquery-ui-1.12.1.min.js: Added.
+        * imported/selenium/common/src/web/js/jquery-ui-1.8.10.custom.min.js: Removed.
+        * imported/selenium/common/src/web/mousePositionTracker.html:
+        * imported/selenium/common/src/web/selectableItems.html:
+        * imported/selenium/importer.json:
+        * imported/selenium/py/conftest.py:
+        * imported/selenium/py/selenium/__init__.py:
+        * imported/selenium/py/selenium/webdriver/__init__.py:
+        * imported/selenium/py/selenium/webdriver/common/action_chains.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/action_builder.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/pointer_actions.py:
+        * imported/selenium/py/selenium/webdriver/common/actions/pointer_input.py:
+        * imported/selenium/py/selenium/webdriver/common/desired_capabilities.py:
+        * imported/selenium/py/selenium/webdriver/common/html5/application_cache.py:
+        * imported/selenium/py/selenium/webdriver/common/keys.py:
+        * imported/selenium/py/selenium/webdriver/common/options.py:
+        * imported/selenium/py/selenium/webdriver/common/service.py:
+        * imported/selenium/py/selenium/webdriver/common/timeouts.py:
+        * imported/selenium/py/selenium/webdriver/common/window.py:
+        * imported/selenium/py/selenium/webdriver/remote/file_detector.py:
+        * imported/selenium/py/selenium/webdriver/remote/remote_connection.py:
+        * imported/selenium/py/selenium/webdriver/remote/switch_to.py:
+        * imported/selenium/py/selenium/webdriver/remote/webdriver.py:
+        * imported/selenium/py/selenium/webdriver/remote/webelement.py:
+        * imported/selenium/py/selenium/webdriver/support/color.py:
+        * imported/selenium/py/selenium/webdriver/support/event_firing_webdriver.py:
+        * imported/selenium/py/selenium/webdriver/support/expected_conditions.py:
+        * imported/selenium/py/selenium/webdriver/support/relative_locator.py:
+        * imported/selenium/py/selenium/webdriver/support/select.py:
+        * imported/selenium/py/selenium/webdriver/support/wait.py:
+        * imported/selenium/py/selenium/webdriver/wpewebkit/options.py:
+        * imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/appcache_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/children_finding_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/clear_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/click_scrolling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/cookie_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/correct_event_firing_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/driver_element_finding_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/element_attribute_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/executing_javascript_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/form_handling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/google_one_box.py:
+        * imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/interactions_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_loading_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/repr_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/results_page.py:
+        * imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/stale_reference_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/takes_screenshots_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/text_handling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/timeout_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/typing_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/visibility_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/remote/remote_hub_connection.py: Copied from WebDriverTests/imported/selenium/py/selenium/webdriver/common/window.py.
+        * imported/selenium/py/test/selenium/webdriver/safari/launcher_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/support/event_firing_webdriver_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/support/relative_by_tests.py:
+
 2020-06-22  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][GTK] Mark two scrolling tests as fail
