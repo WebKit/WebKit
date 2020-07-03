@@ -1105,7 +1105,7 @@ PASS HTMLVideoElement interface: document.createElement("video") must inherit pr
 PASS HTMLVideoElement interface: document.createElement("video") must inherit property "playsInline" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "error" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "src" with the proper type 
-FAIL HTMLMediaElement interface: document.createElement("video") must inherit property "srcObject" with the proper type Unrecognized type MediaStream
+PASS HTMLMediaElement interface: document.createElement("video") must inherit property "srcObject" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "currentSrc" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "crossOrigin" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "NETWORK_EMPTY" with the proper type 
@@ -1165,7 +1165,7 @@ PASS HTMLAudioElement must be primary interface of document.createElement("audio
 PASS Stringification of document.createElement("audio") 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "error" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "src" with the proper type 
-FAIL HTMLMediaElement interface: document.createElement("audio") must inherit property "srcObject" with the proper type Unrecognized type MediaStream
+PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "srcObject" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "currentSrc" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "crossOrigin" with the proper type 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "NETWORK_EMPTY" with the proper type 
@@ -1213,7 +1213,7 @@ PASS HTMLAudioElement must be primary interface of new Audio()
 PASS Stringification of new Audio() 
 PASS HTMLMediaElement interface: new Audio() must inherit property "error" with the proper type 
 PASS HTMLMediaElement interface: new Audio() must inherit property "src" with the proper type 
-FAIL HTMLMediaElement interface: new Audio() must inherit property "srcObject" with the proper type Unrecognized type MediaStream
+PASS HTMLMediaElement interface: new Audio() must inherit property "srcObject" with the proper type 
 PASS HTMLMediaElement interface: new Audio() must inherit property "currentSrc" with the proper type 
 PASS HTMLMediaElement interface: new Audio() must inherit property "crossOrigin" with the proper type 
 PASS HTMLMediaElement interface: new Audio() must inherit property "NETWORK_EMPTY" with the proper type 
@@ -4758,6 +4758,10 @@ PASS DOMParser interface: existence and properties of interface prototype object
 PASS DOMParser interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMParser interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMParser interface: operation parseFromString(DOMString, DOMParserSupportedType) 
+PASS DOMParser must be primary interface of new DOMParser() 
+PASS Stringification of new DOMParser() 
+PASS DOMParser interface: new DOMParser() must inherit property "parseFromString(DOMString, DOMParserSupportedType)" with the proper type 
+PASS DOMParser interface: calling parseFromString(DOMString, DOMParserSupportedType) on new DOMParser() with too few arguments must throw TypeError 
 PASS Navigator interface: existence and properties of interface object 
 PASS Navigator interface object length 
 PASS Navigator interface object name 

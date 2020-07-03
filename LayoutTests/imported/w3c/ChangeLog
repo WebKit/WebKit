@@ -1,3 +1,17 @@
+2020-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/dom & web-platform-tests/html/infrastructure from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213908
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/html/dom & web-platform-tests/html/infrastructure from upstream 145839c323ba1ec8b.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/dom/*: Updated.
+        * web-platform-tests/html/infrastructure/*: Updated.
+
 2020-07-02  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/browsers from upstream

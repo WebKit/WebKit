@@ -34,7 +34,7 @@ FAIL ReferenceError objects can be cloned The object can not be cloned.
 FAIL SyntaxError objects can be cloned The object can not be cloned.
 FAIL TypeError objects can be cloned The object can not be cloned.
 FAIL URIError objects can be cloned The object can not be cloned.
-FAIL URIError objects from other realms are treated as Error The object can not be cloned.
+FAIL URIError objects from other realms are treated as URIError The object can not be cloned.
 FAIL Cloning a modified Error The object can not be cloned.
 FAIL Error.message: getter is ignored when cloning The object can not be cloned.
 FAIL Error.message: undefined property is stringified The object can not be cloned.

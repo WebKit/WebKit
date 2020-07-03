@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/resources/echo-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/resources/echo-worker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/resources/post-parent-type-error.html

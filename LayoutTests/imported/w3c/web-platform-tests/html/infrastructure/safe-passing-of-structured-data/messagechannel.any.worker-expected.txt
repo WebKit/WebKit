@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: window
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: window
+
+

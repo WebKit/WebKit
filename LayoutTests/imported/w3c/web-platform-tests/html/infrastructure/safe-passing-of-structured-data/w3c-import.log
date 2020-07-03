@@ -14,8 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-extra.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js
-/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured_clone_bigint.html
-/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured_clone_blob.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structuredclone_0.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/window-postmessage.window.js

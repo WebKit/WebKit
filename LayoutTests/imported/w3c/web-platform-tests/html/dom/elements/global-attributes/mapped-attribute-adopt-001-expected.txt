@@ -1,0 +1,3 @@
+
+PASS Adoption of an unrelated node shouldn't prevent mapped attributes from applying 
+

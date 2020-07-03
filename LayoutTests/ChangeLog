@@ -1,3 +1,14 @@
+2020-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/dom & web-platform-tests/html/infrastructure from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213908
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2020-07-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC][Quirk] Inflow child box quirk vertical margins should collapse with table cell.

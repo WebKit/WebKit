@@ -1,4 +1,0 @@
-Blocked access to external URL https://www1.localhost:9443/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe-domain.sub.html
-
-FAIL postMessaging to a same-origin-domain (but not same-origin) iframe allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-

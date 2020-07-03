@@ -1,4 +1,0 @@
-
-PASS Primitive BigInt is cloned 
-PASS Instance of BigInt is cloned 
-

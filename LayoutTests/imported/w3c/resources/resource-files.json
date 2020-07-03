@@ -2361,6 +2361,7 @@
         "web-platform-tests/html/editing/dnd/target-origin/HELPER-mustblock.html",
         "web-platform-tests/html/editing/dnd/target-origin/HELPER-showorigin.html",
         "web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16be.html",
+        "web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html",
         "web-platform-tests/html/interaction/focus/document-level-focus-apis/support/test.html",
         "web-platform-tests/html/interaction/focus/processing-model/support/preventScroll-helper.html",
         "web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/support/dialog-framed.html",

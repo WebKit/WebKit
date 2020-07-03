@@ -1,0 +1,18 @@
+
+FAIL An embed name appears in a document's property names if the embed is exposed. assert_true: expected true got false
+PASS An embed name does not appears in a document's property names if the embed is inside another embed. 
+FAIL A form name appears in a document's property names. assert_true: expected true got false
+FAIL An iframe name appears in a document's property names. assert_true: expected true got false
+FAIL An img name appears in a document's property names when the img has no id. assert_true: expected true got false
+FAIL An object name appears in a document's property names if the object is exposed. assert_true: expected true got false
+FAIL An object id appears in a document's property names if the object is exposed. assert_true: expected true got false
+PASS An object name does not appear in a document's property names if the object is inside another object. 
+PASS An object id does not appear in a document's property names if the object is inside another object. 
+FAIL An img name appears in a document's property names when the img has an id. assert_true: expected true got false
+FAIL An img id appears in a document's property names when the img has a name. assert_true: expected true got false
+PASS An img id does not appear in a document's property names when the img has no name. 
+FAIL A document's property names can include integer strings. assert_true: expected true got false
+PASS A template name does not appear in a document's property names. 
+PASS An img name does not appear in a document's property names when the img is in a template's document fragment. 
+FAIL A document's property names appear in tree order. assert_equals: expected 0 but got -1
+         

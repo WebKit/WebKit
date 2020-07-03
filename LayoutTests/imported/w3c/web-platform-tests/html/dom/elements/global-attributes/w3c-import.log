@@ -139,6 +139,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/lang-xmllang-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/lang-xyzzy-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/lang-xyzzy.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/mapped-attribute-adopt-001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/style-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/style-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-001.html
@@ -162,3 +163,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-010.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/translate-enumerated-ascii-case-insensitive.html

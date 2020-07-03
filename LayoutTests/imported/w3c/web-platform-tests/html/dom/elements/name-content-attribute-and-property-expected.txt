@@ -1,0 +1,133 @@
+
+PASS a element's name property reflects its content attribute 
+PASS button element's name property reflects its content attribute 
+PASS embed element's name property reflects its content attribute 
+PASS fieldset element's name property reflects its content attribute 
+PASS form element's name property reflects its content attribute 
+PASS frame element's name property reflects its content attribute 
+PASS iframe element's name property reflects its content attribute 
+PASS img element's name property reflects its content attribute 
+PASS input element's name property reflects its content attribute 
+PASS map element's name property reflects its content attribute 
+PASS meta element's name property reflects its content attribute 
+PASS object element's name property reflects its content attribute 
+PASS output element's name property reflects its content attribute 
+PASS param element's name property reflects its content attribute 
+PASS select element's name property reflects its content attribute 
+PASS slot element's name property reflects its content attribute 
+PASS textarea element's name property reflects its content attribute 
+PASS abbr element's name property does not reflect its content attribute 
+PASS acronym element's name property does not reflect its content attribute 
+PASS address element's name property does not reflect its content attribute 
+PASS area element's name property does not reflect its content attribute 
+PASS article element's name property does not reflect its content attribute 
+PASS aside element's name property does not reflect its content attribute 
+PASS audio element's name property does not reflect its content attribute 
+PASS b element's name property does not reflect its content attribute 
+PASS base element's name property does not reflect its content attribute 
+PASS bdi element's name property does not reflect its content attribute 
+PASS bdo element's name property does not reflect its content attribute 
+PASS bgsound element's name property does not reflect its content attribute 
+PASS big element's name property does not reflect its content attribute 
+PASS blink element's name property does not reflect its content attribute 
+PASS blockquote element's name property does not reflect its content attribute 
+PASS body element's name property does not reflect its content attribute 
+PASS br element's name property does not reflect its content attribute 
+PASS canvas element's name property does not reflect its content attribute 
+PASS caption element's name property does not reflect its content attribute 
+PASS center element's name property does not reflect its content attribute 
+PASS cite element's name property does not reflect its content attribute 
+PASS code element's name property does not reflect its content attribute 
+PASS col element's name property does not reflect its content attribute 
+PASS colgroup element's name property does not reflect its content attribute 
+PASS data element's name property does not reflect its content attribute 
+PASS datalist element's name property does not reflect its content attribute 
+PASS dd element's name property does not reflect its content attribute 
+PASS del element's name property does not reflect its content attribute 
+PASS details element's name property does not reflect its content attribute 
+PASS dfn element's name property does not reflect its content attribute 
+PASS dialog element's name property does not reflect its content attribute 
+PASS dir element's name property does not reflect its content attribute 
+PASS div element's name property does not reflect its content attribute 
+PASS dl element's name property does not reflect its content attribute 
+PASS dt element's name property does not reflect its content attribute 
+PASS em element's name property does not reflect its content attribute 
+PASS figcaption element's name property does not reflect its content attribute 
+PASS figure element's name property does not reflect its content attribute 
+PASS font element's name property does not reflect its content attribute 
+PASS footer element's name property does not reflect its content attribute 
+PASS frameset element's name property does not reflect its content attribute 
+PASS h1 element's name property does not reflect its content attribute 
+PASS h2 element's name property does not reflect its content attribute 
+PASS h3 element's name property does not reflect its content attribute 
+PASS h4 element's name property does not reflect its content attribute 
+PASS h5 element's name property does not reflect its content attribute 
+PASS h6 element's name property does not reflect its content attribute 
+PASS head element's name property does not reflect its content attribute 
+PASS header element's name property does not reflect its content attribute 
+PASS hgroup element's name property does not reflect its content attribute 
+PASS hr element's name property does not reflect its content attribute 
+PASS html element's name property does not reflect its content attribute 
+PASS i element's name property does not reflect its content attribute 
+PASS ins element's name property does not reflect its content attribute 
+PASS isindex element's name property does not reflect its content attribute 
+PASS kbd element's name property does not reflect its content attribute 
+PASS label element's name property does not reflect its content attribute 
+PASS legend element's name property does not reflect its content attribute 
+PASS li element's name property does not reflect its content attribute 
+PASS link element's name property does not reflect its content attribute 
+PASS listing element's name property does not reflect its content attribute 
+PASS main element's name property does not reflect its content attribute 
+PASS mark element's name property does not reflect its content attribute 
+PASS marquee element's name property does not reflect its content attribute 
+PASS meter element's name property does not reflect its content attribute 
+PASS multicol element's name property does not reflect its content attribute 
+PASS nav element's name property does not reflect its content attribute 
+PASS nextid element's name property does not reflect its content attribute 
+PASS nobr element's name property does not reflect its content attribute 
+PASS noframes element's name property does not reflect its content attribute 
+PASS noscript element's name property does not reflect its content attribute 
+PASS option element's name property does not reflect its content attribute 
+PASS p element's name property does not reflect its content attribute 
+PASS picture element's name property does not reflect its content attribute 
+PASS plaintext element's name property does not reflect its content attribute 
+PASS pre element's name property does not reflect its content attribute 
+PASS progress element's name property does not reflect its content attribute 
+PASS q element's name property does not reflect its content attribute 
+PASS rp element's name property does not reflect its content attribute 
+PASS rt element's name property does not reflect its content attribute 
+PASS ruby element's name property does not reflect its content attribute 
+PASS s element's name property does not reflect its content attribute 
+PASS samp element's name property does not reflect its content attribute 
+PASS script element's name property does not reflect its content attribute 
+PASS section element's name property does not reflect its content attribute 
+PASS small element's name property does not reflect its content attribute 
+PASS source element's name property does not reflect its content attribute 
+PASS spacer element's name property does not reflect its content attribute 
+PASS span element's name property does not reflect its content attribute 
+PASS strike element's name property does not reflect its content attribute 
+PASS strong element's name property does not reflect its content attribute 
+PASS style element's name property does not reflect its content attribute 
+PASS sub element's name property does not reflect its content attribute 
+PASS summary element's name property does not reflect its content attribute 
+PASS sup element's name property does not reflect its content attribute 
+PASS table element's name property does not reflect its content attribute 
+PASS tbody element's name property does not reflect its content attribute 
+PASS td element's name property does not reflect its content attribute 
+PASS template element's name property does not reflect its content attribute 
+PASS tfoot element's name property does not reflect its content attribute 
+PASS th element's name property does not reflect its content attribute 
+PASS thead element's name property does not reflect its content attribute 
+PASS time element's name property does not reflect its content attribute 
+PASS title element's name property does not reflect its content attribute 
+PASS tr element's name property does not reflect its content attribute 
+PASS tt element's name property does not reflect its content attribute 
+PASS track element's name property does not reflect its content attribute 
+PASS u element's name property does not reflect its content attribute 
+PASS ul element's name property does not reflect its content attribute 
+PASS var element's name property does not reflect its content attribute 
+PASS video element's name property does not reflect its content attribute 
+PASS wbr element's name property does not reflect its content attribute 
+PASS xmp element's name property does not reflect its content attribute 
+PASS unknown element's name property does not reflect its content attribute 
+

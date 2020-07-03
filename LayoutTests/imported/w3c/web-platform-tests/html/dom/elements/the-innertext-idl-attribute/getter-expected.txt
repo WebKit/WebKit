@@ -120,6 +120,10 @@ PASS <canvas> contents ignored ("<canvas>abc")
 PASS <canvas><div id='target'> contents ok for element not being rendered ("<canvas><div id='target'>abc") 
 PASS <img> alt text ignored ("<img alt='abc'>") 
 PASS <img> contents ignored ("<img src='about:blank' class='poke'>") 
+FAIL <svg> text contents preserved ("<div><svg><text>abc</text></svg></div>") assert_equals: expected "abc" but got "abc\n"
+FAIL <svg><defs> text contents ignored ("<div><svg><defs><text>abc</text></defs></svg></div>") assert_equals: expected "" but got "abc\n"
+PASS <svg> non-rendered text ignored ("<div><svg><stop>abc</stop></svg></div>") 
+PASS <foreignObject> contents preserved ("<svg><foreignObject><span id='target'>abc</span></foreignObject></svg>") 
 FAIL <select size='1'> contents of options preserved ("<select size='1'><option>abc</option><option>def") assert_equals: expected "abc\ndef" but got ""
 FAIL <select size='2'> contents of options preserved ("<select size='2'><option>abc</option><option>def") assert_equals: expected "abc\ndef" but got ""
 PASS <select size='1'> contents of target option preserved ("<select size='1'><option id='target'>abc</option><option>def") 
