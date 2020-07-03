@@ -101,7 +101,6 @@ my (
     $indexedDatabaseSupport,
     $inputTypeColorSupport,
     $inputTypeDateSupport,
-    $inputTypeDatetimeSupport,
     $inputTypeDatetimelocalSupport,
     $inputTypeMonthSupport,
     $inputTypeTimeSupport,
@@ -348,9 +347,6 @@ my @features = (
 
     { option => "input-type-datetimelocal", desc => "Toggle Input Type Datetimelocal support",
       define => "ENABLE_INPUT_TYPE_DATETIMELOCAL", value => \$inputTypeDatetimelocalSupport },
-
-    { option => "input-type-datetime", desc => "Toggle broken Input Type Datetime support",
-      define => "ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE", value => \$inputTypeDatetimeSupport },
 
     { option => "input-type-month", desc => "Toggle Input Type Month support",
       define => "ENABLE_INPUT_TYPE_MONTH", value => \$inputTypeMonthSupport },

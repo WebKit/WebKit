@@ -1130,7 +1130,6 @@ html/DOMFormData.cpp
 html/DOMTokenList.cpp
 html/DOMURL.cpp
 html/DateInputType.cpp
-html/DateTimeInputType.cpp
 html/DateTimeLocalInputType.cpp
 html/DirectoryFileListCreator.cpp
 html/EmailInputType.cpp

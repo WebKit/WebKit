@@ -60,7 +60,6 @@ public:
     enum Type {
         Invalid,
         Date,
-        DateTime,
         DateTimeLocal,
         Month,
         Time,
@@ -84,7 +83,7 @@ public:
     };
 
     // Returns an ISO 8601 representation for this instance.
-    // The format argument is valid for DateTime, DateTimeLocal, and Time types.
+    // The format argument is valid for DateTimeLocal and Time types.
     String toString(SecondFormat = None) const;
 
     // Sets year and month.
@@ -97,14 +96,10 @@ public:
     static Optional<DateComponents> fromParsingTime(StringView);
     // Sets year, month, monthDay, hour, minute, second and millisecond.
     static Optional<DateComponents> fromParsingDateTimeLocal(StringView);
-    // Sets year, month, monthDay, hour, minute, second and millisecond, and adjusts timezone.
-    static Optional<DateComponents> fromParsingDateTime(StringView);
 
 
     // For Date type. Updates m_year, m_month and m_monthDay.
     static Optional<DateComponents> fromMillisecondsSinceEpochForDate(double ms);
-    // For DateTime type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
-    static Optional<DateComponents> fromMillisecondsSinceEpochForDateTime(double ms);
     // For DateTimeLocal type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
     static Optional<DateComponents> fromMillisecondsSinceEpochForDateTimeLocal(double ms);
     // For Month type. Updates m_year and m_month.
@@ -159,7 +154,6 @@ private:
     template<typename CharacterType> bool parseWeek(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
     template<typename CharacterType> bool parseTime(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
     template<typename CharacterType> bool parseDateTimeLocal(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseDateTime(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
     template<typename CharacterType> bool parseYear(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
     template<typename CharacterType> bool parseTimeZone(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
 
@@ -169,7 +163,6 @@ private:
     // DateComponents type. The functions return true if it succeeds, and
     // false if they fail.
     bool setMillisecondsSinceEpochForDate(double);
-    bool setMillisecondsSinceEpochForDateTime(double);
     bool setMillisecondsSinceEpochForDateTimeLocal(double);
     bool setMillisecondsSinceEpochForMonth(double);
     bool setMillisecondsSinceEpochForWeek(double);

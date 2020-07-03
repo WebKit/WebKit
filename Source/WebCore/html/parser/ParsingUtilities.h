@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/text/StringCommon.h>
 
 namespace WebCore {

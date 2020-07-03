@@ -114,11 +114,6 @@ NSDateFormatter *LocalizedDateCache::createFormatterForType(DateComponents::Type
         [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
         [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
         break;
-    case DateComponents::DateTime:
-        [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
-        [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-        [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-        break;
     case DateComponents::DateTimeLocal:
         [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
@@ -169,7 +164,6 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const
     // For each month (in the Gregorian Calendar), format a date and measure its length.
     NSUInteger totalMonthsToTest = 1;
     if (type == DateComponents::Date
-        || type == DateComponents::DateTime
         || type == DateComponents::DateTimeLocal
         || type == DateComponents::Month)
         totalMonthsToTest = numberOfGregorianMonths;

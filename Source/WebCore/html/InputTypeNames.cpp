@@ -55,12 +55,6 @@ const AtomString& date()
     return name;
 }
 
-const AtomString& datetime()
-{
-    static MainThreadNeverDestroyed<const AtomString> name("datetime", AtomString::ConstructFromLiteral);
-    return name;
-}
-
 const AtomString& datetimelocal()
 {
     static MainThreadNeverDestroyed<const AtomString> name("datetime-local", AtomString::ConstructFromLiteral);

@@ -234,13 +234,6 @@ Optional<DateComponents> DateComponents::fromParsingDateTimeLocal(StringView sou
     });
 }
 
-Optional<DateComponents> DateComponents::fromParsingDateTime(StringView source)
-{
-    return createFromString(source, [] (auto& date, const auto* src, auto length, auto& end) {
-        return date.parseDateTime(src, length, 0, end);
-    });
-}
-
 bool DateComponents::addDay(int dayDiff)
 {
     ASSERT(m_monthDay);
@@ -537,27 +530,6 @@ template<typename CharacterType> bool DateComponents::parseDateTimeLocal(const C
     return true;
 }
 
-template<typename CharacterType> bool DateComponents::parseDateTime(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
-{
-    ASSERT(src);
-    unsigned index;
-    if (!parseDate(src, length, start, index))
-        return false;
-    if (index >= length)
-        return false;
-    if (src[index] != 'T')
-        return false;
-    ++index;
-    if (!parseTime(src, length, index, index))
-        return false;
-    if (!parseTimeZone(src, length, index, end))
-        return false;
-    if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
-        return false;
-    m_type = DateTime;
-    return true;
-}
-
 static inline double positiveFmod(double value, double divider)
 {
     double remainder = fmod(value, divider);
@@ -576,13 +548,6 @@ Optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForDate(doubl
 {
     return createFromTimeOffset(ms, [] (auto& date, auto ms) {
         return date.setMillisecondsSinceEpochForDate(ms);
-    });
-}
-
-Optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForDateTime(double ms)
-{
-    return createFromTimeOffset(ms, [] (auto& date, auto ms) {
-        return date.setMillisecondsSinceEpochForDateTime(ms);
     });
 }
 
@@ -654,7 +619,7 @@ bool DateComponents::setMillisecondsSinceEpochForDate(double ms)
     return true;
 }
 
-bool DateComponents::setMillisecondsSinceEpochForDateTime(double ms)
+bool DateComponents::setMillisecondsSinceEpochForDateTimeLocal(double ms)
 {
     m_type = Invalid;
     if (!std::isfinite(ms))
@@ -664,15 +629,6 @@ bool DateComponents::setMillisecondsSinceEpochForDateTime(double ms)
     if (!setMillisecondsSinceEpochForDateInternal(ms))
         return false;
     if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
-        return false;
-    m_type = DateTime;
-    return true;
-}
-
-bool DateComponents::setMillisecondsSinceEpochForDateTimeLocal(double ms)
-{
-    // Internal representation of DateTimeLocal is the same as DateTime except m_type.
-    if (!setMillisecondsSinceEpochForDateTime(ms))
         return false;
     m_type = DateTimeLocal;
     return true;
@@ -764,7 +720,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
 
 double DateComponents::millisecondsSinceEpochForTime() const
 {
-    ASSERT(m_type == Time || m_type == DateTime || m_type == DateTimeLocal);
+    ASSERT(m_type == Time || m_type == DateTimeLocal);
     return ((m_hour * minutesPerHour + m_minute) * secondsPerMinute + m_second) * msPerSecond + m_millisecond;
 }
 
@@ -773,7 +729,6 @@ double DateComponents::millisecondsSinceEpoch() const
     switch (m_type) {
     case Date:
         return dateToDaysFrom1970(m_year, m_month, m_monthDay) * msPerDay;
-    case DateTime:
     case DateTimeLocal:
         return dateToDaysFrom1970(m_year, m_month, m_monthDay) * msPerDay + millisecondsSinceEpochForTime();
     case Month:
@@ -797,7 +752,7 @@ double DateComponents::monthsSinceEpoch() const
 
 String DateComponents::toStringForTime(SecondFormat format) const
 {
-    ASSERT(m_type == DateTime || m_type == DateTimeLocal || m_type == Time);
+    ASSERT(m_type == DateTimeLocal || m_type == Time);
     SecondFormat effectiveFormat = format;
     if (m_millisecond)
         effectiveFormat = Millisecond;
@@ -824,8 +779,6 @@ String DateComponents::toString(SecondFormat format) const
     switch (m_type) {
     case Date:
         return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay));
-    case DateTime:
-        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format), 'Z');
     case DateTimeLocal:
         return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format));
     case Month:

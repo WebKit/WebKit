@@ -486,17 +486,6 @@ input[type="date"] {
 #endif
 }
 #endif
-#if defined(ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE) && ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
-input[type="datetime"] {
-    align-items: center;
-    -webkit-appearance: menulist-button;
-    display: -webkit-inline-flex;
-    overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 10em;
-#endif
-}
-#endif
 #if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
 input[type="datetime-local"] {
     align-items: center;

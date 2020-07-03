@@ -273,11 +273,6 @@ public:
     void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
 #endif
 
-#if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    bool inputTypeDateTimeEnabled() const { return m_isInputTypeDateTimeEnabled; }
-    void setInputTypeDateTimeEnabled(bool isEnabled) { m_isInputTypeDateTimeEnabled = isEnabled; }
-#endif
-
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
     bool inputTypeDateTimeLocalEnabled() const { return m_isInputTypeDateTimeLocalEnabled; }
     void setInputTypeDateTimeLocalEnabled(bool isEnabled) { m_isInputTypeDateTimeLocalEnabled = isEnabled; }
@@ -534,10 +529,6 @@ private:
 
 #if ENABLE(INPUT_TYPE_DATE)
     bool m_isInputTypeDateEnabled { true };
-#endif
-
-#if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    bool m_isInputTypeDateTimeEnabled { false };
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)

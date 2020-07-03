@@ -352,7 +352,6 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
         builder.build(weekFormatInLDML());
         break;
 #endif
-    case DateComponents::DateTime:
     case DateComponents::DateTimeLocal:
         builder.build(formatType == FormatTypeShort ? dateTimeFormatWithoutSeconds() : dateTimeFormatWithSeconds());
         break;

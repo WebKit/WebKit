@@ -30,7 +30,6 @@ const AtomString& button();
 const AtomString& checkbox();
 const AtomString& color();
 const AtomString& date();
-const AtomString& datetime();
 const AtomString& datetimelocal();
 const AtomString& email();
 const AtomString& file();

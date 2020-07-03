@@ -5094,7 +5094,6 @@
 		F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */; };
 		F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D801251F12D003EF269 /* ColorInputType.h */; };
 		F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D821251F12D003EF269 /* DateInputType.h */; };
-		F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D841251F12D003EF269 /* DateTimeInputType.h */; };
 		F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D861251F12D003EF269 /* DateTimeLocalInputType.h */; };
 		F55B3DBC1251F12D003EF269 /* EmailInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D881251F12D003EF269 /* EmailInputType.h */; };
 		F55B3DBE1251F12D003EF269 /* FileInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D8A1251F12D003EF269 /* FileInputType.h */; };
@@ -15898,8 +15897,6 @@
 		F55B3D801251F12D003EF269 /* ColorInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorInputType.h; sourceTree = "<group>"; };
 		F55B3D811251F12D003EF269 /* DateInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateInputType.cpp; sourceTree = "<group>"; };
 		F55B3D821251F12D003EF269 /* DateInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInputType.h; sourceTree = "<group>"; };
-		F55B3D831251F12D003EF269 /* DateTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeInputType.cpp; sourceTree = "<group>"; };
-		F55B3D841251F12D003EF269 /* DateTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeInputType.h; sourceTree = "<group>"; };
 		F55B3D851251F12D003EF269 /* DateTimeLocalInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeLocalInputType.cpp; sourceTree = "<group>"; };
 		F55B3D861251F12D003EF269 /* DateTimeLocalInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeLocalInputType.h; sourceTree = "<group>"; };
 		F55B3D871251F12D003EF269 /* EmailInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmailInputType.cpp; sourceTree = "<group>"; };
@@ -22320,8 +22317,6 @@
 				E517670220B88C1400D41167 /* DataListSuggestionInformation.h */,
 				F55B3D811251F12D003EF269 /* DateInputType.cpp */,
 				F55B3D821251F12D003EF269 /* DateInputType.h */,
-				F55B3D831251F12D003EF269 /* DateTimeInputType.cpp */,
-				F55B3D841251F12D003EF269 /* DateTimeInputType.h */,
 				F55B3D851251F12D003EF269 /* DateTimeLocalInputType.cpp */,
 				F55B3D861251F12D003EF269 /* DateTimeLocalInputType.h */,
 				835D54C11F4DE53400E60671 /* DirectoryFileListCreator.cpp */,
@@ -30402,7 +30397,6 @@
 				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
 				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,
 				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
-				F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
 				0F6A12BE1A00923700C6DE72 /* DebugPageOverlays.h in Headers */,
 				45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */,
@@ -34450,6 +34444,7 @@
 				515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */,
 				6E72F54C229DCD0C00B3E151 /* ExtensionsGLANGLE.cpp in Sources */,
 				7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */,
+				5130F2F624AEA60A00E1D0A0 /* GameControllerSoftLink.mm in Sources */,
 				51A4BB0A1954D61600FA5C2E /* Gamepad.cpp in Sources */,
 				518F4FF6194CA4E60081BAAE /* GamepadButton.cpp in Sources */,
 				516C62201950D48700337E75 /* GamepadEvent.cpp in Sources */,
@@ -34930,7 +34925,6 @@
 				DE5F84321FA186E9006DB63A /* UnifiedSource329.cpp in Sources */,
 				DE5F84331FA186E9006DB63A /* UnifiedSource330.cpp in Sources */,
 				DE5F84341FA186E9006DB63A /* UnifiedSource331.cpp in Sources */,
-				5130F2F624AEA60A00E1D0A0 /* GameControllerSoftLink.mm in Sources */,
 				DE5F84351FA186E9006DB63A /* UnifiedSource332.cpp in Sources */,
 				DE5F84361FA186E9006DB63A /* UnifiedSource333.cpp in Sources */,
 				DE5F84371FA186E9006DB63A /* UnifiedSource334.cpp in Sources */,
