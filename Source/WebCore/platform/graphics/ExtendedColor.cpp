@@ -27,8 +27,8 @@
 #include "ExtendedColor.h"
 
 #include "Color.h"
+#include "ColorConversion.h"
 #include "ColorTypes.h"
-#include "ColorUtilities.h"
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 

@@ -21,19 +21,13 @@
 #include "config.h"
 #include "Color.h"
 
-#include "ColorUtilities.h"
 #include <gdk/gdk.h>
 
 namespace WebCore {
 
-Color::Color(const GdkRGBA& c)
+Color::Color(const GdkRGBA& color)
 {
-    setSimpleColor(makeSimpleColor(
-        static_cast<int>(c.red * 255),
-        static_cast<int>(c.green * 255),
-        static_cast<int>(c.blue * 255),
-        static_cast<int>(c.alpha * 255)
-    ));
+    setSimpleColor(makeSimpleColor(SRGBA { static_cast<float>(color.red), static_cast<float>(color.green), static_cast<float>(color.blue), static_cast<float>(color.alpha) }));
 }
 
 Color::operator GdkRGBA() const

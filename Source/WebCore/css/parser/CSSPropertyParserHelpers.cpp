@@ -41,6 +41,7 @@
 #include "CSSPaintImageValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
+#include "ColorConversion.h"
 #include "Pair.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"

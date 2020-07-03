@@ -1,5 +1,51 @@
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
+        Split color conversion functions out of ColorUtilities.h/cpp into their own file.
+        https://bugs.webkit.org/show_bug.cgi?id=213803
+
+        Reviewed by Simon Fraser.
+
+        Moves color conversion functions (both between color spaces like toDisplayP3(const SRGBA&)
+        and between different representations like toHSLA(const SRGBA&)) to their own files.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        * editing/cocoa/DataDetection.mm:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        * html/canvas/CanvasStyle.cpp:
+        Add include of ColorConversion.h
+
+        * platform/graphics/ColorConversion.cpp: Added.
+        * platform/graphics/ColorConversion.h: Added.
+        * platform/graphics/ColorUtilities.cpp:
+        * platform/graphics/ColorUtilities.h:
+        Move functions to the new files.
+
+        * platform/graphics/ExtendedColor.cpp:
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        * platform/graphics/filters/FELighting.cpp:
+        Add include of ColorConversion.h, remove unncessary include of ColorUtilities.h
+
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        * platform/graphics/filters/FEMorphology.cpp:
+        * platform/graphics/filters/FilterOperations.cpp:
+        Remove unncessary include of ColorUtilities.h
+
+        * platform/graphics/filters/FilterOperation.cpp:
+        Add include of ColorConversion.h and ColorTypes.h, remove unncessary include of ColorUtilities.h.
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+        * platform/graphics/win/ColorDirect2D.cpp:
+        Remove unncessary include of ColorUtilities.h. Update to use standard float -> SimpleColor idiom
+        using SRGBA<float>.
+
+2020-07-03  Sam Weinig  <weinig@apple.com>
+
         Convert DateComponents parsing code to use Optional based return values rather than out-parameters
         https://bugs.webkit.org/show_bug.cgi?id=213440
 

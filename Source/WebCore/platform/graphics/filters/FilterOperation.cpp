@@ -30,8 +30,9 @@
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocumentReference.h"
 #include "ColorBlending.h"
+#include "ColorConversion.h"
 #include "ColorMatrix.h"
-#include "ColorUtilities.h"
+#include "ColorTypes.h"
 #include "FilterEffect.h"
 #include "SVGURIReference.h"
 #include <wtf/text/TextStream.h>

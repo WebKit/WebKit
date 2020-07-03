@@ -2252,6 +2252,7 @@
 		7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96D91AD4483500365A60 /* JSWritableStream.h */; };
 		7C4C96DF1AD4483500363572 /* JSReadableStreamBYOBReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500363572 /* JSReadableStreamBYOBReader.h */; };
 		7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultReader.h */; };
+		7C514E0324AF805E0050710F /* ColorConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C514E0024AF80580050710F /* ColorConversion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C516AD41F3525200034B6BF /* DOMPromiseProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */; };
 		7C5222961E1DAE03002CB8F7 /* IDLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5222951E1DADF8002CB8F7 /* IDLTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C5222991E1DAE1C002CB8F7 /* ActiveDOMCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10021,6 +10022,8 @@
 		7C4C96DB1AD4483500363572 /* JSReadableStreamBYOBReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamBYOBReader.h; sourceTree = "<group>"; };
 		7C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamDefaultReader.h; sourceTree = "<group>"; };
 		7C4EDD731A7B607800198C4D /* FontCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCocoa.mm; sourceTree = "<group>"; };
+		7C514E0024AF80580050710F /* ColorConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorConversion.h; sourceTree = "<group>"; };
+		7C514E0224AF80580050710F /* ColorConversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorConversion.cpp; sourceTree = "<group>"; };
 		7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPromiseProxy.h; sourceTree = "<group>"; };
 		7C5222951E1DADF8002CB8F7 /* IDLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDLTypes.h; sourceTree = "<group>"; };
 		7C5222971E1DAE16002CB8F7 /* ActiveDOMCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMCallback.cpp; sourceTree = "<group>"; };
@@ -25508,6 +25511,8 @@
 				7C1B4A6524A997590033727F /* ColorBlending.cpp */,
 				7C1B4A6724A997660033727F /* ColorBlending.h */,
 				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
+				7C514E0224AF80580050710F /* ColorConversion.cpp */,
+				7C514E0024AF80580050710F /* ColorConversion.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,
 				7CD1E69224ABF6240089C419 /* ColorSerialization.cpp */,
@@ -33912,6 +33917,7 @@
 				91278D6221DEDAF000B57184 /* WorkerAuditAgent.h in Headers */,
 				41A7D3531F438D16008988DE /* WorkerCacheStorageConnection.h in Headers */,
 				A5B81CCD1FAA44DE0037D1E6 /* WorkerConsoleAgent.h in Headers */,
+				7C514E0324AF805E0050710F /* ColorConversion.h in Headers */,
 				A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */,
 				A5B81CCE1FAA44DE0037D1E6 /* WorkerDebuggerAgent.h in Headers */,
 				A52B349E1FA41703008B6246 /* WorkerDebuggerProxy.h in Headers */,

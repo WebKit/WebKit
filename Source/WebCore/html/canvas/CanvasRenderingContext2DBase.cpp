@@ -40,6 +40,7 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
+#include "ColorConversion.h"
 #include "ColorSerialization.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"

@@ -30,6 +30,7 @@
 
 #import "Attr.h"
 #import "CSSStyleDeclaration.h"
+#import "ColorConversion.h"
 #import "ColorSerialization.h"
 #import "Editing.h"
 #import "ElementAncestorIterator.h"

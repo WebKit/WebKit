@@ -27,7 +27,8 @@
 
 #include "Test.h"
 #include <WebCore/Color.h>
-#include <WebCore/ColorUtilities.h>
+#include <WebCore/ColorConversion.h>
+#include <WebCore/ColorTypes.h>
 
 using namespace WebCore;
 

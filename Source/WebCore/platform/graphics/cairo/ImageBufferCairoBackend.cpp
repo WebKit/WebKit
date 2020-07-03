@@ -33,7 +33,7 @@
 #include "BitmapImage.h"
 #include "CairoOperations.h"
 #include "Color.h"
-#include "ColorUtilities.h"
+#include "ColorConversion.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
 #include "ImageBufferUtilitiesCairo.h"

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "FELighting.h"
 
-#include "ColorUtilities.h"
+#include "ColorConversion.h"
 #include "FELightingNEON.h"
 #include "ImageData.h"
 #include <wtf/ParallelJobs.h>

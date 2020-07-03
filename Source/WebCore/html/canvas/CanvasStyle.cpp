@@ -33,6 +33,7 @@
 #include "CSSPropertyNames.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
+#include "ColorConversion.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #if ENABLE(OFFSCREEN_CANVAS)

@@ -24,7 +24,6 @@
 #include "config.h"
 #include "FEDisplacementMap.h"
 
-#include "ColorUtilities.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"

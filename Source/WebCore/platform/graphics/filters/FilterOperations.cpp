@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FilterOperations.h"
 
-#include "ColorUtilities.h"
 #include "FEGaussianBlur.h"
 #include "IntSize.h"
 #include "LengthFunctions.h"

@@ -23,47 +23,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ColorUtilities.h"
-
-#include "ColorConversion.h"
-#include "ColorTypes.h"
+#pragma once
 
 namespace WebCore {
 
-float lightness(const SRGBA<float>& color)
-{
-    auto [r, g, b, a] = color;
-    auto [min, max] = std::minmax({ r, g, b });
-    return 0.5f * (max + min);
-}
+template<typename> struct CMYKA;
+template<typename> struct DisplayP3;
+template<typename> struct HSLA;
+template<typename> struct LinearDisplayP3;
+template<typename> struct LinearSRGBA;
+template<typename> struct SRGBA;
 
-float luminance(const SRGBA<float>& color)
-{
-    // NOTE: This is the equivalent of toXYZA(toLinearSRGBA(color)).y
-    // FIMXE: If we can generalize ColorMatrix a bit more, it might be nice to write this as:
-    //      return toLinearSRGBA(color) * linearSRGBToXYZMatrix.row(1);
-    auto [r, g, b, a] = toLinearSRGBA(color);
-    return 0.2126f * r + 0.7152f * g + 0.0722f * b;
-}
+// These are the standard sRGB <-> LinearRGB / DisplayP3 <-> LinearDisplayP3 conversion functions (https://en.wikipedia.org/wiki/SRGB).
+float linearToRGBColorComponent(float);
+float rgbToLinearColorComponent(float);
 
-float contrastRatio(const SRGBA<float>& colorA, const SRGBA<float>& colorB)
-{
-    // Uses the WCAG 2.0 definition of contrast ratio.
-    // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
-    float lighterLuminance = luminance(colorA);
-    float darkerLuminance = luminance(colorB);
+LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
+SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
 
-    if (lighterLuminance < darkerLuminance)
-        std::swap(lighterLuminance, darkerLuminance);
+LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
+DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
 
-    return (lighterLuminance + 0.05) / (darkerLuminance + 0.05);
-}
+SRGBA<float> toSRGBA(const DisplayP3<float>&);
+DisplayP3<float> toDisplayP3(const SRGBA<float>&);
 
-SRGBA<float> premultiplied(const SRGBA<float>& color)
-{
-    auto [r, g, b, a] = color;
-    return { r * a, g * a, b * a, a };
-}
+WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
+
+SRGBA<float> toSRGBA(const CMYKA<float>&);
 
 } // namespace WebCore
