@@ -1,3 +1,18 @@
+2020-07-03  Sam Weinig  <weinig@apple.com>
+
+        Cleanup ApplicationCacheManifestParser.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=213844
+
+        Reviewed by Alex Christensen.
+
+        Address some post review comments.
+
+        * loader/appcache/ApplicationCacheManifestParser.cpp:
+        (WebCore::parseApplicationCacheManifest):
+        Fix typos: manfest -> manifest. 
+        * loader/appcache/ApplicationCacheManifestParser.h:
+        Stop including ApplicationCache.h, and only include / declare what's needed.
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         Support MediaRecorder.onstart

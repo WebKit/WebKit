@@ -25,10 +25,14 @@
 
 #pragma once
 
-#include "ApplicationCache.h"
+#include <utility>
 #include <wtf/HashSet.h>
+#include <wtf/URL.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+using FallbackURLVector = Vector<std::pair<URL, URL>>;
 
 struct ApplicationCacheManifest {
     Vector<URL> onlineAllowedURLs;

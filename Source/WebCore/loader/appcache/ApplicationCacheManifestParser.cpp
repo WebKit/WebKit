@@ -28,7 +28,6 @@
 
 #include "ParsingUtilities.h"
 #include "TextResourceDecoder.h"
-#include <wtf/URL.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
@@ -75,7 +74,7 @@ template<typename CharacterType> static constexpr CharacterType networkModeIdent
 Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length)
 {
     static constexpr const char cacheManifestMIMEType[] = "text/cache-manifest";
-    bool allowFallbackNamespaceOutsideManfestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
+    bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
     auto manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
@@ -203,7 +202,7 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
                 // Although <https://html.spec.whatwg.org/multipage/offline.html#parsing-cache-manifests> (07/06/2017) saids
                 // that we should always prefix match the manifest path we only do so if the manifest was served with a non-
                 // standard HTTP Content-Type header for web compatibility.
-                if (!allowFallbackNamespaceOutsideManfestPath && !namespaceURL.path().startsWith(manifestPath))
+                if (!allowFallbackNamespaceOutsideManifestPath && !namespaceURL.path().startsWith(manifestPath))
                     continue;
 
                 // Skip whitespace separating fallback namespace from URL.
