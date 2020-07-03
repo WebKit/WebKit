@@ -96,4 +96,29 @@ CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::functi
     return rtcPixelBuffer.pixelBuffer;
 }
 
+CVPixelBufferPoolRef createPixelBufferPool(size_t width, size_t height)
+{
+    const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+    auto pixelAttributes = @{
+        (__bridge NSString *)kCVPixelBufferWidthKey: @(width),
+        (__bridge NSString *)kCVPixelBufferHeightKey: @(height),
+        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat),
+        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @NO,
+#if defined(WEBRTC_IOS)
+        (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @YES,
+#else
+        (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
+#endif
+        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
+    };
+
+    CVPixelBufferPoolRef pool = nullptr;
+    auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &pool);
+
+    if (status != kCVReturnSuccess)
+        return nullptr;
+
+    return pool;
+}
+
 }

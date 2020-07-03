@@ -65,6 +65,12 @@ bool LibWebRTCProvider::webRTCAvailable()
 }
 #endif
 
+#if !USE(LIBWEBRTC) || !PLATFORM(COCOA)
+void LibWebRTCProvider::registerWebKitVP9Decoder()
+{
+}
+#endif
+
 void LibWebRTCProvider::setActive(bool)
 {
 }

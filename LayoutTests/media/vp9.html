@@ -1,0 +1,22 @@
+<html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<video id="video" controls src="content/bipbop-vp9.mp4" autoplay playsInline></video>
+<script>
+// FIXME: Add test for MediaSource.isTypeSupported("video/mp4; codecs=vp9")
+
+test(() => {
+    assert_equals(video.canPlayType("video/mp4; codecs=vp9"), "maybe", "canPlayType");
+}, "HTMLMediaElement.canPlay VP9");
+
+promise_test(async() => {
+    if (window.internals && !window.internals.usingAppleInternalSDK())
+        return;
+    await video.play();
+    assert_equals(video.videoWidth, 640);
+    assert_equals(video.videoHeight, 480);
+}, "VP9 decoding");
+</script>
+</body>
+</html>

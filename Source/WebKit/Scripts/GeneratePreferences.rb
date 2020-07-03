@@ -89,6 +89,8 @@ class Preference
   def nameLower
     if @getter
       @getter
+    elsif @name.start_with?("VP")
+      @name[0..1].downcase + @name[2..@name.length]
     elsif @name.start_with?("CSS", "XSS", "FTP", "DOM", "DNS", "PDF", "ICE")
       @name[0..2].downcase + @name[3..@name.length]
     elsif @name.start_with?("HTTP")

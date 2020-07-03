@@ -773,6 +773,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     send(Messages::WebPageProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
 #endif
 
+    if (parameters.shouldEnableVP9Decoder)
+        WebProcess::singleton().enableVP9Decoder();
+
     updateThrottleState();
 }
 

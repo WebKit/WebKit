@@ -328,6 +328,8 @@ public:
     void setUseGPUProcessForMedia(bool);
 #endif
 
+    void enableVP9Decoder();
+
 private:
     WebProcess();
     ~WebProcess();
@@ -639,6 +641,7 @@ private:
 #endif
 
     bool m_useGPUProcessForMedia { false };
+    bool m_vp9DecoderEnabled { false };
 };
 
 } // namespace WebKit

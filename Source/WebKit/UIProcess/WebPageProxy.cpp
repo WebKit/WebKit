@@ -7853,6 +7853,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldCaptureVideoInUIProcess = preferences().captureVideoInUIProcessEnabled();
     parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
     parameters.shouldRenderCanvasInGPUProcess = preferences().renderCanvasInGPUProcessEnabled();
+    parameters.shouldEnableVP9Decoder = preferences().vp9DecoderEnabled();
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
     parameters.limitsNavigationsToAppBoundDomains = m_limitsNavigationsToAppBoundDomains;
     parameters.shouldRelaxThirdPartyCookieBlocking = m_configuration->shouldRelaxThirdPartyCookieBlocking();

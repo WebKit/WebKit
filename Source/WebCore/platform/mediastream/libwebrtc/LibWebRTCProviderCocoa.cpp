@@ -31,6 +31,7 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
 ALLOW_UNUSED_PARAMETERS_END
+#include <webrtc/sdk/WebKit/WebKitVP9Decoder.h>
 #include <wtf/MainThread.h>
 #include <wtf/darwin/WeakLinking.h>
 
@@ -80,6 +81,11 @@ bool LibWebRTCProvider::webRTCAvailable()
 #endif
 }
 
+void LibWebRTCProvider::registerWebKitVP9Decoder()
+{
+    if (webRTCAvailable())
+        webrtc::registerWebKitVP9Decoder();
+}
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

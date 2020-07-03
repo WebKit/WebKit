@@ -651,6 +651,14 @@ WebRTCMDNSICECandidatesEnabled:
   category: internal
   condition: ENABLE(WEB_RTC)
 
+VP9DecoderEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: none
+  humanReadableName: "VP9 decoder"
+  humanReadableDescription: "Enable VP9 decoder"
+  category: experimental
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue: false

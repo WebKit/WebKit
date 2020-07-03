@@ -1947,6 +1947,15 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 }
 #endif
 
+void WebProcess::enableVP9Decoder()
+{
+    if (m_vp9DecoderEnabled)
+        return;
+
+    m_vp9DecoderEnabled = true;
+    LibWebRTCProvider::registerWebKitVP9Decoder();
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

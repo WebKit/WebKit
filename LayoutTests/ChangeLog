@@ -1,5 +1,17 @@
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
+        Allow registering VP9 as a VT decoder
+        https://bugs.webkit.org/show_bug.cgi?id=213837
+        <rdar://problem/64984881>
+
+        Reviewed by Jer Noble.
+
+        * media/content/bipbop-vp9.mp4: Added.
+        * media/vp9-expected.txt: Added.
+        * media/vp9.html: Added.
+
+2020-07-03  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder.start() Method is Ignoring the "timeslice" Parameter
         https://bugs.webkit.org/show_bug.cgi?id=202233
         <rdar://problem/55720555>

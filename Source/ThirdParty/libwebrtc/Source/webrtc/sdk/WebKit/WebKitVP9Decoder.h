@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,8 @@
 
 #pragma once
 
-#include "api/video/video_frame_buffer.h"
-#include "api/scoped_refptr.h"
-#include "api/video_codecs/video_decoder_factory.h"
-#include "api/video_codecs/video_encoder_factory.h"
-#include "media/engine/encoder_simulcast_proxy.h"
-
-using CVPixelBufferRef = struct __CVBuffer*;
-using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
-
 namespace webrtc {
 
-class VideoDecoderFactory;
-class VideoEncoderFactory;
-class VideoFrame;
-
-enum class WebKitH265 { Off, On };
-enum class WebKitVP9 { Off, On };
-
-std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265, WebKitVP9);
-std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265, WebKitVP9);
-
-void setApplicationStatus(bool isActive);
-
-void setH264HardwareEncoderAllowed(bool);
-bool isH264HardwareEncoderAllowed();
-
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t)>&);
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
-
-CVPixelBufferPoolRef createPixelBufferPool(size_t width, size_t height);
+void registerWebKitVP9Decoder();
 
 }

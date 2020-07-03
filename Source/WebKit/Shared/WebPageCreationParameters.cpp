@@ -153,6 +153,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureVideoInGPUProcess;
     encoder << shouldCaptureDisplayInUIProcess;
     encoder << shouldRenderCanvasInGPUProcess;
+    encoder << shouldEnableVP9Decoder;
     encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
     encoder << shouldRelaxThirdPartyCookieBlocking;
@@ -489,6 +490,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldRenderCanvasInGPUProcess))
+        return WTF::nullopt;
+
+    if (!decoder.decode(parameters.shouldEnableVP9Decoder))
         return WTF::nullopt;
 
     if (!decoder.decode(parameters.needsInAppBrowserPrivacyQuirks))

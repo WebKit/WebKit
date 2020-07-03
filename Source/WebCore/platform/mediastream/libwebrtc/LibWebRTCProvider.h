@@ -72,6 +72,7 @@ public:
     virtual ~LibWebRTCProvider() = default;
 
     static bool webRTCAvailable();
+    static void registerWebKitVP9Decoder();
 
     virtual void setActive(bool);
 

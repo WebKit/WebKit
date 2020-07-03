@@ -1,3 +1,38 @@
+2020-07-03  Youenn Fablet  <youenn@apple.com>
+
+        Allow registering VP9 as a VT decoder
+        https://bugs.webkit.org/show_bug.cgi?id=213837
+        <rdar://problem/64984881>
+
+        Reviewed by Jer Noble.
+
+        Implement a method that registers VP9 as a VT decoder.
+        Implement the binding code between VP9DecoderImpl and VT pluggable codec API.
+        Restrict this to internal SDK for now.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::createPixelBufferPool):
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp: Added.
+        (webrtc::registerWebKitVP9Decoder):
+        (webrtc::createWebKitVP9Decoder):
+        (webrtc::invalidateVP9Decoder):
+        (webrtc::finalizeVP9Decoder):
+        (webrtc::copyVP9DecoderDebugDescription):
+        (webrtc::webKitVP9DecoderFromVTDecoder):
+        (webrtc::startVP9DecoderSession):
+        (webrtc::decodeVP9DecoderFrameFromContiguousBlock):
+        (webrtc::decodeVP9DecoderFrame):
+        (webrtc::WebKitVP9DecoderReceiver::WebKitVP9DecoderReceiver):
+        (webrtc::WebKitVP9DecoderReceiver::~WebKitVP9DecoderReceiver):
+        (webrtc::WebKitVP9DecoderReceiver::decoderFailed):
+        (webrtc::WebKitVP9DecoderReceiver::Decoded):
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.h: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Fix the arm64 iOS simulator build
