@@ -1180,22 +1180,22 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGZoomEvent.idl
 )
 
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/gamepad"
+)
+
+list(APPEND WebCore_IDL_INCLUDES
+    Modules/gamepad
+)
+
+list(APPEND WebCore_NON_SVG_IDL_FILES
+    Modules/gamepad/Gamepad.idl
+    Modules/gamepad/GamepadButton.idl
+    Modules/gamepad/GamepadEvent.idl
+    Modules/gamepad/NavigatorGamepad.idl
+)
+
 if (ENABLE_GAMEPAD)
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/Modules/gamepad"
-    )
-
-    list(APPEND WebCore_IDL_INCLUDES
-        Modules/gamepad
-    )
-
-    list(APPEND WebCore_NON_SVG_IDL_FILES
-        Modules/gamepad/Gamepad.idl
-        Modules/gamepad/GamepadButton.idl
-        Modules/gamepad/GamepadEvent.idl
-        Modules/gamepad/NavigatorGamepad.idl
-    )
-
     list(APPEND WebCore_SOURCES
         Modules/gamepad/Gamepad.cpp
         Modules/gamepad/GamepadButton.cpp

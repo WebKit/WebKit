@@ -3009,6 +3009,9 @@ JSGPUVertexAttributeDescriptor.cpp
 JSGPUVertexBufferDescriptor.cpp
 JSGPUVertexInputDescriptor.cpp
 JSGainNode.cpp
+JSGamepad.cpp
+JSGamepadButton.cpp
+JSGamepadEvent.cpp
 JSGeolocation.cpp
 JSGeolocationCoordinates.cpp
 JSGeolocationPosition.cpp
@@ -3194,6 +3197,7 @@ JSNavigatorClipboard.cpp
 JSNavigatorCredentials.cpp
 JSNavigatorGeolocation.cpp
 JSNavigatorGPU.cpp
+JSNavigatorGamepad.cpp
 JSNavigatorID.cpp
 JSNavigatorLanguage.cpp
 JSNavigatorMaxTouchPoints.cpp
@@ -3651,15 +3655,6 @@ JSXRVisibilityState.cpp
 JSWebXRLayer.cpp
 JSWebXRWebGLLayer.cpp
 JSXRWebGLLayerInit.cpp
-
-#endif
-
-#if ENABLE_GAMEPAD
-
-JSGamepad.cpp
-JSGamepadButton.cpp
-JSGamepadEvent.cpp
-JSNavigatorGamepad.cpp
 
 #endif
 
