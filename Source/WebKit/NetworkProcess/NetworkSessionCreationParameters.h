@@ -69,6 +69,8 @@ struct NetworkSessionCreationParameters {
     SandboxExtension::Handle alternativeServiceDirectoryExtensionHandle;
     bool http3Enabled { false };
 #endif
+    String hstsStorageDirectory;
+    SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
 #if USE(SOUP)
     String cookiePersistentStoragePath;
     SoupCookiePersistentStorageType cookiePersistentStorageType { SoupCookiePersistentStorageType::Text };

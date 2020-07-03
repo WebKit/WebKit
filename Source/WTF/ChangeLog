@@ -1,5 +1,14 @@
 2020-07-02  Alex Christensen  <achristensen@webkit.org>
 
+        Make _WKWebsiteDataStoreConfiguration SPI for HSTS storage to replace _WKProcessPoolConfiguration.hstsStorageDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=213048
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/PlatformHave.h:
+
+2020-07-02  Alex Christensen  <achristensen@webkit.org>
+
         Add testing infrastructure and SPI declaration for HTTP/2 ping
         https://bugs.webkit.org/show_bug.cgi?id=213913
 
