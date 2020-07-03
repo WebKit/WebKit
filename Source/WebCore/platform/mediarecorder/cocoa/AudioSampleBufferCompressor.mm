@@ -58,6 +58,10 @@ AudioSampleBufferCompressor::AudioSampleBufferCompressor()
 AudioSampleBufferCompressor::~AudioSampleBufferCompressor()
 {
     dispatch_release(m_serialDispatchQueue);
+    if (m_converter) {
+        AudioConverterDispose(m_converter);
+        m_converter = nullptr;
+    }
 }
 
 bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callback, void* callbackObject)
@@ -112,19 +116,19 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor AudioConverterNew failed with %d", error);
         return false;
     }
-    m_converter = adoptCF(converter);
+    m_converter = converter;
 
     size_t cookieSize = 0;
     const void *cookie = CMAudioFormatDescriptionGetMagicCookie(formatDescription, &cookieSize);
     if (cookieSize) {
-        if (auto error = AudioConverterSetProperty(m_converter.get(), kAudioConverterDecompressionMagicCookie, (UInt32)cookieSize, cookie)) {
+        if (auto error = AudioConverterSetProperty(m_converter, kAudioConverterDecompressionMagicCookie, (UInt32)cookieSize, cookie)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioConverterDecompressionMagicCookie failed with %d", error);
             return false;
         }
     }
 
     size = sizeof(m_sourceFormat);
-    if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioConverterCurrentInputStreamDescription, &size, &m_sourceFormat)) {
+    if (auto error = AudioConverterGetProperty(m_converter, kAudioConverterCurrentInputStreamDescription, &size, &m_sourceFormat)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterCurrentInputStreamDescription failed with %d", error);
         return false;
     }
@@ -135,7 +139,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
     }
 
     size = sizeof(m_destinationFormat);
-    if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioConverterCurrentOutputStreamDescription, &size, &m_destinationFormat)) {
+    if (auto error = AudioConverterGetProperty(m_converter, kAudioConverterCurrentOutputStreamDescription, &size, &m_destinationFormat)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterCurrentOutputStreamDescription failed with %d", error);
         return false;
     }
@@ -149,7 +153,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
             outputBitRate = 32000;
 
         size = sizeof(outputBitRate);
-        if (auto error = AudioConverterSetProperty(m_converter.get(), kAudioConverterEncodeBitRate, size, &outputBitRate)) {
+        if (auto error = AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
             return false;
         }
@@ -159,7 +163,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
         // If the destination format is VBR, we need to get max size per packet from the converter.
         size = sizeof(m_maxOutputPacketSize);
 
-        if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioConverterPropertyMaximumOutputPacketSize, &size, &m_maxOutputPacketSize)) {
+        if (auto error = AudioConverterGetProperty(m_converter, kAudioConverterPropertyMaximumOutputPacketSize, &size, &m_maxOutputPacketSize)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterPropertyMaximumOutputPacketSize failed with %d", error);
             return false;
         }
@@ -189,7 +193,7 @@ void AudioSampleBufferCompressor::attachPrimingTrimsIfNeeded(CMSampleBufferRef b
         AudioConverterPrimeInfo primeInfo { 0, 0 };
         UInt32 size = sizeof(primeInfo);
 
-        if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioConverterPrimeInfo, &size, &primeInfo)) {
+        if (auto error = AudioConverterGetProperty(m_converter, kAudioConverterPrimeInfo, &size, &primeInfo)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterPrimeInfo failed with %d", error);
             return;
         }
@@ -211,25 +215,25 @@ RetainPtr<NSNumber> AudioSampleBufferCompressor::gradualDecoderRefreshCount()
 {
     UInt32 delaySize = sizeof(uint32_t);
     uint32_t originalDelayMode = 0;
-    if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioCodecPropertyDelayMode, &delaySize, &originalDelayMode)) {
+    if (auto error = AudioConverterGetProperty(m_converter, kAudioCodecPropertyDelayMode, &delaySize, &originalDelayMode)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioCodecPropertyDelayMode failed with %d", error);
         return nil;
     }
 
     uint32_t optimalDelayMode = kAudioCodecDelayMode_Optimal;
-    if (auto error = AudioConverterSetProperty(m_converter.get(), kAudioCodecPropertyDelayMode, delaySize, &optimalDelayMode)) {
+    if (auto error = AudioConverterSetProperty(m_converter, kAudioCodecPropertyDelayMode, delaySize, &optimalDelayMode)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioCodecPropertyDelayMode failed with %d", error);
         return nil;
     }
 
     UInt32 primeSize = sizeof(AudioCodecPrimeInfo);
     AudioCodecPrimeInfo primeInfo { 0, 0 };
-    if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioCodecPropertyPrimeInfo, &primeSize, &primeInfo)) {
+    if (auto error = AudioConverterGetProperty(m_converter, kAudioCodecPropertyPrimeInfo, &primeSize, &primeInfo)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioCodecPropertyPrimeInfo failed with %d", error);
         return nil;
     }
 
-    if (auto error = AudioConverterSetProperty(m_converter.get(), kAudioCodecPropertyDelayMode, delaySize, &originalDelayMode)) {
+    if (auto error = AudioConverterSetProperty(m_converter, kAudioCodecPropertyDelayMode, delaySize, &originalDelayMode)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioCodecPropertyDelayMode failed with %d", error);
         return nil;
     }
@@ -242,11 +246,11 @@ CMSampleBufferRef AudioSampleBufferCompressor::sampleBufferWithNumPackets(UInt32
     if (!m_destinationFormatDescription) {
         UInt32 cookieSize = 0;
 
-        auto error = AudioConverterGetPropertyInfo(m_converter.get(), kAudioConverterCompressionMagicCookie, &cookieSize, NULL);
+        auto error = AudioConverterGetPropertyInfo(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, NULL);
         if ((error == noErr) && !!cookieSize) {
             cookie.resize(cookieSize);
 
-            if (auto error = AudioConverterGetProperty(m_converter.get(), kAudioConverterCompressionMagicCookie, &cookieSize, cookie.data())) {
+            if (auto error = AudioConverterGetProperty(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, cookie.data())) {
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterCompressionMagicCookie failed with %d", error);
                 return nil;
             }
@@ -439,7 +443,7 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         UInt32 outputPacketSize = m_destinationFormat.mBytesPerPacket ? m_destinationFormat.mBytesPerPacket : m_maxOutputPacketSize;
         UInt32 numOutputPackets = (UInt32)m_destinationBuffer.capacity() / outputPacketSize;
 
-        auto error = AudioConverterFillComplexBuffer(m_converter.get(), audioConverterComplexInputDataProc, this, &numOutputPackets, &fillBufferList, m_destinationPacketDescriptions.data());
+        auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, &fillBufferList, m_destinationPacketDescriptions.data());
         if (error) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor AudioConverterFillComplexBuffer failed with %d", error);
             return;
