@@ -1,3 +1,20 @@
+2020-07-03  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Bubblewrap sandbox should not attempt to bind empty paths
+        https://bugs.webkit.org/show_bug.cgi?id=202880
+
+        Reviewed by Carlos Garcia Campos.
+
+        If an empty path is set in LD_LIBRARY_PATH (e.g. /foo::/bar), we wind up passing
+        --ro-bind-try   --ro-bind-try to bwrap, where the second --ro-bind-try is treated as the
+        source path to mount, and the next flag we pass gets treated as the destination path. The
+        web process crashes with this confusing error:
+
+        bwrap: Can't create file at /.flatpak-info: Read-only file system
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindIfExists):
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         Allow registering VP9 as a VT decoder
