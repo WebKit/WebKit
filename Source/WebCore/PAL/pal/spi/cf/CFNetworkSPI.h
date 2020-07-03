@@ -67,6 +67,17 @@ WTF_EXTERN_C_END
 
 #else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(PRECONNECT_PING)
+@interface _NSHTTPConnectionInfo : NSObject
+- (void)sendPingWithReceiveHandler:(void (^)(NSError * _Nullable error, NSTimeInterval interval))pongHandler;
+@property (readonly) BOOL isValid;
+@end
+
+@interface NSURLSessionTask (HTTPConnectionInfo)
+- (void)getUnderlyingHTTPConnectionInfoWithCompletionHandler:(void (^)(_NSHTTPConnectionInfo *connectionInfo))completionHandler;
+@end
+#endif // HAVE(PRECONNECT_PING)
+
 #if HAVE(LOGGING_PRIVACY_LEVEL)
 typedef enum {
     nw_context_privacy_level_public = 1,

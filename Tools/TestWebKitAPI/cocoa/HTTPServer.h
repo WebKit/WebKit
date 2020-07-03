@@ -43,7 +43,7 @@ class HTTPServer {
 public:
     struct HTTPResponse;
     struct RequestData;
-    enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS };
+    enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2 };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
 
     HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr);
@@ -67,6 +67,9 @@ private:
 class Connection {
 public:
     void send(String&&, CompletionHandler<void()>&& = nullptr) const;
+    void send(Vector<uint8_t>&&, CompletionHandler<void()>&& = nullptr) const;
+    void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void()>&& = nullptr) const;
+    void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&) const;
     void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
     void terminate() const;
 
@@ -104,6 +107,61 @@ struct HTTPServer::HTTPResponse {
     String body;
     TerminateConnection terminateConnection { TerminateConnection::No };
 };
+
+namespace H2 {
+
+// https://http2.github.io/http2-spec/#rfc.section.4.1
+class Frame {
+public:
+
+    // https://http2.github.io/http2-spec/#rfc.section.6
+    enum class Type : uint8_t {
+        Data = 0x0,
+        Headers = 0x1,
+        Priority = 0x2,
+        RSTStream = 0x3,
+        Settings = 0x4,
+        PushPromise = 0x5,
+        Ping = 0x6,
+        GoAway = 0x7,
+        WindowUpdate = 0x8,
+        Continuation = 0x9,
+    };
+
+    Frame(Type type, uint8_t flags, uint32_t streamID, Vector<uint8_t> payload)
+        : m_type(type)
+        , m_flags(flags)
+        , m_streamID(streamID)
+        , m_payload(WTFMove(payload)) { }
+
+    Type type() const { return m_type; }
+    uint8_t flags() const { return m_flags; }
+    uint32_t streamID() const { return m_streamID; }
+    const Vector<uint8_t>& payload() const { return m_payload; }
+
+private:
+    Type m_type;
+    uint8_t m_flags;
+    uint32_t m_streamID;
+    Vector<uint8_t> m_payload;
+};
+
+class Connection : public RefCounted<Connection> {
+public:
+    static Ref<Connection> create(TestWebKitAPI::Connection tlsConnection) { return adoptRef(*new Connection(tlsConnection)); }
+    void send(Frame&&, CompletionHandler<void()>&& = nullptr) const;
+    void receive(CompletionHandler<void(Frame&&)>&&) const;
+private:
+    Connection(TestWebKitAPI::Connection tlsConnection)
+        : m_tlsConnection(tlsConnection) { }
+
+    TestWebKitAPI::Connection m_tlsConnection;
+    mutable bool m_expectClientConnectionPreface { true };
+    mutable bool m_sendServerConnectionPreface { true };
+    mutable Vector<uint8_t> m_receiveBuffer;
+};
+
+} // namespace H2
 
 } // namespace TestWebKitAPI
 

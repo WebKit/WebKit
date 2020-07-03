@@ -66,6 +66,8 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
                 verifier(metadata, trust, completion);
             }).get(), dispatch_get_main_queue());
         }
+        if (protocol == Protocol::Http2)
+            sec_protocol_options_add_tls_application_protocol(options.get(), "h2");
 #else
         UNUSED_PARAM(protocolOptions);
         ASSERT_UNUSED(protocol, protocol != Protocol::HttpsWithLegacyTLS);
@@ -165,9 +167,19 @@ static RetainPtr<dispatch_data_t> dataFromString(String&& s)
     }));
 }
 
-static Vector<char> vectorFromData(dispatch_data_t content)
+static RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&& v)
 {
-    __block Vector<char> request;
+    auto bufferSize = v.size();
+    auto rawPointer = v.releaseBuffer().leakPtr();
+    return adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
+        fastFree(rawPointer);
+    }));
+}
+
+static Vector<uint8_t> vectorFromData(dispatch_data_t content)
+{
+    ASSERT(content);
+    __block Vector<uint8_t> request;
     dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
         request.append(static_cast<const char*>(buffer), size);
         return true;
@@ -227,18 +239,26 @@ NSURLRequest *HTTPServer::request(const String& path) const
         break;
     case Protocol::Https:
     case Protocol::HttpsWithLegacyTLS:
+    case Protocol::Http2:
         format = @"https://127.0.0.1:%d%s";
         break;
     }
     return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port(), path.utf8().data()]]];
 }
 
-void Connection::receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&& completionHandler, Vector<char>&& buffer) const
+void Connection::receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler) const
 {
-    nw_connection_receive(m_connection.get(), 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = *this, completionHandler = WTFMove(completionHandler), buffer = WTFMove(buffer)](dispatch_data_t content, nw_content_context_t, bool, nw_error_t error) mutable {
+    nw_connection_receive(m_connection.get(), 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = *this, completionHandler = WTFMove(completionHandler)](dispatch_data_t content, nw_content_context_t, bool, nw_error_t error) mutable {
         if (error || !content)
             return completionHandler({ });
-        buffer.appendVector(vectorFromData(content));
+        completionHandler(vectorFromData(content));
+    }).get());
+}
+
+void Connection::receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&& completionHandler, Vector<char>&& buffer) const
+{
+    receiveBytes([connection = *this, completionHandler = WTFMove(completionHandler), buffer = WTFMove(buffer)](Vector<uint8_t>&& bytes) mutable {
+        buffer.appendVector(WTFMove(bytes));
         if (auto* doubleNewline = strnstr(buffer.data(), "\r\n\r\n", buffer.size())) {
             if (auto* contentLengthBegin = strnstr(buffer.data(), "Content-Length", buffer.size())) {
                 size_t contentLength = atoi(contentLengthBegin + strlen("Content-Length: "));
@@ -249,12 +269,22 @@ void Connection::receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&& co
             completionHandler(WTFMove(buffer));
         } else
             connection.receiveHTTPRequest(WTFMove(completionHandler), WTFMove(buffer));
-    }).get());
+    });
 }
 
 void Connection::send(String&& message, CompletionHandler<void()>&& completionHandler) const
 {
-    nw_connection_send(m_connection.get(), dataFromString(WTFMove(message)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTFMove(completionHandler)](nw_error_t error) mutable {
+    send(dataFromString(WTFMove(message)), WTFMove(completionHandler));
+}
+
+void Connection::send(Vector<uint8_t>&& message, CompletionHandler<void()>&& completionHandler) const
+{
+    send(dataFromVector(WTFMove(message)), WTFMove(completionHandler));
+}
+
+void Connection::send(RetainPtr<dispatch_data_t>&& message, CompletionHandler<void()>&& completionHandler) const
+{
+    nw_connection_send(m_connection.get(), message.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTFMove(completionHandler)](nw_error_t error) mutable {
         ASSERT(!error);
         if (completionHandler)
             completionHandler();
@@ -264,6 +294,79 @@ void Connection::send(String&& message, CompletionHandler<void()>&& completionHa
 void Connection::terminate() const
 {
     nw_connection_cancel(m_connection.get());
+}
+
+void H2::Connection::send(Frame&& frame, CompletionHandler<void()>&& completionHandler) const
+{
+    auto frameType = frame.type();
+    auto sendFrame = [tlsConnection = m_tlsConnection, frame = WTFMove(frame), completionHandler = WTFMove(completionHandler)] () mutable {
+        // https://http2.github.io/http2-spec/#rfc.section.4.1
+        Vector<uint8_t> bytes;
+        constexpr size_t frameHeaderLength = 9;
+        bytes.reserveInitialCapacity(frameHeaderLength + frame.payload().size());
+        bytes.uncheckedAppend(frame.payload().size() >> 16);
+        bytes.uncheckedAppend(frame.payload().size() >> 8);
+        bytes.uncheckedAppend(frame.payload().size() >> 0);
+        bytes.uncheckedAppend(static_cast<uint8_t>(frame.type()));
+        bytes.uncheckedAppend(frame.flags());
+        bytes.uncheckedAppend(frame.streamID() >> 24);
+        bytes.uncheckedAppend(frame.streamID() >> 16);
+        bytes.uncheckedAppend(frame.streamID() >> 8);
+        bytes.uncheckedAppend(frame.streamID() >> 0);
+        bytes.appendVector(frame.payload());
+        tlsConnection.send(WTFMove(bytes), WTFMove(completionHandler));
+    };
+
+    if (m_sendServerConnectionPreface && frameType != Frame::Type::Settings) {
+        // https://http2.github.io/http2-spec/#rfc.section.3.5
+        m_sendServerConnectionPreface = false;
+        send(Frame(Frame::Type::Settings, 0, 0, { }), WTFMove(sendFrame));
+    } else
+        sendFrame();
+}
+
+void H2::Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandler) const
+{
+    if (m_expectClientConnectionPreface) {
+        // https://http2.github.io/http2-spec/#rfc.section.3.5
+        constexpr size_t clientConnectionPrefaceLength = 24;
+        if (m_receiveBuffer.size() < clientConnectionPrefaceLength) {
+            m_tlsConnection.receiveBytes([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
+                m_receiveBuffer.appendVector(bytes);
+                receive(WTFMove(completionHandler));
+            });
+            return;
+        }
+        ASSERT(!memcmp(m_receiveBuffer.data(), "PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n", clientConnectionPrefaceLength));
+        m_receiveBuffer.remove(0, clientConnectionPrefaceLength);
+        m_expectClientConnectionPreface = false;
+        return receive(WTFMove(completionHandler));
+    }
+
+    // https://http2.github.io/http2-spec/#rfc.section.4.1
+    constexpr size_t frameHeaderLength = 9;
+    if (m_receiveBuffer.size() >= frameHeaderLength) {
+        uint32_t payloadLength = (static_cast<uint32_t>(m_receiveBuffer[0]) << 16)
+            + (static_cast<uint32_t>(m_receiveBuffer[1]) << 8)
+            + (static_cast<uint32_t>(m_receiveBuffer[2]) << 0);
+        if (m_receiveBuffer.size() >= frameHeaderLength + payloadLength) {
+            auto type = static_cast<Frame::Type>(m_receiveBuffer[3]);
+            auto flags = m_receiveBuffer[4];
+            auto streamID = (static_cast<uint32_t>(m_receiveBuffer[5]) << 24)
+                + (static_cast<uint32_t>(m_receiveBuffer[6]) << 16)
+                + (static_cast<uint32_t>(m_receiveBuffer[7]) << 8)
+                + (static_cast<uint32_t>(m_receiveBuffer[8]) << 0);
+            Vector<uint8_t> payload;
+            payload.append(m_receiveBuffer.data() + frameHeaderLength, payloadLength);
+            m_receiveBuffer.remove(0, frameHeaderLength + payloadLength);
+            return completionHandler(Frame(type, flags, streamID, WTFMove(payload)));
+        }
+    }
+    
+    m_tlsConnection.receiveBytes([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
+        m_receiveBuffer.appendVector(bytes);
+        receive(WTFMove(completionHandler));
+    });
 }
 
 } // namespace TestWebKitAPI

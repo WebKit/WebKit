@@ -1,3 +1,33 @@
+2020-07-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add testing infrastructure and SPI declaration for HTTP/2 ping
+        https://bugs.webkit.org/show_bug.cgi?id=213913
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Preconnect.mm:
+        (-[SessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (TestWebKitAPI::pingPong):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::H2::Frame::Frame):
+        (TestWebKitAPI::H2::Frame::type const):
+        (TestWebKitAPI::H2::Frame::flags const):
+        (TestWebKitAPI::H2::Frame::streamID const):
+        (TestWebKitAPI::H2::Frame::payload const):
+        (TestWebKitAPI::H2::Connection::create):
+        (TestWebKitAPI::H2::Connection::Connection):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::listenerParameters):
+        (TestWebKitAPI::dataFromVector):
+        (TestWebKitAPI::vectorFromData):
+        (TestWebKitAPI::HTTPServer::request const):
+        (TestWebKitAPI::Connection::receiveBytes const):
+        (TestWebKitAPI::Connection::receiveHTTPRequest const):
+        (TestWebKitAPI::Connection::send const):
+        (TestWebKitAPI::H2::Connection::send const):
+        (TestWebKitAPI::H2::Connection::receive const):
+
 2020-07-02  Kate Cheney  <katherine_cheney@apple.com>
 
         Custom URL schemes should be treated as app-bound
