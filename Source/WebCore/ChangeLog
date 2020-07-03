@@ -1,3 +1,19 @@
+2020-07-02  Brady Eidson  <beidson@apple.com>
+
+        GameController.framework soft linking refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=213909
+
+        Reviewed by Tim Horton.
+
+        No new tests (No behavior changes)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::startMonitoringGamepads):
+        * platform/gamepad/cocoa/GameControllerSPI.h: Added.
+        * platform/gamepad/cocoa/GameControllerSoftLink.h: Added.
+        * platform/gamepad/cocoa/GameControllerSoftLink.mm: Added.
+
 2020-07-02  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r260276): menu items in footer of https://salo.ai are invisible until you hover or resize

@@ -1408,6 +1408,7 @@
 		512DD8F80D91E6AF000F89EE /* ArchiveResourceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8EE0D91E6AF000F89EE /* ArchiveResourceCollection.h */; };
 		512DD8FC0D91E6AF000F89EE /* ArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F20D91E6AF000F89EE /* ArchiveResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512DD8FD0D91E6AF000F89EE /* ArchiveFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */; };
+		5130F2F624AEA60A00E1D0A0 /* GameControllerSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5130F2F424AEA60300E1D0A0 /* GameControllerSoftLink.mm */; };
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		51405C89190B014400754F94 /* SelectionRectGatherer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51405C87190B014400754F94 /* SelectionRectGatherer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8223,6 +8224,9 @@
 		512DD8F20D91E6AF000F89EE /* ArchiveResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveResource.h; sourceTree = "<group>"; };
 		512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveFactory.h; sourceTree = "<group>"; };
 		512F1A771C07EA0D00908239 /* IDBGetResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBGetResult.cpp; sourceTree = "<group>"; };
+		5130F2F224AEA60200E1D0A0 /* GameControllerSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerSoftLink.h; sourceTree = "<group>"; };
+		5130F2F424AEA60300E1D0A0 /* GameControllerSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameControllerSoftLink.mm; sourceTree = "<group>"; };
+		5130F2F524AEA60300E1D0A0 /* GameControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerSPI.h; sourceTree = "<group>"; };
 		51327D5E11A33A2B004F9D65 /* SinkDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinkDocument.h; sourceTree = "<group>"; };
 		51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinkDocument.cpp; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
@@ -19711,6 +19715,9 @@
 				51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */,
 				51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */,
 				51E398FF1D6E474B009C8831 /* GameControllerGamepadProvider.mm */,
+				5130F2F224AEA60200E1D0A0 /* GameControllerSoftLink.h */,
+				5130F2F424AEA60300E1D0A0 /* GameControllerSoftLink.mm */,
+				5130F2F524AEA60300E1D0A0 /* GameControllerSPI.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -34915,6 +34922,7 @@
 				DE5F84321FA186E9006DB63A /* UnifiedSource329.cpp in Sources */,
 				DE5F84331FA186E9006DB63A /* UnifiedSource330.cpp in Sources */,
 				DE5F84341FA186E9006DB63A /* UnifiedSource331.cpp in Sources */,
+				5130F2F624AEA60A00E1D0A0 /* GameControllerSoftLink.mm in Sources */,
 				DE5F84351FA186E9006DB63A /* UnifiedSource332.cpp in Sources */,
 				DE5F84361FA186E9006DB63A /* UnifiedSource333.cpp in Sources */,
 				DE5F84371FA186E9006DB63A /* UnifiedSource334.cpp in Sources */,

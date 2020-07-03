@@ -29,16 +29,11 @@
 #if ENABLE(GAMEPAD)
 
 #import "GameControllerGamepad.h"
+#import "GameControllerSoftLink.h"
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import <GameController/GameController.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(GameController)
-SOFT_LINK_CLASS_OPTIONAL(GameController, GCController);
-SOFT_LINK_CONSTANT_MAY_FAIL(GameController, GCControllerDidConnectNotification, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(GameController, GCControllerDidDisconnectNotification, NSString *)
 
 namespace WebCore {
 
@@ -106,14 +101,14 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
     if (m_connectObserver)
         return;
 
-    if (canLoadGCControllerDidConnectNotification()) {
-        m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:getGCControllerDidConnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+    if (canLoad_GameController_GCControllerDidConnectNotification()) {
+        m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidConnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             GameControllerGamepadProvider::singleton().controllerDidConnect(notification.object, ConnectionVisibility::Visible);
         }];
     }
 
-    if (canLoadGCControllerDidDisconnectNotification()) {
-        m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:getGCControllerDidDisconnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+    if (canLoad_GameController_GCControllerDidDisconnectNotification()) {
+        m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidDisconnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             GameControllerGamepadProvider::singleton().controllerDidDisconnect(notification.object);
         }];
     }
