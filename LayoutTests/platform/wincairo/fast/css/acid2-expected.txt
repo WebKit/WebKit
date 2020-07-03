@@ -8,9 +8,9 @@ layer at (0,0) size 800x4094
           text run at (12,46) width 134: "Hello World!"
 layer at (36,2668) size 764x226
   RenderBlock (relative positioned) {DIV} at (36,2584) size 764x226 [border: (12px solid #00000000)]
-    RenderTable {TABLE} at (12,12) size 1x0
-      RenderTableSection {TBODY} at (0,0) size 1x0
-        RenderTableRow {TR} at (0,0) size 1x0
+    RenderTable {TABLE} at (12,12) size 0x0
+      RenderTableSection {TBODY} at (0,0) size 0x0
+        RenderTableRow {TR} at (0,0) size 0x0
           RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x12

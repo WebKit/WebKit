@@ -1,3 +1,14 @@
+2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/fast/css/acid2-expected.txt:
+        * platform/wincairo/fast/css/acid2-pixel-expected.txt:
+        * platform/wincairo/fast/css/percentage-non-integer-expected.txt:
+        * platform/wincairo/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/wincairo/http/tests/misc/acid2-expected.txt:
+        * platform/wincairo/http/tests/misc/acid2-pixel-expected.txt:
+
 2020-07-02  Karl Rackler  <rackler@apple.com>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html is flaky failing

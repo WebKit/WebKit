@@ -56,30 +56,30 @@ layer at (0,0) size 800x585
           RenderBlock {DIV} at (0,0) size 101x4 [bgcolor=#00000080]
       RenderBlock (anonymous) at (0,100) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-layer at (8,128) size 293x20
-  RenderTable {TABLE} at (0,0) size 293x20
-    RenderTableSection {TBODY} at (0,0) size 293x20
-      RenderTableRow {TR} at (0,0) size 293x20
-        RenderTableCell {TD} at (0,10) size 12x0 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-        RenderTableCell {TD} at (11,10) size 11x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
-        RenderTableCell {TD} at (21,10) size 14x0 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
-        RenderTableCell {TD} at (34,10) size 11x0 [bgcolor=#000000] [r=0 c=3 rs=1 cs=1]
-        RenderTableCell {TD} at (44,10) size 16x0 [bgcolor=#00FF00] [r=0 c=4 rs=1 cs=1]
-        RenderTableCell {TD} at (59,10) size 11x0 [bgcolor=#000000] [r=0 c=5 rs=1 cs=1]
-        RenderTableCell {TD} at (69,10) size 18x0 [bgcolor=#00FF00] [r=0 c=6 rs=1 cs=1]
-        RenderTableCell {TD} at (86,10) size 11x0 [bgcolor=#000000] [r=0 c=7 rs=1 cs=1]
-        RenderTableCell {TD} at (96,10) size 21x0 [bgcolor=#00FF00] [r=0 c=8 rs=1 cs=1]
-        RenderTableCell {TD} at (116,10) size 11x0 [bgcolor=#000000] [r=0 c=9 rs=1 cs=1]
-        RenderTableCell {TD} at (126,10) size 22x0 [bgcolor=#00FF00] [r=0 c=10 rs=1 cs=1]
-        RenderTableCell {TD} at (147,10) size 11x0 [bgcolor=#000000] [r=0 c=11 rs=1 cs=1]
-        RenderTableCell {TD} at (157,10) size 24x0 [bgcolor=#00FF00] [r=0 c=12 rs=1 cs=1]
-        RenderTableCell {TD} at (180,10) size 11x0 [bgcolor=#000000] [r=0 c=13 rs=1 cs=1]
-        RenderTableCell {TD} at (190,10) size 26x0 [bgcolor=#00FF00] [r=0 c=14 rs=1 cs=1]
-        RenderTableCell {TD} at (215,10) size 11x0 [bgcolor=#000000] [r=0 c=15 rs=1 cs=1]
-        RenderTableCell {TD} at (225,10) size 29x0 [bgcolor=#00FF00] [r=0 c=16 rs=1 cs=1]
-        RenderTableCell {TD} at (253,10) size 11x0 [bgcolor=#000000] [r=0 c=17 rs=1 cs=1]
-        RenderTableCell {TD} at (263,10) size 31x0 [bgcolor=#00FF00] [r=0 c=18 rs=1 cs=1]
-        RenderTableCell {TD} at (293,10) size 0x0 [r=0 c=19 rs=1 cs=1]
+layer at (8,128) size 292x20
+  RenderTable {TABLE} at (0,0) size 292x20
+    RenderTableSection {TBODY} at (0,0) size 292x20
+      RenderTableRow {TR} at (0,0) size 292x20
+        RenderTableCell {TD} at (0,10) size 11x0 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (11,10) size 10x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+        RenderTableCell {TD} at (21,10) size 13x0 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
+        RenderTableCell {TD} at (34,10) size 10x0 [bgcolor=#000000] [r=0 c=3 rs=1 cs=1]
+        RenderTableCell {TD} at (44,10) size 15x0 [bgcolor=#00FF00] [r=0 c=4 rs=1 cs=1]
+        RenderTableCell {TD} at (59,10) size 10x0 [bgcolor=#000000] [r=0 c=5 rs=1 cs=1]
+        RenderTableCell {TD} at (69,10) size 17x0 [bgcolor=#00FF00] [r=0 c=6 rs=1 cs=1]
+        RenderTableCell {TD} at (86,10) size 10x0 [bgcolor=#000000] [r=0 c=7 rs=1 cs=1]
+        RenderTableCell {TD} at (96,10) size 20x0 [bgcolor=#00FF00] [r=0 c=8 rs=1 cs=1]
+        RenderTableCell {TD} at (116,10) size 10x0 [bgcolor=#000000] [r=0 c=9 rs=1 cs=1]
+        RenderTableCell {TD} at (126,10) size 21x0 [bgcolor=#00FF00] [r=0 c=10 rs=1 cs=1]
+        RenderTableCell {TD} at (147,10) size 10x0 [bgcolor=#000000] [r=0 c=11 rs=1 cs=1]
+        RenderTableCell {TD} at (157,10) size 23x0 [bgcolor=#00FF00] [r=0 c=12 rs=1 cs=1]
+        RenderTableCell {TD} at (180,10) size 10x0 [bgcolor=#000000] [r=0 c=13 rs=1 cs=1]
+        RenderTableCell {TD} at (190,10) size 25x0 [bgcolor=#00FF00] [r=0 c=14 rs=1 cs=1]
+        RenderTableCell {TD} at (215,10) size 10x0 [bgcolor=#000000] [r=0 c=15 rs=1 cs=1]
+        RenderTableCell {TD} at (225,10) size 27x0 [bgcolor=#00FF00] [r=0 c=16 rs=1 cs=1]
+        RenderTableCell {TD} at (252,10) size 10x0 [bgcolor=#000000] [r=0 c=17 rs=1 cs=1]
+        RenderTableCell {TD} at (262,10) size 30x0 [bgcolor=#00FF00] [r=0 c=18 rs=1 cs=1]
+        RenderTableCell {TD} at (292,10) size 0x0 [r=0 c=19 rs=1 cs=1]
 layer at (8,128) size 1000x20
   RenderTable {TABLE} at (0,0) size 1000x20
     RenderTableSection {TBODY} at (0,0) size 1000x20
