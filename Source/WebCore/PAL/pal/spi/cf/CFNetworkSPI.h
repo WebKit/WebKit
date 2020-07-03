@@ -241,9 +241,6 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (nullable, retain) _NSHTTPAlternativeServicesStorage *_alternativeServicesStorage;
 @property (readonly, assign) BOOL _allowsHTTP3;
 #endif
-#if HAVE(HSTS_STORAGE)
-@property (nullable, retain) _NSHSTSStorage *_hstsStorage;
-#endif
 @end
 
 @interface NSURLSessionTask ()
@@ -307,16 +304,6 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
 
 extern NSString * const NSURLAuthenticationMethodOAuth;
-
-#if HAVE(HSTS_STORAGE)
-@interface _NSHSTSStorage : NSObject
--(instancetype)initPersistentStoreWithURL:(nullable NSURL*)path;
--(BOOL)shouldPromoteHostToHTTPS:(NSString *)host;
--(NSArray<NSString *> *)nonPreloadedHosts;
--(void)resetHSTSForHost:(NSString *)host;
--(void)resetHSTSHostsSinceDate:(NSDate *)date;
-@end
-#endif
 
 #endif // defined(__OBJC__)
 
@@ -431,7 +418,7 @@ WTF_EXTERN_C_BEGIN
 CFDataRef _CFNetworkCopyATSContext(void);
 Boolean _CFNetworkSetATSContext(CFDataRef);
 
-#if PLATFORM(COCOA) && !HAVE(HSTS_STORAGE)
+#if PLATFORM(COCOA)
 extern const CFStringRef _kCFNetworkHSTSPreloaded;
 CFDictionaryRef _CFNetworkCopyHSTSPolicies(CFURLStorageSessionRef);
 void _CFNetworkResetHSTS(CFURLRef, CFURLStorageSessionRef);

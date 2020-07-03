@@ -33,7 +33,6 @@ OBJC_CLASS NSURLSessionDownloadTask;
 OBJC_CLASS NSOperationQueue;
 OBJC_CLASS WKNetworkSessionDelegate;
 OBJC_CLASS WKNetworkSessionWebSocketDelegate;
-OBJC_CLASS _NSHSTSStorage;
 
 #include "DownloadID.h"
 #include "NetworkDataTaskCocoa.h"
@@ -105,7 +104,6 @@ public:
     void taskServerConnectionSucceeded(NetworkDataTaskCocoa::TaskIdentifier);
     void taskFailed(NetworkDataTaskCocoa::TaskIdentifier);
     NSURLCredential *successfulClientCertificateForHost(const String& host, uint16_t port) const;
-    _NSHSTSStorage *hstsStorage() const;
 
 private:
     void invalidateAndCancel() override;

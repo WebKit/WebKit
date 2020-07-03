@@ -27,7 +27,6 @@
 #define WKContextPrivateMac_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKPluginLoadPolicy.h>
 
 #ifdef __cplusplus
@@ -44,8 +43,10 @@ WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRe
 typedef void (^WKContextGetInfoForInstalledPlugInsBlock)(WKArrayRef, WKErrorRef);
 WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKContextGetInfoForInstalledPlugInsBlock block);
 
-WK_EXPORT void WKContextResetHSTSHosts(WKContextRef context) WK_C_API_DEPRECATED;
-WK_EXPORT void WKContextResetHSTSHostsAddedAfterDate(WKContextRef context, double startDateIntervalSince1970) WK_C_API_DEPRECATED;
+WK_EXPORT void WKContextResetHSTSHosts(WKContextRef context);
+
+// The time here is relative to the Unix epoch.
+WK_EXPORT void WKContextResetHSTSHostsAddedAfterDate(WKContextRef context, double startDateIntervalSince1970);
 
 WK_EXPORT void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme);
 WK_EXPORT void WKContextUnregisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme);

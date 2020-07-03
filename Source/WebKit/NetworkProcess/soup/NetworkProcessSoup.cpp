@@ -94,23 +94,21 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
     return builder.toString().utf8();
 }
 
-HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
+void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& storageSession, HashSet<String>& hostNames)
 {
-    HashSet<String> hostNames;
-    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(sessionID));
+    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(storageSession.sessionID()));
     session->soupNetworkSession().getHostNamesWithHSTSCache(hostNames);
-    return hostNames;
 }
 
-void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<String>& hostNames)
+void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& storageSession, const Vector<String>& hostNames)
 {
-    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(sessionID));
+    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(storageSession.sessionID()));
     session->soupNetworkSession().deleteHSTSCacheForHostNames(hostNames);
 }
 
-void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedSince)
+void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& storageSession, WallTime modifiedSince)
 {
-    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(sessionID));
+    const auto* session = static_cast<NetworkSessionSoup*>(networkSession(storageSession.sessionID()));
     session->soupNetworkSession().clearHSTSCache(modifiedSince);
 }
 

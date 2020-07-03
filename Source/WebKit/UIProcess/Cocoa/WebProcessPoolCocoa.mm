@@ -728,11 +728,36 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 }
 
+static CFURLStorageSessionRef privateBrowsingSession()
+{
+    static CFURLStorageSessionRef session;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        NSString *identifier = [NSString stringWithFormat:@"%@.PrivateBrowsing", [[NSBundle mainBundle] bundleIdentifier]];
+        session = createPrivateStorageSession((__bridge CFStringRef)identifier);
+    });
+
+    return session;
+}
+
 bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 {
     RetainPtr<CFURLRef> url = URL(URL(), urlString).createCFURL();
 
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
+}
+
+void WebProcessPool::resetHSTSHosts()
+{
+    _CFNetworkResetHSTSHostsWithSession(nullptr);
+    _CFNetworkResetHSTSHostsWithSession(privateBrowsingSession());
+}
+
+void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970)
+{
+    NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startDateIntervalSince1970];
+    _CFNetworkResetHSTSHostsSinceDate(nullptr, (__bridge CFDateRef)startDate);
+    _CFNetworkResetHSTSHostsSinceDate(privateBrowsingSession(), (__bridge CFDateRef)startDate);
 }
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

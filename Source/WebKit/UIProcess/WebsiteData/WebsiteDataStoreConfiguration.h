@@ -66,10 +66,10 @@ public:
 
     const String& webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
     void setWebSQLDatabaseDirectory(String&& directory) { m_webSQLDatabaseDirectory = WTFMove(directory); }
-
+#if USE(GLIB) // According to r245075 this will eventually move here.
     const String& hstsStorageDirectory() const { return m_hstsStorageDirectory; }
     void setHSTSStorageDirectory(String&& directory) { m_hstsStorageDirectory = WTFMove(directory); }
-
+#endif
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(String&& directory) { m_localStorageDirectory = WTFMove(directory); }
 
@@ -174,8 +174,8 @@ private:
     String m_indexedDBDatabaseDirectory;
     String m_serviceWorkerRegistrationDirectory;
     String m_webSQLDatabaseDirectory;
-    String m_hstsStorageDirectory;
 #if USE(GLIB)
+    String m_hstsStorageDirectory;
     bool m_networkCacheSpeculativeValidationEnabled { true };
 #else
     bool m_networkCacheSpeculativeValidationEnabled { false };
