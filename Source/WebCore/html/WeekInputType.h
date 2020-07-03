@@ -44,8 +44,8 @@ private:
     const AtomString& formControlType() const override;
     DateComponents::Type dateType() const override;
     StepRange createStepRange(AnyStepHandling) const override;
-    bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
-    bool setMillisecondToDateComponents(double, DateComponents*) const override;
+    Optional<DateComponents> parseToDateComponents(const StringView&) const override;
+    Optional<DateComponents> setMillisecondToDateComponents(double) const override;
     bool isWeekField() const override;
 };
 

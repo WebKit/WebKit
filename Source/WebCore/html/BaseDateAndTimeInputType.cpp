@@ -78,7 +78,7 @@ ExceptionOr<void> BaseDateAndTimeInputType::setValueAsDecimal(const Decimal& new
 
 bool BaseDateAndTimeInputType::typeMismatchFor(const String& value) const
 {
-    return !value.isEmpty() && !parseToDateComponents(value, 0);
+    return !value.isEmpty() && !parseToDateComponents(value);
 }
 
 bool BaseDateAndTimeInputType::typeMismatch() const
@@ -110,32 +110,22 @@ void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
 {
-    DateComponents date;
-    if (!parseToDateComponents(source, &date))
+    auto date = parseToDateComponents(source);
+    if (!date)
         return defaultValue;
-    double msec = date.millisecondsSinceEpoch();
+    double msec = date->millisecondsSinceEpoch();
     ASSERT(std::isfinite(msec));
     return Decimal::fromDouble(msec);
-}
-
-bool BaseDateAndTimeInputType::parseToDateComponents(const String& source, DateComponents* out) const
-{
-    if (source.isEmpty())
-        return false;
-    DateComponents ignoredResult;
-    if (!out)
-        out = &ignoredResult;
-    return parseToDateComponentsInternal(StringView(source).upconvertedCharacters(), source.length(), out);
 }
 
 String BaseDateAndTimeInputType::serialize(const Decimal& value) const
 {
     if (!value.isFinite())
-        return String();
-    DateComponents date;
-    if (!setMillisecondToDateComponents(value.toDouble(), &date))
-        return String();
-    return serializeWithComponents(date);
+        return { };
+    auto date = setMillisecondToDateComponents(value.toDouble());
+    if (!date)
+        return { };
+    return serializeWithComponents(*date);
 }
 
 String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& date) const
@@ -158,12 +148,12 @@ String BaseDateAndTimeInputType::serializeWithMilliseconds(double value) const
 
 String BaseDateAndTimeInputType::localizeValue(const String& proposedValue) const
 {
-    DateComponents date;
-    if (!parseToDateComponents(proposedValue, &date))
+    auto date = parseToDateComponents(proposedValue);
+    if (!date)
         return proposedValue;
 
     ASSERT(element());
-    String localized = element()->locale().formatDateTime(date);
+    String localized = element()->locale().formatDateTime(*date);
     return localized.isEmpty() ? proposedValue : localized;
 }
 

@@ -65,17 +65,14 @@ StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, weekStepDescription);
 }
 
-bool WeekInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
+Optional<DateComponents> WeekInputType::parseToDateComponents(const StringView& source) const
 {
-    ASSERT(out);
-    unsigned end;
-    return out->parseWeek(characters, length, 0, end) && end == length;
+    return DateComponents::fromParsingWeek(source);
 }
 
-bool WeekInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
+Optional<DateComponents> WeekInputType::setMillisecondToDateComponents(double value) const
 {
-    ASSERT(date);
-    return date->setMillisecondsSinceEpochForWeek(value);
+    return DateComponents::fromMillisecondsSinceEpochForWeek(value);
 }
 
 bool WeekInputType::isWeekField() const
