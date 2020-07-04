@@ -1,3 +1,13 @@
+2020-07-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Rebaseline imported dom/idlharness tests after r263903
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2020-07-03  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/dom & web-platform-tests/html/infrastructure from upstream

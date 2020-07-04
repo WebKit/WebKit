@@ -467,7 +467,7 @@ PASS Stringification of new MessageEvent("message", { data: 5 })
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "data" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "origin" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "lastEventId" with the proper type 
-FAIL MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "source" with the proper type Unrecognized type WindowProxy
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "source" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "ports" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "initMessageEvent(DOMString, optional boolean, optional boolean, optional any, optional USVString, optional DOMString, optional MessageEventSource?, optional sequence<MessagePort>)" with the proper type 
 PASS MessageEvent interface: calling initMessageEvent(DOMString, optional boolean, optional boolean, optional any, optional USVString, optional DOMString, optional MessageEventSource?, optional sequence<MessagePort>) on new MessageEvent("message", { data: 5 }) with too few arguments must throw TypeError 
