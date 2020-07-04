@@ -56,6 +56,10 @@ public:
     Rect rect() const { return { top(), left(), width(), height() }; }
     Rect rectWithMargin() const;
 
+    struct HorizontalMargin {
+        LayoutUnit start;
+        LayoutUnit end;
+    };
     struct VerticalMargin {
         LayoutUnit before() const { return m_collapsedValues.before.valueOr(m_nonCollapsedValues.before); }
         LayoutUnit after() const { return m_collapsedValues.after.valueOr(m_nonCollapsedValues.after); }
@@ -90,15 +94,6 @@ public:
     private:
         NonCollapsedValues m_nonCollapsedValues;
         CollapsedValues m_collapsedValues;
-    };
-
-    struct HorizontalMargin {
-        HorizontalMargin() = default;
-        HorizontalMargin(Layout::UsedHorizontalMargin);
-        HorizontalMargin(LayoutUnit, LayoutUnit);
-
-        LayoutUnit start;
-        LayoutUnit end;
     };
     VerticalMargin verticalMargin() const;
     HorizontalMargin horizontalMargin() const;
@@ -251,18 +246,6 @@ inline Box::VerticalMargin::CollapsedValues::CollapsedValues(Layout::UsedVertica
     : before(collapsedValues.before)
     , after(collapsedValues.after)
     , isCollapsedThrough(collapsedValues.isCollapsedThrough)
-{
-}
-
-inline Box::HorizontalMargin::HorizontalMargin(Layout::UsedHorizontalMargin horizontalMargin)
-    : start(horizontalMargin.start)
-    , end(horizontalMargin.end)
-{
-}
-
-inline Box::HorizontalMargin::HorizontalMargin(LayoutUnit start, LayoutUnit end)
-    : start(start)
-    , end(end)
 {
 }
 

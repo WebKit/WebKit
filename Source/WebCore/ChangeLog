@@ -1,5 +1,25 @@
 2020-07-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove redundant Display::Box::HorizontalMargin c'tors
+        https://bugs.webkit.org/show_bug.cgi?id=213957
+
+        Reviewed by Antti Koivisto.
+
+        Let's just have a very simple Display::Box:HorizontalMargin struct.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::HorizontalMargin::HorizontalMargin): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+
+2020-07-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Do not cache computed horizontal margin values
         https://bugs.webkit.org/show_bug.cgi?id=213956
 
