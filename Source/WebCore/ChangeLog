@@ -1,5 +1,17 @@
 2020-07-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Remove redundant out-of-flow height-and-margin handling
+        https://bugs.webkit.org/show_bug.cgi?id=213959
+
+        Reviewed by Antti Koivisto.
+
+        We will never end up here with an out-of-flow box.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+
+2020-07-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Store used vertical margin values in the formatting state
         https://bugs.webkit.org/show_bug.cgi?id=213958
 

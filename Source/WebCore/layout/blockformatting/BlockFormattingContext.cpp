@@ -373,15 +373,6 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     auto verticalMargin = UsedVerticalMargin { contentHeightAndMargin.nonCollapsedMargin, collapsedAndPositiveNegativeValues.collapsedValues };
     formattingState().setUsedVerticalMargin(layoutBox, verticalMargin);
 
-    // Out of flow boxes don't need vertical adjustment after margin collapsing.
-    if (layoutBox.isOutOfFlowPositioned()) {
-        ASSERT(!hasPrecomputedMarginBefore(layoutBox));
-        auto& displayBox = formattingState().displayBox(layoutBox);
-        displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
-        displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin.before, contentHeightAndMargin.nonCollapsedMargin.after });
-        return;
-    }
-
 #if ASSERT_ENABLED
     if (hasPrecomputedMarginBefore(layoutBox) && precomputedMarginBefore(layoutBox).usedValue() != marginBefore(verticalMargin)) {
         // When the pre-computed margin turns out to be incorrect, we need to re-layout this subtree with the correct margin values.
