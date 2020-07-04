@@ -1,3 +1,20 @@
+2020-07-03  Darin Adler  <darin@apple.com>
+
+        WebCore/Sources.txt: Remove all remaining #if (ENABLE_WEBGL and ENABLE_WEBXR)
+        https://bugs.webkit.org/show_bug.cgi?id=213946
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Move IDL-related ENABLE_WEBGL and ENABLE_WEBXR items out of if blocks.
+        Longer term, I think our direction should be to remove most feature conditionals from
+        CMakeLists.txt too, just like I am doing for Sources.txt. But for now, doing just enough
+        of this to keep the build working. Someone can tidy this later as desired.
+
+        * Sources.txt: Remove all remaining #if, and sort files, getting rid of paragraphing
+        per directory to just turn this into three sorted lists of filenames (separate ones for
+        derived sources and generated bindings at the end). The source files themselves have the
+        appropriate conditionals and soon we will not need to support #if in Sources.txt files.
+
 2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Unreviewed stack-overflow crash fix for r263890
