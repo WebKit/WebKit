@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static String mimeTypeForExtension(const String& extension)
+static String mimeTypeForExtensionFromRegistry(const String& extension)
 {
     String ext = "." + extension;
     WCHAR contentTypeStr[256];
@@ -102,7 +102,7 @@ String MIMETypeRegistry::mimeTypeForExtension(const String &ext)
     }
     String result = mimetypeMap.get(ext);
     if (result.isEmpty()) {
-        result = mimeTypeForExtension(ext);
+        result = mimeTypeForExtensionFromRegistry(ext);
         if (!result.isEmpty())
             mimetypeMap.add(ext, result);
     }

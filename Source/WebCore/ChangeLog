@@ -1,5 +1,18 @@
 2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] Unreviewed stack-overflow crash fix for r263890
+        https://bugs.webkit.org/show_bug.cgi?id=213912
+        <rdar://problem/65069686>
+
+        Renamed mimeTypeForExtension to mimeTypeForExtensionFromRegistry.
+
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::mimeTypeForExtensionFromRegistry):
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        (WebCore::mimeTypeForExtension): Deleted.
+
+2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win] Unreviewed build fix for r263913
         https://bugs.webkit.org/show_bug.cgi?id=213939
         <rdar://problem/65084185>
