@@ -240,6 +240,18 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/credentialmanagement/CredentialsContainer.idl
     Modules/credentialmanagement/NavigatorCredentials.idl
 
+    Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
+    Modules/encryptedmedia/MediaKeyMessageEvent.idl
+    Modules/encryptedmedia/MediaKeySession.idl
+    Modules/encryptedmedia/MediaKeySessionType.idl
+    Modules/encryptedmedia/MediaKeyStatusMap.idl
+    Modules/encryptedmedia/MediaKeySystemAccess.idl
+    Modules/encryptedmedia/MediaKeySystemConfiguration.idl
+    Modules/encryptedmedia/MediaKeySystemMediaCapability.idl
+    Modules/encryptedmedia/MediaKeys.idl
+    Modules/encryptedmedia/MediaKeysRequirement.idl
+    Modules/encryptedmedia/NavigatorEME.idl
+
     Modules/entriesapi/DOMFileSystem.idl
     Modules/entriesapi/ErrorCallback.idl
     Modules/entriesapi/FileCallback.idl
@@ -874,6 +886,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageBitmapOptions.idl
     html/ImageData.idl
     html/MediaController.idl
+    html/MediaEncryptedEvent.idl
     html/MediaError.idl
     html/OffscreenCanvas.idl
     html/RadioNodeList.idl
@@ -1336,21 +1349,6 @@ if (ENABLE_ENCRYPTED_MEDIA)
         Modules/encryptedmedia/NavigatorEME.cpp
 
         html/MediaEncryptedEvent.cpp
-    )
-    list(APPEND WebCore_IDL_FILES
-        Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
-        Modules/encryptedmedia/MediaKeyMessageEvent.idl
-        Modules/encryptedmedia/MediaKeySession.idl
-        Modules/encryptedmedia/MediaKeySessionType.idl
-        Modules/encryptedmedia/MediaKeyStatusMap.idl
-        Modules/encryptedmedia/MediaKeySystemAccess.idl
-        Modules/encryptedmedia/MediaKeySystemConfiguration.idl
-        Modules/encryptedmedia/MediaKeySystemMediaCapability.idl
-        Modules/encryptedmedia/MediaKeys.idl
-        Modules/encryptedmedia/MediaKeysRequirement.idl
-        Modules/encryptedmedia/NavigatorEME.idl
-
-        html/MediaEncryptedEvent.idl
     )
 endif ()
 

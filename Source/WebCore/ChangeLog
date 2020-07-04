@@ -1,3 +1,11 @@
+2020-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Unreviewed build fix for r263913
+        https://bugs.webkit.org/show_bug.cgi?id=213939
+        <rdar://problem/65084185>
+
+        * CMakeLists.txt: Process encrypted media IDL files even if ENABLE_ENCRYPTED_MEDIA is off.
+
 2020-07-03  Darin Adler  <darin@apple.com>
 
         WebCore/Sources.txt: Remove #if ENABLE_WIRELESS_PLAYBACK_TARGET
