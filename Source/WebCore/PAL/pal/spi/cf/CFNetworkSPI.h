@@ -213,6 +213,10 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 };
 #endif
 
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+@class _NSHTTPAlternativeServicesStorage;
+#endif
+
 @interface NSURLSessionConfiguration ()
 @property (assign) _TimingDataOptions _timingDataOptions;
 @property (copy) NSData *_sourceApplicationAuditTokenData;

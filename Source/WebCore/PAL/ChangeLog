@@ -1,3 +1,15 @@
+2020-07-03  Saagar Jha  <saagar@saagarjha.com>
+
+        Fix a build error by forward declaring _NSHTTPAlternativeServicesStorage
+        https://bugs.webkit.org/show_bug.cgi?id=213911
+
+        Reviewed by Darin Adler.
+
+        The public 10.16 SDK does not define _NSHTTPAlternativeServicesStorage, and the interface
+        declaration comes after it is used. Forward declare it to fix the error.
+
+        * pal/spi/cf/CFNetworkSPI.h: Forward declare _NSHTTPAlternativeServicesStorage.
+
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Remove support for ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
