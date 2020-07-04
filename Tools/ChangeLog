@@ -1,3 +1,18 @@
+2020-07-04  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Allow running Selenium tests with the WPE WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=213500
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missing method used to discover the selenium name of
+        the WPE webdriver.
+
+        Proper gardening/triaging of failures will come in following commits.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_wpe.py:
+        (WebDriverWPE.selenium_name):
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         Update comment in FeatureDefines.xcconfig since PlatformEnableCocoa.h should be used instead

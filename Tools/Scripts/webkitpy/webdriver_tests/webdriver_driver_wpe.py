@@ -20,7 +20,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 from webkitpy.webdriver_tests.webdriver_driver import WebDriver, register_driver
 
 
@@ -48,6 +47,9 @@ class WebDriverWPE(WebDriver):
         return {'wpe:browserOptions': {
             'binary': self.browser_path(),
             'args': self.browser_args()}}
+
+    def selenium_name(self):
+        return 'WPEWebKit'
 
 
 register_driver('wpe', WebDriverWPE)
