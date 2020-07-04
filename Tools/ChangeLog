@@ -1,3 +1,12 @@
+2020-07-04  Darin Adler  <darin@apple.com>
+
+        Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=212420
+
+        * Scripts/generate-unified-sources.sh: Removed --feature-flags from the
+        arguments passed to generate-unified-source-bundles.rb. Also removed many
+        unneeded quotes.
+
 2020-07-04  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][WPE] Allow running Selenium tests with the WPE WebDriver
