@@ -141,6 +141,7 @@ webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
+webkit.org/b/213947 media/vp9.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

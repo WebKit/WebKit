@@ -1,5 +1,13 @@
 2020-07-03  Lauro Moura  <lmoura@igalia.com>
 
+        [GStreamer] Garden media/vp9.html failure
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
+2020-07-03  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Rebaseline imported dom/idlharness tests after r263903
 
         Unreviewed test gardening.
