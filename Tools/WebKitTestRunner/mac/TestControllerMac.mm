@@ -69,6 +69,47 @@ static PlatformWindow wtr_NSApplication_keyWindow(id self, SEL _cmd)
     return WTR::PlatformWebView::keyWindow();
 }
 
+static __weak NSMenu *gCurrentPopUpMenu = nil;
+static void setSwizzledPopUpMenu(NSMenu *menu)
+{
+    if (gCurrentPopUpMenu == menu)
+        return;
+
+    if ([menu.delegate respondsToSelector:@selector(menuWillOpen:)])
+        [menu.delegate menuWillOpen:menu];
+
+    gCurrentPopUpMenu = menu;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSMenuDidBeginTrackingNotification object:nil];
+    });
+}
+
+static void swizzledPopUpContextMenu(Class, SEL, NSMenu *menu, NSEvent *, NSView *)
+{
+    setSwizzledPopUpMenu(menu);
+}
+
+static void swizzledPopUpMenu(id, SEL, NSMenu *menu, NSPoint, CGFloat, NSView *, NSInteger, NSFont *, NSUInteger, NSDictionary *)
+{
+    setSwizzledPopUpMenu(menu);
+}
+
+static void swizzledCancelTracking(NSMenu *menu, SEL)
+{
+    if (menu != gCurrentPopUpMenu)
+        return;
+
+    gCurrentPopUpMenu = nil;
+
+    if ([menu.delegate respondsToSelector:@selector(menuDidClose:)])
+        [menu.delegate menuDidClose:menu];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSMenuDidEndTrackingNotification object:nil];
+    });
+}
+
 void TestController::platformInitialize()
 {
     poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
@@ -87,6 +128,14 @@ void TestController::platformInitialize()
     }
     
     method_setImplementation(keyWindowMethod, (IMP)wtr_NSApplication_keyWindow);
+
+    static InstanceMethodSwizzler cancelTrackingSwizzler { NSMenu.class, @selector(cancelTracking), reinterpret_cast<IMP>(swizzledCancelTracking) };
+    static ClassMethodSwizzler menuPopUpSwizzler { NSMenu.class, @selector(popUpContextMenu:withEvent:forView:), reinterpret_cast<IMP>(swizzledPopUpContextMenu) };
+    static InstanceMethodSwizzler carbonMenuPopUpSwizzler {
+        NSClassFromString(@"NSCarbonMenuImpl"),
+        NSSelectorFromString(@"popUpMenu:atLocation:width:forView:withSelectedItem:withFont:withFlags:withOptions:"),
+        reinterpret_cast<IMP>(swizzledPopUpMenu)
+    };
 }
 
 void TestController::platformDestroy()

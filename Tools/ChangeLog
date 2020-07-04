@@ -1,3 +1,26 @@
+2020-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Tests that show system menu popups may fail when run concurrently
+        https://bugs.webkit.org/show_bug.cgi?id=213950
+        <rdar://problem/64551566>
+
+        Reviewed by Darin Adler.
+
+        Make it possible to run tests that present system modal popups simultaneously, without the possibility of these
+        tests interfering with each other. Examples include context menus, select menus, and the DOM paste popup. To do
+        this, we swizzle out codepaths for showing and dimissing popups, and instead dispatch notifications and the
+        appropriate NSMenuDelegate methods ourselves.
+
+        This change has the side effect of fixing several layout tests that are currently timing out only on arm64e
+        macOS, due to reasons detailed in <rdar://problem/65084503>.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::setSwizzledPopUpMenu):
+        (WTR::swizzledPopUpContextMenu):
+        (WTR::swizzledPopUpMenu):
+        (WTR::swizzledCancelTracking):
+        (WTR::TestController::platformInitialize):
+
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Remove support for ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
