@@ -210,7 +210,6 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
     auto& displayBox = formattingState().displayBox(tableBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
     displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
-    displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
 void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent& constraints)

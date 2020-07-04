@@ -1,3 +1,57 @@
+2020-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Do not cache computed horizontal margin values
+        https://bugs.webkit.org/show_bug.cgi?id=213956
+
+        Reviewed by Antti Koivisto.
+
+        Outside of the width + margin computation, computed horizontal margin values are only required by
+        float positioning. Let's just re-computed them on demand (which is basically just a style.marginStart/end resolve).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        * layout/LayoutUnits.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHasValidVerticalNonCollapsedMargin):
+        (WebCore::Display::Box::setHasValidHorizontalComputedMargin): Deleted.
+        (WebCore::Display::Box::ComputedHorizontalMargin::ComputedHorizontalMargin): Deleted.
+        (WebCore::Display::Box::setHorizontalComputedMargin): Deleted.
+        (WebCore::Display::Box::computedMarginStart const): Deleted.
+        (WebCore::Display::Box::computedMarginEnd const): Deleted.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::computedHorizontalMargin):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForNonFloatingFloatAvoider const):
+        * layout/floats/FloatingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable

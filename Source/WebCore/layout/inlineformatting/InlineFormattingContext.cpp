@@ -281,9 +281,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
     auto computedHorizontalMargin = geometry().computedHorizontalMargin(layoutBox, horizontalConstraints);
-    auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setHorizontalComputedMargin(computedHorizontalMargin);
-    displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
+    formattingState().displayBox(layoutBox).setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
@@ -316,7 +314,6 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
     displayBox.setHorizontalMargin({ contentWidthAndMargin.usedMargin });
-    displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
 void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)

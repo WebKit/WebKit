@@ -294,7 +294,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
         return computeVerticalPositionForFloatClear(floatingContext, layoutBox);
 
     ASSERT(layoutBox.establishesFormattingContext());
-    formattingState().displayBox(layoutBox).setTopLeft(floatingContext.positionForNonFloatingFloatAvoider(layoutBox));
+    formattingState().displayBox(layoutBox).setTopLeft(floatingContext.positionForNonFloatingFloatAvoider(layoutBox, constraintsPair.containingBlock.horizontal));
 }
 
 void BlockFormattingContext::computeVerticalPositionForFloatClear(const FloatingContext& floatingContext, const Box& layoutBox)
@@ -327,7 +327,6 @@ void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floati
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
     displayBox.setHorizontalMargin({ contentWidthAndMargin.usedMargin });
-    displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const ConstraintsForInFlowContent& constraints)

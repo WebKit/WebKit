@@ -138,7 +138,6 @@ inline Edges operator/(const Edges& edge, size_t value)
 struct ContentWidthAndMargin {
     LayoutUnit contentWidth;
     UsedHorizontalMargin usedMargin;
-    ComputedHorizontalMargin computedMargin;
 };
 
 struct ContentHeightAndMargin {

@@ -204,7 +204,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
         }
         ASSERT(width);
 
-        return ContentWidthAndMargin { *width, usedHorizontalMargin, computedHorizontalMargin };
+        return ContentWidthAndMargin { *width, usedHorizontalMargin };
     };
 
     auto contentWidthAndMargin = compute();
@@ -227,7 +227,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMa
     auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(replacedBox, horizontalConstraints, OverrideHorizontalValues { usedWidth, overrideHorizontalValues.margin });
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << usedWidth  << "px) margin(" << nonReplacedWidthAndMargin.usedMargin.start << "px, " << nonReplacedWidthAndMargin.usedMargin.end << "px) -> layoutBox(" << &replacedBox << ")");
-    return { usedWidth, nonReplacedWidthAndMargin.usedMargin, nonReplacedWidthAndMargin.computedMargin };
+    return { usedWidth, nonReplacedWidthAndMargin.usedMargin };
 }
 
 LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& layoutBox, const VerticalConstraints& verticalConstraints) const

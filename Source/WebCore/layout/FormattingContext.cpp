@@ -94,7 +94,6 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
     displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
     displayBox.setContentBoxWidth(horizontalGeometry.contentWidthAndMargin.contentWidth);
     displayBox.setHorizontalMargin({ horizontalGeometry.contentWidthAndMargin.usedMargin });
-    displayBox.setHorizontalComputedMargin({ horizontalGeometry.contentWidthAndMargin.computedMargin });
 }
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, const ConstraintsForOutOfFlowContent& constraints)

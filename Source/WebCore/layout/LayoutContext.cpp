@@ -66,7 +66,6 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationSta
     // we could not lay it out even if we wanted to since it's outside of this LayoutContext.
     auto& displayBox = layoutState().displayBoxForRootLayoutBox();
     displayBox.setHorizontalMargin({ });
-    displayBox.setHorizontalComputedMargin({ });
     displayBox.setVerticalMargin({ });
     displayBox.setBorder({ });
     displayBox.setPadding({ });

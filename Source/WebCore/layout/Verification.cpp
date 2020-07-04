@@ -232,14 +232,27 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         stream.nextLine();
     };
 
-    auto renderBoxLikeMarginBox = [](auto& displayBox) {
-        // Produce a RenderBox matching margin box.
-        auto borderBox = displayBox.borderBox();
+    auto renderBoxLikeMarginBox = [&] (auto& displayBox) {
+        if (layoutBox.isInitialContainingBlock())
+            return displayBox.rect();
 
+        // Produce a RenderBox matching margin box.
+        auto containingBlockWidth = context.displayBoxForLayoutBox(layoutBox.containingBlock()).contentBoxWidth();
+        auto marginStart = LayoutUnit { };
+        auto& marginStartStyle = layoutBox.style().marginStart();
+        if (marginStartStyle.isFixed() || marginStartStyle.isPercent() || marginStartStyle.isCalculated())
+            marginStart = valueForLength(marginStartStyle, containingBlockWidth);
+
+        auto marginEnd = LayoutUnit { };
+        auto& marginEndStyle = layoutBox.style().marginEnd();
+        if (marginEndStyle.isFixed() || marginEndStyle.isPercent() || marginEndStyle.isCalculated())
+            marginEnd = valueForLength(marginEndStyle, containingBlockWidth);
+
+        auto borderBox = displayBox.borderBox();
         return Display::Rect {
             borderBox.top() - displayBox.nonCollapsedMarginBefore(),
-            borderBox.left() - displayBox.computedMarginStart().valueOr(0),
-            displayBox.computedMarginStart().valueOr(0) + borderBox.width() + displayBox.computedMarginEnd().valueOr(0),
+            borderBox.left() - marginStart,
+            marginStart + borderBox.width() + marginEnd,
             displayBox.nonCollapsedMarginBefore() + borderBox.height() + displayBox.nonCollapsedMarginAfter()
         };
     };

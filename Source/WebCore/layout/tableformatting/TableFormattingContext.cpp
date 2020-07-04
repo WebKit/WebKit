@@ -156,7 +156,6 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
         rowDisplayBox.setPadding(geometry().computedPadding(rowBox, availableHorizontalSpace));
         // Internal table elements do not have margins.
         rowDisplayBox.setHorizontalMargin({ });
-        rowDisplayBox.setHorizontalComputedMargin({ });
         rowDisplayBox.setVerticalMargin({ { }, { } });
 
         auto computedRowBorder = [&] {
@@ -239,7 +238,6 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         paddingBefore = WTF::nullopt;
         // Internal table elements do not have margins.
         sectionDisplayBox.setHorizontalMargin({ });
-        sectionDisplayBox.setHorizontalComputedMargin({ });
         sectionDisplayBox.setVerticalMargin({ { }, { } });
 
         sectionDisplayBox.setContentBoxWidth(sectionWidth);
@@ -270,7 +268,6 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellDisplayBox.setPadding(geometry().computedPadding(cellBox, availableHorizontalSpace));
     // Internal table elements do not have margins.
     cellDisplayBox.setHorizontalMargin({ });
-    cellDisplayBox.setHorizontalComputedMargin({ });
     cellDisplayBox.setVerticalMargin({ { }, { } });
 
     auto availableSpaceForContent = [&] {

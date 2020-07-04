@@ -59,7 +59,7 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
     // #2
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, horizontalConstraints);
 
-    return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
+    return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) } };
 }
 
 ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverrideVerticalValues& overrideVerticalValues) const

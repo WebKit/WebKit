@@ -153,6 +153,17 @@ static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
 }
 #endif
 
+static ComputedHorizontalMargin computedHorizontalMargin(const Box& layoutBox, LayoutUnit horizontalConstraint)
+{
+    auto& style = layoutBox.style();
+    auto computedValue = [&] (const auto& margin) {
+        if (margin.isFixed() || margin.isPercent() || margin.isCalculated())
+            return valueForLength(margin, horizontalConstraint);
+        return 0_lu;
+    };
+    return { computedValue(style.marginStart()), computedValue(style.marginEnd()) };
+}
+
 static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const FloatingState::FloatList& floats)
 {
     Optional<PositionInContextRoot> bottomMost;
@@ -238,7 +249,8 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     auto& displayBox = formattingContext().geometryForBox(layoutBox);
     if (absoluteTopLeft.y() - displayBox.marginBefore() < previousFloatAbsoluteTop)
         absoluteTopLeft.setY(previousFloatAbsoluteTop + displayBox.marginBefore());
-    auto margins = Edges { { displayBox.computedMarginStart().valueOr(0), displayBox.computedMarginEnd().valueOr(0) }, { displayBox.marginBefore(), displayBox.marginAfter() } };
+    auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
+    auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { displayBox.marginBefore(), displayBox.marginAfter() } };
     auto floatBox = FloatAvoider { layoutBox, absoluteTopLeft, displayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // From formatting root coordinate system back to containing block's.
@@ -246,7 +258,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     return { floatBox.left() + margins.horizontal.left - containingBlockTopLeft.x(), floatBox.top() + margins.vertical.top - containingBlockTopLeft.y() };
 }
 
-LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layoutBox) const
+LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
     ASSERT(layoutBox.establishesBlockFormattingContext());
     ASSERT(!layoutBox.isFloatingPositioned());
@@ -258,7 +270,8 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
 
     auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
     auto& displayBox = formattingContext().geometryForBox(layoutBox);
-    auto margins = Edges { { displayBox.computedMarginStart().valueOr(0), displayBox.computedMarginEnd().valueOr(0) }, { displayBox.marginBefore(), displayBox.marginAfter() } };
+    auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
+    auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { displayBox.marginBefore(), displayBox.marginAfter() } };
     auto floatAvoider = FloatAvoider { layoutBox, absoluteDisplayBoxCoordinates.topLeft, displayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteDisplayBoxCoordinates.containingBlockTopLeft;

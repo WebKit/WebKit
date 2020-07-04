@@ -605,7 +605,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     *right += containingBlockPaddingVerticalEdge;
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow non-replaced -> left(" << *left << "px) right("  << *right << "px) width(" << *width << "px) margin(" << usedHorizontalMargin.start << "px, "  << usedHorizontalMargin.end << "px) layoutBox(" << &layoutBox << ")");
-    return { *left, *right, { *width, usedHorizontalMargin, computedHorizontalMargin } };
+    return { *left, *right, { *width, usedHorizontalMargin } };
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverrideVerticalValues& overrideVerticalValues) const
@@ -791,7 +791,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     *right += containingBlockPaddingVerticalEdge;
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow replaced -> left(" << *left << "px) right("  << *right << "px) width(" << width << "px) margin(" << *usedMarginStart << "px, "  << *usedMarginEnd << "px) layoutBox(" << &replacedBox << ")");
-    return { *left, *right, { width, { *usedMarginStart, *usedMarginEnd }, computedHorizontalMargin } };
+    return { *left, *right, { width, { *usedMarginStart, *usedMarginEnd } } };
 }
 
 ContentHeightAndMargin FormattingContext::Geometry::complicatedCases(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverrideVerticalValues& overrideVerticalValues) const
@@ -844,7 +844,7 @@ ContentWidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMa
         width = shrinkToFitWidth(layoutBox, horizontalConstraints.logicalWidth);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << *width << "px) margin(" << usedHorizontallMargin.start << "px, " << usedHorizontallMargin.end << "px) -> layoutBox(" << &layoutBox << ")");
-    return ContentWidthAndMargin { *width, usedHorizontallMargin, computedHorizontalMargin };
+    return ContentWidthAndMargin { *width, usedHorizontallMargin };
 }
 
 ContentHeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverrideVerticalValues& overrideVerticalValues) const
@@ -1012,7 +1012,7 @@ ContentWidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(
     ASSERT(width);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << *width << "px) margin(" << usedMarginStart() << "px, " << usedMarginEnd() << "px) -> layoutBox(" << &replacedBox << ")");
-    return { *width, { usedMarginStart(), usedMarginEnd() }, computedHorizontalMargin };
+    return { *width, { usedMarginStart(), usedMarginEnd() } };
 }
 
 LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
