@@ -38,11 +38,11 @@
 namespace WebCore {
 namespace Layout {
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox) const
 {
     auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
-    if (blockFormattingState.hasPositiveAndNegativeVerticalMargin(layoutBox))
-        return blockFormattingState.positiveAndNegativeVerticalMargin(layoutBox).before;
+    if (blockFormattingState.hasUsedVerticalMargin(layoutBox))
+        return blockFormattingState.usedVerticalMargin(layoutBox).positiveAndNegativeValues.before;
 
     auto geometry = formattingContext().geometry();
     auto horizontalConstraints = geometry.constraintsForInFlowContent(layoutBox.containingBlock()).horizontal;
@@ -51,20 +51,20 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);
 }
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
 {
-    auto firstChildCollapsedMarginBefore = [&]() -> PositiveAndNegativeVerticalMargin::Values {
+    auto firstChildCollapsedMarginBefore = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
             return { };
         return precomputedPositiveNegativeValues(*downcast<ContainerBox>(layoutBox).firstInFlowChild());
     };
 
-    auto previouSiblingCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
+    auto previouSiblingCollapsedMarginAfter = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutBox))
             return { };
         auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
         auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
-        return blockFormattingState.positiveAndNegativeVerticalMargin(previousInFlowSibling).after;
+        return blockFormattingState.usedVerticalMargin(previousInFlowSibling).positiveAndNegativeValues.after;
     };
 
     // 1. Gather positive and negative margin values from first child if margins are adjoining.
@@ -74,7 +74,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     if (collapsedMarginBefore.isQuirk && formattingContext().quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox))
         collapsedMarginBefore = { };
 
-    auto nonCollapsedBefore = PositiveAndNegativeVerticalMargin::Values { };
+    auto nonCollapsedBefore = UsedVerticalMargin::PositiveAndNegativePair::Values { };
     if (nonCollapsedValues.before > 0)
         nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().hasMarginBeforeQuirk() };
     else if (nonCollapsedValues.before < 0)

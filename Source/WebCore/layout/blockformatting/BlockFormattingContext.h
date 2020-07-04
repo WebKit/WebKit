@@ -99,11 +99,7 @@ protected:
     // This class implements margin collapsing for block formatting context.
     class MarginCollapse {
     public:
-        struct CollapsedAndPositiveNegativeValues {
-            UsedVerticalMargin::CollapsedValues collapsedValues;
-            PositiveAndNegativeVerticalMargin positiveAndNegativeVerticalValues;
-        };
-        CollapsedAndPositiveNegativeValues collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
+        UsedVerticalMargin collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
         PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
         LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
@@ -127,15 +123,15 @@ protected:
         MarginCollapse(const BlockFormattingContext&);
 
         enum class MarginType { Before, After };
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeValues(const Box&, MarginType) const;
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
+        UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeValues(const Box&, MarginType) const;
+        UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
+        UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
 
-        PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
-        PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeValues(const Box&) const;
+        UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
+        UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const Box&) const;
 
-        PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values, PositiveAndNegativeVerticalMargin::Values) const;
-        Optional<LayoutUnit> marginValue(PositiveAndNegativeVerticalMargin::Values) const;
+        UsedVerticalMargin::PositiveAndNegativePair::Values computedPositiveAndNegativeMargin(UsedVerticalMargin::PositiveAndNegativePair::Values, UsedVerticalMargin::PositiveAndNegativePair::Values) const;
+        Optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
         bool hasClearance(const Box&) const;
 

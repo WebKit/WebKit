@@ -1,5 +1,40 @@
 2020-07-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Move PositiveAndNegativeVerticalMargin to UsedVerticalMargin
+        https://bugs.webkit.org/show_bug.cgi?id=213963
+
+        Reviewed by Antti Koivisto.
+
+        Now that UsedVerticalMargin is not used in Display::Box, we can merged these 2 layout structures.
+
+        * layout/MarginTypes.h:
+        (WebCore::Layout::UsedVerticalMargin::PositiveAndNegativePair::Values::isNonZero const):
+        (WebCore::Layout::PositiveAndNegativeVerticalMargin::Values::isNonZero const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingState.h:
+        (WebCore::Layout::BlockFormattingState::hasUsedVerticalMargin const):
+        (WebCore::Layout::BlockFormattingState::setPositiveAndNegativeVerticalMargin): Deleted.
+        (WebCore::Layout::BlockFormattingState::hasPositiveAndNegativeVerticalMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingState::positiveAndNegativeVerticalMargin const): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedPositiveAndNegativeMargin const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginValue const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+        * layout/blockformatting/PrecomputedBlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeMarginBefore const):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+
+2020-07-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Remove redundant out-of-flow height-and-margin handling
         https://bugs.webkit.org/show_bug.cgi?id=213959
 

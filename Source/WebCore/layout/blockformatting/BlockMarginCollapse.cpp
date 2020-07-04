@@ -433,9 +433,9 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
     return true;
 }
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values a, PositiveAndNegativeVerticalMargin::Values b) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::computedPositiveAndNegativeMargin(UsedVerticalMargin::PositiveAndNegativePair::Values a, UsedVerticalMargin::PositiveAndNegativePair::Values b) const
 {
-    PositiveAndNegativeVerticalMargin::Values computedValues;
+    UsedVerticalMargin::PositiveAndNegativePair::Values computedValues;
     if (a.positive && b.positive)
         computedValues.positive = std::max(*a.positive, *b.positive);
     else
@@ -456,7 +456,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     return computedValues;
 }
 
-Optional<LayoutUnit> BlockFormattingContext::MarginCollapse::marginValue(PositiveAndNegativeVerticalMargin::Values marginValues) const
+Optional<LayoutUnit> BlockFormattingContext::MarginCollapse::marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values marginValues) const
 {
     // When two or more margins collapse, the resulting margin width is the maximum of the collapsing margins' widths.
     // In the case of negative margins, the maximum of the absolute values of the negative adjoining margins is deducted from the maximum
@@ -493,15 +493,16 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
             collapsedVerticalMarginBefore = collapsedVerticalMarginAfter;
 
         // Update positive/negative cache.
-        auto previousSiblingPositiveNegativeMargin = blockFormattingState.positiveAndNegativeVerticalMargin(previousSibling);
-        auto positiveNegativeMarginBefore = blockFormattingState.positiveAndNegativeVerticalMargin(*currentBox).before;
+        auto previousSiblingPositiveNegativeMargin = blockFormattingState.usedVerticalMargin(previousSibling).positiveAndNegativeValues;
+        auto positiveNegativeMarginBefore = blockFormattingState.usedVerticalMargin(*currentBox).positiveAndNegativeValues.before;
 
-        previousSiblingPositiveNegativeMargin.after = marginCollapse.computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, previousSiblingPositiveNegativeMargin.after);
+        auto adjustedPreviousSiblingVerticalMargin = previousSiblingVerticalMargin;
+        adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.after = marginCollapse.computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, previousSiblingPositiveNegativeMargin.after);
         if (marginsCollapseThrough) {
-            previousSiblingPositiveNegativeMargin.before = marginCollapse.computedPositiveAndNegativeMargin(previousSiblingPositiveNegativeMargin.before, previousSiblingPositiveNegativeMargin.after);
-            previousSiblingPositiveNegativeMargin.after = previousSiblingPositiveNegativeMargin.before;
+            adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.before = marginCollapse.computedPositiveAndNegativeMargin(previousSiblingPositiveNegativeMargin.before, adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.after);
+            adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.after = adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.before;
         }
-        blockFormattingState.setPositiveAndNegativeVerticalMargin(previousSibling, previousSiblingPositiveNegativeMargin);
+        blockFormattingState.setUsedVerticalMargin(previousSibling, adjustedPreviousSiblingVerticalMargin);
 
         if (!marginsCollapseThrough)
             break;
@@ -510,25 +511,25 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
     }
 }
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::positiveNegativeValues(const Box& layoutBox, MarginType marginType) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::positiveNegativeValues(const Box& layoutBox, MarginType marginType) const
 {
     auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
     // By the time we get here in BFC layout to gather positive and negative margin values for either a previous sibling or a child box,
     // we mush have computed and cached those values.
-    ASSERT(blockFormattingState.hasPositiveAndNegativeVerticalMargin(layoutBox));
-    auto positiveAndNegativeVerticalMargin = blockFormattingState.positiveAndNegativeVerticalMargin(layoutBox);
+    ASSERT(blockFormattingState.hasUsedVerticalMargin(layoutBox));
+    auto positiveAndNegativeVerticalMargin = blockFormattingState.usedVerticalMargin(layoutBox).positiveAndNegativeValues;
     return marginType == MarginType::Before ? positiveAndNegativeVerticalMargin.before : positiveAndNegativeVerticalMargin.after; 
 }
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
 {
-    auto firstChildCollapsedMarginBefore = [&]() -> PositiveAndNegativeVerticalMargin::Values {
+    auto firstChildCollapsedMarginBefore = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
             return { };
         return positiveNegativeValues(*downcast<ContainerBox>(layoutBox).firstInFlowChild(), MarginType::Before);
     };
 
-    auto previouSiblingCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
+    auto previouSiblingCollapsedMarginAfter = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutBox))
             return { };
         return positiveNegativeValues(*layoutBox.previousInFlowSibling(), MarginType::After);
@@ -541,7 +542,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     if (collapsedMarginBefore.isQuirk && formattingContext().quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox))
         collapsedMarginBefore = { };
 
-    PositiveAndNegativeVerticalMargin::Values nonCollapsedBefore;
+    UsedVerticalMargin::PositiveAndNegativePair::Values nonCollapsedBefore;
     if (nonCollapsedValues.before > 0)
         nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().hasMarginBeforeQuirk() };
     else if (nonCollapsedValues.before < 0)
@@ -550,9 +551,9 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
 {
-    auto lastChildCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
+    auto lastChildCollapsedMarginAfter = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginAfterCollapsesWithLastInFlowChildMarginAfter(layoutBox))
             return { };
         return positiveNegativeValues(*downcast<ContainerBox>(layoutBox).lastInFlowChild(), MarginType::After);
@@ -560,7 +561,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
 
     // We don't know yet the margin before value of the next sibling. Let's just pretend it does not have one and 
     // update it later when we compute the next sibling's margin before. See updateMarginAfterForPreviousSibling.
-    PositiveAndNegativeVerticalMargin::Values nonCollapsedAfter;
+    UsedVerticalMargin::PositiveAndNegativePair::Values nonCollapsedAfter;
     if (nonCollapsedValues.after > 0)
         nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().hasMarginAfterQuirk() };
     else if (nonCollapsedValues.after < 0)
@@ -575,14 +576,14 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsin
     return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
 }
 
-BlockFormattingContext::MarginCollapse::CollapsedAndPositiveNegativeValues BlockFormattingContext::MarginCollapse::collapsedVerticalValues(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
+UsedVerticalMargin BlockFormattingContext::MarginCollapse::collapsedVerticalValues(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
 {
     ASSERT(layoutBox.isBlockLevelBox());
     // 1. Get min/max margin top values from the first in-flow child if we are collapsing margin top with it.
     // 2. Get min/max margin top values from the previous in-flow sibling, if we are collapsing margin top with it.
     // 3. Get this layout box's computed margin top value.
     // 4. Update the min/max value and compute the final margin.
-    auto positiveAndNegativeVerticalMargin = PositiveAndNegativeVerticalMargin { this->positiveNegativeMarginBefore(layoutBox, nonCollapsedValues), this->positiveNegativeMarginAfter(layoutBox, nonCollapsedValues) };
+    auto positiveAndNegativeVerticalMargin = UsedVerticalMargin::PositiveAndNegativePair { this->positiveNegativeMarginBefore(layoutBox, nonCollapsedValues), this->positiveNegativeMarginAfter(layoutBox, nonCollapsedValues) };
 
     auto marginsCollapseThrough = this->marginsCollapseThrough(layoutBox);
     if (marginsCollapseThrough) {
@@ -592,14 +593,15 @@ BlockFormattingContext::MarginCollapse::CollapsedAndPositiveNegativeValues Block
 
     auto hasCollapsedMarginBefore = marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox) || marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutBox);
     auto hasCollapsedMarginAfter = marginAfterCollapsesWithLastInFlowChildMarginAfter(layoutBox);
+    auto usedVerticalMargin = UsedVerticalMargin { nonCollapsedValues, { }, positiveAndNegativeVerticalMargin };
 
     if ((hasCollapsedMarginBefore && hasCollapsedMarginAfter) || marginsCollapseThrough)
-        return { { marginValue(positiveAndNegativeVerticalMargin.before), marginValue(positiveAndNegativeVerticalMargin.after), marginsCollapseThrough }, positiveAndNegativeVerticalMargin };
-    if (hasCollapsedMarginBefore)
-        return { { marginValue(positiveAndNegativeVerticalMargin.before), { }, false }, positiveAndNegativeVerticalMargin };
-    if (hasCollapsedMarginAfter)
-        return { { { }, marginValue(positiveAndNegativeVerticalMargin.after), false }, positiveAndNegativeVerticalMargin };
-    return { { { }, { }, false }, positiveAndNegativeVerticalMargin };
+        usedVerticalMargin.collapsedValues = { marginValue(positiveAndNegativeVerticalMargin.before), marginValue(positiveAndNegativeVerticalMargin.after), marginsCollapseThrough };
+    else if (hasCollapsedMarginBefore)
+        usedVerticalMargin.collapsedValues = { marginValue(positiveAndNegativeVerticalMargin.before), { }, false };
+    else if (hasCollapsedMarginAfter)
+        usedVerticalMargin.collapsedValues = { { }, marginValue(positiveAndNegativeVerticalMargin.after), false };
+    return usedVerticalMargin;
 }
 
 }

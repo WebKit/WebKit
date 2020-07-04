@@ -258,12 +258,11 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
         auto computedVerticalMargin = geometry().computedVerticalMargin(*ancestor, constraintsForAncestor.horizontal);
         auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
         auto precomputedMarginBefore = marginCollapse().precomputedMarginBefore(*ancestor, usedNonCollapsedMargin);
-        formattingState().setPositiveAndNegativeVerticalMargin(*ancestor, { precomputedMarginBefore.positiveAndNegativeMarginBefore, { } });
 
         auto& displayBox = formattingState().displayBox(*ancestor);
         auto nonCollapsedValues = UsedVerticalMargin::NonCollapsedValues { precomputedMarginBefore.nonCollapsedValue, { } };
         auto collapsedValues = UsedVerticalMargin::CollapsedValues { precomputedMarginBefore.collapsedValue, { }, false };
-        auto verticalMargin = UsedVerticalMargin { nonCollapsedValues, collapsedValues };
+        auto verticalMargin = UsedVerticalMargin { nonCollapsedValues, collapsedValues, { precomputedMarginBefore.positiveAndNegativeMarginBefore, { } } };
 
         formattingState().setUsedVerticalMargin(*ancestor, verticalMargin);
         displayBox.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
@@ -367,10 +366,8 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     // 2. Adjust vertical position using the collapsed values.
     // 3. Adjust previous in-flow sibling margin after using this margin.
     auto marginCollapse = this->marginCollapse();
-    auto collapsedAndPositiveNegativeValues = marginCollapse.collapsedVerticalValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin);
+    auto verticalMargin = marginCollapse.collapsedVerticalValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin);
     // Cache the computed positive and negative margin value pair.
-    formattingState().setPositiveAndNegativeVerticalMargin(layoutBox, collapsedAndPositiveNegativeValues.positiveAndNegativeVerticalValues);
-    auto verticalMargin = UsedVerticalMargin { contentHeightAndMargin.nonCollapsedMargin, collapsedAndPositiveNegativeValues.collapsedValues };
     formattingState().setUsedVerticalMargin(layoutBox, verticalMargin);
 
 #if ASSERT_ENABLED

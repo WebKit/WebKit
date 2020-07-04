@@ -220,10 +220,8 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     auto heightAndMargin = geometry().inFlowHeightAndMargin(tableBox, constraints.horizontal, { quirks().overrideTableHeight(tableBox) });
 
     auto marginCollapse = this->marginCollapse();
-    auto collapsedAndPositiveNegativeValues = marginCollapse.collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
+    auto verticalMargin = marginCollapse.collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
     // Cache the computed positive and negative margin value pair.
-    formattingState().setPositiveAndNegativeVerticalMargin(tableBox, collapsedAndPositiveNegativeValues.positiveAndNegativeVerticalValues);
-    auto verticalMargin = UsedVerticalMargin { heightAndMargin.nonCollapsedMargin, collapsedAndPositiveNegativeValues.collapsedValues };
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
     auto& displayBox = formattingState().displayBox(tableBox);
