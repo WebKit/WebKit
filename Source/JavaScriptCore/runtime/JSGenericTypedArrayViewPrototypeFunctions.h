@@ -233,10 +233,10 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     if (thisObject->isNeutered())
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    if (!callFrame->argumentCount())
-        return throwVMTypeError(globalObject, scope, "Expected at least one argument"_s);
-
     unsigned length = thisObject->length();
+
+    if (!length)
+        return JSValue::encode(jsNumber(-1));
 
     JSValue valueToFind = callFrame->argument(0);
     unsigned index = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(1), length);
@@ -309,10 +309,10 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
     if (thisObject->isNeutered())
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    if (!callFrame->argumentCount())
-        return throwVMTypeError(globalObject, scope, "Expected at least one argument"_s);
-
     unsigned length = thisObject->length();
+
+    if (!length)
+        return JSValue::encode(jsNumber(-1));
 
     JSValue valueToFind = callFrame->argument(0);
 

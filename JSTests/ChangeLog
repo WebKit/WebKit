@@ -1,3 +1,15 @@
+2020-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        %TypedArray%.prototype.{indexOf,lastIndexOf} are not spec-perfect
+        https://bugs.webkit.org/show_bug.cgi?id=213715
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/array-prototype-indexOf-empty.js: Added.
+        * microbenchmarks/typed-array-indexOf-empty.js: Added.
+        * stress/array-indexof-tointeger-order.js: Added.
+        * test262/expectations.yaml: Mark 10 test cases as passing.
+
 2020-07-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Promise should check whether a user-provided function is set by using `@isUndefinedOrNull`

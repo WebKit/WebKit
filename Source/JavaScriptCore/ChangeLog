@@ -1,3 +1,33 @@
+2020-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        %TypedArray%.prototype.{indexOf,lastIndexOf} are not spec-perfect
+        https://bugs.webkit.org/show_bug.cgi?id=213715
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch:
+
+        1. Implements step 3 of {Array,%TypedArray%}.prototype.indexOf [1] and
+           %TypedArray%.prototype.lastIndexOf [2] since it is observable when
+           second argument is an object with userland toString() or valueOf() method.
+           Advances provided microbenchmark by 100% for Array and by 25% for %TypedArray%.
+
+        2. Removes argument count check from %TypedArray%.prototype.{indexOf,lastIndexOf},
+           allowing these methods to be invoked w/o arguments. The spec treats missing
+           arguments as `undefined`, always returning -1 for typed arrays.
+
+        Both changes align JSC with V8 and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-array.prototype.indexof
+        [2]: https://tc39.es/ecma262/#sec-%typedarray%.prototype.lastindexof
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove unconditional features from FeatureDefines.xcconfig, making sure they are covered in PlatformEnableCocoa.h

@@ -618,9 +618,6 @@ test/annexB/language/statements/const/dstr/object-pattern-emulates-undefined.js:
 test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/built-ins/Array/prototype/indexOf/length-zero-returns-minus-one.js:
-  default: 'Test262Error: Length should be checked before ToInteger(fromIndex).'
-  strict mode: 'Test262Error: Length should be checked before ToInteger(fromIndex).'
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1440,18 +1437,6 @@ test/built-ins/TypedArray/prototype/filter/speciesctor-get-ctor-returns-throws.j
 test/built-ins/TypedArray/prototype/filter/speciesctor-get-species-custom-ctor-length-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/indexOf/length-zero-returns-minus-one.js:
-  default: 'Test262Error:  (Testing with Float64Array.)'
-  strict mode: 'Test262Error:  (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/indexOf/no-arg.js:
-  default: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
-  strict mode: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/lastIndexOf/length-zero-returns-minus-one.js:
-  default: 'Test262Error:  (Testing with Float64Array.)'
-  strict mode: 'Test262Error:  (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/lastIndexOf/no-arg.js:
-  default: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
-  strict mode: 'TypeError: Expected at least one argument (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-returns-throws.js:
   default: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'

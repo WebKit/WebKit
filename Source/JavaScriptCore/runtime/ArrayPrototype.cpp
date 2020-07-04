@@ -1386,6 +1386,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(JSGlobalObject* globalObject,
         return { };
     uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
     RETURN_IF_EXCEPTION(scope, { });
+    if (!length)
+        return JSValue::encode(jsNumber(-1));
 
     uint64_t index = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(1), length);
     RETURN_IF_EXCEPTION(scope, { });
@@ -1423,7 +1425,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(JSGlobalObject* globalObj
     if (UNLIKELY(!thisObject))
         return { };
     uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
-    if (UNLIKELY(scope.exception()) || !length)
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!length)
         return JSValue::encode(jsNumber(-1));
 
     uint64_t index = length - 1;
