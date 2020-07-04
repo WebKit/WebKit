@@ -1,3 +1,12 @@
+2020-07-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Flatpak SDK] Require OpenXR 1.0.9
+        https://bugs.webkit.org/show_bug.cgi?id=213930
+
+        Reviewed by Philippe Normand.
+
+        * buildstream/elements/sdk/openxr.bst:
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable

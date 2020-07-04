@@ -184,7 +184,7 @@ endif ()
 
 
 if (ENABLE_WEBXR)
-    find_package(OpenXR 1.0)
+    find_package(OpenXR 1.0.9)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENXR ${OpenXR_FOUND})
 endif ()
 
