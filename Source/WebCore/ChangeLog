@@ -1,3 +1,13 @@
+2020-07-04  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove all features from FeatureDefines.xcconfig that are already mentioned in PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=213962
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig: Removed all features that were mentioned
+        in PlatformEnableCocoa.h; the rules in that file now define whether they are enabled.
+
 2020-07-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Move PositiveAndNegativeVerticalMargin to UsedVerticalMargin

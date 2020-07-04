@@ -1,3 +1,19 @@
+2020-07-04  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove all features from FeatureDefines.xcconfig that are already mentioned in PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=213962
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformEnableCocoa.h:
+        (ENABLE_DRAG_SUPPORT): Before, this was enabled for iOS, iOS simulator, and Mac Catalyst in the
+        FeatureDefines.xcconfig file, but then disabled for any other iOS family platform here, then enabled
+        by default in PlatformEnable.h, which covered Mac. Instead, disable here only for watchOS and tvOS,
+        which gives the same result in a more straightforward way.
+        (ENABLE_GEOLOCATION): Before, this was enabled for iOS, iOS simulator, Mac Catalyst, and Mac in the
+        FeatureDefines.xcconfig file, then enabled for any other iOS family platform here. Instead, just
+        enable here for all Cocoa platforms, which gives the same result in a more straightforward way.
+
 2020-07-03  Darin Adler  <darin@apple.com>
 
         Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable
