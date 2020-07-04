@@ -1,3 +1,35 @@
+2020-07-03  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support peer connection remote video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=213924
+
+        Reviewed by Darin Adler.
+
+        Previsouly we were checking whether width and height are given for a video track.
+        This is not always available, for instance for remote tracks.
+        And this can change over time.
+        Instead, pass a simple boolean (whether there is a video track or not).
+        Minor simplifications to stop storing unneeded members.
+
+        Tests: imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-creation.https.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-detached-context.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-disabled-tracks.https.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html
+               imported/w3c/web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https.html
+
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        (WebCore::MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::create):
+
 2020-07-03  Darin Adler  <darin@apple.com>
 
         WebCore/Sources.txt: Remove all remaining #if (ENABLE_WEBGL and ENABLE_WEBXR)

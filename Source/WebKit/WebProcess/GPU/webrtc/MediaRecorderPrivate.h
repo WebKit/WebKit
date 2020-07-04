@@ -68,9 +68,6 @@ private:
     Ref<MediaStreamPrivate> m_stream;
     Ref<IPC::Connection> m_connection;
 
-    String m_recordedAudioTrackID;
-    String m_recordedVideoTrackID;
-
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     WebCore::CAAudioStreamDescription m_description { };
     int64_t m_numberOfFrames { 0 };

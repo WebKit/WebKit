@@ -1,0 +1,5 @@
+
+PASS PeerConnection MediaRecorder records audio from PeerConnection without sinks 
+PASS PeerConnection MediaRecorder records video from PeerConnection without sinks 
+PASS PeerConnection MediaRecorder records audio/video from PeerConnection without sinks 
+

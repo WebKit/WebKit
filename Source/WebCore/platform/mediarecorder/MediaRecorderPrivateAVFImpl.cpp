@@ -45,19 +45,11 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
 
-    auto writer = MediaRecorderPrivateWriter::create(selectedTracks.audioTrack, selectedTracks.videoTrack);
+    auto writer = MediaRecorderPrivateWriter::create(!!selectedTracks.audioTrack, !!selectedTracks.videoTrack);
     if (!writer)
         return nullptr;
 
-    String audioTrackId;
-    if (selectedTracks.audioTrack)
-        audioTrackId = selectedTracks.audioTrack->id();
-
-    String videoTrackId;
-    if (selectedTracks.videoTrack)
-        videoTrackId = selectedTracks.videoTrack->id();
-
-    auto recorder = makeUnique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
+    auto recorder = makeUnique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull());
     if (selectedTracks.audioTrack)
         recorder->setAudioSource(&selectedTracks.audioTrack->source());
     if (selectedTracks.videoTrack)
@@ -65,10 +57,8 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
     return recorder;
 }
 
-MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&& writer, String&& audioTrackId, String&& videoTrackId)
+MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&& writer)
     : m_writer(WTFMove(writer))
-    , m_recordedAudioTrackID(WTFMove(audioTrackId))
-    , m_recordedVideoTrackID(WTFMove(videoTrackId))
 {
 }
 

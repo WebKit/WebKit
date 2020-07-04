@@ -1,0 +1,5 @@
+
+PASS Video-only MediaRecorder 
+PASS Audio-only MediaRecorder 
+PASS Video+Audio MediaRecorder 
+

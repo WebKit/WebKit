@@ -2084,6 +2084,9 @@
     "imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html": [
         "slow"
     ],

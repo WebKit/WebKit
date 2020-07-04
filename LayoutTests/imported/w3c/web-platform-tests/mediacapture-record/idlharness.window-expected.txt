@@ -10,7 +10,7 @@ PASS MediaRecorder interface: existence and properties of interface prototype ob
 PASS MediaRecorder interface: attribute stream 
 FAIL MediaRecorder interface: attribute mimeType assert_true: The prototype object must have a property "mimeType" expected true got false
 PASS MediaRecorder interface: attribute state 
-FAIL MediaRecorder interface: attribute onstart assert_true: The prototype object must have a property "onstart" expected true got false
+PASS MediaRecorder interface: attribute onstart 
 PASS MediaRecorder interface: attribute onstop 
 PASS MediaRecorder interface: attribute ondataavailable 
 FAIL MediaRecorder interface: attribute onpause assert_true: The prototype object must have a property "onpause" expected true got false
@@ -30,7 +30,7 @@ PASS Stringification of [object MediaRecorder]
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "stream" with the proper type 
 FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "mimeType" with the proper type assert_inherits: property "mimeType" not found in prototype chain
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "state" with the proper type 
-FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "onstart" with the proper type assert_inherits: property "onstart" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onstart" with the proper type 
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onstop" with the proper type 
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "ondataavailable" with the proper type 
 FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "onpause" with the proper type assert_inherits: property "onpause" not found in prototype chain
@@ -66,7 +66,7 @@ PASS MediaRecorderErrorEvent interface: existence and properties of interface pr
 PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS MediaRecorderErrorEvent interface: attribute error 
-FAIL MediaRecorderErrorEvent must be primary interface of undefined assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of undefined assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL MediaRecorderErrorEvent interface: undefined must inherit property "error" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS MediaRecorderErrorEvent must be primary interface of [object MediaRecorderErrorEvent] 
+PASS Stringification of [object MediaRecorderErrorEvent] 
+PASS MediaRecorderErrorEvent interface: [object MediaRecorderErrorEvent] must inherit property "error" with the proper type 
 

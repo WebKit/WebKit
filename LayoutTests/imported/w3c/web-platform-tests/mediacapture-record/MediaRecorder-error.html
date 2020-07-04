@@ -7,7 +7,7 @@
     <script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
-<canvas id="canvas">
+<canvas id="canvas" width="320" height="320">
 </canvas>
 <script>
     function createAudioStream() {
@@ -20,7 +20,16 @@
 
     function createVideoStream() {
         let canvas = document.getElementById("canvas");
+        canvas.getContext('2d').lineTo(10, 10);
         return canvas.captureStream();
+    }
+
+    function drawSomethingOnCanvas() {
+        let canvas = document.getElementById("canvas");
+        // Drawing something on the canvas generates a frame in its captured stream.
+        let context = canvas.getContext("2d");
+        context.fillStyle = "red";
+        context.fillRect(0, 0, 10, 10);
     }
 
     async_test(t => {
@@ -37,10 +46,11 @@
         recorder.start();
         assert_equals(recorder.state, "recording", "MediaRecorder has been started successfully");
         video.addTrack(audio.getAudioTracks()[0]);
+        drawSomethingOnCanvas();
         t.step_timeout(() => {
             assert_unreached("error event is not fired after 2 seconds");
         }, 2000);
-    }, "MediaRecorder will stop recording when any of track is added and error event will be fired", { timeout: 10000 });
+    }, "MediaRecorder will stop recording when any of track is added and error event will be fired");
 
     async_test(t => {
         let video = createVideoStream();
@@ -55,17 +65,18 @@
         recorder.start();
         assert_equals(recorder.state, "recording", "MediaRecorder has been started successfully");
         video.removeTrack(video.getVideoTracks()[0]);
+        drawSomethingOnCanvas();
         t.step_timeout(() => {
             assert_unreached("error event is not fired after 2 seconds");
         }, 2000);
-    }, "MediaRecorder will stop recording when any of track is removed and error event will be fired", { timeout: 10000 });
+    }, "MediaRecorder will stop recording when any of track is removed and error event will be fired");
 
     test(t => {
         let video = createVideoStream();
         let recorder = new MediaRecorder(video);
         recorder.start();
         assert_equals(recorder.state, "recording", "MediaRecorder has been started successfully");
-        assert_throws("InvalidStateError", function() {
+        assert_throws_dom("InvalidStateError", function() {
             recorder.start();
         });
     }, "MediaRecorder cannot start recording when MediaRecorder' state is not inactive and an InvalidStateError should be thrown");

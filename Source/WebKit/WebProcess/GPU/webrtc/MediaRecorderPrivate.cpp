@@ -56,20 +56,10 @@ void MediaRecorderPrivate::startRecording(ErrorCallback&& errorCallback)
     // Currently we only choose the first track as the recorded track.
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    if (selectedTracks.audioTrack) {
+    if (selectedTracks.audioTrack)
         m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
-        m_recordedAudioTrackID = selectedTracks.audioTrack->id();
-    }
 
-    int width = 0;
-    int height = 0;
-    if (selectedTracks.videoTrack) {
-        m_recordedVideoTrackID = selectedTracks.videoTrack->id();
-        height = selectedTracks.videoTrack->settings().height();
-        width = selectedTracks.videoTrack->settings().width();
-    }
-
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, width, height }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), errorCallback = WTFMove(errorCallback)](auto&& exception) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), errorCallback = WTFMove(errorCallback)](auto&& exception) mutable {
         if (!weakThis) {
             errorCallback({ });
             return;

@@ -1,0 +1,3 @@
+
+FAIL MediaRecorder handles pause() and resume() calls appropriately in state and events promise_test: Unhandled rejection with value: object "TypeError: recorder.pause is not a function. (In 'recorder.pause()', 'recorder.pause' is undefined)"
+

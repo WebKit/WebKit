@@ -38,9 +38,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, int width, int height)
+std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo)
 {
-    auto writer = MediaRecorderPrivateWriter::create(recordAudio, width, height);
+    auto writer = MediaRecorderPrivateWriter::create(recordAudio, recordVideo);
     if (!writer)
         return nullptr;
     return std::unique_ptr<RemoteMediaRecorder>(new RemoteMediaRecorder { gpuConnectionToWebProcess, identifier, writer.releaseNonNull(), recordAudio });

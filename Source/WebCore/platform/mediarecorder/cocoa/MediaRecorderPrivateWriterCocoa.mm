@@ -114,23 +114,12 @@ namespace WebCore {
 
 using namespace PAL;
 
-RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, int width, int height)
+RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, bool hasVideo)
 {
-    auto writer = adoptRef(*new MediaRecorderPrivateWriter(hasAudio, width && height));
+    auto writer = adoptRef(*new MediaRecorderPrivateWriter(hasAudio, hasVideo));
     if (!writer->initialize())
         return nullptr;
     return writer;
-}
-
-RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack)
-{
-    int width = 0, height = 0;
-    if (videoTrack) {
-        auto& settings = videoTrack->settings();
-        width = settings.width();
-        height = settings.height();
-    }
-    return create(!!audioTrack, width, height);
 }
 
 void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)

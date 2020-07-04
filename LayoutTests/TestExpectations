@@ -825,6 +825,7 @@ webkit.org/b/189905 imported/w3c/web-platform-tests/resource-timing/resource_ini
 webkit.org/b/190523 imported/w3c/web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https.html [ Failure Timeout Pass ]
 
 # These fetch tests are flaky or fail.
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.html [ Pass Failure ]

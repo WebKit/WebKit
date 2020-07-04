@@ -2523,6 +2523,7 @@
         "web-platform-tests/mathml/relations/css-styling/mathcolor-004-notref.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-1.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-2.html",
+        "web-platform-tests/mediacapture-record/support/MediaRecorder-iframe.html",
         "web-platform-tests/payment-request/allowpaymentrequest/echo-PaymentRequest.html",
         "web-platform-tests/payment-request/payment-request-response-id.html",
         "web-platform-tests/payment-request/show-method-postmessage-iframe.html",

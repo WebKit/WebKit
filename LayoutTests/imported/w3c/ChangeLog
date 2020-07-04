@@ -1,3 +1,50 @@
+2020-07-03  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support peer connection remote video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=213924
+
+        Reviewed by Darin Adler.
+
+        Resync to WPT ToT.
+
+        * resources/resource-files.json:
+        * web-platform-tests/mediacapture-record/BlobEvent-constructor.html:
+        * web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-creation.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-creation.https.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-detached-context-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-detached-context.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-disabled-tracks.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-disabled-tracks.https.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-error.html:
+        * web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-mimetype-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-stop-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-stop.html:
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt:
+        * web-platform-tests/mediacapture-record/idlharness.window.js:
+        * web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https.html: Added.
+        * web-platform-tests/mediacapture-record/passthrough/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/w3c-import.log.
+        * web-platform-tests/mediacapture-record/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/w3c-import.log.
+        * web-platform-tests/mediacapture-record/utils/peerconnection.js: Added.
+        (async exchangeOfferAnswer):
+        (setTransceiverCodecPreference):
+        (async startConnection):
+        (async waitForReceivedFrames):
+        (async waitForReceivedCodec):
+        * web-platform-tests/mediacapture-record/utils/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/w3c-import.log.
+        * web-platform-tests/mediacapture-record/w3c-import.log:
+
 2020-07-03  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/dom & web-platform-tests/html/infrastructure from upstream

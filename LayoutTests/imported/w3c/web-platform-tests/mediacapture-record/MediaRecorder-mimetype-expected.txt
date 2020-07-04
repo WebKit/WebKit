@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: TypeError: MediaRecorder.isTypeSupported is not a function. (In 'MediaRecorder.isTypeSupported(mimeType)', 'MediaRecorder.isTypeSupported' is undefined)
+
+Harness Error (FAIL), message = TypeError: MediaRecorder.isTypeSupported is not a function. (In 'MediaRecorder.isTypeSupported(mimeType)', 'MediaRecorder.isTypeSupported' is undefined)
+
+FAIL MediaRecorder sets no default mimeType in the constructor for audio assert_equals: MediaRecorder has no default mimeType expected (string) "" but got (undefined) undefined
+FAIL MediaRecorder sets no default mimeType in the constructor for video assert_equals: MediaRecorder has no default mimeType expected (string) "" but got (undefined) undefined
+FAIL MediaRecorder sets no default mimeType in the constructor for audio/video assert_equals: MediaRecorder has no default mimeType expected (string) "" but got (undefined) undefined
+FAIL MediaRecorder invalid audio mimeType throws assert_throws_dom: function "() => new MediaRecorder(new MediaStream(), {mimeType: "audio/banana"})" did not throw
+FAIL MediaRecorder invalid audio mimeType is unsupported MediaRecorder.isTypeSupported is not a function. (In 'MediaRecorder.isTypeSupported("audio/banana")', 'MediaRecorder.isTypeSupported' is undefined)
+FAIL MediaRecorder invalid video mimeType throws assert_throws_dom: function "() => new MediaRecorder(new MediaStream(), {mimeType: "video/pineapple"})" did not throw
+FAIL MediaRecorder invalid video mimeType is unsupported MediaRecorder.isTypeSupported is not a function. (In 'MediaRecorder.isTypeSupported("video/pineapple")', 'MediaRecorder.isTypeSupported' is undefined)
+
