@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #ifndef NDEBUG
+#include "BlockFormattingState.h"
 #include "DisplayBox.h"
 #include "InlineFormattingState.h"
 #include "InlineTextBox.h"
@@ -217,7 +218,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     return mismatched;
 }
 
-static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutState& context, const RenderBox& renderer, const Box& layoutBox)
+static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBox& renderer, const Box& layoutBox)
 {
     bool firstMismatchingRect = true;
     auto outputRect = [&] (const String& prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
@@ -237,7 +238,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
             return displayBox.rect();
 
         // Produce a RenderBox matching margin box.
-        auto containingBlockWidth = context.displayBoxForLayoutBox(layoutBox.containingBlock()).contentBoxWidth();
+        auto containingBlockWidth = layoutState.displayBoxForLayoutBox(layoutBox.containingBlock()).contentBoxWidth();
         auto marginStart = LayoutUnit { };
         auto& marginStartStyle = layoutBox.style().marginStart();
         if (marginStartStyle.isFixed() || marginStartStyle.isPercent() || marginStartStyle.isCalculated())
@@ -248,12 +249,20 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         if (marginEndStyle.isFixed() || marginEndStyle.isPercent() || marginEndStyle.isCalculated())
             marginEnd = valueForLength(marginEndStyle, containingBlockWidth);
 
+        auto marginBefore = displayBox.marginBefore();
+        auto marginAfter = displayBox.marginAfter();
+        if (layoutBox.isBlockLevelBox()) {
+            auto& formattingState = downcast<BlockFormattingState>(layoutState.formattingStateForBox(layoutBox));
+            auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
+            marginBefore = verticalMargin.nonCollapsedValues.before;
+            marginAfter = verticalMargin.nonCollapsedValues.after;
+        }
         auto borderBox = displayBox.borderBox();
         return Display::Rect {
-            borderBox.top() - displayBox.nonCollapsedMarginBefore(),
+            borderBox.top() - marginBefore,
             borderBox.left() - marginStart,
             marginStart + borderBox.width() + marginEnd,
-            displayBox.nonCollapsedMarginBefore() + borderBox.height() + displayBox.nonCollapsedMarginAfter()
+            marginBefore + borderBox.height() + marginAfter
         };
     };
 
@@ -262,11 +271,11 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     if (renderer.isInFlowPositioned())
         frameRect.move(renderer.offsetForInFlowPosition());
 
-    auto displayBox = Display::Box { context.displayBoxForLayoutBox(layoutBox) };
+    auto displayBox = Display::Box { layoutState.displayBoxForLayoutBox(layoutBox) };
     if (layoutBox.isTableBox()) {
         // When the <table> is out-of-flow positioned, the wrapper table box has the offset
         // while the actual table box is static, inflow.
-        auto& tableWrapperDisplayBox = context.displayBoxForLayoutBox(layoutBox.containingBlock());
+        auto& tableWrapperDisplayBox = layoutState.displayBoxForLayoutBox(layoutBox.containingBlock());
         displayBox.moveBy(tableWrapperDisplayBox.topLeft());
     }
 

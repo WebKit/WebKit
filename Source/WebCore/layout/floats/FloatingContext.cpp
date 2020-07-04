@@ -304,12 +304,13 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
 
         // Clearance inhibits margin collapsing.
         if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-            // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after? 
-            auto verticalMargin = formattingContext().geometryForBox(layoutBox).verticalMargin();
-            if (verticalMargin.hasCollapsedValues() && verticalMargin.collapsedValues().before) {
-                auto previousVerticalMargin = formattingContext().geometryForBox(*previousInFlowSibling).verticalMargin();
-                auto collapsedMargin = *verticalMargin.collapsedValues().before;
-                auto nonCollapsedMargin = previousVerticalMargin.after() + verticalMargin.before();
+            // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after?
+            auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
+            auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
+            if (verticalMargin.collapsedValues.before) {
+                auto previousVerticalMarginAfter = formattingContext().geometryForBox(*previousInFlowSibling).marginAfter();
+                auto collapsedMargin = *verticalMargin.collapsedValues.before;
+                auto nonCollapsedMargin = previousVerticalMarginAfter + marginBefore(verticalMargin);
                 auto marginDifference = nonCollapsedMargin - collapsedMargin;
                 // Move the box to the position where it would be with non-collapsed margins.
                 rootRelativeTop += marginDifference;

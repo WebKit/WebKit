@@ -1,3 +1,76 @@
+2020-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Store used vertical margin values in the formatting state
+        https://bugs.webkit.org/show_bug.cgi?id=213958
+
+        Reviewed by Antti Koivisto.
+
+        Layout related vertical margin values (collapsed vs. non-collapsed) should all go to the FormattingState, while
+        Display::Box should only have the final values.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        * layout/MarginTypes.h:
+        (WebCore::Layout::marginBefore):
+        (WebCore::Layout::marginAfter):
+        (WebCore::Layout::UsedVerticalMargin::before const): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::after const): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::isCollapsedThrough const): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::nonCollapsedValues const): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::collapsedValues const): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::hasCollapsedValues const): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::setCollapsedValues): Deleted.
+        (WebCore::Layout::UsedVerticalMargin::UsedVerticalMargin): Deleted.
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockFormattingState.h:
+        (WebCore::Layout::BlockFormattingState::setUsedVerticalMargin):
+        (WebCore::Layout::BlockFormattingState::usedVerticalMargin const):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::nonCollapsedMarginBox const): Deleted.
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::rectWithMargin const):
+        (WebCore::Display::Box::setHasValidVerticalMargin):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::marginBefore const):
+        (WebCore::Display::Box::marginAfter const):
+        (WebCore::Display::Box::VerticalMargin::before const): Deleted.
+        (WebCore::Display::Box::VerticalMargin::after const): Deleted.
+        (WebCore::Display::Box::VerticalMargin::isCollapsedThrough const): Deleted.
+        (WebCore::Display::Box::VerticalMargin::nonCollapsedValues const): Deleted.
+        (WebCore::Display::Box::VerticalMargin::collapsedValues const): Deleted.
+        (WebCore::Display::Box::VerticalMargin::hasCollapsedValues const): Deleted.
+        (WebCore::Display::Box::VerticalMargin::setCollapsedValues): Deleted.
+        (WebCore::Display::Box::hasCollapsedThroughMargin const): Deleted.
+        (WebCore::Display::Box::setHasValidVerticalNonCollapsedMargin): Deleted.
+        (WebCore::Display::Box::VerticalMargin::VerticalMargin): Deleted.
+        (WebCore::Display::Box::VerticalMargin::NonCollapsedValues::NonCollapsedValues): Deleted.
+        (WebCore::Display::Box::VerticalMargin::CollapsedValues::CollapsedValues): Deleted.
+        (WebCore::Display::Box::nonCollapsedMarginBefore const): Deleted.
+        (WebCore::Display::Box::nonCollapsedMarginAfter const): Deleted.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove unconditional features from FeatureDefines.xcconfig, making sure they are covered in PlatformEnableCocoa.h

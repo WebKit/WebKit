@@ -122,8 +122,8 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
     auto nonCollapsedVerticalMargin = verticalGeometry.contentHeightAndMargin.nonCollapsedMargin;
     displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
     displayBox.setContentBoxHeight(verticalGeometry.contentHeightAndMargin.contentHeight);
-    // Margins of absolutely positioned boxes do not collapse
-    displayBox.setVerticalMargin(nonCollapsedVerticalMargin);
+    // Margins of absolutely positioned boxes do not collapse.
+    displayBox.setVerticalMargin({ nonCollapsedVerticalMargin.before, nonCollapsedVerticalMargin.after });
 }
 
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)

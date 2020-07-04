@@ -224,11 +224,12 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     // Cache the computed positive and negative margin value pair.
     formattingState().setPositiveAndNegativeVerticalMargin(tableBox, collapsedAndPositiveNegativeValues.positiveAndNegativeVerticalValues);
     auto verticalMargin = UsedVerticalMargin { heightAndMargin.nonCollapsedMargin, collapsedAndPositiveNegativeValues.collapsedValues };
+    formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
     auto& displayBox = formattingState().displayBox(tableBox);
     displayBox.setTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.vertical));
     displayBox.setContentBoxHeight(heightAndMargin.contentHeight);
-    displayBox.setVerticalMargin(verticalMargin);
+    displayBox.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
     MarginCollapse::updateMarginAfterForPreviousSibling(*this, marginCollapse, tableBox);
 }

@@ -483,11 +483,10 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
     auto& blockFormattingState = blockFormattingContext.formattingState();
     while (marginCollapse.marginBeforeCollapsesWithPreviousSiblingMarginAfter(*currentBox)) {
         auto& previousSibling = *currentBox->previousInFlowSibling();
-        auto& previousSiblingDisplayBox = blockFormattingState.displayBox(previousSibling);
-        auto previousSiblingVerticalMargin = previousSiblingDisplayBox.verticalMargin();
+        auto previousSiblingVerticalMargin = blockFormattingState.usedVerticalMargin(previousSibling);
 
-        auto collapsedVerticalMarginBefore = previousSiblingVerticalMargin.collapsedValues().before;
-        auto collapsedVerticalMarginAfter = blockFormattingContext.geometryForBox(*currentBox).verticalMargin().before();
+        auto collapsedVerticalMarginBefore = previousSiblingVerticalMargin.collapsedValues.before;
+        auto collapsedVerticalMarginAfter = blockFormattingContext.geometryForBox(*currentBox).marginBefore();
 
         auto marginsCollapseThrough = marginCollapse.marginsCollapseThrough(previousSibling);
         if (marginsCollapseThrough)

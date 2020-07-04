@@ -38,32 +38,31 @@ struct ComputedVerticalMargin {
 };
 
 struct UsedVerticalMargin {
-    LayoutUnit before() const { return m_collapsedValues.before.valueOr(m_nonCollapsedValues.before); }
-    LayoutUnit after() const { return m_collapsedValues.after.valueOr(m_nonCollapsedValues.after); }
-    bool isCollapsedThrough() const { return m_collapsedValues.isCollapsedThrough; }
-
     struct NonCollapsedValues {
         LayoutUnit before;
         LayoutUnit after;
     };
-    NonCollapsedValues nonCollapsedValues() const { return m_nonCollapsedValues; }
+    NonCollapsedValues nonCollapsedValues;
 
     struct CollapsedValues {
         Optional<LayoutUnit> before;
         Optional<LayoutUnit> after;
         bool isCollapsedThrough { false };
     };
-    CollapsedValues collapsedValues() const { return m_collapsedValues; }
-    bool hasCollapsedValues() const { return m_collapsedValues.before || m_collapsedValues.after; }
-    void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsedValues = collapsedValues; }
-
-    UsedVerticalMargin(NonCollapsedValues, CollapsedValues);
-    UsedVerticalMargin() = default;
-
-private:
-    NonCollapsedValues m_nonCollapsedValues;
-    CollapsedValues m_collapsedValues;
+    CollapsedValues collapsedValues;
 };
+
+static inline LayoutUnit marginBefore(const UsedVerticalMargin& usedVerticalMargin)
+{
+    return usedVerticalMargin.collapsedValues.before.valueOr(usedVerticalMargin.nonCollapsedValues.before);
+}
+
+static inline LayoutUnit marginAfter(const UsedVerticalMargin& usedVerticalMargin)
+{
+    if (usedVerticalMargin.collapsedValues.isCollapsedThrough)
+        return 0_lu;
+    return usedVerticalMargin.collapsedValues.after.valueOr(usedVerticalMargin.nonCollapsedValues.after);
+}
 
 struct ComputedHorizontalMargin {
     Optional<LayoutUnit> start;
@@ -99,12 +98,6 @@ struct PrecomputedMarginBefore {
     Optional<LayoutUnit> collapsedValue;
     PositiveAndNegativeVerticalMargin::Values positiveAndNegativeMarginBefore;
 };
-
-inline UsedVerticalMargin::UsedVerticalMargin(UsedVerticalMargin::NonCollapsedValues nonCollapsedValues, UsedVerticalMargin::CollapsedValues collapsedValues)
-    : m_nonCollapsedValues(nonCollapsedValues)
-    , m_collapsedValues(collapsedValues)
-{
-}
 
 }
 }

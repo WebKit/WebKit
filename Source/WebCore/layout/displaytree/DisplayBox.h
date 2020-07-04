@@ -54,58 +54,24 @@ public:
     LayoutUnit height() const { return borderTop() + paddingBoxHeight() + borderBottom(); }
     bool isEmpty() const { return size().isEmpty(); }
     Rect rect() const { return { top(), left(), width(), height() }; }
-    Rect rectWithMargin() const;
+    Rect rectWithMargin() const { return { top() - marginBefore(), left() - marginStart(), marginStart() + width() + marginEnd(), marginBefore() + height() + marginAfter() }; }
+
+    struct VerticalMargin {
+        LayoutUnit before;
+        LayoutUnit after;
+    };
+    VerticalMargin verticalMargin() const;
 
     struct HorizontalMargin {
         LayoutUnit start;
         LayoutUnit end;
     };
-    struct VerticalMargin {
-        LayoutUnit before() const { return m_collapsedValues.before.valueOr(m_nonCollapsedValues.before); }
-        LayoutUnit after() const { return m_collapsedValues.after.valueOr(m_nonCollapsedValues.after); }
-        bool isCollapsedThrough() const { return m_collapsedValues.isCollapsedThrough; }
-
-        struct NonCollapsedValues {
-            NonCollapsedValues(Layout::UsedVerticalMargin::NonCollapsedValues);
-            NonCollapsedValues() = default;
-
-            LayoutUnit before;
-            LayoutUnit after;
-        };
-        NonCollapsedValues nonCollapsedValues() const { return m_nonCollapsedValues; }
-
-        struct CollapsedValues {
-            CollapsedValues(Layout::UsedVerticalMargin::CollapsedValues);
-            CollapsedValues() = default;
-
-            Optional<LayoutUnit> before;
-            Optional<LayoutUnit> after;
-            bool isCollapsedThrough { false };
-        };
-        CollapsedValues collapsedValues() const { return m_collapsedValues; }
-        bool hasCollapsedValues() const { return m_collapsedValues.before || m_collapsedValues.after; }
-        void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsedValues = collapsedValues; }
-
-        VerticalMargin(NonCollapsedValues, CollapsedValues);
-        VerticalMargin(Layout::UsedVerticalMargin);
-        VerticalMargin(Layout::UsedVerticalMargin::NonCollapsedValues);
-        VerticalMargin() = default;
-
-    private:
-        NonCollapsedValues m_nonCollapsedValues;
-        CollapsedValues m_collapsedValues;
-    };
-    VerticalMargin verticalMargin() const;
     HorizontalMargin horizontalMargin() const;
     LayoutUnit marginBefore() const;
     LayoutUnit marginStart() const;
     LayoutUnit marginAfter() const;
     LayoutUnit marginEnd() const;
-    bool hasCollapsedThroughMargin() const { return m_verticalMargin.isCollapsedThrough(); }
     bool hasClearance() const { return m_hasClearance; }
-
-    LayoutUnit nonCollapsedMarginBefore() const;
-    LayoutUnit nonCollapsedMarginAfter() const;
 
     LayoutUnit borderTop() const;
     LayoutUnit borderLeft() const;
@@ -144,8 +110,6 @@ public:
     LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().valueOr(0) + marginEnd(); }
 
     Rect marginBox() const;
-    Rect nonCollapsedMarginBox() const;
-
     Rect borderBox() const;
     Rect paddingBox() const;
     Rect contentBox() const;
@@ -184,7 +148,6 @@ private:
     void setHasValidTop() { m_hasValidTop = true; }
     void setHasValidLeft() { m_hasValidLeft = true; }
     void setHasValidVerticalMargin() { m_hasValidVerticalMargin = true; }
-    void setHasValidVerticalNonCollapsedMargin() { m_hasValidVerticalNonCollapsedMargin = true; }
     void setHasValidHorizontalMargin() { m_hasValidHorizontalMargin = true; }
 
     void setHasValidBorder() { m_hasValidBorder = true; }
@@ -210,7 +173,6 @@ private:
     bool m_hasValidLeft { false };
     bool m_hasValidHorizontalMargin { false };
     bool m_hasValidVerticalMargin { false };
-    bool m_hasValidVerticalNonCollapsedMargin { false };
     bool m_hasValidBorder { false };
     bool m_hasValidPadding { false };
     bool m_hasValidContentHeight { false };
@@ -218,36 +180,6 @@ private:
     bool m_hasPrecomputedMarginBefore { false };
 #endif // ASSERT_ENABLED
 };
-
-inline Box::VerticalMargin::VerticalMargin(Layout::UsedVerticalMargin usedVerticalMargin)
-    : m_nonCollapsedValues(usedVerticalMargin.nonCollapsedValues())
-    , m_collapsedValues(usedVerticalMargin.collapsedValues())
-{
-}
-
-inline Box::VerticalMargin::VerticalMargin(VerticalMargin::NonCollapsedValues nonCollapsedValues, VerticalMargin::CollapsedValues collapsedValues)
-    : m_nonCollapsedValues(nonCollapsedValues)
-    , m_collapsedValues(collapsedValues)
-{
-}
-
-inline Box::VerticalMargin::VerticalMargin(Layout::UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
-    : m_nonCollapsedValues(nonCollapsedValues)
-{
-}
-
-inline Box::VerticalMargin::NonCollapsedValues::NonCollapsedValues(Layout::UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
-    : before(nonCollapsedValues.before)
-    , after(nonCollapsedValues.after)
-{
-}
-
-inline Box::VerticalMargin::CollapsedValues::CollapsedValues(Layout::UsedVerticalMargin::CollapsedValues collapsedValues)
-    : before(collapsedValues.before)
-    , after(collapsedValues.after)
-    , isCollapsedThrough(collapsedValues.isCollapsedThrough)
-{
-}
 
 #if ASSERT_ENABLED
 inline void Box::invalidateMargin()
@@ -341,7 +273,6 @@ inline void Box::setVerticalMargin(VerticalMargin margin)
 {
 #if ASSERT_ENABLED
     setHasValidVerticalMargin();
-    setHasValidVerticalNonCollapsedMargin();
     invalidatePrecomputedMarginBefore();
 #endif
     m_verticalMargin = margin;
@@ -371,14 +302,6 @@ inline void Box::setVerticalPadding(Layout::VerticalEdges verticalPadding)
     m_padding = Layout::Edges { m_padding ? m_padding->horizontal : Layout::HorizontalEdges(), verticalPadding };
 }
 
-inline Rect Box::rectWithMargin() const
-{
-    auto marginAfter = this->marginAfter();
-    if (m_verticalMargin.collapsedValues().isCollapsedThrough)
-        marginAfter = 0;
-    return { top() - marginBefore(), left() - marginStart(), marginStart() + width() + marginEnd(), marginBefore() + height() + marginAfter };
-}
-
 inline Box::VerticalMargin Box::verticalMargin() const
 {
     ASSERT(m_hasValidVerticalMargin);
@@ -394,7 +317,7 @@ inline Box::HorizontalMargin Box::horizontalMargin() const
 inline LayoutUnit Box::marginBefore() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin.before();
+    return m_verticalMargin.before;
 }
 
 inline LayoutUnit Box::marginStart() const
@@ -406,25 +329,13 @@ inline LayoutUnit Box::marginStart() const
 inline LayoutUnit Box::marginAfter() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin.after();
+    return m_verticalMargin.after;
 }
 
 inline LayoutUnit Box::marginEnd() const
 {
     ASSERT(m_hasValidHorizontalMargin);
     return m_horizontalMargin.end;
-}
-
-inline LayoutUnit Box::nonCollapsedMarginBefore() const
-{
-    ASSERT(m_hasValidVerticalNonCollapsedMargin);
-    return m_verticalMargin.nonCollapsedValues().before;
-}
-
-inline LayoutUnit Box::nonCollapsedMarginAfter() const
-{
-    ASSERT(m_hasValidVerticalNonCollapsedMargin);
-    return m_verticalMargin.nonCollapsedValues().after;
 }
 
 inline Optional<LayoutUnit> Box::paddingTop() const

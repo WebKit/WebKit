@@ -116,7 +116,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
                 computeBorderAndPadding(*layoutBox, constraints.horizontal);
                 computeHorizontalMargin(*layoutBox, constraints.horizontal);
-                formattingState().displayBox(*layoutBox).setVerticalMargin({ { }, { } });
+                formattingState().displayBox(*layoutBox).setVerticalMargin({ });
             }
         } else
             ASSERT_NOT_REACHED();
@@ -343,7 +343,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
     }
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
-    displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin });
+    displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin.before, contentHeightAndMargin.nonCollapsedMargin.after });
 }
 
 void InlineFormattingContext::collectInlineContentIfNeeded()

@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingState.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutContext.h"
@@ -281,8 +282,12 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     LayoutUnit top;
     if (layoutBox.previousInFlowSibling() && layoutBox.previousInFlowSibling()->isBlockLevelBox()) {
         // Add sibling offset
-        auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(*layoutBox.previousInFlowSibling(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
-        top += previousInFlowBoxGeometry.bottom() + previousInFlowBoxGeometry.nonCollapsedMarginAfter();
+        auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
+        auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(previousInFlowSibling, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
+        auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
+        auto usedVerticalMarginForPreviousBox = formattingState.usedVerticalMargin(previousInFlowSibling);
+
+        top += previousInFlowBoxGeometry.bottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
     } else
         top = formattingContext.geometryForBox(layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
 
