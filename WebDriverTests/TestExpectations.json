@@ -41,6 +41,16 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/cookie_tests.py": {
+        "subtests": {
+            "testAddCookieSameSiteStrict": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213960"}}
+            },
+            "testAddCookieSameSiteLax": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213960"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py": {
         "subtests": {
             "testShouldNotSwitchMagicallyToTheTopWindow": {
@@ -132,6 +142,12 @@
             },
             "testAllPrintableKeys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
+            },
+            "testArrowKeysAndPageUpAndDown": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
+            },
+            "testNumberpadAndFunctionKeys": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
             }
         }
     },
