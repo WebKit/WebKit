@@ -39,8 +39,8 @@ Color blendSourceOver(const Color& backdrop, const Color& source)
     if (!source.alpha())
         return backdrop;
 
-    auto [backdropR, backdropG, backdropB, backdropA] = backdrop.toSRGBASimpleColorLossy();
-    auto [sourceR, sourceG, sourceB, sourceA] = source.toSRGBASimpleColorLossy();
+    auto [backdropR, backdropG, backdropB, backdropA] = backdrop.toSRGBALossy<uint8_t>();
+    auto [sourceR, sourceG, sourceB, sourceA] = source.toSRGBALossy<uint8_t>();
 
     int d = 0xFF * (backdropA + sourceA) - backdropA * sourceA;
     int a = d / 0xFF;
@@ -68,7 +68,7 @@ Color blendWithWhite(const Color& color)
     if (!color.isOpaque())
         return color;
 
-    auto [existingR, existingG, existingB, existingAlpha] = color.toSRGBASimpleColorLossy();
+    auto [existingR, existingG, existingB, existingAlpha] = color.toSRGBALossy<uint8_t>();
 
     SimpleColor result;
     for (int alpha = startAlpha; alpha <= endAlpha; alpha += alphaIncrement) {
@@ -97,18 +97,17 @@ Color blend(const Color& from, const Color& to, double progress)
     if (progress == 1 && !to.isValid())
         return { };
 
-    // Since premultiplyCeiling() bails on zero alpha, special-case that.
-    auto premultipliedFrom = from.alpha() ? premultiplyCeiling(from.toSRGBASimpleColorLossy()) : Color::transparent;
-    auto premultipliedTo = to.alpha() ? premultiplyCeiling(to.toSRGBASimpleColorLossy()) : Color::transparent;
+    auto premultipliedFrom = premultipliedCeiling(from.toSRGBALossy<uint8_t>());
+    auto premultipliedTo = premultipliedCeiling(to.toSRGBALossy<uint8_t>());
 
-    auto premultBlended = makeSimpleColor(
-        WebCore::blend(premultipliedFrom.redComponent(), premultipliedTo.redComponent(), progress),
-        WebCore::blend(premultipliedFrom.greenComponent(), premultipliedTo.greenComponent(), progress),
-        WebCore::blend(premultipliedFrom.blueComponent(), premultipliedTo.blueComponent(), progress),
-        WebCore::blend(premultipliedFrom.alphaComponent(), premultipliedTo.alphaComponent(), progress)
+    auto premultipliedBlended = convertToComponentBytes<SRGBA>(
+        WebCore::blend(premultipliedFrom.red, premultipliedTo.red, progress),
+        WebCore::blend(premultipliedFrom.green, premultipliedTo.green, progress),
+        WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, progress),
+        WebCore::blend(premultipliedFrom.alpha, premultipliedTo.alpha, progress)
     );
 
-    return unpremultiply(premultBlended);
+    return makeSimpleColor(unpremultiplied(premultipliedBlended));
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
@@ -118,14 +117,14 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
     if (progress == 1 && !to.isValid())
         return { };
 
-    auto fromSRGB = from.toSRGBASimpleColorLossy();
-    auto toSRGB = from.toSRGBASimpleColorLossy();
+    auto fromSRGB = from.toSRGBALossy<uint8_t>();
+    auto toSRGB = from.toSRGBALossy<uint8_t>();
 
     return makeSimpleColor(
-        WebCore::blend(fromSRGB.redComponent(), toSRGB.redComponent(), progress),
-        WebCore::blend(fromSRGB.greenComponent(), toSRGB.greenComponent(), progress),
-        WebCore::blend(fromSRGB.blueComponent(), toSRGB.blueComponent(), progress),
-        WebCore::blend(fromSRGB.alphaComponent(), toSRGB.alphaComponent(), progress)
+        WebCore::blend(fromSRGB.red, toSRGB.red, progress),
+        WebCore::blend(fromSRGB.green, toSRGB.green, progress),
+        WebCore::blend(fromSRGB.blue, toSRGB.blue, progress),
+        WebCore::blend(fromSRGB.alpha, toSRGB.alpha, progress)
     );
 }
 

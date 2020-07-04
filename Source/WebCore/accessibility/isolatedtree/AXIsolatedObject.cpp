@@ -701,10 +701,10 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
 
 void AXIsolatedObject::colorValue(int& r, int& g, int& b) const
 {
-    auto color = colorAttributeValue(AXPropertyName::ColorValue).toSRGBASimpleColorLossy();
-    r = color.redComponent();
-    g = color.greenComponent();
-    b = color.blueComponent();
+    auto color = colorAttributeValue(AXPropertyName::ColorValue).toSRGBALossy<uint8_t>();
+    r = color.red;
+    g = color.green;
+    b = color.blue;
 }
 
 AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const

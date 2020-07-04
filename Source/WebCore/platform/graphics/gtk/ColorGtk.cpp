@@ -32,7 +32,7 @@ Color::Color(const GdkRGBA& color)
 
 Color::operator GdkRGBA() const
 {
-    auto [r, g, b, a] = toSRGBALossy();
+    auto [r, g, b, a] = toSRGBALossy<float>();
     return { r, g, b, a };
 }
 

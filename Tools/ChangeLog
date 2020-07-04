@@ -1,3 +1,16 @@
+2020-07-04  Sam Weinig  <weinig@apple.com>
+
+        Part 1 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=213948
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Adapt tests to use templatized toSRGBALossy<float/uint8_t>.
+
 2020-07-04  Sergio Villar Senin  <svillar@igalia.com>
 
         [Flatpak SDK] Require OpenXR 1.0.9

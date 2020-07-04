@@ -202,7 +202,8 @@ void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentM
     static constexpr SimpleColor grammarPatternColor { makeSimpleColor(0, 128, 0) };
 
     const SimpleColor& patternColor = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor : spellingPatternColor;
-    CGContextSetRGBStrokeColor(context, patternColor.redComponent(), patternColor.greenComponent(), patternColor.blueComponent(), patternColor.alphaComponent());
+    auto patternColorComponents = patternColor.asSRGBA<uint8_t>();
+    CGContextSetRGBStrokeColor(context, patternColorComponents.red, patternColorComponents.green, patternColorComponents.blue, patternColorComponents.alpha);
 
     CGAffineTransform userToBase = getUserToBaseCTM(context);
     CGPoint phase = CGPointApplyAffineTransform(point, userToBase);

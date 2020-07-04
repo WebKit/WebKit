@@ -38,6 +38,11 @@ float luminance(const SRGBA<float>&);
 float contrastRatio(const SRGBA<float>&, const SRGBA<float>&);
 
 SRGBA<float> premultiplied(const SRGBA<float>&);
+SRGBA<float> unpremultiplied(const SRGBA<float>&);
+
+SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t>);
+SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t>);
+SRGBA<uint8_t> unpremultiplied(SRGBA<uint8_t>);
 
 inline uint8_t convertPrescaledToComponentByte(float f)
 {
@@ -52,6 +57,28 @@ inline uint8_t convertToComponentByte(float f)
 constexpr float convertToComponentFloat(uint8_t byte)
 {
     return byte / 255.0f;
+}
+
+template<template<typename> typename ColorType> inline ColorType<uint8_t> convertToComponentBytes(const ColorType<float>& color)
+{
+    auto components = asColorComponents(color);
+    return { convertToComponentByte(components[0]), convertToComponentByte(components[1]), convertToComponentByte(components[2]), convertToComponentByte(components[3]) };
+}
+
+template<template<typename> typename ColorType> constexpr ColorType<uint8_t> convertToComponentBytes(int r, int g, int b, int a)
+{
+    return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), static_cast<uint8_t>(std::clamp(a, 0, 0xFF)) };
+}
+
+template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(const ColorType<uint8_t>& color)
+{
+    auto components = asColorComponents(color);
+    return { convertToComponentFloat(components[0]), convertToComponentFloat(components[1]), convertToComponentFloat(components[2]), convertToComponentFloat(components[3]) };
+}
+
+template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(float r, float g, float b, float a)
+{
+    return { std::clamp(r, 0.0f, 1.0f), std::clamp(g, 0.0f, 1.0f), std::clamp(b, 0.0f, 1.0f), std::clamp(a, 0.0f, 1.0f) };
 }
 
 constexpr uint16_t fastMultiplyBy255(uint16_t value)

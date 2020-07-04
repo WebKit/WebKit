@@ -1,3 +1,213 @@
+2020-07-04  Sam Weinig  <weinig@apple.com>
+
+        Part 1 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=213948
+
+        Reviewed by Darin Adler.
+
+        Begin converging SimpleColor and SRGBA<uint8_t>, starting with removing usages that
+        were getting SimpleColors to access or operate on the color's components.
+
+        - Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>
+        - Replace toSRGBALossy() with toSRGBALossy<float>().
+        - Remove direct color component accessors from SimpleColor. 
+        - Add new ARGB type to support explicit conversion from packed ARGB bits to a color type.
+        - Update premulitplication functions to operate on SRGBA<uint8_t> and rename them to
+          match existing function operating on SRGBA<float>.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Removes SimpleColor.cpp
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::colorValue const):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::colorValue const):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        * css/DeprecatedCSSOMRGBColor.h:
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+        
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightened const):
+        (WebCore::Color::darkened const):
+        (WebCore::Color::lightness const):
+        (WebCore::Color::luminance const):
+        (WebCore::Color::semanticColor const):
+        (WebCore::Color::toSRGBASimpleColorLossy const): Deleted.
+        (WebCore::Color::toSRGBALossy const): Deleted.
+        * platform/graphics/Color.h:
+        Remove toSRGBASimpleColorLossy() and templatize toSRGBALossy() to support both
+        lossy conversion to byte based components as well.
+
+        * platform/graphics/ColorBlending.cpp:
+        (WebCore::blendSourceOver):
+        (WebCore::blendWithWhite):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        (WebCore::blend):
+        (WebCore::blendWithoutPremultiply):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>. Adopt new premultipliedCeiling
+        and unpremultiplied functions that operate on SRGBA<uint8_t> (rather than SimpleColor) and 
+        clamping conversion to SRGBA<uint8_t> via convertToComponentBytes<SRGBA>. premultipliedCeiling 
+        now works correctly for 0 alpha, so no workaround is needed anymore.
+
+        * platform/graphics/ColorTypes.h:
+        (WebCore::asARGB):
+        (WebCore::asSRGBA):
+        Add new type of color struct representing a format packing. The initial one is ARGB to support
+        the few places using SimpleColor to manipulate ARGB pixel data. 
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::unpremultiplied):
+        (WebCore::premultipliedFlooring):
+        (WebCore::premultipliedCeiling):
+        (WebCore::unpremultipliedComponentByte):
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::convertToComponentBytes):
+        (WebCore::convertToComponentFloats):
+        Move remaining premultiplication functions here (from SimpleColor.h/cpp) and reimplement
+        to operate on SRGBA<uint8_t>. Also slightly rename, premultiply -> premultiplied, to 
+        match existing premultiplied functions. While moving them, also fix the premultiplied
+        functions to better support 0 alpha to avoid workarounds in callers.
+        
+        Additional, this adds convertToComponentBytes/convertToComponentFloats helper functions
+        which convert to/from uint8_t/float based color types, and support creating color types
+        from values potentially outside of their supported value range. Right now, that value
+        range is always considerer to be 0-255 for uint8_t and 0-1 for float, but that can be
+        chnaged in the future by allowing color type structs to indicate their supported ranges.
+
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::toSRGBAFloatComponentsLossy const):
+        (WebCore::ExtendedColor::toSRGBALossy const): Deleted.
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::toSRGBALossy const):
+        Rename existing toSRGBALossy() to toSRGBAFloatComponentsLossy() and replace templatize
+        toSRGBALossy(), with the uint8_t case just down converting via new convertToComponentBytes.
+        
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::fillRect):
+        (WebCore::ImageBackingStore::setPixel):
+        (WebCore::ImageBackingStore::blendPixel):
+        (WebCore::ImageBackingStore::pixelValue const):
+        Replace usage of SimpleColor with new ARGB type for conversion from ARGB to SRGBA<uint8_t>.
+        Update to use new premulitplication functions. Also, update the interface to take pixel 
+        components as uint8_t, rather than unsigned, as that is what the callers are passing anyway,
+        and it avoids us having to clamp/cast manually all over the case.
+
+        * platform/graphics/SimpleColor.cpp: Removed.
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::alphaComponent const):
+        (WebCore::SimpleColor::asSRGBA const):
+        (WebCore::SimpleColor::redComponent const):
+        (WebCore::SimpleColor::greenComponent const):
+        (WebCore::SimpleColor::blueComponent const):
+        (WebCore::operator==):
+        (WebCore::makeSimpleColor):
+        Simplify interface, making red, green and blue component accessors private and having 
+        callers all use SRGBA directly. Remove premultiplication functions in favor of new ones  
+        in ColorUtilities.
+
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::PlatformCAAnimationCocoa::setFromValue):
+        (WebCore::PlatformCAAnimationCocoa::setToValue):
+        (WebCore::PlatformCAAnimationCocoa::setValues):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimationWin::setFromValue):
+        (PlatformCAAnimationWin::setToValue):
+        (PlatformCAAnimationWin::setValues):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::setSourceRGBAFromColor):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::addColorStopRGBA):
+        (WebCore::setCornerColorRGBA):
+        (WebCore::interpolateColorStop):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace):
+        Replace usage of SimpleColor with new ARGB type for conversion from ARGB to SRGBA<uint8_t>.
+        Update to use new premulitplication functions.
+
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        Replace usage of SimpleColor with new ARGB type for conversion from ARGB to SRGBA<uint8_t>.
+        Update to use new premulitplication functions. 
+
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::operator GdkRGBA const):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::TextureMapperGL::drawNumber):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore::TextureMapperGL::clearColor):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::operator D2D1_COLOR_F const):
+        (WebCore::Color::operator D2D1_VECTOR_4F const):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        Replace direct usage component access from SimpleColor with usage of accessed SRGBA<uint8_t>.
+
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::colorWithGlobalAlpha const):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::disabledTextColor const):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::shouldUseConvexGradient):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::textColorIsLegibleAgainstBackgroundColor):
+        Replace toSRGBALossy() with toSRGBALossy<float>().
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationColorFunction::animate):
+        Replace toSRGBASimpleColorLossy() with toSRGBALossy<uint8_t>.
+
 2020-07-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove redundant Display::Box::HorizontalMargin c'tors

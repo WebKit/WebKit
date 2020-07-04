@@ -367,8 +367,8 @@ void PlatformCAAnimationWin::setFromValue(const WebCore::Color& value)
     if (animationType() != Basic)
         return;
 
-    auto simpleColor = value.toSRGBASimpleColorLossy();
-    CGFloat a[4] = { simpleColor.redComponent(), simpleColor.greenComponent(), simpleColor.blueComponent(), simpleColor.alphaComponent() };
+    auto components = value.toSRGBALossy<uint8_t>();
+    CGFloat a[4] = { components.red, components.green, components.blue, components.alpha };
     RetainPtr<CACFVectorRef> v = adoptCF(CACFVectorCreate(4, a));
     CACFAnimationSetFromValue(m_animation.get(), v.get());
 }
@@ -419,8 +419,8 @@ void PlatformCAAnimationWin::setToValue(const WebCore::Color& value)
     if (animationType() != Basic)
         return;
 
-    auto simpleColor = value.toSRGBASimpleColorLossy();
-    CGFloat a[4] = { simpleColor.redComponent(), simpleColor.greenComponent(), simpleColor.blueComponent(), simpleColor.alphaComponent() };
+    auto components = value.toSRGBALossy<uint8_t>();
+    CGFloat a[4] = { components.red, components.green, components.blue, components.alpha };
     RetainPtr<CACFVectorRef> v = adoptCF(CACFVectorCreate(4, a));
     CACFAnimationSetToValue(m_animation.get(), v.get());
 }
@@ -489,8 +489,8 @@ void PlatformCAAnimationWin::setValues(const Vector<WebCore::Color>& value)
         
     RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (size_t i = 0; i < value.size(); ++i) {
-        auto simpleColor = value[i].toSRGBASimpleColorLossy();
-        CGFloat a[4] = { simpleColor.redComponent(), simpleColor.greenComponent(), simpleColor.blueComponent(), simpleColor.alphaComponent() };
+        auto components = value[i].toSRGBALossy<uint8_t>();
+        CGFloat a[4] = { components.red, components.green, components.blue, components.alpha };
         RetainPtr<CACFVectorRef> v = adoptCF(CACFVectorCreate(4, a));
         CFArrayAppendValue(array.get(), v.get());
     }

@@ -241,7 +241,7 @@ TEST(ExtendedColor, P3ConversionToSRGB)
     Color p3Color { makeExtendedColor(1.0, 0.5, 0.25, 0.75, ColorSpace::DisplayP3) };
     EXPECT_TRUE(p3Color.isExtended());
 
-    auto sRGBAColor = p3Color.toSRGBALossy();
+    auto sRGBAColor = p3Color.toSRGBALossy<float>();
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.red, 1.0f));
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.green, 0.462537885f));
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.blue, 0.149147838f));
@@ -252,7 +252,7 @@ TEST(ExtendedColor, LinearSRGBConversionToSRGB)
 {
     Color linearColor { makeExtendedColor(1.0, 0.5, 0.25, 0.75, ColorSpace::LinearRGB) };
     EXPECT_TRUE(linearColor.isExtended());
-    auto sRGBAColor = linearColor.toSRGBALossy();
+    auto sRGBAColor = linearColor.toSRGBALossy<float>();
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.red, 1.0f));
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.green, 0.735356927f));
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.blue, 0.537098706f));

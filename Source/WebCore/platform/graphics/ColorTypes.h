@@ -237,4 +237,21 @@ template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& 
     return !(a == b);
 }
 
+
+// Packed Color Formats
+
+struct ARGB {
+    uint32_t value;
+};
+
+constexpr ARGB asARGB(SRGBA<uint8_t> color)
+{
+    return { static_cast<unsigned>(color.alpha << 24 | color.red << 16 | color.green << 8 | color.blue) };
+}
+
+constexpr SRGBA<uint8_t> asSRGBA(ARGB color)
+{
+    return { static_cast<uint8_t>(color.value >> 16), static_cast<uint8_t>(color.value >> 8), static_cast<uint8_t>(color.value), static_cast<uint8_t>(color.value >> 24) };
+}
+
 } // namespace WebCore

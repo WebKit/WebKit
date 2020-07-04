@@ -405,10 +405,10 @@ bool FELighting::drawLighting(Uint8ClampedArray& pixels, int width, int height)
     data.heightDecreasedByOne = height - 1;
     
     if (operatingColorSpace() == ColorSpace::LinearRGB) {
-        auto [r, g, b, a] = toLinearSRGBA(m_lightingColor.toSRGBALossy());
+        auto [r, g, b, a] = toLinearSRGBA(m_lightingColor.toSRGBALossy<float>());
         paintingData.initialLightingData.colorVector = FloatPoint3D(r, g, b);
     } else {
-        auto [r, g, b, a] = m_lightingColor.toSRGBALossy();
+        auto [r, g, b, a] = m_lightingColor.toSRGBALossy<float>();
         paintingData.initialLightingData.colorVector = FloatPoint3D(r, g, b);
     }
     m_lightSource->initPaintingData(*this, paintingData);

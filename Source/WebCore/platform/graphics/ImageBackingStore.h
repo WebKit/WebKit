@@ -102,7 +102,7 @@ public:
         }
     }
 
-    void fillRect(const IntRect &rect, unsigned r, unsigned g, unsigned b, unsigned a)
+    void fillRect(const IntRect& rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         if (rect.isEmpty() || !inBounds(rect))
             return;
@@ -136,45 +136,45 @@ public:
         return m_pixelsPtr + y * m_size.width() + x;
     }
 
-    void setPixel(uint32_t* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+    void setPixel(uint32_t* dest, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         ASSERT(dest);
         *dest = pixelValue(r, g, b, a);
     }
 
-    void setPixel(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
+    void setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         setPixel(pixelAt(x, y), r, g, b, a);
     }
 
-    void blendPixel(uint32_t* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+    void blendPixel(uint32_t* dest, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         if (!a)
             return;
 
-        SimpleColor pixel { *dest };
+        auto pixel = asSRGBA(ARGB { *dest });
 
-        if (a >= 255 || !pixel.isVisible()) {
+        if (a >= 255 || !pixel.alpha) {
             setPixel(dest, r, g, b, a);
             return;
         }
 
         if (!m_premultiplyAlpha)
-            pixel = premultiplyFlooring(pixel);
+            pixel = premultipliedFlooring(pixel);
 
-        unsigned d = 255 - a;
+        uint8_t d = 255 - a;
 
-        r = fastDivideBy255(r * a + pixel.redComponent() * d);
-        g = fastDivideBy255(g * a + pixel.greenComponent() * d);
-        b = fastDivideBy255(b * a + pixel.blueComponent() * d);
-        a += fastDivideBy255(d * pixel.alphaComponent());
+        r = fastDivideBy255(r * a + pixel.red * d);
+        g = fastDivideBy255(g * a + pixel.green * d);
+        b = fastDivideBy255(b * a + pixel.blue * d);
+        a += fastDivideBy255(d * pixel.alpha);
 
-        auto result = makeSimpleColor(r, g, b, a);
+        auto result = SRGBA { r, g, b, a };
 
         if (!m_premultiplyAlpha)
-            result = unpremultiply(result);
+            result = unpremultiplied(result);
 
-        *dest = result.valueAsARGB();
+        *dest = asARGB(result).value;
     }
 
     static bool isOverSize(const IntSize& size)
@@ -221,17 +221,17 @@ private:
         return IntRect(IntPoint(), m_size).contains(rect);
     }
 
-    uint32_t pixelValue(unsigned r, unsigned g, unsigned b, unsigned a) const
+    uint32_t pixelValue(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const
     {
         if (m_premultiplyAlpha && !a)
             return 0;
 
-        auto result = makeSimpleColor(r, g, b, a);
+        auto result = SRGBA { r, g, b, a };
 
         if (m_premultiplyAlpha && a < 255)
-            result = premultiplyFlooring(result);
+            result = premultipliedFlooring(result);
 
-        return result.valueAsARGB();
+        return asARGB(result).value;
     }
 
     RefPtr<SharedBuffer::DataSegment> m_pixels;

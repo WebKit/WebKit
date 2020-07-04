@@ -86,7 +86,7 @@ Color Color::lightened() const
     if (isSimple() && asSimple() == black)
         return lightenedBlack;
 
-    auto [r, g, b, a] = toSRGBALossy();
+    auto [r, g, b, a] = toSRGBALossy<float>();
     float v = std::max({ r, g, b });
 
     if (v == 0.0f)
@@ -103,7 +103,7 @@ Color Color::darkened() const
     if (isSimple() && asSimple() == white)
         return darkenedWhite;
     
-    auto [r, g, b, a] = toSRGBALossy();
+    auto [r, g, b, a] = toSRGBALossy<float>();
 
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
@@ -114,14 +114,14 @@ Color Color::darkened() const
 float Color::lightness() const
 {
     // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.
-    return WebCore::lightness(toSRGBALossy());
+    return WebCore::lightness(toSRGBALossy<float>());
 }
 
 float Color::luminance() const
 {
     // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms
     // for luminance (e.g. convertToXYZ(c).yComponent()).
-    return WebCore::luminance(toSRGBALossy());
+    return WebCore::luminance(toSRGBALossy<float>());
 }
 
 Color Color::colorWithAlpha(float alpha) const
@@ -149,7 +149,7 @@ Color Color::semanticColor() const
     if (isSemantic())
         return *this;
 
-    return { toSRGBASimpleColorLossy(), Semantic };
+    return { makeSimpleColor(toSRGBALossy<uint8_t>()), Semantic };
 }
 
 std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const
@@ -157,20 +157,6 @@ std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() c
     if (isExtended())
         return { asExtended().colorSpace(), asExtended().components() };
     return { ColorSpace::SRGB, asColorComponents(asSimple().asSRGBA<float>()) };
-}
-
-SimpleColor Color::toSRGBASimpleColorLossy() const
-{
-    if (isExtended())
-        return makeSimpleColor(asExtended().toSRGBALossy());
-    return asSimple();
-}
-
-SRGBA<float> Color::toSRGBALossy() const
-{
-    if (isExtended())
-        return asExtended().toSRGBALossy();
-    return asSimple().asSRGBA<float>();
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

@@ -42,11 +42,7 @@ public:
     constexpr uint32_t valueAsARGB() const { return m_value; }
     constexpr uint32_t value() const { return m_value; }
 
-    constexpr uint8_t redComponent() const { return m_value >> 16; }
-    constexpr uint8_t greenComponent() const { return m_value >> 8; }
-    constexpr uint8_t blueComponent() const { return m_value; }
     constexpr uint8_t alphaComponent() const { return m_value >> 24; }
-
     constexpr float alphaComponentAsFloat() const { return convertToComponentFloat(alphaComponent()); }
 
     constexpr bool isOpaque() const { return alphaComponent() == 0xFF; }
@@ -62,7 +58,13 @@ public:
         return { static_cast<uint8_t>(0xFF - redComponent()), static_cast<uint8_t>(0xFF - greenComponent()), static_cast<uint8_t>(0xFF - blueComponent()), alpha };
     }
 
-    template<typename T> constexpr SRGBA<T> asSRGBA() const;
+    template<typename T> constexpr SRGBA<T> asSRGBA() const
+    {
+        if constexpr (std::is_same_v<T, float>)
+            return { convertToComponentFloat(redComponent()), convertToComponentFloat(greenComponent()), convertToComponentFloat(blueComponent()),  convertToComponentFloat(alphaComponent()) };
+        else if constexpr (std::is_same_v<T, uint8_t>)
+            return { redComponent(), greenComponent(), blueComponent(), alphaComponent() };
+    }
 
     template<std::size_t N>
     constexpr uint8_t get() const
@@ -79,6 +81,10 @@ public:
     }
 
 private:
+    constexpr uint8_t redComponent() const { return m_value >> 16; }
+    constexpr uint8_t greenComponent() const { return m_value >> 8; }
+    constexpr uint8_t blueComponent() const { return m_value; }
+
     uint32_t m_value { 0 };
 };
 
@@ -89,10 +95,6 @@ constexpr SimpleColor makeSimpleColor(int r, int g, int b);
 constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a);
 constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>&);
 SimpleColor makeSimpleColor(const SRGBA<float>&);
-
-SimpleColor premultiplyFlooring(SimpleColor);
-SimpleColor premultiplyCeiling(SimpleColor);
-SimpleColor unpremultiply(SimpleColor);
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
@@ -116,24 +118,13 @@ constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
 
 constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>& sRGBA)
 {
-    auto [r, g, b, a] = sRGBA;
-    return { r, g, b, a };
+    return { sRGBA.red, sRGBA.green, sRGBA.blue, sRGBA.alpha };
 }
 
 inline SimpleColor makeSimpleColor(const SRGBA<float>& sRGBA)
 {
-    auto [r, g, b, a] = sRGBA;
-    return { convertToComponentByte(r), convertToComponentByte(g), convertToComponentByte(b), convertToComponentByte(a) };
+    return makeSimpleColor(convertToComponentBytes(sRGBA));
 }
-
-template<typename T> constexpr SRGBA<T> SimpleColor::asSRGBA() const
-{
-    if constexpr (std::is_floating_point_v<T>)
-        return { convertToComponentFloat(redComponent()), convertToComponentFloat(greenComponent()), convertToComponentFloat(blueComponent()),  convertToComponentFloat(alphaComponent()) };
-    else
-        return { redComponent(), greenComponent(), blueComponent(), alphaComponent() };
-}
-
 
 } // namespace WebCore
 

@@ -57,7 +57,7 @@ Ref<ExtendedColor> ExtendedColor::invertedColorWithAlpha(float overrideAlpha) co
     return ExtendedColor::create(1.0f - c1, 1.0f - c2, 1.0f - c3, overrideAlpha, colorSpace());
 }
 
-SRGBA<float> ExtendedColor::toSRGBALossy() const
+SRGBA<float> ExtendedColor::toSRGBAFloatComponentsLossy() const
 {
     switch (m_colorSpace) {
     case ColorSpace::SRGB:

@@ -9984,7 +9984,6 @@
 		7C30D9801F815AC100268356 /* JSAbortController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbortController.h; sourceTree = "<group>"; };
 		7C30D9811F815AC100268356 /* JSAbortSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbortSignal.h; sourceTree = "<group>"; };
 		7C30D9821F815AC200268356 /* JSAbortSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortSignal.cpp; sourceTree = "<group>"; };
-		7C31C88A247AD594005BF319 /* SimpleColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleColor.cpp; sourceTree = "<group>"; };
 		7C31C88C247AD595005BF319 /* SimpleColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleColor.h; sourceTree = "<group>"; };
 		7C330A011DF8FAC600D3395C /* GraphicsContextGLAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLAttributes.h; sourceTree = "<group>"; };
 		7C330A031DF9E95B00D3395C /* PositionOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PositionOptions.idl; sourceTree = "<group>"; };
@@ -25697,7 +25696,6 @@
 				A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
 				0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */,
-				7C31C88A247AD594005BF319 /* SimpleColor.cpp */,
 				7C31C88C247AD595005BF319 /* SimpleColor.h */,
 				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */,

@@ -121,10 +121,7 @@ public:
     WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float>> colorSpaceAndComponents() const;
 
     // This will convert non-sRGB colorspace colors into sRGB.
-    WEBCORE_EXPORT SimpleColor toSRGBASimpleColorLossy() const;
-
-    // This will convert non-sRGB colorspace colors into sRGB.
-    WEBCORE_EXPORT SRGBA<float> toSRGBALossy() const;
+    template<typename T> SRGBA<T> toSRGBALossy() const;
 
     WEBCORE_EXPORT Color lightened() const;
     WEBCORE_EXPORT Color darkened() const;
@@ -266,6 +263,13 @@ inline unsigned Color::hash() const
     if (isExtended())
         return asExtended().hash();
     return WTF::intHash(m_colorData.simpleColorAndFlags);
+}
+
+template<typename T> SRGBA<T> Color::toSRGBALossy() const
+{
+    if (isExtended())
+        return asExtended().toSRGBALossy<T>();
+    return asSimple().asSRGBA<T>();
 }
 
 inline Color Color::invertedColorWithAlpha(Optional<float> alpha) const

@@ -40,13 +40,13 @@ Color::Color(D2D1_COLOR_F color)
 
 Color::operator D2D1_COLOR_F() const
 {
-    auto [r, g, b, a] = toSRGBALossy();
+    auto [r, g, b, a] = toSRGBALossy<float>();
     return D2D1::ColorF(r, g, b, a);
 }
 
 Color::operator D2D1_VECTOR_4F() const
 {
-    auto [r, g, b, a] = toSRGBALossy();
+    auto [r, g, b, a] = toSRGBALossy<float>();
     return D2D1::Vector4F(r, g, b, a);
 }
 

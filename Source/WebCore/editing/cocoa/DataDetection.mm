@@ -621,7 +621,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Da
                 if (renderStyle) {
                     auto textColor = renderStyle->visitedDependentColor(CSSPropertyColor);
                     if (textColor.isValid()) {
-                        auto hsla = toHSLA(textColor.toSRGBALossy());
+                        auto hsla = toHSLA(textColor.toSRGBALossy<float>());
 
                         // Force the lightness of the underline color to the middle, and multiply the alpha by 38%,
                         // so the color will appear on light and dark backgrounds, since only one color can be specified.

@@ -82,7 +82,7 @@ void webkitColorFillFromWebCoreColor(const WebCore::Color& webCoreColor, WebKitC
 {
     RELEASE_ASSERT(webCoreColor.isValid());
 
-    auto [r, g, b, a] = webCoreColor.toSRGBALossy();
+    auto [r, g, b, a] = webCoreColor.toSRGBALossy<float>();
     color->red = r;
     color->green = g;
     color->blue = b;

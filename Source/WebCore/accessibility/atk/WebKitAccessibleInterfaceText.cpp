@@ -92,14 +92,14 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
     if (bgColor.isValid()) {
-        auto [r, g, b, a] = bgColor.toSRGBASimpleColorLossy();
+        auto [r, g, b, a] = bgColor.toSRGBALossy<uint8_t>();
         buffer.reset(g_strdup_printf("%i,%i,%i", r, g, b));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
     }
 
     Color fgColor = style->visitedDependentColor(CSSPropertyColor);
     if (fgColor.isValid()) {
-        auto [r, g, b, a] = fgColor.toSRGBASimpleColorLossy();
+        auto [r, g, b, a] = fgColor.toSRGBALossy<uint8_t>();
         buffer.reset(g_strdup_printf("%i,%i,%i", r, g, b));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
     }
