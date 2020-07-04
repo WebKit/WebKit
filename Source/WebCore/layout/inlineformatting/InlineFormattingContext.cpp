@@ -315,7 +315,7 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
 
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
-    displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
+    displayBox.setHorizontalMargin({ contentWidthAndMargin.usedMargin });
     displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
@@ -346,7 +346,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
     }
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
-    displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin, { } });
+    displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin });
 }
 
 void InlineFormattingContext::collectInlineContentIfNeeded()

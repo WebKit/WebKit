@@ -326,7 +326,7 @@ void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floati
     auto contentWidthAndMargin = geometry().computedWidthAndMargin(layoutBox, constraintsPair.containingBlock.horizontal, availableWidthFloatAvoider);
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
-    displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
+    displayBox.setHorizontalMargin({ contentWidthAndMargin.usedMargin });
     displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 

@@ -93,8 +93,8 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
     displayBox.setContentBoxWidth(horizontalGeometry.contentWidthAndMargin.contentWidth);
-    displayBox.setHorizontalMargin(horizontalGeometry.contentWidthAndMargin.usedMargin);
-    displayBox.setHorizontalComputedMargin(horizontalGeometry.contentWidthAndMargin.computedMargin);
+    displayBox.setHorizontalMargin({ horizontalGeometry.contentWidthAndMargin.usedMargin });
+    displayBox.setHorizontalComputedMargin({ horizontalGeometry.contentWidthAndMargin.computedMargin });
 }
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, const ConstraintsForOutOfFlowContent& constraints)
@@ -123,7 +123,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
     displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
     displayBox.setContentBoxHeight(verticalGeometry.contentHeightAndMargin.contentHeight);
     // Margins of absolutely positioned boxes do not collapse
-    displayBox.setVerticalMargin({ nonCollapsedVerticalMargin, { } });
+    displayBox.setVerticalMargin(nonCollapsedVerticalMargin);
 }
 
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)

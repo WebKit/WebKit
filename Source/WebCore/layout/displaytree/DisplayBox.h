@@ -56,8 +56,60 @@ public:
     Rect rect() const { return { top(), left(), width(), height() }; }
     Rect rectWithMargin() const;
 
-    Layout::UsedVerticalMargin verticalMargin() const;
-    Layout::UsedHorizontalMargin horizontalMargin() const;
+    struct VerticalMargin {
+        LayoutUnit before() const { return m_collapsedValues.before.valueOr(m_nonCollapsedValues.before); }
+        LayoutUnit after() const { return m_collapsedValues.after.valueOr(m_nonCollapsedValues.after); }
+        bool isCollapsedThrough() const { return m_collapsedValues.isCollapsedThrough; }
+
+        struct NonCollapsedValues {
+            NonCollapsedValues(Layout::UsedVerticalMargin::NonCollapsedValues);
+            NonCollapsedValues() = default;
+
+            LayoutUnit before;
+            LayoutUnit after;
+        };
+        NonCollapsedValues nonCollapsedValues() const { return m_nonCollapsedValues; }
+
+        struct CollapsedValues {
+            CollapsedValues(Layout::UsedVerticalMargin::CollapsedValues);
+            CollapsedValues() = default;
+
+            Optional<LayoutUnit> before;
+            Optional<LayoutUnit> after;
+            bool isCollapsedThrough { false };
+        };
+        CollapsedValues collapsedValues() const { return m_collapsedValues; }
+        bool hasCollapsedValues() const { return m_collapsedValues.before || m_collapsedValues.after; }
+        void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsedValues = collapsedValues; }
+
+        VerticalMargin(NonCollapsedValues, CollapsedValues);
+        VerticalMargin(Layout::UsedVerticalMargin);
+        VerticalMargin(Layout::UsedVerticalMargin::NonCollapsedValues);
+        VerticalMargin() = default;
+
+    private:
+        NonCollapsedValues m_nonCollapsedValues;
+        CollapsedValues m_collapsedValues;
+    };
+
+    struct ComputedHorizontalMargin {
+        ComputedHorizontalMargin() = default;
+        ComputedHorizontalMargin(Layout::ComputedHorizontalMargin);
+
+        Optional<LayoutUnit> start;
+        Optional<LayoutUnit> end;
+    };
+
+    struct HorizontalMargin {
+        HorizontalMargin() = default;
+        HorizontalMargin(Layout::UsedHorizontalMargin);
+        HorizontalMargin(LayoutUnit, LayoutUnit);
+
+        LayoutUnit start;
+        LayoutUnit end;
+    };
+    VerticalMargin verticalMargin() const;
+    HorizontalMargin horizontalMargin() const;
     LayoutUnit marginBefore() const;
     LayoutUnit marginStart() const;
     LayoutUnit marginAfter() const;
@@ -128,9 +180,9 @@ public:
     void setContentBoxHeight(LayoutUnit);
     void setContentBoxWidth(LayoutUnit);
 
-    void setHorizontalMargin(Layout::UsedHorizontalMargin);
-    void setVerticalMargin(Layout::UsedVerticalMargin);
-    void setHorizontalComputedMargin(Layout::ComputedHorizontalMargin);
+    void setHorizontalMargin(HorizontalMargin);
+    void setVerticalMargin(VerticalMargin);
+    void setHorizontalComputedMargin(ComputedHorizontalMargin);
     void setHasClearance() { m_hasClearance = true; }
 
     void setBorder(Layout::Edges);
@@ -163,9 +215,9 @@ private:
     LayoutUnit m_contentWidth;
     LayoutUnit m_contentHeight;
 
-    Layout::UsedHorizontalMargin m_horizontalMargin;
-    Layout::UsedVerticalMargin m_verticalMargin;
-    Layout::ComputedHorizontalMargin m_horizontalComputedMargin;
+    HorizontalMargin m_horizontalMargin;
+    VerticalMargin m_verticalMargin;
+    ComputedHorizontalMargin m_horizontalComputedMargin;
     bool m_hasClearance { false };
 
     Layout::Edges m_border;
@@ -185,6 +237,54 @@ private:
     bool m_hasPrecomputedMarginBefore { false };
 #endif // ASSERT_ENABLED
 };
+
+inline Box::VerticalMargin::VerticalMargin(Layout::UsedVerticalMargin usedVerticalMargin)
+    : m_nonCollapsedValues(usedVerticalMargin.nonCollapsedValues())
+    , m_collapsedValues(usedVerticalMargin.collapsedValues())
+{
+}
+
+inline Box::VerticalMargin::VerticalMargin(VerticalMargin::NonCollapsedValues nonCollapsedValues, VerticalMargin::CollapsedValues collapsedValues)
+    : m_nonCollapsedValues(nonCollapsedValues)
+    , m_collapsedValues(collapsedValues)
+{
+}
+
+inline Box::VerticalMargin::VerticalMargin(Layout::UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
+    : m_nonCollapsedValues(nonCollapsedValues)
+{
+}
+
+inline Box::VerticalMargin::NonCollapsedValues::NonCollapsedValues(Layout::UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
+    : before(nonCollapsedValues.before)
+    , after(nonCollapsedValues.after)
+{
+}
+
+inline Box::VerticalMargin::CollapsedValues::CollapsedValues(Layout::UsedVerticalMargin::CollapsedValues collapsedValues)
+    : before(collapsedValues.before)
+    , after(collapsedValues.after)
+    , isCollapsedThrough(collapsedValues.isCollapsedThrough)
+{
+}
+
+inline Box::ComputedHorizontalMargin::ComputedHorizontalMargin(Layout::ComputedHorizontalMargin computedHorizontalMargin)
+    : start(computedHorizontalMargin.start)
+    , end(computedHorizontalMargin.end)
+{
+}
+
+inline Box::HorizontalMargin::HorizontalMargin(Layout::UsedHorizontalMargin horizontalMargin)
+    : start(horizontalMargin.start)
+    , end(horizontalMargin.end)
+{
+}
+
+inline Box::HorizontalMargin::HorizontalMargin(LayoutUnit start, LayoutUnit end)
+    : start(start)
+    , end(end)
+{
+}
 
 #if ASSERT_ENABLED
 inline void Box::invalidateMargin()
@@ -266,7 +366,7 @@ inline LayoutUnit Box::contentBoxWidth() const
     return m_contentWidth;
 }
 
-inline void Box::setHorizontalMargin(Layout::UsedHorizontalMargin margin)
+inline void Box::setHorizontalMargin(HorizontalMargin margin)
 {
 #if ASSERT_ENABLED
     setHasValidHorizontalMargin();
@@ -274,7 +374,7 @@ inline void Box::setHorizontalMargin(Layout::UsedHorizontalMargin margin)
     m_horizontalMargin = margin;
 }
 
-inline void Box::setVerticalMargin(Layout::UsedVerticalMargin margin)
+inline void Box::setVerticalMargin(VerticalMargin margin)
 {
 #if ASSERT_ENABLED
     setHasValidVerticalMargin();
@@ -284,7 +384,7 @@ inline void Box::setVerticalMargin(Layout::UsedVerticalMargin margin)
     m_verticalMargin = margin;
 }
 
-inline void Box::setHorizontalComputedMargin(Layout::ComputedHorizontalMargin margin)
+inline void Box::setHorizontalComputedMargin(ComputedHorizontalMargin margin)
 {
 #if ASSERT_ENABLED
     setHasValidHorizontalComputedMargin();
@@ -324,13 +424,13 @@ inline Rect Box::rectWithMargin() const
     return { top() - marginBefore(), left() - marginStart(), marginStart() + width() + marginEnd(), marginBefore() + height() + marginAfter };
 }
 
-inline Layout::UsedVerticalMargin Box::verticalMargin() const
+inline Box::VerticalMargin Box::verticalMargin() const
 {
     ASSERT(m_hasValidVerticalMargin);
     return m_verticalMargin;
 }
 
-inline Layout::UsedHorizontalMargin Box::horizontalMargin() const
+inline Box::HorizontalMargin Box::horizontalMargin() const
 {
     ASSERT(m_hasValidHorizontalMargin);
     return m_horizontalMargin;

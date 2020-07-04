@@ -1,3 +1,41 @@
+2020-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Used dedicated paint margin structures
+        https://bugs.webkit.org/show_bug.cgi?id=213955
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for having only final margin values in Display::Box.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::VerticalMargin::before const):
+        (WebCore::Display::Box::VerticalMargin::after const):
+        (WebCore::Display::Box::VerticalMargin::isCollapsedThrough const):
+        (WebCore::Display::Box::VerticalMargin::nonCollapsedValues const):
+        (WebCore::Display::Box::VerticalMargin::collapsedValues const):
+        (WebCore::Display::Box::VerticalMargin::hasCollapsedValues const):
+        (WebCore::Display::Box::VerticalMargin::setCollapsedValues):
+        (WebCore::Display::Box::VerticalMargin::VerticalMargin):
+        (WebCore::Display::Box::VerticalMargin::NonCollapsedValues::NonCollapsedValues):
+        (WebCore::Display::Box::VerticalMargin::CollapsedValues::CollapsedValues):
+        (WebCore::Display::Box::ComputedHorizontalMargin::ComputedHorizontalMargin):
+        (WebCore::Display::Box::HorizontalMargin::HorizontalMargin):
+        (WebCore::Display::Box::setHorizontalMargin):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::setHorizontalComputedMargin):
+        (WebCore::Display::Box::verticalMargin const):
+        (WebCore::Display::Box::horizontalMargin const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::horizontalMargin const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         Update comment in FeatureDefines.xcconfig since PlatformEnableCocoa.h should be used instead
