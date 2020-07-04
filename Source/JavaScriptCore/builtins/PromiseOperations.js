@@ -365,8 +365,8 @@ function promiseReactionJob(state, reaction, argument)
     var promiseOrCapability = reaction.@promiseOrCapability;
 
     // Case (3).
-    if (!reaction.@onRejected) {
-        @assert(!reaction.@onFulfilled);
+    if (@isUndefinedOrNull(reaction.@onRejected)) {
+        @assert(@isUndefinedOrNull(reaction.@onFulfilled));
         try {
             @assert(@isPromise(promiseOrCapability));
             if (state === @promiseStateFulfilled)

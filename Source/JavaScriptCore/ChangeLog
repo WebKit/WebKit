@@ -1,3 +1,18 @@
+2020-07-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Promise should check whether a user-provided function is set by using `@isUndefinedOrNull`
+        https://bugs.webkit.org/show_bug.cgi?id=213951
+
+        Reviewed by Ross Kirsling.
+
+        If a user-provided function is masquerade-as-undefined value, `if (!xxx.@onRejected)` returns wrong
+        value since this function object is considered as undefined in this context. We should use `@isUndefinedOrNull`
+        here instead since this if-branch is checking whether this property is null/undefined actually.
+        And `if (@isUndefinedOrNull(...))` is efficient since we have `jundefined_or_null` / `jnundefined_or_null` bytecodes.
+
+        * builtins/PromiseOperations.js:
+        (globalPrivate.promiseReactionJob):
+
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Remove support for ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
