@@ -1,3 +1,26 @@
+2020-07-04  Youenn Fablet  <youenn@apple.com>
+
+        Enable VTB required low latency code path
+        https://bugs.webkit.org/show_bug.cgi?id=210609
+        <rdar://problem/61890332>
+
+        Reviewed by Darin Adler.
+
+        Enable low latency mode for latest MacOS and iOS versions.
+        Add a boolean controlling whether to opt in that code path.
+        Export the setter to that boolean so that it can be controlled by a WebCore runtime flag.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (webrtc::setH264LowLatencyEncoderEnabled):
+        (webrtc::isH264LowLatencyEncoderEnabled):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         Allow registering VP9 as a VT decoder

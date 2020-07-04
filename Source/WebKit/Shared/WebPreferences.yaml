@@ -597,6 +597,15 @@ InterruptAudioOnPageVisibilityChangeEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
+WebRTCH264LowLatencyEncoderEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC H264 LowLatency encoder"
+  humanReadableDescription: "Enable H264 LowLatency encoder"
+  category: experimental
+
 WebRTCH265CodecEnabled:
   type: bool
   defaultValue: false

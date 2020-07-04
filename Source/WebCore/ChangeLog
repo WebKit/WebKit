@@ -1,3 +1,21 @@
+2020-07-04  Youenn Fablet  <youenn@apple.com>
+
+        Enable VTB required low latency code path
+        https://bugs.webkit.org/show_bug.cgi?id=210609
+        <rdar://problem/61890332>
+
+        Reviewed by Darin Adler.
+
+        Add new runtime flag for the low latency code path.
+        Call webrtc newly introduced setter whenever creating a new encoder factory.
+        Manually tested.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCH264LowLatencyEncoderEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCH264LowLatencyEncoderEnabled):
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support peer connection remote video tracks

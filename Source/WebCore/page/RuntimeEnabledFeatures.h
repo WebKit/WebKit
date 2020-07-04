@@ -243,6 +243,8 @@ public:
     void setWebRTCH265CodecEnabled(bool isEnabled) { m_isWebRTCH265CodecEnabled = isEnabled; }
     bool webRTCVP9CodecEnabled() const { return m_isWebRTCVP9CodecEnabled; }
     void setWebRTCVP9CodecEnabled(bool isEnabled) { m_isWebRTCVP9CodecEnabled = isEnabled; }
+    bool webRTCH264LowLatencyEncoderEnabled() const { return m_isWebRTCH264LowLatencyEncoderEnabled; }
+    void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
     bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool webRTCMDNSICECandidatesEnabled() const { return m_isWebRTCMDNSICECandidatesEnabled; }
@@ -513,6 +515,7 @@ private:
     bool m_isWebRTCPlatformCodecsInGPUProcessEnabled { false };
     bool m_isWebRTCH265CodecEnabled { false };
     bool m_isWebRTCVP9CodecEnabled { false };
+    bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)

@@ -119,6 +119,17 @@ bool isH264HardwareEncoderAllowed()
     return h264HardwareEncoderAllowed;
 }
 
+static bool h264LowLatencyEncoderEnabled = false;
+void setH264LowLatencyEncoderEnabled(bool enabled)
+{
+    h264LowLatencyEncoderEnabled = enabled;
+}
+
+bool isH264LowLatencyEncoderEnabled()
+{
+    return h264LowLatencyEncoderEnabled;
+}
+
 std::unique_ptr<VideoEncoder> VideoEncoderFactoryWithSimulcast::CreateVideoEncoder(const SdpVideoFormat& format)
 {
     return std::make_unique<EncoderSimulcastProxy>(m_internalEncoderFactory.get(), format);

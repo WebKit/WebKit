@@ -45,6 +45,7 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 
+VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_RequiredLowLatency;
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
@@ -699,7 +700,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 #endif
   }
 #elif HAVE_VTB_REQUIREDLOWLATENCY
-  CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+  if (webrtc::isH264LowLatencyEncoderEnabled())
+    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
 #endif
 
   OSStatus status =
