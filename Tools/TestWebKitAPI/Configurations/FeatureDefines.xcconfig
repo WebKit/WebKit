@@ -22,14 +22,24 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// The contents of this file must be kept in sync with FeatureDefines.xcconfig in JavaScriptCore,
-// WebCore, WebKitLegacy and WebKit.  Also the default values of the ENABLE_FEATURE_NAME macros in
-// build-webkit should match the values below, but they do not need to be in the same order.
+// *** DO NOT ADD ANYTHING TO THIS FILE ***
 
-// Keep this list of features (not enabled/disabled state) in sync with FeatureDefines.props
-// and FeatureDefinesCairo.props in Source/cmake/tools/vsprops.
+// This file is an obsolete mechanism for setting ENABLE flags for WebKit
+// features on the Cocoa platforms. Instead of adding to this file:
+//
+// 1) If the feature is on by default across most platforms, add code to
+//    turn it on in PlatformEnable.h.
+// 2) If the feature is not on by default, but on for Cocoa platforms,
+//    add code to turn it on in PlatformEnableCocoa.h.
+// 3) If the feature is on by default, but needs to be off for Cocoa
+//    platforms, add code to turn it off in PlatformEnableCocoa.h.
+// 4) If the feature is sometimes on for Cocoa platforms, put the code
+//    to make that decision in PlatformEnableCocoa.h.
 
-// Set any ENABLE_FEATURE_NAME macro to an empty string to disable that feature.
+// Everything currently in this file is going to be removed as soon as
+// possible.
+
+// *** DO NOT ADD ANYTHING TO THIS FILE ***
 
 #include "WebKitTargetConditionals.xcconfig"
 
