@@ -584,22 +584,3 @@ platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify
 // Derived Sources
 
 WHLSLStandardLibraryFunctionMap.cpp
-
-// FIXME: These files need to be conditional because of USE_INTERNAL_SDK,
-// not the specific features they implement, and should be merged into a
-// single list with a single #if.
-
-#if ENABLE_MAC_GESTURE_EVENTS
-    dom/mac/GestureEvents.cpp
-    JSGestureEvent.cpp
-#endif
-
-#if ENABLE_IOS_TOUCH_EVENTS
-    JSTouch.cpp
-    JSTouchEvent.cpp
-    JSTouchList.cpp
-#endif
-
-#if ENABLE_IOS_GESTURE_EVENTS
-    JSGestureEvent.cpp
-#endif

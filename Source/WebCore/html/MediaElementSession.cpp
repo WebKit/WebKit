@@ -29,6 +29,8 @@
 
 #include "MediaElementSession.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"

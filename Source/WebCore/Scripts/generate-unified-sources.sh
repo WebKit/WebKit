@@ -21,4 +21,9 @@ if [ $# -eq 0 ]; then
     echo "Using unified source list files: Sources.txt, SourcesCocoa.txt"
 fi
 
-/usr/bin/env ruby "${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" "--derived-sources-path" "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" "--source-tree-path" "${SRCROOT}" "--feature-flags" "${FEATURE_DEFINES}" "--max-cpp-bundle-count" "${UnifiedSourceCppFileCount}" "--max-obj-c-bundle-count" "${UnifiedSourceMmFileCount}" "--dense-bundle-filter" "JS*" "--dense-bundle-filter" "bindings/js/*" "Sources.txt" "SourcesCocoa.txt" "${ARGS[@]}" > /dev/null
+SOURCES="Sources.txt SourcesCocoa.txt"
+if [ "${USE_INTERNAL_SDK}" == "YES" ]; then
+    SOURCES="${SOURCES} SourcesCocoaInternalSDK.txt"
+fi
+
+/usr/bin/env ruby "${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" --derived-sources-path "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" --source-tree-path "${SRCROOT}" --max-cpp-bundle-count ${UnifiedSourceCppFileCount} --max-obj-c-bundle-count ${UnifiedSourceMmFileCount} --dense-bundle-filter "JS*" --dense-bundle-filter "bindings/js/*" $SOURCES "${ARGS[@]}" > /dev/null

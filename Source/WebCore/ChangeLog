@@ -1,3 +1,21 @@
+2020-07-04  Darin Adler  <darin@apple.com>
+
+        Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=212420
+
+        Reviewed by Don Olmstead.
+
+        * Scripts/generate-unified-sources.sh: Added code to include sources from
+        SourcesCocoaInternalSDK.txt, only if USE_INTERNAL_SDK is YES. Removed --feature-flags
+        argument from invocation of generate-unified-source-bundles.rb. Removed many
+        unnecessary quotes.
+
+        * SourcesCocoa.txt: Removed the names of the files from the internal SDK.
+        * SourcesCocoaInternalSDK.txt: Added. Moved those names here.
+
+        * html/MediaElementSession.cpp: Added some includes, apparently needed because of different
+        groupings of unified sources.
+
 2020-07-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Used dedicated paint margin structures

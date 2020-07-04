@@ -98,6 +98,4 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # config.h
     # -----------------------------------------------------------------------------
     CREATE_CONFIGURATION_HEADER()
-
-    SET_CONFIGURATION_FOR_UNIFIED_SOURCE_LISTS()
 endif ()

@@ -50,7 +50,6 @@ def usage(message)
     puts "--generate-xcfilelists               Generate .xcfilelist files"
     puts "--input-xcfilelist-path              Path of the generated input .xcfilelist file"
     puts "--output-xcfilelist-path             Path of the generated output .xcfilelist file"
-    puts "--feature-flags                 (-f) Space or semicolon separated list of enabled feature flags"
     puts
     puts "Generation options:"
     puts "--max-cpp-bundle-count               Use global sequential numbers for cpp bundle filenames and set the limit on the number"
@@ -64,7 +63,6 @@ MAX_DENSE_BUNDLE_SIZE = 64
 $derivedSourcesPath = nil
 $unifiedSourceOutputPath = nil
 $sourceTreePath = nil
-$featureFlags = {}
 $verbose = false
 $mode = :GenerateBundles
 $inputXCFilelistPath = nil
@@ -81,7 +79,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--derived-sources-path', '-d', GetoptLong::REQUIRED_ARGUMENT],
                ['--source-tree-path', '-s', GetoptLong::REQUIRED_ARGUMENT],
-               ['--feature-flags', '-f', GetoptLong::REQUIRED_ARGUMENT],
                ['--print-bundled-sources', GetoptLong::NO_ARGUMENT],
                ['--print-all-sources', GetoptLong::NO_ARGUMENT],
                ['--generate-xcfilelists', GetoptLong::NO_ARGUMENT],
@@ -101,8 +98,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--source-tree-path'
         $sourceTreePath = Pathname.new(arg)
         usage("Source tree #{arg} does not exist.") if !$sourceTreePath.exist?
-    when '--feature-flags'
-        arg.gsub(/\s+/, ";").split(";").map { |x| $featureFlags[x] = true }
     when '--print-bundled-sources'
         $mode = :PrintBundledSources
     when '--print-all-sources'
@@ -128,7 +123,6 @@ FileUtils.mkpath($unifiedSourceOutputPath) if !$unifiedSourceOutputPath.exist? &
 usage("--derived-sources-path must be specified.") if !$unifiedSourceOutputPath
 usage("--source-tree-path must be specified.") if !$sourceTreePath
 log("Putting unified sources in #{$unifiedSourceOutputPath}")
-log("Active Feature flags: #{$featureFlags.keys.inspect}")
 
 usage("At least one source list file must be specified.") if ARGV.length == 0
 # Even though CMake will only pass us a single semicolon separated arguemnts, we separate all the arguments for simplicity.
@@ -313,7 +307,6 @@ sourceListFiles.each_with_index {
     | path, sourceFileIndex |
     log("Reading #{path}")
     result = []
-    inDisabledLines = false
     File.read(path).lines.each {
         | line |
         commentStart = line =~ COMMENT_REGEXP
@@ -323,26 +316,16 @@ sourceListFiles.each_with_index {
             log("After: #{line}")
         end
         line.strip!
-        if line == "#endif"
-            inDisabledLines = false
-            next
-        end
 
-        next if line.empty? || inDisabledLines
+        next if line.empty?
 
-        if line =~ /\A#if/
-            raise "malformed #if" unless line =~ /\A#if\s+(\S+)/
-            inDisabledLines = !$featureFlags[$1]
-        else
-            if seen[line]
-                next if $mode == :GenerateXCFilelists
-                raise "duplicate line: #{line} in #{path}"
-            end
-            seen[line] = true
-            result << SourceFile.new(line, sourceFileIndex)
+        if seen[line]
+            next if $mode == :GenerateXCFilelists
+            raise "duplicate line: #{line} in #{path}"
         end
+        seen[line] = true
+        result << SourceFile.new(line, sourceFileIndex)
     }
-    raise "Couldn't find closing \"#endif\"" if inDisabledLines
 
     log("Found #{result.length} source files in #{path}")
     sourceFiles += result

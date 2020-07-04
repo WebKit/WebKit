@@ -17,7 +17,6 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
             "--derived-sources-path" "${_derivedSourcesPath}"
             "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
             "--print-bundled-sources"
-            "--feature-flags" "${UNIFIED_SOURCE_LIST_ENABLED_FEATURES}"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE _resultTmp
             OUTPUT_VARIABLE _outputTmp)
@@ -35,7 +34,6 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
             "--derived-sources-path" "${_derivedSourcesPath}"
             "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
-            "--feature-flags" "${UNIFIED_SOURCE_LIST_ENABLED_FEATURES}"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE  _resultTmp
             OUTPUT_VARIABLE _outputTmp)
@@ -52,7 +50,6 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
             "--derived-sources-path" "${_derivedSourcesPath}"
             "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
             "--print-all-sources"
-            "--feature-flags" "${UNIFIED_SOURCE_LIST_ENABLED_FEATURES}"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE _resultTmp
             OUTPUT_VARIABLE _outputTmp)

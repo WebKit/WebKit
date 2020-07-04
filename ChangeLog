@@ -1,3 +1,17 @@
+2020-07-03  Darin Adler  <darin@apple.com>
+
+        Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=212420
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/WebKitCommon.cmake: Removed call to SET_CONFIGURATION_FOR_UNIFIED_SOURCE_LISTS.
+        * Source/cmake/WebKitFeatures.cmake: Removed SET_CONFIGURATION_FOR_UNIFIED_SOURCE_LISTS.
+        * Source/cmake/WebKitMacros.cmake: Removed use of "--feature-flags" when invoking the
+        generate-unified-source-bundles.rb, which also means no longer depending on the
+        UNIFIED_SOURCE_LIST_ENABLED_FEATURES variable, which was set by the
+        SET_CONFIGURATION_FOR_UNIFIED_SOURCE_LISTS function.
+
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Remove support for ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
