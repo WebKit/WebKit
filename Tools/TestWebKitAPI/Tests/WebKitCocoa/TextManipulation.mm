@@ -659,7 +659,7 @@ TEST(TextManipulation, StartTextManipulationFindsInsertedClippedText)
     EXPECT_WK_STREQ("after", items[2].tokens[0].content);
 }
 
-TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAsParagraphs)
+TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAndSpansAsParagraphs)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
@@ -679,7 +679,9 @@ TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAsPa
         "    <button>One</button><button>Two</button>"
         "    <div><br></div>"
         "    <a href='#'>Three</a><a href='#'>Four</a>"
-        "    <span role='button'>Five</span><span role='button'>Six</span>"
+        "    <span role='button'>Five</span>"
+        "    <span>Six</span>"
+        "    <b>End</b>"
         "</body>"];
 
     done = false;
@@ -689,17 +691,21 @@ TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAsPa
     TestWebKitAPI::Util::run(&done);
 
     NSArray<_WKTextManipulationItem *> *items = [delegate items];
-    EXPECT_EQ(items.count, 6UL);
+    EXPECT_EQ(items.count, 7UL);
     EXPECT_EQ(items[0].tokens.count, 1UL);
     EXPECT_EQ(items[1].tokens.count, 1UL);
     EXPECT_EQ(items[2].tokens.count, 1UL);
     EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_EQ(items[4].tokens.count, 1UL);
+    EXPECT_EQ(items[5].tokens.count, 1UL);
+    EXPECT_EQ(items[6].tokens.count, 1UL);
     EXPECT_WK_STREQ("One", items[0].tokens[0].content);
     EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
     EXPECT_WK_STREQ("Three", items[2].tokens[0].content);
     EXPECT_WK_STREQ("Four", items[3].tokens[0].content);
     EXPECT_WK_STREQ("Five", items[4].tokens[0].content);
     EXPECT_WK_STREQ("Six", items[5].tokens[0].content);
+    EXPECT_WK_STREQ("End", items[6].tokens[0].content);
 }
 
 TEST(TextManipulation, StartTextManipulationTreatsLinksInNavigationElementsAsParagraphs)

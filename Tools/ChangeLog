@@ -1,3 +1,13 @@
+2020-07-05  Sihui Liu  <sihui_liu@appe.com>
+
+        Text manipulation: add a new heuristic to decide paragraph boundary
+        https://bugs.webkit.org/show_bug.cgi?id=213918
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-07-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] Move almost all features from FeatureDefines.xcconfig to PlatformEnableCocoa.h

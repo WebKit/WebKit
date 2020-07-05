@@ -1,3 +1,15 @@
+2020-07-05  Sihui Liu  <sihui_liu@appe.com>
+
+        Text manipulation: add a new heuristic to decide paragraph boundary
+        https://bugs.webkit.org/show_bug.cgi?id=213918
+
+        Reviewed by Wenson Hsieh.
+
+        Modified test: TextManipulation.StartTextManipulationTreatsInlineBlockLinksAndButtonsAndSpansAsParagraphs.
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isEnclosingItemBoundaryElement):
+
 2020-07-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] REGRESSION (r263914): Non-Apple-Pay Cocoa builds failing

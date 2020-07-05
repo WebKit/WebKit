@@ -302,8 +302,8 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     if (element.hasTagName(HTMLNames::buttonTag) || role(element) == AccessibilityRole::Button)
         return true;
 
+    auto displayType = renderer->style().display();
     if (element.hasTagName(HTMLNames::liTag) || element.hasTagName(HTMLNames::aTag)) {
-        auto displayType = renderer->style().display();
         if (displayType == DisplayType::Block || displayType == DisplayType::InlineBlock)
             return true;
 
@@ -312,6 +312,9 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
                 return true;
         }
     }
+
+    if (element.hasTagName(HTMLNames::spanTag) && displayType == DisplayType::InlineBlock)
+        return true;
 
     return false;
 }
