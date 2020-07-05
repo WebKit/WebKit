@@ -142,6 +142,11 @@ public:
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 
+    WEBCORE_EXPORT static String preferredImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions);
+    WEBCORE_EXPORT static bool containsImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions);
+    WEBCORE_EXPORT static Vector<String> allowedMIMETypes(const Vector<String>& mimeTypes, const Vector<String>& extensions);
+    WEBCORE_EXPORT static Vector<String> allowedFileExtensions(const Vector<String>& mimeTypes, const Vector<String>& extensions);
+    
 private:
     // Check to see if the MIME type is not suitable for being loaded as a text
     // document in a frame. Only valid for MIME types begining with "text/".

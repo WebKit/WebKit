@@ -788,4 +788,57 @@ String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, 
     return makeString(filename, '.', preferredExtension);
 }
 
+static inline String trimmedExtension(const String& extension)
+{
+    return extension.startsWith('.') ? extension.right(extension.length() - 1) : extension;
+}
+
+String MIMETypeRegistry::preferredImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions)
+{
+    auto allowedMIMETypes = MIMETypeRegistry::allowedMIMETypes(mimeTypes, extensions);
+
+    auto position = allowedMIMETypes.findMatching([](const auto& mimeType) {
+        return MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType);
+    });
+    
+    return position != notFound ? allowedMIMETypes[position] : nullString();
+}
+
+bool MIMETypeRegistry::containsImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions)
+{
+    return !MIMETypeRegistry::preferredImageMIMETypeForEncoding(mimeTypes, extensions).isNull();
+}
+
+Vector<String> MIMETypeRegistry::allowedMIMETypes(const Vector<String>& mimeTypes, const Vector<String>& extensions)
+{
+    Vector<String> allowedMIMETypes;
+
+    for (auto& mimeType : mimeTypes)
+        allowedMIMETypes.appendIfNotContains(mimeType);
+
+    for (auto& extension : extensions) {
+        auto mimeType = MIMETypeRegistry::mimeTypeForExtension(trimmedExtension(extension));
+        if (mimeType.isEmpty())
+            continue;
+        allowedMIMETypes.appendIfNotContains(mimeType);
+    }
+
+    return allowedMIMETypes;
+}
+
+Vector<String> MIMETypeRegistry::allowedFileExtensions(const Vector<String>& mimeTypes, const Vector<String>& extensions)
+{
+    Vector<String> allowedFileExtensions;
+
+    for (auto& mimeType : mimeTypes) {
+        for (auto& extension : MIMETypeRegistry::extensionsForMIMEType(mimeType))
+            allowedFileExtensions.appendIfNotContains(extension);
+    }
+
+    for (auto& extension : extensions)
+        allowedFileExtensions.appendIfNotContains(trimmedExtension(extension));
+
+    return allowedFileExtensions;
+}
+
 } // namespace WebCore

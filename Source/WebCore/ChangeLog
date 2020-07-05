@@ -1,3 +1,30 @@
+2020-07-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS] Allow selecting HEIF images if the 'accept' attribute includes an image MIME type that the platform can transcode the HEIF to
+        https://bugs.webkit.org/show_bug.cgi?id=212489
+
+        Reviewed by Darin Adler.
+
+        Add some utility functions to MIMETypeRegistry. These new functions will
+        deal with a list of MIME types combined with a list of file extensions.
+        They are going to be used the FileChooserSettings which reflects the 
+        'accept' attribute of the <input> file element.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::trimmedExtension):
+        (WebCore::MIMETypeRegistry::preferredImageMIMETypeForEncoding):
+        (WebCore::MIMETypeRegistry::containsImageMIMETypeForEncoding):
+
+        (WebCore::MIMETypeRegistry::allowedMIMETypes):
+        It returns the set of mime types which is stated by a list of mime types
+        and a list of file extensions.
+
+        (WebCore::MIMETypeRegistry::allowedFileExtensions):
+        It returns the set of extensions which is stated by a list of mime types
+        and a list of file extensions.
+
+        * platform/MIMETypeRegistry.h:
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove all features from FeatureDefines.xcconfig that are already mentioned in PlatformEnableCocoa.h

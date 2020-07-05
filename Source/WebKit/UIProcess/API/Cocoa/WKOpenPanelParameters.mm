@@ -66,59 +66,7 @@
 
 - (NSArray<NSString *> *)_allowedFileExtensions
 {
-    // Aggregate extensions based on specified MIME types.
-    auto acceptedMIMETypes = [self _acceptedMIMETypes];
-    auto acceptedFileExtensions = [self _acceptedFileExtensions];
-
-    auto allowedFileExtensions = adoptNS([[NSMutableSet alloc] init]);
-
-    [acceptedMIMETypes enumerateObjectsUsingBlock:^(NSString *mimeType, NSUInteger index, BOOL* stop) {
-        ASSERT([mimeType containsString:@"/"]);
-        auto extensions = API::Array::createStringArray(WebCore::MIMETypeRegistry::extensionsForMIMEType(mimeType));
-        [allowedFileExtensions addObjectsFromArray:wrapper(extensions)];
-    }];
-
-    auto additionalAllowedFileExtensions = adoptNS([[NSMutableArray alloc] init]);
-
-    [acceptedFileExtensions enumerateObjectsUsingBlock:^(NSString *extension, NSUInteger index, BOOL *stop) {
-        ASSERT([extension characterAtIndex:0] == '.');
-        [additionalAllowedFileExtensions addObject:[extension substringFromIndex:1]];
-    }];
-    
-    [allowedFileExtensions addObjectsFromArray:additionalAllowedFileExtensions.get()];
-    return [allowedFileExtensions allObjects];
-}
-
-- (NSArray<NSString *> *)_allowedFileExtensionsTitles
-{
-    auto acceptedMIMETypes = [self _acceptedMIMETypes];
-    auto acceptedFileExtensions = [self _acceptedFileExtensions];
-
-    constexpr auto AllFilesTitle = @"All Files";
-    constexpr auto CustomFilesTitle = @"Custom Files";
-    
-    if (![acceptedMIMETypes count] && ![acceptedFileExtensions count])
-        return @[AllFilesTitle];
-
-    if (!([acceptedMIMETypes count] == 1 && ![acceptedFileExtensions count]))
-        return @[CustomFilesTitle, AllFilesTitle];
-
-    auto mimeType = [acceptedMIMETypes firstObject];
-    auto range = [mimeType rangeOfString:@"/"];
-    
-    if (!range.length)
-        return @[CustomFilesTitle, AllFilesTitle];
-    
-    auto mimeTypePrefix = [mimeType substringToIndex:range.location];
-    auto mimeTypeSuffix = [mimeType substringFromIndex:range.location + 1];
-    
-    if ([mimeTypeSuffix isEqualToString:@"*"])
-        return @[[NSString stringWithFormat:@"%@%@ Files", [[mimeTypePrefix substringToIndex:1] uppercaseString], [mimeTypePrefix substringFromIndex:1]], AllFilesTitle];
-
-    if ([mimeTypeSuffix length] <= 4)
-        return @[[NSString stringWithFormat:@"%@ %@", [mimeTypeSuffix uppercaseString], mimeTypePrefix], AllFilesTitle];
-
-    return @[[NSString stringWithFormat:@"%@ %@", mimeTypeSuffix, mimeTypePrefix], AllFilesTitle];
+    return wrapper(_openPanelParameters->allowedFileExtensions());
 }
 
 @end

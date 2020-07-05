@@ -54,12 +54,12 @@ void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<WTF::String>& fil
 }
 #endif
 
-void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<String>& filenames)
+void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<String>& filenames, const Vector<String>& allowedMIMETypes)
 {
     if (!m_page)
         return;
 
-    m_page->didChooseFilesForOpenPanel(filenames);
+    m_page->didChooseFilesForOpenPanel(filenames, allowedMIMETypes);
 }
 
 void WebOpenPanelResultListenerProxy::cancel()

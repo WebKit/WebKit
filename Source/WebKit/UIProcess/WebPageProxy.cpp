@@ -6690,7 +6690,7 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
 }
 #endif
 
-void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
+void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, const Vector<String>&)
 {
     if (!hasRunningProcess())
         return;

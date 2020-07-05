@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UIDelegate.h"
 
+#import "APIArray.h"
 #import "APIFrameInfo.h"
 #import "APIHitTestResult.h"
 #import "CompletionHandlerCallChecker.h"
@@ -826,7 +827,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:));
 
-    [delegate webView:m_uiDelegate.m_webView runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:makeBlockPtr([checker = WTFMove(checker), listener = WTFMove(listener)] (NSArray *URLs) mutable {
+    [delegate webView:m_uiDelegate.m_webView runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:makeBlockPtr([checker = WTFMove(checker), openPanelParameters = makeRef(*openPanelParameters), listener = WTFMove(listener)] (NSArray *URLs) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -840,7 +841,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
         for (NSURL *url in URLs)
             filenames.append(url.path);
 
-        listener->chooseFiles(filenames);
+        listener->chooseFiles(filenames, openPanelParameters->allowedMIMETypes()->toStringVector());
     }).get()];
 
     return true;

@@ -1,3 +1,38 @@
+2020-07-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS] Allow selecting HEIF images if the 'accept' attribute includes an image MIME type that the platform can transcode the HEIF to
+        https://bugs.webkit.org/show_bug.cgi?id=212489
+
+        Reviewed by Darin Adler.
+
+        Make WKOpenPanelParameters call allowedFileExtensions() and allowedMIMETypes()
+        of MIMETypeRegistry via OpenPanelParameters.
+
+        UIDelegate will get allowedMIMETypes() and pass it to WebOpenPanelResultListenerProxy
+        which will pass it to WebPageProxy. In a following patch, WebPageProxy
+        will use allowedMIMETypes to transcode the selected images before sending
+        them to WebPage.
+
+        * UIProcess/API/APIOpenPanelParameters.cpp:
+        (API::OpenPanelParameters::allowedMIMETypes const):
+        (API::OpenPanelParameters::allowedFileExtensions const):
+        (API::OpenPanelParameters::mediaCaptureType const): Deleted.
+        * UIProcess/API/APIOpenPanelParameters.h:
+        (API::OpenPanelParameters::mediaCaptureType const):
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm:
+        (-[WKOpenPanelParameters _allowedFileExtensions]):
+        (-[WKOpenPanelParameters _allowedFileExtensionsTitles]): Deleted.
+        * UIProcess/API/Cocoa/WKOpenPanelParametersPrivate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::runOpenPanel):
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        * UIProcess/WebPageProxy.h:
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove all features from FeatureDefines.xcconfig that are already mentioned in PlatformEnableCocoa.h

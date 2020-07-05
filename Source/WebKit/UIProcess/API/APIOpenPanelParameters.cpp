@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APIString.h"
+#include <WebCore/MIMETypeRegistry.h>
 #include <wtf/Vector.h>
 
 namespace API {
@@ -58,12 +59,28 @@ Ref<API::Array> OpenPanelParameters::acceptFileExtensions() const
     return API::Array::createStringArray(m_settings.acceptFileExtensions);
 }
 
-#if ENABLE(MEDIA_CAPTURE)
-WebCore::MediaCaptureType OpenPanelParameters::mediaCaptureType() const
+Ref<API::Array> OpenPanelParameters::allowedMIMETypes() const
 {
-    return m_settings.mediaCaptureType;
+    return API::Array::createStringArray(WebCore::MIMETypeRegistry::allowedMIMETypes(m_settings.acceptMIMETypes, m_settings.acceptFileExtensions));
 }
+
+Ref<API::Array> OpenPanelParameters::allowedFileExtensions() const
+{
+#if PLATFORM(MAC)
+    auto acceptMIMETypes = m_settings.acceptMIMETypes;
+
+    // On macOS allow selecting HEIF/HEIC images if acceptMIMETypes or acceptFileExtensions include at least
+    // one MIME type which CG supports encoding to.
+    if (MIMETypeRegistry::containsImageMIMETypeForEncoding(acceptMIMETypes, m_settings.acceptFileExtensions)) {
+        acceptMIMETypes.append("image/heif"_s);
+        acceptMIMETypes.append("image/heic"_s);
+    }
+    
+    return API::Array::createStringArray(WebCore::MIMETypeRegistry::allowedFileExtensions(acceptMIMETypes, m_settings.acceptFileExtensions));
+#else
+    return API::Array::createStringArray(WebCore::MIMETypeRegistry::allowedFileExtensions(m_settings.acceptMIMETypes, m_settings.acceptFileExtensions));
 #endif
+}
 
 Ref<API::Array> OpenPanelParameters::selectedFileNames() const
 {
