@@ -1,3 +1,17 @@
+2020-07-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove FEATURE_DEFINES from the Cocoa/Xcode build system
+        https://bugs.webkit.org/show_bug.cgi?id=213976
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig: Removed everything except for ENABLE_WEB_RTC.
+
+        * Configurations/WebCore.xcconfig: Removed FEATURE_DEFINES.
+        * DerivedSources-input.xcfilelist: Removed FeatureDefines.xcconfig.
+        * DerivedSources.make: Removed FEATURE_DEFINES, FEATURE_DEFINE_FLAGS, and the dependency
+        on FeatureDefines.xcconfig.
+
 2020-07-05  Sihui Liu  <sihui_liu@appe.com>
 
         Text manipulation: add a new heuristic to decide paragraph boundary

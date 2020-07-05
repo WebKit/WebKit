@@ -1,3 +1,17 @@
+2020-07-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove FEATURE_DEFINES from the Cocoa/Xcode build system
+        https://bugs.webkit.org/show_bug.cgi?id=213976
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig: Removed.
+        * Configurations/WebKitLegacy.xcconfig: Removed FEATURE_DEFINES and the include of
+        FeatureDefines.xcconfig.
+        * MigrateHeaders.make: Removed FEATURE_DEFINES, FEATURE_DEFINE_FLAGS, and
+        FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES. FEATURE_AND_PLATFORM_DEFINES is now used
+        solely to determine if this is an internal SDK build, which should be cleaned up later.
+
 2020-07-05  Andy Estes  <aestes@apple.com>
 
         [iOS] La Banque Postale app does not respect safe area insets on iOS 14

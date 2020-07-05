@@ -36,20 +36,11 @@
 // 4) If the feature is sometimes on for Cocoa platforms, put the code
 //    to make that decision in PlatformEnableCocoa.h.
 
-// Everything currently in this file is going to be removed as soon as
-// possible.
-
 // *** DO NOT ADD ANYTHING TO THIS FILE ***
 
-// This ENABLE_WEB_RTC variable is used to decide whether to link the webrtc library.
-// It does not need to be in FEATURE_DEFINES becaus it's also set in PlatformEnableCocoa.h.
+// This ENABLE_WEB_RTC configuration variable determines whether to *link* the libwebrtc library.
+// The ENABLE_WEB_RTC macro in PlatformEnableCocoa.h determines whether WebKit's WebRTC code is compiled.
 ENABLE_WEB_RTC = $(ENABLE_WEB_RTC_$(WK_PLATFORM_NAME));
 ENABLE_WEB_RTC_iphoneos = ENABLE_WEB_RTC;
 ENABLE_WEB_RTC_iphonesimulator = ENABLE_WEB_RTC;
 ENABLE_WEB_RTC_macosx = ENABLE_WEB_RTC;
-
-// ENABLE_EXPERIMENTAL_FEATURES is defined only here, not in PlatformEnable.h headers, at this time.
-ENABLE_EXPERIMENTAL_FEATURES = $(ENABLE_EXPERIMENTAL_FEATURES_$(WK_RELOCATABLE_FRAMEWORKS));
-ENABLE_EXPERIMENTAL_FEATURES_YES = ENABLE_EXPERIMENTAL_FEATURES;
-
-FEATURE_DEFINES = $(ENABLE_EXPERIMENTAL_FEATURES);

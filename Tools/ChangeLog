@@ -1,3 +1,21 @@
+2020-07-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove FEATURE_DEFINES from the Cocoa/Xcode build system
+        https://bugs.webkit.org/show_bug.cgi?id=213976
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/style/checkers/featuredefines.py: Removed all FeatureDefines.xcconfig
+        files except for the two that remain, WebCore and WebKit.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig: Removed FEATURE_DEFINES.
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Removed.
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig: Removed include of FeatureDefines.xcconfig.
+        * TestWebKitAPI/Configurations/TestWTFLibrary.xcconfig: Ditto.
+        * TestWebKitAPI/Configurations/TestWebKitAPILibrary.xcconfig: Ditto.
+        * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Ditto.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Removed FeatureDefines.xcconfig.
+
 2020-07-05  Sihui Liu  <sihui_liu@appe.com>
 
         Text manipulation: add a new heuristic to decide paragraph boundary
