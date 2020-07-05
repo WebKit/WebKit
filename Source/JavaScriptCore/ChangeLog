@@ -1,3 +1,33 @@
+2020-07-05  Philippe Normand  <pnormand@igalia.com>
+
+        Web Inspector: Fix python3 build warnings
+        https://bugs.webkit.org/show_bug.cgi?id=213971
+
+        Reviewed by Sam Weinig.
+
+        Fix Python3 syntax warnings. Using 'is' with string literals triggers those. Adopt the ==
+        operator instead, which is more idiomatic anyway.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_getter_method_for_type):
+        (CppGenerator.cpp_setter_method_for_type):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCTypeCategory.category_for_type):
+        (ObjCGenerator.objc_type_for_raw_name):
+        (ObjCGenerator.objc_class_for_raw_name):
+        (ObjCGenerator.protocol_type_for_raw_name):
+        (ObjCGenerator.objc_protocol_export_expression_for_variable):
+        (ObjCGenerator.objc_protocol_import_expression_for_variable):
+        (ObjCGenerator.objc_to_protocol_expression_for_member):
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        (ObjCGenerator.payload_to_objc_expression_for_member):
+        (ObjCGenerator.objc_setter_method_for_member_internal):
+        (ObjCGenerator.objc_getter_method_for_member_internal):
+        (ObjCGenerator.objc_protocol_export_expression_for_variable.is): Deleted.
+        (ObjCGenerator.objc_protocol_import_expression_for_variable.is): Deleted.
+        (ObjCGenerator.objc_to_protocol_expression_for_member.is): Deleted.
+        (ObjCGenerator.protocol_to_objc_expression_for_member.is): Deleted.
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove all features from FeatureDefines.xcconfig that are already mentioned in PlatformEnableCocoa.h
