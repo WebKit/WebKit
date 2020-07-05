@@ -17,6 +17,7 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from __future__ import print_function
 import logging
 import os
 import sys
@@ -49,10 +50,10 @@ class WPETestRunner(TestRunner):
 if __name__ == "__main__":
     flatpakutils.run_in_sandbox_if_available([sys.argv[0], "--wpe"] + sys.argv[1:])
     if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available("wpe"):
-        print '***'
-        print '*** Warning: jhbuild environment not present and not running in flatpak.'
-        print '*** Run update-webkitwpe-libs or update-webkit-flatpak before build-webkit to ensure proper testing..'
-        print '***'
+        print('***')
+        print('*** Warning: jhbuild environment not present and not running in flatpak.')
+        print('*** Run update-webkitwpe-libs or update-webkit-flatpak before build-webkit to ensure proper testing..')
+        print('***')
 
     option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
     add_options(option_parser);

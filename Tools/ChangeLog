@@ -1,3 +1,12 @@
+2020-07-05  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] run-wpe-tests Python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=213969
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-wpe-tests:
+
 2020-07-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS] Allow selecting HEIF images if the 'accept' attribute includes an image MIME type that the platform can transcode the HEIF to
