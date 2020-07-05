@@ -50,6 +50,7 @@ extern const CFStringRef kCUIUserInterfaceLayoutDirectionKey;
 extern const CFStringRef kCUIScaleKey;
 extern const CFStringRef kCUIPresentationStateKey;
 extern const CFStringRef kCUIOrientationKey;
-extern const CFStringRef kCUIAnimationFrameKey;
+extern const CFStringRef kCUIAnimationStartTimeKey;
+extern const CFStringRef kCUIAnimationTimeKey;
 
 #endif

@@ -1,3 +1,42 @@
+2020-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 11] Indeterminate progress bar animation periodically jumps
+        https://bugs.webkit.org/show_bug.cgi?id=213967
+
+        Reviewed by Sam Weinig.
+
+        The animation for an indeterminate progress bar occasionally jumps to the starting frame on macOS 11. This is
+        because the indeterinate progress bar animation only lasts for 120 frames on macOS 11, so our current hard-coded
+        value of 256 frames results in 16 extra frames of animation, before abruptly looping back to the starting frame.
+
+        To fix this, instead of specifying the animation frame index when painting progress bars on macOS, specify the
+        starting time and current time for the animation, and let CoreUI determine which frame to use.
+
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::animationProgress):
+
+        Assert that this never gets called with a zero animation duration.
+
+        (WebCore::RenderProgress::updateAnimationState):
+
+        Instead of checking for the animation duration to determine whether or not we should try and animate progress
+        bar painting, check for the animation repeat interval instead. This is because on macOS, we no longer hard-code
+        the animation duration, but still want to be able to animate progress bars.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::animationRepeatIntervalForProgressBar const): Deleted.
+        (WebCore::RenderThemeIOS::animationDurationForProgressBar const): Deleted.
+
+        Drive-by fix: remove some unnecessary overridden method implementations on RenderThemeIOS.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::animationDurationForProgressBar const): Deleted.
+
+        Stop overriding this method, and remove the `progressAnimationNumFrames` constant declared in this file.
+
 2020-07-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS] Allow selecting HEIF images if the 'accept' attribute includes an image MIME type that the platform can transcode the HEIF to

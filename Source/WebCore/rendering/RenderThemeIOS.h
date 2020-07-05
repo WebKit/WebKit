@@ -102,11 +102,6 @@ private:
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
     bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    // Returns the repeat interval of the animation for the progress bar.
-    Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
-    // Returns the duration of the animation for the progress bar.
-    Seconds animationDurationForProgressBar(RenderProgress&) const override;
-
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(DATALIST_ELEMENT)

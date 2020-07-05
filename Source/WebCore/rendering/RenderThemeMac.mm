@@ -120,7 +120,6 @@
 @end
 
 static const Seconds progressAnimationFrameRate = 33_ms; // 30 fps
-static const double progressAnimationNumFrames = 256;
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 @end
@@ -1370,11 +1369,6 @@ Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress&) c
     return progressAnimationFrameRate;
 }
 
-Seconds RenderThemeMac::animationDurationForProgressBar(RenderProgress&) const
-{
-    return progressAnimationFrameRate * progressAnimationNumFrames;
-}
-
 void RenderThemeMac::adjustProgressBarStyle(RenderStyle&, const Element*) const
 {
 }
@@ -1389,7 +1383,6 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
     float deviceScaleFactor = renderObject.document().deviceScaleFactor();
     bool isIndeterminate = renderProgress.position() < 0;
-    auto animationFrame = lround(renderProgress.animationProgress() * nextafter(progressAnimationNumFrames, 0) * deviceScaleFactor);
     auto imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size(), deviceScaleFactor, ColorSpace::SRGB, paintInfo.context());
     if (!imageBuffer)
         return true;
@@ -1419,7 +1412,8 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
         (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
         (__bridge NSString *)kCUIPresentationStateKey: (__bridge NSString *)(isActive(renderObject) ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive),
         (__bridge NSString *)kCUIOrientationKey: (__bridge NSString *)kCUIOrientHorizontal,
-        (__bridge NSString *)kCUIAnimationFrameKey: @(isIndeterminate ? animationFrame : 0)
+        (__bridge NSString *)kCUIAnimationStartTimeKey: @(renderProgress.animationStartTime().secondsSinceEpoch().seconds()),
+        (__bridge NSString *)kCUIAnimationTimeKey: @(MonotonicTime::now().secondsSinceEpoch().seconds())
     }];
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());

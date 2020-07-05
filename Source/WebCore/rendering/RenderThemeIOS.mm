@@ -893,16 +893,6 @@ bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const 
     return false;
 }
 
-Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(RenderProgress&) const
-{
-    return 0_s;
-}
-
-Seconds RenderThemeIOS::animationDurationForProgressBar(RenderProgress&) const
-{
-    return 0_s;
-}
-
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!is<RenderProgress>(renderer))

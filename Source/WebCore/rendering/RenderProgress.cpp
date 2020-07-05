@@ -66,6 +66,7 @@ RenderBox::LogicalExtentComputedValues RenderProgress::computeLogicalHeight(Layo
 
 double RenderProgress::animationProgress() const
 {
+    ASSERT(m_animationDuration > 0_s);
     return m_animating ? (fmod((MonotonicTime::now() - m_animationStartTime).seconds(), m_animationDuration.seconds()) / m_animationDuration.seconds()) : 0;
 }
 
@@ -87,7 +88,7 @@ void RenderProgress::updateAnimationState()
     m_animationDuration = theme().animationDurationForProgressBar(*this);
     m_animationRepeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
 
-    bool animating = style().hasAppearance() && m_animationDuration > 0_s;
+    bool animating = style().hasAppearance() && m_animationRepeatInterval > 0_s;
     if (animating == m_animating)
         return;
 
