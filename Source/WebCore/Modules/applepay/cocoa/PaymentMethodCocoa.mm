@@ -178,6 +178,6 @@ PKPaymentMethod *PaymentMethod::pkPaymentMethod() const
     return m_pkPaymentMethod.get();
 }
 
-#endif
-#undef ALLOW
 }
+
+#endif
