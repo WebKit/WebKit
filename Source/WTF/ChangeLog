@@ -1,5 +1,62 @@
 2020-07-04  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Add almost everything from FeatureDefines.xcconfig to PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=213964
+
+        Reviewed by Sam Weinig.
+
+        Added logic that matches what FeatureDefines.xcconfig does for everything
+        except for ENABLE_EXPERIMENTAL_FEATURES.
+
+        Changed format so we mostly list platforms where we do not want to enable
+        a certain feature; also order it pretty consistently macOS, iOS, Mac Catalyst,
+        watchOS, then tvOS. This format highlights possible mistakes when not enabling
+        a feature on some platforms in an easier to understand way.
+
+        * wtf/PlatformEnableCocoa.h:
+        (ENABLE_AIRPLAY_PICKER): List platforms that do *not* enable this.
+        (ENABLE_APPLE_PAY): All except Mac Catalyst, watchOS, tvOS.
+        Not sure why disabled in Mac Catalyst, but replicates FeatureDefines.xcconfig.
+        (ENABLE_APPLE_PAY_REMOTE_UI): List platforms that do *not* enable this.
+        (ENABLE_AUTOCAPITALIZE): List platforms that do *not* enable this.
+        (ENABLE_AUTOCORRECT): List platforms that do *not* enable this.
+        (ENABLE_CONTENT_FILTERING): All except older watchOS simulator and tvOS.
+        (ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER): Re-sorted this.
+        (ENABLE_CSS_CONIC_GRADIENTS): All except older macOS and tvOS. The tvOS
+        exception seems questionable, so added a FIXME.
+        (ENABLE_DARK_MODE_CSS): All except watchOS and tvOS.
+        (ENABLE_DATA_INTERACTION): All except macOS, watchOS, and tvOS.
+        (ENABLE_DATA_DETECTION): All except Mac Catalyst, watchOS, and tvOS.
+        (ENABLE_EDITABLE_REGION): Only iOS.
+        (ENABLE_ENCRYPTED_MEDIA): All except older macOS and Mac Catalyst.
+        (ENABLE_FULLSCREEN_API): All except Mac Catalyst, watchOS, and tvOS.
+        (ENABLE_FULL_KEYBOARD_ACCESS): All except Mac Catalyst, watchOS, and tvOS.
+        (ENABLE_GAMEPAD): All except watchOS.
+        (ENABLE_INPUT_TYPE_DATE): All except macOS, Mac Catalyst, and tvOS.
+        (ENABLE_INPUT_TYPE_DATETIMELOCAL): Ditto.
+        (ENABLE_INPUT_TYPE_MONTH): Ditto.
+        (ENABLE_INPUT_TYPE_TIME): Ditto.
+        (ENABLE_INPUT_TYPE_WEEK): Ditto.
+        (ENABLE_MEDIA_CAPTURE): All except macOS.
+        (ENABLE_MEDIA_SOURCE): All except Mac Catalyst, watchOS, tvOS, and
+        all simulators.
+        (ENABLE_MEDIA_STREAM): All except Mac Catalyst, watchOS, and tvOS.
+        (ENABLE_NAVIGATOR_STANDALONE): All iOS family. (Considered writing as
+        all except macOS, but left like this to match some .cpp code for now.)
+        (ENABLE_OVERFLOW_SCROLLING_TOUCH): All iOS family.
+        (ENABLE_PICTURE_IN_PICTURE_API): All except Mac Catalyst, watchOS, and tvOS.
+        (ENABLE_SPEECH_SYNTHESIS): All except Mac Catalyst.
+        (ENABLE_REVEAL): All except older macOS, watchOS, and tvOS.
+        (ENABLE_SIGILL_CRASH_ANALYZER): All except macOS and watchOS.
+        (ENABLE_TAKE_UNBOUNDED_NETWORKING_ASSERTION): All except macOS, watchOS, and tvOS.
+        (ENABLE_VIDEO_PRESENTATION_MODE): All except simulators and tvOS.
+        (ENABLE_WEBGPU): All except older macOS, Mac Catalyst, and simulators.
+        (ENABLE_WEB_API_STATISTICS): Re-sorted this.
+        (ENABLE_WEB_AUTHN): All except Mac Catalyst, watchOS, and tvOS.
+        (ENABLE_WEB_RTC): All except Mac Catalyst, watchOS, and tvOS.
+
+2020-07-04  Darin Adler  <darin@apple.com>
+
         [Cocoa] Remove all features from FeatureDefines.xcconfig that are already mentioned in PlatformEnableCocoa.h
         https://bugs.webkit.org/show_bug.cgi?id=213962
 
