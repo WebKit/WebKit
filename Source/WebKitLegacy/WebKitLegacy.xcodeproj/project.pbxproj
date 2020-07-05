@@ -620,6 +620,7 @@
 		A10C1D8C1820305E0036883A /* WebPDFViewIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D871820305E0036883A /* WebPDFViewIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D8D1820305E0036883A /* WebPDFViewPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D881820305E0036883A /* WebPDFViewPlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D8E1820305E0036883A /* WebPDFViewPlaceholder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D891820305E0036883A /* WebPDFViewPlaceholder.mm */; };
+		A1382CDF24B15A51001645B0 /* LaBanquePostaleQuirks.js in Resources */ = {isa = PBXBuildFile; fileRef = A1382CDE24B15A51001645B0 /* LaBanquePostaleQuirks.js */; };
 		A17A11B1180DC84800E5498C /* WebPluginPackagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A17A11B0180DC84800E5498C /* WebPluginPackagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A560946614D8AD2600799A8A /* WebIndicateLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = A560946414D8AD2600799A8A /* WebIndicateLayer.h */; };
 		A560946714D8AD2600799A8A /* WebIndicateLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A560946514D8AD2600799A8A /* WebIndicateLayer.mm */; };
@@ -1430,6 +1431,7 @@
 		A10C1D881820305E0036883A /* WebPDFViewPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPDFViewPlaceholder.h; path = ios/WebView/WebPDFViewPlaceholder.h; sourceTree = SOURCE_ROOT; };
 		A10C1D891820305E0036883A /* WebPDFViewPlaceholder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPDFViewPlaceholder.mm; path = ios/WebView/WebPDFViewPlaceholder.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D8F1820307D0036883A /* WebKit.iOS.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = WebKit.iOS.exp; path = ios/WebKit.iOS.exp; sourceTree = "<group>"; };
+		A1382CDE24B15A51001645B0 /* LaBanquePostaleQuirks.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = LaBanquePostaleQuirks.js; sourceTree = "<group>"; };
 		A17A11B0180DC84800E5498C /* WebPluginPackagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPackagePrivate.h; sourceTree = "<group>"; };
 		A182B74E199E7B8F001FD95A /* migrate-headers.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "migrate-headers.sh"; path = "mac/migrate-headers.sh"; sourceTree = "<group>"; };
 		A182B74F199E7B8F001FD95A /* postprocess-headers.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "postprocess-headers.sh"; path = "mac/postprocess-headers.sh"; sourceTree = "<group>"; };
@@ -1632,6 +1634,7 @@
 			isa = PBXGroup;
 			children = (
 				939811320824BF01008DF038 /* Info.plist */,
+				A1382CDE24B15A51001645B0 /* LaBanquePostaleQuirks.js */,
 				F5B67130023EDF8901C1A525 /* url_icon.tiff */,
 				5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib */,
 			);
@@ -3207,6 +3210,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1382CDF24B15A51001645B0 /* LaBanquePostaleQuirks.js in Resources */,
 				29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */,
 				5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */,
 				5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */,

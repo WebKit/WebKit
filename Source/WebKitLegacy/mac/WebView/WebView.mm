@@ -1364,6 +1364,31 @@ static NSString *leakOutlookQuirksUserScriptContents()
 }
 #endif
 
+#if PLATFORM(IOS)
+static bool needsLaBanquePostaleQuirks()
+{
+    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_14_0;
+    return needsQuirks;
+}
+
+static NSString *leakLaBanquePostaleQuirksScript()
+{
+    NSURL *scriptURL = [[NSBundle bundleForClass:WebView.class] URLForResource:@"LaBanquePostaleQuirks" withExtension:@"js"];
+    NSStringEncoding encoding;
+    return [[NSString alloc] initWithContentsOfURL:scriptURL usedEncoding:&encoding error:nullptr];
+}
+
+- (void)_injectLaBanquePostaleQuirks
+{
+    ASSERT(needsLaBanquePostaleQuirks());
+    static NSString * const quirksScript = leakLaBanquePostaleQuirksScript();
+
+    using namespace WebCore;
+    auto userScript = makeUnique<UserScript>(quirksScript, URL(), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInAllFrames, WaitForNotificationBeforeInjecting::No);
+    _private->group->userContentController().addUserScript(*core(WebScriptWorld.world), WTFMove(userScript));
+}
+#endif
+
 static bool shouldRespectPriorityInCSSAttributeSetters()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -1637,6 +1662,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         _private->page->settings().setShouldInjectUserScriptsInInitialEmptyDocument(true);
         [self _injectOutlookQuirksScript];
     }
+#endif
+
+#if PLATFORM(IOS)
+    if (needsLaBanquePostaleQuirks())
+        [self _injectLaBanquePostaleQuirks];
 #endif
 
 #if PLATFORM(IOS_FAMILY)

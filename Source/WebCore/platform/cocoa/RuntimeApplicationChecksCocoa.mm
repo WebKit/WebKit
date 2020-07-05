@@ -398,6 +398,12 @@ bool IOSApplication::isEssentialSkeleton()
     return isEssentialSkeleton;
 }
 
+bool IOSApplication::isLaBanquePostale()
+{
+    static bool isLaBanquePostale = applicationBundleIsEqualTo("fr.labanquepostale.moncompte"_s);
+    return isLaBanquePostale;
+}
+
 #endif
 
 } // namespace WebCore
