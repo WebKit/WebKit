@@ -22,11 +22,10 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
-#include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
 
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited);
 
 FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(FRAMEWORK_SEARCH_PATHS_ios_$(CONFIGURATION));
 FRAMEWORK_SEARCH_PATHS_ios_Debug = $(BUILT_PRODUCTS_DIR);
