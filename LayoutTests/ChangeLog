@@ -1,5 +1,13 @@
 2020-07-06  Zalan Bujtas  <zalan@apple.com>
 
+        [Win] No need to mark tables/mozilla_expected_failures/other/empty_cells.html with [Failure] anymore.
+
+        Unreviewed.
+
+        * platform/win/TestExpectations:
+
+2020-07-06  Zalan Bujtas  <zalan@apple.com>
+
         [Win] Unreviewed mozilla test gardening after r263855.
 
         * platform/win/tables/mozilla_expected_failures/other/empty_cells-expected.txt:

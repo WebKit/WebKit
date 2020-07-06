@@ -4513,4 +4513,3 @@ webkit.org/b/212172 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 
 fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/table-with-margin-content-simple.html [ ImageOnlyFailure ]
-tables/mozilla_expected_failures/other/empty_cells.html [ Failure ]
