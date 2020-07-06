@@ -60,9 +60,4 @@ bool isMainThread()
 #endif
 }
 
-void scheduleDispatchFunctionsOnMainThread()
-{
-    RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
-}
-
 } // namespace WTF

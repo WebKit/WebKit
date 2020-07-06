@@ -1,3 +1,27 @@
+2020-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        callOnMainThread should use the same queue as RunLoop::dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=213830
+
+        Reviewed by Brady Eidson.
+
+        This should reduce flakiness in scheduled tasks.
+
+        There's no need to keep a separate queue anymore since both APIs have
+        the same semantics now.
+
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainThread):
+        (WTF::functionQueue): Deleted.
+        (WTF::dispatchFunctionsFromMainThread): Deleted.
+        * wtf/MainThread.h:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::scheduleDispatchFunctionsOnMainThread): Deleted.
+        * wtf/generic/MainThreadGeneric.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread): Deleted.
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread): Deleted.
+
 2020-07-06  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Spams system logs with "Current memory footprint: 10 MB"

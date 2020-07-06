@@ -72,8 +72,6 @@ WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();
-void scheduleDispatchFunctionsOnMainThread();
-void dispatchFunctionsFromMainThread();
 
 } // namespace WTF
 

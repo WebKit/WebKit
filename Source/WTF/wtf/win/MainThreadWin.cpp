@@ -51,9 +51,4 @@ bool isMainThread()
     return mainThread == Thread::currentID();
 }
 
-void scheduleDispatchFunctionsOnMainThread()
-{
-    RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
-}
-
 } // namespace WTF

@@ -69,18 +69,6 @@ void initializeMainThreadPlatform()
     ASSERT(pthread_main_np());
 }
 
-void scheduleDispatchFunctionsOnMainThread()
-{
-#if USE(WEB_THREAD)
-    if (auto* webRunLoop = RunLoop::webIfExists()) {
-        webRunLoop->dispatch(dispatchFunctionsFromMainThread);
-        return;
-    }
-#endif
-
-    RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
-}
-
 void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)())
 {
 #if USE(WEB_THREAD)

@@ -41,14 +41,6 @@
 
 namespace WTF {
 
-static Lock mainThreadFunctionQueueMutex;
-
-static Deque<Function<void ()>>& functionQueue()
-{
-    static NeverDestroyed<Deque<Function<void ()>>> functionQueue;
-    return functionQueue;
-}
-
 void initializeMainThread()
 {
     static std::once_flag initializeKey;
@@ -66,28 +58,6 @@ bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 }
 #endif
 
-void dispatchFunctionsFromMainThread()
-{
-    ASSERT(isMainThread());
-
-    Function<void ()> function;
-
-    while (true) {
-        {
-            auto locker = holdLock(mainThreadFunctionQueueMutex);
-            if (!functionQueue().size())
-                break;
-
-            function = functionQueue().takeFirst();
-        }
-
-        function();
-
-        // Clearing the function can have side effects, so do so outside of the lock above.
-        function = nullptr;
-    }
-}
-
 bool isMainRunLoop()
 {
     return RunLoop::isMain();
@@ -100,18 +70,14 @@ void callOnMainRunLoop(Function<void()>&& function)
 
 void callOnMainThread(Function<void()>&& function)
 {
-    ASSERT(function);
-
-    bool needToSchedule = false;
-
-    {
-        auto locker = holdLock(mainThreadFunctionQueueMutex);
-        needToSchedule = functionQueue().size() == 0;
-        functionQueue().append(WTFMove(function));
+#if USE(WEB_THREAD)
+    if (auto* webRunLoop = RunLoop::webIfExists()) {
+        webRunLoop->dispatch(WTFMove(function));
+        return;
     }
+#endif
 
-    if (needToSchedule)
-        scheduleDispatchFunctionsOnMainThread();
+    RunLoop::main().dispatch(WTFMove(function));
 }
 
 bool isMainThreadOrGCThread()
