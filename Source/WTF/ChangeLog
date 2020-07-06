@@ -1,3 +1,17 @@
+2020-07-06  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Spams system logs with "Current memory footprint: 10 MB"
+        https://bugs.webkit.org/show_bug.cgi?id=213991
+
+        Reviewed by Darin Adler.
+
+        This particular log statement is too much spam in the system journal, since it prints
+        continuously under normal operating conditions. Let's limit it only to Apple platforms,
+        which have had RELEASE_LOG() for a long time and where this is presumably expected.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+
 2020-07-06  Sam Weinig  <weinig@apple.com>
 
         Compile-time enable (but leave disabled at runtime by default) date/time input types on macOS to allow testing of cross platform (e.g. DOM) aspects of the controls

@@ -191,7 +191,9 @@ void MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint(size_t footprin
 void MemoryPressureHandler::measurementTimerFired()
 {
     size_t footprint = memoryFootprint();
+#if PLATFORM(COCOA)
     RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint / MB);
+#endif
     if (footprint >= thresholdForMemoryKill()) {
         shrinkOrDie();
         return;
