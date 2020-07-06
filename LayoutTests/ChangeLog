@@ -1,3 +1,20 @@
+2020-07-06  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Unreviewed test gardening after r263855.
+
+        * platform/win/fast/css/acid2-expected.txt:
+        * platform/win/fast/css/acid2-pixel-expected.txt:
+        * platform/win/fast/css/percentage-non-integer-expected.txt:
+        * platform/win/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/win/fast/repaint/table-cell-move-expected.txt:
+        * platform/win/fast/table/cell-absolute-child-expected.txt:
+        * platform/win/fast/table/empty-cells-expected.txt:
+        * platform/win/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/win/fast/table/table-cell-split-expected.txt:
+        * platform/win/fast/table/table-insert-before-non-anonymous-block-expected.txt:
+        * platform/win/http/tests/misc/acid2-expected.txt:
+        * platform/win/http/tests/misc/acid2-pixel-expected.txt:
+
 2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable storageAccess tests
