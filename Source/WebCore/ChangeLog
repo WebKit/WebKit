@@ -1,3 +1,18 @@
+2020-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERT_NOT_REACHED() in EventRegionContext::popClip()
+        https://bugs.webkit.org/show_bug.cgi?id=213905
+
+        Reviewed by Daniel Bates.
+
+        Fix an assertion seen on bing.com, tesla.com etc where event region painting
+        would have mismatched push/pop because of an obvious code error.
+
+        I spent too long trying to make a testcase and gave up.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::restoreClip):
+
 2020-07-06  Sam Weinig  <weinig@apple.com>
 
         Compile-time enable (but leave disabled at runtime by default) date/time input types on macOS to allow testing of cross platform (e.g. DOM) aspects of the controls
