@@ -1,3 +1,12 @@
+2020-07-06  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [result database] Empty search will return too many tests to display
+        https://bugs.webkit.org/show_bug.cgi?id=213898
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/js/search.js: Trim the search string before fetching the tests, ingore empty string on paste event
+
 2020-07-06  Geoffrey Garen  <ggaren@apple.com>
 
         RunLoop::dispatch should only call wakeUp when needed
