@@ -27,8 +27,7 @@
 #import "config.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 
-#if PLATFORM(COCOA)
-#if HAVE(AVKIT)
+#if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #import "Logging.h"
 #import "MediaSelectionOption.h"
@@ -229,5 +228,4 @@ void PlaybackSessionInterfaceAVKit::modelDestroyed()
 
 }
 
-#endif // HAVE(AVKIT)
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(COCOA) && HAVE(AVKIT)

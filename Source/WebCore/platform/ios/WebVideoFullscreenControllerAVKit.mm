@@ -991,7 +991,6 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
         m_interface = VideoFullscreenInterfaceAVKit::create(sessionInterface.get());
         m_interface->setVideoFullscreenChangeObserver(this);
         m_interface->setVideoFullscreenModel(this);
-        m_interface->setVideoFullscreenChangeObserver(this);
 
         m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);
 

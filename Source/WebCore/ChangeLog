@@ -1,3 +1,17 @@
+2020-07-06  Peng Liu  <peng.liu6@apple.com>
+
+        Cleanup WebVideoFullscreenControllerAVKit.mm and PlaybackSessionInterfaceAVKit.mm
+        https://bugs.webkit.org/show_bug.cgi?id=214005
+
+        Reviewed by Daniel Bates.
+
+        No new tests, no behavior change.
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::setUpFullscreen):
+        Remove a redundant line.
+
 2020-07-06  Clark Wang  <clark_wang@apple.com>
 
         Added PannerNode constructor according to spec
