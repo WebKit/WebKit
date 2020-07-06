@@ -46,7 +46,6 @@ public:
 private:
     static struct option longOptions[];
 
-    int m_argc;
     char** m_argv;
     std::string m_benchmarkName;
     bool m_detailedReport;

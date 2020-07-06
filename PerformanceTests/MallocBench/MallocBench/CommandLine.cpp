@@ -40,8 +40,7 @@ struct option CommandLine::longOptions[] =
 };
 
 CommandLine::CommandLine(int argc, char** argv)
-    : m_argc(argc)
-    , m_argv(argv)
+    : m_argv(argv)
     , m_detailedReport(false)
     , m_isParallel(false)
     , m_useThreadID(false)

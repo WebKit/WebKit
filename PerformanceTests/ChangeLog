@@ -1,3 +1,15 @@
+2020-07-06  Philippe Normand  <pnormand@igalia.com>
+
+        MallocBench: Remove unused private field
+        https://bugs.webkit.org/show_bug.cgi?id=213989
+
+        Reviewed by Alex Christensen.
+
+        The m_argc private field is never used. Remove it.
+        
+        * MallocBench/MallocBench/CommandLine.cpp:
+        * MallocBench/MallocBench/CommandLine.h:
+
 2020-07-01  Saam Barati  <sbarati@apple.com>
 
         Make it so JetStream2 can run with the d8 shell
