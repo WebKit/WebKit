@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Quirks.h"
 
+#include "Attr.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -39,11 +40,19 @@
 #include "HTMLObjectElement.h"
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
+#include "NamedNodeMap.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGPathElement.h"
+#include "SVGSVGElement.h"
+#include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "Settings.h"
 #include "SpaceSplitString.h"
 #include "UserAgent.h"
+#include "UserContentTypes.h"
+#include "UserScript.h"
+#include "UserScriptTypes.h"
 
 namespace WebCore {
 
@@ -842,7 +851,37 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 #endif
 }
 
-Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const AtomString& eventType, const SpaceSplitString& classNames) const
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+bool Quirks::isKinjaLoginAvatarElement(const Element& element) const
+{
+    // The click event handler has been found to trigger on a div or
+    // span with these class names, or the svg, or the svg's path.
+    if (element.hasClass()) {
+        auto& classNames = element.classNames();
+        if (classNames.contains("js_switch-to-burner-login")
+            || classNames.contains("js_header-userbutton")
+            || classNames.contains("sc-1il3uru-3") || classNames.contains("cIhKfd")
+            || classNames.contains("iyvn34-0") || classNames.contains("bYIjtl"))
+            return true;
+    }
+
+    const Element* svgElement = nullptr;
+    if (is<SVGSVGElement>(element))
+        svgElement = &element;
+    else if (is<SVGPathElement>(element) && is<SVGSVGElement>(element.parentElement()))
+        svgElement = element.parentElement();
+
+    if (svgElement && svgElement->hasAttributes()) {
+        auto ariaLabelAttr = svgElement->attributes().getNamedItem("aria-label");
+        if (ariaLabelAttr && ariaLabelAttr->value() == "UserFilled icon")
+            return true;
+    }
+
+    return false;
+}
+#endif
+
+Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const Element& element, const AtomString& eventType) const
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!needsQuirks())
@@ -865,36 +904,59 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const Atom
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theinventory.com"_s));
         return set;
     }();
-    static NeverDestroyed<RegistrableDomain> kinjaDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kinja.com"_s);
+    static NeverDestroyed<URL> kinjaURL = URL(URL(), "https://kinja.com");
+    static NeverDestroyed<RegistrableDomain> kinjaDomain { kinjaURL };
 
     static NeverDestroyed<RegistrableDomain> youTubeDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_s);
+    
+    static NeverDestroyed<String> loginPopupWindowFeatureString = "toolbar=no,location=yes,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=599,height=600,top=420,left=980.5"_s;
+
+    static NeverDestroyed<UserScript> kinjaLoginUserScript { "function triggerLoginForm() { let elements = document.getElementsByClassName('js_header-userbutton'); if (elements && elements[0]) { elements[0].click(); clearInterval(interval); } } let interval = setInterval(triggerLoginForm, 200);", URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
 
     if (eventType == "click") {
 
         // Embedded YouTube case.
-        if (domain == youTubeDomain && !m_document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain) && (classNames.contains("ytp-watch-later-icon") || classNames.contains("ytp-watch-later-icon"))) {
-            if (ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
-                DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*m_document, [](StorageAccessWasGranted) {
-                    // FIXME: Add appropriate logging.
-                });
-                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+        if (element.hasClass() && domain == youTubeDomain && !m_document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
+            auto& classNames = element.classNames();
+            if (classNames.contains("ytp-watch-later-icon") || classNames.contains("ytp-watch-later-icon")) {
+                if (ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
+                    DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*m_document, [](StorageAccessWasGranted) { });
+                    return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+                }
             }
+            return Quirks::StorageAccessResult::ShouldNotCancelEvent;
         }
 
-        // Kinja burner account login case.
-        if (kinjaQuirks.get().contains(domain) && classNames.contains("js_switch-to-burner-login")) {
+        // Kinja login case.
+        if (kinjaQuirks.get().contains(domain) && isKinjaLoginAvatarElement(element)) {
             if (ResourceLoadObserver::shared().hasHadUserInteraction(kinjaDomain)) {
-                DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, kinjaDomain.get().isolatedCopy(), [](StorageAccessWasGranted) {
-                    // FIXME: Add appropriate logging.
-                });
+                DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, kinjaDomain.get().isolatedCopy(), [](StorageAccessWasGranted) { });
                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
             }
-            // FIXME: Take the user to kinja.com in the else case.
+
+            auto* domWindow = m_document->domWindow();
+            if (!domWindow)
+                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+
+            ExceptionOr<RefPtr<WindowProxy>> proxyOrException =  domWindow->open(*domWindow, *domWindow, kinjaURL->string(), emptyString(), loginPopupWindowFeatureString);
+            if (proxyOrException.hasException())
+                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+            auto proxy = proxyOrException.releaseReturnValue();
+
+            auto* abstractFrame = proxy->frame();
+            if (abstractFrame && is<Frame>(*abstractFrame)) {
+                auto& frame = downcast<Frame>(*abstractFrame);
+                if (auto* page = frame.page()) {
+                    auto world = ScriptController::createWorld("kinjaComQuirkWorld", ScriptController::WorldType::User);
+                    page->addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
+                    return Quirks::StorageAccessResult::ShouldCancelEvent;
+                }
+            }
         }
     }
 #else
+    UNUSED_PARAM(element);
     UNUSED_PARAM(eventType);
-    UNUSED_PARAM(classNames);
 #endif
     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }
