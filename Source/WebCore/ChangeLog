@@ -1,3 +1,15 @@
+2020-07-06  Matt Gilligan  <matthew_gilligan@apple.com>
+
+        Update the user agent on iPadOS to use 11 to match macOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=213753
+
+        Reviewed by Alex Christensen.
+
+        Update the version number in the desktop user agent string to 11_0.
+
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+
 2020-07-06  Daniel Bates  <dabates@apple.com>
 
         Use RenderObject::positionForPoint instead of hit testing the entire view in closestEditablePositionInElementForAbsolutePoint
