@@ -1,3 +1,19 @@
+2020-07-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WAKWindow should override -resignFirstResponder and clear state
+        https://bugs.webkit.org/show_bug.cgi?id=214011
+        <rdar://problem/65152410>
+
+        Reviewed by Tim Horton.
+
+        This is part of the fix for <rdar://problem/62615273>.
+
+        Override -resignFirstResponder to clear out internal state that tracks the first responder
+        in the iOS Legacy WebKit world.
+
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow resignFirstResponder]):
+
 2020-07-06  Sam Weinig  <weinig@apple.com>
 
         REGRESSION: (r263977): [ iOS Debug WK2 ] 36 fast form and web-platform test consistently crashing
