@@ -458,7 +458,8 @@ void VideoFullscreenManagerProxy::addClientForContext(PlaybackSessionContextIden
 
 void VideoFullscreenManagerProxy::removeClientForContext(PlaybackSessionContextIdentifier contextId)
 {
-    ASSERT(m_clientCounts.contains(contextId));
+    if (!m_clientCounts.contains(contextId))
+        return;
 
     int clientCount = m_clientCounts.get(contextId);
     ASSERT(clientCount > 0);
