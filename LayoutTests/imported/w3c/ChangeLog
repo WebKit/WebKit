@@ -1,3 +1,14 @@
+2020-07-06  Rob Buis  <rbuis@igalia.com>
+
+        Allow setting empty host/hostname on URLs if they use file scheme
+        https://bugs.webkit.org/show_bug.cgi?id=213983
+
+        Reviewed by Alex Christensen.
+
+        Update improved test expectation.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support peer connection remote video tracks

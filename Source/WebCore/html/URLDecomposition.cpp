@@ -95,14 +95,14 @@ static unsigned countASCIIDigits(StringView string)
 
 void URLDecomposition::setHost(StringView value)
 {
-    if (value.isEmpty())
+    auto fullURL = this->fullURL();
+    if (value.isEmpty() && !fullURL.protocolIs("file"))
         return;
 
     size_t separator = value.find(':');
     if (!separator)
         return;
 
-    auto fullURL = this->fullURL();
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
         return;
 
@@ -146,10 +146,10 @@ static StringView removeAllLeadingSolidusCharacters(StringView string)
 
 void URLDecomposition::setHostname(StringView value)
 {
-    auto host = removeAllLeadingSolidusCharacters(value);
-    if (host.isEmpty())
-        return;
     auto fullURL = this->fullURL();
+    auto host = removeAllLeadingSolidusCharacters(value);
+    if (host.isEmpty() && !fullURL.protocolIs("file"))
+        return;
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
         return;
     fullURL.setHost(host);

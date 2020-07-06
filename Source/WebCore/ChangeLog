@@ -1,3 +1,24 @@
+2020-07-06  Rob Buis  <rbuis@igalia.com>
+
+        Allow setting empty host/hostname on URLs if they use file scheme
+        https://bugs.webkit.org/show_bug.cgi?id=213983
+
+        Reviewed by Alex Christensen.
+
+        Allow setting empty host/hostname on URLs if they use file scheme [1, 2, 3].
+
+        Behavior matches Firefox.
+
+        [1] https://url.spec.whatwg.org/#dom-url-host
+        [2] https://url.spec.whatwg.org/#dom-url-hostname
+        [3] https://url.spec.whatwg.org/#host-state Step 1
+
+        Test: imported/w3c/web-platform-tests/url/url-setters.html
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHost):
+        (WebCore::URLDecomposition::setHostname):
+
 2020-07-06  Matt Gilligan  <matthew_gilligan@apple.com>
 
         Update the user agent on iPadOS to use 11 to match macOS Safari
@@ -1125,7 +1146,6 @@
             - Make parse* member functions templates to allow factory parse functions to
               call them without upconverting.
             - Replace header guard with #pragma once.
-
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Cleanup ApplicationCacheManifestParser.h/cpp
