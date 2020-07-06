@@ -1,3 +1,27 @@
+2020-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        RunLoop::dispatch should only call wakeUp when needed
+        https://bugs.webkit.org/show_bug.cgi?id=213705
+
+        Reviewed by Brady Eidson.
+
+        RunLoop::wakeUp is super expensive (at least on Darwin platforms). Back
+        when IndexedDB used RunLoop::dispatch, RunLoop::wakeUp accounted for 15%
+        of all database lookup time.
+
+        We can reduce the cost a bit by only scheduling a wakeUp when the queue
+        is empty.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::performWork): Take all the functions out of the pending
+        queue before we start executing them; that way, we can tell if a new
+        function has been added to the pending queue since we enetered
+        performWork.
+
+        (WTF::RunLoop::dispatch): Only call wakeUp if we need to.
+
+        * wtf/RunLoop.h:
+
 2020-07-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Add almost everything from FeatureDefines.xcconfig to PlatformEnableCocoa.h

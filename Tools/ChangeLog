@@ -1,3 +1,27 @@
+2020-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        RunLoop::dispatch should only call wakeUp when needed
+        https://bugs.webkit.org/show_bug.cgi?id=213705
+
+        Reviewed by Brady Eidson.
+
+        Added some tests for interesting edge cases.
+
+        Now that we have tests, we don't need so many comments.
+
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::TEST): Test that re-entry maintiains ordering. Test that
+        re-entry does not deadlock with cross-thread posting. (This deadlock is
+        why we can't just use a naive check for an empty queue.)
+
+        * TestWebKitAPI/glib/UtilitiesGLib.cpp:
+        (TestWebKitAPI::Util::run):
+        (TestWebKitAPI::Util::spinRunLoop):
+        (TestWebKitAPI::Util::sleep): Try to fix the GLib RunLoop testing code.
+        GLib fails my two new tests, and seems to fail other RunLoop-y tests.
+        I think this is because g_idle_add is defined not to work in nested
+        RunLoops. Let's see if using WTF's RunLoop API instead can help.
+
 2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable storageAccess tests

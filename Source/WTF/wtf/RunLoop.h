@@ -208,8 +208,11 @@ private:
 
     void performWork();
 
-    Lock m_functionQueueLock;
-    Deque<Function<void()>> m_functionQueue;
+    Deque<Function<void()>> m_currentIteration;
+
+    Lock m_nextIterationLock;
+    Deque<Function<void()>> m_nextIteration;
+
     bool m_isFunctionDispatchSuspended { false };
     bool m_hasSuspendedFunctions { false };
 

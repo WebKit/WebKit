@@ -34,31 +34,22 @@ namespace Util {
 
 void run(bool* done)
 {
-    g_idle_add([](gpointer userData) -> gboolean {
-        bool* done = static_cast<bool*>(userData);
-        if (*done)
-            RunLoop::current().stop();
-
-        return !*done;
-    }, done);
-    RunLoop::run();
+    while (!*done)
+        RunLoop::current().cycle();
 }
 
 void spinRunLoop(uint64_t count)
 {
-    g_idle_add([](gpointer userData) -> gboolean {
-        uint64_t* count = static_cast<uint64_t*>(userData);
-        return --(*count) ? G_SOURCE_CONTINUE : G_SOURCE_REMOVE;
-    }, &count);
+    while (count--)
+        RunLoop::current().cycle();
 }
 
 void sleep(double seconds)
 {
-    g_timeout_add(seconds * 1000, [](gpointer userData) -> gboolean {
-        RunLoop::main().stop();
-        return G_SOURCE_REMOVE;
-    }, nullptr);
-    RunLoop::current().stop();
+    RunLoop::current().dispatchAfter(Seconds(seconds), [] {
+        RunLoop::current().stop();
+    });
+    RunLoop::current().run();
 }
 
 } // namespace Util
