@@ -163,6 +163,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioListener.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioListener.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNodeOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNodeOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEvent.cpp
@@ -1230,6 +1232,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaintWorkletGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaintWorkletGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPannerNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPannerNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPannerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPannerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPanningModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPanningModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSParentNode.cpp

@@ -27,6 +27,8 @@
     JSGenerateToJSObject,
     EnabledBySetting=ModernUnprefixedWebAudio,
 ] interface PannerNode : AudioNode {
+    [MayThrowException] constructor (BaseAudioContext context, optional PannerOptions options);
+
     // Default model for stereo is equalpower
     attribute PanningModelType panningModel;
 

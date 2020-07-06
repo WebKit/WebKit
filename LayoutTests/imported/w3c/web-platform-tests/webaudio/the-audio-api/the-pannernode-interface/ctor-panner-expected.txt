@@ -2,25 +2,116 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
-FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.panningModel')"
+FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.listener[item.name].value')"
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "constructor with options" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new PannerNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new PannerNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new PannerNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new PannerNode() threw TypeError: "Not enough arguments". 
+PASS   new PannerNode(1) threw TypeError: "Argument 1 ('context') to the PannerNode constructor must be an instance of BaseAudioContext". 
+PASS   new PannerNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new PannerNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof PannerNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new PannerNode(context) did not throw an exception. 
+PASS   node0 instanceof PannerNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 1. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 2. 
+PASS   node0.channelCountMode is equal to clamped-max. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS   node0.panningModel is equal to equalpower. 
+PASS   node0.positionX.value is equal to 0. 
+PASS   node0.positionY.value is equal to 0. 
+PASS   node0.positionZ.value is equal to 0. 
+PASS   node0.orientationX.value is equal to 1. 
+PASS   node0.orientationY.value is equal to 0. 
+PASS   node0.orientationZ.value is equal to 0. 
+PASS   node0.distanceModel is equal to inverse. 
+PASS   node0.refDistance is equal to 1. 
+PASS   node0.maxDistance is equal to 10000. 
+PASS   node0.rolloffFactor is equal to 1. 
+PASS   node0.coneInnerAngle is equal to 360. 
+PASS   node0.coneOuterAngle is equal to 360. 
+PASS   node0.coneOuterGain is equal to 0. 
 PASS > [test AudioNodeOptions]  
-FAIL X node1 = new PannerNode(c, {"channelCount":1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, options)')". assert_true: expected true got false
+PASS   node1 = new PannerNode(c, {"channelCount":1}) did not throw an exception. 
+PASS   node1.channelCount is equal to 1. 
+PASS   node2 = new PannerNode(c, {"channelCount":2}) did not throw an exception. 
+PASS   node2.channelCount is equal to 2. 
+PASS   new PannerNode(c, {"channelCount":0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   node.channelCount = 0 threw InvalidStateError: "The object is in an invalid state.". 
+PASS   node.channelCount after setting to 0 is equal to 2. 
+FAIL X new PannerNode(c, {"channelCount":3}) did not throw an exception. assert_true: expected true got false
+FAIL X node.channelCount = 3 did not throw an exception. assert_true: expected true got false
+FAIL X node.channelCount after setting to 3 is not equal to 2. Got 3. assert_true: expected true got false
+PASS   new PannerNode(c, {"channelCount":99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   node.channelCount = 99 threw InvalidStateError: "The object is in an invalid state.". 
+PASS   node.channelCount after setting to 99 is equal to 2. 
+PASS   node3 = new PannerNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception. 
+PASS   node3.channelCountMode is equal to clamped-max. 
+PASS   node4 = new PannerNode(c, {"channelCountMode":"explicit"}) did not throw an exception. 
+PASS   node4.channelCountMode is equal to explicit. 
+FAIL X new PannerNode(c, {"channelCountMode":"max"}) did not throw an exception. assert_true: expected true got false
+FAIL X node.channelCountMode = max did not throw an exception. assert_true: expected true got false
+FAIL X node.channelCountMode after setting to max is not equal to clamped-max. Got max. assert_true: expected true got false
+FAIL X new PannerNode(c, " + JSON.stringify(options) + ") threw "InvalidStateError" instead of EcmaScript error TypeError. assert_true: expected true got false
+FAIL X node.channelCountMode = foobar incorrectly threw InvalidStateError: "The object is in an invalid state.". assert_true: expected true got false
+PASS   node.channelCountMode after setting to foobar is equal to clamped-max. 
+PASS   node5 = new PannerNode(c, {"channelInterpretation":"speakers"}) did not throw an exception. 
+PASS   node5.channelInterpretation is equal to speakers. 
+PASS   node6 = new PannerNode(c, {"channelInterpretation":"discrete"}) did not throw an exception. 
+PASS   node6.channelInterpretation is equal to discrete. 
+FAIL X new PannerNode(c, {"channelInterpretation":"foobar"}) threw "InvalidStateError" instead of EcmaScript error TypeError. assert_true: expected true got false
+PASS   new PannerNode(c, {"maxDistance":-1}) threw RangeError: "maxDistance cannot be set to a non-positive value". 
+PASS   node.maxDistance = -1 threw RangeError: "maxDistance cannot be set to a non-positive value". 
+PASS   node.maxDistance after setting to -1 is equal to 10000. 
+PASS   node7 = new PannerNode(c, {"maxDistance":100}) did not throw an exception. 
+PASS   node7.maxDistance is equal to 100. 
+PASS   new PannerNode(c, {"rolloffFactor":-1}) threw RangeError: "rolloffFactor cannot be set to a negative value". 
+PASS   node.rolloffFactor = -1 threw RangeError: "rolloffFactor cannot be set to a negative value". 
+PASS   node.rolloffFactor after setting to -1 is equal to 1. 
+PASS   node8 = new PannerNode(c, {"rolloffFactor":0}) did not throw an exception. 
+PASS   node8.rolloffFactor is equal to 0. 
+PASS   node8 = new PannerNode(c, {"rolloffFactor":0.5}) did not throw an exception. 
+PASS   node8.rolloffFactor is equal to 0.5. 
+PASS   node8 = new PannerNode(c, {"rolloffFactor":100}) did not throw an exception. 
+PASS   node8.rolloffFactor is equal to 100. 
+PASS   new PannerNode(c, {"coneOuterGain":-1}) threw InvalidStateError: "coneOuterGain must be in [0, 1]". 
+PASS   node.coneOuterGain = -1 threw InvalidStateError: "coneOuterGain must be in [0, 1]". 
+PASS   node.coneOuterGain after setting to -1 is equal to 0. 
+PASS   new PannerNode(c, {"coneOuterGain":1.1}) threw InvalidStateError: "coneOuterGain must be in [0, 1]". 
+PASS   node.coneOuterGain = 1.1 threw InvalidStateError: "coneOuterGain must be in [0, 1]". 
+PASS   node.coneOuterGain after setting to 1.1 is equal to 0. 
+PASS   node9 = new PannerNode(c, {"coneOuterGain":0}) did not throw an exception. 
+PASS   node9.coneOuterGain is equal to 0. 
+PASS   node9 = new PannerNode(c, {"coneOuterGain":0.5}) did not throw an exception. 
+PASS   node9.coneOuterGain is equal to 0.5. 
+PASS   node9 = new PannerNode(c, {"coneOuterGain":1}) did not throw an exception. 
+PASS   node9.coneOuterGain is equal to 1. 
+FAIL < [test AudioNodeOptions] 9 out of 54 assertions were failed. assert_true: expected true got false
 PASS > [constructor with options]  
-FAIL X node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.4142135623730951,"positionY":2.8284271247461903,"positionZ":4.242640687119286,"orientationX":-1.4142135623730951,"orientationY":-2.8284271247461903,"orientationZ":-4.242640687119286,"distanceModel":"linear","refDistance":3.141592653589793,"maxDistance":6.283185307179586,"rolloffFactor":9.42477796076938,"coneInnerAngle":12.566370614359172,"coneOuterAngle":15.707963267948966,"coneOuterGain":0.3141592653589793}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, options)')". assert_true: expected true got false
-FAIL X node instanceof PannerNode is not equal to true. Got false. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+PASS   node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.4142135623730951,"positionY":2.8284271247461903,"positionZ":4.242640687119286,"orientationX":-1.4142135623730951,"orientationY":-2.8284271247461903,"orientationZ":-4.242640687119286,"distanceModel":"linear","refDistance":3.141592653589793,"maxDistance":6.283185307179586,"rolloffFactor":9.42477796076938,"coneInnerAngle":12.566370614359172,"coneOuterAngle":15.707963267948966,"coneOuterGain":0.3141592653589793}) did not throw an exception. 
+PASS   node instanceof PannerNode is equal to true. 
+PASS   node.panningModel is equal to HRTF. 
+PASS   node.positionX.value is equal to 1.4142135381698608. 
+PASS   node.positionY.value is equal to 2.8284270763397217. 
+PASS   node.positionZ.value is equal to 4.242640495300293. 
+PASS   node.orientationX.value is equal to -1.4142135381698608. 
+PASS   node.orientationY.value is equal to -2.8284270763397217. 
+PASS   node.orientationZ.value is equal to -4.242640495300293. 
+PASS   node.distanceModel is equal to linear. 
+PASS   node.refDistance is equal to 3.141592653589793. 
+PASS   node.maxDistance is equal to 6.283185307179586. 
+PASS   node.rolloffFactor is equal to 9.42477796076938. 
+PASS   node.coneInnerAngle is equal to 12.566370614359172. 
+PASS   node.coneOuterAngle is equal to 15.707963267948966. 
+PASS   node.coneOuterGain is equal to 0.3141592653589793. 
+PASS   node.channelCount is equal to 2. 
+PASS   node.channelCountMode is equal to clamped-max. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS < [constructor with options] All assertions passed. (total 19 assertions) 
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 5 tasks were failed. assert_true: expected true got false
 

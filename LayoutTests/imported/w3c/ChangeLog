@@ -1,3 +1,17 @@
+2020-07-06  Clark Wang  <clark_wang@apple.com>
+
+        Added PannerNode constructor according to spec
+        https://bugs.webkit.org/show_bug.cgi?id=213801
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests now that new ones are passing. New ones that fail are due to accepted range
+        of values that attributes can take on, which are to be implemented in a future patch.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/ctor-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping-expected.txt:
+
 2020-07-06  Rob Buis  <rbuis@igalia.com>
 
         Allow setting empty host/hostname on URLs if they use file scheme

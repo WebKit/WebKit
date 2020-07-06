@@ -454,6 +454,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioDestinationNode.idl
     Modules/webaudio/AudioListener.idl
     Modules/webaudio/AudioNode.idl
+    Modules/webaudio/AudioNodeOptions.idl
     Modules/webaudio/AudioParam.idl
     Modules/webaudio/AudioProcessingEvent.idl
     Modules/webaudio/BaseAudioContext.idl
@@ -472,6 +473,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/OfflineAudioContext.idl
     Modules/webaudio/OscillatorNode.idl
     Modules/webaudio/PannerNode.idl
+    Modules/webaudio/PannerOptions.idl
     Modules/webaudio/PanningModelType.idl
     Modules/webaudio/PeriodicWave.idl
     Modules/webaudio/ScriptProcessorNode.idl

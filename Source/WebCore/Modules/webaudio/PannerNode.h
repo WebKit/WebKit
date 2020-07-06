@@ -34,6 +34,7 @@
 #include "Distance.h"
 #include "FloatPoint3D.h"
 #include "Panner.h"
+#include "PannerOptions.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -41,6 +42,7 @@
 namespace WebCore {
 
 class HRTFDatabaseLoader;
+class BaseAudioContext;
 
 class PannerNodeBase : public AudioNode {
 public:
@@ -49,7 +51,10 @@ public:
     virtual float dopplerRate() = 0;
 
 protected:
+    
+    // FIXME: Remove once dependencies on old constructor are removed
     PannerNodeBase(BaseAudioContext&, float sampleRate);
+    PannerNodeBase(BaseAudioContext&);
 };
 
 // PannerNode is an AudioNode with one input and one output.
@@ -62,11 +67,14 @@ protected:
 class PannerNode final : public PannerNodeBase {
     WTF_MAKE_ISO_ALLOCATED(PannerNode);
 public:
+    // FIXME: Remove once dependencies on old constructor are removed
     static Ref<PannerNode> create(BaseAudioContext& context, float sampleRate)
     {
         return adoptRef(*new PannerNode(context, sampleRate));
     }
-
+    
+    static ExceptionOr<Ref<PannerNode>> create(BaseAudioContext&, const PannerOptions& = { });
+    
     virtual ~PannerNode();
 
     // AudioNode
@@ -131,7 +139,9 @@ public:
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
 
 private:
+    // FIXME: Remove once dependencies on old constructor are removed
     PannerNode(BaseAudioContext&, float sampleRate);
+    PannerNode(BaseAudioContext&, const PannerOptions&);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain();
@@ -148,7 +158,7 @@ private:
     RefPtr<AudioParam> m_coneGain;
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
-    float m_lastGain;
+    float m_lastGain { -1.0 };
     
     Ref<AudioParam> m_positionX;
     Ref<AudioParam> m_positionY;
@@ -161,7 +171,7 @@ private:
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
 
-    unsigned m_connectionCount;
+    unsigned m_connectionCount { 0 };
 
     // Synchronize process() and setPanningModel() which can change the panner.
     mutable Lock m_pannerMutex;

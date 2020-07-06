@@ -903,7 +903,7 @@ FAIL AudioNode interface: new OscillatorNode(context) must inherit property "cha
 FAIL AudioNode interface: new OscillatorNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context)')"
 FAIL AudioNode interface: new OscillatorNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context)')"
 PASS PannerNode interface: existence and properties of interface object 
-FAIL PannerNode interface object length assert_equals: wrong value for PannerNode.length expected 1 but got 0
+PASS PannerNode interface object length 
 PASS PannerNode interface object name 
 PASS PannerNode interface: existence and properties of interface prototype object 
 PASS PannerNode interface: existence and properties of interface prototype object's "constructor" property 
@@ -924,49 +924,49 @@ PASS PannerNode interface: attribute coneOuterAngle
 PASS PannerNode interface: attribute coneOuterGain 
 PASS PannerNode interface: operation setPosition(float, float, float) 
 PASS PannerNode interface: operation setOrientation(float, float, float) 
-FAIL PannerNode must be primary interface of new PannerNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL Stringification of new PannerNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "panningModel" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "positionX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "positionY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "positionZ" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "orientationX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "orientationY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "orientationZ" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "distanceModel" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "refDistance" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "maxDistance" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "rolloffFactor" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "coneInnerAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "coneOuterAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "coneOuterGain" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "setPosition(float, float, float)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: calling setPosition(float, float, float) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: new PannerNode(context) must inherit property "setOrientation(float, float, float)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL PannerNode interface: calling setOrientation(float, float, float) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new PannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL AudioNode interface: new PannerNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
+PASS PannerNode must be primary interface of new PannerNode(context) 
+PASS Stringification of new PannerNode(context) 
+PASS PannerNode interface: new PannerNode(context) must inherit property "panningModel" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "positionX" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "positionY" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "positionZ" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "orientationX" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "orientationY" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "orientationZ" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "distanceModel" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "refDistance" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "maxDistance" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "rolloffFactor" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "coneInnerAngle" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "coneOuterAngle" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "coneOuterGain" with the proper type 
+PASS PannerNode interface: new PannerNode(context) must inherit property "setPosition(float, float, float)" with the proper type 
+PASS PannerNode interface: calling setPosition(float, float, float) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS PannerNode interface: new PannerNode(context) must inherit property "setOrientation(float, float, float)" with the proper type 
+PASS PannerNode interface: calling setOrientation(float, float, float) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new PannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new PannerNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new PannerNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new PannerNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new PannerNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new PannerNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new PannerNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS PeriodicWave interface: existence and properties of interface object 
 FAIL PeriodicWave interface object length assert_equals: wrong value for PeriodicWave.length expected 1 but got 0
 PASS PeriodicWave interface object name 

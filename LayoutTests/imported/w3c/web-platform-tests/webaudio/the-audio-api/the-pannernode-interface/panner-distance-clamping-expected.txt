@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "ref-distance-error" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
-FAIL Executing "max-distance-error" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PannerNode(context)')"
+PASS Executing "ref-distance-error" 
+PASS Executing "max-distance-error" 
 FAIL Executing "min-distance" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {
           type: 'sawtooth',
           frequency: 20 * 440,
@@ -12,14 +12,22 @@ FAIL Executing "max-distance" promise_test: Unhandled rejection with value: obje
         })')"
 PASS Audit report 
 PASS > [ref-distance-error]  
-FAIL X new PannerNode(c, {refDistance: -1}) threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
-FAIL X new PannerNode(c, {refDistance: 0}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, nodeOptions)')". assert_true: expected true got false
-FAIL X new PannerNode(c, {refDistance: 5e-324}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, nodeOptions)')". assert_true: expected true got false
+PASS   new PannerNode(c, {refDistance: -1}) threw RangeError: "refDistance cannot be set to a negative value". 
+PASS   new PannerNode(c, {refDistance: 0}) did not throw an exception. 
+PASS   new PannerNode(c, {refDistance: 5e-324}) did not throw an exception. 
+PASS   panner.refDistance = -1 threw RangeError: "refDistance cannot be set to a negative value". 
+PASS   panner.refDistance = 0 did not throw an exception. 
+PASS   panner.refDistance = 5e-324 did not throw an exception. 
+PASS < [ref-distance-error] All assertions passed. (total 6 assertions) 
 PASS > [max-distance-error]  
-FAIL X new PannerNode(c, {maxDistance: -1}) threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
-FAIL X new PannerNode(c, {maxDistance: 0}) threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
-FAIL X new PannerNode(c, {maxDistance: 5e-324}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new PannerNode(context, nodeOptions)')". assert_true: expected true got false
+PASS   new PannerNode(c, {maxDistance: -1}) threw RangeError: "maxDistance cannot be set to a non-positive value". 
+PASS   new PannerNode(c, {maxDistance: 0}) threw RangeError: "maxDistance cannot be set to a non-positive value". 
+PASS   new PannerNode(c, {maxDistance: 5e-324}) did not throw an exception. 
+PASS   panner.maxDistance = -1 threw RangeError: "maxDistance cannot be set to a non-positive value". 
+PASS   panner.maxDistance = 0 threw RangeError: "maxDistance cannot be set to a non-positive value". 
+PASS   panner.maxDistance = 5e-324 did not throw an exception. 
+PASS < [max-distance-error] All assertions passed. (total 6 assertions) 
 PASS > [min-distance]  
 PASS > [max-distance]  
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 4 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 

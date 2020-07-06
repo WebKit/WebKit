@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class BaseAudioContext;
 class AudioNodeInput;
+struct AudioNodeOptions;
 class AudioNodeOutput;
 class AudioParam;
 class BaseAudioContext;
@@ -59,7 +59,9 @@ class AudioNode
 public:
     enum { ProcessingSizeInFrames = 128 };
 
+    // FIXME: Remove once dependencies on old constructor are removed.
     AudioNode(BaseAudioContext&, float sampleRate);
+    AudioNode(BaseAudioContext&);
     virtual ~AudioNode();
 
     BaseAudioContext& context() { return m_context.get(); }
@@ -212,22 +214,26 @@ private:
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    volatile bool m_isInitialized;
-    NodeType m_nodeType;
+    volatile bool m_isInitialized { false };
+    NodeType m_nodeType { NodeTypeUnknown };
     Ref<BaseAudioContext> m_context;
+    
+    // FIXME: Remove m_sampleRate once old constructor is removed.
     float m_sampleRate;
+    
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;
 
-    double m_lastProcessingTime;
-    double m_lastNonSilentTime;
+    double m_lastProcessingTime { -1 };
+    double m_lastNonSilentTime { -1 };
 
     // Ref-counting
-    std::atomic<int> m_normalRefCount;
-    std::atomic<int> m_connectionRefCount;
+    // start out with normal refCount == 1 (like WTF::RefCounted class).
+    std::atomic<int> m_normalRefCount { 1 };
+    std::atomic<int> m_connectionRefCount { 0 };
     
-    bool m_isMarkedForDeletion;
-    bool m_isDisabled;
+    bool m_isMarkedForDeletion { false };
+    bool m_isDisabled { false };
 
 #if DEBUG_AUDIONODE_REFERENCES
     static bool s_isNodeCountInitialized;

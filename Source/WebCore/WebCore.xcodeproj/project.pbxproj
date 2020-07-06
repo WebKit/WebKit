@@ -5038,6 +5038,8 @@
 		E58B45BA20AD07DD00991025 /* DataListButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E58B45B820AD07DD00991025 /* DataListButtonElement.h */; };
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E71467B324ABAEF200FB2F50 /* AudioNodeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */; };
+		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -15774,6 +15776,10 @@
 		E58B45B820AD07DD00991025 /* DataListButtonElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataListButtonElement.h; sourceTree = "<group>"; };
 		E59DD4B721098285003C8B47 /* ListButtonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ListButtonArrow.png; sourceTree = "<group>"; };
 		E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthFunctions.h; sourceTree = "<group>"; };
+		E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeOptions.h; sourceTree = "<group>"; };
+		E71467B424ABAF0B00FB2F50 /* AudioNodeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioNodeOptions.idl; sourceTree = "<group>"; };
+		E71467B524ABAF1D00FB2F50 /* PannerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerOptions.h; sourceTree = "<group>"; };
+		E71467B724ABAF2C00FB2F50 /* PannerOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PannerOptions.idl; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29323,6 +29329,8 @@
 				FD315FCA12B0267500C1A359 /* AudioNode.idl */,
 				FD315FCB12B0267500C1A359 /* AudioNodeInput.cpp */,
 				FD315FCC12B0267500C1A359 /* AudioNodeInput.h */,
+				E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */,
+				E71467B424ABAF0B00FB2F50 /* AudioNodeOptions.idl */,
 				FD315FCD12B0267500C1A359 /* AudioNodeOutput.cpp */,
 				FD315FCE12B0267500C1A359 /* AudioNodeOutput.h */,
 				FD315FD212B0267500C1A359 /* AudioParam.cpp */,
@@ -29399,6 +29407,8 @@
 				FD315FCF12B0267500C1A359 /* PannerNode.cpp */,
 				FD315FD012B0267500C1A359 /* PannerNode.h */,
 				FD315FD112B0267500C1A359 /* PannerNode.idl */,
+				E71467B524ABAF1D00FB2F50 /* PannerOptions.h */,
+				E71467B724ABAF2C00FB2F50 /* PannerOptions.idl */,
 				83040280249A7A5C00A90D8D /* PanningModelType.h */,
 				83040281249A7A5D00A90D8D /* PanningModelType.idl */,
 				FD581FB11520F93B003A7A75 /* PeriodicWave.cpp */,
@@ -29839,6 +29849,7 @@
 				416A06A123CCAD0300347109 /* AudioMediaStreamTrackRenderer.h in Headers */,
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
 				FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */,
+				E71467B324ABAEF200FB2F50 /* AudioNodeOptions.h in Headers */,
 				FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */,
 				FD31601D12B0267600C1A359 /* AudioParam.h in Headers */,
 				FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */,
@@ -32493,6 +32504,7 @@
 				A80E6CFB0A1989CA007FB8C5 /* Pair.h in Headers */,
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
 				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,
+				E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */,
 				83040282249A7A5F00A90D8D /* PanningModelType.h in Headers */,
 				A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */,
 				CDCD41E81C3DDB0A00965D99 /* ParsedContentRange.h in Headers */,

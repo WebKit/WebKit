@@ -96,17 +96,11 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+
+// FIXME: Remove once dependencies on old constructor are removed
 AudioNode::AudioNode(BaseAudioContext& context, float sampleRate)
-    : m_isInitialized(false)
-    , m_nodeType(NodeTypeUnknown)
-    , m_context(context)
+    : m_context(context)
     , m_sampleRate(sampleRate)
-    , m_lastProcessingTime(-1)
-    , m_lastNonSilentTime(-1)
-    , m_normalRefCount(1) // start out with normal refCount == 1 (like WTF::RefCounted class)
-    , m_connectionRefCount(0)
-    , m_isMarkedForDeletion(false)
-    , m_isDisabled(false)
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
@@ -117,6 +111,24 @@ AudioNode::AudioNode(BaseAudioContext& context, float sampleRate)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
+#if DEBUG_AUDIONODE_REFERENCES
+    if (!s_isNodeCountInitialized) {
+        s_isNodeCountInitialized = true;
+        atexit(AudioNode::printNodeCounts);
+    }
+#endif
+}
+
+AudioNode::AudioNode(BaseAudioContext& context)
+    : m_context(context)
+    , m_sampleRate(context.sampleRate())
+#if !RELEASE_LOG_DISABLED
+    , m_logger(context.logger())
+    , m_logIdentifier(context.nextAudioNodeLogIdentifier())
+#endif
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
 #if DEBUG_AUDIONODE_REFERENCES
     if (!s_isNodeCountInitialized) {
         s_isNodeCountInitialized = true;

@@ -2632,6 +2632,7 @@ JSAudioContextState.cpp
 JSAudioDestinationNode.cpp
 JSAudioListener.cpp
 JSAudioNode.cpp
+JSAudioNodeOptions.cpp
 JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
 JSAudioTrack.cpp
@@ -3126,6 +3127,7 @@ JSPageTransitionEvent.cpp
 JSPaintRenderingContext2D.cpp
 JSPaintWorkletGlobalScope.cpp
 JSPannerNode.cpp
+JSPannerOptions.cpp
 JSPanningModelType.cpp
 JSParentNode.cpp
 JSPath2D.cpp

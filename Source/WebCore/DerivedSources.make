@@ -386,6 +386,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
     $(WebCore)/Modules/webaudio/AudioListener.idl \
     $(WebCore)/Modules/webaudio/AudioNode.idl \
+    $(WebCore)/Modules/webaudio/AudioNodeOptions.idl \
     $(WebCore)/Modules/webaudio/AudioParam.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
     $(WebCore)/Modules/webaudio/BaseAudioContext.idl \
@@ -404,6 +405,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
     $(WebCore)/Modules/webaudio/OscillatorNode.idl \
     $(WebCore)/Modules/webaudio/PannerNode.idl \
+    $(WebCore)/Modules/webaudio/PannerOptions.idl \
     $(WebCore)/Modules/webaudio/PanningModelType.idl \
     $(WebCore)/Modules/webaudio/PeriodicWave.idl \
     $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
