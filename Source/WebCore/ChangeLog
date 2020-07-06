@@ -1,3 +1,83 @@
+2020-07-06  Sam Weinig  <weinig@apple.com>
+
+        Compile-time enable (but leave disabled at runtime by default) date/time input types on macOS to allow testing of cross platform (e.g. DOM) aspects of the controls
+        https://bugs.webkit.org/show_bug.cgi?id=213949
+
+        Reviewed by Darin Adler.
+
+        Enable date/time related input element types on all Cocoa platforms, but disable them at runtime.
+        To make runtime disabling work completely, the user agent style for these element types was
+        extracted from html.css and is now only added when needed via UserAgentStyle::ensureDefaultStyleSheetsForElement.
+
+        This is the first step to allowing us to run a subset of the date/time related input element tests
+        on more platforms. If this is successful, we should consider do this for all platforms, not just Cocoa. 
+
+        * css/html.css:
+        Move to RenderTheme accessors for conditional inclusion based on Settings.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isDateTimeField const): Deleted.
+        * html/HTMLInputElement.h:
+        Removed dead isDateTimeField() code. This should have been removed when datetime was removed.
+
+        * html/InputType.cpp:
+        (WebCore::createInputTypeFactoryMap):
+        (WebCore::InputType::create):
+        Switch from using RuntimeEnabledFeatures to Settings for checking for enabling (Settings allows
+        us to write less boilerplate code and is more versatile for testing) and switch to checking the
+        condition on each InputType construction, rather than just on map's creation (again, this allows
+        us to have more flexibility in testing).
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::inputTypeColorEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeColorEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateTimeLocalEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::inputTypeMonthEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeMonthEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::inputTypeTimeEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeTimeEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::inputTypeWeekEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeWeekEnabled): Deleted.
+        Remove hand written code infavor of code genreated from Settings.yaml.
+
+        * page/Settings.yaml:
+        Moved from RuntimeEnabledFeatures.
+
+        * platform/LocalizedStrings.h:
+        Remove weekFormatInLDML() declaration, which had not implementation.
+
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::Locale::formatDateTime):
+        * platform/text/PlatformLocale.h:
+        Simplify code by marking formatDateTime() virtual on all platforms and un-#ifdefing
+        the base implementation. Platforms that wish to override it still can.
+
+        * platform/text/cocoa/LocaleCocoa.h:
+        * platform/text/cocoa/LocaleCocoa.mm:
+        * platform/text/ios/LocalizedDateCache.h:
+        * platform/text/ios/LocalizedDateCache.mm:
+        Remove iOS specific #ifdefs around code that should work on all Cocoa platforms.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::colorInputStyleSheet const):
+        (WebCore::RenderTheme::dateInputStyleSheet const):
+        (WebCore::RenderTheme::dateTimeLocalInputStyleSheet const):
+        (WebCore::RenderTheme::monthInputStyleSheet const):
+        (WebCore::RenderTheme::timeInputStyleSheet const):
+        (WebCore::RenderTheme::weekInputStyleSheet const):
+        * rendering/RenderTheme.h:
+        Add default user agent stylesheet strings for input types. All moved from html.css. 
+        
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::ensureDefaultStyleSheetsForElement):
+        * style/UserAgentStyle.h:
+        Conditionally add the input type specific user agent stylesheets only if the actual
+        input type is being passed in. Since creation of the input types is guarded by a Setting,
+        this can only happen if the type has been enabled. 
+
 2020-07-06  Rob Buis  <rbuis@igalia.com>
 
         Allow setting empty host/hostname on URLs if they use file scheme

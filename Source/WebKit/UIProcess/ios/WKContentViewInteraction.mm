@@ -540,9 +540,6 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
     case WebKit::InputType::Date:
         _type = WKInputTypeDate;
         break;
-    case WebKit::InputType::DateTime:
-        _type = WKInputTypeDateTime;
-        break;
     case WebKit::InputType::DateTimeLocal:
         _type = WKInputTypeDateTimeLocal;
         break;
@@ -2959,7 +2956,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::Select:
-    case WebKit::InputType::DateTime:
     case WebKit::InputType::Week:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
@@ -5034,7 +5030,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         case WebKit::InputType::TextArea:
         case WebKit::InputType::Search:
         case WebKit::InputType::Date:
-        case WebKit::InputType::DateTime:
         case WebKit::InputType::DateTimeLocal:
         case WebKit::InputType::Month:
         case WebKit::InputType::Week:
@@ -5081,7 +5076,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebKit::InputType::Color:
 #endif
     case WebKit::InputType::Date:
-    case WebKit::InputType::DateTime:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Email:
@@ -5777,7 +5771,6 @@ static bool mayContainSelectableText(WebKit::InputType type)
     case WebKit::InputType::Text:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::URL:
-    case WebKit::InputType::DateTime:
     case WebKit::InputType::Week:
         return true;
     }

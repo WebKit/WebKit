@@ -201,11 +201,6 @@ namespace WebCore {
     String AXLinkActionVerb();
     String AXListItemActionVerb();
 
-#if ENABLE(INPUT_TYPE_WEEK)
-    // weekFormatInLDML() returns week and year format in LDML, Unicode
-    // technical standard 35, Locale Data Markup Language, e.g. "'Week' ww, yyyy"
-    String weekFormatInLDML();
-#endif
 #if PLATFORM(COCOA)
 #if ENABLE(METER_ELEMENT)
     String AXMeterGaugeRegionOptimumText();

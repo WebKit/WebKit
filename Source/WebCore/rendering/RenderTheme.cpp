@@ -1034,11 +1034,65 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 
 String RenderTheme::colorInputStyleSheet() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().inputTypeColorEnabled());
     return "input[type=\"color\"] { -webkit-appearance: color-well; width: 44px; height: 23px; outline: none; } "_s;
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
+
+#if PLATFORM(IOS_FAMILY)
+#define DATE_INPUT_WIDTH ""
+#else
+#define DATE_INPUT_WIDTH "width: 10em; "
+#endif
+
+#if ENABLE(INPUT_TYPE_DATE)
+
+String RenderTheme::dateInputStyleSheet() const
+{
+    return "input[type=\"date\"] { align-items: center; -webkit-appearance: menulist-button; display: -webkit-inline-flex; overflow: hidden; " DATE_INPUT_WIDTH "} "_s;
+}
+
+#endif
+
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+
+String RenderTheme::dateTimeLocalInputStyleSheet() const
+{
+    return "input[type=\"datetime-local\"] { align-items: center; -webkit-appearance: menulist-button; display: -webkit-inline-flex; overflow: hidden; " DATE_INPUT_WIDTH "} "_s;
+}
+
+#endif
+
+#if ENABLE(INPUT_TYPE_MONTH)
+
+String RenderTheme::monthInputStyleSheet() const
+{
+    return "input[type=\"month\"] { align-items: center; -webkit-appearance: menulist-button; display: -webkit-inline-flex; overflow: hidden; " DATE_INPUT_WIDTH "} "_s;
+}
+
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME)
+
+String RenderTheme::timeInputStyleSheet() const
+{
+    return "input[type=\"time\"] { align-items: center; -webkit-appearance: menulist-button; display: -webkit-inline-flex; overflow: hidden; " DATE_INPUT_WIDTH "} "_s;
+}
+
+#endif
+
+#if ENABLE(INPUT_TYPE_WEEK)
+
+String RenderTheme::weekInputStyleSheet() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return ""_s;
+#else
+    return "input[type=\"week\"] { align-items: center; -webkit-appearance: menulist-button; display: -webkit-inline-flex; overflow: hidden; " DATE_INPUT_WIDTH "} "_s;
+#endif
+}
+
+#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 

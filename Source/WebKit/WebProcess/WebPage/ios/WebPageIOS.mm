@@ -3179,8 +3179,6 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             information.elementType = InputType::DateTimeLocal;
         else if (element.isDateField())
             information.elementType = InputType::Date;
-        else if (element.isDateTimeField())
-            information.elementType = InputType::DateTime;
         else if (element.isTimeField())
             information.elementType = InputType::Time;
         else if (element.isWeekField())

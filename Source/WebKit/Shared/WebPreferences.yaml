@@ -1773,8 +1773,47 @@ InputTypeColorEnabled:
   humanReadableName: "Color Inputs"
   humanReadableDescription: "Enable input elements of type color"
   category: internal
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(INPUT_TYPE_COLOR)
+
+InputTypeDateEnabled:
+  type: bool
+  defaultValue: DEFAULT_INPUT_TYPE_DATE_ENABLED
+  humanReadableName: "Date Input"
+  humanReadableDescription: "Enable input elements of type date"
+  category: internal
+  condition: ENABLE(INPUT_TYPE_DATE)
+
+InputTypeDateTimeLocalEnabled:
+  type: bool
+  defaultValue: DEFAULT_INPUT_TYPE_DATETIMELOCAL_ENABLED
+  humanReadableName: "datetime-local Inputs"
+  humanReadableDescription: "Enable input elements of type datetime-local"
+  category: internal
+  condition: ENABLE(INPUT_TYPE_DATETIMELOCAL)
+
+InputTypeMonthEnabled:
+  type: bool
+  defaultValue: DEFAULT_INPUT_TYPE_MONTH_ENABLED
+  humanReadableName: "Month Input"
+  humanReadableDescription: "Enable input elements of type month"
+  category: internal
+  condition: ENABLE(INPUT_TYPE_MONTH)
+
+InputTypeTimeEnabled:
+  type: bool
+  defaultValue: DEFAULT_INPUT_TYPE_TIME_ENABLED
+  humanReadableName: "Time Input"
+  humanReadableDescription: "Enable input elements of type time"
+  category: internal
+  condition: ENABLE(INPUT_TYPE_TIME)
+
+InputTypeWeekEnabled:
+  type: bool
+  defaultValue: DEFAULT_INPUT_TYPE_WEEK_ENABLED
+  humanReadableName: "Week Input"
+  humanReadableDescription: "Enable input elements of type week"
+  category: internal
+  condition: ENABLE(INPUT_TYPE_WEEK)
 
 DataListElementEnabled:
   type: bool

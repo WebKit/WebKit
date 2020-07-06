@@ -325,16 +325,10 @@ String Locale::convertFromLocalizedNumber(const String& localized)
 }
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
-#if !PLATFORM(IOS_FAMILY)
 String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
 {
     if (date.type() == DateComponents::Invalid)
         return String();
-#if !ENABLE(INPUT_TYPE_WEEK)
-    if (date.type() == DateComponents::Week)
-        return String();
-#endif
 
     DateTimeStringBuilder builder(*this, date);
     switch (date.type()) {
@@ -348,10 +342,8 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
         builder.build(formatType == FormatTypeShort ? shortMonthFormat() : monthFormat());
         break;
     case DateComponents::Week:    
-#if ENABLE(INPUT_TYPE_WEEK)
-        builder.build(weekFormatInLDML());
+        // FIXME: Add support for formatting weeks.
         break;
-#endif
     case DateComponents::DateTimeLocal:
         builder.build(formatType == FormatTypeShort ? dateTimeFormatWithoutSeconds() : dateTimeFormatWithSeconds());
         break;
@@ -361,8 +353,6 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
     }
     return builder.toString();
 }
-#endif // !PLATFORM(IOS_FAMILY)
-
 #endif
 
 }

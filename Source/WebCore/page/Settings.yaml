@@ -950,6 +950,30 @@ isAccessibilityIsolatedTreeEnabled:
 aspectRatioOfImgFromWidthAndHeightEnabled:
   initial: false
 
+inputTypeColorEnabled:
+  initial: false
+  conditional: INPUT_TYPE_COLOR
+
+inputTypeDateEnabled:
+  initial: false
+  conditional: INPUT_TYPE_DATE
+
+inputTypeDateTimeLocalEnabled:
+  initial: false
+  conditional: INPUT_TYPE_DATETIMELOCAL
+
+inputTypeMonthEnabled:
+  initial: false
+  conditional: INPUT_TYPE_MONTH
+
+inputTypeTimeEnabled:
+  initial: false
+  conditional: INPUT_TYPE_TIME
+
+inputTypeWeekEnabled:
+  initial: false
+  conditional: INPUT_TYPE_WEEK
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

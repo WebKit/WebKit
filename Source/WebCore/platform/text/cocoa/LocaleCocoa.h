@@ -44,7 +44,7 @@ namespace WebCore {
 
 class DateComponents;
 
-class LocaleCocoa : public Locale {
+class LocaleCocoa final : public Locale {
 public:
     explicit LocaleCocoa(NSLocale*);
     ~LocaleCocoa();

@@ -475,62 +475,6 @@ input[type="search"]::-webkit-search-results-button {
     flex: none;
 }
 
-#if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
-input[type="date"] {
-    align-items: center;
-    -webkit-appearance: menulist-button;
-    display: -webkit-inline-flex;
-    overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 10em;
-#endif
-}
-#endif
-#if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
-input[type="datetime-local"] {
-    align-items: center;
-    -webkit-appearance: menulist-button;
-    display: -webkit-inline-flex;
-    overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 10em;
-#endif
-}
-#endif
-#if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
-input[type="month"] {
-    align-items: center;
-    -webkit-appearance: menulist-button;
-    display: -webkit-inline-flex;
-    overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 10em;
-#endif
-}
-#endif
-#if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
-input[type="time"] {
-    align-items: center;
-    -webkit-appearance: menulist-button;
-    display: -webkit-inline-flex;
-    overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 10em;
-#endif
-}
-#endif
-#if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-input[type="week"] {
-    align-items: center;
-    -webkit-appearance: menulist-button;
-    display: -webkit-inline-flex;
-    overflow: hidden;
-    width: 10em;
-}
-#endif
-#endif
-
 input::-webkit-date-and-time-value {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     margin-right: 18px;

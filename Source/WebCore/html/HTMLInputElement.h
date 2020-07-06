@@ -122,7 +122,6 @@ public:
     WEBCORE_EXPORT bool isTelephoneField() const;
     WEBCORE_EXPORT bool isURLField() const;
     WEBCORE_EXPORT bool isDateField() const;
-    WEBCORE_EXPORT bool isDateTimeField() const;
     WEBCORE_EXPORT bool isDateTimeLocalField() const;
     WEBCORE_EXPORT bool isMonthField() const;
     WEBCORE_EXPORT bool isTimeField() const;

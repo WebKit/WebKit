@@ -1766,11 +1766,6 @@ bool HTMLInputElement::isDateField() const
     return m_inputType->isDateField();
 }
 
-bool HTMLInputElement::isDateTimeField() const
-{
-    return m_inputType->isDateTimeField();
-}
-
 bool HTMLInputElement::isDateTimeLocalField() const
 {
     return m_inputType->isDateTimeLocalField();

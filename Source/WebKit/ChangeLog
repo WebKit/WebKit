@@ -1,3 +1,30 @@
+2020-07-06  Sam Weinig  <weinig@apple.com>
+
+        Compile-time enable (but leave disabled at runtime by default) date/time input types on macOS to allow testing of cross platform (e.g. DOM) aspects of the controls
+        https://bugs.webkit.org/show_bug.cgi?id=213949
+
+        Reviewed by Darin Adler.
+
+        * Shared/FocusedElementInformation.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFocusedElementInfo initWithFocusedElementInformation:isUserInitiated:userObject:]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView textInputTraits]):
+        (mayContainSelectableText):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+        Remove DateTime from the InputType enum. This should have been removed when datetime was removed.
+
+        * Shared/WebPreferences.yaml:
+        Add preferences for all the date/time related input types, and have them automatically
+        link up with the newly added WebCore Settings of the same names (this is the default 
+        behavior if no explicit webcoreBinding: is provided).
+
+        * Shared/WebPreferencesDefaultValues.h:
+        Disable date/time input elements by default for non iOS/watchOS cocoa platforms. For non-Cocoa platforms
+        (and iOS/watchOS), they are enabled by default, but only actually get enabled if the appropriate ENABLE_*
+        macro is also set.
+
 2020-07-06  Haelwenn (lanodan) Monnier  <contact@hacktivis.me>
 
         BubblewrapLauncher.cpp: Add paths required for sndio

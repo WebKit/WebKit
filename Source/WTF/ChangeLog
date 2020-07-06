@@ -1,3 +1,13 @@
+2020-07-06  Sam Weinig  <weinig@apple.com>
+
+        Compile-time enable (but leave disabled at runtime by default) date/time input types on macOS to allow testing of cross platform (e.g. DOM) aspects of the controls
+        https://bugs.webkit.org/show_bug.cgi?id=213949
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnableCocoa.h:
+        Enable building date/time input types on all Cocoa ports. 
+
 2020-07-06  Geoffrey Garen  <ggaren@apple.com>
 
         RunLoop::dispatch should only call wakeUp when needed

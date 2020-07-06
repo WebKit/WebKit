@@ -39,10 +39,7 @@
 #import <wtf/Language.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/AtomStringHash.h>
-
-#if PLATFORM(IOS_FAMILY)
 #import "LocalizedDateCache.h"
-#endif
 
 namespace WebCore {
 

@@ -101,6 +101,21 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     String colorInputStyleSheet() const;
 #endif
+#if ENABLE(INPUT_TYPE_DATE)
+    String dateInputStyleSheet() const;
+#endif
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    String dateTimeLocalInputStyleSheet() const;
+#endif
+#if ENABLE(INPUT_TYPE_MONTH)
+    String monthInputStyleSheet() const;
+#endif
+#if ENABLE(INPUT_TYPE_TIME)
+    String timeInputStyleSheet() const;
+#endif
+#if ENABLE(INPUT_TYPE_WEEK)
+    String weekInputStyleSheet() const;
+#endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of

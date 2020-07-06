@@ -84,6 +84,21 @@ StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 #if ENABLE(INPUT_TYPE_COLOR)
 StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #endif
+#if ENABLE(INPUT_TYPE_DATE)
+StyleSheetContents* UserAgentStyle::dateInputStyleSheet;
+#endif
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+StyleSheetContents* UserAgentStyle::dateTimeLocalInputStyleSheet;
+#endif
+#if ENABLE(INPUT_TYPE_MONTH)
+StyleSheetContents* UserAgentStyle::monthInputStyleSheet;
+#endif
+#if ENABLE(INPUT_TYPE_TIME)
+StyleSheetContents* UserAgentStyle::timeInputStyleSheet;
+#endif
+#if ENABLE(INPUT_TYPE_WEEK)
+StyleSheetContents* UserAgentStyle::weekInputStyleSheet;
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #define DEFAULT_OUTLINE_WIDTH "3px"
@@ -269,6 +284,36 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             addToDefaultStyle(*colorInputStyleSheet);
         }
 #endif // ENABLE(INPUT_TYPE_COLOR)
+#if ENABLE(INPUT_TYPE_DATE)
+        else if (!dateInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isDateField()) {
+            dateInputStyleSheet = parseUASheet(RenderTheme::singleton().dateInputStyleSheet());
+            addToDefaultStyle(*dateInputStyleSheet);
+        }
+#endif // ENABLE(INPUT_TYPE_DATE)
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+        else if (!dateTimeLocalInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isDateTimeLocalField()) {
+            dateTimeLocalInputStyleSheet = parseUASheet(RenderTheme::singleton().dateTimeLocalInputStyleSheet());
+            addToDefaultStyle(*dateTimeLocalInputStyleSheet);
+        }
+#endif // ENABLE(INPUT_TYPE_DATETIMELOCAL)
+#if ENABLE(INPUT_TYPE_MONTH)
+        else if (!monthInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isMonthField()) {
+            monthInputStyleSheet = parseUASheet(RenderTheme::singleton().monthInputStyleSheet());
+            addToDefaultStyle(*monthInputStyleSheet);
+        }
+#endif // ENABLE(INPUT_TYPE_MONTH)
+#if ENABLE(INPUT_TYPE_TIME)
+        else if (!timeInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isTimeField()) {
+            timeInputStyleSheet = parseUASheet(RenderTheme::singleton().timeInputStyleSheet());
+            addToDefaultStyle(*timeInputStyleSheet);
+        }
+#endif // ENABLE(INPUT_TYPE_TIME)
+#if ENABLE(INPUT_TYPE_WEEK)
+        else if (!weekInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isWeekField()) {
+            weekInputStyleSheet = parseUASheet(RenderTheme::singleton().weekInputStyleSheet());
+            addToDefaultStyle(*weekInputStyleSheet);
+        }
+#endif // ENABLE(INPUT_TYPE_WEEK)
     } else if (is<SVGElement>(element)) {
         if (!svgStyleSheet) {
             // SVG rules.

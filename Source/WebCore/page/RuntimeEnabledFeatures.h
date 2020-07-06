@@ -260,39 +260,9 @@ public:
     bool legacyCSSVendorPrefixesEnabled() const { return m_isLegacyCSSVendorPrefixesEnabled; }
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    bool inputTypeColorEnabled() const { return m_isInputTypeColorEnabled; }
-    void setInputTypeColorEnabled(bool isEnabled) { m_isInputTypeColorEnabled = isEnabled; }
-#endif
-
 #if ENABLE(DATALIST_ELEMENT)
     bool dataListElementEnabled() const { return m_isDataListElementEnabled; }
     void setDataListElementEnabled(bool isEnabled) { m_isDataListElementEnabled = isEnabled; }
-#endif
-
-#if ENABLE(INPUT_TYPE_DATE)
-    bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
-    void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
-#endif
-
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    bool inputTypeDateTimeLocalEnabled() const { return m_isInputTypeDateTimeLocalEnabled; }
-    void setInputTypeDateTimeLocalEnabled(bool isEnabled) { m_isInputTypeDateTimeLocalEnabled = isEnabled; }
-#endif
-
-#if ENABLE(INPUT_TYPE_MONTH)
-    bool inputTypeMonthEnabled() const { return m_isInputTypeMonthEnabled; }
-    void setInputTypeMonthEnabled(bool isEnabled) { m_isInputTypeMonthEnabled = isEnabled; }
-#endif
-
-#if ENABLE(INPUT_TYPE_TIME)
-    bool inputTypeTimeEnabled() const { return m_isInputTypeTimeEnabled; }
-    void setInputTypeTimeEnabled(bool isEnabled) { m_isInputTypeTimeEnabled = isEnabled; }
-#endif
-
-#if ENABLE(INPUT_TYPE_WEEK)
-    bool inputTypeWeekEnabled() const { return m_isInputTypeWeekEnabled; }
-    void setInputTypeWeekEnabled(bool isEnabled) { m_isInputTypeWeekEnabled = isEnabled; }
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -522,32 +492,8 @@ private:
     bool m_isLegacyCSSVendorPrefixesEnabled { false };
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    bool m_isInputTypeColorEnabled { false };
-#endif
-
 #if ENABLE(DATALIST_ELEMENT)
     bool m_isDataListElementEnabled { false };
-#endif
-
-#if ENABLE(INPUT_TYPE_DATE)
-    bool m_isInputTypeDateEnabled { true };
-#endif
-
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    bool m_isInputTypeDateTimeLocalEnabled { true };
-#endif
-
-#if ENABLE(INPUT_TYPE_MONTH)
-    bool m_isInputTypeMonthEnabled { true };
-#endif
-
-#if ENABLE(INPUT_TYPE_TIME)
-    bool m_isInputTypeTimeEnabled { true };
-#endif
-
-#if ENABLE(INPUT_TYPE_WEEK)
-    bool m_isInputTypeWeekEnabled { true };
 #endif
 
 #if ENABLE(GAMEPAD)

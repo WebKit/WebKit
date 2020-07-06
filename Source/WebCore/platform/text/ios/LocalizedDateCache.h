@@ -25,9 +25,6 @@
 
 #pragma once
 
-// FIXME: Rename this file to LocalizedDataCacheIOS.h and remove this guard.
-#if PLATFORM(IOS_FAMILY)
-
 #include "DateComponents.h"
 #include "FontCascade.h"
 #include <wtf/HashMap.h>
@@ -71,5 +68,3 @@ private:
 LocalizedDateCache& localizedDateCache();
 
 } // namespace WebCore
-
-#endif // PLATFORM(IOS_FAMILY)
