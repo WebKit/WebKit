@@ -367,7 +367,10 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
         m_pendingFrameLoads.add(frameID, pendingFrameLoad.copyRef());
 
         // Retrieve the subresources entry if it exists to start speculative revalidation and to update it.
-        retrieveSubresourcesEntry(resourceKey, [this, frameID, pendingFrameLoad = WTFMove(pendingFrameLoad), isNavigatingToAppBoundDomain](std::unique_ptr<SubresourcesEntry> entry) {
+        retrieveSubresourcesEntry(resourceKey, [this, weakThis = makeWeakPtr(*this), frameID, pendingFrameLoad = WTFMove(pendingFrameLoad), isNavigatingToAppBoundDomain](std::unique_ptr<SubresourcesEntry> entry) {
+            if (!weakThis)
+                return;
+
             if (entry)
                 startSpeculativeRevalidation(frameID, *entry, isNavigatingToAppBoundDomain);
 
@@ -559,7 +562,10 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
         return;
     m_pendingPreloads.add(key, nullptr);
     
-    retrieveEntryFromStorage(subresourceInfo, [this, key, subresourceInfo, frameID, isNavigatingToAppBoundDomain](std::unique_ptr<Entry> entry) {
+    retrieveEntryFromStorage(subresourceInfo, [this, weakThis = makeWeakPtr(*this), key, subresourceInfo, frameID, isNavigatingToAppBoundDomain](std::unique_ptr<Entry> entry) {
+        if (!weakThis)
+            return;
+
         ASSERT(!m_pendingPreloads.get(key));
         bool removed = m_pendingPreloads.remove(key);
         ASSERT_UNUSED(removed, removed);

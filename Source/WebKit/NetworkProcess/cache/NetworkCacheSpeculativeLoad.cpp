@@ -51,6 +51,14 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
 {
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
+    auto* networkSession = m_cache->networkProcess().networkSession(m_cache->sessionID());
+    if (!networkSession) {
+        RunLoop::main().dispatch([completionHandler = WTFMove(m_completionHandler)]() mutable {
+            completionHandler(nullptr);
+        });
+        return;
+    }
+
     NetworkLoadParameters parameters;
     parameters.webPageProxyID = globalFrameID.webPageProxyID;
     parameters.webPageID = globalFrameID.webPageID;
@@ -60,7 +68,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
     parameters.request = m_originalRequest;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
-    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *cache.networkProcess().networkSession(cache.sessionID()));
+    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *networkSession);
 }
 
 SpeculativeLoad::~SpeculativeLoad()

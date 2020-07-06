@@ -33,6 +33,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
@@ -43,7 +44,7 @@ class SpeculativeLoad;
 class SubresourceInfo;
 class SubresourcesEntry;
 
-class SpeculativeLoadManager {
+class SpeculativeLoadManager : public CanMakeWeakPtr<SpeculativeLoadManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculativeLoadManager(Cache&, Storage&);

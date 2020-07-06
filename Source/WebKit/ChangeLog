@@ -1,3 +1,25 @@
+2020-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r249303) Crash under NetworkLoad::NetworkLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=214008
+        <rdar://problem/64853936>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        Do some hardening and fail the SpeculativeLoad if the network session is null, instead of dereferencing
+        the network session unconditionally. The NetworkCache owns the NetworkCacheSpeculativeLoadManager and
+        the NetworkCache is RefCounted so it may outlive its NetworkSession in theory and schedule speculative
+        loads for a session that was just destroyed.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        Capture weakThis in a few lambda and check it when the lambda gets called. It looked unsafe so I
+        decided to do some hardening.
+
 2020-07-06  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r261001): ASSERTION FAILED: m_clientCounts.contains(contextId) in WebKit::VideoFullscreenManagerProxy::removeClientForContext
