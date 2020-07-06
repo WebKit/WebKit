@@ -470,13 +470,6 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         mediaSample->duration().toString().utf8().data(),
         mediaSample->presentationSize().width(), mediaSample->presentationSize().height());
 
-    // If we're beyond the duration, ignore this sample.
-    MediaTime duration = m_mediaSourceClient->duration();
-    if (duration.isValid() && !duration.indefiniteTime() && mediaSample->presentationTime() > duration) {
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Detected sample (%s) beyond the duration (%s), discarding", mediaSample->presentationTime().toString().utf8().data(), duration.toString().utf8().data());
-        return;
-    }
-
     // Hack, rework when GStreamer >= 1.16 becomes a requirement:
     // We're not applying edit lists. GStreamer < 1.16 doesn't emit the correct segments to do so.
     // GStreamer fix in https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/commit/c2a0da8096009f0f99943f78dc18066965be60f9

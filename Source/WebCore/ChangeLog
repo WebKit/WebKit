@@ -1,3 +1,26 @@
+2020-07-06  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Don't skip samples past media duration in AppendPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=213888
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        appsinkNewSample() contained code to skip samples whose presentation
+        time starts after media duration. This is paradoxical, because later
+        sourceBufferPrivateDidReceiveSample() extends media duration whenever
+        the presentation end time of the sample is past the original one.
+
+        It does not sound reasonable that samples extending the duration are
+        okay on one case but outright rejected in the other. Also, if it was
+        about skipping samples, sourceBufferPrivateDidReceiveSample() could do
+        it itself, and already does in other cases.
+
+        For all these reasons I was very doubtful of the need for this if()
+        and indeed removing this condition didn't cause any new test failure.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkNewSample):
+
 2020-07-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263960.
