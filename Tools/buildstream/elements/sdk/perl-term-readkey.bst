@@ -12,3 +12,9 @@ public:
     integration-commands:
     - |
       perl -w -e "use Term::ReadKey;"
+
+config:
+  install-commands:
+    - |
+      %{make-install}
+      find "%{install-root}" -type f -name perllocal.pod -delete

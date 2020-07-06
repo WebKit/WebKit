@@ -1026,11 +1026,22 @@ def run_in_sandbox_if_available(args):
     if not check_flatpak(verbose=False):
         return None
 
-    flatpak_runner = WebkitFlatpak.load_from_args(args, add_help=False)
+    # Filter out flatpakutils args for the app.
+    runner_args = []
+    app_args = []
+    opt_prefix = "--flatpak-"
+    for arg in args:
+        if arg.startswith(opt_prefix):
+            runner_args.append("--%s" % arg[len(opt_prefix):])
+        else:
+            runner_args.append(arg)
+            app_args.append(arg)
+
+    flatpak_runner = WebkitFlatpak.load_from_args(runner_args, add_help=False)
     if not flatpak_runner.clean_args():
         return None
 
     if not flatpak_runner.has_environment():
         return None
 
-    sys.exit(flatpak_runner.run_in_sandbox(*args))
+    sys.exit(flatpak_runner.run_in_sandbox(*app_args))
