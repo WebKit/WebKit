@@ -1,3 +1,18 @@
+2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Change the cookies accept policy when ITP is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=213502
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy): Use NetworkStorageSession::setCookieAcceptPolicy().
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::setCookiePersistentStorage): Do not change the accept policy, it's now done by
+        NetworkStorageSession when the new cookie jar is set.
+        * UIProcess/API/glib/WebKitCookieManager.cpp: Update API docs.
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp: Ditto.
+
 2020-07-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263960.

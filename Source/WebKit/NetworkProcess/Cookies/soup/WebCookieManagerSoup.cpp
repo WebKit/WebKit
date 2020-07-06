@@ -39,24 +39,8 @@ using namespace WebCore;
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    SoupCookieJarAcceptPolicy soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
-    switch (policy) {
-    case HTTPCookieAcceptPolicy::AlwaysAccept:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
-        break;
-    case HTTPCookieAcceptPolicy::Never:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
-        break;
-    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
-        break;
-    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    m_process.forEachNetworkStorageSession([soupPolicy] (const auto& session) {
-        soup_cookie_jar_set_accept_policy(session.cookieStorage(), soupPolicy);
+    m_process.forEachNetworkStorageSession([policy] (auto& session) {
+        session.setCookieAcceptPolicy(policy);
     });
 }
 

@@ -67,6 +67,13 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const String&)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
+#if !USE(SOUP)
+void NetworkStorageSession::setResourceLoadStatisticsEnabled(bool enabled)
+{
+    m_isResourceLoadStatisticsEnabled = enabled;
+}
+#endif
+
 bool NetworkStorageSession::shouldBlockThirdPartyCookies(const RegistrableDomain& registrableDomain) const
 {
     if (!m_isResourceLoadStatisticsEnabled || registrableDomain.isEmpty())

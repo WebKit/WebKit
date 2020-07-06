@@ -841,8 +841,8 @@ WebKitCookieManager* webkit_website_data_manager_get_cookie_manager(WebKitWebsit
  *
  * Enable or disable Intelligent Tracking Prevention (ITP). When ITP is enabled resource load statistics
  * are collected and used to decide whether to allow or block third-party cookies and prevent user tracking.
- * Note that when ITP is enabled the resources for which cookies are allowed will follow the accept policy
- * set with webkit_cookie_manager_set_accept_policy().
+ * Note that while ITP is enabled the accept policy %WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY is ignored and
+ * %WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS is used instead. See also webkit_cookie_manager_set_accept_policy().
  *
  * Since: 2.30
  */
