@@ -1,3 +1,13 @@
+2020-07-06  Sam Weinig  <weinig@apple.com>
+
+        REGRESSION: (r263977): [ iOS Debug WK2 ] 36 fast form and web-platform test consistently crashing
+        https://bugs.webkit.org/show_bug.cgi?id=214009
+        <rdar://problem/65151752>
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::weekInputStyleSheet const):
+        Replace ""_s with emptyString() to fix crashing tests.
+
 2020-07-06  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add the capability to open a popup and get user interaction so we can call the Storage Access API as a quirk, on behalf of websites that should be doing it themselves

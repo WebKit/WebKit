@@ -1086,7 +1086,7 @@ String RenderTheme::timeInputStyleSheet() const
 String RenderTheme::weekInputStyleSheet() const
 {
 #if PLATFORM(IOS_FAMILY)
-    return ""_s;
+    return emptyString();
 #else
     return "input[type=\"week\"] { align-items: center; -webkit-appearance: menulist-button; display: -webkit-inline-flex; overflow: hidden; " DATE_INPUT_WIDTH "} "_s;
 #endif
