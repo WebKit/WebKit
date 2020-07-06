@@ -569,8 +569,6 @@ VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& 
         return { };
 
     Ref<const Element> protectedElement { element };
-    auto frame = makeRef(*element.document().frame());
-
     element.document().updateLayoutIgnorePendingStylesheets();
 
     RenderObject* renderer = element.renderer();
@@ -585,8 +583,9 @@ VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& 
     if (!renderer)
         return { };
     auto absoluteBoundingBox = renderer->absoluteBoundingBoxRect();
-    auto constrainedPoint = point.constrainedBetween(absoluteBoundingBox.minXMinYCorner(), absoluteBoundingBox.maxXMaxYCorner());
-    auto visiblePosition = frame->visiblePositionForPoint(constrainedPoint);
+    auto constrainedAbsolutePoint = point.constrainedBetween(absoluteBoundingBox.minXMinYCorner(), absoluteBoundingBox.maxXMaxYCorner());
+    auto localPoint = renderer->absoluteToLocal(constrainedAbsolutePoint, UseTransforms);
+    auto visiblePosition = renderer->positionForPoint(flooredLayoutPoint(localPoint), nullptr);
     return isEditablePosition(visiblePosition.deepEquivalent()) ? visiblePosition : VisiblePosition { };
 }
 

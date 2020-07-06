@@ -1,3 +1,16 @@
+2020-07-06  Daniel Bates  <dabates@apple.com>
+
+        Use RenderObject::positionForPoint instead of hit testing the entire view in closestEditablePositionInElementForAbsolutePoint
+        https://bugs.webkit.org/show_bug.cgi?id=213975
+
+        Reviewed by Wenson Hsieh.
+
+        The target renderer is known a priori so it is more efficient to hit test this directly
+        instead of indirectly by hit testing the entire view.
+
+        * editing/Editing.cpp:
+        (WebCore::closestEditablePositionInElementForAbsolutePoint):
+
 2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Change the cookies accept policy when ITP is enabled
