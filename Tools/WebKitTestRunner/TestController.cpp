@@ -3205,12 +3205,11 @@ void getAllStorageAccessEntriesCallback(void* userData, WKArrayRef domainList)
 
 void TestController::getAllStorageAccessEntries()
 {
-    auto dataStore = WKContextGetWebsiteDataStore(platformContext());
     GetAllStorageAccessEntriesCallbackContext context(*this, [this] (Vector<String>&& domains) {
         m_currentInvocation->didReceiveAllStorageAccessEntries(WTFMove(domains));
     });
 
-    WKWebsiteDataStoreGetAllStorageAccessEntries(dataStore, m_mainWebView->page(), &context, getAllStorageAccessEntriesCallback);
+    WKWebsiteDataStoreGetAllStorageAccessEntries(websiteDataStore(), m_mainWebView->page(), &context, getAllStorageAccessEntriesCallback);
     runUntil(context.done, noTimeout);
 }
 

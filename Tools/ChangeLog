@@ -1,5 +1,15 @@
 2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Enable storageAccess tests
+        https://bugs.webkit.org/show_bug.cgi?id=213881
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::getAllStorageAccessEntries): Use the right website data store.
+
+2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Change the cookies accept policy when ITP is enabled
         https://bugs.webkit.org/show_bug.cgi?id=213502
 

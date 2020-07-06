@@ -1,3 +1,14 @@
+2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable storageAccess tests
+        https://bugs.webkit.org/show_bug.cgi?id=213881
+
+        Reviewed by Adrian Perez de Castro.
+
+        Enable storageAccess tests and mark expected failures.
+
+        * platform/glib/TestExpectations:
+
 2020-07-03  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support peer connection remote video tracks
