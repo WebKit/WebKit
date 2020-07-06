@@ -1,3 +1,14 @@
+2020-07-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [test-webkitpy] Use platform architecture
+        https://bugs.webkit.org/show_bug.cgi?id=214002
+        <rdar://problem/65144773>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+
 2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Unable to change focus between Google Docs windows by tapping

@@ -222,6 +222,7 @@ class Tester(object):
                     style=self.upload_style,
                     sdk=_host.platform.build_version(),
                     flavor=self._options.result_report_flavor,
+                    architecture=_host.platform.architecture(),
                 ),
                 details=Upload.create_details(options=self._options),
                 commits=[Upload.create_commit(
