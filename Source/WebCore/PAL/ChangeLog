@@ -1,3 +1,22 @@
+2020-07-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r263953 and r263959.
+        https://bugs.webkit.org/show_bug.cgi?id=213979
+
+        Broke internal build
+
+        Reverted changesets:
+
+        "[Cocoa] Move almost all features from FeatureDefines.xcconfig
+        to PlatformEnableCocoa.h"
+        https://bugs.webkit.org/show_bug.cgi?id=212542
+        https://trac.webkit.org/changeset/263953
+
+        "[Cocoa] Remove FEATURE_DEFINES from the Cocoa/Xcode build
+        system"
+        https://bugs.webkit.org/show_bug.cgi?id=213976
+        https://trac.webkit.org/changeset/263959
+
 2020-07-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove FEATURE_DEFINES from the Cocoa/Xcode build system

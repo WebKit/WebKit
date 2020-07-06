@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
+#include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
 
@@ -48,7 +49,7 @@ OTHER_CFLAGS_COCOA_TOUCH_NO = -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Framew
 OTHER_CPLUSPLUSFLAGS = $(inherited) $(OTHER_CFLAGS_COCOA_TOUCH);
 
 GCC_PREFIX_HEADER = mac/WebKitPrefix.h;
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) BUILDING_WEBKIT FRAMEWORK_NAME=WebKitLegacy $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) BUILDING_WEBKIT FRAMEWORK_NAME=WebKitLegacy $(inherited);
 
 WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions $(SDKROOT)/usr/local/include/WebKitAdditions;
 LIBWEBRTC_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc $(SDKROOT)/usr/local/include/webrtc;

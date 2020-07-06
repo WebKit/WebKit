@@ -23,6 +23,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "FeatureDefines.xcconfig"
+
 INFOPLIST_FILE = cocoa/WebProcessPlugIn/Info.plist;
 PRODUCT_NAME = TestWebKitAPI;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);

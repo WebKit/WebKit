@@ -16,6 +16,7 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/lazywriter.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/make-js-file-arrays.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/wkbuiltins.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
+$(PROJECT_DIR)/Configurations/FeatureDefines.xcconfig
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayCancelEvent.idl

@@ -23,6 +23,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "FeatureDefines.xcconfig"
+
 PRODUCT_NAME = TestWTF;
 SKIP_INSTALL = YES;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;

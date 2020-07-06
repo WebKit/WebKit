@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 #include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
+#include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
 INSTALL_PATH = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/$(JAVASCRIPTCORE_HELPERS_DIR);
