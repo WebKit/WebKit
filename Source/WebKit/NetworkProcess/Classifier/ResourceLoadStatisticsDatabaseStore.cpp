@@ -926,24 +926,22 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadSta
 
 static const StringView joinSubStatisticsForSorting()
 {
-    return R"query(
-        domainID,
-        (countSubFrameUnderTopFrame + countSubResourceUnderTopFrame + countUniqueRedirectTo) as sum
-        FROM (
-        SELECT
-            domainID,
-            COUNT(DISTINCT f.topFrameDomainID) as countSubFrameUnderTopFrame,
-            COUNT(DISTINCT r.topFrameDomainID) as countSubResourceUnderTopFrame,
-            COUNT(DISTINCT toDomainID) as countUniqueRedirectTo
-        FROM
-        ObservedDomains o
-        LEFT JOIN SubframeUnderTopFrameDomains f ON o.domainID = f.subFrameDomainID
-        LEFT JOIN SubresourceUnderTopFrameDomains r ON o.domainID = r.subresourceDomainID
-        LEFT JOIN SubresourceUniqueRedirectsTo u ON o.domainID = u.subresourceDomainID
-        WHERE isPrevalent LIKE ?
-        and hadUserInteraction LIKE ?
-        GROUP BY domainID) ORDER BY sum DESC
-        )query";
+    return "domainID,"
+        "(countSubFrameUnderTopFrame + countSubResourceUnderTopFrame + countUniqueRedirectTo) as sum  "
+        "FROM ( "
+        "SELECT "
+            "domainID, "
+            "COUNT(DISTINCT f.topFrameDomainID) as countSubFrameUnderTopFrame, "
+            "COUNT(DISTINCT r.topFrameDomainID) as countSubResourceUnderTopFrame, "
+            "COUNT(DISTINCT toDomainID) as countUniqueRedirectTo "
+        "FROM "
+        "ObservedDomains o "
+        "LEFT JOIN SubframeUnderTopFrameDomains f ON o.domainID = f.subFrameDomainID "
+        "LEFT JOIN SubresourceUnderTopFrameDomains r ON o.domainID = r.subresourceDomainID "
+        "LEFT JOIN SubresourceUniqueRedirectsTo u ON o.domainID = u.subresourceDomainID "
+        "WHERE isPrevalent LIKE ? "
+        "and hadUserInteraction LIKE ? "
+        "GROUP BY domainID) ORDER BY sum DESC ";
 }
 
 static SQLiteStatement makeMedianWithUIQuery(SQLiteDatabase& database)
