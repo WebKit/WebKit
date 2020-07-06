@@ -67,6 +67,22 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
     return self;
 }
 
+- (void)becomeKeyWindow
+{
+    [super becomeKeyWindow];
+
+    if (_platformWebView)
+        _platformWebView->setWindowIsKey(true);
+}
+
+- (void)resignKeyWindow
+{
+    [super resignKeyWindow];
+
+    if (_platformWebView)
+        _platformWebView->setWindowIsKey(false);
+}
+
 - (void)dealloc
 {
     allWindows.removeFirst(self);
@@ -212,7 +228,7 @@ PlatformWindow PlatformWebView::keyWindow()
 void PlatformWebView::setWindowIsKey(bool isKey)
 {
     m_windowIsKey = isKey;
-    if (isKey)
+    if (isKey && !m_window.keyWindow)
         [m_window makeKeyWindow];
 }
 

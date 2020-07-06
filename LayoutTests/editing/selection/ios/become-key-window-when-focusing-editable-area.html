@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js" type="text/javascript"></script>
+<script src="../../../resources/ui-helper.js" type="text/javascript"></script>
+<head>
+    <style>
+    #tiny-editor {
+        width: 0.5px;
+        height: 0.5px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        outline: none;
+    }
+
+    textarea, button {
+        width: 280px;
+        height: 50px;
+        display: block;
+        font-size: 20px;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("This test verifies that focusing editable elements updates the key window. This test requires WebKitTestRunner.");
+
+        const textarea = document.querySelector("textarea");
+        const button = document.querySelector("button");
+
+        button.addEventListener("touchstart", (event) => {
+            document.querySelector("#tiny-editor").focus();
+            event.preventDefault();
+        });
+
+        if (!window.testRunner)
+            return;
+
+        for (let element of [textarea, button]) {
+            await UIHelper.setWindowIsKey(false);
+            await UIHelper.activateElementAndWaitForInputSession(element);
+            while (true) {
+                result = await UIHelper.windowIsKey();
+                if (result)
+                    break;
+            }
+            testPassed(`Became key window after tapping on ${element.tagName}`);
+            document.activeElement.blur();
+            await UIHelper.waitForKeyboardToHide();
+            element.remove();
+        }
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <div id="tiny-editor" contenteditable></div>
+    <textarea>First, click here</textarea>
+    <button>Then, click here</button>
+</body>
+</html>

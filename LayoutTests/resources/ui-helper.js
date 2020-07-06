@@ -1188,6 +1188,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static setWindowIsKey(isKey)
+    {
+        const script = `uiController.windowIsKey = ${isKey}`;
+        return new Promise(resolve => testRunner.runUIScript(script, resolve));
+    }
+
+    static windowIsKey()
+    {
+        const script = "uiController.uiScriptComplete(uiController.windowIsKey)";
+        return new Promise(resolve => testRunner.runUIScript(script, (result) => {
+            resolve(result === "true");
+        }));
+    }
+
     static waitForDoubleTapDelay()
     {
         const uiScript = `uiController.doAfterDoubleTapDelay(() => uiController.uiScriptComplete(""))`;

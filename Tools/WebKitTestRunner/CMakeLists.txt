@@ -10,7 +10,7 @@ set(WebKitTestRunner_SOURCES
     ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
 
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptControllerShared.cpp
 
     CyclicRedundancyCheck.cpp
     GeolocationProviderMock.cpp
@@ -19,6 +19,7 @@ set(WebKitTestRunner_SOURCES
     TestController.cpp
     TestInvocation.cpp
     TestOptions.cpp
+    UIScriptController.cpp
     WebNotificationProvider.cpp
     WorkQueueManager.cpp
 )

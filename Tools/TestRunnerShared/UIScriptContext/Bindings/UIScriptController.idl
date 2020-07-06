@@ -241,6 +241,8 @@ interface UIScriptController {
     readonly attribute boolean isShowingKeyboard;
     readonly attribute boolean hasInputSession;
 
+    attribute boolean windowIsKey;
+
     attribute object didShowMenuCallback;
     attribute object didHideMenuCallback;
     readonly attribute boolean isDismissingMenu;

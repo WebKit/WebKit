@@ -43,18 +43,18 @@ DeviceOrientation* toDeviceOrientation(JSContextRef context, JSValueRef value)
     };
 
     auto option = adopt(JSValueToStringCopy(context, value, nullptr));
-    if (option.get()->string() == "portrait")
+    if (option->string() == "portrait")
         return &values[0];
-        
-    if (option.get()->string() == "portrait-upsidedown")
+
+    if (option->string() == "portrait-upsidedown")
         return &values[1];
-        
-    if (option.get()->string() == "landscape-left")
+
+    if (option->string() == "landscape-left")
         return &values[2];
-        
-    if (option.get()->string() == "landscape-right")
+
+    if (option->string() == "landscape-right")
         return &values[3];
-        
+
     return nullptr;
 }
 

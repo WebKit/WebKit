@@ -188,6 +188,9 @@ public:
     virtual void replaceTextAtRange(JSStringRef, int location, int length) { notImplemented(); }
     virtual void removeAllDynamicDictionaries() { notImplemented(); }
 
+    virtual bool windowIsKey() const;
+    virtual void setWindowIsKey(bool);
+
     // Stylus
 
     virtual void stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback) { notImplemented(); }

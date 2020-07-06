@@ -48,7 +48,6 @@
 /* Begin PBXBuildFile section */
 		00F048541A0C3C9A000244DB /* URLRedirect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00F048531A0C3C9A000244DB /* URLRedirect.cpp */; };
 		0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */; };
-		0F18E6ED1D6B9C070027E547 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6EA1D6B9C070027E547 /* UIScriptController.cpp */; };
 		0F18E7061D6BA0230027E547 /* JSUIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E7041D6BA0230027E547 /* JSUIScriptController.cpp */; };
 		0F18E70D1D6BAC8C0027E547 /* UIScriptControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E70C1D6BAC8C0027E547 /* UIScriptControllerIOS.mm */; };
 		0F18E70F1D6BACB60027E547 /* UIScriptControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E70E1D6BACB60027E547 /* UIScriptControllerMac.mm */; };
@@ -157,6 +156,8 @@
 		C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */; };
 		C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
+		F445C68624B2789D00790440 /* UIScriptControllerShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */; };
+		F445C68924B278EC00790440 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68824B278EC00790440 /* UIScriptController.cpp */; };
 		F44A531D21B89A4D00DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531E21B89A5000DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531C21B89A4500DBB99C /* InstanceMethodSwizzler.mm */; };
 		F484C223237B27D600BF77D0 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F484C222237B27D600BF77D0 /* UIScriptControllerCocoa.mm */; };
@@ -246,7 +247,6 @@
 		00F048531A0C3C9A000244DB /* URLRedirect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLRedirect.cpp; sourceTree = "<group>"; };
 		0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptContext.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptContext.cpp; sourceTree = "<group>"; };
 		0F18E6E91D6B9C070027E547 /* UIScriptContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptContext.h; path = ../TestRunnerShared/UIScriptContext/UIScriptContext.h; sourceTree = "<group>"; };
-		0F18E6EA1D6B9C070027E547 /* UIScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptController.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptController.cpp; sourceTree = "<group>"; };
 		0F18E6EB1D6B9C070027E547 /* UIScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptController.h; path = ../TestRunnerShared/UIScriptContext/UIScriptController.h; sourceTree = "<group>"; };
 		0F18E6F01D6B9C240027E547 /* UIScriptController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = UIScriptController.idl; path = ../TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl; sourceTree = "<group>"; };
 		0F18E6F11D6B9C640027E547 /* DerivedSources.make */ = {isa = PBXFileReference; lastKnownFileType = text; path = DerivedSources.make; sourceTree = "<group>"; };
@@ -428,6 +428,8 @@
 		C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.ttf; path = fonts/FontWithFeatures.ttf; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
 		E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockGeolocationProvider.mm; path = mac/MockGeolocationProvider.mm; sourceTree = "<group>"; };
+		F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptControllerShared.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp; sourceTree = "<group>"; };
+		F445C68824B278EC00790440 /* UIScriptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIScriptController.cpp; sourceTree = "<group>"; };
 		F44A531921B89A4400DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F44A531B21B89A4400DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassMethodSwizzler.h; sourceTree = "<group>"; };
@@ -533,8 +535,9 @@
 				0F6A0E001D6E0F8A00F1C9A8 /* mac */,
 				0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */,
 				0F18E6E91D6B9C070027E547 /* UIScriptContext.h */,
-				0F18E6EA1D6B9C070027E547 /* UIScriptController.cpp */,
+				F445C68824B278EC00790440 /* UIScriptController.cpp */,
 				0F18E6EB1D6B9C070027E547 /* UIScriptController.h */,
+				F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */,
 			);
 			name = UIScriptContext;
 			sourceTree = "<group>";
@@ -1230,10 +1233,11 @@
 				BCA18B490C9B02C400114369 /* TextInputControllerMac.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */,
-				0F18E6ED1D6B9C070027E547 /* UIScriptController.cpp in Sources */,
+				F445C68924B278EC00790440 /* UIScriptController.cpp in Sources */,
 				F484C223237B27D600BF77D0 /* UIScriptControllerCocoa.mm in Sources */,
 				0F18E70D1D6BAC8C0027E547 /* UIScriptControllerIOS.mm in Sources */,
 				0F18E70F1D6BACB60027E547 /* UIScriptControllerMac.mm in Sources */,
+				F445C68624B2789D00790440 /* UIScriptControllerShared.cpp in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
 			);

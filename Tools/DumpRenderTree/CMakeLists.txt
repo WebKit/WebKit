@@ -9,7 +9,7 @@ set(DumpRenderTree_SOURCES
     ${WebKitTestRunner_SHARED_DIR}/Bindings/JSWrapper.cpp
 
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptControllerShared.cpp
 
     AccessibilityController.cpp
     AccessibilityTextMarker.cpp
@@ -21,6 +21,7 @@ set(DumpRenderTree_SOURCES
     PixelDumpSupport.cpp
     TestOptions.cpp
     TestRunner.cpp
+    UIScriptController.cpp
     WorkQueue.cpp
 )
 

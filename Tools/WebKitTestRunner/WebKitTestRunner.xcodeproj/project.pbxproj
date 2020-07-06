@@ -45,7 +45,7 @@
 
 /* Begin PBXBuildFile section */
 		0F18E6E51D6B9B9E0027E547 /* UIScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */; };
-		0F18E6E61D6B9BA20027E547 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DF1D6B9AAF0027E547 /* UIScriptController.cpp */; };
+		0F18E6E61D6B9BA20027E547 /* UIScriptControllerShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DF1D6B9AAF0027E547 /* UIScriptControllerShared.cpp */; };
 		0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E7151D6BC4560027E547 /* JSWrapper.cpp */; };
 		0F4B08731D5BE88D00EC1B78 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F4B08721D5BE88D00EC1B78 /* Launch.storyboard */; };
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
@@ -152,6 +152,7 @@
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
+		F445C68A24B27ACC00790440 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68324B277E300790440 /* UIScriptController.cpp */; };
 		F44A531721B899E200DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */; };
 		F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */; };
@@ -221,7 +222,7 @@
 /* Begin PBXFileReference section */
 		0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptContext.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptContext.cpp; sourceTree = "<group>"; };
 		0F18E6DE1D6B9AAF0027E547 /* UIScriptContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptContext.h; path = ../TestRunnerShared/UIScriptContext/UIScriptContext.h; sourceTree = "<group>"; };
-		0F18E6DF1D6B9AAF0027E547 /* UIScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptController.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptController.cpp; sourceTree = "<group>"; };
+		0F18E6DF1D6B9AAF0027E547 /* UIScriptControllerShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptControllerShared.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp; sourceTree = "<group>"; };
 		0F18E6E01D6B9AAF0027E547 /* UIScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptController.h; path = ../TestRunnerShared/UIScriptContext/UIScriptController.h; sourceTree = "<group>"; };
 		0F18E6E31D6B9ABF0027E547 /* UIScriptController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = UIScriptController.idl; path = ../TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl; sourceTree = "<group>"; };
 		0F18E7141D6BC4560027E547 /* JSWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWrappable.h; path = ../TestRunnerShared/Bindings/JSWrappable.h; sourceTree = "<group>"; };
@@ -410,6 +411,7 @@
 		E1C642C217CBCC7300D66A3C /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
 		E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerPasteboard.mm; sourceTree = "<group>"; };
 		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
+		F445C68324B277E300790440 /* UIScriptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIScriptController.cpp; sourceTree = "<group>"; };
 		F44A531321B899DA00DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = ../TestRunnerShared/cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClassMethodSwizzler.mm; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F44A531521B899DA00DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClassMethodSwizzler.h; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.h; sourceTree = "<group>"; };
@@ -503,6 +505,7 @@
 				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
 				0F622CE81BBB3A1A00838AD3 /* TestOptions.cpp */,
 				1A3326051B75396500F89F62 /* TestOptions.h */,
+				F445C68324B277E300790440 /* UIScriptController.cpp */,
 				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
 				3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */,
 				3110BE0F15BA011400D216AC /* WebNotificationProvider.h */,
@@ -557,8 +560,8 @@
 				2DB6187F1D7D598800978D19 /* spi */,
 				0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */,
 				0F18E6DE1D6B9AAF0027E547 /* UIScriptContext.h */,
-				0F18E6DF1D6B9AAF0027E547 /* UIScriptController.cpp */,
 				0F18E6E01D6B9AAF0027E547 /* UIScriptController.h */,
+				0F18E6DF1D6B9AAF0027E547 /* UIScriptControllerShared.cpp */,
 			);
 			name = UIScriptContext;
 			sourceTree = "<group>";
@@ -1199,9 +1202,10 @@
 				0F87B6171BACC4C0004EC572 /* TestRunnerWKWebView.mm in Sources */,
 				41C5378E21F13414008B1FAD /* TestWebsiteDataStoreDelegate.mm in Sources */,
 				0F18E6E51D6B9B9E0027E547 /* UIScriptContext.cpp in Sources */,
-				0F18E6E61D6B9BA20027E547 /* UIScriptController.cpp in Sources */,
+				F445C68A24B27ACC00790440 /* UIScriptController.cpp in Sources */,
 				F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */,
 				0F73B55C1BA89042004B3EF4 /* UIScriptControllerIOS.mm in Sources */,
+				0F18E6E61D6B9BA20027E547 /* UIScriptControllerShared.cpp in Sources */,
 				A18510431B9AE14500744AEB /* WebNotificationProvider.cpp in Sources */,
 				A18510441B9AE14A00744AEB /* WorkQueueManager.cpp in Sources */,
 			);

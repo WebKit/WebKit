@@ -1496,6 +1496,9 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
         if (!_page->isScrollingOrZooming())
             [self _resetPanningPreventionFlags];
+
+        if (nativeWebTouchEvent.isPotentialTap() && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
+            [self.window makeKeyWindow];
     }
 #endif
 }
@@ -5977,8 +5980,11 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     [self reloadInputViews];
 #endif
 
-    if (isSelectable)
+    if (isSelectable) {
         [self _showKeyboard];
+        if (!self.window.keyWindow)
+            [self.window makeKeyWindow];
+    }
 
     // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
     if (editableChanged)
@@ -6621,7 +6627,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (BOOL)hasHiddenContentEditable
 {
-    return _suppressSelectionAssistantReasons.contains(WebKit::EditableRootIsTransparentOrFullyClipped);
+    return _suppressSelectionAssistantReasons.containsAny({ WebKit::EditableRootIsTransparentOrFullyClipped, WebKit::FocusedElementIsTooSmall });
 }
 
 - (BOOL)_shouldSuppressSelectionCommands
@@ -8553,6 +8559,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     if (event->type() == WebKit::WebEvent::MouseDown)
         _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+
+    if (event->type() == WebKit::WebEvent::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
+        [self.window makeKeyWindow];
 
     _page->handleMouseEvent(*event);
 }

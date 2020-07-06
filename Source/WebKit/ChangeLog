@@ -1,3 +1,51 @@
+2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Unable to change focus between Google Docs windows by tapping
+        https://bugs.webkit.org/show_bug.cgi?id=213985
+        <rdar://problem/57083267>
+
+        Reviewed by Darin Adler.
+
+        When putting two Google Docs windows side-by-side on iPad, it's currently not possible to change the window to
+        which keyboard input is routed. In native views (e.g. two side-by-side Notes windows), this is normally handled
+        by `UITextMultiTapRecognizer`, which is part of the `UITextSelectionInteraction`; tapping to place the text
+        selection calls into `-[UITextInteractionAssistant setFirstResponderIfNecessaryActivatingSelection:]`, which
+        updates the key window if needed. This doesn't apply to Google Docs because they instead use touch events to
+        drive their own "text interaction"-like behaviors instead of relying on system gesture recognizers, which we
+        suppress due to the fact that the selection is within a hidden contenteditable.
+
+        But even in non-hidden editable areas, the initial tap to focus an editable element still doesn't automatically
+        make the window key, since the editable text interaction gestures are still inactive when tapping to focus an
+        editable element. This means two taps are currently required to change the key window when focusing two Safari
+        windows side-by-side: the first tap to focus the element (via the synthetic click gesture), and the second tap
+        to trigger the editable text interaction tap gesture that is used to set the selection.
+
+        To fix both of these issues, make some minor adjustments to call `-makeKeyWindow` from WebKit when focusing
+        editable elements. See below for more details.
+
+        Test: editing/selection/ios/become-key-window-when-focusing-editable-area.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        For the case in Google Docs where a hidden editable element is used and tapping in the page does not result in
+        the element being refocused, we additionally need to make sure that we make our window key anyways. Limit this
+        hack to tap gestures, and only when there is a hidden focused editable element to emulate platform behavior of
+        updating the key window based on the text tap gesture.
+
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
+        Make the content view's window key when focusing an editable element.
+
+        (-[WKContentView hasHiddenContentEditable]):
+
+        Consider the selection to be inside a hidden editable area if the `WebKit::FocusedElementIsTooSmall` flag is set
+        as well. While this doesn't affect Google Docs, it does affect some other custom editors, such as Quip.
+
+        (-[WKContentView mouseGestureRecognizerChanged:]):
+
+        Additionally make the current window key when clicking in a hidden editable area with a trackpad on iOS.
+
 2020-07-06  Sam Weinig  <weinig@apple.com>
 
         Compile-time enable (but leave disabled at runtime by default) date/time input types on macOS to allow testing of cross platform (e.g. DOM) aspects of the controls

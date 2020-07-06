@@ -1,3 +1,21 @@
+2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Unable to change focus between Google Docs windows by tapping
+        https://bugs.webkit.org/show_bug.cgi?id=213985
+        <rdar://problem/57083267>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test to verify that tapping to focus a plain textarea causes the web view's window to become
+        the key window, as well as tapping to focus a hidden contenteditable area, over a touch handler that prevents
+        default.
+
+        * editing/selection/ios/become-key-window-when-focusing-editable-area-expected.txt: Added.
+        * editing/selection/ios/become-key-window-when-focusing-editable-area.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.setWindowIsKey):
+        (window.UIHelper.windowIsKey):
+
 2020-07-06  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Unreviewed mozilla test gardening after r263855.

@@ -1,3 +1,47 @@
+2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Unable to change focus between Google Docs windows by tapping
+        https://bugs.webkit.org/show_bug.cgi?id=213985
+        <rdar://problem/57083267>
+
+        Reviewed by Darin Adler.
+
+        Add WebKitTestRunner support for being able to verify that a web view's window has become the key window.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/UIScriptController.cpp: Added.
+        (WTR::UIScriptController::setWindowIsKey):
+        (WTR::UIScriptController::windowIsKey const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp: Renamed from Tools/TestRunnerShared/UIScriptContext/UIScriptController.cpp.
+
+        Rename `UIScriptController.cpp` (in TestRunnerShared) to `UIScriptControllerShared.cpp`, and introduce new
+        DumpRenderTree and WebKitTestRunner versions of `UIScriptController.cpp` to house DumpRenderTree and
+        WebKitTestRunner-specific UIScriptController method implementations.
+
+        For now, these are just `windowIsKey` and `setWindowIsKey` below, which plumb into their respective platform-
+        agnostic `PlatformWebView` methods in WebKitTestRunner.
+
+        * WebKitTestRunner/UIScriptController.cpp: Added.
+        (WTR::UIScriptController::windowIsKey const):
+        (WTR::UIScriptController::setWindowIsKey):
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[WebKitTestRunnerWindow becomeKeyWindow]):
+        (-[WebKitTestRunnerWindow resignKeyWindow]):
+
+        Update these two methods to update `m_windowIsKey` when the test runner's `UIWindow` becomes the key window (or
+        stops being the key window). This is invoked when `-[UIWindow makeKeyWindow]` is called (e.g. from within WebKit
+        code when tapping on an editable element).
+
+        (WTR::PlatformWebView::setWindowIsKey):
+
+        Avoid infinitely looping when setting windowIsKey to `true`, due to `-becomeKeyWindow` calling back into
+        `setWindowIsKey`.
+
 2020-07-06  Zhifei Fang  <zhifei_fang@apple.com>
 
         [result database] Empty search will return too many tests to display
