@@ -381,6 +381,18 @@ static void bindPulse(Vector<CString>& args)
     bindIfExists(args, "/dev/snd", BindFlags::Device);
 }
 
+static void bindSndio(Vector<CString>& args)
+{
+    bindIfExists(args, "/tmp/sndio", BindFlags::ReadWrite);
+
+    GUniquePtr<char> sndioUidDir(g_strdup_printf("/tmp/sndio-%d", getuid()));
+    bindIfExists(args, sndioUidDir.get(), BindFlags::ReadWrite);
+
+    const char* homeDir = g_get_home_dir();
+    GUniquePtr<char> sndioHomeDir(g_build_filename(homeDir, ".sndio", nullptr));
+    bindIfExists(args, sndioHomeDir.get(), BindFlags::ReadWrite);
+}
+
 static void bindFonts(Vector<CString>& args)
 {
     const char* configDir = g_get_user_config_dir();
@@ -806,6 +818,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         bindDBusSession(sandboxArgs, proxy);
         // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
         bindPulse(sandboxArgs);
+        bindSndio(sandboxArgs);
         bindFonts(sandboxArgs);
         bindGStreamerData(sandboxArgs);
         bindOpenGL(sandboxArgs);

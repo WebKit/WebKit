@@ -1,3 +1,20 @@
+2020-07-06  Haelwenn (lanodan) Monnier  <contact@hacktivis.me>
+
+        BubblewrapLauncher.cpp: Add paths required for sndio
+        https://bugs.webkit.org/show_bug.cgi?id=212524
+
+        Information about the paths currently ins't into the sndio
+        documentation but it can be found in this email:
+        http://www.sndio.org/arch/0077.html
+
+        Reviewed by Adrian Perez de Castro.
+
+        Manually tested, there is currently no automatic tests for it
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindSndio):
+        (WebKit::bubblewrapSpawn):
+
 2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Change the cookies accept policy when ITP is enabled
