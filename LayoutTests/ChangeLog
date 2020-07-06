@@ -1,3 +1,13 @@
+2020-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Locale-specific quotes infrastructure needs to compare locale strings properly
+        https://bugs.webkit.org/show_bug.cgi?id=213827
+
+        Reviewed by Darin Adler.
+
+        * fast/css-generated-content/quotes-lang-2-expected.html: Added.
+        * fast/css-generated-content/quotes-lang-2.html: Added.
+
 2020-07-06  Zalan Bujtas  <zalan@apple.com>
 
         [Win] No need to mark tables/mozilla_expected_failures/other/empty_cells.html with [Failure] anymore.

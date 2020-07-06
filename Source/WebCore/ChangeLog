@@ -1,3 +1,42 @@
+2020-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Locale-specific quotes infrastructure needs to compare locale strings properly
+        https://bugs.webkit.org/show_bug.cgi?id=213827
+
+        Reviewed by Darin Adler.
+
+        Before this patch, WebKit is selecting which quotes to display on <q>
+        elements by doing a raw strcmp() on the locale string with a big table
+        of locale strings. strcmp() is the wrong way to compare locale strings.
+
+        The HTML spec has a list of locales and their associated quotes[1].
+        It is formulated in terms of CSS using the "lang()" pseudoclass.
+        The spec of the lang() pseudoclass[2] describes that locale comparison
+        needs to be done according to section 3.3.2 in RFC4647[3].
+
+        This algorithm is a pretty general algorithm, and implementing it naively
+        would mean turning our O(log(n)) algorithm into a O(n) algorithm, which
+        would be unfortunate. Instead, we can use a few observations about the
+        set of locale strings we are comparing against, in order to preserve the
+        O(log(n)) runtime:
+        - All the locales have either 1 or 2 subtags
+        - None of the subtags in any of the ranges are wildcards
+        - The list is sorted, so a locale string that is a prefix of another one
+              is listed before it.
+
+        [1] https://html.spec.whatwg.org/multipage/rendering.html#quotes
+        [2] https://drafts.csswg.org/selectors-4/#the-lang-pseudo
+        [3] https://tools.ietf.org/html/rfc4647#page-10
+
+        Test: fast/css-generated-content/quotes-lang-2.html
+
+        * WebCore.xcodeproj/xcshareddata/xcschemes/WebCore.xcscheme:
+        * rendering/RenderQuote.cpp:
+        (WebCore::subtagCompare):
+        (WebCore::quoteTableLanguageComparisonFunction):
+        (WebCore::quotesForLanguage):
+        (WebCore::RenderQuote::computeText const):
+
 2020-07-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] WAKWindow should override -resignFirstResponder and clear state
