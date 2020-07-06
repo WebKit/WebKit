@@ -240,6 +240,7 @@
     "web-platform-tests/html/obsolete": "skip", 
     "web-platform-tests/html/rendering": "skip", 
     "web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/": "import", 
+    "web-platform-tests/html/semantics": "import", 
     "web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives": "skip", 
     "web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh": "import", 
     "web-platform-tests/html/semantics/embedded-content": "import", 

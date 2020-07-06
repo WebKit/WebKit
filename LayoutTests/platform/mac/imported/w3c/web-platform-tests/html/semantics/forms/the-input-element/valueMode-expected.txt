@@ -41,4 +41,6 @@ PASS value IDL attribute of input type range without value attribute
 PASS value IDL attribute of input type range with value attribute 
 FAIL value IDL attribute of input type color without value attribute assert_equals: expected "#000000" but got "foo\0"
 FAIL value IDL attribute of input type color with value attribute assert_equals: expected "#000000" but got "foo\0"
+PASS value IDL attribute of input type file without value attribute 
+PASS value IDL attribute of input type file with value attribute 
 

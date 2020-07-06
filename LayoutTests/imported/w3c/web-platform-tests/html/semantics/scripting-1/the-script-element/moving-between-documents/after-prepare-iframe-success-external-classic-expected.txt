@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: exec
+ 
+
+PASS Sanity check around top-level Window 
+FAIL Eval: Move success external classic script to iframe after-prepare assert_false: The script must not have executed in destination window expected false got "executed"
+FAIL <script> load: Move success external classic script to iframe after-prepare assert_unreached: Script load event fired unexpectedly Reached unreachable code
+PASS <script> error: Move success external classic script to iframe after-prepare 
+PASS window error: Move success external classic script to iframe after-prepare 
+

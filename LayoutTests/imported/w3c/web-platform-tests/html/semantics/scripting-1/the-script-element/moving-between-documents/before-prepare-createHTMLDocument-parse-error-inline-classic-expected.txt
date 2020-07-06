@@ -1,0 +1,8 @@
+ 
+
+PASS Sanity check around top-level Window 
+PASS Eval: Move parse-error inline classic script to createHTMLDocument before-prepare 
+PASS <script> load: Move parse-error inline classic script to createHTMLDocument before-prepare 
+PASS <script> error: Move parse-error inline classic script to createHTMLDocument before-prepare 
+PASS window error: Move parse-error inline classic script to createHTMLDocument before-prepare 
+

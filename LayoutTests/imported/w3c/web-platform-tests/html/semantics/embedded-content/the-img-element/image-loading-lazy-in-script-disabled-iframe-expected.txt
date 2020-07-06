@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-in-viewport-iframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-in-viewport.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 
 PASS Images with loading='lazy' in script disabled iframe are not handled

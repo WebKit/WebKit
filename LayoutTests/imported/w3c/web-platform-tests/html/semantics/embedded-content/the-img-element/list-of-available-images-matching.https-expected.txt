@@ -1,0 +1,5 @@
+
+PASS registering service worker 
+FAIL list of available images tuple-matching logic assert_false: The image is not fetched with mode: no-cors expected false got true
+PASS unregistering service worker 
+

@@ -1,0 +1,4 @@
+
+PASS clicking on summary should open details and set focus on summary 
+Summary
+Contents

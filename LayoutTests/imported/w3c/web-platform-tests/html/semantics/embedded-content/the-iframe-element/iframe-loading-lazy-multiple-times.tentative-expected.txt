@@ -1,0 +1,4 @@
+
+
+FAIL Iframes with loading='lazy' can be lazy loaded multiple times assert_true: The loading=lazy below-viewport iframe should not block the window load event expected true got false
+

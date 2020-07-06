@@ -1,0 +1,8 @@
+ 
+
+PASS Sanity check around top-level Window 
+FAIL Eval: Move success inline classic script to iframe before-prepare assert_false: The script must not have executed in destination window expected false got "executed"
+PASS <script> load: Move success inline classic script to iframe before-prepare 
+PASS <script> error: Move success inline classic script to iframe before-prepare 
+PASS window error: Move success inline classic script to iframe before-prepare 
+

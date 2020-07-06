@@ -1,0 +1,6 @@
+      
+
+PASS The last selected OPTION should win; Inserted by parser 
+FAIL The last selected OPTION should win; Inserted by DOM API assert_equals: expected "Second" but got "First"
+PASS The last selected OPTION should win; Inserted by innerHTML 
+

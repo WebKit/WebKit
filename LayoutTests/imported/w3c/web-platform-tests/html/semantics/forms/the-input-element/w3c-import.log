@@ -16,7 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox-click-events.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox-detached-change-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checked.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/clone.html
@@ -25,8 +24,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/date.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/files.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden-charset-case-sensitive-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden-charset-case-sensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image-click-form-data.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-expected.html
@@ -34,6 +37,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-checkvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-height.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-labels.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-list.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-seconds-leading-zeroes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-setcustomvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup.html
@@ -43,9 +48,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-validity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-value-invalidstateerr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-invalidstateerr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-stepping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-invalidstateerr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-stepping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-width.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-willvalidate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength-number.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/minlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/month.html
@@ -59,7 +69,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/password.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/pattern_attribute.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-detached-change-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-groupname-case.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-input-cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio.html

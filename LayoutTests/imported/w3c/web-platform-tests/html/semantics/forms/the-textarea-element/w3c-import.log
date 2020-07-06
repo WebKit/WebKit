@@ -31,6 +31,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-validity-clone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-enumerated-ascii-case-insensitive-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-enumerated-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1b-expected.html

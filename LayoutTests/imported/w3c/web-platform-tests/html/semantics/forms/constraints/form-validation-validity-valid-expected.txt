@@ -1,18 +1,18 @@
 
 FAIL [INPUT in TEXT status] validity.valid must be false if validity.patternMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in TEXT status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in TEXT status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in SEARCH status] validity.valid must be false if validity.patternMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in SEARCH status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in SEARCH status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in TEL status] validity.valid must be false if validity.patternMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in TEL status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in TEL status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in PASSWORD status] validity.valid must be false if validity.patternMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in PASSWORD status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in PASSWORD status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in URL status] validity.valid must be false if validity.patternMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
 FAIL [INPUT in URL status] validity.valid must be false if validity.typeMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in URL status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in URL status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in EMAIL status] validity.valid must be false if validity.patternMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
 FAIL [INPUT in EMAIL status] validity.valid must be false if validity.typeMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in EMAIL status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in EMAIL status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
 FAIL [INPUT in DATE status] The date type must be supported. assert_equals: The date type should be supported. expected "date" but got "text"
 FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: The month type should be supported. expected "month" but got "text"
@@ -21,10 +21,10 @@ FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The 
 FAIL [INPUT in NUMBER status] validity.valid must be false if validity.rangeOverflow is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
 FAIL [INPUT in NUMBER status] validity.valid must be false if validity.rangeUnderflow is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
 FAIL [INPUT in NUMBER status] validity.valid must be false if validity.stepMismatch is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in NUMBER status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [INPUT in NUMBER status] validity.valid must be false if validity.valueMissing is true 
 FAIL [INPUT in CHECKBOX status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [INPUT in RADIO status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+FAIL [INPUT in RADIO status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false. expected false got true
 FAIL [INPUT in FILE status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
 FAIL [select]  validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
-FAIL [textarea]  validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false, when control is disabled. expected false got true
+PASS [textarea]  validity.valid must be false if validity.valueMissing is true 
 

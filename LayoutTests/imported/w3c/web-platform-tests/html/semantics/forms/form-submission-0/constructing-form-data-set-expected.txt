@@ -3,6 +3,7 @@
 
 
 
+
   close  button  reset  submit
 
 PASS FormData constructor always produces UTF-8 _charset_ value. 
@@ -12,4 +13,5 @@ FAIL "formdata" event bubbles, and is not cancelable. assert_true: expected true
 FAIL "formdata" event bubbles in an orphan tree. assert_true: expected true got false
 FAIL "formData" IDL attribute should have entries for form-associated elements in the first event handler, and the second handler can read entries set by the first handler. assert_true: expected true got false
 FAIL Entries added to "formData" IDL attribute should be submitted. assert_true: expected true got false
+FAIL The constructed FormData object should not contain an entry for the submit button that was used to submit the form. assert_false: expected false got true
 

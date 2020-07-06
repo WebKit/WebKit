@@ -1,0 +1,4 @@
+Test
+
+FAIL Stylesheet in XHTML HEAD blocking scripts assert_equals: expected "fixed" but got "static"
+

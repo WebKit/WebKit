@@ -16,6 +16,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-import-to-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-tabindex.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_image-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_image.htm

@@ -1,5 +1,0 @@
-
-
-PASS An image with loading='lazy' in cross origin iframe loads when it gets
-       visible by scrolling the iframe's scroll port 
-

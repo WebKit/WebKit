@@ -1,3 +1,16 @@
+2020-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/semantics from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=213994
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/html/semantics from upstream 145839c323ba1ec8b.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/*: Updated.
+
 2020-07-06  Clark Wang  <clark_wang@apple.com>
 
         Added PannerNode constructor according to spec

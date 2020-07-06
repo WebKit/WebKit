@@ -14,10 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/blue-10.png
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/cat.jpg
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-below-viewport-iframe.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-in-viewport-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-below-viewport.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-in-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image.png
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/newwindow.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/referrer-checker-img.py
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/subframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/sw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/resources/sw.js.headers

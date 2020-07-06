@@ -22,8 +22,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_load_async.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_load_event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_media.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_media_change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_non_matching_media.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_type_change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_type_html.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_type_svg.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/update-style-block-ascii-case-insensitive-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/update-style-block-ascii-case-insensitive.html

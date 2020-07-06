@@ -51,6 +51,10 @@ FAIL [INPUT in TIME status] The value is less than min(with millisecond in 1 dig
 FAIL [INPUT in TIME status] The value is less than min(with millisecond in 2 digit) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
 FAIL [INPUT in TIME status] The value is less than min(with millisecond in 3 digit) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
 FAIL [INPUT in TIME status] The time missing second part is valid assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The time is max for reversed range assert_false: The validity.rangeUnderflow should be false. expected false got true
+FAIL [INPUT in TIME status] The time is outside the accepted range for reversed range assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+PASS [INPUT in TIME status] The time is min for reversed range 
+PASS [INPUT in TIME status] The time is inside the accepted range for reversed range 
 PASS [INPUT in NUMBER status] The min attribute is not set 
 PASS [INPUT in NUMBER status] Value is empty string 
 PASS [INPUT in NUMBER status] The min is less than value(integer) 

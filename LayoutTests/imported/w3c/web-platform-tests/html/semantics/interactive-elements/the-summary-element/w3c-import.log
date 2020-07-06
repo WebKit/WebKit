@@ -16,4 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/activation-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/anchor-with-inline-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/click-behavior-optional.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/display-table-with-rt-crash.html

@@ -1,0 +1,4 @@
+ 
+
+PASS currentSrc is right even if underlying image is a shared blob 
+

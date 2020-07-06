@@ -30,4 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/infinite_backtracking.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/input-number-validity-dynamic-value-no-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/input-pattern-dynamic-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/inputwillvalidate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/radio-valueMissing.html

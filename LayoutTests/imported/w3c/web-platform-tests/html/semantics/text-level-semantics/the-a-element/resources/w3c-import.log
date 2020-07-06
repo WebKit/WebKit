@@ -17,3 +17,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/resources/a-download-404.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/resources/a-download-click.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/resources/a-download-redirect-to-javascript.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/resources/a-onclick-handler-iframe.html

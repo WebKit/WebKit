@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-appendChild-to-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-play-in-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_001-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_002-expected.htm

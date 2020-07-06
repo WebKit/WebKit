@@ -4,7 +4,7 @@ FAIL direction doesn't affect :dir() assert_array_equals: lengths differ, expect
 <title id="ti..., Element node <meta charset="iso-8859-8" id="meta"></meta>, Element node <title id="title">Selector: pseudo-classes (:dir(ltr), :d..., Element node <link rel="author" title="Denis Ah-Kang" href="mailto:den..., Element node <link rel="help" href="https://html.spec.whatwg.org/multi..., Element node <script src="/resources/testharness.js" id="script1"></sc..., Element node <script src="/resources/testharnessreport.js" id="script2..., Element node <script src="utils.js" id="script3"></script>, Element node <body><div id="log"></div>
 <div>This text is left to righ..., Element node <div id="log"></div>, Element node <div>This text is left to right<div id="div1" style="dire..., Element node <div id="div1" style="direction:rtl">this is right to lef..., Element node <div>This text is left to right<span id="div2" style="dir..., Element node <span id="div2" style="direction:rtl">this is left to rig..., Element node <script>
   var ltr = new Array(),
-      all = document.qu...] length 16, got object "[object NodeList]" length 0
+      all = document.qu...] length 16, got [] length 0
 This text is left to right
 this is right to left
 This text is left to rightthis is left to right

@@ -1,0 +1,4 @@
+
+
+FAIL An image request's parsed URL should be affected by a dynamically-inserted <base>, if it was inserted before the image request microtask runs assert_unreached: The image should have failed to load, as the request URL should be affected by the <base> element Reached unreachable code
+

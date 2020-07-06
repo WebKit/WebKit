@@ -17,9 +17,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/content-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/node-document-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-construction-in-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-hierarcy.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-in-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-move-to-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-node-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-body.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-head.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-element-clone-into-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-set-inner-html-in-inactive-document-crash.html

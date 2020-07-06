@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir-html-input-dynamic-text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/disabled.html

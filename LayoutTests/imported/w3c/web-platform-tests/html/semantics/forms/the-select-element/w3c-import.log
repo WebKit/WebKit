@@ -17,6 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-add.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-namedItem.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/inserted-or-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-multiple.html

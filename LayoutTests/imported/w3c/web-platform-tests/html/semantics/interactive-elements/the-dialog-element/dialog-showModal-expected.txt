@@ -6,9 +6,7 @@ PASS showModal() on a <dialog> that already has an open attribute throws an Inva
 PASS showModal() on a <dialog> after initial showModal() and removing the open attribute 
 PASS showModal() on a <dialog> not in a Document throws an InvalidStateError exception 
 PASS when opening multiple dialogs, only the newest one is non-inert 
-FAIL opening dialog without focusable children assert_equals: expected Element node <dialog id="d6" open=""></dialog> but got Element node <body><div id="log"></div>
-<button id="b0">OK</button>
-<d...
+PASS opening dialog without focusable children 
 FAIL opening dialog with multiple focusable children assert_equals: expected Element node <input id="i71" value="foobar"></input> but got Element node <body><div id="log"></div>
 <button id="b0">OK</button>
 <d...

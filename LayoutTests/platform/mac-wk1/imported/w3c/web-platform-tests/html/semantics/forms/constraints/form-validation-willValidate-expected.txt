@@ -39,11 +39,11 @@ FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The 
 FAIL [INPUT in COLOR status] The color type must be supported. assert_equals: The color type should be supported. expected "color" but got "text"
 PASS [INPUT in FILE status] Must be barred from the constraint validation if it is disabled 
 PASS [INPUT in FILE status] The willValidate attribute must be true if an element is mutable 
-PASS [INPUT in FILE status] Must be barred from the constraint validation if it is readonly 
+FAIL [INPUT in FILE status] Must be not barred from the constraint validation even if it is readonly assert_true: The willValidate attribute should be true. expected true got false
 PASS [INPUT in FILE status] The willValidate attribute must be false if it has a datalist ancestor 
 PASS [INPUT in SUBMIT status] Must be barred from the constraint validation if it is disabled 
 PASS [INPUT in SUBMIT status] The willValidate attribute must be true if an element is mutable 
-PASS [INPUT in SUBMIT status] Must be barred from the constraint validation if it is readonly 
+FAIL [INPUT in SUBMIT status] Must be not barred from the constraint validation even if it is readonly assert_true: The willValidate attribute should be true. expected true got false
 PASS [INPUT in SUBMIT status] The willValidate attribute must be false if it has a datalist ancestor 
 PASS [BUTTON in SUBMIT status] Must be barred from the constraint validation 
 PASS [BUTTON in SUBMIT status] The willValidate attribute must be true if an element is mutable 

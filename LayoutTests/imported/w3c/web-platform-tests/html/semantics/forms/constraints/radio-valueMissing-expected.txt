@@ -1,0 +1,8 @@
+
+PASS The required attribute is not set 
+PASS One of the radios is required, but none checked 
+PASS One of the radios is required and checked 
+PASS One of the radios is required and another one is checked 
+FAIL One of the radios is required and disabled, but none checked assert_true: The radio10.validity.valueMissing should be true expected true got false
+PASS One of the radios is required, checked and disabled 
+

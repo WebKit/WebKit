@@ -1,0 +1,8 @@
+ 
+
+PASS Sanity check around top-level Window 
+FAIL Eval: Move success inline classic script to iframe move-back assert_false: The script must not have executed in source window expected false got "executed"
+FAIL <script> load: Move success inline classic script to iframe move-back assert_unreached: Script load event fired unexpectedly Reached unreachable code
+PASS <script> error: Move success inline classic script to iframe move-back 
+PASS window error: Move success inline classic script to iframe move-back 
+

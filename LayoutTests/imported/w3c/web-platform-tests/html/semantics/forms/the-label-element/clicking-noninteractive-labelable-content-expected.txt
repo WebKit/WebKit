@@ -1,0 +1,11 @@
+
+PASS labelable element <meter></meter> as first child of <label> 
+PASS labelable element <meter></meter> deeply nested under <label> 
+PASS labelable element <meter></meter> as second child under <label> 
+PASS labelable element <output></output> as first child of <label> 
+PASS labelable element <output></output> deeply nested under <label> 
+PASS labelable element <output></output> as second child under <label> 
+PASS labelable element <progress></progress> as first child of <label> 
+PASS labelable element <progress></progress> deeply nested under <label> 
+PASS labelable element <progress></progress> as second child under <label> 
+

@@ -1,0 +1,4 @@
+
+
+FAIL When a loading=lazy iframe is loaded, it loads relative to the document's base URL computed at parse-time. assert_true: Below-viewport loading=lazy iframes do not block the window load event expected true got false
+

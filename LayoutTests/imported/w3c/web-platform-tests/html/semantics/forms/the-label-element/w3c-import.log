@@ -14,7 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/clicking-interactive-content.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/clicking-noninteractive-labelable-content.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/clicking-noninteractive-unlabelable-content.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/forward-focus-to-associated-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/iframe-label-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/label-attributes.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/label-inside-anchor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/proxy-click-to-associated-element.html

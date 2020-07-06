@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT This test will pass if <input type=radio> emits change events while detached from document.body Test timed out
-

@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/document-getters-return-null-for-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-construct-in-document-with-null-browsing-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html

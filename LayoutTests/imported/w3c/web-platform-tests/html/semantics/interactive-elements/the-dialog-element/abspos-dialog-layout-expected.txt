@@ -1,15 +1,15 @@
 
-FAIL showModal() should center in the viewport assert_equals: expected 291 but got -500
+FAIL showModal() should center in the viewport assert_approx_equals: expected 291 +/- 1 but got -500
 FAIL The dialog is a positioned element, so the top and bottom should not have style auto. assert_not_equals: got disallowed value "auto"
-FAIL Dialog should be recentered if showModal() is called after close() assert_equals: expected 290 but got -1000
+FAIL Dialog should be recentered if showModal() is called after close() assert_approx_equals: expected 290 +/- 1 but got -1000
 PASS Dialog should not recenter on relayout. 
 FAIL A tall dialog should be positioned at the top of the viewport. assert_equals: expected 0 but got -500
-FAIL The dialog should be centered regardless of the presence of a horizontal scrollbar. assert_equals: expected -9700 but got -500
-FAIL Centering should work when dialog is inside positioned containers. assert_equals: expected -9700 but got 330
+FAIL The dialog should be centered regardless of the presence of a horizontal scrollbar. assert_approx_equals: expected -9700 +/- 1 but got -500
+FAIL Centering should work when dialog is inside positioned containers. assert_approx_equals: expected -9700 +/- 1 but got 330
 PASS A centered dialog's position should survive becoming display:none temporarily. 
 FAIL Dialog should lose centering when removed from the document. assert_not_equals: got disallowed value 320
 PASS Dialog's specified position should survive after close() and showModal(). 
-FAIL Dialog should be recentered if showModal() is called after removing 'open'. assert_equals: expected -9700 but got -1000
+FAIL Dialog should be recentered if showModal() is called after removing 'open'. assert_approx_equals: expected -9700 +/- 1 but got -1000
 FAIL Dialog should not be centered if showModal() was called when an ancestor had display 'none'. assert_equals: expected 9500 but got 330
 FAIL A dialog with specified 'top' should be positioned as usual assert_equals: expected 50 but got 0
 FAIL A dialog with specified 'bottom' should be positioned as usual assert_equals: expected 550 but got 20000

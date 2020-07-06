@@ -1,0 +1,8 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS naturalWidth and naturalHeight return correct values for an image without orientation metadata 
+TIMEOUT naturalWidth and naturalHeight return re-oriented values for an image with orientation metadata Test timed out
+TIMEOUT naturalWidth and naturalHeight return re-oriented values for an image with orientation metadata even with image-orientation:none Test timed out
+

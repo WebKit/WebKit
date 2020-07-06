@@ -41,4 +41,6 @@ PASS value IDL attribute of input type range without value attribute
 PASS value IDL attribute of input type range with value attribute 
 PASS value IDL attribute of input type color without value attribute 
 PASS value IDL attribute of input type color with value attribute 
+PASS value IDL attribute of input type file without value attribute 
+PASS value IDL attribute of input type file with value attribute 
 

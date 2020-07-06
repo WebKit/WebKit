@@ -1,0 +1,8 @@
+
+PASS focusing a label with for attribute should forward focus to the associated element 
+PASS focusing a label without for attribute should fowrad focus to the first labelable child 
+PASS focusing a label with tabindex should not forward focus to the labelable element 
+PASS focusing a label with negative tabindex should not forward focus to the labelable element 
+PASS focusing a label with empty tabindex should forward focus to the labelable element 
+PASS focusing a hidden label with tabindex should forward focus to the labelable element 
+ a   b   c   d   e  

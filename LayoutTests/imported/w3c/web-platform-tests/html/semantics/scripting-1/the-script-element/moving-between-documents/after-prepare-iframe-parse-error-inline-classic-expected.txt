@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: SyntaxError: Left side of assignment is not a reference.
+ 
+
+PASS Sanity check around top-level Window 
+PASS Eval: Move parse-error inline classic script to iframe after-prepare 
+FAIL <script> load: Move parse-error inline classic script to iframe after-prepare assert_unreached: Script load event fired unexpectedly Reached unreachable code
+PASS <script> error: Move parse-error inline classic script to iframe after-prepare 
+FAIL window error: Move parse-error inline classic script to iframe after-prepare assert_unreached: Window error event shouldn't fired on destination window Reached unreachable code
+

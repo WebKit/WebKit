@@ -1,0 +1,4 @@
+
+
+PASS Verifies that form submissions scheduled inside javascript: urls take precedence over the javascript: url's return value. 
+

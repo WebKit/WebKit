@@ -1,0 +1,9 @@
+Confirm  
+
+
+FAIL click the form submission button should close the dialog assert_false: dialog should be closed now expected false got true
+FAIL form submission should return correct value promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL no returnValue when there's no result. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL input image button should return the coordianates promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL formmethod attribute should use dialog form submission promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+

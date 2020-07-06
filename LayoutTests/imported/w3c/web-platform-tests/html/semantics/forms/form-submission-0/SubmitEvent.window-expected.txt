@@ -1,7 +1,10 @@
 
-FAIL Failing SubmitEvent constructor assert_throws: 0 arguments function "() => { new SubmitEvent() }" threw object "ReferenceError: Can't find variable: SubmitEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL Failing SubmitEvent constructor assert_throws_js: 0 arguments function "() => { new SubmitEvent() }" threw object "ReferenceError: Can't find variable: SubmitEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 FAIL Successful SubmitEvent constructor Can't find variable: SubmitEvent
-FAIL Successful SubmitEvent constructor; null submitter Can't find variable: SubmitEvent
+FAIL Successful SubmitEvent constructor; null/undefined submitter Can't find variable: SubmitEvent
+FAIL Successful SubmitEvent constructor; null/undefined dictionary Can't find variable: SubmitEvent
 FAIL Successful SubmitEvent constructor; empty dictionary Can't find variable: SubmitEvent
 FAIL Successful SubmitEvent constructor; missing dictionary Can't find variable: SubmitEvent
 

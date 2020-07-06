@@ -1,0 +1,4 @@
+
+
+PASS Test that when a deferred iframe is fetched, it uses the `referrerpolicy` specified at parse-time 
+
