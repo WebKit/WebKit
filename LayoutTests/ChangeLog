@@ -1,3 +1,12 @@
+2020-07-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Some tests are failing on the EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=213998
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Unable to change focus between Google Docs windows by tapping
