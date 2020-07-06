@@ -1,5 +1,17 @@
 2020-07-06  Zalan Bujtas  <zalan@apple.com>
 
+        [Win] Unreviewed mozilla test gardening after r263855.
+
+        * platform/win/tables/mozilla/bugs/bug100334-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug10633-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug1302-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug16012-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug222336-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug3037-1-expected.txt:
+
+2020-07-06  Zalan Bujtas  <zalan@apple.com>
+
         [Win] Unreviewed test gardening after r263855.
 
         * platform/win/fast/css/acid2-expected.txt:

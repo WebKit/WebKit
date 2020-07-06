@@ -132,9 +132,9 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,179) size 600x3
               RenderTableCell {TD} at (2,179) size 597x3 [bgcolor=#99CCCC] [r=4 c=0 rs=1 cs=4]
-                RenderTable {TABLE} at (1,1) size 1x1
-                  RenderTableSection {TBODY} at (0,0) size 1x1
-                    RenderTableRow {TR} at (0,0) size 1x1
+                RenderTable {TABLE} at (1,1) size 0x1
+                  RenderTableSection {TBODY} at (0,0) size 0x1
+                    RenderTableRow {TR} at (0,0) size 0x1
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
 layer at (274,79) size 216x15
   RenderBlock {DIV} at (2,3) size 216x15
