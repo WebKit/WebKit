@@ -619,6 +619,22 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
     }
 }
 
+#ifndef NDEBUG
+- (NSString *)innerHTML
+{
+    if (auto* element = self.axBackingObject->element())
+        return element->innerHTML();
+    return nil;
+}
+
+- (NSString *)outerHTML
+{
+    if (auto* element = self.axBackingObject->element())
+        return element->outerHTML();
+    return nil;
+}
+#endif
+
 #pragma mark Search helpers
 
 typedef HashMap<String, AccessibilitySearchKey> AccessibilitySearchKeyMap;
