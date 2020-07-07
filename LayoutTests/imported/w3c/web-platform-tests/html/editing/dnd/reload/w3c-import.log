@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/009-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/010-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/011-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/012-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/012-2.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/reload/012.xhtml

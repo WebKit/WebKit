@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/015.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/022-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/022.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/helper-drag-me-input.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/helper-drag-me-link.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/helper-drag-me-p.xhtml

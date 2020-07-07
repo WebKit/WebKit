@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/015.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/025.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/026.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/027.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/028.html

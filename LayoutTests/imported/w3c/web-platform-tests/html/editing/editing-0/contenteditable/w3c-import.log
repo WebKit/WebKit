@@ -16,4 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contentEditable-invalidvalue.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contentEditable-slotted-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-enumerated-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-with-empty-block-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-with-empty-block.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/selection-in-contentEditable-at-turning-designMode-on-off.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/user-interaction-editing-contenteditable.html

@@ -1,5 +1,17 @@
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/html/editing from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214051
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/html/editing from upstream 145839c323ba1ec8b973.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/editing/*: Updated.
+
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/html/webappapis from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214049
 

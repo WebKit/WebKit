@@ -232,7 +232,7 @@
     "web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.sub.html": "skip", 
     "web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters": "skip", 
     "web-platform-tests/html/dom/reflection-original.html": "skip", 
-    "web-platform-tests/html/editing": "skip", 
+    "web-platform-tests/html/editing": "import", 
     "web-platform-tests/html/iana": "skip", 
     "web-platform-tests/html/infrastructure": "import", 
     "web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers": "skip", 

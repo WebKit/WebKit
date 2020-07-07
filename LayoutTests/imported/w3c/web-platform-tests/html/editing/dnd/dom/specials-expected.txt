@@ -1,0 +1,24 @@
+Enable script and reload
+
+PASS ondragstart in window 
+PASS ondrag in window 
+PASS ondragover in window 
+PASS ondragenter in window 
+PASS ondragleave in window 
+PASS ondrop in window 
+PASS ondragend in window 
+PASS ondragstart in document 
+PASS ondrag in document 
+PASS ondragover in document 
+PASS ondragenter in document 
+PASS ondragleave in document 
+PASS ondrop in document 
+PASS ondragend in document 
+PASS ondragstart in HTMLElement 
+PASS ondrag in HTMLElement 
+PASS ondragover in HTMLElement 
+PASS ondragenter in HTMLElement 
+PASS ondragleave in HTMLElement 
+PASS ondrop in HTMLElement 
+PASS ondragend in HTMLElement 
+

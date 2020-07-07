@@ -1,0 +1,51 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/click-to-activate.js
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/dragndrop.swf
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/dragndropleavedeactivate.swf
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-010.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-011.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-101.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-102.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-103.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-104.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-105.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-106.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-107.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-108.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-109.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-110.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-111.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-203.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-204.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-205.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-206.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-207.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-303.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-304.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-305.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-306.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugin/plugin-dnd-307.html

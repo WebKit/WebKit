@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/012-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/013-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/014-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/015.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/025.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/026.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/027.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/028.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/helper-circle.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/helper-drag-me-data-url-image.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/helper-drop-horizontal-scrollbar.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/helper-drop-image-here.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/helper-drop-vertical-scrollbar.xhtml

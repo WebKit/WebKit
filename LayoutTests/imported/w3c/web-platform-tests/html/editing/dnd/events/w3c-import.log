@@ -1,0 +1,67 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/001-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/002-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/003-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/015.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/025.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/026.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/027.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/028.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/029.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/030.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/031-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/031.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/032.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/033.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/034.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/035.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/036.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/037-proposed.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/037-spec.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/038-proposed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-cross-document-suite-HELPER-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-cross-document-suite-HELPER-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-non-draggable-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-non-draggable-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-input-with-circle.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-link-with-circle.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-p-with-circle.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drop-here-body-circle.xhtml

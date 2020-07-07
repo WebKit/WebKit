@@ -1,0 +1,9 @@
+
+PASS element.ondragstart initial value 
+PASS element.ondrag must initial value 
+PASS element.ondragenter initial value 
+PASS element.ondragleave initial value 
+PASS element.ondragover initial value 
+PASS element.ondrop initial value 
+PASS element.ondragend initial value 
+
