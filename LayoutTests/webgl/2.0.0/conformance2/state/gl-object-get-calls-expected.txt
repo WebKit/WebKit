@@ -279,13 +279,13 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 275: FAIL ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) should be 5124. Was 5126.
 [ 276: FAIL ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_INTEGER) should be true (of type boolean). Was null (of type object).
 [ 277: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
-[ 278: FAIL ] getVertexAttrib did not generate INVALID_ENUM for invalid parameter enum: NO_ERROR
-[ 279: FAIL ] getError expected: INVALID_VALUE. Was INVALID_ENUM : after evaluating: gl.getVertexAttrib(16, gl.CURRENT_VERTEX_ATTRIB)
+[ 278: PASS ] getVertexAttrib correctly handled invalid parameter enums
+[ 279: PASS ] getError was expected value: INVALID_VALUE : after evaluating: gl.getVertexAttrib(16, gl.CURRENT_VERTEX_ATTRIB)
 [ 280: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
-[ 281: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE :
+[ 281: PASS ] getError was expected value: INVALID_OPERATION :
 [ 282: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
 [ 283: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
-[ 284: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 284: PASS ] getError was expected value: NO_ERROR :
 [ 285: PASS ] gl.getInternalformatParameter(gl.RENDERBUFFER, gl.R32I, gl.SAMPLES) is non-null.
 [ 286: PASS ] getError was expected value: NO_ERROR :
 [ 287: PASS ] getInternalformatParameter correctly handled invalid target enums
@@ -311,5 +311,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 307: PASS ] getSamplerParameter correctly handled invalid pname enums
 [ 308: FAIL ] gl.getSyncParameter(sync, gl.OBJECT_TYPE) should be 37142. Threw exception TypeError: Argument 1 ('sync') to WebGL2RenderingContext.getSyncParameter must be an instance of WebGLSync
 [ 309: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 58 failures reported
+[ FAIL ] 54 failures reported
 

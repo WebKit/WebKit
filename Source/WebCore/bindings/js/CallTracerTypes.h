@@ -61,13 +61,13 @@
 #include "WebGLShader.h"
 #include "WebGLSync.h"
 #include "WebGLTexture.h"
-#include "WebGLTransformFeedback.h"
 #include "WebGLUniformLocation.h"
 #include "WebGLVertexArrayObject.h"
 #endif
 
 #if ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
+#include "WebGLTransformFeedback.h"
 #endif
 
 namespace WebCore {
@@ -101,9 +101,11 @@ using RecordCanvasActionVariant = Variant<
     WebGLShader*,
     WebGLSync*,
     WebGLTexture*,
-    WebGLTransformFeedback*,
     WebGLUniformLocation*,
     WebGLVertexArrayObject*,
+#endif
+#if ENABLE(WEBGL2)
+    WebGLTransformFeedback*,
 #endif
     RefPtr<ArrayBuffer>,
     RefPtr<ArrayBufferView>,

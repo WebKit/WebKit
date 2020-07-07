@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL2)
 #include "WebGLTransformFeedback.h"
 
 #include "WebGLContextGroup.h"
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGLRenderingContextBase& ctx)
+Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGL2RenderingContext& ctx)
 {
     return adoptRef(*new WebGLTransformFeedback(ctx));
 }
@@ -43,10 +43,11 @@ WebGLTransformFeedback::~WebGLTransformFeedback()
     deleteObject(0);
 }
 
-WebGLTransformFeedback::WebGLTransformFeedback(WebGLRenderingContextBase& ctx)
+WebGLTransformFeedback::WebGLTransformFeedback(WebGL2RenderingContext& ctx)
     : WebGLSharedObject(ctx)
 {
     setObject(ctx.graphicsContextGL()->createTransformFeedback());
+    m_boundIndexedTransformFeedbackBuffers.resize(ctx.maxTransformFeedbackSeparateAttribs());
 }
 
 void WebGLTransformFeedback::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
@@ -54,6 +55,50 @@ void WebGLTransformFeedback::deleteObjectImpl(GraphicsContextGLOpenGL* context3d
     context3d->deleteTransformFeedback(object);
 }
 
+void WebGLTransformFeedback::setProgram(WebGLProgram& program)
+{
+    m_program = &program;
+    m_programLinkCount = program.getLinkCount();
 }
 
-#endif // ENABLE(WEBGL)
+void WebGLTransformFeedback::setBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer* buffer)
+{
+    ASSERT(index < m_boundIndexedTransformFeedbackBuffers.size());
+    m_boundIndexedTransformFeedbackBuffers[index] = buffer;
+}
+
+bool WebGLTransformFeedback::getBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer** outBuffer)
+{
+    if (index > m_boundIndexedTransformFeedbackBuffers.size())
+        return false;
+    *outBuffer = m_boundIndexedTransformFeedbackBuffers[index].get();
+    return true;
+}
+
+bool WebGLTransformFeedback::hasEnoughBuffers(GCGLuint numRequired) const
+{
+    if (numRequired > m_boundIndexedTransformFeedbackBuffers.size())
+        return false;
+    for (GCGLuint i = 0; i < numRequired; i++) {
+        if (!m_boundIndexedTransformFeedbackBuffers[i].get())
+            return false;
+    }
+    return true;
+}
+
+void WebGLTransformFeedback::unbindBuffer(WebGLBuffer& buffer)
+{
+    for (auto& boundBuffer : m_boundIndexedTransformFeedbackBuffers) {
+        if (boundBuffer == &buffer)
+            boundBuffer = nullptr;
+    }
+}
+
+bool WebGLTransformFeedback::validateProgramForResume(WebGLProgram* program) const
+{
+    return program && m_program == program && program->getLinkCount() == m_programLinkCount;
+}
+
+}
+
+#endif // ENABLE(WEBGL2)

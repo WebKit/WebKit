@@ -25,8 +25,9 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL2)
 
+#include "WebGL2RenderingContext.h"
 #include "WebGLSharedObject.h"
 
 namespace WebCore {
@@ -35,12 +36,42 @@ class WebGLTransformFeedback final : public WebGLSharedObject {
 public:
     virtual ~WebGLTransformFeedback();
 
-    static Ref<WebGLTransformFeedback> create(WebGLRenderingContextBase&);
+    static Ref<WebGLTransformFeedback> create(WebGL2RenderingContext&);
+    
+    bool isActive() const { return m_active; }
+    bool isPaused() const { return m_paused; }
+    
+    void setActive(bool active) { m_active = active; }
+    void setPaused(bool paused) { m_paused = paused; }
+    
+    // These are the indexed bind points for transform feedback buffers.
+    // Returns false if index is out of range and the caller should
+    // synthesize a GL error.
+    void setBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer*);
+    bool getBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer** outBuffer);
+    
+    bool validateProgramForResume(WebGLProgram*) const;
 
+    bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
+    void setHasEverBeenBound() { m_hasEverBeenBound = true; }
+    
+    WebGLProgram* program() const { return m_program.get(); }
+    void setProgram(WebGLProgram&);
+    
+    void unbindBuffer(WebGLBuffer&);
+    
+    bool hasEnoughBuffers(GCGLuint numRequired) const;
 private:
-    WebGLTransformFeedback(WebGLRenderingContextBase&);
+    WebGLTransformFeedback(WebGL2RenderingContext&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    
+    bool m_active { false };
+    bool m_paused { false };
+    bool m_hasEverBeenBound { false };
+    unsigned m_programLinkCount { 0 };
+    Vector<RefPtr<WebGLBuffer>> m_boundIndexedTransformFeedbackBuffers;
+    RefPtr<WebGLProgram> m_program;
 };
 
 } // namespace WebCore

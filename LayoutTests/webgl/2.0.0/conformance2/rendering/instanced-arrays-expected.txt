@@ -1,57 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/instanced-arrays.html
-[ 1: PASS ] WebGL context exists
-[ 2: PASS ] gl.VERTEX_ATTRIB_ARRAY_DIVISOR is 0x88FE
-[ 3: PASS ] Vertex attribute 0 must has a default divisor of 0
-[ 4: PASS ] Vertex attribute 1 must has a default divisor of 0
-[ 5: PASS ] Vertex attribute 2 must has a default divisor of 0
-[ 6: PASS ] Vertex attribute 3 must has a default divisor of 0
-[ 7: PASS ] Vertex attribute 4 must has a default divisor of 0
-[ 8: PASS ] Vertex attribute 5 must has a default divisor of 0
-[ 9: PASS ] Vertex attribute 6 must has a default divisor of 0
-[ 10: PASS ] Vertex attribute 7 must has a default divisor of 0
-[ 11: PASS ] Vertex attribute 8 must has a default divisor of 0
-[ 12: PASS ] Vertex attribute 9 must has a default divisor of 0
-[ 13: PASS ] Vertex attribute 10 must has a default divisor of 0
-[ 14: PASS ] Vertex attribute 11 must has a default divisor of 0
-[ 15: PASS ] Vertex attribute 12 must has a default divisor of 0
-[ 16: PASS ] Vertex attribute 13 must has a default divisor of 0
-[ 17: PASS ] Vertex attribute 14 must has a default divisor of 0
-[ 18: PASS ] Vertex attribute 15 must has a default divisor of 0
-[ 19: PASS ] getError was expected value: INVALID_VALUE : vertexAttribDivisor index set greater than or equal to MAX_VERTEX_ATTRIBS should be an invalid value
-[ 20: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : vertexAttribDivisor index set less than MAX_VERTEX_ATTRIBS should succeed
-[ 21: PASS ] Set value of VERTEX_ATTRIB_ARRAY_DIVISOR matches expecation
-[ 22: FAIL ] should be 255,0,0,255 at (0, 25) expected: 255,0,0,255 was 0,0,0,0
-[ 23: FAIL ] should be 0,255,0,255 at (25, 25) expected: 0,255,0,255 was 0,0,0,0
-[ 24: FAIL ] should be 0,0,255,255 at (0, 0) expected: 0,0,255,255 was 0,0,0,0
-[ 25: FAIL ] should be 255,255,0,255 at (25, 0) expected: 255,255,0,255 was 0,0,0,0
-[ 26: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : drawArraysInstanced cannot have a primcount less than 0
-[ 27: PASS ] getError was expected value: INVALID_VALUE : drawArraysInstanced cannot have a count less than 0
-[ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : It's allowed for all vertex attributes to have non-zero divisors when calling drawArraysInstanced
-[ 29: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with POINTS should succeed
-[ 30: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with LINES should succeed
-[ 31: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with LINE_LIST should return succeed
-[ 32: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawArraysInstanced with TRI_LIST should succeed
-[ 33: PASS ] getError was expected value: INVALID_ENUM : drawArraysInstanced with QUAD_STRIP should return INVALID_ENUM
-[ 34: PASS ] getError was expected value: INVALID_ENUM : drawArraysInstanced with QUADS should return INVALID_ENUM
-[ 35: PASS ] getError was expected value: INVALID_ENUM : drawArraysInstanced with POLYGON should return INVALID_ENUM
-[ 36: FAIL ] should be 255,0,0,255 at (0, 25) expected: 255,0,0,255 was 0,0,0,0
-[ 37: FAIL ] should be 0,255,0,255 at (25, 25) expected: 0,255,0,255 was 0,0,0,0
-[ 38: FAIL ] should be 0,0,255,255 at (0, 0) expected: 0,0,255,255 was 0,0,0,0
-[ 39: FAIL ] should be 255,255,0,255 at (25, 0) expected: 255,255,0,255 was 0,0,0,0
-[ 40: PASS ] getError was expected value: INVALID_VALUE : drawElementsInstanced cannot have a primcount less than 0
-[ 41: PASS ] getError was expected value: INVALID_VALUE : drawElementsInstanced cannot have a count less than 0
-[ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : It's allowed for all vertex attributes to have non-zero divisors when calling drawElementsInstanced
-[ 43: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : drawElementsInstanced with UNSIGNED_BYTE should succeed
-[ 44: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with POINTS should succeed
-[ 45: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with LINES should succeed
-[ 46: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with LINE_LIST should return succeed
-[ 47: PASS ] getError was expected value: NO_ERROR : drawElementsInstanced with TRI_LIST should succeed
-[ 48: PASS ] getError was expected value: INVALID_ENUM : drawElementsInstanced with QUAD_STRIP should return INVALID_ENUM
-[ 49: PASS ] getError was expected value: INVALID_ENUM : drawElementsInstanced with QUADS should return INVALID_ENUM
-[ 50: PASS ] getError was expected value: INVALID_ENUM : drawElementsInstanced with POLYGON should return INVALID_ENUM
-[ 51: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 52: PASS ] successfullyParsed is true
-[ FAIL ] 17 failures reported
+[ PASS ] All tests passed
 

@@ -112,7 +112,6 @@ WebGL2RenderingContext::~WebGL2RenderingContext()
     // they will be freed before the last context is removed from the context group.
     m_readFramebufferBinding = nullptr;
     m_boundTransformFeedback = nullptr;
-    m_boundTransformFeedbackBuffers.clear();
     m_boundTransformFeedbackBuffer = nullptr;
     m_boundUniformBuffer = nullptr;
     m_boundIndexedUniformBuffers.clear();
@@ -135,11 +134,12 @@ void WebGL2RenderingContext::initializeNewContext()
 
     // NEEDS_PORT: boolean occlusion query, transform feedback primitives written query, elapsed query
 
-    int maxTransformFeedbackAttribs = getIntParameter(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
-    ASSERT(maxTransformFeedbackAttribs >= 4);
-    m_boundTransformFeedbackBuffers.resize(maxTransformFeedbackAttribs);
+    m_maxTransformFeedbackSeparateAttribs = getUnsignedIntParameter(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
+    ASSERT(m_maxTransformFeedbackSeparateAttribs >= 4);
 
-    // NEEDS_PORT: set up default transform feedback object
+    m_defaultTransformFeedback = createTransformFeedback();
+    m_context->bindTransformFeedback(GraphicsContextGL::TRANSFORM_FEEDBACK, m_defaultTransformFeedback->object());
+    m_boundTransformFeedback = m_defaultTransformFeedback;
 
     m_boundIndexedUniformBuffers.resize(getIntParameter(GraphicsContextGL::MAX_UNIFORM_BUFFER_BINDINGS));
     m_uniformBufferOffsetAlignment = getIntParameter(GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT);
@@ -1785,11 +1785,18 @@ RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 
 void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* feedbackObject)
 {
-    if (isContextLostOrPending())
+    if (isContextLostOrPending() || !feedbackObject || feedbackObject->isDeleted() || !validateWebGLObject("deleteTransformFeedback", feedbackObject))
         return;
+    
+    ASSERT(feedbackObject != m_defaultTransformFeedback);
+    
+    if (feedbackObject->isActive()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "deleteTransformFeedback", "attempt to delete an active transform feedback object");
+        return;
+    }
 
     if (m_boundTransformFeedback == feedbackObject)
-        m_boundTransformFeedback = nullptr;
+        m_boundTransformFeedback = m_defaultTransformFeedback;
 
     deleteObject(feedbackObject);
 }
@@ -1817,16 +1824,64 @@ void WebGL2RenderingContext::bindTransformFeedback(GCGLenum target, WebGLTransfo
             return;
     }
 
-    m_context->bindTransformFeedback(target, objectOrZero(feedbackObject));
-    m_boundTransformFeedback = feedbackObject;
+    if (target != GraphicsContextGL::TRANSFORM_FEEDBACK) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindTransformFeedback", "target must be TRANSFORM_FEEDBACK");
+        return;
+    }
+    if (m_boundTransformFeedback->isActive() && !m_boundTransformFeedback->isPaused()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindTransformFeedback", "transform feedback is active and not paused");
+        return;
+    }
+
+    auto toBeBound = feedbackObject ? feedbackObject : m_defaultTransformFeedback.get();
+    m_context->bindTransformFeedback(target, toBeBound->object());
+    m_boundTransformFeedback = toBeBound;
+}
+
+static bool ValidateTransformFeedbackPrimitiveMode(GCGLenum mode)
+{
+    switch (mode) {
+    case GL_POINTS:
+    case GL_LINES:
+    case GL_TRIANGLES:
+        return true;
+    default:
+        return false;
+    }
 }
 
 void WebGL2RenderingContext::beginTransformFeedback(GCGLenum primitiveMode)
 {
     if (isContextLostOrPending())
         return;
+    
+    if (!ValidateTransformFeedbackPrimitiveMode(primitiveMode)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "beginTransformFeedback", "invalid transform feedback primitive mode");
+        return;
+    }
+    if (!m_currentProgram) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginTransformFeedback", "no program is active");
+        return;
+    }
+    if (m_boundTransformFeedback->isActive()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginTransformFeedback", "transform feedback is already active");
+        return;
+    }
+    int requiredBufferCount = m_currentProgram->requiredTransformFeedbackBufferCount();
+    if (!requiredBufferCount) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginTransformFeedback", "current active program does not specify any transform feedback varyings to record");
+        return;
+    }
+    if (!m_boundTransformFeedback->hasEnoughBuffers(requiredBufferCount)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginTransformFeedback", "not enough transform feedback buffers bound");
+        return;
+    }
 
     m_context->beginTransformFeedback(primitiveMode);
+
+    m_boundTransformFeedback->setProgram(*m_currentProgram);
+    m_boundTransformFeedback->setActive(true);
+    m_boundTransformFeedback->setPaused(false);
 }
 
 void WebGL2RenderingContext::endTransformFeedback()
@@ -1834,13 +1889,36 @@ void WebGL2RenderingContext::endTransformFeedback()
     if (isContextLostOrPending())
         return;
 
+    if (!m_boundTransformFeedback->isActive()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endTransformFeedback", "transform feedback is not active");
+        return;
+    }
+    
     m_context->endTransformFeedback();
+
+    m_boundTransformFeedback->setPaused(false);
+    m_boundTransformFeedback->setActive(false);
 }
 
 void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, const Vector<String>& varyings, GCGLenum bufferMode)
 {
-    if (isContextLostOrPending() || varyings.isEmpty() || !validateWebGLObject("transformFeedbackVaryings", &program))
+    if (isContextLostOrPending() || !validateWebGLObject("transformFeedbackVaryings", &program))
         return;
+    
+    switch (bufferMode) {
+    case GraphicsContextGL::SEPARATE_ATTRIBS:
+        if (varyings.size() > m_maxTransformFeedbackSeparateAttribs) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "transformFeedbackVaryings", "too many varyings");
+            return;
+        }
+        break;
+    case GraphicsContextGL::INTERLEAVED_ATTRIBS:
+        break;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "transformFeedbackVaryings", "invalid buffer mode");
+        return;
+    }
+    program.setRequiredTransformFeedbackBufferCount(bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? 1 : varyings.size());
 
     m_context->transformFeedbackVaryings(program.object(), varyings, bufferMode);
 }
@@ -1861,12 +1939,39 @@ RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebG
 
 void WebGL2RenderingContext::pauseTransformFeedback()
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] pauseTransformFeedback()");
+    if (isContextLostOrPending())
+        return;
+
+    if (!m_boundTransformFeedback->isActive()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "pauseTransformFeedback", "transform feedback is not active");
+        return;
+    }
+
+    if (m_boundTransformFeedback->isPaused()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "pauseTransformFeedback", "transform feedback is already paused");
+        return;
+    }
+
+    m_boundTransformFeedback->setPaused(true);
+    m_context->pauseTransformFeedback();
 }
 
 void WebGL2RenderingContext::resumeTransformFeedback()
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] resumeTransformFeedback()");
+    if (isContextLostOrPending())
+        return;
+
+    if (!m_boundTransformFeedback->validateProgramForResume(m_currentProgram.get())) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "resumeTransformFeedback", "the current program is not the same as when beginTransformFeedback was called");
+        return;
+    }
+    if (!m_boundTransformFeedback->isActive() || !m_boundTransformFeedback->isPaused()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "resumeTransformFeedback", "transform feedback is not active or not paused");
+        return;
+    }
+
+    m_boundTransformFeedback->setPaused(false);
+    m_context->resumeTransformFeedback();
 }
 
 bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
@@ -1879,7 +1984,7 @@ bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, G
 
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        if (index >= m_boundTransformFeedbackBuffers.size()) {
+        if (index > m_maxTransformFeedbackSeparateAttribs) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
             return false;
         }
@@ -1900,7 +2005,7 @@ bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, G
 
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        m_boundTransformFeedbackBuffers[index] = buffer;
+        m_boundTransformFeedback->setBoundIndexedTransformFeedbackBuffer(index, buffer);
         break;
     case GraphicsContextGL::UNIFORM_BUFFER:
         m_boundIndexedUniformBuffers[index] = buffer;
@@ -1938,12 +2043,15 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
         return nullptr;
 
     switch (target) {
-    case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
-        if (index >= m_boundTransformFeedbackBuffers.size()) {
+    case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING: {
+        WebGLBuffer* buffer;
+        bool success = m_boundTransformFeedback->getBoundIndexedTransformFeedbackBuffer(index, &buffer);
+        if (!success) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter", "index out of range");
             return nullptr;
         }
-        return m_boundTransformFeedbackBuffers[index];
+        return makeRefPtr(buffer);
+    }
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_SIZE:
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_START:
     case GraphicsContextGL::UNIFORM_BUFFER_SIZE:
@@ -1958,7 +2066,6 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             return nullptr;
         }
         return m_boundIndexedUniformBuffers[index];
-        return nullptr;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter", "invalid parameter name");
         return nullptr;
@@ -2484,6 +2591,11 @@ void WebGL2RenderingContext::hint(GCGLenum target, GCGLenum mode)
     m_context->hint(target, mode);
 }
 
+GCGLuint WebGL2RenderingContext::maxTransformFeedbackSeparateAttribs() const
+{
+    return m_maxTransformFeedbackSeparateAttribs;
+}
+
 GCGLenum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GCGLenum internalformat)
 {
     // Handles sized, unsized, and compressed internal formats.
@@ -2692,8 +2804,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
         return m_boundTransformFeedbackBuffer;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BINDING:
-        // FIXME: NEEDS_PORT: support default transform feedback object.
-        return m_boundTransformFeedback;
+        return m_boundTransformFeedback == m_defaultTransformFeedback ? nullptr : m_boundTransformFeedback;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_PAUSED:
         return getBooleanParameter(pname);
     case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
@@ -3022,10 +3133,7 @@ void WebGL2RenderingContext::uncacheDeletedBuffer(WebGLBuffer* buffer)
     REMOVE_BUFFER_FROM_BINDING(m_boundPixelUnpackBuffer);
     REMOVE_BUFFER_FROM_BINDING(m_boundTransformFeedbackBuffer);
     REMOVE_BUFFER_FROM_BINDING(m_boundUniformBuffer);
-
-    size_t index = m_boundTransformFeedbackBuffers.find(buffer);
-    if (index < m_boundTransformFeedbackBuffers.size())
-        m_boundTransformFeedbackBuffers[index] = nullptr;
+    m_boundTransformFeedback->unbindBuffer(*buffer);
 
     WebGLRenderingContextBase::uncacheDeletedBuffer(buffer);
 }

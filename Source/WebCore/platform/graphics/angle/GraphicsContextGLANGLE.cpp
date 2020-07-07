@@ -1929,7 +1929,10 @@ void GraphicsContextGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei cou
 
 void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
-    getExtensions().vertexAttribDivisor(index, divisor);
+    if (m_isForWebGL2)
+        gl::VertexAttribDivisor(index, divisor);
+    else
+        getExtensions().vertexAttribDivisor(index, divisor);
 }
 
 GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName)

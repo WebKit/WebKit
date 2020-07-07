@@ -1,3 +1,54 @@
+2020-07-06  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix transform feedback tests
+        https://bugs.webkit.org/show_bug.cgi?id=213906
+
+        Reviewed by Dean Jackson.
+
+        Fix transform feedback conformance tests by implementing missing functionality such as:
+         - Transform feedback object state tracking
+         - Validation for all GL errors that can affect state tracking before calling ANGLE
+         - Default transform feedback object
+         - Pause/resume
+         - Fix vertexAttribDivisor in WebGL 2 (unrelated to transform feedback)
+
+        After this, all related tests pass except for a few that also fail in Chrome, and one that uses
+        PIXEL_PACK_BUFFER which is not yet supported.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::~WebGL2RenderingContext):
+        (WebCore::WebGL2RenderingContext::initializeNewContext):
+        (WebCore::WebGL2RenderingContext::deleteTransformFeedback):
+        (WebCore::WebGL2RenderingContext::bindTransformFeedback):
+        (WebCore::ValidateTransformFeedbackPrimitiveMode):
+        (WebCore::WebGL2RenderingContext::beginTransformFeedback):
+        (WebCore::WebGL2RenderingContext::endTransformFeedback):
+        (WebCore::WebGL2RenderingContext::transformFeedbackVaryings):
+        (WebCore::WebGL2RenderingContext::pauseTransformFeedback):
+        (WebCore::WebGL2RenderingContext::resumeTransformFeedback):
+        (WebCore::WebGL2RenderingContext::setIndexedBufferBinding):
+        (WebCore::WebGL2RenderingContext::getIndexedParameter):
+        (WebCore::WebGL2RenderingContext::getMaxTransformFeedbackSeparateAttribs):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        (WebCore::WebGL2RenderingContext::uncacheDeletedBuffer):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheInfoIfNeeded):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLTransformFeedback.cpp:
+        (WebCore::WebGLTransformFeedback::create):
+        (WebCore::WebGLTransformFeedback::WebGLTransformFeedback):
+        (WebCore::WebGLTransformFeedback::setProgram):
+        (WebCore::WebGLTransformFeedback::setBoundIndexedTransformFeedbackBuffer):
+        (WebCore::WebGLTransformFeedback::getBoundIndexedTransformFeedbackBuffer):
+        (WebCore::WebGLTransformFeedback::hasEnoughBuffers const):
+        (WebCore::WebGLTransformFeedback::usesBuffer):
+        (WebCore::WebGLTransformFeedback::unbindBuffer):
+        (WebCore::WebGLTransformFeedback::validateProgramForResume const):
+        * html/canvas/WebGLTransformFeedback.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::vertexAttribDivisor):
+
 2020-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Locale-specific quotes infrastructure needs to compare locale strings properly

@@ -246,6 +246,7 @@ public:
 
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void hint(GCGLenum target, GCGLenum mode) final;
+    GCGLuint maxTransformFeedbackSeparateAttribs() const;
 
 private:
     WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
@@ -304,7 +305,7 @@ private:
 
     RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
     RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;
-    Vector<RefPtr<WebGLBuffer>> m_boundTransformFeedbackBuffers;
+    RefPtr<WebGLTransformFeedback> m_defaultTransformFeedback;
 
     RefPtr<WebGLBuffer> m_boundCopyReadBuffer;
     RefPtr<WebGLBuffer> m_boundCopyWriteBuffer;
@@ -324,6 +325,7 @@ private:
     GCGLint m_unpackImageHeight { 0 };
     GCGLint m_unpackSkipImages { 0 };
     GCGLint m_uniformBufferOffsetAlignment { 0 };
+    GCGLuint m_maxTransformFeedbackSeparateAttribs { 0 };
 };
 
 } // namespace WebCore
