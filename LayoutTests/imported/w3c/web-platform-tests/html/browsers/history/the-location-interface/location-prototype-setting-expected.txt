@@ -1,3 +1,0 @@
-
-PASS [[SetPrototypeOf]] on a location object should return false 
-

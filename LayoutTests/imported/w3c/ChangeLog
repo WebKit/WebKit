@@ -1,5 +1,16 @@
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop a couple of tests that failed to get removed during resync in r263856.
+
+        These tests were renamed and exist under slightly different names after r263856.
+
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-expected.txt: Removed.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting.html: Removed.
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub-expected.txt: Removed.
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub.html: Removed.
+
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/custom-elements from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214028
 
