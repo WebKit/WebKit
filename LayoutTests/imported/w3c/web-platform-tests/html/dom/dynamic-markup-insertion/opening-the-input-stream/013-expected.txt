@@ -1,3 +1,0 @@
-
-PASS Timeout after document.open in DOMContentLoaded event 
-

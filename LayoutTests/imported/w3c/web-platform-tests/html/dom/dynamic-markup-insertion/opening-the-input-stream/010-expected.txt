@@ -1,5 +1,0 @@
-#PID UNRESPONSIVE - WebKitTestRunner (pid 35312)
-FAIL: Timed out waiting for notifyDone to be called
-
-#EOF
-#EOF

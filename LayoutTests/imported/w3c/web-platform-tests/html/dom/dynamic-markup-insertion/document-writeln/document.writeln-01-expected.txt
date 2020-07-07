@@ -1,3 +1,0 @@
-
-PASS document.writeln in XHTML 
-

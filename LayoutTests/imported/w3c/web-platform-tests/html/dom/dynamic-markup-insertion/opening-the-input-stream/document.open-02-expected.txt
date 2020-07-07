@@ -1,4 +1,0 @@
-
-PASS document.open should redirect to window.open when called with three arguments 
-PASS document.open should throw when it has no window and is called with three arguments 
-

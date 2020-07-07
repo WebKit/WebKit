@@ -1,3 +1,0 @@
-
-PASS document.close in XHTML 
-

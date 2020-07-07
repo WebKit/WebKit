@@ -1,3 +1,0 @@
-
-PASS Cancelling error after document.open 
-

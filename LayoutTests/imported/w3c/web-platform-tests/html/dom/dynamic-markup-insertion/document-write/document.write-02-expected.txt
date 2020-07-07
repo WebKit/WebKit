@@ -1,5 +1,0 @@
-
-PASS Calling document.write with null and undefined 
-PASS document.write(null) 
-PASS document.write(undefined) 
-

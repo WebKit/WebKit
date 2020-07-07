@@ -1,4 +1,0 @@
-Filler TextFiller Text
-
-PASS document.write 
-

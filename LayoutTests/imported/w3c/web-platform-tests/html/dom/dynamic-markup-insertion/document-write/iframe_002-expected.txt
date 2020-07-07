@@ -1,4 +1,0 @@
-
-
-PASS document.write into iframe 
-

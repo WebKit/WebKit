@@ -1,3 +1,0 @@
-
-PASS document.write script writing a further script 
-

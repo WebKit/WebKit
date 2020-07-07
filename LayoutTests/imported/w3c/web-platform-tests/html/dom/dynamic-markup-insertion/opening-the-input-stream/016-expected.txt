@@ -1,6 +1,0 @@
-
-FAIL Timeout on original window, scope assert_equals: Global scope from original window timeout expected 1 but got 2
-PASS Timeout on original window, this object 
-FAIL Timeout on new window, scope assert_equals: Global scope from original window timeout expected 1 but got 2
-PASS Timeout on new window, this object 
-

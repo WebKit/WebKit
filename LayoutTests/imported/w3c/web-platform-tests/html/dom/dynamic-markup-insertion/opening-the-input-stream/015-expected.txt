@@ -1,5 +1,0 @@
-
-FAIL global scope unchanged assert_equals: expected 1 but got 2
-PASS window object changed 
-PASS this is the window object 
-
