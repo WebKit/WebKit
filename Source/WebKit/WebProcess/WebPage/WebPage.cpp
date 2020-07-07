@@ -5418,18 +5418,18 @@ void WebPage::hasMarkedText(CompletionHandler<void(bool)>&& completionHandler)
     completionHandler(m_page->focusController().focusedOrMainFrame().editor().hasComposition());
 }
 
-void WebPage::getMarkedRangeAsync(CallbackID callbackID)
+void WebPage::getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     auto editingRange = EditingRange::fromRange(frame, frame.editor().compositionRange().get());
-    send(Messages::WebPageProxy::EditingRangeCallback(editingRange, callbackID));
+    completionHandler(editingRange);
 }
 
-void WebPage::getSelectedRangeAsync(CallbackID callbackID)
+void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     auto editingRange = EditingRange::fromRange(frame, createLiveRange(frame.selection().selection().toNormalizedRange()).get());
-    send(Messages::WebPageProxy::EditingRangeCallback(editingRange, callbackID));
+    completionHandler(editingRange);
 }
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)

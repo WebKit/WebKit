@@ -4920,13 +4920,8 @@ void WebViewImpl::selectedRangeWithCompletionHandler(void(^completionHandlerPtr)
     auto completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "selectedRange");
-    m_page->getSelectedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
+    m_page->getSelectedRangeAsync([completionHandler](const EditingRange& editingRangeResult) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            LOG(TextInput, "    ...selectedRange failed.");
-            completionHandlerBlock(NSMakeRange(NSNotFound, 0));
-            return;
-        }
         NSRange result = editingRangeResult;
         if (result.location == NSNotFound)
             LOG(TextInput, "    -> selectedRange returned (NSNotFound, %llu)", result.length);
@@ -4941,13 +4936,8 @@ void WebViewImpl::markedRangeWithCompletionHandler(void(^completionHandlerPtr)(N
     auto completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "markedRange");
-    m_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
+    m_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            LOG(TextInput, "    ...markedRange failed.");
-            completionHandlerBlock(NSMakeRange(NSNotFound, 0));
-            return;
-        }
         NSRange result = editingRangeResult;
         if (result.location == NSNotFound)
             LOG(TextInput, "    -> markedRange returned (NSNotFound, %llu)", result.length);

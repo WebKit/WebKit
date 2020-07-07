@@ -1,3 +1,26 @@
+2020-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use sendWithAsyncReply instead of EditingRangeCallback
+        https://bugs.webkit.org/show_bug.cgi?id=214056
+
+        Reviewed by Chris Dumez.
+
+        No change in behavior.
+
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter initWithWebView:frameHandle:urlString:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::selectedRangeWithCompletionHandler):
+        (WebKit::WebViewImpl::markedRangeWithCompletionHandler):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::editingRangeCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-07-07  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow additional IOKit classes for Apple Silicon

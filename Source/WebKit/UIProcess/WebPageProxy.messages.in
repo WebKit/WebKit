@@ -165,7 +165,6 @@ messages -> WebPageProxy {
     ScriptValueCallback(IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details, WebKit::CallbackID callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin, WebKit::CallbackID callbackID)
     ValidateCommandCallback(String command, bool isEnabled, int32_t state, WebKit::CallbackID callbackID)
-    EditingRangeCallback(struct WebKit::EditingRange range, WebKit::CallbackID callbackID)
     UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
     RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
 #if ENABLE(APPLICATION_MANIFEST)

@@ -851,8 +851,8 @@ public:
     void setTextAsync(const String&);
     void insertTextAsync(const String& text, const EditingRange& replacementRange, InsertTextOptions&&);
     void hasMarkedText(CompletionHandler<void(bool)>&&);
-    void getMarkedRangeAsync(CallbackID);
-    void getSelectedRangeAsync(CallbackID);
+    void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
+    void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void characterIndexForPointAsync(const WebCore::IntPoint&, CallbackID);
     void firstRectForCharacterRangeAsync(const EditingRange&, CallbackID);
     void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const EditingRange& selectionRange, const EditingRange& replacementRange);

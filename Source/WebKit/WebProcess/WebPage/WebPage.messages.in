@@ -450,8 +450,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     InsertDictatedTextAsync(String text, struct WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives, struct WebKit::InsertTextOptions options)
 
     HasMarkedText() -> (bool hasMarkedText) Async
-    GetMarkedRangeAsync(WebKit::CallbackID callbackID)
-    GetSelectedRangeAsync(WebKit::CallbackID callbackID)
+    GetMarkedRangeAsync() -> (struct WebKit::EditingRange range) Async
+    GetSelectedRangeAsync() -> (struct WebKit::EditingRange range) Async
     CharacterIndexForPointAsync(WebCore::IntPoint point, WebKit::CallbackID callbackID);
     FirstRectForCharacterRangeAsync(struct WebKit::EditingRange range, WebKit::CallbackID callbackID);
     SetCompositionAsync(String text, Vector<WebCore::CompositionUnderline> underlines, Vector<WebCore::CompositionHighlight> highlights, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange)

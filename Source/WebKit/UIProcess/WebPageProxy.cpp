@@ -7161,20 +7161,6 @@ void WebPageProxy::unsignedCallback(uint64_t result, CallbackID callbackID)
     callback->performCallbackWithReturnValue(result);
 }
 
-void WebPageProxy::editingRangeCallback(const EditingRange& range, CallbackID callbackID)
-{
-    MESSAGE_CHECK(m_process, range.isValid());
-
-    auto callback = m_callbacks.take<EditingRangeCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        // this can validly happen if a load invalidated the callback, though
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(range);
-}
-
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     updateEditorState(editorState);
@@ -8749,26 +8735,24 @@ void WebPageProxy::hasMarkedText(CompletionHandler<void(bool)>&& callback)
     sendWithAsyncReply(Messages::WebPage::HasMarkedText(), WTFMove(callback));
 }
 
-void WebPageProxy::getMarkedRangeAsync(WTF::Function<void (EditingRange, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
-        callbackFunction(EditingRange(), CallbackBase::Error::Unknown);
+        callbackFunction(EditingRange());
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getMarkedRangeAsync"_s));
-    send(Messages::WebPage::GetMarkedRangeAsync(callbackID));
+    sendWithAsyncReply(Messages::WebPage::GetMarkedRangeAsync(), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::getSelectedRangeAsync(WTF::Function<void (EditingRange, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
-        callbackFunction(EditingRange(), CallbackBase::Error::Unknown);
+        callbackFunction(EditingRange());
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectedRangeAsync"_s));
-    send(Messages::WebPage::GetSelectedRangeAsync(callbackID));
+    sendWithAsyncReply(Messages::WebPage::GetSelectedRangeAsync(), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, WTF::Function<void (uint64_t, CallbackBase::Error)>&& callbackFunction)
