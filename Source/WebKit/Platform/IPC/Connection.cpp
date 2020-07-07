@@ -811,7 +811,7 @@ bool Connection::hasIncomingSyncMessage()
 
 void Connection::enableIncomingMessagesThrottling()
 {
-    if (m_incomingMessagesThrottler)
+    if (isIncomingMessagesThrottlingEnabled())
         return;
 
     m_incomingMessagesThrottler = makeUnique<MessagesThrottler>(*this, &Connection::dispatchIncomingMessages);
@@ -956,9 +956,9 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
         if (m_wasKilled)
             return;
 
-        if (m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
+        if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
             if (kill()) {
-                RELEASE_LOG_ERROR(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, killing the connection as the remote process seems to be misbehaving", this, maxPendingIncomingMessagesKillingThreshold);
+                RELEASE_LOG_FAULT(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, killing the connection as the remote process seems to be misbehaving", this, maxPendingIncomingMessagesKillingThreshold);
                 m_incomingMessages.clear();
             }
             return;
@@ -967,12 +967,12 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 
         m_incomingMessages.append(WTFMove(incomingMessage));
 
-        if (m_incomingMessagesThrottler && m_incomingMessages.size() != 1)
+        if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() != 1)
             return;
     }
 
     RunLoop::main().dispatch([protectedThis = makeRef(*this)]() mutable {
-        if (protectedThis->m_incomingMessagesThrottler)
+        if (protectedThis->isIncomingMessagesThrottlingEnabled())
             protectedThis->dispatchIncomingMessages();
         else
             protectedThis->dispatchOneIncomingMessage();

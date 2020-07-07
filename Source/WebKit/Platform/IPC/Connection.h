@@ -274,6 +274,8 @@ private:
     Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
     void platformInvalidate();
+
+    bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
     
     std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption>);
     

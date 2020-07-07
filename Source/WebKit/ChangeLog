@@ -1,3 +1,28 @@
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
+        WebContent process sometimes kills itself because it is receiving too much IPC from the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=214048
+        <rdar://problem/64844770>
+
+        Reviewed by Darin Adler.
+
+        There was logic in IPC::Connection::enqueueIncomingMessage() that would kill the XPC connection
+        if too many IPC messages had been queued without the main thread processing them. The intention
+        was to protect the UIProcess again a badly behavior WebProcess sending too much IPC and it would
+        in effect terminate that WebProcess. However, the logic would actually apply too ALL IPC
+        connections. In <rdar://problem/64844770>, we see that the WebProcess is stuck on a sync IPC and
+        thus not processing other incoming IPCs. The UIProcess is sending it a lot of IPC so the
+        WebProcess decides to kill its IPC connection, thus terminating itself, which does not make much
+        sense. To address the issue, we now enable to killing on too much IPC behavior only if IPC message
+        throttling is enabled for the IPC connection, which means it only impacts the UIProcess connections
+        to its WebProcesses.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::enableIncomingMessagesThrottling):
+        (IPC::Connection::enqueueIncomingMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::isIncomingMessagesThrottlingEnabled const):
+
 2020-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Unable to scroll elcomerico.pe page until the page finishes loading
