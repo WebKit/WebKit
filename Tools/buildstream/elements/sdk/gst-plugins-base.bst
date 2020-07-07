@@ -11,6 +11,9 @@ sources:
   path: patches/gst-plugins-base-0002-glupload-fix-segfault.patch
 - kind: patch
   path: patches/gst-plugins-base-0003-glbasefilter-add-support-for-changing-the-display.patch
+- kind: patch
+  path: patches/gst-plugins-base-0001-oggstream-Workaround-for-broken-PAR-in-VP8-BOS.patch
+
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:

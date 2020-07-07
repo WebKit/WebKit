@@ -1,3 +1,15 @@
+2020-07-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] OGV/VP8 video not playing on minibrowser (neither epiphany)
+        https://bugs.webkit.org/show_bug.cgi?id=205916
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * buildstream/elements/sdk/gst-plugins-base.bst: Vendor upstreamed GStreamer patch. It is
+        merged in the 1.16 branch and scheduled for 1.16.3 release but we don't know when/if it will
+        happen.
+        * buildstream/patches/gst-plugins-base-0001-oggstream-Workaround-for-broken-PAR-in-VP8-BOS.patch: Added.
+
 2020-07-07  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK][MiniBrowser] occasional crashes when closing while download in progress
