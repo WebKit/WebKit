@@ -1,3 +1,18 @@
+2020-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r262680): [GTK] Crash in WebKit::DropTarget::didPerformAction
+        https://bugs.webkit.org/show_bug.cgi?id=213885
+
+        Reviewed by Michael Catanzaro.
+
+        Just compare if new operation is the same as the current one, the == operator of Optional already takes care of
+        values being nullopt.
+
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::didPerformAction):
+        * UIProcess/API/gtk/DropTargetGtk4.cpp:
+        (WebKit::DropTarget::didPerformAction):
+
 2020-07-07  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         [Win] Implement Pasteboard::writeCustomData for Web Inspector Console tab

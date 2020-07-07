@@ -217,7 +217,7 @@ void DropTarget::didPerformAction()
     ASSERT(page);
 
     auto operation = page->currentDragOperation();
-    if ((!operation && !m_operation) || *operation == *m_operation)
+    if (operation == m_operation)
         return;
 
     m_operation = operation;
