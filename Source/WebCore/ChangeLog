@@ -1,3 +1,24 @@
+2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process sometimes crashes when translating an article on spiegel.de
+        https://bugs.webkit.org/show_bug.cgi?id=214014
+        <rdar://problem/65099253>
+
+        Reviewed by Tim Horton.
+
+        The crash happens because we try to make a BoundaryPoint (using `makeBoundaryPoint`) out of an orphaned
+        `Position` that is anchored before or after the anchor node (more specifically, either `PositionIsBeforeAnchor`
+        or `PositionIsAfterAnchor`). In `makeBoundaryPoint`, we'll avoid the early `WTF::nullopt` return since the
+        position is non-null, but then try to access the container node, which is null in this case because the anchor
+        node has been unparented.
+
+        Fix this by not attempting to observe orphaned DOM positions when extracting content for translation.
+
+        Test: TextManipulation.StartTextManipulationAvoidCrashWhenExtractingOrphanedPositions
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+
 2020-07-06  John Wilander  <wilander@apple.com>
 
         Follow-up to r263992: Make isKinjaLoginAvatarElement() a free function

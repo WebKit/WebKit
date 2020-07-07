@@ -1,3 +1,16 @@
+2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process sometimes crashes when translating an article on spiegel.de
+        https://bugs.webkit.org/show_bug.cgi?id=214014
+        <rdar://problem/65099253>
+
+        Reviewed by Tim Horton.
+
+        Add a test case that dynamically adds an `object` element, immediately removes it, and then adds a chunk of text
+        and verifies that the text manipulation delegate method for new content is invoked.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+
 2020-07-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         svn-apply should use verbose mode when adding files to git

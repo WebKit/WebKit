@@ -426,7 +426,7 @@ void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& un
 
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
 {
-    if (start.isNull() || end.isNull())
+    if (start.isNull() || end.isNull() || start.isOrphan() || end.isOrphan())
         return;
 
     auto document = makeRefPtr(start.document());

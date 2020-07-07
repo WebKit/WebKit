@@ -1050,6 +1050,44 @@ TEST(TextManipulation, StartTextManipulationExcludesTextRenderedAsIcons)
     EXPECT_FALSE(item.tokens[3].isExcluded);
 }
 
+TEST(TextManipulation, StartTextManipulationAvoidCrashWhenExtractingOrphanedPositions)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<p>hello world</p>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello world", items[0].tokens[0].content);
+
+    done = false;
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        done = true;
+    };
+
+    [webView objectByEvaluatingJavaScript:@"(() => {"
+        "    const objectElement = document.createElement('object');"
+        "    document.body.appendChild(objectElement);"
+        "    document.body.scrollTop;"
+        "    objectElement.remove();"
+        "    const text = document.createTextNode('testing');"
+        "    const container = document.createElement('div');"
+        "    container.appendChild(text);"
+        "    document.body.appendChild(container);"
+        "})();"];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;
