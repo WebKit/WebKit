@@ -1,3 +1,9 @@
+2020-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Rebaseline test for iOS after r263987.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+
 2020-07-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement user action spec for Escape action
