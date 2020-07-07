@@ -1,3 +1,17 @@
+2020-07-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK][MiniBrowser] occasional crashes when closing while download in progress
+        https://bugs.webkit.org/show_bug.cgi?id=214007
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove signal handlers from WebKitDownload when BrowserDownload is finalized,
+        WebKitDownload may emit a signal after the UI item has been destroyed which leads
+        to a crash.
+
+        * MiniBrowser/gtk/BrowserDownloadsBar.c:
+        (browserDownloadFinalize):
+
 2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web process sometimes crashes when translating an article on spiegel.de

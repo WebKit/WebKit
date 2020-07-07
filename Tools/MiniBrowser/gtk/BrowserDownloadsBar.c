@@ -127,6 +127,7 @@ static void browserDownloadFinalize(GObject *object)
     BrowserDownload *browserDownload = BROWSER_DOWNLOAD(object);
 
     if (browserDownload->download) {
+        g_signal_handlers_disconnect_by_data(browserDownload->download, browserDownload);
         g_object_unref(browserDownload->download);
         browserDownload->download = NULL;
     }
