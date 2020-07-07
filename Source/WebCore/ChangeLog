@@ -1,3 +1,19 @@
+2020-07-06  John Wilander  <wilander@apple.com>
+
+        Follow-up to r263992: Make isKinjaLoginAvatarElement() a free function
+        https://bugs.webkit.org/show_bug.cgi?id=214015
+        <rdar://problem/65153632>
+
+        Unreviewed follow-up to a quirk. Just changing
+        isKinjaLoginAvatarElement() from member to free function.
+
+        As requested in https://bugs.webkit.org/show_bug.cgi?id=213910#c10.
+
+        * page/Quirks.cpp:
+        (WebCore::isKinjaLoginAvatarElement):
+        (WebCore::Quirks::isKinjaLoginAvatarElement const): Deleted.
+        * page/Quirks.h:
+
 2020-07-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement user action spec for Escape action

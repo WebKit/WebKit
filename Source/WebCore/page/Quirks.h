@@ -116,10 +116,6 @@ private:
     bool isGoogleMaps() const;
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool isKinjaLoginAvatarElement(const Element&) const;
-#endif
-
     WeakPtr<Document> m_document;
 
     mutable Optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;

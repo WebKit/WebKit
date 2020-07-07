@@ -852,7 +852,7 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-bool Quirks::isKinjaLoginAvatarElement(const Element& element) const
+static bool isKinjaLoginAvatarElement(const Element& element)
 {
     // The click event handler has been found to trigger on a div or
     // span with these class names, or the svg, or the svg's path.
