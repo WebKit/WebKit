@@ -630,6 +630,15 @@ void AXIsolatedObject::setIsExpanded(bool value)
     });
 }
 
+bool AXIsolatedObject::performDismissAction()
+{
+    return Accessibility::retrieveValueFromMainThread<bool>([this] () -> bool {
+        if (auto* axObject = associatedAXObject())
+            return axObject->performDismissAction();
+        return false;
+    });
+}
+
 bool AXIsolatedObject::setValue(float value)
 {
     return Accessibility::retrieveValueFromMainThread<bool>([&value, this] () -> bool {

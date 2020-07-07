@@ -750,6 +750,7 @@ Bug(GTK) editing/spelling/markers.html [ Skip ]
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
+webkit.org/b/213874 accessibility/keyevents-posted-for-dismiss-action.html [ Skip ]
 
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 

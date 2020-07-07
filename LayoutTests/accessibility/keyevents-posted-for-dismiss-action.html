@@ -1,0 +1,32 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="alert">alert</div>
+
+<p id="description"></p>
+<div id="console"></div>
+     
+<script>
+    function handleKeyDown(event) {
+        debug("Keycode received: code: " + event.keyCode + " key name: " + event.key);
+        event.preventDefault();
+        event.stopPropagation();
+        finishJSTest();
+     }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        description("This test verifies that the dismiss action generates an escape key event.");
+
+        document.getElementById("alert").addEventListener('keydown', handleKeyDown);
+        accessibilityController.accessibleElementById("alert").dismiss();
+    }
+ </script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

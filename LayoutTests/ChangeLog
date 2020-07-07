@@ -1,3 +1,17 @@
+2020-07-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement user action spec for Escape action
+        https://bugs.webkit.org/show_bug.cgi?id=213875
+        <rdar://problem/65022980>
+
+        Reviewed by Darin Adler.
+
+        * accessibility/keyevents-posted-for-dismiss-action-expected.txt: Added.
+        * accessibility/keyevents-posted-for-dismiss-action.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Locale-specific quotes infrastructure needs to compare locale strings properly

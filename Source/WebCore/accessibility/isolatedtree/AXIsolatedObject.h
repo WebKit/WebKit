@@ -721,6 +721,7 @@ private:
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
     void increment() override { }
     void decrement() override { }
+    bool performDismissAction() override;
     void scrollToMakeVisible() const override { }
     void scrollToMakeVisibleWithSubFocus(const IntRect&) const override { }
     void scrollToGlobalPoint(const IntPoint&) const override { }

@@ -189,8 +189,10 @@ private:
     bool computeAccessibilityIsIgnored() const override;
     bool usesAltTagForTextComputation() const;
     bool roleIgnoresTitle() const;
-    void postKeyboardKeysForValueChange(bool increase);
+    bool postKeyboardKeysForValueChange(bool increase);
     void setNodeValue(bool increase, float value);
+    bool performDismissAction() final;
+    
     Node* m_node;
 };
 

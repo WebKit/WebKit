@@ -3470,6 +3470,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [self accessibilityPerformDecrementAction];
     else if ([action isEqualToString:NSAccessibilityScrollToVisibleAction])
         [self accessibilityScrollToVisible];
+    else if ([action isEqualToString:@"AXDismissAction"])
+        backingObject->performDismissAction();
 }
 
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string

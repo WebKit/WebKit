@@ -1,3 +1,31 @@
+2020-07-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement user action spec for Escape action
+        https://bugs.webkit.org/show_bug.cgi?id=213875
+        <rdar://problem/65022980>
+
+        Reviewed by Darin Adler.
+
+        Implement the Escape action for the user action events.
+        https://github.com/WICG/aom/blob/gh-pages/explainer.md#user-action-events-from-assistive-technology
+
+        Test: accessibility/keyevents-posted-for-dismiss-action.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::performEscape):
+        (WebCore::AccessibilityNodeObject::dispatchSimulatedKeyboardUpDownEvent):
+        (WebCore::AccessibilityNodeObject::postKeyboardKeysForValueChange):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPerformEscape]):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::performEscape):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPerformAction:]):
+
 2020-07-06  James Darpinian  <jdarpinian@chromium.org>
 
         Fix transform feedback tests

@@ -97,6 +97,7 @@ public:
     void decrement();
     void showMenu();
     void press();
+    void dismiss();
 
     // Attributes - platform-independent implementations
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);

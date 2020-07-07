@@ -907,7 +907,8 @@ public:
     virtual void makeRangeVisible(const PlainTextRange&) = 0;
     virtual bool press() = 0;
     virtual bool performDefaultAction() = 0;
-
+    virtual bool performDismissAction() { return false; }
+    
     virtual AccessibilityOrientation orientation() const = 0;
     virtual void increment() = 0;
     virtual void decrement() = 0;

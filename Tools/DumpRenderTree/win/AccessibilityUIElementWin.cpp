@@ -749,6 +749,10 @@ void AccessibilityUIElement::press()
     m_element->accDoDefaultAction(self());
 }
 
+void AccessibilityUIElement::dismiss()
+{
+}
+
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
     return { nullptr };

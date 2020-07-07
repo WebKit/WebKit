@@ -1827,6 +1827,13 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return nil;
 }
 
+- (BOOL)accessibilityPerformEscape
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    return self.axBackingObject->performDismissAction();
+}
+
 - (BOOL)_accessibilityActivate
 {
     if (![self _prepareAccessibilityCall])

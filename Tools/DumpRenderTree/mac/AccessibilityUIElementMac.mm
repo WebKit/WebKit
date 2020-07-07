@@ -1374,6 +1374,13 @@ void AccessibilityUIElement::setValue(JSStringRef valueText)
     END_AX_OBJC_EXCEPTIONS
 }
 
+void AccessibilityUIElement::dismiss()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilityPerformAction:@"AXDismissAction"];
+    END_AX_OBJC_EXCEPTIONS
+}
+
 void AccessibilityUIElement::increment()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

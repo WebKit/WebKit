@@ -1,3 +1,29 @@
+2020-07-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement user action spec for Escape action
+        https://bugs.webkit.org/show_bug.cgi?id=213875
+        <rdar://problem/65022980>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (dismissCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::dismiss):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::dismiss):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers):
+        (WTR::AccessibilityUIElement::dismiss):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::dismiss):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::dismiss):
+
 2020-07-06  Jonathan Bedard  <jbedard@apple.com>
 
         [test-webkitpy] Use platform architecture

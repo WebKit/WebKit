@@ -91,6 +91,7 @@ AccessibilityUIElement::AccessibilityUIElement(id element)
 - (NSString *)accessibilityTextualContext;
 - (BOOL)accessibilityHasPopup;
 - (NSString *)accessibilityPopupValue;
+- (BOOL)accessibilityPerformEscape;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -327,6 +328,11 @@ AccessibilityUIElement AccessibilityUIElement::rowAtIndex(unsigned index)
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
     return 0;
+}
+
+void AccessibilityUIElement::dismiss()
+{
+    [m_element accessibilityPerformEscape];
 }
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()

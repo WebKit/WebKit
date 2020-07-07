@@ -103,7 +103,7 @@ public:
     void decrement();
     void showMenu();
     void press();
-    bool dismiss();
+    void dismiss();
 #if PLATFORM(MAC)
     void syncPress();
     void asyncIncrement();
