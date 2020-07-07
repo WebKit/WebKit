@@ -1,3 +1,17 @@
+2020-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebProcess hangs when browsing GitHub
+        https://bugs.webkit.org/show_bug.cgi?id=213970
+
+        Reviewed by Sergio Villar Senin.
+
+        Use a lower priority for LayerFlushTimer and DisplayRefreshMonitorTimer. We were using a very high priority for
+        drawing with the idea of keeping a good rendering performance without being affected by other timers. The
+        problem is that animations can be controlled by timers, so we need to ensure that MainThreadSharedTimer has
+        higher priority than drawing.
+
+        * wtf/glib/RunLoopSourcePriority.h: Use 110 for LayerFlushTimer and DisplayRefreshMonitorTimer.
+
 2020-07-06  Geoffrey Garen  <ggaren@apple.com>
 
         callOnMainThread should use the same queue as RunLoop::dispatch
