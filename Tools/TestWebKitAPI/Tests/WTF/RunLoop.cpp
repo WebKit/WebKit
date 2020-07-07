@@ -97,6 +97,26 @@ TEST(WTF_RunLoop, DispatchCrossThreadWhileNested)
     Util::run(&done);
 }
 
+TEST(WTF_RunLoop, CallOnMainCrossThreadWhileNested)
+{
+    WTF::initializeMainThread();
+
+    bool done = false;
+
+    callOnMainThread([&done] {
+        Thread::create("CallOnMainCrossThread", [&done] {
+            callOnMainThread([&done] {
+                done = true;
+            });
+        });
+
+        Util::run(&done);
+    });
+    callOnMainThread([] { });
+
+    Util::run(&done);
+}
+
 class DerivedOneShotTimer : public RunLoop::Timer<DerivedOneShotTimer> {
 public:
     DerivedOneShotTimer(bool& testFinished)

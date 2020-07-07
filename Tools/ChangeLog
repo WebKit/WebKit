@@ -1,3 +1,18 @@
+2020-07-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Added a test for callOnMainThread
+        https://bugs.webkit.org/show_bug.cgi?id=214025
+
+        Reviewed by Sam Weinig.
+
+        This test failed prior to https://trac.webkit.org/changeset/263981.
+
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::TEST): Added a test demonstrating why a simple "is the
+        queue empty?" check doesn't work when you support both re-entrancy and
+        threads. While the main thread is sleeping in a nested RunLoop, a
+        secondary thread can see a non-empty queue.
+
 2020-07-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] OGV/VP8 video not playing on minibrowser (neither epiphany)
