@@ -1,3 +1,19 @@
+2020-07-07  Youenn Fablet  <youenn@apple.com>
+
+        Fix potential pixel buffer leak in ImageRotationSessionVT::rotate
+        https://bugs.webkit.org/show_bug.cgi?id=213922
+
+        Reviewed by Eric Carlson.
+
+        Fix a potential memory leak in an error case.
+        Add more logging to be able to see errors.
+        Remove the kCVPixelBufferIOSurfacePropertiesKey key on iOS from the buffer pool to revert
+        part of https://trac.webkit.org/changeset/258504/webkit that seems problematic in iOS.
+
+        * platform/graphics/cv/ImageRotationSessionVT.mm:
+        (WebCore::ImageRotationSessionVT::initialize):
+        (WebCore::ImageRotationSessionVT::rotate):
+
 2020-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Unable to scroll elcomerico.pe page until the page finishes loading

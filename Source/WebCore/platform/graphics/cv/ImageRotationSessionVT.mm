@@ -27,6 +27,7 @@
 #import "ImageRotationSessionVT.h"
 
 #import "AffineTransform.h"
+#import "Logging.h"
 #import "MediaSample.h"
 
 #import "CoreVideoSoftLink.h"
@@ -94,22 +95,35 @@ void ImageRotationSessionVT::initialize(const RotationProperties& rotation, Floa
         (__bridge NSString *)kCVPixelBufferHeightKey: @(m_rotatedSize.height()),
         (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(pixelFormat),
         (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: (cvImageCompatibility == IsCGImageCompatible::Yes ? @YES : @NO),
+#if PLATFORM(IOS_SIMULATOR) || PLATFORM(MAC)
         (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
+#endif
     };
     CVPixelBufferPoolRef rawPool = nullptr;
     if (auto err = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &rawPool); err != noErr)
-        LOG_ERROR("CVPixelBufferPool create returned error code %d", err);
+        RELEASE_LOG_ERROR(WebRTC, "ImageRotationSessionVT failed creating buffer pool with error %d", err);
     m_rotationPool = adoptCF(rawPool);
 }
 
 RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixelBuffer)
 {
+    RetainPtr<CVPixelBufferRef> result;
+
     CVPixelBufferRef rawRotatedBuffer = nullptr;
-    CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_rotationPool.get(), &rawRotatedBuffer);
-    auto status = VTImageRotationSessionTransferImage(m_rotationSession.get(), pixelBuffer, rawRotatedBuffer);
-    if (status == noErr)
-        return adoptCF(rawRotatedBuffer);
-    return nullptr;
+    auto status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_rotationPool.get(), &rawRotatedBuffer);
+    if (status != kCVReturnSuccess) {
+        RELEASE_LOG_ERROR(WebRTC, "ImageRotationSessionVT failed creating buffer from pool with error %d", status);
+        return nullptr;
+    }
+    result = adoptCF(rawRotatedBuffer);
+
+    status = VTImageRotationSessionTransferImage(m_rotationSession.get(), pixelBuffer, rawRotatedBuffer);
+    if (status != noErr) {
+        RELEASE_LOG_ERROR(WebRTC, "ImageRotationSessionVT failed rotating buffer with error %d", status);
+        return nullptr;
+    }
+
+    return result;
 }
 
 RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(MediaSample& sample, const RotationProperties& rotation, IsCGImageCompatible cvImageCompatibility)
