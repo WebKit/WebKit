@@ -1,3 +1,19 @@
+2020-07-07  Peng Liu  <peng.liu6@apple.com>
+
+        Function didCleanupFullscreencreen() should be called at the end of VideoFullscreenInterfaceAVKit::cleanupFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=214032
+
+        Reviewed by Eric Carlson.
+
+        VideoFullscreenManagerProxy::didCleanupFullscreen() may destroy an instance of VideoFullscreenInterfaceAVKit.
+        So we should not access member variables of VideoFullscreenInterfaceAVKit after calling didCleanupFullscreen()
+        in VideoFullscreenInterfaceAVKit::cleanupFullscreen().
+
+        Fix a flaky test crash: media/video-autoplay.html
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+
 2020-07-07  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> layout does not scale with Dynamic Type size changes

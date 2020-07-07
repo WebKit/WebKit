@@ -982,12 +982,12 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     m_videoView = nil;
     m_parentView = nil;
     m_parentWindow = nil;
-    
-    if (m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->didCleanupFullscreen();
 
     [playerController() setHasEnabledVideo:false];
     [playerController() setHasVideo:false];
+
+    if (m_fullscreenChangeObserver)
+        m_fullscreenChangeObserver->didCleanupFullscreen();
 }
 
 void VideoFullscreenInterfaceAVKit::invalidate()
