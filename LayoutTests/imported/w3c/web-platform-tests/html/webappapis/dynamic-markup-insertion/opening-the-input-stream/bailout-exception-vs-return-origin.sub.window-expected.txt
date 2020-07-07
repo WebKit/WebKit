@@ -1,8 +1,8 @@
 
 PASS document.open should throw an InvalidStateError with XML document even if it is cross-origin 
-FAIL document.open should throw an InvalidStateError when the throw-on-dynamic-markup-insertion counter is incremented even if the document is cross-origin assert_throws: opening a document when the throw-on-dynamic-markup-insertion counter is incremented should throw an InvalidStateError function "() => {
-        iframe.contentDocument.open();
-      }" threw object "SecurityError: The operation is insecure." that is not a DOMException InvalidStateError: property "code" is equal to 18, expected 11
+FAIL document.open should throw an InvalidStateError when the throw-on-dynamic-markup-insertion counter is incremented even if the document is cross-origin assert_throws_dom: opening a document when the throw-on-dynamic-markup-insertion counter is incremented should throw an InvalidStateError function "() => {
+          iframe.contentDocument.open();
+        }" threw object "SecurityError: The operation is insecure." that is not a DOMException InvalidStateError: property "code" is equal to 18, expected 11
 PASS document.open should throw a SecurityError with cross-origin document even when there is an active parser executing script 
 PASS document.open should throw a SecurityError with cross-origin document even when the ignore-opens-during-unload counter is greater than 0 (during beforeunload event) 
 PASS document.open should throw a SecurityError with cross-origin document even when the ignore-opens-during-unload counter is greater than 0 (during pagehide event) 

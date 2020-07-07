@@ -1,3 +1,3 @@
 
-FAIL [[CanBlock]] in a DedicatedWorkerGlobalScope Can't find variable: SharedArrayBuffer
+FAIL [[CanBlock]] in a DedicatedWorkerGlobalScope Can't find variable: Atomics
 

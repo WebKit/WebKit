@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected keyword 'import'
+
+FAIL document.write in an imported module assert_true: documentWriteDone event was not sent expected true got false
+

@@ -1,0 +1,3 @@
+
+FAIL async document.write in a module assert_equals: expected "Initial body contents\n" but got "document.write body contents\n"
+

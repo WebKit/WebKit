@@ -1,5 +1,17 @@
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/html/webappapis from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214049
+
+        Reviewed by Darin Adler.
+
+        Resync web-platform-tests/html/webappapis from upstream 145839c323ba1ec8b.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/webappapis/*: Updated.
+
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop tests from web-platform-tests/html/dom/dynamic-markup-insertion.
 
         Those tests were moved upstream to html/webappapis/dynamic-markup-insertion/ and should have

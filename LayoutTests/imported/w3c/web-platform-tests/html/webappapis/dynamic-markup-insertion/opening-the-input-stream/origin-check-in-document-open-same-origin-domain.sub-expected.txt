@@ -1,8 +1,8 @@
 
-FAIL It should not be possible to open same origin-domain (but not same origin) documents. assert_throws: Opening a same origin-domain (but not same origin) document doesn't throw. function "function open() {
+FAIL It should not be possible to open same origin-domain (but not same origin) documents. assert_throws_dom: Opening a same origin-domain (but not same origin) document doesn't throw. function "function open() {
     [native code]
 }" did not throw
-FAIL It should not be possible to implicitly open same origin-domain (but not same origin) documents. assert_throws: Implicitly opening a same origin-domain (but not same origin) document doesn't throw. function "function write() {
+FAIL It should not be possible to implicitly open same origin-domain (but not same origin) documents. assert_throws_dom: Implicitly opening a same origin-domain (but not same origin) document doesn't throw. function "function write() {
     [native code]
 }" did not throw
 

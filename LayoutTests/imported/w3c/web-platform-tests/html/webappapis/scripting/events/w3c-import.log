@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-onresize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-removal.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-sourcetext.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/eventhandler-cancellation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering.html

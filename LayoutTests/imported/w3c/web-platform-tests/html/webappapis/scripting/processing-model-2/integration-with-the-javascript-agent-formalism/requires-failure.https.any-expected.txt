@@ -1,3 +1,7 @@
 
-FAIL [[CanBlock]] in a Window Can't find variable: SharedArrayBuffer
+FAIL [[CanBlock]] in a Window assert_throws_js: function "() => {
+    Atomics.wait(ta, 0, 0, 10);
+  }" threw object "ReferenceError: Can't find variable: Atomics" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

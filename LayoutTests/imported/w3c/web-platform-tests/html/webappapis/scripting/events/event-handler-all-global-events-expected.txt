@@ -307,22 +307,22 @@ PASS onwaiting: dispatching an Event at a <meta> element must trigger element.on
 FAIL onwebkitanimationend: must be on the appropriate locations for GlobalEventHandlers assert_true: HTMLElement has an own property named "onwebkitanimationend" expected true got false
 PASS onwebkitanimationend: the default value must be null 
 PASS onwebkitanimationend: the content attribute must be compiled into a function as the corresponding property 
-FAIL onwebkitanimationend: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS onwebkitanimationend: the content attribute must execute when an event is dispatched 
 PASS onwebkitanimationend: dispatching an Event at a <meta> element must trigger element.onwebkitanimationend 
 FAIL onwebkitanimationiteration: must be on the appropriate locations for GlobalEventHandlers assert_true: HTMLElement has an own property named "onwebkitanimationiteration" expected true got false
 PASS onwebkitanimationiteration: the default value must be null 
 PASS onwebkitanimationiteration: the content attribute must be compiled into a function as the corresponding property 
-FAIL onwebkitanimationiteration: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS onwebkitanimationiteration: the content attribute must execute when an event is dispatched 
 PASS onwebkitanimationiteration: dispatching an Event at a <meta> element must trigger element.onwebkitanimationiteration 
 FAIL onwebkitanimationstart: must be on the appropriate locations for GlobalEventHandlers assert_true: HTMLElement has an own property named "onwebkitanimationstart" expected true got false
 PASS onwebkitanimationstart: the default value must be null 
 PASS onwebkitanimationstart: the content attribute must be compiled into a function as the corresponding property 
-FAIL onwebkitanimationstart: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS onwebkitanimationstart: the content attribute must execute when an event is dispatched 
 PASS onwebkitanimationstart: dispatching an Event at a <meta> element must trigger element.onwebkitanimationstart 
 FAIL onwebkittransitionend: must be on the appropriate locations for GlobalEventHandlers assert_true: HTMLElement has an own property named "onwebkittransitionend" expected true got false
 PASS onwebkittransitionend: the default value must be null 
 PASS onwebkittransitionend: the content attribute must be compiled into a function as the corresponding property 
-FAIL onwebkittransitionend: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS onwebkittransitionend: the content attribute must execute when an event is dispatched 
 PASS onwebkittransitionend: dispatching an Event at a <meta> element must trigger element.onwebkittransitionend 
 PASS onwheel: must be on the appropriate locations for GlobalEventHandlers 
 PASS onwheel: the default value must be null 
