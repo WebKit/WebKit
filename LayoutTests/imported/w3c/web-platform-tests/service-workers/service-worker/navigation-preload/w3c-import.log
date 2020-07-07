@@ -22,3 +22,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/redirect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resource-timing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/samesite-cookies.https.html

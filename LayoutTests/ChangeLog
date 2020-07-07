@@ -1,5 +1,14 @@
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/service-workers from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214052
+
+        Reviewed by Geoff Garen.
+
+        * tests-options.json:
+
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark one of the imported WPT webaudio tests as flaky.
 
         The test is failing and printing out information that is hardware specific.

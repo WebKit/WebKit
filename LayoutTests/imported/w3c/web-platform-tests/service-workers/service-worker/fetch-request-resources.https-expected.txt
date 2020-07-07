@@ -1,4 +1,6 @@
 
+Harness Error (FAIL), message = Unhandled rejection: FetchEvent.respondWith received an error: undefined
+
 PASS Verify FetchEvent for resources. 
 PASS Image load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test1 cross_origin:) 
 PASS Image load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test2 cross_origin:) 
@@ -21,8 +23,8 @@ PASS CSS load (url:https://localhost:9443/service-workers/service-worker/resourc
 PASS CSS load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test19 cross_origin:) 
 PASS CSS load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test20 cross_origin:anonymous) 
 PASS CSS load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test21 cross_origin:use-credentials) 
-FAIL FontFace load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test22) assert_equals: mode of FontFace load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test22) must be cors. expected "cors" but got "no-cors"
-FAIL FontFace load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test23) assert_equals: mode of FontFace load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test23) must be cors. expected "cors" but got "no-cors"
+FAIL FontFace load (url: https://localhost:9443/service-workers/service-worker/resources/dummy?test22) assert_equals: mode of must be cors. expected "cors" but got "no-cors"
+FAIL FontFace load (url: https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test23) assert_equals: mode of must be cors. expected "cors" but got "no-cors"
 PASS Script load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test24) 
 PASS Script load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test25) 
 PASS Script load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test26) 
@@ -35,21 +37,21 @@ PASS CSS load (url:https://localhost:9443/service-workers/service-worker/resourc
 PASS CSS load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test33) 
 PASS CSS load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test34) 
 PASS CSS load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test35) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test36 mode:same-origin credentials:omit) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test37 mode:same-origin credentials:same-origin) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test38 mode:same-origin credentials:include) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test39 mode:no-cors credentials:omit) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test40 mode:no-cors credentials:same-origin) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test41 mode:no-cors credentials:include) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test42 mode:cors credentials:omit) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test43 mode:cors credentials:same-origin) 
-PASS fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test44 mode:cors credentials:include) 
-PASS fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test45 mode:no-cors credentials:omit) 
-PASS fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test46 mode:no-cors credentials:same-origin) 
-PASS fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test47 mode:no-cors credentials:include) 
-PASS fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test48 mode:cors credentials:omit) 
-PASS fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test49 mode:cors credentials:same-origin) 
-PASS fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test50 mode:cors credentials:include) 
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test36 mode:same-origin credentials:omit) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test36 mode:same-origin credentials:omit) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test37 mode:same-origin credentials:same-origin) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test37 mode:same-origin credentials:same-origin) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test38 mode:same-origin credentials:include) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test38 mode:same-origin credentials:include) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test39 mode:no-cors credentials:omit) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test39 mode:no-cors credentials:omit) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test40 mode:no-cors credentials:same-origin) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test40 mode:no-cors credentials:same-origin) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test41 mode:no-cors credentials:include) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test41 mode:no-cors credentials:include) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test42 mode:cors credentials:omit) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test42 mode:cors credentials:omit) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test43 mode:cors credentials:same-origin) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test43 mode:cors credentials:same-origin) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test44 mode:cors credentials:include) assert_equals: destination of fetch (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test44 mode:cors credentials:include) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test45 mode:no-cors credentials:omit) assert_equals: destination of fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test45 mode:no-cors credentials:omit) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test46 mode:no-cors credentials:same-origin) assert_equals: destination of fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test46 mode:no-cors credentials:same-origin) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test47 mode:no-cors credentials:include) assert_equals: destination of fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test47 mode:no-cors credentials:include) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test48 mode:cors credentials:omit) assert_equals: destination of fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test48 mode:cors credentials:omit) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test49 mode:cors credentials:same-origin) assert_equals: destination of fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test49 mode:cors credentials:same-origin) must be empty. expected "empty" but got ""
+FAIL fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test50 mode:cors credentials:include) assert_equals: destination of fetch (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test50 mode:cors credentials:include) must be empty. expected "empty" but got ""
 PASS Audio load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test51 cross_origin:) 
 PASS Audio load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test52 cross_origin:anonymous) 
 PASS Audio load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test53 cross_origin:use-credentials) 

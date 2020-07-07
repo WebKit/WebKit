@@ -4,5 +4,7 @@ FAIL requests for EMBED elements of embedded HTML content should not be intercep
 FAIL requests for OBJECT elements of embedded HTML content should not be intercepted by service workers assert_equals: expected "request for embedded content was not intercepted" but got "request for embedded content was intercepted by service worker"
 FAIL requests for EMBED elements of an image should not be intercepted by service workers assert_equals: expected "request was not intercepted" but got "FAIL: request was intercepted"
 FAIL requests for OBJECT elements of an image should not be intercepted by service workers assert_equals: expected "request was not intercepted" but got "FAIL: request was intercepted"
+FAIL post-load navigation of OBJECT elements should not be intercepted by service workers assert_equals: expected "request for embedded content was not intercepted" but got "request for embedded content was intercepted by service worker"
+FAIL post-load navigation of EMBED elements should not be intercepted by service workers assert_equals: expected "request for embedded content was not intercepted" but got "request for embedded content was intercepted by service worker"
 PASS restore global state 
 

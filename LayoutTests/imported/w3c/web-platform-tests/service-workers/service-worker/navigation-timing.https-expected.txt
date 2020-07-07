@@ -1,5 +1,5 @@
 
-FAIL Service worker controlled navigation timing assert_unreached: unexpected rejection: undefined is not an object (evaluating 'timing[timingEventOrder[i]]') Reached unreachable code
+FAIL Service worker controlled navigation timing assert_unreached: unexpected rejection: undefined is not an object (evaluating 'timing.workerStart') Reached unreachable code
 FAIL Service worker controlled navigation timing network fallback assert_unreached: unexpected rejection: undefined is not an object (evaluating 'timing[timingEventOrder[i]]') Reached unreachable code
 FAIL Service worker controlled navigation timing redirect assert_unreached: unexpected rejection: undefined is not an object (evaluating 'timing[timingEventOrder[i]]') Reached unreachable code
 

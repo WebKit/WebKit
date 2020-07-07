@@ -1,3 +1,3 @@
 
-FAIL The response from service worker should be correctly MIME siniffed. assert_equals: expected "test" but got "<!DOCTYPE html>\n<h1 id='testid'>test</h1>"
+PASS The response from service worker should be correctly MIME siniffed. 
 

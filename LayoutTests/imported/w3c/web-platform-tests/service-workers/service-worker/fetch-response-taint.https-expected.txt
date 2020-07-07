@@ -9,18 +9,32 @@ PASS fetching url:"https://localhost:9443/service-workers/service-worker/resourc
 PASS fetching url:"https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"no-cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?" mode:"cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=*" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=*" mode:"cors" credentials:"same-origin" should succeed. 
-PASS url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=*" mode:"cors" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=*" mode:"cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://localhost:9443&ACACredentials=true" mode:"cors" credentials:"include" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should succeed. 
@@ -31,9 +45,15 @@ PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2F
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"include" should succeed. 
@@ -49,51 +69,117 @@ PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2F
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"no-cors" credentials:"include" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=same-origin&" mode:"cors" credentials:"include" should succeed. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"include" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"omit" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"same-origin" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"include" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"omit" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"include" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"include" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"include" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"include" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"no-cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=same-origin&credentials=omit&" mode:"cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"no-cors" credentials:"include" should succeed. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"omit" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. 
-PASS url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"include" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"no-cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3F&mode=no-cors&credentials=omit&" mode:"cors" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. assert_unreached: Should have rejected: undefined Reached unreachable code
@@ -103,9 +189,15 @@ PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2F
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3D*&mode=cors&credentials=omit&" mode:"no-cors" credentials:"include" should succeed. 
@@ -121,9 +213,15 @@ PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2F
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://localhost:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"cors" credentials:"include" should succeed. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"same-origin" credentials:"omit" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"same-origin" credentials:"same-origin" should fail. 
-PASS url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"same-origin" credentials:"include" should fail. 
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"same-origin" credentials:"omit" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"same-origin" credentials:"same-origin" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"same-origin" credentials:"include" should fail. promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cross origin requests are not allowed when using same-origin fetch mode." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"no-cors" credentials:"omit" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"no-cors" credentials:"same-origin" should succeed. 
 PASS fetching url:"https://127.0.0.1:9443/?url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue&mode=cors&credentials=include&" mode:"no-cors" credentials:"include" should succeed. 

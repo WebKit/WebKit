@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/idlharness.https.any.js

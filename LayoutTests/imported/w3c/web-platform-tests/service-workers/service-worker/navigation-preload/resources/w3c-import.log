@@ -18,10 +18,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/broken-chunked-encoding-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/chunked-encoding-scope.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/chunked-encoding-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/empty-preload-response-body-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/empty-preload-response-body-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/get-state-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/navigation-preload-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-redirected.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-scope.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-worker.js

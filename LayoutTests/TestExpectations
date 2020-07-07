@@ -236,10 +236,6 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https
 # Per specification, if the scripts are identical, we do not install the new script and return the existing registration.
 imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-redirect.https.html [ Skip ]
 
-# This test is a flaky timeout because 2 of its subtests are wrong and don't match the behavior of any browser.
-# The 2 bad subtests were edited out of http/wpt/service-workers/ready.https.html.
-imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Skip ]
-
 # This test is timing out in all browsers.
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-frozen.https.html [ Skip ]
 
@@ -530,7 +526,6 @@ imported/w3c/web-platform-tests/subresource-integrity [ DumpJSConsoleLogInStdErr
 
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-order.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Slow ]
-[ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/multiple-update.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Slow ]

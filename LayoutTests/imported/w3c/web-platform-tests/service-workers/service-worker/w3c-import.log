@@ -46,6 +46,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-load.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-reload.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/controller-with-no-fetch-event-handler.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/data-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/data-transfer-files.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/detached-context.https.html
@@ -66,6 +68,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-add-async.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-after-navigation-within-page.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-handled.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-is-history-backward-navigation-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-is-history-forward-navigation-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-is-reload-iframe-navigation-manual.https.html
@@ -94,7 +97,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-css-cross-origin.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-fallback.https.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-html-imports.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-resources.https.html
@@ -117,8 +119,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/indexeddb.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/install-event-type.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-window.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/interface-requirements-sw.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/invalid-blobtype.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/invalid-header.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/iso-latin1-header.https.html
@@ -132,9 +133,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/onactivate-script-error.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/oninstall-script-error.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/opaque-response-preloaded.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/opaque-script.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-blob-url.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-from-waiting-serviceworker.https.html
@@ -142,7 +145,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-to-client-message-queue.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-to-client.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/referer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/referrer-policy-header.https.html
@@ -187,6 +190,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/synced-state.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/uncontrolled-page.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister-controller.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-during-extendable-events.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/unregister.https.html

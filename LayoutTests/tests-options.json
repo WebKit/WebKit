@@ -2399,6 +2399,9 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-order.https.html": [
         "slow"
     ],
@@ -2441,10 +2444,16 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/interface-requirements-sw.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-window.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/local-url-inherit-controller.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/samesite-cookies.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html": [
@@ -2460,6 +2469,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html": [
@@ -2478,6 +2490,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html": [

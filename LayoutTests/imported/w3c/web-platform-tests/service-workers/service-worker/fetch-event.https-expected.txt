@@ -19,6 +19,7 @@ FAIL Service Worker responds to fetch event with the correct cache types assert_
 PASS Service Worker should intercept EventSource 
 PASS Service Worker responds to fetch event with the correct integrity_metadata 
 PASS FetchEvent#body is a string 
+FAIL FetchEvent#body is a ReadableStream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextEncoderStream"
 PASS FetchEvent#body is a string and is passed to network fallback 
 PASS FetchEvent#body is a blob 
 PASS FetchEvent#body is a blob and is passed to network fallback 
