@@ -1,3 +1,22 @@
+2020-07-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        svn-apply should use verbose mode when adding files to git
+        https://bugs.webkit.org/show_bug.cgi?id=214022
+
+        Reviewed by Darin Adler.
+
+        If a patch contains several copy or add operations it can happen that there is
+        no output for more than 600 seconds meanwhile the tool is applying the patch.
+        This can cause a fatal error on the EWS. Pass the verbose flag to git,
+        so it outputs the name of the file after adding it to the index.
+        This is consequent how "svn add" works by default (it outputs the name of the file),
+        or how "git rm" works (it also outputs the name of the file by default as well).
+
+        * Scripts/svn-apply:
+        (scmCopy):
+        (scmAdd):
+        (scmCommitQueueAdded):
+
 2020-07-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement user action spec for Escape action

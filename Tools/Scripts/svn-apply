@@ -468,7 +468,7 @@ sub scmCopy($$)
         system("svn", "copy", $escapedSource, $escapedDestination) == 0 or die "Failed to svn copy $escapedSource $escapedDestination.";
     } elsif (isGit()) {
         copy($source, $destination) or die "Failed to copy $source $destination.";
-        system("git", "add", $destination) == 0 or die "Failed to git add $destination.";
+        system("git", "add", "-v", $destination) == 0 or die "Failed to git add $destination.";
     }
 }
 
@@ -479,7 +479,7 @@ sub scmAdd($)
         my $escapedPath = escapeSubversionPath($path);
         system("svn", "add", $escapedPath) == 0 or die "Failed to svn add $escapedPath.";
     } elsif (isGit()) {
-        system("git", "add", $path) == 0 or die "Failed to git add $path.";
+        system("git", "add", "-v", $path) == 0 or die "Failed to git add $path.";
     }
 }
 
@@ -526,7 +526,7 @@ sub scmCommitQueueAdded()
     if (isSVN()) {
         @cmdBase = ("svn", "add")
     } elsif (isGit()) {
-        @cmdBase = ("git", "add")
+        @cmdBase = ("git", "add", "-v")
     }
 
     # When we are handling a very large patch (more than 1000 files modified)
