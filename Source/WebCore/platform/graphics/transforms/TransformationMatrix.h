@@ -279,7 +279,7 @@ public:
     // Returns a transformation that maps a rect to a rect.
     WEBCORE_EXPORT static TransformationMatrix rectToRect(const FloatRect&, const FloatRect&);
 
-    bool isInvertible() const; // If you call this this, you're probably doing it wrong.
+    WEBCORE_EXPORT bool isInvertible() const;
     WEBCORE_EXPORT Optional<TransformationMatrix> inverse() const;
 
     // Decompose the matrix into its component parts.

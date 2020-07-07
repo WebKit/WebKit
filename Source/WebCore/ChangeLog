@@ -1,3 +1,25 @@
+2020-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Unable to scroll elcomerico.pe page until the page finishes loading
+        https://bugs.webkit.org/show_bug.cgi?id=214027
+        <rdar://problem/64646259>
+
+        Reviewed by Antti Koivisto.
+        
+        <https://elcomercio.pe/mundo/eeuu/que-visas-para-estados-unidos-fueron-suspendidas-por-orden-de-donald-trump-hasta-fin-de-ano-y-a-quien-afecta-la-medida-noticia/>
+        had a scaleX(0) element as an ancestor of an overflow:scroll. The CALayer hit-testing code failed to take
+        non-invertible transforms into account, causing the overflow:scroll to intercept scrolling events.
+
+        Fix by explicitly testing for non-invertible transforms, and, when found, bailing from the
+        sublayer walk. A non-invertible layer transform makes all its descendants non hit-testable.
+
+        Tests: fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html
+               fast/scrolling/mac/non-invertible-transform-hit-testing.html
+
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+        (collectDescendantLayersAtPoint):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2020-07-07  Peng Liu  <peng.liu6@apple.com>
 
         Function didCleanupFullscreencreen() should be called at the end of VideoFullscreenInterfaceAVKit::cleanupFullscreen()

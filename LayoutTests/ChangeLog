@@ -1,3 +1,18 @@
+2020-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Unable to scroll elcomerico.pe page until the page finishes loading
+        https://bugs.webkit.org/show_bug.cgi?id=214027
+        <rdar://problem/64646259>
+
+        Reviewed by Antti Koivisto.
+
+        macOS and iOS tests with non-invertible transforms.
+
+        * fast/scrolling/ios/non-invertible-transformed-scroller-ancestor-expected.txt: Added.
+        * fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html: Added.
+        * fast/scrolling/mac/non-invertible-transform-hit-testing-expected.txt: Added.
+        * fast/scrolling/mac/non-invertible-transform-hit-testing.html: Added.
+
 2020-07-07  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> layout does not scale with Dynamic Type size changes

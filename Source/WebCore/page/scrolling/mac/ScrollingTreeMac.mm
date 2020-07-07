@@ -89,6 +89,10 @@ static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPo
         if ([[layer animationKeys] count])
             layerWithResolvedAnimations = [layer presentationLayer];
 
+        auto transform = TransformationMatrix { [layerWithResolvedAnimations transform] };
+        if (!transform.isInvertible())
+            continue;
+
         CGPoint subviewPoint = [layerWithResolvedAnimations convertPoint:point fromLayer:parent];
 
         auto handlesEvent = [&] {

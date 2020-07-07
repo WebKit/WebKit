@@ -35,6 +35,7 @@
 #import "WKDeferringGestureRecognizer.h"
 #import "WKDrawingView.h"
 #import <WebCore/Region.h>
+#import <WebCore/TransformationMatrix.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
@@ -47,6 +48,10 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
 
     for (UIView *view in [parent subviews]) {
         CGPoint subviewPoint = [view convertPoint:point fromView:parent];
+
+        auto transform = WebCore::TransformationMatrix { [view.layer transform] };
+        if (!transform.isInvertible())
+            continue;
 
         auto handlesEvent = [&] {
             // FIXME: isUserInteractionEnabled is mostly redundant with event regions for web content layers.

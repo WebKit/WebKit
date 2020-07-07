@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .scale0 {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            transform: scaleX(0);
+        }
+        
+        #scroller {
+            width: 200px;
+            height: 200px;
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+        
+        .contents {
+            height: 300%;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var windowScrollTop;
+        var overflowScrollTop;
+        
+        window.addEventListener('load', async () => {
+            description('An overflow scrolling inside a scale(0) layer should not hit-test');
+
+            await UIHelper.immediateScrollElementAtContentPointToOffset(20, 20, 0, 100);
+
+            windowScrollTop = document.scrollingElement.scrollTop;
+            overflowScrollTop = scroller.scrollTop;
+
+            shouldBe('windowScrollTop > 0', 'true');
+            shouldBe('overflowScrollTop', '0');
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scale0">
+        <div id="scroller">
+            <div class="contents"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

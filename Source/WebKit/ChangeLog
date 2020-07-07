@@ -1,3 +1,18 @@
+2020-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Unable to scroll elcomerico.pe page until the page finishes loading
+        https://bugs.webkit.org/show_bug.cgi?id=214027
+        <rdar://problem/64646259>
+
+        Reviewed by Antti Koivisto.
+
+        The same issue with non-invertible transforms existed on iOS. r248015 attempted to
+        fix some instances of this, but failed to take into account the fact that a non-invertible
+        transfrom should also prevent hit-testing of descendant views.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+
 2020-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Add WebCoreNSURLSession SPI to send HTTP/2 ping
