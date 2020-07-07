@@ -1,0 +1,24 @@
+
+FAIL alt on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL alt on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL src on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL src on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL srcset on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL srcset on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL sizes on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL sizes on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL crossOrigin on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL crossOrigin on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL useMap on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL useMap on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL isMap on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL isMap on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL width on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL width on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL height on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL height on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL referrerPolicy on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL referrerPolicy on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL decoding on HTMLImageElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL decoding on HTMLImageElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

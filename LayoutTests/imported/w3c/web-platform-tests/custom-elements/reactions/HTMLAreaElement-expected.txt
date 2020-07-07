@@ -1,0 +1,19 @@
+ 
+
+FAIL alt on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL alt on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL coords on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL coords on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL shape on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL shape on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL target on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL target on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL download on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL download on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL ping on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL ping on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL rel on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL rel on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL referrerPolicy on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL referrerPolicy on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

@@ -1,0 +1,10 @@
+
+FAIL src on HTMLEmbedElement must enqueue an attributeChanged reaction when adding src content attribute The superclass is not a constructor.
+FAIL src on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL type on HTMLEmbedElement must enqueue an attributeChanged reaction when adding type content attribute The superclass is not a constructor.
+FAIL type on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL width on HTMLEmbedElement must enqueue an attributeChanged reaction when adding width content attribute The superclass is not a constructor.
+FAIL width on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL height on HTMLEmbedElement must enqueue an attributeChanged reaction when adding height content attribute The superclass is not a constructor.
+FAIL height on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

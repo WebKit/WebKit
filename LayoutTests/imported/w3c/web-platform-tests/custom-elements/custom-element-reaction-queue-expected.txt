@@ -1,5 +1,6 @@
 
 PASS Upgrading a custom element must invoke attributeChangedCallback and connectedCallback before start upgrading another element 
+PASS Upgrading a custom element must not invoke attributeChangedCallback for the attribute that is changed during upgrading 
 PASS Mutating a undefined custom element while upgrading a custom element must not enqueue or invoke reactions on the mutated element 
 PASS Mutating another custom element inside adopted callback must invoke all pending callbacks on the mutated element 
 

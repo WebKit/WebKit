@@ -1,0 +1,7 @@
+
+
+FAIL disabled on HTMLOptGroupElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL disabled on HTMLOptGroupElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL label on HTMLOptGroupElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL label on HTMLOptGroupElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

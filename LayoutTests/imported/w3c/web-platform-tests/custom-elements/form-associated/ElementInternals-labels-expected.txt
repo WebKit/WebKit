@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+FAIL LABEL association assert_equals: expected Element node <my-control></my-control> but got null
+FAIL LABEL click assert_equals: expected 1 but got 0
+

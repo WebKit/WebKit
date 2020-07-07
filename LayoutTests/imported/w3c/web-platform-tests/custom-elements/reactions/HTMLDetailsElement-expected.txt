@@ -1,0 +1,4 @@
+
+FAIL open on HTMLDetailsElement must enqueue an attributeChanged reaction when adding open content attribute The superclass is not a constructor.
+FAIL open on HTMLDetailsElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

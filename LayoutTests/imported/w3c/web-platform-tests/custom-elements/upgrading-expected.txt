@@ -24,4 +24,7 @@ PASS Inserting an unresolved custom element into the document of an iframe must 
 PASS "define" in the document of an iframe must enqueue a custom element upgrade reaction on a connected unresolved custom element 
 PASS Adopting (and leaving disconnceted) an unresolved custom element into the document of an iframe must not enqueue a custom element upgrade reaction 
 PASS Adopting and inserting an unresolved custom element into the document of an iframe must enqueue a custom element upgrade reaction 
+FAIL If definition's disable shadow is true and element's shadow root is non-null, then throw a "NotSupportedError" DOMException. assert_false: Upgrading should fail. expected false got true
+PASS Infinite constructor recursion with upgrade(this) should not be possible 
+FAIL Infinite constructor recursion with appendChild should not be possible assert_array_equals: expected property 0 to be Element node <infinite-cloning-element-2 id="b"></infinite-cloning-ele... but got Element node <infinite-cloning-element-2 id="a"></infinite-cloning-ele... (expected array [Element node <infinite-cloning-element-2 id="b"></infinite-cloning-ele..., "begin"] got [Element node <infinite-cloning-element-2 id="a"></infinite-cloning-ele..., "end"])
  

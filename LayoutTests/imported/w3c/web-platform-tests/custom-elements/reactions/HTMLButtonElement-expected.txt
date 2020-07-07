@@ -1,0 +1,22 @@
+
+FAIL autofocus on HTMLButtonElement must enqueue an attributeChanged reaction when adding autofocus content attribute The superclass is not a constructor.
+FAIL autofocus on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL disabled on HTMLButtonElement must enqueue an attributeChanged reaction when adding disabled content attribute The superclass is not a constructor.
+FAIL disabled on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL name on HTMLButtonElement must enqueue an attributeChanged reaction when adding name content attribute The superclass is not a constructor.
+FAIL name on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL value on HTMLButtonElement must enqueue an attributeChanged reaction when adding value content attribute The superclass is not a constructor.
+FAIL value on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL type on HTMLButtonElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL type on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL formAction on HTMLButtonElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL formAction on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL formEnctype on HTMLButtonElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL formEnctype on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL formMethod on HTMLButtonElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL formMethod on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL formNoValidate on HTMLButtonElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL formNoValidate on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL formTarget on HTMLButtonElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL formTarget on HTMLButtonElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-NotSupportedError.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-accessibility.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-labels.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-setFormValue.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-validation.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/form-associated-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/form-disabled-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/form-reset-callback.html

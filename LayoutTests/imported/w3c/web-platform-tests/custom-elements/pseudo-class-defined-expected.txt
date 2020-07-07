@@ -1,5 +1,6 @@
 
 
+PASS this.matches(:defined) should not match during an upgrade 
 PASS <div> should be :defined 
 PASS createElement("div") should be :defined 
 PASS createElementNS("http://www.w3.org/1999/xhtml", "div") should be :defined 

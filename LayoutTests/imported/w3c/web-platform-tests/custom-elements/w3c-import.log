@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-attachInternals.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/adopted-callback.html
@@ -26,10 +27,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-reaction-queue.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/customized-built-in-constructor-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/disconnected-callbacks.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/microtasks-and-constructors.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/perform-microtask-checkpoint-before-construction.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/range-and-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reaction-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-construct.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading.html

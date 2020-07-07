@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+ 
+
+Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+FAIL willValidate this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL validity and setValidity() undefined is not an object (evaluating 'control.i.validity')
+FAIL "anchor" argument of setValidity() assert_throws_dom: Not a descendant function "() => {
+    control.i.setValidity(flags, m, document.body);
+  }" threw object "TypeError: undefined is not an object (evaluating 'control.i.setValidity')" that is not a DOMException NotFoundError: property "code" is equal to undefined, expected 8
+FAIL checkValidity() undefined is not an object (evaluating 'control.i.checkValidity')
+FAIL reportValidity() undefined is not an object (evaluating 'control.i.reportValidity')
+FAIL Custom control affects validation at the owner form undefined is not an object (evaluating 'control.i.checkValidity')
+FAIL Custom control affects :valid :invalid for FORM and FIELDSET assert_true: expected true got false
+

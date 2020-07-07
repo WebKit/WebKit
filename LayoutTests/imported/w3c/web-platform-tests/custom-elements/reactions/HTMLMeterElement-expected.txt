@@ -1,0 +1,14 @@
+
+FAIL value on HTMLMeterElement must enqueue an attributeChanged reaction when adding value content attribute The superclass is not a constructor.
+FAIL value on HTMLMeterElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL min on HTMLMeterElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL min on HTMLMeterElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL max on HTMLMeterElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL max on HTMLMeterElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL low on HTMLMeterElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL low on HTMLMeterElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL high on HTMLMeterElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL high on HTMLMeterElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL optimum on HTMLMeterElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL optimum on HTMLMeterElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

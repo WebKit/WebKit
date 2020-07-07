@@ -9,20 +9,27 @@ PASS customElements.define must throw a NotSupportedError when element definitio
 PASS customElements.define must check IsConstructor on the constructor before checking the element definition is running flag 
 PASS customElements.define must validate the custom element name before checking the element definition is running flag 
 PASS customElements.define unset the element definition is running flag before upgrading custom elements 
-PASS customElements.define must not throw when defining another custom element in a different global object during Get(constructor, "prototype") 
+FAIL customElements.define must not throw when defining another custom element in a different global object during Get(constructor, "prototype") assert_array_equals: customElements.define must get "prototype", "disabledFeatures", and "formAssociated" on the constructor lengths differ, expected array ["prototype", "disabledFeatures", "formAssociated"] length 3, got ["prototype"] length 1
 PASS Custom Elements: CustomElementRegistry interface 
-PASS customElements.define must get "prototype" property of the constructor 
+FAIL customElements.define must get "prototype", "disabledFeatures", and "formAssociated" property of the constructor assert_array_equals: lengths differ, expected array ["prototype", "disabledFeatures", "formAssociated"] length 3, got ["prototype"] length 1
 PASS customElements.define must rethrow an exception thrown while getting "prototype" property of the constructor 
 PASS customElements.define must throw when "prototype" property of the constructor is not an object 
 PASS customElements.define must get callbacks of the constructor prototype 
 PASS customElements.define must rethrow an exception thrown while getting callbacks on the constructor prototype 
 PASS customElements.define must rethrow an exception thrown while converting a callback value to Function callback type 
-PASS customElements.define must get "observedAttributes" property on the constructor prototype when "attributeChangedCallback" is present 
+FAIL customElements.define must get "observedAttributes" property on the constructor prototype when "attributeChangedCallback" is present assert_array_equals: lengths differ, expected array [0, "prototype", 5, "observedAttributes", 6, "disabledFeatures", 7, "formAssociated"] length 8, got [0, "prototype", 5, "observedAttributes"] length 4
 PASS customElements.define must rethrow an exception thrown while getting observedAttributes on the constructor prototype 
 PASS customElements.define must rethrow an exception thrown while converting the value of observedAttributes to sequence<DOMString> 
 PASS customElements.define must rethrow an exception thrown while iterating over observedAttributes to sequence<DOMString> 
 PASS customElements.define must rethrow an exception thrown while retrieving Symbol.iterator on observedAttributes 
 PASS customElements.define must not throw even if "observedAttributes" fails to convert if "attributeChangedCallback" is not defined 
+FAIL customElements.define must rethrow an exception thrown while getting disabledFeatures on the constructor prototype assert_throws_exactly: function "() => customElements.define('element-with-throwing-disabled-features', proxy)" did not throw
+FAIL customElements.define must rethrow an exception thrown while converting the value of disabledFeatures to sequence<DOMString> assert_throws_js: function "() => customElements.define('element-with-invalid-disabled-features', proxy)" did not throw
+FAIL customElements.define must rethrow an exception thrown while iterating over disabledFeatures to sequence<DOMString> assert_throws_exactly: function "() => customElements.define('element-with-generator-disabled-features', constructor)" did not throw
+FAIL customElements.define must rethrow an exception thrown while retrieving Symbol.iterator on disabledFeatures assert_throws_js: function "() => customElements.define('element-with-disabled-features-with-uncallable-iterator', constructor)" did not throw
+FAIL customElements.define must rethrow an exception thrown while getting formAssociated on the constructor prototype assert_throws_exactly: function "() => customElements.define('element-with-throwing-form-associated', proxy)" did not throw
+FAIL customElements.define must get four additional callbacks on the prototype if formAssociated is converted to true assert_array_equals: customElements.define must get "prototype", "disabledFeatures", and "formAssociated" on the constructor lengths differ, expected array ["prototype", "disabledFeatures", "formAssociated"] length 3, got ["prototype"] length 1
+FAIL customElements.define must rethrow an exception thrown while getting additional formAssociated callbacks on the constructor prototype assert_throws_exactly: function "() => customElements.define('element-with-throwing-callback-2', proxy)" did not throw
 PASS customElements.define must define an instantiatable custom element 
 PASS customElements.define must upgrade elements in the shadow-including tree order 
 PASS CustomElementRegistry interface must have get as a method 

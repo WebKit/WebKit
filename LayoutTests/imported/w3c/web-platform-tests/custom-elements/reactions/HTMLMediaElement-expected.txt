@@ -1,0 +1,30 @@
+
+FAIL src on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding src content attribute The superclass is not a constructor.
+FAIL src on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL crossOrigin on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL crossOrigin on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL preload on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL preload on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL autoplay on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL autoplay on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL loop on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL loop on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL controls on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL controls on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL defaultMuted on HTMLMediaElement in audio must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL defaultMuted on HTMLMediaElement in audio must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL src on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding src content attribute The superclass is not a constructor.
+FAIL src on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL crossOrigin on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL crossOrigin on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL preload on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL preload on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL autoplay on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL autoplay on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL loop on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL loop on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL controls on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL controls on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL defaultMuted on HTMLMediaElement in video must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL defaultMuted on HTMLMediaElement in video must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

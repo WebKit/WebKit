@@ -1,3 +1,14 @@
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/custom-elements from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214028
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/custom-elements from upstream 145839c323ba1ec8b97.
+
+        * web-platform-tests/custom-elements/*: Updated.
+
 2020-07-06  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/semantics from upstream

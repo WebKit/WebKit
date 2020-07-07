@@ -19,6 +19,12 @@ PASS removeAttribute on Element must not enqueue an attributeChanged reaction wh
 PASS removeAttributeNS on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
 PASS removeAttributeNS on Element must enqueue an attributeChanged reaction when removing an existing attribute 
 PASS removeAttributeNS on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
+PASS toggleAttribute (only removes) on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
+PASS toggleAttribute (only removes) on Element must enqueue an attributeChanged reaction when removing an existing attribute 
+PASS toggleAttribute (only removes) on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
+PASS toggleAttribute (force false) on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
+PASS toggleAttribute (force false) on Element must enqueue an attributeChanged reaction when removing an existing attribute 
+PASS toggleAttribute (force false) on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
 PASS setAttributeNode on Element must enqueue an attributeChanged reaction when adding an attribute 
 PASS setAttributeNode on Element must not enqueue an attributeChanged reaction when adding an unobserved attribute 
 PASS setAttributeNode on Element must enqueue an attributeChanged reaction when replacing an existing attribute 

@@ -7,6 +7,6 @@ PASS HTML parser must use the registry of window.document in a document created 
 PASS HTML parser must use the registry of window.document in a document created by document.implementation.createXHTMLDocument() 
 PASS HTML parser must use the registry of window.document in a document created by new Document 
 PASS HTML parser must use the registry of window.document in a document created by XMLHttpRequest 
-FAIL document.write() must not instantiate a custom element without a defined insertion point assert_false: expected false got true
-FAIL document.writeln() must not instantiate a custom element without a defined insertion point assert_false: expected false got true
+PASS document.write() must not instantiate a custom element without a defined insertion point 
+PASS document.writeln() must not instantiate a custom element without a defined insertion point 
 

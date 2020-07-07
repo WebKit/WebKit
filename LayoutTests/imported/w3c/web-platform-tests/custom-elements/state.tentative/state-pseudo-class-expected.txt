@@ -1,0 +1,8 @@
+
+PASS :state() parsing failures 
+FAIL :state() serialization undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].cssText')
+FAIL :state() in simple cases this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL :state() and other pseudo classes this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL :state() and ::part() this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL :state() and :host() this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+

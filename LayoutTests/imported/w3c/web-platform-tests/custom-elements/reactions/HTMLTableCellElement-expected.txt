@@ -1,0 +1,18 @@
+
+FAIL colSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL colSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL colSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL colSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL rowSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL rowSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL rowSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL rowSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL headers on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL headers on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL headers on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL headers on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL scope on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL scope on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL abbr on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL abbr on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

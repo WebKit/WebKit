@@ -10,8 +10,8 @@ PASS HTMLElement constructor must allow subclassing an user-defined subclass of 
 PASS HTMLElement constructor must only get .prototype once, calling proxy constructor directly 
 PASS HTMLElement constructor must only get .prototype once, calling proxy constructor via Reflect 
 PASS HTMLElement constructor must only get .prototype once, calling proxy constructor via Reflect with no inheritance 
-FAIL HTMLElement constructor must not get .prototype until it finishes its extends sanity checks, calling proxy constructor directly assert_throws: Should not be able to construct an HTMLElement named 'button' function "function () { new countingProxy() }" did not throw
-FAIL HTMLElement constructor must not get .prototype until it finishes its extends sanity checks, calling via Reflect assert_throws: Should not be able to construct an HTMLElement named 'button' function "function () { Reflect.construct(HTMLElement, [], countingProxy) }" did not throw
+FAIL HTMLElement constructor must not get .prototype until it finishes its extends sanity checks, calling proxy constructor directly assert_throws_js: Should not be able to construct an HTMLElement named 'button' function "function () { new countingProxy() }" did not throw
+FAIL HTMLElement constructor must not get .prototype until it finishes its extends sanity checks, calling via Reflect assert_throws_js: Should not be able to construct an HTMLElement named 'button' function "function () { Reflect.construct(HTMLElement, [], countingProxy) }" did not throw
 PASS HTMLElement constructor must not get .prototype until it finishes its registration sanity checks, calling proxy constructor directly 
 PASS HTMLElement constructor must not get .prototype until it finishes its registration  sanity checks, calling via Reflect 
 

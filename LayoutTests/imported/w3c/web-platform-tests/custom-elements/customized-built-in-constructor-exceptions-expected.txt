@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: The superclass is not a constructor.
+CONSOLE MESSAGE: TypeError: The superclass is not a constructor.
+CONSOLE MESSAGE: TypeError: The superclass is not a constructor.
+CONSOLE MESSAGE: TypeError: The superclass is not a constructor.
+CONSOLE MESSAGE: TypeError: The superclass is not a constructor.
+
+
+  
+
+FAIL Appending children in customized built-in constructor should work Cannot access uninitialized variable.
+FAIL Throwing exception in customized built-in constructor should not crash and should return correct element type (video) Cannot access uninitialized variable.
+FAIL Throwing exception in customized built-in constructor should not crash and should return correct element type (form) Cannot access uninitialized variable.
+FAIL Make sure customized <input> element doesnt crash Cannot access uninitialized variable.
+FAIL Make sure customized <input> element that sets attributes doesnt crash Cannot access uninitialized variable.
+

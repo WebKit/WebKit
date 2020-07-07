@@ -1,0 +1,6 @@
+
+FAIL width on HTMLCanvasElement must enqueue an attributeChanged reaction when adding width content attribute The superclass is not a constructor.
+FAIL width on HTMLCanvasElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL height on HTMLCanvasElement must enqueue an attributeChanged reaction when adding height content attribute The superclass is not a constructor.
+FAIL height on HTMLCanvasElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

@@ -1,0 +1,10 @@
+
+FAIL cite on ins use HTMLModElement must enqueue an attributeChanged reaction when adding cite content attribute The superclass is not a constructor.
+FAIL cite on ins use HTMLModElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL dateTime on ins use HTMLModElement must enqueue an attributeChanged reaction when adding datetime content attribute The superclass is not a constructor.
+FAIL dateTime on ins use HTMLModElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL cite on del use HTMLModElement must enqueue an attributeChanged reaction when adding cite content attribute The superclass is not a constructor.
+FAIL cite on del use HTMLModElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL dateTime on del use HTMLModElement must enqueue an attributeChanged reaction when adding datetime content attribute The superclass is not a constructor.
+FAIL dateTime on del use HTMLModElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+

@@ -1,0 +1,8 @@
+
+FAIL value on HTMLLIElement in ol must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL value on HTMLLIElement in ol must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL value on HTMLLIElement in ul must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL value on HTMLLIElement in ul must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL value on HTMLLIElement in menu must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
+FAIL value on HTMLLIElement in menu must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+
