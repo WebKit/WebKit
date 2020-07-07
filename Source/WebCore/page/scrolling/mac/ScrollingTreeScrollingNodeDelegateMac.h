@@ -95,6 +95,8 @@ private:
     void releaseReferencesToScrollerImpsOnTheMainThread();
 
     ScrollController m_scrollController;
+    
+    bool m_inMomentumPhase { false };
 
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;

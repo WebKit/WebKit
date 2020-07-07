@@ -1,5 +1,33 @@
 2020-07-06  Simon Fraser  <simon.fraser@apple.com>
 
+        High CPU usage on Stash search results pages
+        https://bugs.webkit.org/show_bug.cgi?id=214018
+        <rdar://problem/64832917>
+
+        Reviewed by Tim Horton.
+
+        Stash search results pages can contain a lot of overflow:scroll areas, so scrolling thread CA commits
+        would take a long time because ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters() would
+        open and close a CA commit for each scroller.
+
+        Fix by not explicitly starting a CA commit, and only entering this code if a gesture is active and in
+        the momentum phase.
+
+        Also sprinkle BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS in more places that call into Core
+        Animation.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters):
+
+2020-07-06  Simon Fraser  <simon.fraser@apple.com>
+
         BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS should not have trailing semicolons
         https://bugs.webkit.org/show_bug.cgi?id=214019
 

@@ -32,6 +32,7 @@
 #import "ScrollingStateOverflowScrollingNode.h"
 #import "ScrollingTree.h"
 #import "WebCoreCALayerExtras.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -93,7 +94,9 @@ FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const F
 
 void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [static_cast<CALayer*>(scrollContainerLayer()) _web_setLayerBoundsOrigin:currentScrollOffset()];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::repositionRelatedLayers()

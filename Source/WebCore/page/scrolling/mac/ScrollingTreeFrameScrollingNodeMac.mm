@@ -38,6 +38,7 @@
 #import "ScrollingTree.h"
 #import "TileController.h"
 #import "WebCoreCALayerExtras.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/Deque.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>
@@ -158,12 +159,15 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollingL
 
 void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     // We use scroll position here because the root content layer is offset to account for scrollOrigin (see FrameView::positionForRootContentLayer).
     static_cast<CALayer*>(scrolledContentsLayer()).position = -currentScrollPosition();
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto scrollPosition = currentScrollPosition();
     auto layoutViewport = this->layoutViewport();
 
@@ -191,6 +195,7 @@ void ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers()
         if (m_footerLayer)
             m_footerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsSize().height(), footerHeight()));
     }
+    END_BLOCK_OBJC_EXCEPTIONS
 
     m_delegate.updateScrollbarPainters();
 }
