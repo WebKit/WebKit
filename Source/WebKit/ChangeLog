@@ -1,3 +1,16 @@
+2020-07-07  Sihui Liu  <sihui_liu@appe.com>
+
+        Network process crashes in WebKit::StorageManagerSet::deleteSessionStorageForOrigins
+        https://bugs.webkit.org/show_bug.cgi?id=214050
+
+        Reviewed by Chris Dumez.
+
+        In NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains, deleteSessionStorageForOrigins is called 
+        in a callback without checking if session still exists.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
         WebContent process sometimes kills itself because it is receiving too much IPC from the UIProcess

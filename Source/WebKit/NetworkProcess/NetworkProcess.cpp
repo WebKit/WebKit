@@ -1925,6 +1925,9 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     if (m_storageManagerSet->contains(sessionID)) {
         if (websiteDataTypes.contains(WebsiteDataType::SessionStorage)) {
             m_storageManagerSet->getSessionStorageOrigins(sessionID, [protectedThis = makeRef(*this), this, sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
+                if (!m_storageManagerSet->contains(sessionID))
+                    return;
+
                 auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator->m_domains);
                 m_storageManagerSet->deleteSessionStorageForOrigins(sessionID, originsToDelete, [callbackAggregator] { });
             });
@@ -1932,6 +1935,9 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
 
         if (websiteDataTypes.contains(WebsiteDataType::LocalStorage)) {
             m_storageManagerSet->getLocalStorageOrigins(sessionID, [protectedThis = makeRef(*this), this, sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
+                if (!m_storageManagerSet->contains(sessionID))
+                    return;
+
                 auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator->m_domains);
                 m_storageManagerSet->deleteLocalStorageForOrigins(sessionID, originsToDelete, [callbackAggregator] { });
             });
