@@ -1,3 +1,43 @@
+2020-07-06  Brady Eidson  <beidson@apple.com>
+
+        Get rid of concept of "initial connected gamepads"
+        https://bugs.webkit.org/show_bug.cgi?id=214010
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkit/messages.py:
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::gamepadSyncTimerFired):
+        (WebKit::UIGamepadProvider::platformGamepadConnected):
+        (WebKit::UIGamepadProvider::platformGamepadInputActivity):
+        (WebKit::UIGamepadProvider::setInitialConnectedGamepads): Deleted.
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gamepadActivity):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gamepadConnected):
+        (WebKit::WebProcessPool::setInitialConnectedGamepads): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+        * WebProcess/Gamepad/WebGamepadProvider.cpp:
+        (WebKit::WebGamepadProvider::gamepadConnected):
+        (WebKit::WebGamepadProvider::gamepadActivity):
+        * WebProcess/Gamepad/WebGamepadProvider.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::gamepadActivity):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::gamepadConnected):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-07-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r249303) Crash under NetworkLoad::NetworkLoad()

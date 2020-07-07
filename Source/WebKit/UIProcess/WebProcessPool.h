@@ -92,6 +92,7 @@ class PageConfiguration;
 
 namespace WebCore {
 class RegistrableDomain;
+enum class EventMakesGamepadsVisible : bool;
 struct MockMediaDevice;
 }
 
@@ -463,10 +464,8 @@ public:
     void synthesizeAppIsBackground(bool background);
     
 #if ENABLE(GAMEPAD)
-    void gamepadConnected(const UIGamepad&);
+    void gamepadConnected(const UIGamepad&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(const UIGamepad&);
-
-    void setInitialConnectedGamepads(const Vector<std::unique_ptr<UIGamepad>>&);
 #endif
 
 #if PLATFORM(COCOA)

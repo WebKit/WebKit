@@ -100,7 +100,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
 #if ENABLE(GAMEPAD)
     SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)
-    GamepadConnected(WebKit::GamepadData gamepadData)
+    GamepadConnected(WebKit::GamepadData gamepadData, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
     GamepadDisconnected(unsigned index)
 #endif
 

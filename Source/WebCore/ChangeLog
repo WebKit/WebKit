@@ -1,3 +1,50 @@
+2020-07-06  Brady Eidson  <beidson@apple.com>
+
+        Get rid of concept of "initial connected gamepads"
+        https://bugs.webkit.org/show_bug.cgi?id=214010
+
+        Reviewed by Tim Horton.
+
+        No new tests (Refactor, no behavior change)
+
+        When a page starts using gamepads and some were already connected, this concept
+        was meant to manage when the already-connected gamepads could be revealed to the page.
+        
+        It obviously wasn't needed, as only the HID provider used them (GameController provider didn't)
+        
+        Instead, we should just always include a "does this event make gamepads visible?" bit.
+        
+        This cleans up a lot of weird code gets both providers working closer to each other.
+        
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::platformGamepadConnected):
+        (WebCore::GamepadManager::platformGamepadInputActivity):
+        * Modules/gamepad/GamepadManager.h:
+        
+        * platform/gamepad/GamepadProvider.cpp:
+        (WebCore::GamepadProvider::dispatchPlatformGamepadInputActivity):
+        
+        * platform/gamepad/GamepadProviderClient.h:
+        (WebCore::GamepadProviderClient::setInitialConnectedGamepads): Deleted.
+        
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect):
+        (WebCore::GameControllerGamepadProvider::makeInvisibileGamepadsVisible):
+        
+        * platform/gamepad/mac/HIDGamepadProvider.cpp:
+        (WebCore::HIDGamepadProvider::HIDGamepadProvider):
+        (WebCore::HIDGamepadProvider::initialGamepadsConnectedTimerFired):
+        (WebCore::HIDGamepadProvider::openAndScheduleManager):
+        (WebCore::HIDGamepadProvider::closeAndUnscheduleManager):
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+        (WebCore::HIDGamepadProvider::inputNotificationTimerFired):
+        (WebCore::HIDGamepadProvider::connectionDelayTimerFired): Deleted.
+        * platform/gamepad/mac/HIDGamepadProvider.h:
+        
+        * testing/MockGamepadProvider.cpp:
+        (WebCore::MockGamepadProvider::connectMockGamepad):
+
 2020-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web process sometimes crashes when translating an article on spiegel.de

@@ -67,8 +67,10 @@ void WebGamepadProvider::setInitialGamepads(const Vector<GamepadData>& gamepadDa
     }
 }
 
-void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData)
+void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData, EventMakesGamepadsVisible eventVisibility)
 {
+    LOG(Gamepad, "WebGamepadProvider::gamepadConnected - Index %i attached (visibility: %i)\n", gamepadData.index(), (int)eventVisibility);
+
     if (m_gamepads.size() <= gamepadData.index()) {
         m_gamepads.resize(gamepadData.index() + 1);
         m_rawGamepads.resize(gamepadData.index() + 1);
@@ -80,7 +82,7 @@ void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData)
     m_rawGamepads[gamepadData.index()] = m_gamepads[gamepadData.index()].get();
 
     for (auto* client : m_clients)
-        client->platformGamepadConnected(*m_gamepads[gamepadData.index()]);
+        client->platformGamepadConnected(*m_gamepads[gamepadData.index()], eventVisibility);
 }
 
 void WebGamepadProvider::gamepadDisconnected(unsigned index)
@@ -94,7 +96,7 @@ void WebGamepadProvider::gamepadDisconnected(unsigned index)
         client->platformGamepadDisconnected(*disconnectedGamepad);
 }
 
-void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas, bool shouldMakeGamepadsVisible)
+void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas, EventMakesGamepadsVisible eventVisibility)
 {
     ASSERT(m_gamepads.size() == gamepadDatas.size());
 
@@ -104,7 +106,7 @@ void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas
     }
 
     for (auto* client : m_clients)
-        client->platformGamepadInputActivity(shouldMakeGamepadsVisible);
+        client->platformGamepadInputActivity(eventVisibility);
 }
 
 void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)

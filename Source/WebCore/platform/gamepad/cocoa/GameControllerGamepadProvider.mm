@@ -73,7 +73,7 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
     makeInvisibileGamepadsVisible();
 
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index]);
+        client->platformGamepadConnected(*m_gamepadVector[index], EventMakesGamepadsVisible::Yes);
 }
 
 void GameControllerGamepadProvider::controllerDidDisconnect(GCController *controller)
@@ -151,7 +151,7 @@ void GameControllerGamepadProvider::makeInvisibileGamepadsVisible()
 {
     for (auto* gamepad : m_invisibleGamepads) {
         for (auto& client : m_clients)
-            client->platformGamepadConnected(*gamepad);
+            client->platformGamepadConnected(*gamepad, EventMakesGamepadsVisible::Yes);
     }
 
     m_invisibleGamepads.clear();

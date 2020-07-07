@@ -81,8 +81,7 @@ HIDGamepadProvider& HIDGamepadProvider::singleton()
 }
 
 HIDGamepadProvider::HIDGamepadProvider()
-    : m_shouldDispatchCallbacks(false)
-    , m_connectionDelayTimer(*this, &HIDGamepadProvider::connectionDelayTimerFired)
+    : m_initialGamepadsConnectedTimer(*this, &HIDGamepadProvider::initialGamepadsConnectedTimerFired)
     , m_inputNotificationTimer(*this, &HIDGamepadProvider::inputNotificationTimerFired)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
@@ -122,12 +121,9 @@ unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
-void HIDGamepadProvider::connectionDelayTimerFired()
+void HIDGamepadProvider::initialGamepadsConnectedTimerFired()
 {
-    m_shouldDispatchCallbacks = true;
-
-    for (auto* client : m_clients)
-        client->setInitialConnectedGamepads(m_gamepadVector);
+    m_initialGamepadsConnected = true;
 }
 
 void HIDGamepadProvider::openAndScheduleManager()
@@ -137,14 +133,14 @@ void HIDGamepadProvider::openAndScheduleManager()
     ASSERT(m_gamepadVector.isEmpty());
     ASSERT(m_gamepadMap.isEmpty());
 
-    m_shouldDispatchCallbacks = false;
+    m_initialGamepadsConnected = false;
 
     IOHIDManagerScheduleWithRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
 
     // Any connections we are notified of within the connectionDelayInterval of listening likely represent
     // devices that were already connected, so we suppress notifying clients of these.
-    m_connectionDelayTimer.startOneShot(connectionDelayInterval);
+    m_initialGamepadsConnectedTimer.startOneShot(connectionDelayInterval);
 }
 
 void HIDGamepadProvider::closeAndUnscheduleManager()
@@ -157,7 +153,7 @@ void HIDGamepadProvider::closeAndUnscheduleManager()
     m_gamepadVector.clear();
     m_gamepadMap.clear();
 
-    m_connectionDelayTimer.stop();
+    m_initialGamepadsConnectedTimer.stop();
 }
 
 void HIDGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
@@ -195,21 +191,18 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
     m_gamepadVector[index] = gamepad.get();
     m_gamepadMap.set(device, WTFMove(gamepad));
 
-    if (!m_shouldDispatchCallbacks) {
+    if (!m_initialGamepadsConnected) {
         // This added device is the result of us starting to monitor gamepads.
         // We'll get notified of all connected devices during this current spin of the runloop
-        // and we don't want to tell the client about any of them.
-        // The m_connectionDelayTimer fires in a subsequent spin of the runloop after which
-        // any connection events are actual new devices.
-        m_connectionDelayTimer.startOneShot(0_s);
-
-        LOG(Gamepad, "Device %p was added while suppressing callbacks, so this should be an 'already connected' event", device);
-
-        return;
+        // and the client should be told they were already connected.
+        // The m_initialGamepadsConnectedTimer fires in a subsequent spin of the runloop after which
+        // any connection events are actual new devices and can trigger gamepad visibility.
+        if (!m_initialGamepadsConnectedTimer.isActive())
+            m_initialGamepadsConnectedTimer.startOneShot(0_s);
     }
 
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index]);
+        client->platformGamepadConnected(*m_gamepadVector[index], m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
 }
 
 void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
@@ -218,10 +211,6 @@ void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 
     std::unique_ptr<HIDGamepad> removedGamepad = removeGamepadForDevice(device);
     ASSERT(removedGamepad);
-
-    // Any time we get a device removed callback we know it's a real event and not an 'already connected' event.
-    // We should always stop suppressing callbacks when we receive such an event.
-    m_shouldDispatchCallbacks = true;
 
     for (auto& client : m_clients)
         client->platformGamepadDisconnected(*removedGamepad);
@@ -248,8 +237,11 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
 
 void HIDGamepadProvider::inputNotificationTimerFired()
 {
-    if (!m_shouldDispatchCallbacks)
+    if (!m_initialGamepadsConnected) {
+        if (!m_inputNotificationTimer.isActive())
+            m_inputNotificationTimer.startOneShot(0_s);
         return;
+    }
 
     dispatchPlatformGamepadInputActivity();
 }

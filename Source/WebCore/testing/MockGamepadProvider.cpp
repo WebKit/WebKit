@@ -87,7 +87,7 @@ bool MockGamepadProvider::connectMockGamepad(unsigned index)
     m_connectedGamepadVector[index] = m_mockGamepadVector[index].get();
 
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_connectedGamepadVector[index]);
+        client->platformGamepadConnected(*m_connectedGamepadVector[index], EventMakesGamepadsVisible::Yes);
 
     return true;
 }

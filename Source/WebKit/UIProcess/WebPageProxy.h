@@ -229,6 +229,7 @@ class ValidationBubble;
 
 enum class AutoplayEvent : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
+enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
 enum class HasInsecureContent : bool;
 enum class MouseEventPolicy : uint8_t;
@@ -1569,7 +1570,7 @@ public:
     bool isAlwaysOnLoggingAllowed() const;
 
 #if ENABLE(GAMEPAD)
-    void gamepadActivity(const Vector<GamepadData>&, bool shouldMakeGamepadsVisible);
+    void gamepadActivity(const Vector<GamepadData>&, WebCore::EventMakesGamepadsVisible);
 #endif
 
     void isLoadingChanged() { activityStateDidChange(WebCore::ActivityState::IsLoading); }

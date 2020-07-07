@@ -1049,9 +1049,9 @@ void WebProcess::setInitialGamepads(const Vector<WebKit::GamepadData>& gamepadDa
     WebGamepadProvider::singleton().setInitialGamepads(gamepadDatas);
 }
 
-void WebProcess::gamepadConnected(const GamepadData& gamepadData)
+void WebProcess::gamepadConnected(const GamepadData& gamepadData, WebCore::EventMakesGamepadsVisible eventVisibility)
 {
-    WebGamepadProvider::singleton().gamepadConnected(gamepadData);
+    WebGamepadProvider::singleton().gamepadConnected(gamepadData, eventVisibility);
 }
 
 void WebProcess::gamepadDisconnected(unsigned index)

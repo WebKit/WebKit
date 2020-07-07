@@ -64,7 +64,7 @@ private:
     void openAndScheduleManager();
     void closeAndUnscheduleManager();
 
-    void connectionDelayTimerFired();
+    void initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
     unsigned indexForNewlyConnectedDevice();
@@ -74,9 +74,9 @@ private:
 
     RetainPtr<IOHIDManagerRef> m_manager;
 
-    bool m_shouldDispatchCallbacks;
+    bool m_initialGamepadsConnected { false };
 
-    Timer m_connectionDelayTimer;
+    Timer m_initialGamepadsConnectedTimer;
     Timer m_inputNotificationTimer;
 };
 
