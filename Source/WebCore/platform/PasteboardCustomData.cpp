@@ -92,12 +92,11 @@ Ref<SharedBuffer> PasteboardCustomData::createSharedBuffer() const
     return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
 }
 
-PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& buffer)
+PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persistence::Decoder&& decoder)
 {
     constexpr unsigned maxSupportedDataSerializationVersionNumber = 1;
 
     PasteboardCustomData result;
-    auto decoder = buffer.decoder();
     Optional<unsigned> version;
     decoder >> version;
     if (!version || *version > maxSupportedDataSerializationVersionNumber)
@@ -123,6 +122,11 @@ PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& 
         result.writeStringInCustomData(type, sameOriginCustomStringData->get(type));
 
     return result;
+}
+
+PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& buffer)
+{
+    return fromPersistenceDecoder(buffer.decoder());
 }
 
 void PasteboardCustomData::writeString(const String& type, const String& value)

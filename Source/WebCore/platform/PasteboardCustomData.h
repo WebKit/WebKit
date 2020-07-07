@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
+#include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -61,6 +62,7 @@ public:
 
     WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;
     WEBCORE_EXPORT static PasteboardCustomData fromSharedBuffer(const SharedBuffer&);
+    WEBCORE_EXPORT static PasteboardCustomData fromPersistenceDecoder(WTF::Persistence::Decoder&&);
 
     String readString(const String& type) const;
     RefPtr<SharedBuffer> readBuffer(const String& type) const;

@@ -1,3 +1,32 @@
+2020-07-07  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [Win] Implement Pasteboard::writeCustomData for Web Inspector Console tab
+        https://bugs.webkit.org/show_bug.cgi?id=213986
+
+        Reviewed by Fujii Hironori.
+
+        Implement Pasteboard::writeCustomData and Pasteboard::typesSafeForBindings.
+        This fixes the issue which we cannot copy text in WebInspector's Console tab.
+
+        We enable some existing testcases for pasteboard.
+
+        * platform/Pasteboard.h:
+        * platform/PasteboardCustomData.cpp:
+        (WebCore::PasteboardCustomData::fromPersistenceDecoder): Construct PasteboardCustomData from WTF::Persistence::Decoder.
+        (WebCore::PasteboardCustomData::fromSharedBuffer): Use fromPersistenceDecoder function to implement.
+        * platform/PasteboardCustomData.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::createGlobalData): Add uint8_t* variant.
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::finishCreatingPasteboard): Register new clipboard format CustomDataClipboardFormat.
+        (WebCore::Pasteboard::readPasteboardCustomData): Helper function to read PasteboardCustomData from the pasteboard.
+        (WebCore::Pasteboard::typesSafeForBindings): Implemented.
+        (WebCore::Pasteboard::readOrigin): Implemented.
+        (WebCore::Pasteboard::readStringInCustomData): Implemented.
+        (WebCore::Pasteboard::writeCustomData): Implemented.
+
+
 2020-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         High CPU usage on Stash search results pages

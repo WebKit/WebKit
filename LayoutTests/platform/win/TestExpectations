@@ -1186,8 +1186,6 @@ editing/pasteboard/dom-paste/ [ Skip ]
 [ Debug ] editing/selection/4983858.html [ Skip ] # Debug Assertion
 [ Debug ] editing/selection/4975120.html [ Skip ] # Debug Assertion
 
-# Custom pasteboard data is not supported on Windows.
-editing/pasteboard/clipboard-customData.html [ Skip ]
 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Skip ]
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Skip ]
 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]

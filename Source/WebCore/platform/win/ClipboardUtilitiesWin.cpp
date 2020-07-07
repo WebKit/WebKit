@@ -215,6 +215,18 @@ HGLOBAL createGlobalData(const Vector<char>& vector)
     return vm;
 }
 
+HGLOBAL createGlobalData(const uint8_t* data, size_t length)
+{
+    HGLOBAL vm = ::GlobalAlloc(GPTR, length + 1);
+    if (!vm)
+        return 0;
+    uint8_t* buffer = static_cast<uint8_t*>(GlobalLock(vm));
+    memcpy(buffer, data, length);
+    buffer[length] = 0;
+    GlobalUnlock(vm);
+    return vm;
+}
+
 static String getFullCFHTML(IDataObject* data)
 {
     STGMEDIUM store;

@@ -1,3 +1,14 @@
+2020-07-07  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [Win] Implement Pasteboard::writeCustomData for Web Inspector Console tab
+        https://bugs.webkit.org/show_bug.cgi?id=213986
+
+        Reviewed by Fujii Hironori.
+
+        Now pasteboard tests related to custom data pass.
+
+        * platform/win/TestExpectations:
+
 2020-07-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] OGV/VP8 video not playing on minibrowser (neither epiphany)

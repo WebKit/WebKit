@@ -315,6 +315,7 @@ private:
     void writeRangeToDataObject(Range&, Frame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
+    Optional<PasteboardCustomData> readPasteboardCustomData();
 #endif
 
 #if PLATFORM(COCOA)
