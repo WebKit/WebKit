@@ -1,0 +1,46 @@
+
+PASS value IDL attribute of input type hidden without value attribute 
+PASS value IDL attribute of input type hidden with value attribute 
+PASS value IDL attribute of input type submit without value attribute 
+PASS value IDL attribute of input type submit with value attribute 
+PASS value IDL attribute of input type image without value attribute 
+PASS value IDL attribute of input type image with value attribute 
+PASS value IDL attribute of input type reset without value attribute 
+PASS value IDL attribute of input type reset with value attribute 
+PASS value IDL attribute of input type button without value attribute 
+PASS value IDL attribute of input type button with value attribute 
+PASS value IDL attribute of input type checkbox without value attribute 
+PASS value IDL attribute of input type checkbox with value attribute 
+PASS value IDL attribute of input type radio without value attribute 
+PASS value IDL attribute of input type radio with value attribute 
+PASS value IDL attribute of input type text without value attribute 
+PASS value IDL attribute of input type text with value attribute 
+PASS value IDL attribute of input type search without value attribute 
+PASS value IDL attribute of input type search with value attribute 
+PASS value IDL attribute of input type tel without value attribute 
+PASS value IDL attribute of input type tel with value attribute 
+PASS value IDL attribute of input type url without value attribute 
+PASS value IDL attribute of input type url with value attribute 
+PASS value IDL attribute of input type email without value attribute 
+PASS value IDL attribute of input type email with value attribute 
+PASS value IDL attribute of input type password without value attribute 
+PASS value IDL attribute of input type password with value attribute 
+FAIL value IDL attribute of input type datetime-local without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type datetime-local with value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type date without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type date with value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type month without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type month with value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type week without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type week with value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type time without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type time with value attribute assert_equals: expected "" but got "foo\0"
+PASS value IDL attribute of input type number without value attribute 
+PASS value IDL attribute of input type number with value attribute 
+PASS value IDL attribute of input type range without value attribute 
+PASS value IDL attribute of input type range with value attribute 
+PASS value IDL attribute of input type color without value attribute 
+PASS value IDL attribute of input type color with value attribute 
+PASS value IDL attribute of input type file without value attribute 
+PASS value IDL attribute of input type file with value attribute 
+

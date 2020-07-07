@@ -143,6 +143,12 @@ webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
 webkit.org/b/213947 media/vp9.html [ Failure ]
 
+# These two are affected by a broken ogv that can't be read by the Gstreamer from SDK.
+webkit.org/b/205916 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Skip ]
+webkit.org/b/205916 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange-dynamically-created-track-element.html [ Skip ]
+
+webkit.org/b/214031 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -414,6 +420,10 @@ webkit.org/b/213331 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-m
 
 # As of r263626, the imported baseline based on Mojave fails for glib. Added custom baseline for it.
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Pass ]
+
+webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
+
+webkit.org/b/214033 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

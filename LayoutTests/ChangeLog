@@ -1,3 +1,14 @@
+2020-07-06  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Imported semantics tests gardening after r263987
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt:
+
 2020-07-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark ref-test imported in r263987 as failing on iOS.
