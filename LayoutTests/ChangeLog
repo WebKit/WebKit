@@ -1,5 +1,13 @@
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
+        Mark 3 WPT tests imported in r264035 as failing in iOS Simulator.
+
+        This is because of lack of WebAssembly support on this platform.
+
+        * platform/ios-simulator/TestExpectations:
+
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION: (r263987): [ iOS Debug WK2 ] 12 web-platform-tests semantics/scripting consistently failing
         https://bugs.webkit.org/show_bug.cgi?id=214058
         <rdar://problem/65193100>
