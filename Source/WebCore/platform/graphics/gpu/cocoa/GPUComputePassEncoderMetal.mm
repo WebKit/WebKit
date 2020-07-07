@@ -46,9 +46,9 @@ RefPtr<GPUComputePassEncoder> GPUComputePassEncoder::tryCreate(Ref<GPUCommandBuf
 
     RetainPtr<MTLComputeCommandEncoder> mtlEncoder;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     mtlEncoder = [buffer->platformCommandBuffer() computeCommandEncoder];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlEncoder) {
         LOG(WebGPU, "GPUComputePassEncoder::tryCreate(): Unable to create MTLComputeCommandEncoder!");
@@ -73,9 +73,9 @@ void GPUComputePassEncoder::setPipeline(Ref<const GPUComputePipeline>&& pipeline
 
     ASSERT(pipeline->platformComputePipeline());
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformComputePassEncoder setComputePipelineState:pipeline->platformComputePipeline()];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     m_pipeline = WTFMove(pipeline);
 }
@@ -94,7 +94,7 @@ void GPUComputePassEncoder::dispatch(unsigned x, unsigned y, unsigned z)
 
     ASSERT(m_pipeline->platformComputePipeline());
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     auto threadsPerThreadgroup = MTLSizeMake(m_pipeline->computeDimensions().width, m_pipeline->computeDimensions().height, m_pipeline->computeDimensions().depth);
 
@@ -102,7 +102,7 @@ void GPUComputePassEncoder::dispatch(unsigned x, unsigned y, unsigned z)
 
     [m_platformComputePassEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 const MTLCommandEncoder *GPUComputePassEncoder::platformPassEncoder() const
@@ -116,18 +116,18 @@ void GPUComputePassEncoder::useResource(const MTLResource *resource, unsigned us
 {
     ASSERT(m_platformComputePassEncoder);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformComputePassEncoder useResource:resource usage:usage];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPUComputePassEncoder::setComputeBuffer(const MTLBuffer *buffer, NSUInteger offset, unsigned index)
 {
     ASSERT(m_platformComputePassEncoder);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformComputePassEncoder setBuffer:buffer offset:offset atIndex:index];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #endif

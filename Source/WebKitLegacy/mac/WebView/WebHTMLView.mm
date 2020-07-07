@@ -6848,7 +6848,7 @@ static CGImageRef imageFromRect(WebCore::Frame* frame, CGRect rect)
     OptionSet<WebCore::PaintBehavior> oldPaintBehavior = frame->view()->paintBehavior();
     frame->view()->setPaintBehavior(oldPaintBehavior | WebCore::PaintBehavior::FlattenCompositingLayers | WebCore::PaintBehavior::Snapshotting);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     CGRect bounds = [view bounds];
     
@@ -6892,7 +6892,7 @@ static CGImageRef imageFromRect(WebCore::Frame* frame, CGRect rect)
     
     return resultImage.autorelease();
     
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     frame->view()->setPaintBehavior(oldPaintBehavior);
     return nil;

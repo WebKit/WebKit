@@ -90,11 +90,11 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
 {
     RetainPtr<MTLTextureDescriptor> mtlDescriptor;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlDescriptor = adoptNS([MTLTextureDescriptor new]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlDescriptor) {
         LOG(WebGPU, "%s: Unable to create new MTLTextureDescriptor!", functionName);
@@ -131,7 +131,7 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
     auto storageMode = storageModeForPixelFormatAndSampleCount(pixelFormat, descriptor.sampleCount);
 #endif
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     [mtlDescriptor setWidth:width];
     [mtlDescriptor setHeight:height];
@@ -145,7 +145,7 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
 
     [mtlDescriptor setStorageMode:storageMode];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return mtlDescriptor;
 }
@@ -171,11 +171,11 @@ RefPtr<GPUTexture> GPUTexture::tryCreate(const GPUDevice& device, const GPUTextu
 
     RetainPtr<MTLTexture> mtlTexture;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlTexture = adoptNS([device.platformDevice() newTextureWithDescriptor:mtlDescriptor.get()]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlTexture) {
         LOG(WebGPU, "%s: Unable to create MTLTexture!", functionName);
@@ -205,11 +205,11 @@ RefPtr<GPUTexture> GPUTexture::tryCreateDefaultTextureView()
 {
     RetainPtr<MTLTexture> texture;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     texture = adoptNS([m_platformTexture newTextureViewWithPixelFormat:m_platformTexture.get().pixelFormat]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!texture) {
         LOG(WebGPU, "GPUTexture::createDefaultTextureView(): Unable to create MTLTexture view!");

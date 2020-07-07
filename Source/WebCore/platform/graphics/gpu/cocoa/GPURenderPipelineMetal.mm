@@ -52,11 +52,11 @@ static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const GPUDe
 {
     RetainPtr<MTLDepthStencilDescriptor> mtlDescriptor;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlDescriptor = adoptNS([MTLDepthStencilDescriptor new]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlDescriptor) {
         errorScopes.generatePrefixedError("Unable to create MTLDepthStencilDescriptor!");
@@ -71,11 +71,11 @@ static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const GPUDe
 
     RetainPtr<MTLDepthStencilState> state;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     state = adoptNS([device.platformDevice() newDepthStencilStateWithDescriptor:mtlDescriptor.get()]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!state) {
         errorScopes.generatePrefixedError("Error creating MTLDepthStencilState!");
@@ -186,11 +186,11 @@ static bool trySetVertexInput(const GPUVertexInputDescriptor& descriptor, MTLRen
 
         auto convertedBufferIndex = WHLSL::Metal::calculateVertexBufferIndex(index);
 
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedBufferIndex]);
         [mtlLayoutDesc setStepFunction:mtlStepFunctionForGPUInputStepMode(buffers[index]->stepMode)];
         [mtlLayoutDesc setStride:inputStride];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
 
         for (const auto& attribute : attributes) {
             if (!locations.add(attribute.shaderLocation).isNewEntry) {
@@ -204,12 +204,12 @@ static bool trySetVertexInput(const GPUVertexInputDescriptor& descriptor, MTLRen
                 return false;
             }
 
-            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
             auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:attributeIndex]);
             [mtlAttributeDesc setFormat:mtlVertexFormatForGPUVertexFormat(attribute.format)];
             [mtlAttributeDesc setOffset:offset];
             [mtlAttributeDesc setBufferIndex:convertedBufferIndex];
-            END_BLOCK_OBJC_EXCEPTIONS;
+            END_BLOCK_OBJC_EXCEPTIONS
 
             if (whlslDescriptor)
                 whlslDescriptor->vertexAttributes.append({ convertVertexFormat(attribute.format), attribute.shaderLocation, attributeIndex });
@@ -303,7 +303,7 @@ static bool trySetColorStates(const Vector<GPUColorStateDescriptor>& colorStates
         return false;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     for (unsigned i = 0; i < colorStates.size(); ++i) {
         auto& state = colorStates[i];
@@ -328,7 +328,7 @@ static bool trySetColorStates(const Vector<GPUColorStateDescriptor>& colorStates
         }
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return true;
 }
@@ -336,7 +336,7 @@ static bool trySetColorStates(const Vector<GPUColorStateDescriptor>& colorStates
 static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fragmentMetalLibrary, MTLRenderPipelineDescriptor *mtlDescriptor, const String& vertexEntryPointName, const String& fragmentEntryPointName, GPUErrorScopes& errorScopes)
 {
     {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
 
         // Metal requires a vertex shader in all render pipelines.
         if (!vertexMetalLibrary) {
@@ -352,11 +352,11 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
 
         [mtlDescriptor setVertexFunction:function.get()];
 
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
     }
 
     {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
 
         // However, fragment shaders are optional.
         if (!fragmentMetalLibrary || fragmentEntryPointName.isNull())
@@ -372,7 +372,7 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
         [mtlDescriptor setFragmentFunction:function.get()];
         return true;
 
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
     }
 
     return false;
@@ -399,7 +399,7 @@ static bool trySetFunctions(const GPUProgrammableStageDescriptor& vertexStage, c
 
         NSError *error = nil;
 
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         MonotonicTime startTime;
         if (WHLSL::dumpMetalCompileTimes)
             startTime = MonotonicTime::now();
@@ -407,7 +407,7 @@ static bool trySetFunctions(const GPUProgrammableStageDescriptor& vertexStage, c
         vertexLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource.toString() options:nil error:&error]);
         if (WHLSL::dumpMetalCompileTimes)
             dataLogLn("Metal compile times: ", (MonotonicTime::now() - startTime).milliseconds(), " ms");
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
 
         if (!vertexLibrary && error) {
             errorScopes.generatePrefixedError(error.localizedDescription.UTF8String);
@@ -439,11 +439,11 @@ static RetainPtr<MTLRenderPipelineDescriptor> convertRenderPipelineDescriptor(co
 {
     RetainPtr<MTLRenderPipelineDescriptor> mtlDescriptor;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlDescriptor = adoptNS([MTLRenderPipelineDescriptor new]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlDescriptor) {
         errorScopes.generatePrefixedError("Error creating MTLDescriptor!");
@@ -497,14 +497,14 @@ static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const G
 
     RetainPtr<MTLRenderPipelineState> pipeline;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSError *error = nil;
     pipeline = adoptNS([device.platformDevice() newRenderPipelineStateWithDescriptor:mtlDescriptor.get() error:&error]);
     if (!pipeline)
         errorScopes.generatePrefixedError(error.localizedDescription.UTF8String);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return pipeline;
 }

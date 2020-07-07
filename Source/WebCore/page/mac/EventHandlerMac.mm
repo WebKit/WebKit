@@ -150,14 +150,14 @@ bool EventHandler::wheelEvent(NSEvent *event)
 
 bool EventHandler::keyEvent(NSEvent *event)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     ASSERT([event type] == NSEventTypeKeyDown || [event type] == NSEventTypeKeyUp);
 
     CurrentEventScope scope(event, nil);
     return keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -211,12 +211,12 @@ static bool lastEventIsMouseUp()
     ASSERT([NSApp isRunning]);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
     return EventHandler::currentNSEvent() != currentEventAfterHandlingMouseDown
         && [currentEventAfterHandlingMouseDown type] == NSEventTypeLeftMouseUp
         && [currentEventAfterHandlingMouseDown timestamp] >= [EventHandler::currentNSEvent() timestamp];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -238,7 +238,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (!widget->platformWidget())
         return false;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView *nodeView = widget->platformWidget();
     ASSERT([nodeView superview]);
@@ -295,7 +295,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (lastEventIsMouseUp())
         m_mousePressed = false;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return true;
 }
@@ -305,7 +305,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 // tree, and this works in cases where the target has already been deallocated.
 static bool findViewInSubviews(NSView *superview, NSView *target)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSEnumerator *e = [[superview subviews] objectEnumerator];
     NSView *subview;
     while ((subview = [e nextObject])) {
@@ -313,7 +313,7 @@ static bool findViewInSubviews(NSView *superview, NSView *target)
             return true;
         }
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -347,9 +347,9 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     if (!m_mouseDownWasInSubframe) {
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [view mouseDragged:currentNSEvent()];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
         m_sendingEventToSubview = false;
     }
     
@@ -366,9 +366,9 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     if (!m_mouseDownWasInSubframe) {
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [view mouseUp:currentNSEvent()];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
         m_sendingEventToSubview = false;
     }
  
@@ -377,7 +377,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     switch ([currentNSEvent() type]) {
     case NSEventTypeLeftMouseDragged:
@@ -428,7 +428,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     default:
         return false;
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -469,7 +469,7 @@ static void selfRetainingNSScrollViewScrollWheel(NSScrollView *self, SEL selecto
 
 bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView* nodeView = widget.platformWidget();
     if (!nodeView) {
@@ -502,7 +502,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
     m_sendingEventToSubview = false;
     return true;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return false;
 }
 
@@ -512,7 +512,7 @@ void EventHandler::mouseDown(NSEvent *event, NSEvent *correspondingPressureEvent
     if (!v || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     m_mouseDownView = nil;
     
@@ -520,7 +520,7 @@ void EventHandler::mouseDown(NSEvent *event, NSEvent *correspondingPressureEvent
 
     handleMousePressEvent(currentPlatformMouseEvent());
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::mouseDragged(NSEvent *event, NSEvent *correspondingPressureEvent)
@@ -529,12 +529,12 @@ void EventHandler::mouseDragged(NSEvent *event, NSEvent *correspondingPressureEv
     if (!v || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     CurrentEventScope scope(event, correspondingPressureEvent);
     handleMouseMoveEvent(currentPlatformMouseEvent());
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
@@ -543,7 +543,7 @@ void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
     if (!v || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     CurrentEventScope scope(event, correspondingPressureEvent);
 
@@ -562,7 +562,7 @@ void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
     
     m_mouseDownView = nil;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 /*
@@ -582,7 +582,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     m_sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
@@ -633,7 +633,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         [NSApp postEvent:fakeEvent atStart:YES];
     }
     
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::mouseMoved(NSEvent *event, NSEvent* correspondingPressureEvent)
@@ -643,10 +643,10 @@ void EventHandler::mouseMoved(NSEvent *event, NSEvent* correspondingPressureEven
     if (!m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     CurrentEventScope scope(event, correspondingPressureEvent);
     mouseMoved(currentPlatformMouseEvent());
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::pressureChange(NSEvent *event, NSEvent* correspondingPressureEvent)
@@ -654,10 +654,10 @@ void EventHandler::pressureChange(NSEvent *event, NSEvent* correspondingPressure
     if (!m_frame.view() || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     CurrentEventScope scope(event, correspondingPressureEvent);
     handleMouseForceEvent(currentPlatformMouseEvent());
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event, NSEvent* correspondingPressureEvent)
@@ -667,10 +667,10 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event, NSEvent* corr
     if (!m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     CurrentEventScope scope(event, correspondingPressureEvent);
     passMouseMovedEventToScrollbars(currentPlatformMouseEvent());
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static bool frameHasPlatformWidget(const Frame& frame)

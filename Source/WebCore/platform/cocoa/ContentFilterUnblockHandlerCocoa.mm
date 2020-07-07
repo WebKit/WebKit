@@ -95,26 +95,26 @@ bool ContentFilterUnblockHandler::needsUIProcess() const
 void ContentFilterUnblockHandler::encode(NSCoder *coder) const
 {
     ASSERT_ARG(coder, coder.allowsKeyedCoding && coder.requiresSecureCoding);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [coder encodeObject:m_unblockURLHost forKey:unblockURLHostKey];
     [coder encodeObject:(NSURL *)m_unreachableURL forKey:unreachableURLKey];
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     [coder encodeObject:m_webFilterEvaluator.get() forKey:webFilterEvaluatorKey];
 #endif
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool ContentFilterUnblockHandler::decode(NSCoder *coder, ContentFilterUnblockHandler& unblockHandler)
 {
     ASSERT_ARG(coder, coder.allowsKeyedCoding && coder.requiresSecureCoding);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     unblockHandler.m_unblockURLHost = [coder decodeObjectOfClass:[NSString class] forKey:unblockURLHostKey];
     unblockHandler.m_unreachableURL = [coder decodeObjectOfClass:[NSURL class] forKey:unreachableURLKey];
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     unblockHandler.m_webFilterEvaluator = [coder decodeObjectOfClass:getWebFilterEvaluatorClass() forKey:webFilterEvaluatorKey];
 #endif
     return true;
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return false;
 }
 

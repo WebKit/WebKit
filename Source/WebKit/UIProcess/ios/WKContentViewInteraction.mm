@@ -9124,7 +9124,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         // and create one. We need to replicate this code for the new API.
         if (!previewViewController || [(NSURL *)url iTunesStoreURL]) {
             auto ddContextMenuActionClass = getDDContextMenuActionClass();
-            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
             NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
             RetainPtr<UIContextMenuConfiguration> dataDetectorsResult = [ddContextMenuActionClass contextMenuConfigurationForURL:url identifier:_positionInformation.dataDetectorIdentifier selectedText:self.selectedText results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
             if (_showLinkPreviews && dataDetectorsResult && dataDetectorsResult.get().previewProvider)
@@ -9133,7 +9133,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
                 auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
                 _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
             }
-            END_BLOCK_OBJC_EXCEPTIONS;
+            END_BLOCK_OBJC_EXCEPTIONS
             return;
         }
 
@@ -9380,7 +9380,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #if ENABLE(DATA_DETECTION)
 - (void)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto ddContextMenuActionClass = getDDContextMenuActionClass();
     URL linkURL = _positionInformation.url;
     NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
@@ -9388,7 +9388,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     _contextMenuActionProviderDelegateNeedsOverride = YES;
     _page->startInteractionWithPositionInformation(_positionInformation);
     continueWithContextMenuConfiguration(configurationFromDD);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 #endif
 

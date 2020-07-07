@@ -58,7 +58,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& pag
 {
     Vector<WebCore::PluginInfo> plugins;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
 
     // WebKit1 has no application plug-ins, so we don't need to add them here.
@@ -68,7 +68,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& pag
     for (WebPluginPackage *plugin in [WebPluginDatabase sharedDatabase].plugins)
         plugins.append(plugin.pluginInfo);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return plugins;
 }

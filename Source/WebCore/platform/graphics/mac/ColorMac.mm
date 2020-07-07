@@ -73,7 +73,7 @@ static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
     CGFloat blueComponent;
     CGFloat alpha;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSColor *rgbColor = [color colorUsingColorSpace:NSColorSpace.deviceRGBColorSpace];
     if (!rgbColor) {
         // The color space conversion above can fail if the NSColor is in the NSPatternColorSpace.
@@ -95,7 +95,7 @@ static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
     }
 
     [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return makeSimpleColor(SRGBA { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }

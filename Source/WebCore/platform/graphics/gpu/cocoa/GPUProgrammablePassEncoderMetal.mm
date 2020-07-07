@@ -40,9 +40,9 @@ void GPUProgrammablePassEncoder::endPass()
     if (!platformPassEncoder())
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [platformPassEncoder() endEncoding];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     invalidateEncoder();
     m_commandBuffer->setIsEncodingPass(false);

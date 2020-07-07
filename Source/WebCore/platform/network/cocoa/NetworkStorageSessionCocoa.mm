@@ -56,9 +56,9 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [nsCookieStorage() setCookie:(NSHTTPCookie *)cookie];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL)
@@ -69,9 +69,9 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
         return cookie;
     });
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [nsCookieStorage() setCookies:nsCookies.get() forURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NetworkStorageSession::deleteCookie(const Cookie& cookie)
@@ -135,13 +135,13 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
         }
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     for (NSHTTPCookie *oldCookie in oldCookiesToDelete.get())
         deleteHTTPCookie(cookieStorage().get(), oldCookie);
 
     for (NSHTTPCookie *newCookie in newCookiesToAdd.get())
         [nsCookieStorage() setCookie:newCookie];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 #else
     UNUSED_PARAM(domain);
 #endif
@@ -359,7 +359,7 @@ std::pair<String, bool> NetworkStorageSession::cookiesForSession(const URL& firs
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSArray *cookies = cookiesForURL(firstParty, sameSiteInfo, url, frameID, pageID, shouldAskITP, shouldRelaxThirdPartyCookieBlocking);
     if (![cookies count])
@@ -389,7 +389,7 @@ std::pair<String, bool> NetworkStorageSession::cookiesForSession(const URL& firs
     }
     return { cookiesBuilder.toString(), didAccessSecureCookies };
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return { String(), false };
 }
 
@@ -430,7 +430,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (shouldAskITP == ShouldAskITP::Yes && shouldBlockCookies(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking))
@@ -468,7 +468,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 
     setHTTPCookiesForURL(cookieStorage().get(), filteredCookies.get(), cookieURL, firstParty, sameSiteInfo);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static NSHTTPCookieAcceptPolicy httpCookieAcceptPolicy(CFHTTPCookieStorageRef cookieStorage)
@@ -483,10 +483,10 @@ static NSHTTPCookieAcceptPolicy httpCookieAcceptPolicy(CFHTTPCookieStorageRef co
 
 HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto policy = httpCookieAcceptPolicy(cookieStorage().get());
     return toHTTPCookieAcceptPolicy(policy);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return HTTPCookieAcceptPolicy::Never;
 }
@@ -494,7 +494,7 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, Vector<Cookie>& rawCookies) const
 {
     rawCookies.clear();
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSArray *cookies = cookiesForURL(firstParty, sameSiteInfo, url, frameID, pageID, shouldAskITP, shouldRelaxThirdPartyCookieBlocking);
     NSUInteger count = [cookies count];
@@ -504,7 +504,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
         rawCookies.uncheckedAppend({ cookie });
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return true;
 }
 
@@ -512,7 +512,7 @@ void NetworkStorageSession::deleteCookie(const URL& url, const String& cookieNam
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = this->cookieStorage();
     NSArray *cookies = httpCookiesForURL(cookieStorage.get(), nil, WTF::nullopt, url);
@@ -526,12 +526,12 @@ void NetworkStorageSession::deleteCookie(const URL& url, const String& cookieNam
             deleteHTTPCookie(cookieStorage.get(), cookie);
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSArray *cookies = httpCookies(cookieStorage().get());
     
@@ -542,7 +542,7 @@ void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
             ASSERT_NOT_REACHED();
     }
     
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NetworkStorageSession::deleteAllCookies()
@@ -559,7 +559,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& host
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = this->cookieStorage();
     NSArray *cookies = httpCookies(cookieStorage.get());
@@ -586,7 +586,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& host
 
     [nsCookieStorage() _saveCookies];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime timePoint)

@@ -155,7 +155,7 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 
 bool EventHandler::keyEvent(WebEvent *event)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     ASSERT(event.type == WebEventKeyDown || event.type == WebEventKeyUp);
 
@@ -164,7 +164,7 @@ bool EventHandler::keyEvent(WebEvent *event)
     event.wasHandled = eventWasHandled;
     return eventWasHandled;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -215,13 +215,13 @@ static bool lastEventIsMouseUp()
     // that state. Handling this was critical when we used AppKit widgets for form elements.
     // It's not clear in what cases this is helpful now -- it's possible it can be removed. 
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     WebEvent *currentEventAfterHandlingMouseDown = [WAKWindow currentEvent];
     return currentEventAfterHandlingMouseDown
         && EventHandler::currentEvent() != currentEventAfterHandlingMouseDown
         && currentEventAfterHandlingMouseDown.type == WebEventMouseUp
         && currentEventAfterHandlingMouseDown.timestamp >= EventHandler::currentEvent().timestamp;
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -243,7 +243,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (!widget->platformWidget())
         return false;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView *nodeView = widget->platformWidget();
     ASSERT(nodeView);
@@ -301,7 +301,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (lastEventIsMouseUp())
         m_mousePressed = false;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return true;
 }
@@ -311,7 +311,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 // tree, and this works in cases where the target has already been deallocated.
 static bool findViewInSubviews(NSView *superview, NSView *target)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSEnumerator *e = [[superview subviews] objectEnumerator];
     NSView *subview;
     while ((subview = [e nextObject])) {
@@ -319,7 +319,7 @@ static bool findViewInSubviews(NSView *superview, NSView *target)
             return true;
         }
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
@@ -356,9 +356,9 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     if (!m_mouseDownWasInSubframe) {
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [view mouseUp:currentEvent()];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
         m_sendingEventToSubview = false;
     }
  
@@ -367,7 +367,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     WebEventType currentEventType = currentEvent().type;
     switch (currentEventType) {
@@ -414,14 +414,14 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     case WebEventTouchEnd:
         return false;
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }
 
 bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView* nodeView = widget.platformWidget();
     if (!nodeView) {
@@ -446,7 +446,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& wid
     m_sendingEventToSubview = false;
     return true;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return false;
 }
 
@@ -456,7 +456,7 @@ void EventHandler::mouseDown(WebEvent *event)
     if (!v || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // FIXME: Why is this here? EventHandler::handleMousePressEvent() calls it.
     m_frame.loader().resetMultipleFormSubmissionProtection();
@@ -467,7 +467,7 @@ void EventHandler::mouseDown(WebEvent *event)
 
     event.wasHandled = handleMousePressEvent(currentPlatformMouseEvent());
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::mouseUp(WebEvent *event)
@@ -476,7 +476,7 @@ void EventHandler::mouseUp(WebEvent *event)
     if (!v || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     CurrentEventScope scope(event);
 
@@ -484,7 +484,7 @@ void EventHandler::mouseUp(WebEvent *event)
 
     m_mouseDownView = nil;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void EventHandler::mouseMoved(WebEvent *event)
@@ -494,7 +494,7 @@ void EventHandler::mouseMoved(WebEvent *event)
     if (!m_frame.document() || !m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto& document = *m_frame.document();
     // Ensure we start mouse move event dispatching on a clear tree.
     document.updateStyleIfNeeded();
@@ -511,7 +511,7 @@ void EventHandler::mouseMoved(WebEvent *event)
         });
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static bool frameHasPlatformWidget(const Frame& frame)

@@ -33,7 +33,7 @@ namespace WebKit {
 
 CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
 #if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
     auto mutableDictionary = adoptNS([attributes mutableCopy]);

@@ -245,11 +245,11 @@ void ScrollbarThemeMac::preferencesChanged()
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState expansionState)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
     [scrollerImp setExpanded:(expansionState == ScrollbarExpansionState::Expanded)];
     return [scrollerImp trackBoxWidth];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
@@ -264,7 +264,7 @@ void ScrollbarThemeMac::usesOverlayScrollbarsChanged()
 
 void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSScrollerImp *painter = painterForScrollbar(scrollbar);
     switch (scrollbar.scrollableArea().scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyleDefault:
@@ -277,7 +277,7 @@ void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
         [painter setKnobStyle:NSScrollerKnobStyleLight];
         break;
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 ScrollbarButtonsPlacement ScrollbarThemeMac::buttonsPlacement() const
@@ -437,9 +437,9 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar& scrollbar, bool painting)
 
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar& scrollbar)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return [scrollbarMap().get(&scrollbar) knobMinLength];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static bool shouldCenterOnThumb(const PlatformMouseEvent& evt)
@@ -496,14 +496,14 @@ int ScrollbarThemeMac::scrollbarPartToHIPressedState(ScrollbarPart part)
 
 void ScrollbarThemeMac::updateEnabledState(Scrollbar& scrollbar)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [scrollbarMap().get(&scrollbar) setEnabled:scrollbar.enabled()];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSScrollerImp *painter = painterForScrollbar(scrollbar);
 
     float value;
@@ -518,12 +518,12 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
     [painter setPresentationValue:value];
 #endif
     [painter setKnobProportion:proportion];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static void scrollerImpPaint(NSScrollerImp *scrollerImp, bool enabled)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Use rectForPart: here; it will take the expansion transition progress into account.
     NSRect trackRect = [scrollerImp rectForPart:NSScrollerKnobSlot];
     [scrollerImp drawKnobSlotInRect:trackRect highlight:NO];
@@ -532,7 +532,7 @@ static void scrollerImpPaint(NSScrollerImp *scrollerImp, bool enabled)
     // call drawKnob.
     if (enabled)
         [scrollerImp drawKnob];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, const IntRect& damageRect)
@@ -573,10 +573,10 @@ static RetainPtr<CGColorRef> linenBackgroundColor()
 {
     NSImage *image = nil;
     CGImageRef cgImage = nullptr;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     image = [NSColor _linenPatternImage];
     cgImage = [image CGImageForProposedRect:NULL context:NULL hints:nil];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     
     if (!cgImage)
         return nullptr;

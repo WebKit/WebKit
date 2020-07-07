@@ -41,9 +41,9 @@ String DOMCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {
     NSString *namespaceURI = nil;
     
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     namespaceURI = [m_customResolver lookupNamespaceURI:prefix];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     
     return namespaceURI;
 }

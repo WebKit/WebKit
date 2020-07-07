@@ -205,9 +205,9 @@ RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)
     if (!length)
         return nullptr;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return SharedBuffer::create([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;
 }
@@ -218,9 +218,9 @@ RefPtr<SharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
     if (!length)
         return nullptr;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return SharedBuffer::create([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;
 }

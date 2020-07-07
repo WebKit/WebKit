@@ -2882,7 +2882,7 @@ void WebViewImpl::updateFontManagerIfNeeded()
         if (error != CallbackBase::Error::None)
             return;
 
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
 
         NSDictionary *attributeDictionary = (__bridge NSDictionary *)fontInfo.fontAttributeDictionary.get();
         if (!attributeDictionary)

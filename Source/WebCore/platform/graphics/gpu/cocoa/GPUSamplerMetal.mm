@@ -84,9 +84,9 @@ static RetainPtr<MTLSamplerState> tryCreateMtlSamplerState(const GPUDevice& devi
 
     RetainPtr<MTLSamplerDescriptor> mtlDescriptor;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     mtlDescriptor = adoptNS([MTLSamplerDescriptor new]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlDescriptor) {
         LOG(WebGPU, "GPUSampler::tryCreate(): Error creating MTLSamplerDescriptor!");
@@ -95,7 +95,7 @@ static RetainPtr<MTLSamplerState> tryCreateMtlSamplerState(const GPUDevice& devi
 
     RetainPtr<MTLSamplerState> sampler;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [mtlDescriptor setRAddressMode:mtlAddressModeForAddressMode(descriptor.addressModeU)];
     [mtlDescriptor setSAddressMode:mtlAddressModeForAddressMode(descriptor.addressModeV)];
     [mtlDescriptor setTAddressMode:mtlAddressModeForAddressMode(descriptor.addressModeW)];
@@ -110,7 +110,7 @@ static RetainPtr<MTLSamplerState> tryCreateMtlSamplerState(const GPUDevice& devi
     [mtlDescriptor setSupportArgumentBuffers:YES];
 
     sampler = adoptNS([device.platformDevice() newSamplerStateWithDescriptor:mtlDescriptor.get()]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!sampler)
         LOG(WebGPU, "GPUSampler::tryCreate(): Error creating MTLSamplerState!");

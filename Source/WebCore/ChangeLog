@@ -1,3 +1,229 @@
+2020-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS should not have trailing semicolons
+        https://bugs.webkit.org/show_bug.cgi?id=214019
+
+        Reviewed by Tim Horton.
+
+        These macros are defined as:
+        
+        #define BEGIN_BLOCK_OBJC_EXCEPTIONS @try {
+        #define END_BLOCK_OBJC_EXCEPTIONS } @catch(NSException *localException) { ReportBlockedObjCException(localException); }
+        
+        so they should not be used with trailing semicolons.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::expandSelectionByCharacters):
+        (WebCore::showPopupOrCreateAnimationController):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::dataInRTFDFormat):
+        (WebCore::Editor::dataInRTFFormat):
+        * editing/mac/DictionaryLookupLegacy.mm:
+        (WebCore::tokenRange):
+        (WebCore::expandSelectionByCharacters):
+        (WebCore::showPopupOrCreateAnimationController):
+        (WebCore::DictionaryLookup::hidePopup):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::findViewInSubviews):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::mouseDown):
+        (WebCore::EventHandler::mouseUp):
+        (WebCore::EventHandler::mouseMoved):
+        * page/mac/ChromeMac.mm:
+        (WebCore::Chrome::focusNSView):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::findViewInSubviews):
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::mouseDown):
+        (WebCore::EventHandler::mouseDragged):
+        (WebCore::EventHandler::mouseUp):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::pressureChange):
+        (WebCore::EventHandler::passMouseMovedEventToScrollbars):
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::encode const):
+        (WebCore::ContentFilterUnblockHandler::decode):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+        * platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm:
+        (WebCore::GPUBindGroupAllocator::allocateAndSetEncoders):
+        (WebCore::GPUBindGroupAllocator::reallocate):
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::appendArgumentToArray):
+        (WebCore::tryCreateMtlArgumentEncoder):
+        (WebCore::argumentDescriptor):
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::setBufferOnEncoder):
+        (WebCore::setSamplerOnEncoder):
+        (WebCore::setTextureOnEncoder):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::commandBufferCommitted):
+        (WebCore::GPUBuffer::copyStagingBufferToGPU):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::tryCreate):
+        (WebCore::GPUCommandBuffer::endBlitEncoding):
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer):
+        (WebCore::GPUCommandBuffer::copyBufferToTexture):
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer):
+        (WebCore::GPUCommandBuffer::copyTextureToTexture):
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm:
+        (WebCore::GPUComputePassEncoder::tryCreate):
+        (WebCore::GPUComputePassEncoder::setPipeline):
+        (WebCore::GPUComputePassEncoder::dispatch):
+        (WebCore::GPUComputePassEncoder::useResource):
+        (WebCore::GPUComputePassEncoder::setComputeBuffer):
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertComputePipelineDescriptor):
+        (WebCore::tryCreateMTLComputePipelineState):
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::endPass):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::tryCreate):
+        (WebCore::GPUQueue::submit):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::populateMtlColorAttachmentsArray):
+        (WebCore::populateMtlDepthStencilAttachment):
+        (WebCore::GPURenderPassEncoder::tryCreate):
+        (WebCore::GPURenderPassEncoder::setPipeline):
+        (WebCore::GPURenderPassEncoder::setBlendColor):
+        (WebCore::GPURenderPassEncoder::setViewport):
+        (WebCore::GPURenderPassEncoder::setScissorRect):
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+        (WebCore::GPURenderPassEncoder::draw):
+        (WebCore::GPURenderPassEncoder::drawIndexed):
+        (WebCore::GPURenderPassEncoder::useResource):
+        (WebCore::GPURenderPassEncoder::setVertexBuffer):
+        (WebCore::GPURenderPassEncoder::setFragmentBuffer):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::tryCreateMtlDepthStencilState):
+        (WebCore::trySetVertexInput):
+        (WebCore::trySetColorStates):
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertRenderPipelineDescriptor):
+        (WebCore::tryCreateMtlRenderPipelineState):
+        * platform/graphics/gpu/cocoa/GPUSamplerMetal.mm:
+        (WebCore::tryCreateMtlSamplerState):
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::tryCreateWebGPULayer):
+        (WebCore::GPUSwapChain::tryGetCurrentTexture):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::tryCreateMtlTextureDescriptor):
+        (WebCore::GPUTexture::tryCreate):
+        (WebCore::GPUTexture::tryCreateDefaultTextureView):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::documentView const):
+        (WebCore::ScrollView::platformSetScrollbarModes):
+        (WebCore::ScrollView::platformScrollbarModes const):
+        (WebCore::ScrollView::platformSetCanBlitOnScroll):
+        (WebCore::ScrollView::platformUnobscuredContentRect const):
+        (WebCore::ScrollView::platformExposedContentRect const):
+        (WebCore::ScrollView::setActualScrollPosition):
+        (WebCore::ScrollView::platformVisibleContentRect const):
+        (WebCore::ScrollView::platformVisibleContentSize const):
+        (WebCore::ScrollView::legacyTileCache):
+        (WebCore::ScrollView::platformSetContentsSize):
+        (WebCore::ScrollView::platformSetScrollbarsSuppressed):
+        (WebCore::ScrollView::platformSetScrollPosition):
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+        (WebCore::ScrollView::platformContentsToScreen const):
+        (WebCore::ScrollView::platformScreenToContents const):
+        (WebCore::ScrollView::platformSetScrollOrigin):
+        * platform/ios/WidgetIOS.mm:
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::frameRect const):
+        (WebCore::Widget::setFrameRect):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::addToSuperview):
+        (WebCore::Widget::removeFromSuperview):
+        (WebCore::Widget::convertFromRootToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindowToRoot):
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPartAnimation invalidate]):
+        (-[WebScrollerImpDelegate cancelAnimations]):
+        (-[WebScrollerImpDelegate invalidate]):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::documentView const):
+        (WebCore::ScrollView::platformAddChild):
+        (WebCore::ScrollView::platformSetScrollbarModes):
+        (WebCore::ScrollView::platformScrollbarModes const):
+        (WebCore::ScrollView::platformSetCanBlitOnScroll):
+        (WebCore::ScrollView::platformTopContentInset const):
+        (WebCore::ScrollView::platformSetTopContentInset):
+        (WebCore::ScrollView::platformVisibleContentRect const):
+        (WebCore::ScrollView::platformVisibleContentRectIncludingObscuredArea const):
+        (WebCore::ScrollView::platformSetContentsSize):
+        (WebCore::ScrollView::platformSetScrollbarsSuppressed):
+        (WebCore::ScrollView::platformSetScrollPosition):
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+        (WebCore::ScrollView::platformContentsToScreen const):
+        (WebCore::ScrollView::platformScreenToContents const):
+        (WebCore::ScrollView::platformSetScrollOrigin):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+        (WebCore::ScrollbarThemeMac::setPaintCharacteristicsForScrollbar):
+        (WebCore::scrollerImpPaint):
+        (WebCore::linenBackgroundColor):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::frameRect const):
+        (WebCore::Widget::setFrameRect):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::removeFromSuperview):
+        (WebCore::Widget::convertFromRootToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindowToRoot):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::setCookie):
+        (WebCore::NetworkStorageSession::setCookies):
+        (WebCore::NetworkStorageSession::setAllCookiesToSameSiteStrict):
+        (WebCore::NetworkStorageSession::cookiesForSession const):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::cookieAcceptPolicy const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::NetworkStorageSession::deleteCookie const):
+        (WebCore::NetworkStorageSession::getHostnamesWithCookies):
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::platformLazyInit):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::mediaControlsFormattedStringForDuration):
+
 2020-07-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Add ability for AX objects to output html in debug

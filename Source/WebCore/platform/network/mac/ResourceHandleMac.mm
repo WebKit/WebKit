@@ -231,7 +231,7 @@ bool ResourceHandle::start()
     if (!d->m_context)
         return false;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // If NetworkingContext is invalid then we are no longer attached to a Page,
     // this must be an attempted load from an unload event handler, so let's just block it.
@@ -275,7 +275,7 @@ bool ResourceHandle::start()
         return true;
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return false;
 }

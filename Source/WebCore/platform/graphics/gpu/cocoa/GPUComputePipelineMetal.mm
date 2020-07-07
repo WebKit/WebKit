@@ -44,7 +44,7 @@ namespace WebCore {
 
 static bool trySetMetalFunctions(MTLLibrary *computeMetalLibrary, MTLComputePipelineDescriptor *mtlDescriptor, const String& computeEntryPointName, GPUErrorScopes& errorScopes)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!computeMetalLibrary) {
         errorScopes.generatePrefixedError("MTLLibrary for compute stage does not exist!");
@@ -59,7 +59,7 @@ static bool trySetMetalFunctions(MTLLibrary *computeMetalLibrary, MTLComputePipe
 
     [mtlDescriptor setComputeFunction:function.get()];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return true;
 }
@@ -86,7 +86,7 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUProgrammableS
 
         NSError *error = nil;
 
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         MonotonicTime startTime;
         if (WHLSL::dumpMetalCompileTimes)
             startTime = MonotonicTime::now();
@@ -94,7 +94,7 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUProgrammableS
         computeLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource.toString() options:nil error:&error]);
         if (WHLSL::dumpMetalCompileTimes)
             dataLogLn("Metal compile times: ", (MonotonicTime::now() - startTime).milliseconds(), " ms");
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
 #ifndef NDEBUG
         if (!computeLibrary)
             NSLog(@"%@", error);
@@ -123,9 +123,9 @@ static Optional<ConvertResult> convertComputePipelineDescriptor(const GPUCompute
 {
     RetainPtr<MTLComputePipelineDescriptor> mtlDescriptor;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     mtlDescriptor = adoptNS([MTLComputePipelineDescriptor new]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlDescriptor) {
         errorScopes.generatePrefixedError("Error creating MTLComputePipelineDescriptor!");
@@ -175,7 +175,7 @@ static Optional<CreateResult> tryCreateMTLComputePipelineState(const GPUDevice& 
 
     RetainPtr<MTLComputePipelineState> pipeline;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSError *error = nil;
     pipeline = adoptNS([device.platformDevice() newComputePipelineStateWithDescriptor:mtlDescriptor.get() options:MTLPipelineOptionNone reflection:nil error:&error]);
@@ -184,7 +184,7 @@ static Optional<CreateResult> tryCreateMTLComputePipelineState(const GPUDevice& 
         return WTF::nullopt;
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return {{ pipeline, convertResult->computeDimensions }};
 }

@@ -146,11 +146,11 @@ bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*
 
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithCallback:WTFMove(callback)];
     requestPermission(context, listener);
     [listener release];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)

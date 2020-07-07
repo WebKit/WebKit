@@ -54,11 +54,11 @@ RefPtr<GPUCommandBuffer> GPUCommandBuffer::tryCreate(const GPUDevice& device)
 
     RetainPtr<MTLCommandBuffer> buffer;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     buffer = [mtlQueue commandBuffer];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!buffer) {
         LOG(WebGPU, "GPUCommandBuffer::create(): Unable to create MTLCommandBuffer!");
@@ -87,9 +87,9 @@ void GPUCommandBuffer::endBlitEncoding()
 {
     if (!m_blitEncoder)
         return;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_blitEncoder endEncoding];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     m_blitEncoder = nullptr;
 }
 
@@ -116,7 +116,7 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffs
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // These casts are safe due to earlier checkedSum() checks.
     [blitEncoder()
@@ -126,7 +126,7 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffs
         destinationOffset:static_cast<NSUInteger>(dstOffset)
         size:static_cast<NSUInteger>(size)];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     useBuffer(WTFMove(src));
     useBuffer(WTFMove(dst));
@@ -158,7 +158,7 @@ void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTex
 
     // GPUTextureCopyView::texture: The value must not be a framebufferOnly texture and must not have a PVRTC pixel format.
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     [blitEncoder()
         copyFromBuffer:srcBuffer.buffer->platformBuffer()
@@ -171,7 +171,7 @@ void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTex
         destinationLevel:dstTexture.mipLevel
         destinationOrigin:MTLOriginMake(dstTexture.origin.x, dstTexture.origin.y, dstTexture.origin.z)];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     useBuffer(WTFMove(srcBuffer.buffer));
     useTexture(WTFMove(dstTexture.texture));
@@ -192,7 +192,7 @@ void GPUCommandBuffer::copyTextureToBuffer(GPUTextureCopyView&& srcTexture, GPUB
 
     // FIXME: Add Metal validation?
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     [blitEncoder()
         copyFromTexture:srcTexture.texture->platformTexture()
@@ -205,7 +205,7 @@ void GPUCommandBuffer::copyTextureToBuffer(GPUTextureCopyView&& srcTexture, GPUB
         destinationBytesPerRow:dstBuffer.rowPitch
         destinationBytesPerImage:dstBuffer.imageHeight];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     useTexture(WTFMove(srcTexture.texture));
     useBuffer(WTFMove(dstBuffer.buffer));
@@ -220,7 +220,7 @@ void GPUCommandBuffer::copyTextureToTexture(GPUTextureCopyView&& src, GPUTexture
 
     // FIXME: Add Metal validation?
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     [blitEncoder()
         copyFromTexture:src.texture->platformTexture()
@@ -233,7 +233,7 @@ void GPUCommandBuffer::copyTextureToTexture(GPUTextureCopyView&& src, GPUTexture
         destinationLevel:dst.mipLevel
         destinationOrigin:MTLOriginMake(dst.origin.x, dst.origin.y, dst.origin.z)];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     useTexture(WTFMove(src.texture));
     useTexture(WTFMove(dst.texture));

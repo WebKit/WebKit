@@ -89,11 +89,11 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(GPUDevice& device, const GPUBufferDescrip
 
     RetainPtr<MTLBuffer> mtlBuffer;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlBuffer = adoptNS([device.platformDevice() newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:resourceOptions]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlBuffer) {
         errorScopes.generateError("", GPUErrorFilter::OutOfMemory);
@@ -147,14 +147,14 @@ void GPUBuffer::commandBufferCommitted(MTLCommandBuffer *commandBuffer)
     ASSERT(isMainThread());
     ++m_numScheduledCommandBuffers;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Make sure |this| only gets ref'd / deref'd on the main thread since it is not ThreadSafeRefCounted.
     [commandBuffer addCompletedHandler:makeBlockPtr([this, protectedThis = makeRef(*this)](id<MTLCommandBuffer>) mutable {
         callOnMainThread([this, protectedThis = WTFMove(protectedThis)] {
             commandBufferCompleted();
         });
     }).get()];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPUBuffer::commandBufferCompleted()
@@ -226,17 +226,17 @@ void GPUBuffer::copyStagingBufferToGPU(GPUErrorScopes* errorScopes)
 
     RetainPtr<MTLBuffer> stagingMtlBuffer;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     // GPUBuffer creation validation ensures m_byteSize fits in NSUInteger.
     stagingMtlBuffer = adoptNS([m_device->platformDevice() newBufferWithBytes:m_stagingBuffer->data() length:static_cast<NSUInteger>(m_byteLength) options:MTLResourceCPUCacheModeDefaultCache]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!stagingMtlBuffer && errorScopes) {
         errorScopes->generateError("", GPUErrorFilter::OutOfMemory);
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     auto commandBuffer = retainPtr([queue commandBuffer]);
     auto blitEncoder = retainPtr([commandBuffer blitCommandEncoder]);
@@ -245,7 +245,7 @@ void GPUBuffer::copyStagingBufferToGPU(GPUErrorScopes* errorScopes)
     [blitEncoder endEncoding];
     [commandBuffer commit];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPUBuffer::unmap(GPUErrorScopes* errorScopes)

@@ -192,9 +192,9 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int selectedIndex)
     
     if (Page* page = frame->page()) {
         WebView* webView = kit(page);
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         CallUIDelegate(webView, @selector(webView:willPopupMenu:), menu);
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
     }
 
     NSControlSize controlSize;

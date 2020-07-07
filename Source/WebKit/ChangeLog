@@ -1,3 +1,38 @@
+2020-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS should not have trailing semicolons
+        https://bugs.webkit.org/show_bug.cgi?id=214019
+
+        Reviewed by Tim Horton.
+
+        These macros are defined as:
+        
+        #define BEGIN_BLOCK_OBJC_EXCEPTIONS @try {
+        #define END_BLOCK_OBJC_EXCEPTIONS } @catch(NSException *localException) { ReportBlockedObjCException(localException); }
+        
+        so they should not be used with trailing semicolons.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeFontInternal):
+        * Shared/Cocoa/CoreTextHelpers.mm:
+        (WebKit::fontWithAttributes):
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateFontManagerIfNeeded):
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.mm:
+        (-[WKScrollbarPartAnimation invalidate]):
+        (-[WKScrollerImpDelegate cancelAnimations]):
+        (-[WKScrollerImpDelegate invalidate]):
+        (WebKit::ScrollerMac::updateValues):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView continueContextMenuInteractionWithDataDetectors:]):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::updateLayerAnimations):
+
 2020-07-06  Brady Eidson  <beidson@apple.com>
 
         Get rid of concept of "initial connected gamepads"

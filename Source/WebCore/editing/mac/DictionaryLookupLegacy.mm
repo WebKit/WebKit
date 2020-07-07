@@ -54,11 +54,11 @@ static NSRange tokenRange(const String& string, NSRange range, NSDictionary **op
     if (!PAL::getLULookupDefinitionModuleClass())
         return NSMakeRange(NSNotFound, 0);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     return [PAL::getLULookupDefinitionModuleClass() tokenRangeForString:string range:range options:options];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return NSMakeRange(NSNotFound, 0);
 }
@@ -152,7 +152,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     size_t originalLength = selection.string.length;
     [selection extendSelectionAtStart:numberOfCharactersToExpand];
@@ -162,12 +162,12 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
     [selection extendSelectionAtEnd:numberOfCharactersToExpand];
     charactersAddedAfterEnd = selection.string.length - originalLength - charactersAddedBeforeStart;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(PDFSelection *selection)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // Don't do anything if there is no character at the point.
     if (!selection || !selection.string.length)
@@ -200,14 +200,14 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     ASSERT([selection.string isEqualToString:[fullPlainTextString substringWithRange:extractedRange]]);
     return { selection.string, options };
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return { @"", nil };
 }
 
 static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!PAL::getLULookupDefinitionModuleClass())
         return nil;
@@ -246,7 +246,7 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
     [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     return nil;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return nil;
 }
 
@@ -259,13 +259,13 @@ void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo,
 
 void DictionaryLookup::hidePopup()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!PAL::getLULookupDefinitionModuleClass())
         return;
     [PAL::getLULookupDefinitionModuleClass() hideDefinition];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 id <NSImmediateActionAnimationController> DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)

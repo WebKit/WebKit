@@ -440,9 +440,9 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 
 - (void)invalidate
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [self stopAnimation];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     _scrollbar = 0;
 }
 
@@ -487,12 +487,12 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 
 - (void)cancelAnimations
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [_knobAlphaAnimation stopAnimation];
     [_trackAlphaAnimation stopAnimation];
     [_uiStateTransitionAnimation stopAnimation];
     [_expansionTransitionAnimation stopAnimation];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 - (NakedPtr<ScrollAnimatorMac>)scrollAnimator
@@ -710,12 +710,12 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
 - (void)invalidate
 {
     _scrollbar = 0;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [_knobAlphaAnimation invalidate];
     [_trackAlphaAnimation invalidate];
     [_uiStateTransitionAnimation invalidate];
     [_expansionTransitionAnimation invalidate];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 @end
@@ -745,13 +745,13 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
 
 ScrollAnimatorMac::~ScrollAnimatorMac()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_scrollerImpPairDelegate invalidate];
     [m_scrollerImpPair setDelegate:nil];
     [m_horizontalScrollerImpDelegate invalidate];
     [m_verticalScrollerImpDelegate invalidate];
     [m_scrollAnimationHelperDelegate invalidate];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static bool scrollAnimationEnabledForSystem()

@@ -1616,7 +1616,7 @@ bool WebFrameLoaderClient::canCachePage() const
 
 RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const String& name, WebCore::HTMLFrameOwnerElement& ownerElement)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     ASSERT(m_webFrame);
     
@@ -1636,14 +1636,14 @@ RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const String& name, Web
  
     return result;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;
 }
 
 WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeType)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     String type = mimeType;
 
@@ -1679,7 +1679,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     
     return WebCore::ObjectContentType::None;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return WebCore::ObjectContentType::None;
 }
@@ -1855,15 +1855,15 @@ private:
     {
         switch (notification) {
         case WebCore::WillPaintFlattened: {
-            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
             [(WebBaseNetscapePluginView *)platformWidget() cacheSnapshot];
-            END_BLOCK_OBJC_EXCEPTIONS;
+            END_BLOCK_OBJC_EXCEPTIONS
             break;
         }
         case WebCore::DidPaintFlattened: {
-            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
             [(WebBaseNetscapePluginView *)platformWidget() clearCachedSnapshot];
-            END_BLOCK_OBJC_EXCEPTIONS;
+            END_BLOCK_OBJC_EXCEPTIONS
             break;
         }
         }
@@ -1892,7 +1892,7 @@ static bool shouldBlockPlugin(WebBasePluginPackage *pluginPackage)
 RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSize& size, WebCore::HTMLPlugInElement& element, const URL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     ASSERT(paramNames.size() == paramValues.size());
 
@@ -2010,14 +2010,14 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
     return adoptRef(new PluginWidget(view));
 #endif
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;
 }
 
 void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget& pluginWidget)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[m_webFrame.get() _dataSource] representation];
 
@@ -2034,13 +2034,13 @@ void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget& pluginWidget)
         [representation _redirectDataToManualLoader:[documentView _pluginController] forPluginView:pluginView];
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
     
 RefPtr<WebCore::Widget> WebFrameLoaderClient::createJavaAppletWidget(const WebCore::IntSize& size, WebCore::HTMLAppletElement& element, const URL& baseURL,
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView *view = nil;
 
@@ -2087,7 +2087,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createJavaAppletWidget(const WebCo
         }
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return 0;
 }

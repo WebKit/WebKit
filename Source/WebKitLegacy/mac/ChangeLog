@@ -1,3 +1,54 @@
+2020-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS should not have trailing semicolons
+        https://bugs.webkit.org/show_bug.cgi?id=214019
+
+        Reviewed by Tim Horton.
+
+        These macros are defined as:
+        
+        #define BEGIN_BLOCK_OBJC_EXCEPTIONS @try {
+        #define END_BLOCK_OBJC_EXCEPTIONS } @catch(NSException *localException) { ReportBlockedObjCException(localException); }
+        
+        so they should not be used with trailing semicolons.
+
+        * DOM/DOMCustomXPathNSResolver.mm:
+        (DOMCustomXPathNSResolver::lookupNamespaceURI):
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota):
+        (WebChromeClient::reachedApplicationCacheOriginQuota):
+        (WebChromeClient::runOpenPanel):
+        (WebChromeClient::keyboardUIMode):
+        (WebChromeClient::firstResponder):
+        (WebChromeClient::makeFirstResponder):
+        (WebChromeClient::attachRootGraphicsLayer):
+        (WebChromeClient::setNeedsOneShotDrawingSynchronization):
+        (WebChromeClient::scheduleRenderingUpdate):
+        (WebChromeClient::enterVideoFullscreenForVideoElement):
+        (WebChromeClient::exitVideoFullscreenForVideoElement):
+        (WebChromeClient::exitVideoFullscreenToModeWithoutAnimation):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createFrame):
+        (WebFrameLoaderClient::objectContentType):
+        (NetscapePluginWidget::notifyWidget):
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::redirectDataToPlugin):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (WebGeolocationClient::setEnableHighAccuracy):
+        (WebGeolocationClient::requestPermission):
+        (-[WebGeolocationProviderInitializationListener initializationAllowedWebView:]):
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::requestPermission):
+        * WebCoreSupport/WebPluginInfoProvider.mm:
+        (WebPluginInfoProvider::pluginInfo):
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::populateVisitedLinksIfNeeded):
+        * WebView/WebHTMLView.mm:
+        (imageFromRect):
+
 2020-07-06  Jonathan Bedard  <jbedard@apple.com>
 
         [Catalyst] Remove SPI header from WebDownload.h

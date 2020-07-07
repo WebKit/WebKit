@@ -46,7 +46,7 @@ RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>&
 {
     RetainPtr<MTLDevice> devicePtr;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
 #if PLATFORM(MAC)
     if (!options || !options->powerPreference || options->powerPreference == GPUPowerPreference::LowPower) {
@@ -70,7 +70,7 @@ RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>&
     if (!isAcceptableDevice(devicePtr.get()))
         devicePtr.clear();
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!devicePtr) {
         LOG(WebGPU, "GPUDevice::GPUDevice(): Unable to create GPUDevice!");

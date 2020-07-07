@@ -688,13 +688,13 @@ void WebChromeClient::print(Frame& frame)
 
 void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& databaseName, DatabaseDetails)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame.document()->securityOrigin()];
     CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(&frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
@@ -704,13 +704,13 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 
 void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin, int64_t totalSpaceNeeded)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin];
     CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:), webOrigin, static_cast<NSUInteger>(totalSpaceNeeded));
     [webOrigin release];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -762,7 +762,7 @@ void WebChromeClient::requestPointerUnlock()
 
 void WebChromeClient::runOpenPanel(Frame&, FileChooser& chooser)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     BOOL allowMultipleFiles = chooser.settings().allowsMultipleFiles;
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
     id delegate = [m_webView UIDelegate];
@@ -773,7 +773,7 @@ void WebChromeClient::runOpenPanel(Frame&, FileChooser& chooser)
     else
         [listener cancel];
     [listener release];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&)
@@ -825,27 +825,27 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return [m_webView _keyboardUIMode];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return KeyboardAccessDefault;
 }
 
 NSResponder *WebChromeClient::firstResponder()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return [[m_webView _UIDelegateForwarder] webViewFirstResponder:m_webView];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return nil;
 }
 
 void WebChromeClient::makeFirstResponder(NSResponder *responder)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_webView _pushPerformingProgrammaticFocus];
     [[m_webView _UIDelegateForwarder] webView:m_webView makeFirstResponder:responder];
     [m_webView _popPerformingProgrammaticFocus];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebChromeClient::enableSuddenTermination()
@@ -918,7 +918,7 @@ void WebChromeClient::attachRootGraphicsLayer(Frame& frame, GraphicsLayer* graph
     UNUSED_PARAM(frame);
     UNUSED_PARAM(graphicsLayer);
 #else
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView *documentView = [[kit(&frame) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]]) {
@@ -932,7 +932,7 @@ void WebChromeClient::attachRootGraphicsLayer(Frame& frame, GraphicsLayer* graph
         [webHTMLView attachRootLayer:graphicsLayer->platformLayer()];
     else
         [webHTMLView detachRootLayer];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 #endif
 }
 
@@ -943,16 +943,16 @@ void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer*)
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_webView _setNeedsOneShotDrawingSynchronization:YES];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebChromeClient::scheduleRenderingUpdate()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_webView _scheduleUpdateRendering];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #if ENABLE(VIDEO)
@@ -977,32 +977,32 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
 {
     ASSERT_UNUSED(standby, !standby);
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (m_mockVideoPresentationModeEnabled)
         videoElement.didBecomeFullscreenElement();
     else
         [m_webView _enterVideoFullscreenForVideoElement:&videoElement mode:mode];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (m_mockVideoPresentationModeEnabled)
         videoElement.didStopBeingFullscreenElement();
     else
         [m_webView _exitVideoFullscreen];
-    END_BLOCK_OBJC_EXCEPTIONS;    
+    END_BLOCK_OBJC_EXCEPTIONS    
 }
 
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (m_mockVideoPresentationModeEnabled)
         videoElement.didStopBeingFullscreenElement();
     else
         [m_webView _exitVideoFullscreen];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

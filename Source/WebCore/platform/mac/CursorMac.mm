@@ -203,7 +203,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     auto nsImage = image->snapshotNSImage();
     if (!nsImage)
         return nullptr;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
     NSSize size = NSMakeSize(image->width() / scale, image->height() / scale);
@@ -228,7 +228,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
 #endif
 
     return adoptNS([[NSCursor alloc] initWithImage:nsImage.get() hotSpot:hotSpot]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return nullptr;
 }
 #endif // ENABLE(CUSTOM_CURSOR_SUPPORT)

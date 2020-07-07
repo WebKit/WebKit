@@ -95,14 +95,14 @@ void Widget::setFocus(bool focused)
     if (!frame)
         return;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
  
     // Call this even when there is no platformWidget(). WK2 will focus on the widget in the UIProcess.
     NSView *view = [platformWidget() _webcore_effectiveFirstResponder];
     if (Page* page = frame->page())
         page->chrome().focusNSView(view);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void Widget::setCursor(const Cursor& cursor)
@@ -120,9 +120,9 @@ void Widget::show()
 
     setSelfVisible(true);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [getOuterView() setHidden:NO];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void Widget::hide()
@@ -132,9 +132,9 @@ void Widget::hide()
 
     setSelfVisible(false);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [getOuterView() setHidden:YES];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 IntRect Widget::frameRect() const
@@ -142,9 +142,9 @@ IntRect Widget::frameRect() const
     if (!platformWidget())
         return m_frame;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return enclosingIntRect([getOuterView() frame]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     
     return m_frame;
 }
@@ -153,7 +153,7 @@ void Widget::setFrameRect(const IntRect& rect)
 {
     m_frame = rect;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView *outerView = getOuterView();
     if (!outerView)
@@ -169,7 +169,7 @@ void Widget::setFrameRect(const IntRect& rect)
         outerView.needsDisplay = NO;
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 NSView *Widget::getOuterView() const
@@ -212,9 +212,9 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
         ALLOW_DEPRECATED_DECLARATIONS_END
         // This is the common case of drawing into a window or an inclusive layer, or printing.
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
         return;
     }
 
@@ -251,12 +251,12 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
     CGContextScaleCTM(cgContext, 1, -1);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     {
         NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:NO];
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     CGContextRestoreGState(cgContext);
 
@@ -268,19 +268,19 @@ void Widget::setIsSelected(bool isSelected)
 {
     NSView *view = platformWidget();
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])
         [view webPlugInSetIsSelected:isSelected];
     else if ([view respondsToSelector:@selector(setIsSelected:)])
         [view setIsSelected:isSelected];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void Widget::removeFromSuperview()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     safeRemoveFromSuperview(getOuterView());
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 // These are here to deal with flipped coords on Mac.
@@ -289,9 +289,9 @@ IntRect Widget::convertFromRootToContainingWindow(const Widget* rootWidget, cons
     if (!rootWidget->platformWidget())
         return rect;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return enclosingIntRect([rootWidget->platformWidget() convertRect:rect toView:nil]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return rect;
 }
@@ -301,9 +301,9 @@ IntRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, cons
     if (!rootWidget->platformWidget())
         return rect;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return enclosingIntRect([rootWidget->platformWidget() convertRect:rect fromView:nil]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return rect;
 }
@@ -313,9 +313,9 @@ IntPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, con
     if (!rootWidget->platformWidget())
         return point;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return IntPoint([rootWidget->platformWidget() convertPoint:point toView:nil]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return point;
 }
 
@@ -324,9 +324,9 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, con
     if (!rootWidget->platformWidget())
         return point;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return IntPoint([rootWidget->platformWidget() convertPoint:point fromView:nil]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return point;
 }

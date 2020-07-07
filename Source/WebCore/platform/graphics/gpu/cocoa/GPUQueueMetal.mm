@@ -50,12 +50,12 @@ RefPtr<GPUQueue> GPUQueue::tryCreate(const GPUDevice& device)
 
     RetainPtr<MTLCommandQueue> queue;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     queue = adoptNS([device.platformDevice() newCommandQueue]);
     [queue setLabel:commandQueueDefaultLabel];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!queue) {
         LOG(WebGPU, "GPUQueue::tryCreate(): Unable to create MTLCommandQueue!");
@@ -91,9 +91,9 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
         // Okay to commit; prevent any buffer mapping callbacks from executing until command buffer is complete.
         for (auto& buffer : commandBuffer->usedBuffers())
             buffer->commandBufferCommitted(commandBuffer->platformCommandBuffer());
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [commandBuffer->platformCommandBuffer() commit];
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
     }
 
     if (m_presentTask.hasPendingTask() || !m_device || !m_device->swapChain())

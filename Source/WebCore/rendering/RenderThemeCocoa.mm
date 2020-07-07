@@ -159,7 +159,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
     if (!std::isfinite(durationInSeconds))
         return WEB_UI_STRING("indefinite time", "accessibility help text for an indefinite media controller time value");
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_durationFormatter) {
         m_durationFormatter = adoptNS([NSDateComponentsFormatter new]);
         m_durationFormatter.get().unitsStyle = NSDateComponentsFormatterUnitsStyleFull;
@@ -168,7 +168,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
         m_durationFormatter.get().maximumUnitCount = 2;
     }
     return [m_durationFormatter.get() stringFromTimeInterval:durationInSeconds];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 FontCascadeDescription& RenderThemeCocoa::cachedSystemFontDescription(CSSValueID valueID) const

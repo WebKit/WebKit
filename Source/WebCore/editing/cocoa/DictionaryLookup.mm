@@ -262,7 +262,7 @@ namespace WebCore {
 
 std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
@@ -287,14 +287,14 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
 
     return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return { nullptr, nil };
 }
 
 std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
@@ -360,7 +360,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     
     return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };
     
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     
     return { nullptr, nil };
     
@@ -368,7 +368,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     size_t originalLength = selection.string.length;
     [selection extendSelectionAtStart:numberOfCharactersToExpand];
@@ -378,12 +378,12 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
     [selection extendSelectionAtEnd:numberOfCharactersToExpand];
     charactersAddedAfterEnd = selection.string.length - originalLength - charactersAddedBeforeStart;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(PDFSelection *selection)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
@@ -418,14 +418,14 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     ASSERT([selection.string isEqualToString:[fullPlainTextString substringWithRange:extractedRange]]);
     return { selection.string, nil };
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return { @"", nil };
 }
 
 static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, RevealView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     
 #if PLATFORM(MAC)
     
@@ -509,7 +509,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     return nil;
 #endif // PLATFORM(IOS_FAMILY)
     
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     
 }
 

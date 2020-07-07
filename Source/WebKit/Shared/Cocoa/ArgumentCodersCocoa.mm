@@ -316,7 +316,7 @@ static Optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
     if (!decode(decoder, fontAttributes))
         return WTF::nullopt;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     return { WebKit::fontWithAttributes(fontAttributes.get(), 0) };
 

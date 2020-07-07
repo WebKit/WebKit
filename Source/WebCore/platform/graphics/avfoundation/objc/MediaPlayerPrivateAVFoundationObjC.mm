@@ -1502,7 +1502,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
         return;
 
     setDelayCallbacks(true);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // Callers of this will often call copyVideoTextureToPlatformTexture first,
     // which calls updateLastPixelBuffer, which clears m_lastImage whenever the
@@ -1518,7 +1518,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     else
         paintWithImageGenerator(context, rect);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     setDelayCallbacks(false);
 
     m_videoFrameHasDrawn = true;

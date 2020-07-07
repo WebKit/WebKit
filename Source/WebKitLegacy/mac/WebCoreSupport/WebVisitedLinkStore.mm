@@ -139,9 +139,9 @@ void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& page)
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [[WebHistory optionalSharedHistory] _addVisitedLinksToVisitedLinkStore:*this];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebVisitedLinkStore::addVisitedLinkHash(SharedStringHash linkHash)

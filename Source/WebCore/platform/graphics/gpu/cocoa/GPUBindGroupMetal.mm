@@ -71,12 +71,12 @@ static void setBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBuf
 {
     ASSERT(argumentEncoder && bufferBinding.buffer->platformBuffer());
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Bounds check when converting GPUBufferBinding ensures that NSUInteger cast of uint64_t offset is safe.
     [argumentEncoder setBuffer:bufferBinding.buffer->platformBuffer() offset:static_cast<NSUInteger>(bufferBinding.offset) atIndex:name];
     void* lengthPointer = [argumentEncoder constantDataAtIndex:lengthName];
     memcpy(lengthPointer, &bufferBinding.size, sizeof(uint64_t));
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
     
 static MTLSamplerState *tryGetResourceAsMtlSampler(const GPUBindingResource& resource, const char* const functionName)
@@ -100,9 +100,9 @@ static void setSamplerOnEncoder(MTLArgumentEncoder *argumentEncoder, MTLSamplerS
 {
     ASSERT(argumentEncoder && sampler);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [argumentEncoder setSamplerState:sampler atIndex:index];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static RefPtr<GPUTexture> tryGetResourceAsTexture(const GPUBindingResource& resource, const char* const functionName)
@@ -126,9 +126,9 @@ static void setTextureOnEncoder(MTLArgumentEncoder *argumentEncoder, MTLTexture 
 {
     ASSERT(argumentEncoder && texture);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [argumentEncoder setTexture:texture atIndex:index];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descriptor, GPUBindGroupAllocator& allocator)

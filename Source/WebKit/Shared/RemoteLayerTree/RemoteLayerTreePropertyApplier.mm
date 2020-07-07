@@ -271,7 +271,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
 void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     applyPropertiesToLayer(node.layer(), layerTreeHost, properties, layerContentsType);
     updateChildren(node, properties, relatedLayers);
@@ -284,7 +284,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     applyPropertiesToUIView(node.uiView(), properties, relatedLayers);
 #endif
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)

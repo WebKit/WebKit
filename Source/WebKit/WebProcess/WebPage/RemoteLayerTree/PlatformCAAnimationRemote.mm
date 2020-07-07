@@ -807,7 +807,7 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
 
 void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     for (const auto& value : animationsToRemove)
         [layer removeAnimationForKey:value];
@@ -815,7 +815,7 @@ void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLaye
     for (const auto& keyAnimationPair : animationsToAdd)
         addAnimationToLayer(layer, layerTreeHost, keyAnimationPair.first, keyAnimationPair.second);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 TextStream& operator<<(TextStream&ts, const PlatformCAAnimationRemote::KeyframeValue& value)

@@ -68,7 +68,7 @@ static RetainPtr<WebGPULayer> tryCreateWebGPULayer(MTLDevice *device, MTLPixelFo
 
     RetainPtr<WebGPULayer> layer;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     layer = adoptNS([WebGPULayer new]);
 
     [layer setName:@"Web GPU Layer"];
@@ -77,7 +77,7 @@ static RetainPtr<WebGPULayer> tryCreateWebGPULayer(MTLDevice *device, MTLPixelFo
     [layer setDevice:device];
     [layer setFramebufferOnly:(usage == GPUTextureUsage::Flags::OutputAttachment)];
     [layer setPixelFormat:format];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!layer)
         LOG(WebGPU, "GPUSwapChain::tryCreate(): Unable to create CAMetalLayer!");
@@ -124,12 +124,12 @@ RefPtr<GPUTexture> GPUSwapChain::tryGetCurrentTexture()
 {
     RetainPtr<MTLTexture> mtlTexture;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_currentDrawable)
         m_currentDrawable = retainPtr([m_platformSwapLayer nextDrawable]);
     mtlTexture = [m_currentDrawable texture];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlTexture) {
         LOG(WebGPU, "GPUSwapChain::getCurrentTexture(): Unable to get current MTLTexture!");

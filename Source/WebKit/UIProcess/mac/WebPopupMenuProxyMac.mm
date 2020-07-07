@@ -104,7 +104,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSFont *font;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (NSDictionary *fontAttributes = static_cast<NSDictionary *>(data.fontInfo.fontAttributeDictionary.get()))
         font = fontWithAttributes(fontAttributes, ((pageScaleFactor != 1) ? [fontAttributes[NSFontSizeAttribute] floatValue] * pageScaleFactor : 0));

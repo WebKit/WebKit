@@ -78,7 +78,7 @@ static bool populateMtlColorAttachmentsArray(MTLRenderPassColorAttachmentDescrip
         }
         const auto& color = descriptor.clearColor;
 
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
 
         auto mtlAttachment = retainPtr([array objectAtIndexedSubscript:i]);
         [mtlAttachment setTexture:descriptor.attachment->platformTexture()];
@@ -86,7 +86,7 @@ static bool populateMtlColorAttachmentsArray(MTLRenderPassColorAttachmentDescrip
         [mtlAttachment setLoadAction:loadActionForGPULoadOp(descriptor.loadOp)];
         [mtlAttachment setStoreAction:storeActionForGPUStoreOp(descriptor.storeOp)];
 
-        END_BLOCK_OBJC_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS
     }
 
     return true;
@@ -103,14 +103,14 @@ static bool populateMtlDepthStencilAttachment(MTLRenderPassDepthAttachmentDescri
         return false;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     [mtlAttachment setTexture:descriptor.attachment->platformTexture()];
     [mtlAttachment setClearDepth:descriptor.clearDepth];
     [mtlAttachment setLoadAction:loadActionForGPULoadOp(descriptor.depthLoadOp)];
     [mtlAttachment setStoreAction:storeActionForGPUStoreOp(descriptor.depthStoreOp)];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return true;
 }
@@ -135,11 +135,11 @@ RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::tryCreate(Ref<GPUCommandBuffe
 
     RetainPtr<MTLRenderPassDescriptor> mtlDescriptor;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlDescriptor = adoptNS([MTLRenderPassDescriptor new]);
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlDescriptor) {
         LOG(WebGPU, "%s: Unable to create MTLRenderPassDescriptor!", functionName);
@@ -157,11 +157,11 @@ RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::tryCreate(Ref<GPUCommandBuffe
 
     RetainPtr<MTLRenderCommandEncoder> mtlEncoder;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     mtlEncoder = [buffer->platformCommandBuffer() renderCommandEncoderWithDescriptor:mtlDescriptor.get()];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (!mtlEncoder) {
         LOG(WebGPU, "%s: Unable to create MTLRenderCommandEncoder!", functionName);
@@ -194,14 +194,14 @@ void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
 
     // FIXME: Metal throws an error if the MTLPipelineState's attachment formats do not match the MTLCommandEncoder's attachment formats.
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (pipeline->depthStencilState())
         [m_platformRenderPassEncoder setDepthStencilState:pipeline->depthStencilState()];
 
     [m_platformRenderPassEncoder setRenderPipelineState:pipeline->platformRenderPipeline()];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     m_pipeline = WTFMove(pipeline);
 }
@@ -213,9 +213,9 @@ void GPURenderPassEncoder::setBlendColor(const GPUColor& color)
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder setBlendColorRed:color.r green:color.g blue:color.b alpha:color.a];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPURenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
@@ -225,9 +225,9 @@ void GPURenderPassEncoder::setViewport(float x, float y, float width, float heig
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder setViewport: { x, y, width, height, minDepth, maxDepth }];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPURenderPassEncoder::setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height)
@@ -237,9 +237,9 @@ void GPURenderPassEncoder::setScissorRect(unsigned x, unsigned y, unsigned width
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder setScissorRect: { x, y, width, height }];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPURenderPassEncoder::setIndexBuffer(GPUBuffer& buffer, uint64_t offset)
@@ -267,7 +267,7 @@ void GPURenderPassEncoder::setVertexBuffers(unsigned index, const Vector<Ref<GPU
 
     ASSERT(buffers.size() && offsets.size() == buffers.size());
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     auto mtlBuffers = buffers.map([this] (auto& buffer) {
         commandBuffer().useBuffer(buffer.copyRef());
@@ -279,7 +279,7 @@ void GPURenderPassEncoder::setVertexBuffers(unsigned index, const Vector<Ref<GPU
 
     [m_platformRenderPassEncoder setVertexBuffers:mtlBuffers.data() offsets:(const NSUInteger *)offsets.data() withRange:indexRanges];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static MTLPrimitiveType mtlPrimitiveTypeForGPUPrimitiveTopology(GPUPrimitiveTopology type)
@@ -311,14 +311,14 @@ void GPURenderPassEncoder::draw(unsigned vertexCount, unsigned instanceCount, un
         return;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder 
         drawPrimitives:mtlPrimitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
         vertexStart:firstVertex
         vertexCount:vertexCount
         instanceCount:instanceCount
         baseInstance:firstInstance];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static MTLIndexType mtlIndexTypeForGPUIndexFormat(GPUIndexFormat format)
@@ -369,7 +369,7 @@ void GPURenderPassEncoder::drawIndexed(unsigned indexCount, unsigned instanceCou
 
     commandBuffer().useBuffer(makeRef(*m_indexBuffer));
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder
         drawIndexedPrimitives:mtlPrimitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
         indexCount:indexCount
@@ -379,7 +379,7 @@ void GPURenderPassEncoder::drawIndexed(unsigned indexCount, unsigned instanceCou
         instanceCount:instanceCount
         baseVertex:baseVertex
         baseInstance:firstInstance];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #if USE(METAL)
@@ -388,27 +388,27 @@ void GPURenderPassEncoder::useResource(const MTLResource *resource, unsigned usa
 {
     ASSERT(m_platformRenderPassEncoder);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder useResource:resource usage:usage];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPURenderPassEncoder::setVertexBuffer(const MTLBuffer *buffer, NSUInteger offset, unsigned index)
 {
     ASSERT(m_platformRenderPassEncoder);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder setVertexBuffer:buffer offset:offset atIndex:index];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void GPURenderPassEncoder::setFragmentBuffer(const MTLBuffer *buffer, NSUInteger offset, unsigned index)
 {
     ASSERT(m_platformRenderPassEncoder);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_platformRenderPassEncoder setFragmentBuffer:buffer offset:offset atIndex:index];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #endif // USE(METAL)

@@ -55,21 +55,21 @@ static MTLDataType MTLDataTypeForBindingType(GPUBindingType type)
 using ArgumentArray = RetainPtr<NSMutableArray<MTLArgumentDescriptor *>>;
 static void appendArgumentToArray(ArgumentArray& array, RetainPtr<MTLArgumentDescriptor> argument)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!array)
         array = adoptNS([[NSMutableArray alloc] initWithObjects:argument.get(), nil]);
     else
         [array addObject:argument.get()];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static RetainPtr<MTLArgumentEncoder> tryCreateMtlArgumentEncoder(const GPUDevice& device, ArgumentArray array)
 {
     RetainPtr<MTLArgumentEncoder> encoder;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     encoder = adoptNS([device.platformDevice() newArgumentEncoderWithArguments:array.get()]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     if (!encoder) {
         LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentEncoder!");
         return nullptr;
@@ -80,9 +80,9 @@ static RetainPtr<MTLArgumentEncoder> tryCreateMtlArgumentEncoder(const GPUDevice
 static RetainPtr<MTLArgumentDescriptor> argumentDescriptor(MTLDataType dataType, NSUInteger index)
 {
     RetainPtr<MTLArgumentDescriptor> mtlArgument;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     mtlArgument = adoptNS([MTLArgumentDescriptor new]);
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=201384 This needs to set the "textureType" field
     [mtlArgument setDataType:dataType];
@@ -158,11 +158,11 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
             return nullptr;
     }
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [vertexArgs addObjectsFromArray:vertexLengths.get()];
     [fragmentArgs addObjectsFromArray:fragmentLengths.get()];
     [computeArgs addObjectsFromArray:computeLengths.get()];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr<MTLArgumentEncoder> vertex, fragment, compute;
 

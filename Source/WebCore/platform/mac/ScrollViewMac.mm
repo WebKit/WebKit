@@ -56,15 +56,15 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
 
 NSView *ScrollView::documentView() const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return [scrollView() documentView];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return nil;
 }
 
 void ScrollView::platformAddChild(Widget* child)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSView *parentView = documentView();
     NSView *childView = child->getOuterView();
     ASSERT(![parentView isDescendantOf:childView]);
@@ -76,7 +76,7 @@ void ScrollView::platformAddChild(Widget* child)
     if ([childView superview] != parentView)
         [parentView addSubview:childView];
     [window _setNeedsToResetDragMargins:resetDragMargins];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformRemoveChild(Widget* child)
@@ -86,25 +86,25 @@ void ScrollView::platformRemoveChild(Widget* child)
 
 void ScrollView::platformSetScrollbarModes()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [scrollView() setScrollingModes:m_horizontalScrollbarMode vertical:m_verticalScrollbarMode andLock:NO];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [scrollView() scrollingModes:&horizontal vertical:&vertical];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformSetCanBlitOnScroll(bool canBlitOnScroll)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[scrollView() contentView] setCopiesOnScroll:canBlitOnScroll];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool ScrollView::platformCanBlitOnScroll() const
@@ -116,16 +116,16 @@ bool ScrollView::platformCanBlitOnScroll() const
 
 float ScrollView::platformTopContentInset() const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return scrollView().contentInsets.top;
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return 0;
 }
 
 void ScrollView::platformSetTopContentInset(float topContentInset)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (topContentInset)
         scrollView().automaticallyAdjustsContentInsets = NO;
     else
@@ -134,19 +134,19 @@ void ScrollView::platformSetTopContentInset(float topContentInset)
     NSEdgeInsets contentInsets = scrollView().contentInsets;
     contentInsets.top = topContentInset;
     scrollView().contentInsets = contentInsets;
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     IntRect visibleContentRect = platformVisibleContentRectIncludingObscuredArea(includeScrollbars);
 
     visibleContentRect.move(scrollView().contentInsets.left, scrollView().contentInsets.top);
     visibleContentRect.contract(scrollView().contentInsets.left + scrollView().contentInsets.right, scrollView().contentInsets.top + scrollView().contentInsets.bottom);
 
     return visibleContentRect;
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return IntRect();
 }
@@ -158,7 +158,7 @@ IntSize ScrollView::platformVisibleContentSize(bool includeScrollbars) const
 
 IntRect ScrollView::platformVisibleContentRectIncludingObscuredArea(bool includeScrollbars) const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     IntRect visibleContentRectIncludingObscuredArea = enclosingIntRect([scrollView() documentVisibleRect]);
 
     if (includeScrollbars) {
@@ -167,7 +167,7 @@ IntRect ScrollView::platformVisibleContentRectIncludingObscuredArea(bool include
     }
 
     return visibleContentRectIncludingObscuredArea;
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 
     return IntRect();
 }
@@ -184,25 +184,25 @@ IntRect ScrollView::platformUnobscuredContentRect(VisibleContentRectIncludesScro
 
 void ScrollView::platformSetContentsSize()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     int w = m_contentsSize.width();
     int h = m_contentsSize.height();
     LOG(Frames, "%p %@ at w %d h %d\n", documentView(), [(id)[documentView() class] className], w, h);            
     [documentView() setFrameSize:NSMakeSize(std::max(0, w), std::max(0, h))];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [scrollView() setScrollBarsSuppressed:m_scrollbarsSuppressed
                       repaintOnUnsuppress:repaintOnUnsuppress];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSPoint floatPoint = scrollPoint;
     NSPoint tempPoint = { std::max(-[scrollView() scrollOrigin].x, floatPoint.x), std::max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
 
@@ -212,7 +212,7 @@ void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
     tempPoint.y = tempPoint.y - scrollView().contentInsets.top;
 
     [documentView() scrollPoint:tempPoint];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
@@ -224,18 +224,18 @@ bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
 
 void ScrollView::platformRepaintContentRectangle(const IntRect& rect)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSView *view = documentView();
     [view setNeedsDisplayInRect:rect];
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
 IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (NSView* documentView = this->documentView()) {
         NSRect tempRect = rect;
         tempRect = [documentView convertRect:tempRect toView:nil];
@@ -244,20 +244,20 @@ IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
         ALLOW_DEPRECATED_DECLARATIONS_END
         return enclosingIntRect(tempRect);
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return IntRect();
 }
 
 IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (NSView* documentView = this->documentView()) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSPoint windowCoord = [[documentView window] convertScreenToBase: point];
         ALLOW_DEPRECATED_DECLARATIONS_END
         return IntPoint([documentView convertPoint:windowCoord fromView:nil]);
     }
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
     return IntPoint();
 }
 
@@ -285,9 +285,9 @@ void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle overlayS
 
 void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [scrollView() setScrollOrigin:origin updatePositionAtAll:updatePositionAtAll immediately:updatePositionSynchronously];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 } // namespace WebCore
