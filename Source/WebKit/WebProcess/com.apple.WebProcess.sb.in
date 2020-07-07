@@ -407,6 +407,7 @@
     (allow iokit-get-properties
         (iokit-property "ADSSupported")
         (iokit-property "IOAVDHEVCDecodeCapabilities")
+        (iokit-property "IOSurfaceAcceleratorCapabilitiesDict") ;; <rdar://problem/63696732>
     ))
 
 (if (equal? (param "CPU") "arm64")
@@ -665,6 +666,8 @@
     (allow iokit-open
         (iokit-user-client-class "AppleAVDUserClient")
         (iokit-user-client-class "IOMobileFramebufferUserClient")
+        (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; <rdar://problem/63696732>
+        (iokit-user-client-class "IOSurfaceRootUserClient") ;; <rdar://problem/63696732>
     )
 )
 

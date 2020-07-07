@@ -1,3 +1,16 @@
+2020-07-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow additional IOKit classes for Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=214021
+
+        Reviewed by Sam Weinig.
+        <rdar://problem/63696732>
+
+        Update two of the arm64-specific sandbox rules to include additional
+        IOKit classes (and one IOKit property).
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-07-07  Sihui Liu  <sihui_liu@appe.com>
 
         Network process crashes in WebKit::StorageManagerSet::deleteSessionStorageForOrigins
