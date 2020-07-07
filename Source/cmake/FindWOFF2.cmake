@@ -59,7 +59,7 @@ This will define the following variables in your project:
 find_package(PkgConfig QUIET)
 pkg_check_modules(PC_WOFF2 QUIET libwoff2common)
 set(WOFF2_COMPILE_OPTIONS ${PC_WOFF2_CFLAGS_OTHER})
-set(WOFF2_VERSION ${PC_WOFF2_CFLAGS_VERSION})
+set(WOFF2_VERSION ${PC_WOFF2_VERSION})
 
 find_library(WOFF2_LIBRARY
     NAMES ${WOFF2_NAMES} woff2common

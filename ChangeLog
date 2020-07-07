@@ -1,3 +1,13 @@
+2020-07-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Fix typo in version variable assingment in FindWOFF2.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=214012
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/FindWOFF2.cmake: Properly use PC_WOFF2_VERSION as the version
+        detected from pkg-config.
+
 2020-07-04  Sergio Villar Senin  <svillar@igalia.com>
 
         [Flatpak SDK] Require OpenXR 1.0.9
