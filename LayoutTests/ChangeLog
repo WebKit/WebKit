@@ -1,3 +1,15 @@
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: (r263987): [ iOS Debug WK2 ] 12 web-platform-tests semantics/scripting consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=214058
+        <rdar://problem/65193100>
+
+        Unreviewed, mark as flaky on iOS some of the new html/semantics web-platform-tests that got added
+        during the resync in r263987. Those give different TEXT results on release and debug builds so this
+        must be due to a timing issue, indicating those tests are actually flaky.
+
+        * platform/ios/TestExpectations:
+
 2020-07-07  Sam Weinig  <weinig@apple.com>
 
         Enabled testing of date/time input types for WebKit2 macOS

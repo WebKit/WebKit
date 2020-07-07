@@ -1423,6 +1423,19 @@ webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.h
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
 webkit.org/b/176078 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Pass Failure ]
 
+# Newly imported web-platform-tests that are flaky on iOS.
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-inline-classic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-inline-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-classic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-inline-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-inline-classic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-inline-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-empty-src-classic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-empty-src-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-external-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-classic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-module.html [ Pass Failure ]
 
 # SVG tests that fail:
 svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
