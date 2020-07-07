@@ -1,3 +1,13 @@
+2020-07-07  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> layout does not scale with Dynamic Type size changes
+        https://bugs.webkit.org/show_bug.cgi?id=214023
+        <rdar://problem/64914762>
+
+        Reviewed by Sam Weinig.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2020-07-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263960.

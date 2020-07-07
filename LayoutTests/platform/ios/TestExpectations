@@ -2524,6 +2524,7 @@ imported/w3c/web-platform-tests/dom/events/scrolling [ Pass ]
 
 fast/attachment/attachment-wrapping-action.html [ Pass ]
 fast/attachment/attachment-borderless.html [ Pass ]
+fast/attachment/attachment-dynamic-type.html [ Pass ]
 fast/images/pdf-as-image-dest-rect-change.html [ Pass ]
 
 fast/events/page-visibility-iframe-move-test.html [ Skip ]

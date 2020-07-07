@@ -262,6 +262,7 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
     virtual int attachmentBaseline(const RenderAttachment&) const { return -1; }
+    virtual bool attachmentShouldAllowWidthToShrink(const RenderAttachment&) const { return false; }
 #endif
 
     enum class InnerSpinButtonLayout { Vertical, HorizontalUpLeft, HorizontalUpRight };

@@ -1,3 +1,42 @@
+2020-07-07  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> layout does not scale with Dynamic Type size changes
+        https://bugs.webkit.org/show_bug.cgi?id=214023
+        <rdar://problem/64914762>
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/attachment/attachment-dynamic-type.html
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::shortCaptionPointSizeWithContentSizeCategory):
+        (WebCore::attachmentDynamicTypeScaleFactor):
+        (WebCore::RenderAttachmentInfo::buildWrappedLines):
+        (WebCore::RenderThemeIOS::attachmentIntrinsicSize const):
+        Scale the <attachment> overall size and text line width by the Dynamic Type
+        scaling factor, determined by dividing the resolved point size of two
+        font descriptors created with the Large (default) category and the Current category.
+
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::layout):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::attachmentShouldAllowWidthToShrink const):
+        * rendering/RenderThemeIOS.h:
+        Add a RenderTheme bit controlling the behavior introduced in r202117.
+        After r202117, <attachment> elements are never allowed to shrink. This 
+        is fine for macOS, where we don't vary the Dynamic Type size, only the content,
+        but undesirable on iOS, where the size of the <attachment> is based solely
+        on Dynamic Type size (and thus can shrink when the size is reduced),
+        and not the content.
+        
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setContentSizeCategory):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add a Internals method to change the current Dynamic Type category.
+
 2020-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Add WebCoreNSURLSession SPI to send HTTP/2 ping

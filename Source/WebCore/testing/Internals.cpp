@@ -158,6 +158,7 @@
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
+#include "RenderThemeIOS.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
@@ -330,6 +331,7 @@
 
 #if PLATFORM(COCOA)
 #include "SystemBattery.h"
+#include <pal/spi/cocoa/CoreTextSPI.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -581,6 +583,10 @@ void Internals::resetToConsistentState(Page& page)
 
     HTMLCanvasElement::setMaxPixelMemoryForTesting(0); // This means use the default value.
     DOMWindow::overrideTransientActivationDurationForTesting(WTF::nullopt);
+
+#if PLATFORM(IOS)
+    RenderThemeIOS::setContentSizeCategory(kCTFontContentSizeCategoryL);
+#endif
 }
 
 Internals::Internals(Document& document)
@@ -5899,5 +5905,24 @@ unsigned Internals::mediaKeySessionInternalInstanceSessionObjectRefCount(const M
     return mediaKeySession.internalInstanceSessionObjectRefCount();
 }
 #endif
+
+void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
+{
+#if PLATFORM(IOS)
+    CFStringRef ctCategory = nil;
+    switch (category) {
+    case Internals::ContentSizeCategory::L:
+        ctCategory = kCTFontContentSizeCategoryL;
+        break;
+    case Internals::ContentSizeCategory::XXXL:
+        ctCategory = kCTFontContentSizeCategoryXXXL;
+        break;
+    }
+    RenderThemeIOS::setContentSizeCategory(ctCategory);
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+#else
+    UNUSED_PARAM(category);
+#endif
+}
 
 } // namespace WebCore

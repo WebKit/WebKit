@@ -1,3 +1,17 @@
+2020-07-07  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> layout does not scale with Dynamic Type size changes
+        https://bugs.webkit.org/show_bug.cgi?id=214023
+        <rdar://problem/64914762>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * fast/attachment/attachment-dynamic-type-expected.txt: Added.
+        * fast/attachment/attachment-dynamic-type.html: Added.
+        * platform/ios/TestExpectations:
+        Add a test that ensures that changing the content size to XXXL also increases the size of the <attachment>.
+
 2020-07-07  Truitt Savell  <tsavell@apple.com>
 
         [ iOS ] http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html is flaky timing out

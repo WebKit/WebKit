@@ -1037,6 +1037,9 @@ public:
     unsigned mediaKeySessionInternalInstanceSessionObjectRefCount(const MediaKeySession&) const;
 #endif
 
+    enum class ContentSizeCategory { L, XXXL };
+    void setContentSizeCategory(ContentSizeCategory);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

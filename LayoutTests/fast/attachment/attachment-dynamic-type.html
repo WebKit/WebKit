@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body>
+<attachment id="attachment" title=" " type="public.jpeg"></attachment>
+<pre id="log"></pre>
+<script>
+testRunner.dumpAsText();
+
+window.onload = function () {
+    var attachment = document.getElementById("attachment");
+
+    function logSize(s) { log.innerText += s + ": " + attachment.offsetWidth + " x " + attachment.offsetHeight + "\n"; }
+
+    logSize("Default");
+    internals.setContentSizeCategory("L");
+    logSize("Large");
+    internals.setContentSizeCategory("XXXL");
+    logSize("XXXLarge");
+}
+</script>
+</body>
+</html>

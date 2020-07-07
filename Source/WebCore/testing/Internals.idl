@@ -100,6 +100,11 @@ enum CompositingPolicy {
     "Interrupted"
 };
 
+enum ContentSizeCategory {
+    "L",
+    "XXXL"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
@@ -927,4 +932,6 @@ enum CompositingPolicy {
 
     [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeysInternalInstanceObjectRefCount(MediaKeys mediaKeys);
     [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeySessionInternalInstanceSessionObjectRefCount(MediaKeySession session);
+
+    void setContentSizeCategory(ContentSizeCategory category);
 };

@@ -1,0 +1,5 @@
+
+Default: 160 x 119
+Large: 160 x 119
+XXXLarge: 240 x 179
+

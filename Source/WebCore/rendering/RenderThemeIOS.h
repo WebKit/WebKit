@@ -136,6 +136,7 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const override;
     int attachmentBaseline(const RenderAttachment&) const override;
+    bool attachmentShouldAllowWidthToShrink(const RenderAttachment&) const override { return true; }
     bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 

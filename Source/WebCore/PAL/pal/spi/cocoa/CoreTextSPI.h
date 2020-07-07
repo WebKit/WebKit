@@ -150,6 +150,7 @@ extern const CFStringRef kCTUIFontTextStyleCaption2;
 extern const CFStringRef kCTFontDescriptorTextStyleEmphasized;
 
 extern const CFStringRef kCTFontContentSizeCategoryL;
+extern const CFStringRef kCTFontContentSizeCategoryXXXL;
 
 extern const CGFloat kCTFontWeightUltraLight;
 extern const CGFloat kCTFontWeightThin;
