@@ -25,16 +25,16 @@ PASS value IDL attribute of input type email without value attribute
 PASS value IDL attribute of input type email with value attribute 
 PASS value IDL attribute of input type password without value attribute 
 PASS value IDL attribute of input type password with value attribute 
-FAIL value IDL attribute of input type datetime-local without value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type datetime-local with value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type date without value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type date with value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type month without value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type month with value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type week without value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type week with value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type time without value attribute assert_equals: expected "" but got "foo\0"
-FAIL value IDL attribute of input type time with value attribute assert_equals: expected "" but got "foo\0"
+PASS value IDL attribute of input type datetime-local without value attribute 
+PASS value IDL attribute of input type datetime-local with value attribute 
+PASS value IDL attribute of input type date without value attribute 
+PASS value IDL attribute of input type date with value attribute 
+PASS value IDL attribute of input type month without value attribute 
+PASS value IDL attribute of input type month with value attribute 
+PASS value IDL attribute of input type week without value attribute 
+PASS value IDL attribute of input type week with value attribute 
+PASS value IDL attribute of input type time without value attribute 
+PASS value IDL attribute of input type time with value attribute 
 PASS value IDL attribute of input type number without value attribute 
 PASS value IDL attribute of input type number with value attribute 
 PASS value IDL attribute of input type range without value attribute 

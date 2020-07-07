@@ -131,14 +131,8 @@ editing/pasteboard/file-drag-to-editable.html [ Skip ]
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61827 fast/events/drag-image-filename.html
 
-# ENABLE_INPUT_TYPE_* are not enabled.
-# https://bugs.webkit.org/show_bug.cgi?id=29359
-fast/forms/date
+# <input type="datetime"> is not supported by WebKit (or other engines) and the tests should be removed.
 fast/forms/datetime
-fast/forms/datetimelocal
-fast/forms/month
-fast/forms/time
-fast/forms/week
 
 # Media Stream API is not fully supported.
 fast/mediastream/MediaStream-add-ended-tracks.html

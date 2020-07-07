@@ -1,0 +1,68 @@
+
+PASS [INPUT in DATETIME-LOCAL status] The min attribute is not set 
+PASS [INPUT in DATETIME-LOCAL status] Value is empty string 
+PASS [INPUT in DATETIME-LOCAL status] The min attribute is an invalid local date time string 
+PASS [INPUT in DATETIME-LOCAL status] The min attribute is less than the value attribute 
+PASS [INPUT in DATETIME-LOCAL status] The value is an invalid local date time string(hour is greater than 23) 
+PASS [INPUT in DATETIME-LOCAL status] The value is an invalid local date time string(year is two digits) 
+FAIL [INPUT in DATETIME-LOCAL status] The value is less than min assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is less than min(with millisecond in 1 digit) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is less than min(with millisecond in 2 digits) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is less than min(with millisecond in 3 digits) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is less than min(Year is 10000 should be valid) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+PASS [INPUT in DATETIME-LOCAL status] The value is greater than max 
+PASS [INPUT in DATE status] The min attribute is not set 
+PASS [INPUT in DATE status] Value is empty string 
+PASS [INPUT in DATE status] The min attribute is an invalid date 
+PASS [INPUT in DATE status] The value attribute is an invalid date 
+PASS [INPUT in DATE status] The value is an invalid date(year is three digits) 
+PASS [INPUT in DATE status] The value is an invalid date(month is less than 12) 
+PASS [INPUT in DATE status] The value is an invalid date(date is less than 29 for Feb) 
+PASS [INPUT in DATE status] The min attribute is less than value attribute 
+FAIL [INPUT in DATE status] The value attribute is less than min attribute assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATE status] The value attribute is less than min attribute(Year is 10000 should be valid) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+PASS [INPUT in MONTH status] The min attribute is not set 
+PASS [INPUT in MONTH status] Value is empty string 
+PASS [INPUT in MONTH status] The min attribute is an invalid month string 
+PASS [INPUT in MONTH status] The value attribute is an invalid month string 
+PASS [INPUT in MONTH status] The value is an invalid month string(year is three digits) 
+PASS [INPUT in MONTH status] The value is an invalid month string(month is less than 12) 
+PASS [INPUT in MONTH status] The min attribute is less than value attribute 
+FAIL [INPUT in MONTH status] The value attribute is less than min attribute assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in MONTH status] The value attribute is less than min attribute(Year is 10000 should be valid) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+PASS [INPUT in WEEK status] The min attribute is not set 
+PASS [INPUT in WEEK status] Value is empty string 
+PASS [INPUT in WEEK status] The min attribute is an invalid week string 
+PASS [INPUT in WEEK status] The value attribute is an invalid week string 
+PASS [INPUT in WEEK status] The value attribute is an invalid week string(w is in lowercase) 
+PASS [INPUT in WEEK status] The value is an invalid week string(year is three digits) 
+PASS [INPUT in WEEK status] The value is an invalid week string(week is too greater) 
+PASS [INPUT in WEEK status] The min attribute is less than value attribute 
+FAIL [INPUT in WEEK status] The value attribute is less than min attribute assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in WEEK status] The value attribute is less than min attribute(Year is 10000 should be valid) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+PASS [INPUT in TIME status] The min attribute is not set 
+PASS [INPUT in TIME status] Value is empty string 
+PASS [INPUT in TIME status] The min attribute is an invalid time string 
+PASS [INPUT in TIME status] The value attribute is an invalid time string 
+PASS [INPUT in TIME status] The min attribute is less than value attribute 
+PASS [INPUT in TIME status] The time missing second and minute parts is invalid 
+FAIL [INPUT in TIME status] The value attribute is less than min attribute assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The value is less than min(with millisecond in 1 digit) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The value is less than min(with millisecond in 2 digit) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The value is less than min(with millisecond in 3 digit) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The time missing second part is valid assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The time is max for reversed range assert_false: The validity.rangeUnderflow should be false. expected false got true
+FAIL [INPUT in TIME status] The time is outside the accepted range for reversed range assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+PASS [INPUT in TIME status] The time is min for reversed range 
+PASS [INPUT in TIME status] The time is inside the accepted range for reversed range 
+PASS [INPUT in NUMBER status] The min attribute is not set 
+PASS [INPUT in NUMBER status] Value is empty string 
+PASS [INPUT in NUMBER status] The min is less than value(integer) 
+PASS [INPUT in NUMBER status] The min is less than value(floating number) 
+PASS [INPUT in NUMBER status] The min equals to value 
+PASS [INPUT in NUMBER status] The value is not a number 
+FAIL [INPUT in NUMBER status] The value is less than min(integer) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is less than min(floating number) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is less than min(special floating number) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is less than min(scientific notation) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
+

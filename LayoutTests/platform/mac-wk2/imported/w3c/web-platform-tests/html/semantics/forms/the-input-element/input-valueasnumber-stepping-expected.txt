@@ -1,0 +1,23 @@
+input_valueAsNumber_stepping
+
+
+PASS date should step correctly 
+PASS time should step correctly 
+PASS month should step correctly 
+PASS week should step correctly 
+PASS datetime-local should step correctly 
+PASS range should step correctly 
+PASS number should step correctly 
+
+
+
+
+
+
+
+
+
+
+
+
+

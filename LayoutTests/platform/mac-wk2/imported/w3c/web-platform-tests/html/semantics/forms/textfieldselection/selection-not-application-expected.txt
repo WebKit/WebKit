@@ -31,6 +31,86 @@ PASS setRangeText on an input[type=email] throws InvalidStateError
 FAIL setSelectionRange on an input[type=email] throws InvalidStateError assert_throws_dom: function "function (){
         el.setSelectionRange(0, 1);
       }" did not throw
+FAIL selectionStart on an input[type=datetime-local] returns null Type error
+FAIL selectionEnd on an input[type=datetime-local] returns null Type error
+FAIL selectionDirection on an input[type=datetime-local] returns null Type error
+FAIL assigning selectionStart on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionStart = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionEnd on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionEnd = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionDirection on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionDirection = 'none';
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS setRangeText on an input[type=datetime-local] throws InvalidStateError 
+FAIL setSelectionRange on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+        el.setSelectionRange(0, 1);
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL selectionStart on an input[type=date] returns null Type error
+FAIL selectionEnd on an input[type=date] returns null Type error
+FAIL selectionDirection on an input[type=date] returns null Type error
+FAIL assigning selectionStart on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionStart = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionEnd on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionEnd = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionDirection on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionDirection = 'none';
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS setRangeText on an input[type=date] throws InvalidStateError 
+FAIL setSelectionRange on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+        el.setSelectionRange(0, 1);
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL selectionStart on an input[type=month] returns null Type error
+FAIL selectionEnd on an input[type=month] returns null Type error
+FAIL selectionDirection on an input[type=month] returns null Type error
+FAIL assigning selectionStart on an input[type=month] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionStart = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionEnd on an input[type=month] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionEnd = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionDirection on an input[type=month] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionDirection = 'none';
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS setRangeText on an input[type=month] throws InvalidStateError 
+FAIL setSelectionRange on an input[type=month] throws InvalidStateError assert_throws_dom: function "function (){
+        el.setSelectionRange(0, 1);
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL selectionStart on an input[type=week] returns null Type error
+FAIL selectionEnd on an input[type=week] returns null Type error
+FAIL selectionDirection on an input[type=week] returns null Type error
+FAIL assigning selectionStart on an input[type=week] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionStart = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionEnd on an input[type=week] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionEnd = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionDirection on an input[type=week] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionDirection = 'none';
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS setRangeText on an input[type=week] throws InvalidStateError 
+FAIL setSelectionRange on an input[type=week] throws InvalidStateError assert_throws_dom: function "function (){
+        el.setSelectionRange(0, 1);
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL selectionStart on an input[type=time] returns null Type error
+FAIL selectionEnd on an input[type=time] returns null Type error
+FAIL selectionDirection on an input[type=time] returns null Type error
+FAIL assigning selectionStart on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionStart = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionEnd on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionEnd = 0;
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL assigning selectionDirection on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+        el.selectionDirection = 'none';
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS setRangeText on an input[type=time] throws InvalidStateError 
+FAIL setSelectionRange on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+        el.setSelectionRange(0, 1);
+      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
 FAIL selectionStart on an input[type=number] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionEnd on an input[type=number] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionDirection on an input[type=number] returns null assert_equals: expected (object) null but got (string) "none"

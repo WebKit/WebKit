@@ -1,3 +1,63 @@
+2020-07-07  Sam Weinig  <weinig@apple.com>
+
+        Enabled testing of date/time input types for WebKit2 macOS
+        https://bugs.webkit.org/show_bug.cgi?id=214044
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        Move skipping of date/time input types to WebKit1 specific TestExpectations
+        to allow for testing on WebKit2. If this goes well, we can look into enabling
+        them for WebKit1 as well.
+
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        * platform/mac-wk2/fast/forms/datalist: Added.
+        * platform/mac-wk2/fast/forms/datalist/input-list-expected.txt: Added.
+        * platform/mac-wk2/fast/forms/date: Added.
+        * platform/mac-wk2/fast/forms/date/date-input-rendering-basic-expected.png: Added.
+        * platform/mac-wk2/fast/forms/date/date-input-rendering-basic-expected.txt: Added.
+        * platform/mac-wk2/fast/forms/time: Added.
+        * platform/mac-wk2/fast/forms/time/time-input-rendering-basic-expected.png: Added.
+        * platform/mac-wk2/fast/forms/time/time-input-rendering-basic-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering/widgets: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/appearance: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/date-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-seconds-leading-zeroes-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-stepping-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-stepping-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/month-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-2-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/week-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-expected.txt: Added.
+        Update results, adding new platform specific results where needed.
+
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/service-workers from upstream

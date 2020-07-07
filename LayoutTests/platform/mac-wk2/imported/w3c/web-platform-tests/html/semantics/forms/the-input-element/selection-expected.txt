@@ -6,11 +6,11 @@ PASS input type url should support the select() method
 PASS input type tel should support the select() method 
 PASS input type email should support the select() method 
 PASS input type password should support the select() method 
-FAIL input type date should support the select() method assert_equals: the given input type is not supported expected "date" but got "text"
-FAIL input type month should support the select() method assert_equals: the given input type is not supported expected "month" but got "text"
-FAIL input type week should support the select() method assert_equals: the given input type is not supported expected "week" but got "text"
-FAIL input type time should support the select() method assert_equals: the given input type is not supported expected "time" but got "text"
-FAIL input type datetime-local should support the select() method assert_equals: the given input type is not supported expected "datetime-local" but got "text"
+PASS input type date should support the select() method 
+PASS input type month should support the select() method 
+PASS input type week should support the select() method 
+PASS input type time should support the select() method 
+PASS input type datetime-local should support the select() method 
 PASS input type number should support the select() method 
 PASS input type color should support the select() method 
 PASS input type file should support the select() method 
@@ -30,11 +30,11 @@ PASS input type tel should support all selection attributes and methods
 PASS input type password should support all selection attributes and methods 
 FAIL input type hidden should not support variable-length selections Type error
 FAIL input type email should not support variable-length selections assert_equals: getting input.selectionStart expected (object) null but got (number) 0
-FAIL input type date should not support variable-length selections assert_equals: the given input type is not supported expected "date" but got "text"
-FAIL input type month should not support variable-length selections assert_equals: the given input type is not supported expected "month" but got "text"
-FAIL input type week should not support variable-length selections assert_equals: the given input type is not supported expected "week" but got "text"
-FAIL input type time should not support variable-length selections assert_equals: the given input type is not supported expected "time" but got "text"
-FAIL input type datetime-local should not support variable-length selections assert_equals: the given input type is not supported expected "datetime-local" but got "text"
+FAIL input type date should not support variable-length selections Type error
+FAIL input type month should not support variable-length selections Type error
+FAIL input type week should not support variable-length selections Type error
+FAIL input type time should not support variable-length selections Type error
+FAIL input type datetime-local should not support variable-length selections Type error
 FAIL input type number should not support variable-length selections assert_equals: getting input.selectionStart expected (object) null but got (number) 0
 FAIL input type range should not support variable-length selections Type error
 FAIL input type color should not support variable-length selections Type error

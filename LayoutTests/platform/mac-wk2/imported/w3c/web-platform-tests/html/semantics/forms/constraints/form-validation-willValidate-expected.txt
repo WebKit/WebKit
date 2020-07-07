@@ -31,11 +31,26 @@ PASS [INPUT in PASSWORD status] Must be barred from the constraint validation if
 PASS [INPUT in PASSWORD status] The willValidate attribute must be true if an element is mutable 
 PASS [INPUT in PASSWORD status] Must be barred from the constraint validation if it is readonly 
 PASS [INPUT in PASSWORD status] The willValidate attribute must be false if it has a datalist ancestor 
-FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
-FAIL [INPUT in DATE status] The date type must be supported. assert_equals: The date type should be supported. expected "date" but got "text"
-FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: The month type should be supported. expected "month" but got "text"
-FAIL [INPUT in WEEK status] The week type must be supported. assert_equals: The week type should be supported. expected "week" but got "text"
-FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The time type should be supported. expected "time" but got "text"
+PASS [INPUT in DATETIME-LOCAL status] Must be barred from the constraint validation if it is disabled 
+PASS [INPUT in DATETIME-LOCAL status] The willValidate attribute must be true if an element is mutable 
+PASS [INPUT in DATETIME-LOCAL status] Must be barred from the constraint validation if it is readonly 
+PASS [INPUT in DATETIME-LOCAL status] The willValidate attribute must be false if it has a datalist ancestor 
+PASS [INPUT in DATE status] Must be barred from the constraint validation if it is disabled 
+PASS [INPUT in DATE status] The willValidate attribute must be true if an element is mutable 
+PASS [INPUT in DATE status] Must be barred from the constraint validation if it is readonly 
+PASS [INPUT in DATE status] The willValidate attribute must be false if it has a datalist ancestor 
+PASS [INPUT in MONTH status] Must be barred from the constraint validation if it is disabled 
+PASS [INPUT in MONTH status] The willValidate attribute must be true if an element is mutable 
+PASS [INPUT in MONTH status] Must be barred from the constraint validation if it is readonly 
+PASS [INPUT in MONTH status] The willValidate attribute must be false if it has a datalist ancestor 
+PASS [INPUT in WEEK status] Must be barred from the constraint validation if it is disabled 
+PASS [INPUT in WEEK status] The willValidate attribute must be true if an element is mutable 
+PASS [INPUT in WEEK status] Must be barred from the constraint validation if it is readonly 
+PASS [INPUT in WEEK status] The willValidate attribute must be false if it has a datalist ancestor 
+PASS [INPUT in TIME status] Must be barred from the constraint validation if it is disabled 
+PASS [INPUT in TIME status] The willValidate attribute must be true if an element is mutable 
+PASS [INPUT in TIME status] Must be barred from the constraint validation if it is readonly 
+PASS [INPUT in TIME status] The willValidate attribute must be false if it has a datalist ancestor 
 PASS [INPUT in COLOR status] Must be barred from the constraint validation if it is disabled 
 PASS [INPUT in COLOR status] The willValidate attribute must be true if an element is mutable 
 FAIL [INPUT in COLOR status] Must be not barred from the constraint validation even if it is readonly assert_true: The willValidate attribute should be true. expected true got false

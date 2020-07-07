@@ -1,0 +1,30 @@
+
+PASS [INPUT in DATE status] The step attribute is not set 
+PASS [INPUT in DATE status] The value attibute is empty string 
+PASS [INPUT in DATE status] The value must match the step 
+FAIL [INPUT in DATE status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in MONTH status] The step attribute is not set 
+PASS [INPUT in MONTH status] The value attibute is empty string 
+PASS [INPUT in MONTH status] The value must match the step 
+FAIL [INPUT in MONTH status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in WEEK status] The step attribute is not set 
+PASS [INPUT in WEEK status] The value attibute is empty string 
+PASS [INPUT in WEEK status] The value must match the step 
+FAIL [INPUT in WEEK status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in TIME status] The step attribute is not set 
+PASS [INPUT in TIME status] The value attibute is empty string 
+PASS [INPUT in TIME status] The value must match the step 
+FAIL [INPUT in TIME status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in DATETIME-LOCAL status] The step attribute is not set 
+PASS [INPUT in DATETIME-LOCAL status] The value attibute is empty string 
+PASS [INPUT in DATETIME-LOCAL status] The value must match the step 
+FAIL [INPUT in DATETIME-LOCAL status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in NUMBER status] The step attribute is not set 
+FAIL [INPUT in NUMBER status] The step attribute is not set and the value attribute is a floating number assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in NUMBER status] The value attribute is empty string 
+PASS [INPUT in NUMBER status] The value must match the step 
+FAIL [INPUT in NUMBER status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+PASS [INPUT in NUMBER status] No step mismatch when step is a floating number and value is its integral multiple 
+PASS [INPUT in NUMBER status] No step mismatch when step is a floating number in exponent format and value is its integral multiple 
+FAIL [INPUT in NUMBER status] Step mismatch when step is a very small floating number and value is not its integral multiple assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
+

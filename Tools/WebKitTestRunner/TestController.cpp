@@ -847,6 +847,27 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     static WKStringRef asyncFrameScrollingFeature = WKStringCreateWithUTF8CString("AsyncFrameScrollingEnabled");
     WKPreferencesSetInternalDebugFeatureForKey(preferences, false, asyncFrameScrollingFeature);
 
+#if ENABLE(INPUT_TYPE_DATE)
+    static WKStringRef inputTypeDateFeature = WKStringCreateWithUTF8CString("InputTypeDateEnabled");
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeDateFeature);
+#endif
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    static WKStringRef inputTypeDateTimeLocalFeature = WKStringCreateWithUTF8CString("InputTypeDateTimeLocalEnabled");
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeDateTimeLocalFeature);
+#endif
+#if ENABLE(INPUT_TYPE_MONTH)
+    static WKStringRef inputTypeMonthFeature = WKStringCreateWithUTF8CString("InputTypeMonthEnabled");
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeMonthFeature);
+#endif
+#if ENABLE(INPUT_TYPE_TIME)
+    static WKStringRef inputTypeTimeFeature = WKStringCreateWithUTF8CString("InputTypeTimeEnabled");
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeTimeFeature);
+#endif
+#if ENABLE(INPUT_TYPE_WEEK)
+    static WKStringRef inputTypeWeekFeature = WKStringCreateWithUTF8CString("InputTypeWeekEnabled");
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeWeekFeature);
+#endif
+
     for (const auto& internalDebugFeature : options.internalDebugFeatures)
         WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
 
