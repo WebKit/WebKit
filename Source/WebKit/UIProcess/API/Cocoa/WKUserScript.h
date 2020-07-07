@@ -24,16 +24,17 @@
  */
 
 #import <WebKit/WKFoundation.h>
-
 #import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class WKContentWorld;
 
 /*! @enum WKUserScriptInjectionTime
  @abstract when a user script should be injected into a webpage.
  @constant WKUserScriptInjectionTimeAtDocumentStart    Inject the script after the document element has been created, but before any other content has been loaded.
  @constant WKUserScriptInjectionTimeAtDocumentEnd      Inject the script after the document has finished loading, but before any subresources may have finished loading.
  */
-NS_ASSUME_NONNULL_BEGIN
-
 typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
     WKUserScriptInjectionTimeAtDocumentStart,
     WKUserScriptInjectionTimeAtDocumentEnd
