@@ -1,3 +1,26 @@
+2020-07-07  Brady Eidson  <beidson@apple.com>
+
+        Fix CrashTracer reported in PDFPlugin::ByteRangeRequest::maybeComplete.
+        <rdar://problem/64884982> and https://bugs.webkit.org/show_bug.cgi?id=214026
+
+        Reviewed by Tim Horton.
+
+        No new tests (CrashTracer with no reproduction)
+        
+        Due to the racy-ness of how PDFKit calls us on the background thread vs. what might be
+        happening with the main thread, sometimes the main thread is asked to handle a data
+        request either:
+        - Before m_data is allocated
+          or
+        - After it is deallocated
+
+        In either case it's okay to just not handle it.
+
+        Despite understanding how to reproduce in theory, writing a test case has been elusive.
+        
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::ByteRangeRequest::maybeComplete): Null check m_data before doing anything with it.
+
 2020-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r262680): [GTK] Crash in WebKit::DropTarget::didPerformAction
