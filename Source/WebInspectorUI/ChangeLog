@@ -1,3 +1,17 @@
+2020-07-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: show an error message if unable to fetch shader source
+        https://bugs.webkit.org/show_bug.cgi?id=213661
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView):
+        (WI.ShaderProgramContentView.prototype._refreshContent):
+        * UserInterface/Views/ShaderProgramContentView.css:
+        (.content-view.shader-program > .spinner-container): Added.
+        (.content-view.shader-program > .spinner-container > .indeterminate-progress-spinner): Added.
+
 2020-07-03  Sam Weinig  <weinig@apple.com>
 
         Add "-Wliteral-conversion" warning to Xcode based builds and fix the issues it finds

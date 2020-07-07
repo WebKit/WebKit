@@ -59,6 +59,23 @@ body[dir=rtl] .content-view.shader-program > .shader.vertex:not(.shares-vertex-f
     border-bottom: 1px solid lightgrey;
 }
 
+.content-view.shader-program > .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--background-color-content);
+}
+
+.content-view.shader-program > .spinner-container > .indeterminate-progress-spinner {
+    width: 32px;
+    height: 32px;
+}
+
 @media (prefers-color-scheme: dark) {
     .content-view.shader-program > .shader > header > .shader-type {
         background-color: var(--background-color);
