@@ -1,3 +1,16 @@
+2020-07-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Web content process hangs in AccessibilityRenderObject::setSelectedVisiblePositionRange in some corner cases.
+        https://bugs.webkit.org/show_bug.cgi?id=214017
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/resources/accessibility-helper.js:
+        (selectTextInNode):
+        * accessibility/mac/selected-visible-position-range-expected.txt: Added.
+        * accessibility/mac/selected-visible-position-range.html: Added.
+        * accessibility/mac/text-marker-p-tags.html:
+
 2020-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Unable to scroll elcomerico.pe page until the page finishes loading

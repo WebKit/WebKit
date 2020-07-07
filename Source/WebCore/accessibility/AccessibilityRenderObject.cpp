@@ -2219,26 +2219,31 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 {
     if (range.start.isNull() || range.end.isNull())
         return;
-    
+
     // In WebKit1, when the top web area sets the selection to be an input element in an iframe, the caret will disappear.
     // FrameSelection::setSelectionWithoutUpdatingAppearance is setting the selection on the new frame in this case, and causing this behavior.
-    if (isWebArea() && parentObject() && parentObject()->isAttachment()) {
-        if (isVisiblePositionRangeInDifferentDocument(range))
-            return;
-    }
+    if (isWebArea() && parentObject() && parentObject()->isAttachment()
+        && isVisiblePositionRangeInDifferentDocument(range))
+        return;
 
     // make selection and tell the document to use it. if it's zero length, then move to that position
     if (range.start == range.end) {
         setTextSelectionIntent(axObjectCache(), AXTextStateChangeTypeSelectionMove);
-        m_renderer->frame().selection().moveTo(range.start, UserTriggered);
-        clearTextSelectionIntent(axObjectCache());
-    }
-    else {
+
+        auto elementRange = this->elementRange();
+        auto start = range.start;
+        if (elementRange && !elementRange->contains(start))
+            start = VisiblePosition(elementRange->startPosition());
+
+        m_renderer->frame().selection().moveTo(start, UserTriggered);
+    } else {
         setTextSelectionIntent(axObjectCache(), AXTextStateChangeTypeSelectionExtend);
+
         VisibleSelection newSelection = VisibleSelection(range.start, range.end);
         m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions());
-        clearTextSelectionIntent(axObjectCache());
     }
+
+    clearTextSelectionIntent(axObjectCache());
 }
 
 VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoint& point) const

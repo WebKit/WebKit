@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="./resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -19,7 +20,7 @@
     if (window.accessibilityController) {
 
         // select text
-        selectText('p2');
+        selectTextInNode('p2');
         var p2 = accessibilityController.accessibleElementById("p2");
         var selectedRange = p2.selectedTextMarkerRange();
         var selectedString = p2.stringForTextMarkerRange(selectedRange);
@@ -41,25 +42,6 @@
         var paragraphString = p2.stringForTextMarkerRange(paragraphRange);
         debug("Previous paragraph: " + paragraphString);
     }
-
-    function selectText(node) {
-        node = document.getElementById(node);
-
-        if (document.body.createTextRange) {
-            const range = document.body.createTextRange();
-            range.moveToElementText(node);
-            range.select();
-        } else if (window.getSelection) {
-            const selection = window.getSelection();
-            const range = document.createRange();
-            range.selectNodeContents(node);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        } else {
-            console.warn("Could not select text in node: Unsupported browser.");
-        }
-    }
-    
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

@@ -1,3 +1,19 @@
+2020-07-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Web content process hangs in AccessibilityRenderObject::setSelectedVisiblePositionRange in some corner cases.
+        https://bugs.webkit.org/show_bug.cgi?id=214017
+        <rdar://problem/63000006>
+
+        Reviewed by Chris Fleizach.
+
+        Ensures that in the case of collapsed ranges, the VisiblePosition that
+        the selection is being set to, is contained in the Element object.
+
+        Test: accessibility/mac/selected-visible-position-range.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+
 2020-07-07  Youenn Fablet  <youenn@apple.com>
 
         Fix potential pixel buffer leak in ImageRotationSessionVT::rotate
