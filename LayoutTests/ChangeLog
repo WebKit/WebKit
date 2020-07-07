@@ -1,3 +1,11 @@
+2020-07-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark one of the imported WPT webaudio tests as flaky.
+
+        The test is failing and printing out information that is hardware specific.
+
+        * TestExpectations:
+
 2020-07-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Web content process hangs in AccessibilityRenderObject::setSelectedVisiblePositionRange in some corner cases.
