@@ -811,6 +811,7 @@ enum CompositingPolicy {
     readonly attribute long processIdentifier;
     DOMString serviceWorkerClientIdentifier(Document document);
     Promise<void> storeRegistrationsOnDisk();
+    Promise<double> sendH2Ping(DOMString url);
 
     Promise<void> clearCacheStorageMemoryRepresentation();
     Promise<DOMString> cacheStorageEngineRepresentation();

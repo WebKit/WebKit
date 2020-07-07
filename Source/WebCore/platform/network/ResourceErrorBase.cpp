@@ -27,6 +27,9 @@
 #include "config.h"
 #include "ResourceError.h"
 
+#include "LocalizedStrings.h"
+#include "Logging.h"
+
 namespace WebCore {
 
 const char* const errorDomainWebKitInternal = "WebKitInternal";
@@ -86,6 +89,14 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
         return false;
 
     return ResourceError::platformCompare(a, b);
+}
+
+ResourceError internalError(const URL& url)
+{
+    RELEASE_LOG_ERROR(Loading, "Internal error called");
+    RELEASE_LOG_STACKTRACE(Loading);
+
+    return ResourceError("WebKitErrorDomain"_s, 300, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }
 
 } // namespace WebCore

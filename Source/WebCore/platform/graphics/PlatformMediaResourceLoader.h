@@ -29,6 +29,7 @@
 
 #include "PolicyChecker.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Expected.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -66,6 +67,7 @@ public:
     virtual ~PlatformMediaResourceLoader() = default;
 
     virtual RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) = 0;
+    virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
 
 protected:
     PlatformMediaResourceLoader() = default;

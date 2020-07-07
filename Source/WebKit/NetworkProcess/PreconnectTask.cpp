@@ -54,13 +54,20 @@ PreconnectTask::PreconnectTask(NetworkProcess& networkProcess, PAL::SessionID se
 
     ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *networkSession);
-
     m_timeoutTimer.startOneShot(60000_s);
 }
 
-PreconnectTask::~PreconnectTask()
+void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
+    m_networkLoad->setH2PingCallback(url, WTFMove(completionHandler));
 }
+
+void PreconnectTask::start()
+{
+    m_networkLoad->start();
+}
+
+PreconnectTask::~PreconnectTask() = default;
 
 void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {

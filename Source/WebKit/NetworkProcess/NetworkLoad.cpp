@@ -64,17 +64,16 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, BlobRegistryImpl* blobRegist
     , m_loadThrottleLatency(networkSession.loadThrottleLatency())
     , m_currentRequest(m_parameters.request)
 {
-    initialize(networkSession, blobRegistry);
-}
-
-void NetworkLoad::initialize(NetworkSession& networkSession, WebCore::BlobRegistryImpl* blobRegistry)
-{
     if (blobRegistry && m_parameters.request.url().protocolIsBlob())
         m_task = NetworkDataTaskBlob::create(networkSession, *blobRegistry, *this, m_parameters.request, m_parameters.contentSniffingPolicy, m_parameters.blobFileReferences);
     else
         m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
+}
 
-    m_task->resume();
+void NetworkLoad::start()
+{
+    if (m_task)
+        m_task->resume();
 }
 
 NetworkLoad::~NetworkLoad()
@@ -298,6 +297,14 @@ String NetworkLoad::description() const
     if (m_task.get())
         return m_task->description();
     return emptyString();
+}
+
+void NetworkLoad::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+{
+    if (m_task)
+        m_task->setH2PingCallback(url, WTFMove(completionHandler));
+    else
+        completionHandler(makeUnexpected(internalError(url)));
 }
 
 } // namespace WebKit

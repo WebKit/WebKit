@@ -577,4 +577,24 @@ String NetworkDataTaskCocoa::description() const
     return String([m_task description]);
 }
 
+void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+{
+#if HAVE(PRECONNECT_PING)
+    ASSERT(m_task.get()._preconnect);
+    auto handler = CompletionHandlerWithFinalizer<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>(WTFMove(completionHandler), [url] (Function<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>& completionHandler) {
+        completionHandler(makeUnexpected(WebCore::internalError(url)));
+    });
+    [m_task getUnderlyingHTTPConnectionInfoWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(handler), url] (_NSHTTPConnectionInfo *connectionInfo) mutable {
+        if (!connectionInfo.isValid)
+            return completionHandler(makeUnexpected(WebCore::internalError(url)));
+        [connectionInfo sendPingWithReceiveHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error, NSTimeInterval interval) mutable {
+            completionHandler(Seconds(interval));
+        }).get()];
+    }).get()];
+#else
+    ASSERT_NOT_REACHED();
+    return completionHandler(makeUnexpected(WebCore::internalError(url)));
+#endif
+}
+
 }

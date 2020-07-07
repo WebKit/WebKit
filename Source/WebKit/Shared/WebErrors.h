@@ -48,7 +48,6 @@ WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceReques
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
-WebCore::ResourceError internalError(const URL&);
 
 #if USE(SOUP)
 WebCore::ResourceError downloadNetworkError(const URL&, const WTF::String&);

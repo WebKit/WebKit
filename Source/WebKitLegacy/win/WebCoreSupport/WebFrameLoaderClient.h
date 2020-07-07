@@ -192,6 +192,7 @@ public:
     bool shouldAlwaysUsePluginDocument(const WTF::String& mimeType) const override;
 
     void prefetchDNS(const String&) override;
+    void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&&) final;
 
 private:
     WebHistory* webHistory() const;

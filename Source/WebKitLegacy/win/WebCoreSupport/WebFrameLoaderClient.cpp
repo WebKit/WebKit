@@ -1284,3 +1284,9 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
 {
     WebCore::prefetchDNS(hostname);
 }
+
+void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+{
+    ASSERT_NOT_REACHED();
+    completionHandler(makeUnexpected(WebCore::internalError(url)));
+}

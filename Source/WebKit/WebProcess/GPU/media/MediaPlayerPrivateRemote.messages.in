@@ -67,6 +67,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 
     RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
+    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result) Async
     ResourceNotSupported()
 
     EngineUpdated()

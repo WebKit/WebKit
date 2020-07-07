@@ -40,8 +40,11 @@ class NetworkProcess;
 
 class PreconnectTask final : public NetworkLoadClient {
 public:
-    PreconnectTask(NetworkProcess&, PAL::SessionID, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
+    PreconnectTask(NetworkProcess&, PAL::SessionID, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
     ~PreconnectTask();
+
+    void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
+    void start();
 
 private:
     // NetworkLoadClient.

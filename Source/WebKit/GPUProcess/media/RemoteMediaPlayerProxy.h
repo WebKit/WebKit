@@ -181,6 +181,7 @@ public:
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);
 
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
+    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void removeResource(RemoteMediaResourceIdentifier);
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer() { return m_player; }

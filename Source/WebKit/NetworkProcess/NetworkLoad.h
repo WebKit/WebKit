@@ -47,6 +47,7 @@ public:
     NetworkLoad(NetworkLoadClient&, WebCore::BlobRegistryImpl*, NetworkLoadParameters&&, NetworkSession&);
     ~NetworkLoad();
 
+    void start();
     void cancel();
 
     bool isAllowedToAskUserForCredentials() const;
@@ -67,10 +68,9 @@ public:
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
 
     String description() const;
+    void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
 private:
-    void initialize(NetworkSession&, WebCore::BlobRegistryImpl*);
-
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final;

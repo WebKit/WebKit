@@ -47,6 +47,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformTimeRanges.h>
+#include <WebCore/ResourceError.h>
 #include <wtf/HashMap.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MainThread.h>
@@ -1104,6 +1105,11 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
     m_mediaResources.add(remoteMediaResourceIdentifier, WTFMove(resource));
 
     completionHandler();
+}
+
+void MediaPlayerPrivateRemote::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+{
+    m_mediaResourceLoader->sendH2Ping(url, WTFMove(completionHandler));
 }
 
 void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)

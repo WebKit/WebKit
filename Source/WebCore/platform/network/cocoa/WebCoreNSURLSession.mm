@@ -466,6 +466,19 @@ NS_ASSUME_NONNULL_END
     return (NSURLSessionDataTask *)[task autorelease];
 }
 
+- (void)sendH2Ping:(NSURL *)url pongHandler:(void (^)(NSError *error, NSTimeInterval interval))pongHandler
+{
+    if (_invalidated)
+        return pongHandler(adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil]).get(), 0);
+
+    self.loader.sendH2Ping(url, [pongHandler = makeBlockPtr(pongHandler)] (Expected<Seconds, ResourceError>&& result) {
+        if (result)
+            pongHandler(nil, result.value().value());
+        else
+            pongHandler(result.error(), 0);
+    });
+}
+
 - (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL
 {
     UNUSED_PARAM(request);

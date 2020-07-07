@@ -1421,7 +1421,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
-    new PreconnectTask(*this, sessionID, WTFMove(parameters), [](const WebCore::ResourceError&) { });
+    (new PreconnectTask(*this, sessionID, WTFMove(parameters), [](const WebCore::ResourceError&) { }))->start();
 #else
     UNUSED_PARAM(url);
     UNUSED_PARAM(userAgent);

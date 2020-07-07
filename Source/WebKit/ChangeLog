@@ -1,3 +1,63 @@
+2020-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebCoreNSURLSession SPI to send HTTP/2 ping
+        https://bugs.webkit.org/show_bug.cgi?id=214030
+        <rdar://problem/64495827>
+
+        Reviewed by Jer Noble.
+
+        The SPI to do this through CFNetwork requires setting a block on the task
+        between construction and resumption.  To allow this, I made PreconnectTask
+        and NetworkLoad require a start() call, and I added start() calls everywhere
+        they were implied with construction before.
+
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::sendH2Ping):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::setH2PingCallback):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::start):
+        (WebKit::NetworkLoad::setH2PingCallback):
+        (WebKit::NetworkLoad::initialize): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::setH2PingCallback):
+        (WebKit::PreconnectTask::start):
+        (WebKit::PreconnectTask::~PreconnectTask): Deleted.
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadFromNetwork):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::preconnectForSubresource):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::setH2PingCallback):
+        * Shared/WebErrors.cpp:
+        (WebKit::internalError): Deleted.
+        * Shared/WebErrors.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::generateLoadIdentifier):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        (WebKit::generateLoadIdentifier): Deleted.
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::sendH2Ping):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2020-07-07  Brady Eidson  <beidson@apple.com>
 
         Forward declare WKContentWorld in WKUserScript.h

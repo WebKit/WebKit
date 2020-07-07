@@ -546,6 +546,12 @@ Ref<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingContext()
     return EmptyFrameNetworkingContext::create();
 }
 
+void EmptyFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+{
+    ASSERT_NOT_REACHED();
+    completionHandler(makeUnexpected(internalError(url)));
+}
+
 void EmptyEditorClient::EmptyTextCheckerClient::requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
 {
 }

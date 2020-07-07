@@ -84,14 +84,6 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
     return ResourceError(API::Error::webKitPluginErrorDomain(), API::Error::Plugin::PlugInWillHandleLoad, response.url(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
 }
 
-ResourceError internalError(const URL& url)
-{
-    RELEASE_LOG_ERROR(Loading, "Internal error called");
-    RELEASE_LOG_STACKTRACE(Loading);
-
-    return ResourceError(API::Error::webKitErrorDomain(), API::Error::General::Internal, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
-}
-
 #if !PLATFORM(COCOA)
 ResourceError cancelledError(const ResourceRequest& request)
 {

@@ -40,6 +40,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
     : m_networkLoad(makeUnique<NetworkLoad>(*this, blobRegistry, WTFMove(parameters), networkSession))
     , m_parentProcessConnection(parentProcessConnection)
 {
+    m_networkLoad->start();
     m_isAllowedToAskUserForCredentials = parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
 
     m_networkLoad->setPendingDownloadID(downloadID);

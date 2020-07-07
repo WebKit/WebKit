@@ -39,6 +39,7 @@
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkResourceLoadParameters.h"
 #include "PluginView.h"
 #include "SharedBufferDataReference.h"
 #include "UserData.h"
@@ -52,6 +53,7 @@
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebFullScreenManager.h"
+#include "WebLoaderStrategy.h"
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
@@ -84,6 +86,7 @@
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
@@ -1858,6 +1861,29 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblo
 void WebFrameLoaderClient::prefetchDNS(const String& hostname)
 {
     WebProcess::singleton().prefetchDNS(hostname);
+}
+
+void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return completionHandler(makeUnexpected(internalError(url)));
+
+    NetworkResourceLoadParameters parameters;
+    parameters.request = ResourceRequest(url);
+    parameters.identifier = WebLoaderStrategy::generateLoadIdentifier();
+    parameters.webPageProxyID = webPage->webPageProxyIdentifier();
+    parameters.webPageID = webPage->identifier();
+    parameters.webFrameID = m_frame->frameID();
+    parameters.parentPID = presentingApplicationPID();
+#if HAVE(AUDIT_TOKEN)
+    parameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
+#endif
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+    parameters.options.destination = FetchOptions::Destination::EmptyString;
+    parameters.isNavigatingToAppBoundDomain = m_frame->isTopFrameNavigatingToAppBoundDomain();
+    
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SendH2Ping(parameters), WTFMove(completionHandler));
 }
 
 void WebFrameLoaderClient::didRestoreScrollPosition()

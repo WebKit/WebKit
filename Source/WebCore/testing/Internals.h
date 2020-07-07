@@ -802,6 +802,7 @@ public:
     bool audioSessionActive() const;
 
     void storeRegistrationsOnDisk(DOMPromiseDeferred<void>&&);
+    void sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&&);
 
     void clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&);
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);

@@ -5349,6 +5349,28 @@ void Internals::storeRegistrationsOnDisk(DOMPromiseDeferred<void>&& promise)
 #endif
 }
 
+void Internals::sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&& promise)
+{
+    auto* document = contextDocument();
+    if (!document) {
+        promise.settle(InvalidStateError);
+        return;
+    }
+
+    auto* frame = document->frame();
+    if (!frame) {
+        promise.settle(InvalidStateError);
+        return;
+    }
+
+    frame->loader().client().sendH2Ping(URL(URL(), url), [promise = WTFMove(promise)] (Expected<Seconds, ResourceError>&& result) mutable {
+        if (result.has_value())
+            promise.resolve(result.value().value());
+        else
+            promise.settle(InvalidStateError);
+    });
+}
+
 void Internals::clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&& promise)
 {
     auto* document = contextDocument();

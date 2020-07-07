@@ -132,6 +132,7 @@ public:
     bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
 
     virtual String description() const;
+    virtual void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     PAL::SessionID sessionID() const;
 

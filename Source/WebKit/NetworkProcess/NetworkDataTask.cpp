@@ -147,6 +147,12 @@ String NetworkDataTask::description() const
     return emptyString();
 }
 
+void NetworkDataTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+{
+    ASSERT_NOT_REACHED();
+    completionHandler(makeUnexpected(internalError(url)));
+}
+
 PAL::SessionID NetworkDataTask::sessionID() const
 {
     return m_session->sessionID();

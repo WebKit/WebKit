@@ -65,6 +65,7 @@
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
@@ -542,6 +543,19 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
     m_networkProcess->prefetchDNS(hostname);
 }
 
+void NetworkConnectionToWebProcess::sendH2Ping(NetworkResourceLoadParameters&& parameters, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    URL url = parameters.request.url();
+    auto* task = new PreconnectTask(networkProcess(), sessionID(), WTFMove(parameters), [] (const ResourceError&) { });
+    task->setH2PingCallback(url, WTFMove(completionHandler));
+    task->start();
+#else
+    ASSERT_NOT_REACHED();
+    completionHandler(makeUnexpected(internalError(parameters.request.url())));
+#endif
+}
+
 void NetworkConnectionToWebProcess::preconnectTo(Optional<uint64_t> preconnectionIdentifier, NetworkResourceLoadParameters&& loadParameters)
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "preconnectTo: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier);
@@ -563,9 +577,9 @@ void NetworkConnectionToWebProcess::preconnectTo(Optional<uint64_t> preconnectio
 #if ENABLE(SERVER_PRECONNECT)
     auto* session = networkSession();
     if (session && session->allowsServerPreconnect()) {
-        new PreconnectTask(networkProcess(), sessionID(), WTFMove(loadParameters), [completionHandler = WTFMove(completionHandler)] (const ResourceError& error) {
+        (new PreconnectTask(networkProcess(), sessionID(), WTFMove(loadParameters), [completionHandler = WTFMove(completionHandler)] (const ResourceError& error) {
             completionHandler(error);
-        });
+        }))->start();
         return;
     }
 #endif

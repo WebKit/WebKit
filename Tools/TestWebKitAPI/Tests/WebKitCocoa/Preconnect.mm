@@ -30,7 +30,9 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "Utilities.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
@@ -171,6 +173,34 @@ TEST(Preconnect, DISABLED_H2Ping)
     Util::spinRunLoop(100);
     EXPECT_EQ(headersCount, 1u);
 }
+
+// This should remain disabled until rdar://problem/65055930 is integrated and bots are updated
+TEST(Preconnect, DISABLED_H2PingFromWebCoreNSURLSession)
+{
+    size_t headersCount = 0;
+    HTTPServer server([headersCount = &headersCount] (Connection tlsConnection) {
+        pingPong(H2::Connection::create(tlsConnection), headersCount);
+    }, HTTPServer::Protocol::Http2);
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    __block bool receivedChallenge = false;
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        receivedChallenge = true;
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadHTMLString:[NSString stringWithFormat:@"<script>internals.sendH2Ping('https://127.0.0.1:%d/').then(function(t){if(t>0){alert('pass')}else{alert('fail')}})</script>", server.port()] baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass");
+    EXPECT_FALSE(headersCount);
+    EXPECT_TRUE(receivedChallenge);
+}
+
+
+
 #endif // HAVE(PRECONNECT_PING)
 
 }

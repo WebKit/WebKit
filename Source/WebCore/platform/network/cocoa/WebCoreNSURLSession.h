@@ -105,6 +105,10 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 - (NSURLSessionDownloadTask *)downloadTaskWithResumeData:(NSData *)resumeData completionHandler:(void (^)(NSURL * location, NSURLResponse * response, NSError * error))completionHandler;
 @end
 
+@interface WebCoreNSURLSession (WebKitAwesomeness)
+- (void)sendH2Ping:(NSURL *)url pongHandler:(void (^)(NSError * _Nullable error, NSTimeInterval interval))pongHandler;
+@end
+
 @interface WebCoreNSURLSessionDataTask : NSObject {
     __unsafe_unretained WebCoreNSURLSession *_session;
     RefPtr<WebCore::PlatformMediaResource> _resource;

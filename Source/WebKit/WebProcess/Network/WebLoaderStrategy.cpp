@@ -633,7 +633,7 @@ void WebLoaderStrategy::browsingContextRemoved(Frame& frame)
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
 }
 
-static uint64_t generateLoadIdentifier()
+uint64_t WebLoaderStrategy::generateLoadIdentifier()
 {
     static uint64_t identifier = 0;
     return ++identifier;
@@ -662,7 +662,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     }
 
     NetworkResourceLoadParameters loadParameters;
-    loadParameters.identifier = generateLoadIdentifier();
+    loadParameters.identifier = WebLoaderStrategy::generateLoadIdentifier();
     loadParameters.webPageProxyID = webPage->webPageProxyIdentifier();
     loadParameters.webPageID = webPage->identifier();
     loadParameters.webFrameID = webFrame->frameID();
@@ -726,7 +726,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
 {
     Optional<uint64_t> preconnectionIdentifier;
     if (completionHandler) {
-        preconnectionIdentifier = generateLoadIdentifier();
+        preconnectionIdentifier = WebLoaderStrategy::generateLoadIdentifier();
         auto addResult = m_preconnectCompletionHandlers.add(*preconnectionIdentifier, WTFMove(completionHandler));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }

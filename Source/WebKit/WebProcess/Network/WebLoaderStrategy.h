@@ -89,6 +89,8 @@ public:
     void addOnlineStateChangeListener(Function<void(bool)>&&) final;
     void setOnLineState(bool);
 
+    static uint64_t generateLoadIdentifier();
+
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);

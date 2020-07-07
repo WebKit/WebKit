@@ -2092,6 +2092,12 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createJavaAppletWidget(const WebCo
     return 0;
 }
 
+void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+{
+    ASSERT_NOT_REACHED();
+    completionHandler(makeUnexpected(WebCore::internalError(url)));
+}
+
 String WebFrameLoaderClient::overrideMediaType() const
 {
     NSString* overrideType = [getWebView(m_webFrame.get()) mediaStyle];

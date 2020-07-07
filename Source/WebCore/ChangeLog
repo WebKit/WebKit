@@ -1,3 +1,38 @@
+2020-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebCoreNSURLSession SPI to send HTTP/2 ping
+        https://bugs.webkit.org/show_bug.cgi?id=214030
+        <rdar://problem/64495827>
+
+        Reviewed by Jer Noble.
+
+        Add lots of plumbing, move internalError from WebKit to WebCore.
+
+        Covered by an API test that requires some future CFNetwork behavior.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMPromiseDeferred.h:
+        * loader/FrameLoaderClient.cpp: Added.
+        (WebCore::FrameLoaderClient::sendH2Ping):
+        * loader/FrameLoaderClient.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::sendH2Ping):
+        * loader/MediaResourceLoader.h:
+        * platform/graphics/PlatformMediaResourceLoader.cpp: Added.
+        (WebCore::PlatformMediaResourceLoader::sendH2Ping):
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::internalError):
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession sendH2Ping:pongHandler:]):
+        * testing/Internals.cpp:
+        (WebCore::Internals::sendH2Ping):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-07-07  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         [Win] Implement Pasteboard::writeCustomData for Web Inspector Console tab

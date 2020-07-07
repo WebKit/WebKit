@@ -463,7 +463,7 @@ void SpeculativeLoadManager::preconnectForSubresource(const SubresourceInfo& sub
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.request = constructRevalidationRequest(subresourceInfo.key(), subresourceInfo, entry);
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
-    new PreconnectTask(m_cache.networkProcess(), m_cache.sessionID(), WTFMove(parameters), [](const WebCore::ResourceError&) { });
+    (new PreconnectTask(m_cache.networkProcess(), m_cache.sessionID(), WTFMove(parameters), [](const WebCore::ResourceError&) { }))->start();
 #else
     UNUSED_PARAM(subresourceInfo);
     UNUSED_PARAM(entry);
