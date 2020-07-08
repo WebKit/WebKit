@@ -912,6 +912,7 @@
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
 		C13D82D92416F13200A62793 /* EnableAccessibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = C13D82D82416F13200A62793 /* EnableAccessibility.mm */; };
 		C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C149D54F242E9844003EBB12 /* SleepDisabler.mm */; };
+		C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D304524B4C3BA00480387 /* XPCEndpoint.mm */; };
 		C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */; };
 		C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */; };
 		C1692DCA23D10DAE006E88F7 /* Battery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DC923D10DAE006E88F7 /* Battery.mm */; };
@@ -2559,6 +2560,7 @@
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
 		C13D82D82416F13200A62793 /* EnableAccessibility.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnableAccessibility.mm; sourceTree = "<group>"; };
 		C149D54F242E9844003EBB12 /* SleepDisabler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SleepDisabler.mm; sourceTree = "<group>"; };
+		C14D304524B4C3BA00480387 /* XPCEndpoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCEndpoint.mm; sourceTree = "<group>"; };
 		C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BacklightLevelNotification.mm; sourceTree = "<group>"; };
 		C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceChanges.mm; sourceTree = "<group>"; };
 		C1692DC923D10DAE006E88F7 /* Battery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Battery.mm; sourceTree = "<group>"; };
@@ -3043,6 +3045,7 @@
 				C149D54F242E9844003EBB12 /* SleepDisabler.mm */,
 				0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */,
 				C1FF9EDA244644F000839AE4 /* WebFilter.mm */,
+				C14D304524B4C3BA00480387 /* XPCEndpoint.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -5392,6 +5395,7 @@
 				CD7F89DC22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm in Sources */,
 				9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */,
 				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
+				C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */,
 				9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

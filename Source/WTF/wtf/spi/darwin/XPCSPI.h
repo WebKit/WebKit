@@ -49,6 +49,7 @@ static ALWAYS_INLINE void _xpc_object_validate(xpc_object_t object)
 
 typedef void* xpc_object_t;
 typedef void* xpc_connection_t;
+typedef void* xpc_endpoint_t;
 
 #define XPC_GLOBAL_OBJECT(object) (&(object))
 
@@ -121,6 +122,8 @@ void xpc_array_set_string(xpc_object_t, size_t index, const char* string);
 bool xpc_bool_get_value(xpc_object_t);
 void xpc_connection_cancel(xpc_connection_t);
 xpc_connection_t xpc_connection_create(const char* name, dispatch_queue_t);
+xpc_endpoint_t xpc_endpoint_create(xpc_connection_t);
+xpc_connection_t xpc_connection_create_from_endpoint(xpc_endpoint_t);
 xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
 pid_t xpc_connection_get_pid(xpc_connection_t);
 void xpc_connection_resume(xpc_connection_t);
