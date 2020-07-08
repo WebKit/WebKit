@@ -102,4 +102,23 @@ typedef NS_ENUM(NSUInteger, PKPaymentRequestType) {
 @property (nonatomic, copy) NSString *installmentGroupIdentifier;
 @end
 
+// FIXME: The SPIs above can be declared by WebKit without causing redeclaration errors on Catalina
+// internal SDKs because we can avoid including the SPIs' private headers from PassKit, but we can't
+// avoid importing PKPaymentSetupFeature.h due to how many other private headers include it. To avoid
+// redeclaration errors while continuing to support all Catalina SDKs, declare -supportedOptions
+// only when building against an internal SDK without PKPaymentInstallmentConfiguration.h (so that we
+// can implement a -respondsToSelector: check). The __has_include portion of this check can be
+// removed once the minimum supported Catalina internal SDK is known to contain this private header.
+#if !USE(APPLE_INTERNAL_SDK) || !__has_include(<PassKitCore/PKPaymentInstallmentConfiguration.h>)
+
+typedef NS_OPTIONS(NSInteger, PKPaymentSetupFeatureSupportedOptions) {
+    PKPaymentSetupFeatureSupportedOptionsInstallments = 1 << 0,
+};
+
+@interface PKPaymentSetupFeature ()
+@property (nonatomic, assign, readonly) PKPaymentSetupFeatureSupportedOptions supportedOptions;
+@end
+
+#endif
+
 #endif // HAVE(PASSKIT_INSTALLMENTS)

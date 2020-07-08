@@ -1,3 +1,13 @@
+2020-07-07  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Fix the build on Catalina internal SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=214066
+
+        Unreviewed build fix for the 10.15.0 Internal SDK.
+
+        * Modules/applepay/ApplePaySetupFeature.mm:
+        (WebCore::ApplePaySetupFeature::supportsInstallments const):
+
 2020-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Allow WebCoreNSURLSession sendH2Ping:pongHandler: to be called from any thread like the rest of WebCoreNSURLSession methods

@@ -66,6 +66,10 @@ ApplePaySetupFeatureState ApplePaySetupFeature::state() const
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
 bool ApplePaySetupFeature::supportsInstallments() const
 {
+#if PLATFORM(MAC)
+    if (![m_feature respondsToSelector:@selector(supportedOptions)])
+        return false;
+#endif
     return [m_feature supportedOptions] & PKPaymentSetupFeatureSupportedOptionsInstallments;
 }
 #endif
