@@ -53,7 +53,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
             bitwise_cast<volatile uint64_t*>(dst)[i] = bitwise_cast<volatile uint64_t*>(src)[i];
     };
 
-#if COMPILER(GCC_COMPATIBLE) && USE(JSVALUE64)
+#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
     if (bytes <= smallCutoff)
         slowPathForwardMemcpy();
     else if (isARM64() || bytes <= mediumCutoff) {
@@ -121,8 +121,6 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
             :
             : "d0", "d1", "memory"
         );
-#else
-    slowPathForwardMemcpy();
 #endif // CPU(X86_64)
     } else {
         RELEASE_ASSERT(isX86_64());
@@ -139,7 +137,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
     }
 #else
     slowPathForwardMemcpy();
-#endif // COMPILER(GCC_COMPATIBLE)
+#endif // COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
 #else
     memcpy(dst, src, bytes);
 #endif // USE(JSVALUE64)

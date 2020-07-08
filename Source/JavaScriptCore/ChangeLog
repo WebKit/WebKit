@@ -1,3 +1,19 @@
+2020-05-07  Daniel Kolesa  <daniel@octaforge.org>
+
+        REGRESSION(r251875): Crash in JSC::StructureIDTable::get on ppc64le: gcSafeMemcpy broken on JSVALUE64 platforms other than x86_64 and aarch64
+        https://bugs.webkit.org/show_bug.cgi?id=210685
+
+        Reviewed by Michael Catanzaro.
+
+        Fix gcSafeMemcpy on non-x86_64/aarch64 64-bit architectures.
+
+        We were hitting an incorrect x86_64 assertion on values larger than
+        mediumCutoff on JSVALUE64 architectures other than x86_64 and aarch64,
+        as the control flow is wrong.
+
+        * heap/GCMemoryOperations.h:
+        (JSC::gcSafeMemcpy):
+
 2020-04-01  Keith Miller  <keith_miller@apple.com>
 
         Bindings that override getOwnPropertySlotByIndex need to say they MayHaveIndexedAccessors
