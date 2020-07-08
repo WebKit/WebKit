@@ -1,3 +1,17 @@
+2020-07-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Pre-start sccache server
+        https://bugs.webkit.org/show_bug.cgi?id=213973
+
+        Reviewed by Žan Doberšek.
+
+        Pre-start the sccache-dist server when the flatpak sandbox is being invoked for a build.
+        Usually the first sccache client process would do it but it seems to be racy when a large
+        number of clients is being started simultaneously.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] install-dependencies should install the gstreamer plugins

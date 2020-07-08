@@ -653,11 +653,12 @@ class WebkitFlatpak:
 
     def run_in_sandbox(self, *args, **kwargs):
         self.setup_builddir()
-        cwd = kwargs.pop("cwd", None)
-        extra_env_vars = kwargs.pop("env", {})
-        stdout = kwargs.pop("stdout", sys.stdout)
-        extra_flatpak_args = kwargs.pop("extra_flatpak_args", [])
-        skip_icc = kwargs.pop("skip_icc", False)
+        cwd = kwargs.get("cwd", None)
+        extra_env_vars = kwargs.get("env", {})
+        stdout = kwargs.get("stdout", sys.stdout)
+        extra_flatpak_args = kwargs.get("extra_flatpak_args", [])
+        start_sccache = kwargs.get("start_sccache", True)
+        skip_icc = kwargs.get("skip_icc", False)
 
         if not isinstance(args, list):
             args = list(args)
@@ -774,17 +775,28 @@ class WebkitFlatpak:
         remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
                                       "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
                                       "WEBKIT_USE_SCCACHE"])
-        if remote_sccache_configs.intersection(set(os.environ.keys())):
+        if remote_sccache_configs.intersection(set(os.environ.keys())) and start_sccache:
             _log.debug("Enabling network access for the remote sccache")
             flatpak_command.append(share_network_option)
 
-            if os.path.isfile(self.sccache_config_file) and not self.regenerate_toolchains and "SCCACHE_CONF" not in os.environ.keys():
-                sandbox_environment["SCCACHE_CONF"] = self.host_path_to_sandbox_path(self.sccache_config_file)
+            sccache_environment = {}
+            if os.path.isfile(self.sccache_config_file) and not self.regenerate_toolchains and \
+               "SCCACHE_CONF" not in os.environ.keys():
+                sccache_environment["SCCACHE_CONF"] = self.host_path_to_sandbox_path(self.sccache_config_file)
 
-        override_sccache_server_port = os.environ.get("WEBKIT_SCCACHE_SERVER_PORT")
-        if override_sccache_server_port:
-            _log.debug("Overriding sccache server port to %s" % override_sccache_server_port)
-            sandbox_environment["SCCACHE_SERVER_PORT"] = override_sccache_server_port
+            override_sccache_server_port = os.environ.get("WEBKIT_SCCACHE_SERVER_PORT")
+            if override_sccache_server_port:
+                _log.debug("Overriding sccache server port to %s" % override_sccache_server_port)
+                sccache_environment["SCCACHE_SERVER_PORT"] = override_sccache_server_port
+
+            if building:
+                # Spawn the sccache server in background, and avoid recursing here, using a bool keyword.
+                _log.debug("Pre-starting the SCCache dist server")
+                self.run_in_sandbox("sccache", "--start-server", env=sccache_environment,
+                                    extra_flatpak_args=[share_network_option], start_sccache=False)
+
+            # Forward sccache server env vars to sccache clients.
+            sandbox_environment.update(sccache_environment)
 
         if self.use_icecream and not skip_icc:
             _log.debug('Enabling the icecream compiler')
