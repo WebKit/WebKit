@@ -161,6 +161,7 @@ void JSPromise::resolve(JSGlobalObject* lexicalGlobalObject, JSValue value)
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t flags = this->flags();
+    ASSERT(!value.inherits<Exception>(vm));
     if (!(flags & isFirstResolvingFunctionCalledFlag)) {
         internalField(Field::Flags).set(vm, this, jsNumber(flags | isFirstResolvingFunctionCalledFlag));
         JSGlobalObject* globalObject = this->globalObject(vm);
@@ -175,6 +176,7 @@ void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t flags = this->flags();
+    ASSERT(!value.inherits<Exception>(vm));
     if (!(flags & isFirstResolvingFunctionCalledFlag)) {
         internalField(Field::Flags).set(vm, this, jsNumber(flags | isFirstResolvingFunctionCalledFlag));
         JSGlobalObject* globalObject = this->globalObject(vm);

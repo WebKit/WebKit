@@ -1,5 +1,32 @@
 2020-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Should not pass Exception to JSPromise::reject
+        https://bugs.webkit.org/show_bug.cgi?id=214061
+        <rdar://problem/65134450>
+
+        Reviewed by Mark Lam.
+
+        In some places, we are passing Exception* as JSValue instead of Exception::value()'s JSValue.
+        Error and Exception are different, and Exception is not an object. We should pass Exception::value()'s
+        thrown value instead. I checked `reject(` call sites and ensure error is passed.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::moduleLoaderParseModule):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::resolve):
+        (JSC::JSPromise::reject):
+
+2020-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix btjs by recovering CallFrame::describeFrame
         https://bugs.webkit.org/show_bug.cgi?id=214055
 

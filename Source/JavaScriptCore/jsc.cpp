@@ -818,7 +818,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     auto moduleName = moduleNameValue->value(globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
     if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+        return reject(catchScope.exception()->value());
 
     auto directoryName = extractDirectoryName(referrer.impl());
     if (!directoryName)
@@ -826,7 +826,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
 
     auto result = JSC::importModule(globalObject, Identifier::fromString(vm, resolvePath(directoryName.value(), ModuleName(moduleName))), parameters, jsUndefined());
     if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+        return reject(catchScope.exception()->value());
     return result;
 }
 
@@ -1147,7 +1147,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
     String moduleKey = key.toWTFString(globalObject);
     if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+        return reject(catchScope.exception()->value());
 
     // Here, now we consider moduleKey as the fileName.
     Vector<uint8_t> buffer;

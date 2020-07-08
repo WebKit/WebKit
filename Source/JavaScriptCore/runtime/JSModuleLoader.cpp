@@ -254,9 +254,9 @@ JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JS
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto moduleNameString = moduleName->value(globalObject);
     if (UNLIKELY(catchScope.exception())) {
-        JSValue exception = catchScope.exception()->value();
+        JSValue error = catchScope.exception()->value();
         catchScope.clearException();
-        promise->reject(globalObject, exception);
+        promise->reject(globalObject, error);
         catchScope.clearException();
         return promise;
     }
@@ -284,9 +284,9 @@ JSInternalPromise* JSModuleLoader::resolve(JSGlobalObject* globalObject, JSValue
 
     const Identifier moduleKey = resolveSync(globalObject, name, referrer, scriptFetcher);
     if (UNLIKELY(catchScope.exception())) {
-        JSValue exception = catchScope.exception();
+        JSValue error = catchScope.exception()->value();
         catchScope.clearException();
-        promise->reject(globalObject, exception);
+        promise->reject(globalObject, error);
         catchScope.clearException();
         return promise;
     }
@@ -311,9 +311,9 @@ JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue k
 
     String moduleKey = key.toWTFString(globalObject);
     if (UNLIKELY(catchScope.exception())) {
-        JSValue exception = catchScope.exception()->value();
+        JSValue error = catchScope.exception()->value();
         catchScope.clearException();
-        promise->reject(globalObject, exception);
+        promise->reject(globalObject, error);
         catchScope.clearException();
         return promise;
     }
@@ -378,7 +378,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
 
     const Identifier moduleKey = callFrame->argument(0).toPropertyKey(globalObject);
     if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+        return reject(catchScope.exception()->value());
 
     JSValue source = callFrame->argument(1);
     auto* jsSourceCode = jsCast<JSSourceCode*>(source);
@@ -399,7 +399,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
 
     ModuleAnalyzer moduleAnalyzer(globalObject, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+        return reject(catchScope.exception()->value());
 
     promise->resolve(globalObject, moduleAnalyzer.analyze(*moduleProgramNode));
     catchScope.clearException();
