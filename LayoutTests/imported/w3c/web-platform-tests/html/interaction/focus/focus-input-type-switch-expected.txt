@@ -1,0 +1,6 @@
+Can still focus on inputs that change types
+
+
+
+PASS Can change an input's type during focus handler without breaking focus 
+

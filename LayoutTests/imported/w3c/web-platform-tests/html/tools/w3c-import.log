@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/tools/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/tools/build.sh
 /LayoutTests/imported/w3c/web-platform-tests/html/tools/html5lib_test.xml
 /LayoutTests/imported/w3c/web-platform-tests/html/tools/html5lib_test_fragment.xml

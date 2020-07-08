@@ -4,9 +4,9 @@ html5lib Parser Test
 PASS html5lib_menuitem-element.html e61b5db0435eb768ec21c1aa7355c649e7969c17 
 PASS html5lib_menuitem-element.html 9c975c544402eed521499270b0e97cfa78f155b0 
 PASS html5lib_menuitem-element.html d46fa11c0107d59c84778beae84f388f55bffc31 
-FAIL html5lib_menuitem-element.html afcd3b1e3317ac609ddab924d836ba1e3873b80f assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <menuitem>\n|       \"A\"\n|     <menuitem>\n|       \"B\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <menuitem>\n|       \"A\"\n|       <menuitem>\n|         \"B\""
-FAIL html5lib_menuitem-element.html 95c0c6923fe609297c1592f2cb82bb9f2d0f5aed assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <menuitem>\n|       \"A\"\n|     <menu>\n|       \"B\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <menuitem>\n|       \"A\"\n|       <menu>\n|         \"B\""
-FAIL html5lib_menuitem-element.html e2772fe779cbcefb4458f169a0cd495cf7115845 assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <menuitem>\n|       \"A\"\n|     <hr>\n|     \"B\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <menuitem>\n|       \"A\"\n|       <hr>\n|       \"B\""
+PASS html5lib_menuitem-element.html afcd3b1e3317ac609ddab924d836ba1e3873b80f 
+PASS html5lib_menuitem-element.html 95c0c6923fe609297c1592f2cb82bb9f2d0f5aed 
+PASS html5lib_menuitem-element.html e2772fe779cbcefb4458f169a0cd495cf7115845 
 PASS html5lib_menuitem-element.html 7a9fa28f6207f045ebb0aa49938debd0c1e7123e 
 PASS html5lib_menuitem-element.html 798bb352d9f256153340661e1277e44674f1026d 
 PASS html5lib_menuitem-element.html f2b5a63d94f108207a7a998216222dc24bea4850 
@@ -21,85 +21,4 @@ PASS html5lib_menuitem-element.html 0f95585196dae2b1b5164e8c27897699c464c35f
 PASS html5lib_menuitem-element.html 03664aa93a55daceccc26d99c0aef841d8862af5 
 PASS html5lib_menuitem-element.html 6d596b9e342db2306365fbdfb7615377c5b26347 
 PASS html5lib_menuitem-element.html 4b712b488be9ee047c139c1b0cd955bae990b8e5 
-afcd3b1e3317ac609ddab924d836ba1e3873b80f
-
-Input
-
-<!DOCTYPE html><body><menuitem>A<menuitem>B
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <menuitem>
-|       "A"
-|     <menuitem>
-|       "B"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <menuitem>
-|       "A"
-|       <menuitem>
-|         "B"
-95c0c6923fe609297c1592f2cb82bb9f2d0f5aed
-
-Input
-
-<!DOCTYPE html><body><menuitem>A<menu>B</menu>
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <menuitem>
-|       "A"
-|     <menu>
-|       "B"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <menuitem>
-|       "A"
-|       <menu>
-|         "B"
-e2772fe779cbcefb4458f169a0cd495cf7115845
-
-Input
-
-<!DOCTYPE html><body><menuitem>A<hr>B
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <menuitem>
-|       "A"
-|     <hr>
-|     "B"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <menuitem>
-|       "A"
-|       <hr>
-|       "B"
 

@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html-integration-point.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_adoption01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_adoption02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_blocks.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_comments01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_doctype01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_domjs-unsafe.html
@@ -102,3 +103,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/test.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/the-end.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/unclosed-svg-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/zero.html

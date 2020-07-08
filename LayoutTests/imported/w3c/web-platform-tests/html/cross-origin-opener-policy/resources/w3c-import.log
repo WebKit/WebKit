@@ -14,7 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/call-functionCalledByOpenee.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/coop-coep.py
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/iframe-popup.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/popup-coop-by-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/postback.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/postback.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/universal-worker.js

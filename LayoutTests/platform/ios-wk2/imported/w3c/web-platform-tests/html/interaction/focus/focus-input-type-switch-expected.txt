@@ -1,0 +1,6 @@
+Can still focus on inputs that change types
+
+
+
+FAIL Can change an input's type during focus handler without breaking focus assert_equals: The element was correctly focused expected Element node <input type="text" value="123" onfocus="javascript:event.... but got Element node <body><h1>Can still focus on inputs that change types</h1...
+

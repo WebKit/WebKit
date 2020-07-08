@@ -1,0 +1,10 @@
+Basic user activation test
+
+Tests that a popup is allowed with user activation.
+
+Click anywhere in the document.
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Popup with click 
+

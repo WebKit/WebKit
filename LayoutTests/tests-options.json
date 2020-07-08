@@ -1607,16 +1607,199 @@
     "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-dedicated-worker.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/report-only-require-corp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-redirect.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/coep-navigate-popup-unsafe-inherit.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-redirect-cache.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-cross-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-same-site.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-with-structured-header.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_openee-coop-ro.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_openee-coop.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_opener-coop-ro.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_opener-coop.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_openee-coop-ro.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_openee-coop.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_opener-coop-ro.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_opener-coop.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-from-unsafe-none.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-report-to.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-with-coep-report-only.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-with-coep.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-allow-popups-report-to.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-coep-report-to.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-report-to.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unafe-none-report-to.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-01.html": [
@@ -2010,6 +2193,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_adoption02.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_blocks.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_comments01.html": [

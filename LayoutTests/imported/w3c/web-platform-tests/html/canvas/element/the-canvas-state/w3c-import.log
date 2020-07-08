@@ -20,7 +20,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.font.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.globalAlpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.globalCompositeOperation.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.imageSmoothingEnabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.lineCap.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.lineJoin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.lineWidth.html
@@ -37,5 +36,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.textBaseline.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.transformation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.underflow.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/canvas_state_restore_001-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/canvas_state_restore_001.htm

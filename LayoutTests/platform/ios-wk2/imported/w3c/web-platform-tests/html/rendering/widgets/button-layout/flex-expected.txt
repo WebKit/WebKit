@@ -1,0 +1,25 @@
+
+1
+2
+3
+4
+ 
+1
+2
+3
+4
+
+1
+2
+3
+4
+ 
+abc
+
+abc
+
+PASS inline-flex 
+PASS flex 
+FAIL align-items:flex-start should work assert_equals: expected 90 but got 80
+FAIL align-items:stretch should work assert_equals: expected 14 but got 33
+

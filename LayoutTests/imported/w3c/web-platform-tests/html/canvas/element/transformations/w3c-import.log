@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.getTransform.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.order.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.rotate.direction.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.rotate.nonfinite.html
@@ -37,10 +36,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.transform.skewed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.translate.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/2d.transformation.translate.nonfinite.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_reset_001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_reset_001.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_scale_001-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_scale_001.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/transform_a-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/transform_a.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/transformations/transform_ref.html

@@ -18,4 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focus-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focus-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focus-file-input.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focus-input-type-switch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/tabindex-focus-flag.html

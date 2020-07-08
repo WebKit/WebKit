@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-fallback-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-update-with-border-object-fit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-update-with-border-object-fit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas_scale-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas_scale.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas_scale_ref.html

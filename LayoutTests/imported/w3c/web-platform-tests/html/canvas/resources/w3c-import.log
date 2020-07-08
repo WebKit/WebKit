@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/resources/2x2.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/resources/canvas-frame.css
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/resources/canvas-frame.css.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/resources/canvas-index.css

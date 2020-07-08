@@ -82,7 +82,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-6.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.current.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.current.changed.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.current.notrendered.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.current.removed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.current.removed.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.parse.hex3.html
@@ -333,5 +332,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.svgimage.nonexistent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.svgimage.zeroheight.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.svgimage.zerowidth.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.identity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.infinity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.strokeStyle.default.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/canvas_colorsandstyles_createlineargradient_001.htm

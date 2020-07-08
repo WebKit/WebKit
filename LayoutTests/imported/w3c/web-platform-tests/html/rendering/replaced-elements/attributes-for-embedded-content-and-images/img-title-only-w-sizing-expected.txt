@@ -1,0 +1,4 @@
+ 
+
+PASS Images with only title should be treated as a replaced element 
+

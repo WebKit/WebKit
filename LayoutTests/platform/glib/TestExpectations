@@ -204,7 +204,6 @@ webkit.org/b/206055 imported/w3c/web-platform-tests/html/canvas/offscreen/drawin
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/canvas/offscreen/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ DumpJSConsoleLogInStdErr ]
 
 # OffscreenCanvas tests that are flaky due to console output from unhandled Promise rejections due to unimplemented API.
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.destination-atop.html [ DumpJSConsoleLogInStdErr ]

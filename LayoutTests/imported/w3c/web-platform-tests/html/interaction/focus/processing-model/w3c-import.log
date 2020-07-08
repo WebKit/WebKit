@@ -17,4 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/focus-fixup-rule-one-no-dialogs.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/legend-focusable.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/legend.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/textarea-scroll-selection.html

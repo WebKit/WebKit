@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough due to access control checks.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html.
+
+PASS setup 
+PASS making a same-origin request for CORP: same-origin 
+PASS making a same-origin request for no CORP 
+PASS making a same-origin request for CORP: cross-origin 
+FAIL making a cross-origin request for CORP: same-origin promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt because it violates the resource's Cross-Origin-Resource-Policy response header." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL making a cross-origin request for no CORP assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS making a cross-origin request for CORP: cross-origin 
+FAIL making a cross-origin request for CORP: same-origin [PASS THROUGH] promise_rejects_js: function "function () { throw e }" threw object "TypeError: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough because it violates the resource's Cross-Origin-Resource-Policy response header." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL making a cross-origin request for no CORP [PASS THROUGH] assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS making a cross-origin request for CORP: cross-origin [PASS THROUGH] 
+FAIL making a cross-origin request with CORS without ACAO promise_rejects_js: function "function () { throw e }" threw object "TypeError: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin." ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS making a cross-origin request with CORS 
+PASS teardown 
+

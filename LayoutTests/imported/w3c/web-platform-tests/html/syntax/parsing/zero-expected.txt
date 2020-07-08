@@ -1,0 +1,15 @@
+
+PASS U+0000 should get replaced with U+FFFD after markup declaration hyphen 
+PASS U+0000 should vanish after ampersand 
+PASS U+0000 should vanish after ampersand and one letter of entity prefix 
+PASS U+0000 should vanish after ampersand and two letters of entity prefix 
+PASS U+0000 should vanish after ampersand and three letters of entity prefix 
+PASS U+0000 should vanish after semicolonless entity 
+PASS U+0000 should vanish before required semicolon 
+PASS U+0000 should get replaced with U+FFFD after ampersand 
+PASS U+0000 should get replaced with U+FFFD after ampersand and one letter of entity prefix 
+PASS U+0000 should get replaced with U+FFFD after ampersand and two letters of entity prefix 
+PASS U+0000 should get replaced with U+FFFD after ampersand and three letters of entity prefix 
+PASS U+0000 should get replaced with U+FFFD after semicolonless entity 
+PASS U+0000 should get replaced with U+FFFD before required semicolon 
+

@@ -1,0 +1,8 @@
+
+PASS Set up global state 
+PASS fetch() to 'CORP: cross-origin' response should succeed. 
+FAIL fetch() to no CORP response should not succeed. assert_equals: expected "Exception: TypeError" but got "opaque"
+FAIL importScripts() fails for a script with no corp. assert_unreached: Should have rejected: register() should fail. Reached unreachable code
+PASS importScripts() succeeds for a script with corp: cross-origin. 
+PASS Clean up global state 
+

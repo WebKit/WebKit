@@ -20,4 +20,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display-property-is-ignored-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display-property-is-ignored.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-1-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-1-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-2-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-2-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-1-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-1-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-2-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-2-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/empty-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/single-summary.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html

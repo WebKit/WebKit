@@ -46,9 +46,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.transformed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.valid.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/canvas_linestyles_linecap_001-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/canvas_linestyles_linecap_001.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/lineto_a-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/lineto_a.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/lineto_ref.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/setLineDash.html

@@ -14,5 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/object-fallback-text-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/object-fallback-text-decoration.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html

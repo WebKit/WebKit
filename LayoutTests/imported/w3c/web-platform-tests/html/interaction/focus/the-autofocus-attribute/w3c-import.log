@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-when-later.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/first.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/focusable-area-in-top-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/no-autofocus-on-changing-input-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/no-cross-origin-autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/no-sandboxed-automatic-features.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/not-on-first-task.html

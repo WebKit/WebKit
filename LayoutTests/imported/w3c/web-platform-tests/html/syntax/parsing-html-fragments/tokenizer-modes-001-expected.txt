@@ -1,0 +1,12 @@
+
+PASS </title> should not break out of title. 
+PASS </textarea> should not break out of textarea. 
+PASS </style> should not break out of style. 
+PASS </xmp> should not break out of xmp. 
+FAIL </iframe> should not break out of iframe. assert_equals: expected "</iframe><div>" but got "&lt;/iframe&gt;&lt;div&gt;"
+FAIL </noembed> should not break out of noembed. assert_equals: expected "</noembed><div>" but got "&lt;/noembed&gt;&lt;div&gt;"
+FAIL </noframes> should not break out of noframes. assert_equals: expected "</noframes><div>" but got "&lt;/noframes&gt;&lt;div&gt;"
+PASS </script> should not break out of script. 
+FAIL </noscript> should not break out of noscript. assert_equals: expected "</noscript><div>" but got "&lt;/noscript&gt;&lt;div&gt;"
+FAIL </plaintext> should not break out of plaintext. assert_equals: expected "</plaintext><div>" but got "&lt;/plaintext&gt;&lt;div&gt;"
+

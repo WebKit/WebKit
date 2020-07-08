@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/compositing.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/conformance-requirements.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/drawing-images-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/drawing-rectangles-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/drawing-text-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/fill-and-stroke-styles.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/line-styles.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/meta.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/path-objects.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/pixel-manipulation.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/scroll.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/shadows.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/text-styles.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/the-canvas-element.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/the-canvas-state.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/transformations.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/video.yaml

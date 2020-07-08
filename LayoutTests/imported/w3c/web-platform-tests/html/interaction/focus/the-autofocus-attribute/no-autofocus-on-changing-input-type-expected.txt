@@ -1,0 +1,4 @@
+ 
+
+PASS Changing input type should not refocus on the element. 
+

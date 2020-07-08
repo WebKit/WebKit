@@ -24,3 +24,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-1-line-height.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-multiple-re-add-option-via-document-fragment-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-multiple-re-add-option-via-document-fragment.html

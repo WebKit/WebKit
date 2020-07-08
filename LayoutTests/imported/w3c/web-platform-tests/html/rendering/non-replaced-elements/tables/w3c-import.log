@@ -29,6 +29,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-s-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-s.html
@@ -44,7 +46,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-direction-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-height.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-001-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-001-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-ua-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-valign-baseline-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-s.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-150percent-expected.html
@@ -53,5 +62,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-s-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-s.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/tr-transform-and-will-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/tr-transform-and-will-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/transformed-tbody-tr-collapsed-border-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/transformed-tbody-tr-collapsed-border.html

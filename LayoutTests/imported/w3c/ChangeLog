@@ -1,3 +1,15 @@
+2020-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Resync all remaining web-platform-tests/html tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214057
+
+        Reviewed by Sam Weinig.
+
+        Resync all remaining web-platform-tests/html tests from upstream cef93b58e7cf31f1d47ccb.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/*: Updated.
+
 2020-07-07  Lauro Moura  <lmoura@igalia.com>
 
         Rebaseline windowclient-navigate.https after service-workers resync

@@ -14,14 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-api-click.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-api-iframe-no-activate.tenative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-api-iframe.tenative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-api-setTimeout.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-hierarchy-parent-manual.sub.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-transfer-cross-origin-with-click-two-child-frames.sub.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-transfer-cross-origin-with-click.sub.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-transfer-with-click.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-transfer-without-click.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-activation-api-iframe-cross-origin.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-init.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.tentative.html

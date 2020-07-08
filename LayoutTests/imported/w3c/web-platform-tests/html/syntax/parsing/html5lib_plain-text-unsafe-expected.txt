@@ -6,7 +6,7 @@ PASS html5lib_plain-text-unsafe.html e552342bdd3ac62316bd91126556512683f3d4a9
 PASS html5lib_plain-text-unsafe.html 9112cef60139e6988b66334e522777329051442a 
 PASS html5lib_plain-text-unsafe.html 5dfa36c8a466dd245e7977924936f4940df65e53 
 PASS html5lib_plain-text-unsafe.html e057c57a5f32e5e341d70b0a6581bdad39b84ac5 
-PASS html5lib_plain-text-unsafe.html dee24cacc42c7d0cdacab20abbcf128d8ac423bb 
+PASS html5lib_plain-text-unsafe.html 24bcb6928bd42daaf1f3688caf93bb399d159bfc 
 PASS html5lib_plain-text-unsafe.html 24ed904940ecdad39c61706e709ffed5ee804514 
 PASS html5lib_plain-text-unsafe.html 0829c314a34a62cd1caf52ddc4100050bf32aef3 
 PASS html5lib_plain-text-unsafe.html 024ba847361612e5e87bce271d0497eeee07f87f 

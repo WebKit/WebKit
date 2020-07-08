@@ -81,7 +81,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.stroke.join.3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.transform.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.transform.2.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/canvas_shadows_001.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/canvas_shadows_002-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/canvas_shadows_002.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/shadowBlur_gaussian_tolerance.1.html

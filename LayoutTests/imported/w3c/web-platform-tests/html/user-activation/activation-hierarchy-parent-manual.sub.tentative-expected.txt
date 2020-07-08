@@ -1,7 +1,0 @@
-Activation state is visible in parent and not in child
-
-Click anywhere on the green area (child frame).
-
-
-FAIL Parent test undefined is not an object (evaluating 'navigator.userActivation.isActive')
-

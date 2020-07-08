@@ -1,6 +1,0 @@
-User activation transfer request from an inactive frame is ignored.
-
-
-
-FAIL User activation transfer from inactive frame undefined is not an object (evaluating 'navigator.userActivation.isActive')
-

@@ -1,0 +1,6 @@
+
+PASS A ServiceWorker with coep-none use CacheStorage to get a corp-undefined response. 
+PASS A ServiceWorker with coep-none use CacheStorage to get a corp-cross-origin response. 
+FAIL A ServiceWorker with coep-require-corp use CacheStorage to get a corp-undefined response. assert_equals: expected false but got true
+PASS A ServiceWorker with coep-require-corp use CacheStorage to get a corp-cross-origin response. 
+

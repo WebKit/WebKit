@@ -1,7 +1,0 @@
-User activation can be transferred to a child frame via a postMessage option.
-
-Click this instruction text.
-
-
-FAIL User activation transfer through postMessages undefined is not an object (evaluating 'navigator.userActivation.isActive')
-

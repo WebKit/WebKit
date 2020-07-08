@@ -1,7 +1,0 @@
-Clicking in parent frame does not propagate state to child
-
-Click this instruction text.
-
-
-FAIL Values adjust on activity undefined is not an object (evaluating 'navigator.userActivation.isActive')
-

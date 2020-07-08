@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.getTransform.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.order.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.order.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.direction.html

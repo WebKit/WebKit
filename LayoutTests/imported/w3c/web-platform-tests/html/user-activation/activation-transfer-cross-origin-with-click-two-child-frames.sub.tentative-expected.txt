@@ -1,7 +1,0 @@
-User activation can be transferred to a cross-origin child frame via a postMessage option.
-
-Click this instruction text.
-  
-
-FAIL Cross-origin user activation transfer through postMessages undefined is not an object (evaluating 'navigator.userActivation.isActive')
-

@@ -1,5 +1,0 @@
-
-PASS Test that restore() undoes any modifications to imageSmoothingEnabled. 
-PASS Test that save() doesn't modify the values of imageSmoothingEnabled. 
-PASS Test that restoring actually changes smoothing and not just the attribute value. 
-

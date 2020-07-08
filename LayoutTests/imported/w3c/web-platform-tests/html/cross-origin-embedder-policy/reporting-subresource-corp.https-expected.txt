@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
+CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
+CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
+CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: ReportingObserver
+
+FAIL [document] same-origin promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
+    for (const report of rs) {
+      reports.push(report.toJSON());
+    }
+  })')"
+FAIL [document] blocked by CORP: same-origin promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
+    for (const report of rs) {
+      reports.push(report.toJSON());
+    }
+  })')"
+FAIL [document] blocked due to COEP promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
+    for (const report of rs) {
+      reports.push(report.toJSON());
+    }
+  })')"
+FAIL [document] blocked during redirect promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
+    for (const report of rs) {
+      reports.push(report.toJSON());
+    }
+  })')"
+FAIL [dedicated worker] same-origin assert_unreached: Worker.onerror Reached unreachable code
+FAIL [dedicated worker] blocked by CORP: same-origin assert_unreached: Worker.onerror Reached unreachable code
+FAIL [dedicated worker] blocked due to COEP assert_unreached: Worker.onerror Reached unreachable code
+FAIL [dedicated worker] blocked during redirect assert_unreached: Worker.onerror Reached unreachable code
+FAIL [shared worker] same-origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL [shared worker] blocked by CORP: same-origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL [shared worker] blocked due to COEP promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL [shared worker] blocked during redirect promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+TIMEOUT [service worker] same-origin Test timed out
+NOTRUN [service worker] blocked by CORP: same-origin 
+NOTRUN [service worker] blocked due to COEP 
+NOTRUN [service worker] blocked during redirect 
+NOTRUN [between service worker and page] same-origin 
+NOTRUN [between service worker and page] blocked by CORP: same-origin 
+NOTRUN [between service worker and page] blocked due to COEP 
+NOTRUN [between service worker and page] blocked during redirect 
+

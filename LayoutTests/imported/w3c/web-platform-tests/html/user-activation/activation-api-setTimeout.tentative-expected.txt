@@ -1,7 +1,0 @@
-Clicking on document sets user activation even after setTimeout
-
-Click anywhere in the document.
-
-
-FAIL Values adjust on activity undefined is not an object (evaluating 'navigator.userActivation.hasBeenActive')
-

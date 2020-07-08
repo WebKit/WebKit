@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/compositing.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/conformance-requirements.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/drawing-images-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/drawing-rectangles-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/fill-and-stroke-styles.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/line-styles.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/meta.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/path-objects.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/pixel-manipulation.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/shadows.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/text.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/the-canvas-state.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/the-offscreen-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/transformations.yaml
