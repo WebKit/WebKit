@@ -463,6 +463,7 @@ private:
     HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
     Ref<WebIDBServer> createWebIDBServer(PAL::SessionID);
     void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
+    void removeWebIDBServerIfPossible(PAL::SessionID);
 #endif
 
 #if ENABLE(SERVICE_WORKER)

@@ -89,6 +89,7 @@ public:
     void dispatchToThread(WTF::Function<void()>&&);
     void close();
 
+    bool hasConnection() const { return !m_connections.isEmpty(); }
 private:
     WebIDBServer(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
     ~WebIDBServer();

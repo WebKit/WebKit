@@ -415,7 +415,9 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     m_storageManagerSet->addConnection(connection.connection());
 
+#if ENABLE(INDEXED_DATABASE)
     webIDBServer(sessionID).addConnection(connection.connection(), identifier);
+#endif
 }
 
 void NetworkProcess::clearCachedCredentials()
@@ -596,8 +598,10 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 #endif
 
     m_storageManagerSet->remove(sessionID);
-    if (auto webIDBServer = m_webIDBServers.take(sessionID))
-        webIDBServer->close();
+
+#if ENABLE(INDEXED_DATABASE)
+    removeWebIDBServerIfPossible(sessionID);
+#endif
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2506,6 +2510,24 @@ void NetworkProcess::setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID ses
     sessionStorageQuotaManager->setIDBRootPath(idbRootPath);
 }
 
+void NetworkProcess::removeWebIDBServerIfPossible(PAL::SessionID sessionID)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto iterator = m_webIDBServers.find(sessionID);
+    if (iterator == m_webIDBServers.end())
+        return;
+
+    if (m_networkSessions.contains(sessionID))
+        return;
+
+    if (iterator->value->hasConnection())
+        return;
+
+    iterator->value->close();
+    m_webIDBServers.remove(iterator);
+}
+
 #endif // ENABLE(INDEXED_DATABASE)
 
 void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
@@ -2737,8 +2759,13 @@ void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, Comp
 void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, PAL::SessionID sessionID)
 {
     m_storageManagerSet->removeConnection(connection);
-    if (auto* webIDBServer = m_webIDBServers.get(sessionID))
-        webIDBServer->removeConnection(connection);
+
+#if ENABLE(INDEXED_DATABASE)
+    auto* webIDBServer = m_webIDBServers.get(sessionID);
+    ASSERT(webIDBServer);
+    webIDBServer->removeConnection(connection);
+    removeWebIDBServerIfPossible(sessionID);
+#endif
 }
 
 NetworkConnectionToWebProcess* NetworkProcess::webProcessConnection(ProcessIdentifier identifier) const
