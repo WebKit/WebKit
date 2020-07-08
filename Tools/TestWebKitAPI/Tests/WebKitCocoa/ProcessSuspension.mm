@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
@@ -50,4 +51,35 @@ TEST(ProcessSuspension, CancelWebProcessSuspension)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ProcessSuspension, DestroyWebPageDuringWebProcessSuspension)
+{
+    auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration1.get() addToWindow:YES]);
+    [webView1 synchronouslyLoadTestPageNamed:@"large-red-square-image"];
+
+    auto pid1 = [webView1 _webProcessIdentifier];
+    EXPECT_NE(pid1, 0);
+
+    auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration2.get().processPool = configuration1.get().processPool;
+    configuration2.get()._relatedWebView = webView1.get();
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(100, 0, 100, 100) configuration:configuration2.get() addToWindow:YES]);
+    [webView2 synchronouslyLoadTestPageNamed:@"large-red-square-image"];
+
+    auto pid2 = [webView2 _webProcessIdentifier];
+    EXPECT_EQ(pid1, pid2);
+
+    auto webView3 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(200, 0, 100, 100) configuration:configuration2.get() addToWindow:YES]);
+    [webView3 synchronouslyLoadTestPageNamed:@"large-red-square-image"];
+
+    [webView3 _processWillSuspendForTesting:^{ }];
+    [webView1 _close];
+    TestWebKitAPI::Util::sleep(0.1);
+    [webView2 _close];
+
+    EXPECT_EQ(pid1, [webView3 _webProcessIdentifier]);
+    TestWebKitAPI::Util::sleep(1);
+    EXPECT_EQ(pid1, [webView3 _webProcessIdentifier]);
 }

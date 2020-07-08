@@ -170,6 +170,17 @@
     return _page && _page->hasInspectorFrontend();
 }
 
+- (void)_processWillSuspendForTesting:(void (^)(void))completionHandler
+{
+    if (!_page) {
+        completionHandler();
+        return;
+    }
+    _page->process().sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_processWillSuspendImminentlyForTesting
 {
     if (_page)

@@ -1,3 +1,16 @@
+2020-07-08  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILURE: Completion handlers not invalidated when WebPage::~WebPage() invoked navigating to docs.google.com and signing in
+        https://bugs.webkit.org/show_bug.cgi?id=214098
+        <rdar://problem/64848288>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSuspension.mm:
+        (TEST):
+
 2020-07-08  Sam Weinig  <weinig@apple.com>
 
         Part 3 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them

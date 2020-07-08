@@ -60,6 +60,7 @@ typedef enum {
 
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 
+- (void)_processWillSuspendForTesting:(void (^)(void))completionHandler;
 - (void)_processWillSuspendImminentlyForTesting;
 - (void)_processDidResumeForTesting;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerBackgroundActivityForTesting;

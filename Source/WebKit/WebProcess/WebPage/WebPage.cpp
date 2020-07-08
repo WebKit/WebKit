@@ -895,6 +895,9 @@ WebPage::~WebPage()
     if (m_videoFullscreenManager)
         m_videoFullscreenManager->invalidate();
 #endif
+
+    for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
+        completionHandler(false);
 }
 
 IPC::Connection* WebPage::messageSenderConnection() const
