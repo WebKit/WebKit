@@ -1,3 +1,12 @@
+2020-05-28  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Buildfix after r262242
+
+        Unreviewed build fix.
+
+        * Shared/glib/ArgumentCodersGLib.cpp:
+        (IPC::decode):
+
 2020-05-28  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] GVariant decoding must copy the serialized data
