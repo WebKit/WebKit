@@ -77,11 +77,11 @@ enum LSSessionID {
 };
 #endif
 
-#endif // !USE(APPLE_INTERNAL_SDK)
-
 @interface LSDatabaseContext : NSObject
 @property (class, readonly) LSDatabaseContext *sharedDatabaseContext;
 @end
+
+#endif // !USE(APPLE_INTERNAL_SDK)
 
 @interface LSDatabaseContext (WebKitChangeTracking)
 - (id <NSObject>)addDatabaseChangeObserver4WebKit:(void (^)(xpc_object_t change))observer;

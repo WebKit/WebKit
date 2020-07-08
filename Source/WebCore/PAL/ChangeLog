@@ -1,3 +1,9 @@
+2020-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix attempt after r264132.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2020-07-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Update Launch Services database in the WebContent process from the Network process
