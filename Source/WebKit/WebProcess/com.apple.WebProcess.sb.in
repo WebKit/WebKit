@@ -819,6 +819,11 @@
     (global-name "com.apple.system.notification_center"))
 #endif
 
+;; <rdar://problem/63943836>
+(deny mach-lookup
+    (global-name "com.apple.system.logger")
+    (with no-report))
+
 (if (defined? 'vnode-type)
         (deny file-write-create (vnode-type SYMLINK)))
 

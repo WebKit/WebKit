@@ -1,3 +1,17 @@
+2020-07-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Silence spam reports about deprecated logging system
+        https://bugs.webkit.org/show_bug.cgi?id=214090
+        <rdar://problem/63943836>
+
+        Reviewed by Per Arne Vollan.
+
+        Change the default 'block' behavior for 'com.apple.system.logger' to
+        block "with no-report" so that we don't spend time generating backtraces
+        when non-WebKit code attempts to use this deprecated logging system.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-07-08  Sihui Liu  <sihui_liu@appe.com>
 
         Network process crashes in WebKit::WebIDBServer::removeConnection
