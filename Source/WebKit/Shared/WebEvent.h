@@ -205,7 +205,7 @@ public:
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, OptionSet<Modifier>, WallTime timestamp);
 #if PLATFORM(COCOA)
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier>, WallTime timestamp);
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(WPE)
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Phase, Phase momentumPhase, Granularity, OptionSet<Modifier>, WallTime timestamp);
 #endif
 

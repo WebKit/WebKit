@@ -69,6 +69,7 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
 #endif
             m_offset.x = touchPoint->x;
             m_offset.y = touchPoint->y;
+            m_phase = WebWheelEvent::Phase::PhaseChanged;
             return true;
         }
         return false;
@@ -77,16 +78,20 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
             m_handling = false;
 #if WPE_CHECK_VERSION(1, 5, 0)
             m_axisEvent.base = {
-                wpe_input_axis_event_type_null,
-                0, 0, 0, 0, 0, 0
+                m_axisEvent.base.type,
+                touchPoint->time, m_start.x, m_start.y,
+                0, 0, 0
             };
             m_axisEvent.x_axis = m_axisEvent.y_axis = 0;
 #else
             m_axisEvent = {
-                wpe_input_axis_event_type_null,
-                0, 0, 0, 0, 0, 0
+                m_axisEvent.type,
+                touchPoint->time, m_start.x, m_start.y,
+                0, 0, 0
             };
 #endif
+            m_offset.x = m_offset.y = 0;
+            m_phase = WebWheelEvent::Phase::PhaseEnded;
             return true;
         }
         return false;

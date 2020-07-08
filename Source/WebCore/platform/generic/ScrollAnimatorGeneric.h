@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class ScrollAnimation;
+class ScrollAnimationKinetic;
 
 class ScrollAnimatorGeneric final : public ScrollAnimator {
 public:
@@ -71,15 +72,12 @@ private:
     void hideOverlayScrollbars();
     void updateOverlayScrollbarsOpacity();
 
-    FloatPoint computeVelocity();
-
 #if ENABLE(SMOOTH_SCROLLING)
     void ensureSmoothScrollingAnimation();
 
     std::unique_ptr<ScrollAnimation> m_smoothAnimation;
 #endif
-    std::unique_ptr<ScrollAnimation> m_kineticAnimation;
-    Vector<PlatformWheelEvent> m_scrollHistory;
+    std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
     Scrollbar* m_horizontalOverlayScrollbar { nullptr };
     Scrollbar* m_verticalOverlayScrollbar { nullptr };
     bool m_overlayScrollbarsLocked { false };
