@@ -1,3 +1,16 @@
+2020-07-08  Christopher Reid  <chris.reid@sony.com>
+
+        Heap Snapshot Object Graph view doesn't get populated in some cases when inspecting a JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=214054
+
+        Reviewed by Devin Rousso.
+
+        When JSContexts are created with a custom globalObjectClass, that object is an
+        instance of CallbackGlobalObject and not GlobalObject so the view doesn't get populated.
+        Add instances of CallbackGlobalObject to the Object Graph view as top level nodes.
+
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+
 2020-07-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: show an error message if unable to fetch shader source

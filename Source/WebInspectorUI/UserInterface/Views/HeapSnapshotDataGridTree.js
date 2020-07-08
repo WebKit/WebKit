@@ -263,7 +263,14 @@ WI.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDataGridTree
 
     populateTopLevel()
     {
+        // FIXME: <https://webkit.org/b/214092> Web Inspector: Object Graph view shouldn't hardcode class names for root nodes
+
         this.heapSnapshot.instancesWithClassName("GlobalObject", (instances) => {
+            for (let instance of instances)
+                this.appendChild(new WI.HeapSnapshotInstanceDataGridNode(instance, this));
+        });
+
+        this.heapSnapshot.instancesWithClassName("CallbackGlobalObject", (instances) => {
             for (let instance of instances)
                 this.appendChild(new WI.HeapSnapshotInstanceDataGridNode(instance, this));
         });
