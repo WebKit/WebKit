@@ -4521,3 +4521,5 @@ fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html [ Image
 fast/layoutformattingcontext/table-with-margin-content-simple.html [ ImageOnlyFailure ]
 
 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
+
+webkit.org/b/214088 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
