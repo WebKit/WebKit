@@ -98,7 +98,10 @@ RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& 
 
 void ConstantNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, Label& trueTarget, Label& falseTarget, FallThroughMode fallThroughMode)
 {
-    TriState value = jsValue(generator).pureToBoolean();
+    TriState value = TriState::Indeterminate;
+    JSValue constant = jsValue(generator);
+    if (LIKELY(constant))
+        value = constant.pureToBoolean();
 
     if (UNLIKELY(needsDebugHook())) {
         if (value != TriState::Indeterminate)
@@ -410,8 +413,13 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
             break;
         if (!firstPutElement->value()->isConstant())
             hadVariableExpression = true;
-        else
-            recommendedIndexingType = leastUpperBoundOfIndexingTypeAndValue(recommendedIndexingType, static_cast<ConstantNode*>(firstPutElement->value())->jsValue(generator));
+        else {
+            JSValue constant = static_cast<ConstantNode*>(firstPutElement->value())->jsValue(generator);
+            if (UNLIKELY(!constant))
+                hadVariableExpression = true;
+            else
+                recommendedIndexingType = leastUpperBoundOfIndexingTypeAndValue(recommendedIndexingType, constant);
+        }
 
         ++length;
     }
@@ -424,7 +432,9 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
             unsigned index = 0;
             for (ElementNode* element = elements; index < length; element = element->next()) {
                 ASSERT(element->value()->isConstant());
-                array->setIndex(generator.vm(), index++, static_cast<ConstantNode*>(element->value())->jsValue(generator));
+                JSValue constant = static_cast<ConstantNode*>(element->value())->jsValue(generator);
+                ASSERT(constant);
+                array->setIndex(generator.vm(), index++, constant);
             }
             return generator.emitNewArrayBuffer(dst, array, recommendedIndexingType);
         }
@@ -2703,6 +2713,8 @@ void BinaryOpNode::tryFoldToBranch(BytecodeGenerator& generator, TriState& branc
 
     OpcodeID opcodeID = this->opcodeID();
     JSValue value = constant->jsValue(generator);
+    if (UNLIKELY(!value))
+        return;
     bool canFoldToBranch = JSC::canFoldToBranch(opcodeID, branchExpression, value);
     if (!canFoldToBranch)
         return;
