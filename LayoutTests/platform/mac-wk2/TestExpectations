@@ -1040,5 +1040,3 @@ webkit.org/b/213621 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getCon
 webkit.org/b/213652 webrtc/video-autoplay1.html [ Pass Failure ]
 
 webkit.org/b/214084 [ Release ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
-
-webkit.org/b/214078 [ Debug ] accessibility/textarea-selected-text-range.html [ Pass Failure ]
