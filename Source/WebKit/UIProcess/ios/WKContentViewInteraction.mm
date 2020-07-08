@@ -6792,6 +6792,16 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [_shareSheet setDelegate:nil];
     _shareSheet = nil;
 }
+
+- (void)shareSheet:(WKShareSheet *)shareSheet willShowActivityItems:(NSArray *)activityItems
+{
+    ASSERT(_shareSheet == shareSheet);
+
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:willShareActivityItems:)])
+        [uiDelegate _webView:self.webView willShareActivityItems:activityItems];
+}
+
 #endif
 
 - (NSString *)inputLabelText
@@ -6908,7 +6918,15 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 {
     WebCore::ShareDataWithParsedURL shareData;
     shareData.url = { url };
-    [self _showShareSheet:shareData inRect: { [self convertRect:boundingRect toView:self.webView] } completionHandler:[] (bool success) { }];
+    [self _showShareSheet:shareData inRect: { [self convertRect:boundingRect toView:self.webView] } completionHandler:nil];
+}
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithImage:(UIImage *)image rect:(CGRect)boundingRect
+{
+    WebCore::ShareDataWithParsedURL shareData;
+    NSString* fileName = [NSString stringWithFormat:@"%@.png", (NSString*)WEB_UI_STRING("Shared Image", "Default name for the file created for a shared image with no explicit name.")];
+    shareData.files = { { fileName, WebCore::SharedBuffer::create(UIImagePNGRepresentation(image)) } };
+    [self _showShareSheet:shareData inRect: { [self convertRect:boundingRect toView:self.webView] } completionHandler:nil];
 }
 
 #if HAVE(APP_LINKS)

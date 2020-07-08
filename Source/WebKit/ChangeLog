@@ -1,3 +1,31 @@
+2020-07-07  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Sharing an <img> element with a base64-encoded URL shares the URL as raw text instead of an image
+        https://bugs.webkit.org/show_bug.cgi?id=214042
+        <rdar://problem/56669102>
+
+        Reviewed by Wenson Hsieh.
+
+        In the case where the <img> element that was the target when the share sheet was brought has its data encoded
+        as a base64 URL, we need to share the UIImage that was created as its snapshot as a file rather than the URL
+        to avoid a base64 string to be shared instead of the image data.
+
+        To support testing of this, we add a new optional WKShareSheet delegate to indicate that the share sheet will
+        show and the provided activity items, which we forward to a new optional WKUIDelegatePrivate delegate method.
+        API tests can thus be written to check the data provided to the share sheet.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/WKShareSheet.h:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithShareDataArray:inRect:]):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shareSheet:willShowActivityItems:]):
+        (-[WKContentView actionSheetAssistant:shareElementWithURL:rect:]):
+        (-[WKContentView actionSheetAssistant:shareElementWithImage:rect:]):
+
 2020-07-08  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] Deprecation warnings

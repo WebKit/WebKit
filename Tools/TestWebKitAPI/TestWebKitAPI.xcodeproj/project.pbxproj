@@ -488,6 +488,8 @@
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
 		6BF4A683239ED4CD00E2F45B /* LoggedInStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */; };
 		6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */; };
+		71E88C4124B5299C00665160 /* ShareSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71E88C4024B5299C00665160 /* ShareSheetTests.mm */; };
+		71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 71E88C4324B533EC00665160 /* img-with-base64-url.html */; };
 		725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */; };
 		7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */; };
 		7283A9D222FB1E0600B21C7D /* exif-orientation-8-llo.jpg in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */; };
@@ -1394,6 +1396,7 @@
 				F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */,
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
 				3128A8152376413300D90D40 /* image.html in Copy Resources */,
+				71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */,
 				7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */,
 				49897D6C241FE9E400ECF153 /* in-app-browser-privacy-local-file.html in Copy Resources */,
 				4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */,
@@ -2194,6 +2197,8 @@
 		6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrableDomain.cpp; sourceTree = "<group>"; };
 		6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
 		6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoggedInStatus.cpp; sourceTree = "<group>"; };
+		71E88C4024B5299C00665160 /* ShareSheetTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareSheetTests.mm; sourceTree = "<group>"; };
+		71E88C4324B533EC00665160 /* img-with-base64-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "img-with-base64-url.html"; sourceTree = "<group>"; };
 		725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AdditionalSupportedImageTypes.html; sourceTree = "<group>"; };
 		7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "img-with-rotated-image.html"; sourceTree = "<group>"; };
 		7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "exif-orientation-8-llo.jpg"; sourceTree = "<group>"; };
@@ -3463,6 +3468,7 @@
 				1C90420B2326E03C00BEF91E /* SelectionByWord.mm */,
 				9B4B5EA422DEBE19001E3D5A /* SelectionModifyByParagraphBoundary.mm */,
 				CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */,
+				71E88C4024B5299C00665160 /* ShareSheetTests.mm */,
 				4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */,
 				F45E15742112CE6200307E82 /* TestInputDelegate.h */,
 				F45E15752112CE6200307E82 /* TestInputDelegate.mm */,
@@ -3807,6 +3813,7 @@
 			children = (
 				0F16BED72304A1D100B4A167 /* composited.html */,
 				CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */,
+				71E88C4324B533EC00665160 /* img-with-base64-url.html */,
 				CE6D0EE22426B8ED002AD901 /* insert-text.html */,
 				A11E7D9F24A169E200026745 /* link-with-hover-menu.html */,
 				0F340777230382540060A1A0 /* overflow-scroll.html */,
@@ -5216,6 +5223,7 @@
 				7C83E0521D0A641800FEBCF3 /* SharedBuffer.cpp in Sources */,
 				A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */,
 				A179918B1E1CA24100A505ED /* SharedBufferTest.cpp in Sources */,
+				71E88C4124B5299C00665160 /* ShareSheetTests.mm in Sources */,
 				5CCB10E4213457E000AC5AF0 /* ShouldGoToBackForwardListItem.mm in Sources */,
 				7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
 				37BCA61C1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm in Sources */,

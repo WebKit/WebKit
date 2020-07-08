@@ -1,3 +1,22 @@
+2020-07-07  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Sharing an <img> element with a base64-encoded URL shares the URL as raw text instead of an image
+        https://bugs.webkit.org/show_bug.cgi?id=214042
+        <rdar://problem/56669102>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test that loads a page with an <img> with its data encoded as a base64 URL, brings up the share sheet for it
+        and checks a single NSURL object is made available in the activity items.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ShareSheetTests.mm: Added.
+        (-[ShareSheetObserver _webView:actionsForElement:defaultActions:]):
+        (-[ShareSheetObserver _webView:willShareActivityItems:]):
+        (TestWebKitAPI::showShareSheet):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/img-with-base64-url.html: Added.
+
 2020-07-08  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Pre-start sccache server

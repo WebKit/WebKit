@@ -1,3 +1,13 @@
+2020-07-07  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Sharing an <img> element with a base64-encoded URL shares the URL as raw text instead of an image
+        https://bugs.webkit.org/show_bug.cgi?id=214042
+        <rdar://problem/56669102>
+
+        Reviewed by Wenson Hsieh.
+
+        * en.lproj/Localizable.strings:
+
 2020-07-08  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r263836): [GStreamer] Debug ASSERT hits

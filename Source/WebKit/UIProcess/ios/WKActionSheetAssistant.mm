@@ -828,7 +828,10 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
         [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::SaveImage];
         break;
     case _WKElementActionTypeShare:
-        [delegate actionSheetAssistant:self shareElementWithURL:element.URL ?: element.imageURL rect:element.boundingRect];
+        if ([element.imageURL.scheme caseInsensitiveCompare:@"data"] == NSOrderedSame && element.image && [delegate respondsToSelector:@selector(actionSheetAssistant:shareElementWithImage:rect:)])
+            [delegate actionSheetAssistant:self shareElementWithImage:element.image rect:element.boundingRect];
+        else
+            [delegate actionSheetAssistant:self shareElementWithURL:element.URL ?: element.imageURL rect:element.boundingRect];
         break;
     default:
         ASSERT_NOT_REACHED();

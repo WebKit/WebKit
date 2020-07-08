@@ -1,0 +1,11 @@
+<script>
+
+const canvas = document.createElement("canvas");
+canvas.getContext("2d").fillRect(0, 0, canvas.width, canvas.height);
+
+const img = document.createElement("img");
+img.src = canvas.toDataURL("image/png");
+
+document.addEventListener("DOMContentLoaded", () => document.body.appendChild(img));
+
+</script>

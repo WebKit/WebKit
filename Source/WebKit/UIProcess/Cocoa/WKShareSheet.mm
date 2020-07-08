@@ -182,7 +182,10 @@
         popoverController.sourceRect = *rect;
     } else
         popoverController._centersPopoverIfSourceViewNotSet = YES;
-    
+
+    if ([_delegate respondsToSelector:@selector(shareSheet:willShowActivityItems:)])
+        [_delegate shareSheet:self willShowActivityItems:sharingItems];
+
     _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:webView];
     [_presentationViewController presentViewController:_shareSheetViewController.get() animated:YES completion:nil];
 #endif
