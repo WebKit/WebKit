@@ -1,3 +1,11 @@
+2020-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Skip a couple of WPT webaudio tests instead of marking them as crashing.
+
+        This avoids wasting resources on the bots since those tests are consistently crashing.
+
+        * TestExpectations:
+
 2020-07-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Table width is computed as if box-sizing was border-box

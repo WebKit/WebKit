@@ -1977,8 +1977,8 @@ webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 fast/text/user-installed-fonts/extended-character.html [ Pass ImageOnlyFailure ]
 fast/text/user-installed-fonts/extended-character-with-user-font.html [ Pass ImageOnlyFailure ]
 
-[ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-large-endtime.html [ Crash ]
-[ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect.html [ Crash ]
+[ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-large-endtime.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-disconnect.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
