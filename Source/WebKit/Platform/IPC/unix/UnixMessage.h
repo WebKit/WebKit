@@ -34,12 +34,18 @@ namespace IPC {
 
 class MessageInfo {
 public:
-    MessageInfo() = default;
+    MessageInfo()
+    {
+        // The entire MessageInfo is passed to write(), so we have to zero our
+        // padding bytes to avoid writing uninitialized memory.
+        memset(this, 0, sizeof(*this));
+    }
 
     MessageInfo(size_t bodySize, size_t initialAttachmentCount)
-        : m_bodySize(bodySize)
-        , m_attachmentCount(initialAttachmentCount)
     {
+        memset(this, 0, sizeof(*this));
+        m_bodySize = bodySize;
+        m_attachmentCount = initialAttachmentCount;
     }
 
     void setBodyOutOfLine()

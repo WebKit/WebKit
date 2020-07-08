@@ -1,3 +1,16 @@
+2020-03-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Syscall param sendmsg(msg.msg_iov[0]) points to uninitialised byte(s) in IPC::Connection::sendOutgoingMessage
+        https://bugs.webkit.org/show_bug.cgi?id=146729
+
+        Reviewed by Carlos Garcia Campos.
+
+        The entire MessageInfo is passed to write(), so we have to zero the padding bytes to avoid
+        writing uninitialized memory.
+
+        * Platform/IPC/unix/UnixMessage.h:
+        (IPC::MessageInfo::MessageInfo):
+
 2020-06-01  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] pthread_create() fails with EPERM in the second WebKitWebProcess with sandbox on
