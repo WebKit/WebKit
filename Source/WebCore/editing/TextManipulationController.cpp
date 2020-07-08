@@ -147,7 +147,6 @@ class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
         : m_iterator({ *makeBoundaryPoint(start), *makeBoundaryPoint(end) }, TextIteratorIgnoresStyleVisibility)
-        , m_iteratorNode(m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode())
         , m_node(start.firstNode())
         , m_pastEndNode(end.firstNode())
     {
@@ -188,7 +187,14 @@ public:
     bool atEnd() const { return !m_text && m_iterator.atEnd() && m_node == m_pastEndNode; }
 
 private:
-    bool shouldAdvanceIteratorPastCurrentNode() const { return !m_iterator.atEnd() && m_iteratorNode == m_node; }
+    bool shouldAdvanceIteratorPastCurrentNode() const
+    {
+        if (m_iterator.atEnd())
+            return false;
+
+        auto* iteratorNode = m_iterator.node();
+        return !iteratorNode || iteratorNode == m_node;
+    }
 
     void advanceNode()
     {
@@ -215,28 +221,22 @@ private:
         StringBuilder stringBuilder;
         Vector<String> text;
         while (shouldAdvanceIteratorPastCurrentNode()) {
-            if (!m_iterator.node()) {
-                auto iteratorText = m_iterator.text();
-                bool containsDelimiter = false;
-                for (unsigned index = 0; index < iteratorText.length() && !containsDelimiter; ++index)
-                    containsDelimiter = isTokenDelimiter(iteratorText[index]);
-
-                if (containsDelimiter) {
+            auto iteratorText = m_iterator.text();
+            if (m_iterator.range().collapsed()) {
+                if (iteratorText == "\n") {
                     appendToText(text, stringBuilder);
                     text.append({ });
                 }
             } else
-                stringBuilder.append(m_iterator.text());
+                stringBuilder.append(iteratorText);
 
             m_iterator.advance();
-            m_iteratorNode = m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode();
         }
         appendToText(text, stringBuilder);
         m_text = text;
     }
 
     TextIterator m_iterator;
-    RefPtr<Node> m_iteratorNode;
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastEndNode;
     Optional<Vector<String>> m_text;

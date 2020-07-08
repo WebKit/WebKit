@@ -1,3 +1,33 @@
+2020-07-08  Sihui Liu  <sihui_liu@appe.com>
+
+        Text manipulation should ignore white spaces between nodes
+        https://bugs.webkit.org/show_bug.cgi?id=213907
+
+        Reviewed by Wenson Hsieh.
+
+        Text returned by TextIterator contains white spaces (including tabs and line breaks) that do not belong to 
+        content of nodes. Those spaces are emitted based on style of nodes. For example, line breaks can be emitted 
+        before and after block-level element. These spaces should not be extracted as part of the content, because 
+        they could change based on the style of nodes or range of TextIterator, and manipulation fails if content is 
+        changed. We want to make sure TextManipulationController monitors the real content of nodes.
+
+        r262778 tried solving this issue by excluding text with empty node from TextIterator's result. That worked with
+        line break, but not space and tab. See radar and new test. To solve this, now we exclude text with zero-length
+        range. 
+
+        This patch does not change the behavior of line breaks, which is covered by:
+        TextManipulation.StartTextManipulationExtractsVisibleLineBreaksInTextAsExcludedTokens
+        TextManipulation.CompleteTextManipulationCanMergeContentAndPreserveLineBreaks
+        TextManipulation.CompleteTextManipulationReplaceTwoSimpleParagraphs
+
+        New test: TextManipulation.CompleteTextManipulationIgnoreWhiteSpacesBetweenParagraphs
+        Modified existing tests: TextManipulation.StartTextManipulationExtractsValuesByNode
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::ParagraphContentIterator::ParagraphContentIterator):
+        (WebCore::ParagraphContentIterator::shouldAdvanceIteratorPastCurrentNode const):
+        (WebCore::ParagraphContentIterator::advanceIteratorNodeAndUpdateText):
+
 2020-07-08  Darin Adler  <darin@apple.com>
 
         Remove use of live ranges from AXObject.h
