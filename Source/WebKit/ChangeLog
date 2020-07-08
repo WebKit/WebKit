@@ -1,3 +1,17 @@
+2020-03-31  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Fix build breaks after r259112
+        https://bugs.webkit.org/show_bug.cgi?id=209830
+
+        Unreviewed build fix.
+
+        Replace PLATFORM(WPE) with USE(LIBWPE) within WebWheelEvent.
+
+        * Shared/WebEvent.h:
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::encode const):
+        (WebKit::WebWheelEvent::decode):
+
 2020-03-27  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Enable kinetic scrolling with async scrolling

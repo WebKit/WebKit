@@ -27,7 +27,10 @@
 #include "ScrollAnimationKinetic.h"
 
 #include "PlatformWheelEvent.h"
+
+#if USE(GLIB)
 #include <wtf/glib/RunLoopSourcePriority.h>
+#endif
 
 /*
  * PerAxisData is a port of GtkKineticScrolling as of GTK+ 3.20,
@@ -111,7 +114,9 @@ ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollExtentsCallback&& scrollExt
     , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
     , m_animationTimer(RunLoop::current(), this, &ScrollAnimationKinetic::animationTimerFired)
 {
+#if USE(GLIB)
     m_animationTimer.setPriority(WTF::RunLoopSourcePriority::DisplayRefreshMonitorTimer);
+#endif
 }
 
 ScrollAnimationKinetic::~ScrollAnimationKinetic() = default;
