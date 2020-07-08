@@ -2108,6 +2108,16 @@ sub getJhbuildPath()
     return File::Spec->catdir(@jhbuildPath);
 }
 
+
+sub getJhbuildModulesetName()
+{
+    if (defined($ENV{'WEBKIT_JHBUILD_MODULESET'})) {
+        return 'jhbuild-' . $ENV{'WEBKIT_JHBUILD_MODULESET'} . '.modules';
+    }
+    return 'jhbuild.modules';
+}
+
+
 sub getUserFlatpakPath()
 {
     my $productDir = baseProductDir();

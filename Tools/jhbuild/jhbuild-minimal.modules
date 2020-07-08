@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <metamodule id="webkitgtk-minimal-dependencies">
+    <dependencies>
+      <dep package="wpebackend-fdo"/>
+      <dep package="libsoup"/>
+    </dependencies>
+  </metamodule>
+
+  <metamodule id="webkitwpe-minimal-dependencies">
+    <dependencies>
+      <dep package="wpebackend-fdo"/>
+      <dep package="libsoup"/>
+    </dependencies>
+  </metamodule>
+
+  <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
+  <repository type="git" name="github.com"
+      href="https://github.com"/>
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com/"/>
+  <repository type="tarball" name="sourceware.org-mirror"
+      href="http://mirrors.kernel.org/sources.redhat.com/"/>
+  <repository type="tarball" name="ftp.gnome.org"
+      href="http://ftp.gnome.org"/>
+  <repository type="tarball" name="download.gnome.org"
+      href="https://download.gnome.org"/>
+  <repository type="git" name="git.gnome.org"
+      href="https://git.gnome.org/browse/"/>
+  <repository type="tarball" name="cairographics.org"
+      href="http://cairographics.org"/>
+  <repository type="tarball" name="freedesktop.org"
+      href="http://www.freedesktop.org"/>
+  <repository type="tarball" name="xorg"
+      href="http://xorg.freedesktop.org"/>
+  <repository type="tarball" name="xmlsoft.org"
+      href="http://xmlsoft.org"/>
+  <repository type="tarball" name="savannah.gnu.org"
+      href="http://download.savannah.gnu.org/releases/"/>
+  <repository type="git" name="freedesktop-git"
+      href="http://anongit.freedesktop.org/git"/>
+ <repository type="tarball" name="dri.freedesktop.org"
+      href="https://dri.freedesktop.org"/>
+  <repository type="tarball" name="mesa.freedesktop.org"
+      href="https://mesa.freedesktop.org"/>
+  <repository type="tarball" name="wayland.freedesktop.org"
+      href="http://wayland.freedesktop.org"/>
+  <repository type="tarball" name="llvm.org"
+      href="http://llvm.org"/>
+  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
+      href="http://webkitgtk.org/jhbuild_mirror/"/>
+  <repository type="tarball" name="gnupg.org"
+      href="https://www.gnupg.org/ftp/gcrypt/"/>
+  <repository type="tarball" name="wpewebkit"
+      href="https://wpewebkit.org/releases/"/>
+
+
+<!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
+<!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
+<!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
+
+  <cmake id="libwpe">
+    <branch module="WebPlatformForEmbedded/libwpe/releases/download/1.6.0/libwpe-1.6.0.tar.xz" version="1.6.0"
+            repo="github-tarball"
+            hash="3587c6b8a807f4bb76b268ba74ca82c6b395b90235db41ad8252224456193c90"/>
+  </cmake>
+
+  <cmake id="wpebackend-fdo">
+    <dependencies>
+      <dep package="libwpe"/>
+    </dependencies>
+    <branch repo="github.com" module="Igalia/WPEBackend-fdo.git" checkoutdir="wpebackend-fdo" tag="1.3.1-54-g1f58ebdf632fdf90f691949d90c8338a8d7073c7"/>
+  </cmake>
+
+  <!-- libsoup >= 2.69 required for SameSite cookie support -->
+  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled -Dtests=false">
+    <pkg-config>libsoup-2.4.pc</pkg-config>
+    <dependencies>
+      <dep package="libpsl"/>
+    </dependencies>
+    <branch module="/sources/libsoup/2.69/libsoup-${version}.tar.xz" version="2.69.90"
+            repo="download.gnome.org"
+            hash="sha256:8ed18092cfb27d870a7c7c45992f3a216bd22dd6fd6d2c9fbf1adc2d6957cab8">
+    <patch file="libsoup-lower-glib-dependency-to-2.38.patch" strip="1"/>
+    </branch>
+  </meson>
+
+  <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
+    <pkg-config>libpsl.pc</pkg-config>
+    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
+            version="0.20.2"
+            repo="github-tarball"
+            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
+  </autotools>
+
+  <!-- meson 0.50.1 required to build libsoup 2.69 -->
+  <distutils id="meson" python3="1">
+    <branch repo="github-tarball"
+            version="0.50.1"
+            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
+            checkoutdir="meson-${version}"
+            hash="sha256:f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc"/>
+  </distutils>
+
+</moduleset>

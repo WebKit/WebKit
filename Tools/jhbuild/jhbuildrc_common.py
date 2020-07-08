@@ -43,14 +43,26 @@ def init(jhbuildrc_globals, jhbuild_platform):
 
     jhbuildrc_globals["build_policy"] = 'updated'
 
-    __moduleset_file_uri = 'file://' + os.path.join(__tools_directory, 'jhbuild.modules')
+    __moduleset_file_name = 'jhbuild.modules'
+    if 'WEBKIT_JHBUILD_MODULESET' in os.environ:
+        __moduleset_file_name = 'jhbuild-%s.modules' % os.environ['WEBKIT_JHBUILD_MODULESET']
+    __moduleset_file_path = os.path.join(__tools_directory, __moduleset_file_name)
+    if not os.path.isfile(__moduleset_file_path):
+        raise RuntimeError("Can't find the moduleset in path %s" % __moduleset_file_path)
+    __moduleset_file_uri = 'file://' + __moduleset_file_path
+
     __extra_modulesets = os.environ.get("WEBKIT_EXTRA_MODULESETS", "").split(",")
     jhbuildrc_globals["moduleset"] = [__moduleset_file_uri, ]
     if __extra_modulesets != ['']:
         jhbuildrc_globals["moduleset"].extend(__extra_modulesets)
 
     __extra_modules = os.environ.get("WEBKIT_EXTRA_MODULES", "").split(",")
-    jhbuildrc_globals["modules"] = ['webkit' + jhbuild_platform + '-testing-dependencies', ]
+
+    base_dependency_suffix = 'testing'
+    if 'WEBKIT_JHBUILD_MODULESET' in os.environ:
+        base_dependency_suffix = os.environ['WEBKIT_JHBUILD_MODULESET']
+
+    jhbuildrc_globals["modules"] = ['webkit' + jhbuild_platform + '-' + base_dependency_suffix + '-dependencies', ]
     if __extra_modules != ['']:
         jhbuildrc_globals["modules"].extend(__extra_modules)
 

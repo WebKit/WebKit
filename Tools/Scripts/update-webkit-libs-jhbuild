@@ -48,6 +48,7 @@ GetOptions(
 sub getJhbuildIncludedFilePaths
 {
     my $jhbuildFile = shift;
+    die "Can't find file $jhbuildFile" if ! -e $jhbuildFile;
     my $dom = XML::LibXML->load_xml(location => $jhbuildFile);
     my @includes;
 
@@ -95,10 +96,23 @@ sub jhbuildConfigurationCheckFile
     }
 }
 
+sub jhbuildModulesetNameChanged()
+{
+    my $jhBuildModulesetNameFile = join('/', getJhbuildPath(), $platform, 'moduleset.name');
+    my $previousModulesetName;
+    open(my $FH, '<', $jhBuildModulesetNameFile) or return 1;
+    {
+        local $/; # localized slurp mode
+        $previousModulesetName = <$FH>;
+    }
+    close($FH);
+    return $previousModulesetName ne getJhbuildModulesetName();
+}
+
 sub jhbuildConfigurationChanged()
 {
-    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, 'jhbuild.modules');
-    my @jhbuildFiles = qw(jhbuildrc jhbuild.modules);
+    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, getJhbuildModulesetName());
+    my @jhbuildFiles = ('jhbuildrc', getJhbuildModulesetName());
     push(@jhbuildFiles, getJhbuildIncludedFilePaths($jhbuildMain));
 
     foreach my $file (@jhbuildFiles) {
@@ -106,6 +120,7 @@ sub jhbuildConfigurationChanged()
             return 1;
         }
     }
+    return jhbuildModulesetNameChanged();
 }
 
 sub saveMd5File
@@ -125,8 +140,8 @@ sub saveMd5File
 sub saveJhbuildMd5() {
     # Save md5sum for jhbuild-related files.saveJhbuildMd5();
     my $jhbuildPath = getJhbuildPath();
-    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, 'jhbuild.modules');
-    my @jhbuildFiles = qw(jhbuildrc jhbuild.modules);
+    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, getJhbuildModulesetName());
+    my @jhbuildFiles = ('jhbuildrc', getJhbuildModulesetName());
     push(@jhbuildFiles, getJhbuildIncludedFilePaths($jhbuildMain));
 
     (-d $jhbuildPath) || mkpath $jhbuildPath;
@@ -135,20 +150,44 @@ sub saveJhbuildMd5() {
     }
 }
 
+sub saveJhbuildModulesetName() {
+    my $jhBuildPlatformDir = join('/', getJhbuildPath(), $platform);
+    (-d $jhBuildPlatformDir) || mkpath $jhBuildPlatformDir;
+    my $jhBuildModulesetNameFile = join('/', $jhBuildPlatformDir, 'moduleset.name');
+    open(FH, '>', $jhBuildModulesetNameFile);
+    print FH getJhbuildModulesetName();
+    close(FH);
+}
+
+sub saveJhbuildConfig() {
+    saveJhbuildMd5();
+    saveJhbuildModulesetName();
+}
+
 sub deleteJhbuildMd5() {
     my $jhbuildPath = getJhbuildPath();
     if (!-d $jhbuildPath) {
         return;
     }
 
-    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, 'jhbuild.modules');
-    my @jhbuildFiles = qw(jhbuildrc jhbuild.modules);
+    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, getJhbuildModulesetName());
+    my @jhbuildFiles = ('jhbuildrc', getJhbuildModulesetName());
     push(@jhbuildFiles, getJhbuildIncludedFilePaths($jhbuildMain));
 
     foreach my $file (@jhbuildFiles) {
         my $md5File = join('/', $jhbuildPath, $platform, $file) . ".md5sum";
         unlink($md5File) if -e $md5File;
     }
+}
+
+sub deleteJhbuildModulesetName() {
+    my $jhBuildModulesetNameFile = join('/', jhbuildPath, $platform, 'moduleset.name');
+    unlink($jhBuildModulesetNameFile) if -e $jhBuildModulesetNameFile;
+}
+
+sub deleteJhbuildConfig() {
+    deleteJhbuildMd5();
+    deleteJhbuildModulesetName();
 }
 
 sub runJhbuild
@@ -193,8 +232,8 @@ if ($wipeOnChange && -e getJhbuildPath()) {
 
 print "Updating " . $prettyPlatform{$platform} . " port dependencies using jhbuild...\n";
 if (runJhbuild("build") == 0) {
-    saveJhbuildMd5();
+    saveJhbuildConfig();
 } else {
-    deleteJhbuildMd5();
+    deleteJhbuildConfig();
     die "Failed to build " . $prettyPlatform{$platform} . " port dependencies with jhbuild\n";
 }
