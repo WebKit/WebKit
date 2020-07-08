@@ -362,6 +362,14 @@ void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& des
     if (destinationContext.paintingDisabled())
         return;
 
+    if (!destinationContext.hasPlatformContext()) {
+        // If there's no platformContext, we're using threaded rendering, and all the operations must be done
+        // through the GraphicsContext.
+        auto image = copyImage(&destinationContext == &context() ? CopyBackingStore : DontCopyBackingStore);
+        destinationContext.drawImage(*image, destRect, srcRect, options);
+        return;
+    }
+
     if (auto surface = nativeImage()) {
         if (&destinationContext == &context())
             surface = cairoSurfaceCopy(surface.get());
@@ -373,10 +381,18 @@ void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& des
 }
 
 void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)
+    const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (context.paintingDisabled())
         return;
+
+    if (!context.hasPlatformContext()) {
+        // If there's no platformContext, we're using threaded rendering, and all the operations must be done
+        // through the GraphicsContext.
+        auto image = copyImage(DontCopyBackingStore);
+        image->drawPattern(context, destRect, srcRect, patternTransform, phase, spacing, options);
+        return;
+    }
 
     if (auto surface = nativeImage())
         Cairo::drawPattern(*context.platformContext(), surface.get(), m_size, destRect, srcRect, patternTransform, phase, options);
