@@ -1,3 +1,18 @@
+2020-07-08  Jer Noble  <jer.noble@apple.com>
+
+        Flaky API Test: TestWebKitAPI.SleepDisabler.NavigateBack
+        https://bugs.webkit.org/show_bug.cgi?id=213513
+        <rdar://problem/64642715>
+
+        Reviewed by Eric Carlson.
+
+        Make the test less dependent on the specific behavior of restoring the history state by adding code within
+        the source HTML itself to explicitly play the contained video after state restoration.
+
+        * TestWebKitAPI/Tests/WebKit/SleepDisabler.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/video-with-audio.html:
+
 2020-07-07  Antoine Quint  <graouts@webkit.org>
 
         [iOS] Sharing an <img> element with a base64-encoded URL shares the URL as raw text instead of an image

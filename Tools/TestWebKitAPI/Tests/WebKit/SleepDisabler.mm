@@ -214,7 +214,6 @@ TEST_F(SleepDisabler, NavigateBack)
     hasSleepDisablerShouldBecomeEqualTo(false);
 
     [webView goBack];
-    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 

@@ -28,6 +28,8 @@
             window.webkit.messageHandlers.testHandler.postMessage('not playing');
         } catch(e) { }
     }
+
+    document.addEventListener('pageshow', go);
    </script>
 </head>
 <body onload="go()">
