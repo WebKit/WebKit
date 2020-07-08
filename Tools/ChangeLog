@@ -1,3 +1,17 @@
+2020-07-08  Philippe Normand  <pnormand@igalia.com>
+
+        [webkitpy] run-minibrowser doesn't handle unicode urls
+        https://bugs.webkit.org/show_bug.cgi?id=214036
+
+        Reviewed by Žan Doberšek.
+
+        Convert unregistered command-line arguments to utf-8 and append parsed URL. Previously
+        unrelated arguments (like the platform arg) were passed to the final MiniBrowser app, this
+        is no longer the case.
+
+        * Scripts/webkitpy/minibrowser/run_webkit_app.py:
+        (main):
+
 2020-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [JHBuild] Add support for using a minimal moduleset
