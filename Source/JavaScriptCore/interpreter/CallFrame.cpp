@@ -288,6 +288,25 @@ void CallFrame::dump(PrintStream& out)
     out.print(returnPC());
 }
 
+const char* CallFrame::describeFrame()
+{
+    constexpr size_t bufferSize = 200;
+    static char* buffer = nullptr;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        buffer = static_cast<char*>(fastZeroedMalloc(bufferSize + 1));
+    });
+
+    WTF::StringPrintStream stringStream;
+
+    dump(stringStream);
+
+    strncpy(buffer, stringStream.toCString().data(), bufferSize);
+    buffer[bufferSize] = '\0';
+
+    return buffer;
+}
+
 void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound)
 {
     ASSERT(!isDeprecatedCallFrameForDebugger());

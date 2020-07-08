@@ -281,6 +281,9 @@ namespace JSC  {
 
         void dump(PrintStream&);
 
+        // This function is used in LLDB btjs.
+        JS_EXPORT_PRIVATE const char* describeFrame();
+
     private:
 
         CallFrame();

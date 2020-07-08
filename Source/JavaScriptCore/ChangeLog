@@ -1,3 +1,18 @@
+2020-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix btjs by recovering CallFrame::describeFrame
+        https://bugs.webkit.org/show_bug.cgi?id=214055
+
+        Reviewed by Mark Lam.
+
+        While CallFrame::describeFrame is not used in WebKit tree, it is used in LLDB btjs which is invoked from python.
+        So we need to keep it. We also use std::call_once based buffer allocation instead of `static char buffer[...]`
+        to avoid spreading debug-use-only buffer in BSS segment.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::describeFrame):
+        * interpreter/CallFrame.h:
+
 2020-07-07  Keith Miller  <keith_miller@apple.com>
 
         Bytecode UseDef should be aware of checkpoints
