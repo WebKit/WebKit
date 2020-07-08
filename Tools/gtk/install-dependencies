@@ -249,6 +249,16 @@ function installDependenciesWithApt {
         python3-secretstorage \
         subversion"
 
+    # These are GStreamer plugins needed to play different media files.
+    packages="$packages \
+        gstreamer1.0-gl \
+        gstreamer1.0-libav \
+        gstreamer1.0-plugins-bad \
+        gstreamer1.0-plugins-base \
+        gstreamer1.0-plugins-good \
+        gstreamer1.0-plugins-ugly \
+        gstreamer1.0-pulseaudio"
+
     apt-get install $packages
 
     # Ubuntu Bionic doesn't ship pipenv. So fallback to the pip3 install path.
@@ -280,7 +290,6 @@ function installDependenciesWithPacman {
         grep \
         groff \
         gstreamer \
-        gst-plugins-bad \
         gst-plugins-base-libs \
         gzip \
         hyphen \
@@ -424,6 +433,14 @@ function installDependenciesWithPacman {
     packages="$packages \
         python-secretstorage \
         svn"
+
+    # These are GStreamer plugins needed to play different media files.
+    packages="$packages \
+        gst-plugins-bad \
+        gst-plugins-base \
+        gst-plugins-good \
+        gst-plugins-ugly"
+
     pacman -S --needed $packages
 
 	cat <<-EOF
@@ -598,6 +615,15 @@ function installDependenciesWithDnf {
         git-svn \
         python3-secretstorage \
         subversion"
+
+    # These are GStreamer plugins needed to play different media files.
+    packages="$packages \
+        gstreamer1-plugins-bad-free \
+        gstreamer1-plugins-bad-free-extras \
+        gstreamer1-plugins-base \
+        gstreamer1-plugins-good \
+        gstreamer1-plugins-good-extras \
+        gstreamer1-plugins-ugly-free"
 
     dnf install $packages
 }

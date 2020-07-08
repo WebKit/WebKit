@@ -1,3 +1,21 @@
+2020-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] install-dependencies should install the gstreamer plugins
+        https://bugs.webkit.org/show_bug.cgi?id=214045
+
+        Reviewed by Adrian Perez de Castro.
+
+        When building webkit against system libraries (without flatpak/jhbuild)
+        its needed to have installed the webkit plugins to play media files.
+        The install-dependencies script should install them.
+
+        gstreamer-plugins-ugly its likely not needed for the majority of the cases,
+        but it can be required by some ugly media files that require an ugly decoder.
+        Since we are installing it on the flatpak, let's add it here as well.
+
+        * gtk/install-dependencies:
+        * wpe/install-dependencies:
+
 2020-07-08  Philippe Normand  <pnormand@igalia.com>
 
         [webkitpy] run-minibrowser doesn't handle unicode urls
