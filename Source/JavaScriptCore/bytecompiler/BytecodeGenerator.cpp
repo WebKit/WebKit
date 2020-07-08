@@ -5215,10 +5215,12 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGener
     for (unsigned offset = bodyBytecodeStartOffset(); isValid() && offset < bodyBytecodeEndOffset;) {
         auto instruction = generator.instructions().at(offset);
         ASSERT(!instruction->is<OpEnter>());
-        computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), [&] (VirtualRegister operand) {
-            if (local()->virtualRegister() == operand)
-                invalidate();
-        });
+        for (Checkpoint checkpoint = instruction->numberOfCheckpoints(); checkpoint--;) {
+            computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), checkpoint, [&] (VirtualRegister operand) {
+                if (local()->virtualRegister() == operand)
+                    invalidate();
+            });
+        }
         offset += instruction->size();
     }
 }

@@ -1,3 +1,94 @@
+2020-07-07  Keith Miller  <keith_miller@apple.com>
+
+        Bytecode UseDef should be aware of checkpoints
+        https://bugs.webkit.org/show_bug.cgi?id=213566
+
+        Reviewed by Saam Barati.
+
+        Previously, we tried to solve teaching DFG about uses and defs of
+        locals across checkpoints by asking what locals were def'd at some
+        checkpoint. However, this was subtly wrong because we couldn't
+        report any uses at subsequent checkpoints so DFG thought the
+        local was dead immediately after its birth.
+
+        This patch reverts that change and instead teaches BytecodeUseDef
+        about checkpoints. Right now, BytecodeUseDef only knows about
+        locals at checkpoints but in the future we may teach it about tmps
+        at well.
+
+        Since the vectors containing our liveness bitmaps were already
+        sparse (they are indexed by the bytecode offset) we can reuse the
+        gaps to hold our checkpoint liveness information. To make sure we
+        don't overlap between the next bytecode and a checkpoint for the
+        current bytecode there is now a static assert that the length of
+        the bytecode is greater than the number of checkpoints. This
+        assumption is already true for existing bytecodes with checkpoints (and
+        likely to be true for future ones anyway).
+
+        Many of the BytecodeLivenessPropegation functions have been
+        renamed to reflect that they operate over the full instruction,
+        including checkpoints, rather than just the BytecodeIndex passed.
+
+        Lastly, this patch makes a speculative fix to forAllKilledOperands where we
+        wouldn't report that all tmps die at the end of each bytecode. I can't think
+        of a case where this would break things but it's probably good hygiene.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::GeneratorLivenessAnalysis::run):
+        * bytecode/BytecodeIndex.h:
+        (JSC::BytecodeIndex::BytecodeIndex):
+        (JSC::BytecodeIndex::checkpoint const):
+        (JSC::BytecodeIndex::withCheckpoint const):
+        (JSC::BytecodeIndex::pack):
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        (JSC::tmpLivenessForCheckpoint):
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeIndex): Deleted.
+        (JSC::livenessForCheckpoint): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtInstruction):
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::BytecodeLivenessPropagation::stepOverBytecodeIndexDef):
+        (JSC::BytecodeLivenessPropagation::stepOverBytecodeIndexUse):
+        (JSC::BytecodeLivenessPropagation::stepOverBytecodeIndexUseInExceptionHandler):
+        (JSC::BytecodeLivenessPropagation::stepOverBytecodeIndex):
+        (JSC::BytecodeLivenessPropagation::stepOverInstruction):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForInstruction):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtInstruction):
+        (JSC::BytecodeLivenessPropagation::stepOverInstructionDef): Deleted.
+        (JSC::BytecodeLivenessPropagation::stepOverInstructionUse): Deleted.
+        (JSC::BytecodeLivenessPropagation::stepOverInstructionUseInExceptionHandler): Deleted.
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBytecodeIndex): Deleted.
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtBytecodeIndex): Deleted.
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        (JSC::computeDefsForBytecodeIndex):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow):
+        (JSC::CodeBlock::validate):
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::getLiveness const):
+        (JSC::FullBytecodeLiveness::toIndex):
+        * bytecode/Instruction.h:
+        (JSC::BaseInstruction::numberOfCheckpoints const):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ForInContext::finalize):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * generator/Opcode.rb:
+        * generator/Section.rb:
+
 2020-07-06  Geoffrey Garen  <ggaren@apple.com>
 
         callOnMainThread should use the same queue as RunLoop::dispatch

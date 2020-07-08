@@ -84,13 +84,16 @@ class Section
 
       if config[:emit_in_structs_file]
           i = 0
+          out.write("static constexpr unsigned #{config[:macro_name_component].downcase}CheckpointCountTable[] = {\n")
           while true
               if !opcodes[i].checkpoints
-                  out << "\n"
+                  out << "    0, // this unused entry is needed since MSVC won't compile empty arrays\n"
+                  out << "};\n\n"
                   out << "#define NUMBER_OF_#{config[:macro_name_component]}_WITH_CHECKPOINTS #{i}\n"
                   break
               end
 
+              out.write("    #{opcodes[i].checkpoints.length},\n")
               i += 1
           end
           out << "\n"

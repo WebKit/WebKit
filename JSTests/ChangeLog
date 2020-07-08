@@ -1,3 +1,13 @@
+2020-07-07  Keith Miller  <keith_miller@apple.com>
+
+        Bytecode UseDef should be aware of checkpoints
+        https://bugs.webkit.org/show_bug.cgi?id=213566
+
+        Reviewed by Saam Barati.
+
+        * stress/def-then-use-in-single-bytecode-with-checkpoints-for-of.js: Added.
+        (foo):
+
 2020-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         %TypedArray%.prototype.{indexOf,lastIndexOf} are not spec-perfect

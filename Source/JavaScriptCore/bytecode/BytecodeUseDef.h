@@ -32,23 +32,23 @@
 
 namespace JSC {
 
-void computeUsesForBytecodeIndexImpl(VirtualRegister, const Instruction*, const Function<void(VirtualRegister)>&);
-void computeDefsForBytecodeIndexImpl(unsigned, const Instruction*, const Function<void(VirtualRegister)>&);
+void computeUsesForBytecodeIndexImpl(VirtualRegister, const Instruction*, Checkpoint, const ScopedLambda<void(VirtualRegister)>&);
+void computeDefsForBytecodeIndexImpl(unsigned, const Instruction*, Checkpoint, const ScopedLambda<void(VirtualRegister)>&);
 
-template<typename Block>
-void computeUsesForBytecodeIndex(Block* codeBlock, const Instruction* instruction, const Function<void(VirtualRegister)>& functor)
+template<typename Block, typename Functor>
+void computeUsesForBytecodeIndex(Block* codeBlock, const Instruction* instruction, Checkpoint checkpoint, const Functor& functor)
 {
     OpcodeID opcodeID = instruction->opcodeID();
     if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesEval()) && codeBlock->scopeRegister().isValid())
         functor(codeBlock->scopeRegister());
 
-    computeUsesForBytecodeIndexImpl(codeBlock->scopeRegister(), instruction, functor);
+    computeUsesForBytecodeIndexImpl(codeBlock->scopeRegister(), instruction, checkpoint, scopedLambda<void(VirtualRegister)>(functor));
 }
 
-template<typename Block>
-void computeDefsForBytecodeIndex(Block* codeBlock, const Instruction* instruction, const Function<void(VirtualRegister)>& functor)
+template<typename Block, typename Functor>
+void computeDefsForBytecodeIndex(Block* codeBlock, const Instruction* instruction, Checkpoint checkpoint, const Functor& functor)
 {
-    computeDefsForBytecodeIndexImpl(codeBlock->numVars(), instruction, functor);
+    computeDefsForBytecodeIndexImpl(codeBlock->numVars(), instruction, checkpoint, scopedLambda<void(VirtualRegister)>(functor));
 }
 
 #undef CALL_FUNCTOR

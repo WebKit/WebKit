@@ -39,6 +39,7 @@ struct JSOpcodeTraits {
     static constexpr OpcodeID wide32 = op_wide32;
     static constexpr const unsigned* opcodeLengths = ::JSC::opcodeLengths;
     static constexpr const char* const* opcodeNames = ::JSC::opcodeNames;
+    static constexpr auto checkpointCountTable = bytecodeCheckpointCountTable;
 };
 
 struct WasmOpcodeTraits {
@@ -50,6 +51,7 @@ struct WasmOpcodeTraits {
     static constexpr OpcodeID wide32 = wasm_wide32;
     static constexpr const unsigned* opcodeLengths = wasmOpcodeLengths;
     static constexpr const char* const* opcodeNames = wasmOpcodeNames;
+    static constexpr auto checkpointCountTable = wasmCheckpointCountTable;
 };
 
 
@@ -120,6 +122,14 @@ public:
     bool hasCheckpoints() const
     {
         return opcodeID<Traits>() < Traits::numberOfBytecodesWithCheckpoints;
+    }
+
+    template<typename Traits = JSOpcodeTraits>
+    unsigned numberOfCheckpoints() const
+    {
+        if (!hasCheckpoints<Traits>())
+            return 1;
+        return Traits::checkpointCountTable[opcodeID<Traits>()];
     }
 
     template<typename Traits = JSOpcodeTraits>

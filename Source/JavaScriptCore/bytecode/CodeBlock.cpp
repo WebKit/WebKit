@@ -34,7 +34,7 @@
 #include "BasicBlockLocation.h"
 #include "ByValInfo.h"
 #include "BytecodeDumper.h"
-#include "BytecodeLivenessAnalysis.h"
+#include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeOperandsForCheckpoint.h"
 #include "BytecodeStructs.h"
 #include "CodeBlockInlines.h"
@@ -1924,7 +1924,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow(const OpCatch&
     // into the DFG.
 
     auto nextOffset = instructions().at(bytecodeIndex).next().offset();
-    FastBitVector liveLocals = bytecodeLiveness.getLivenessInfoAtBytecodeIndex(this, BytecodeIndex(nextOffset));
+    FastBitVector liveLocals = bytecodeLiveness.getLivenessInfoAtInstruction(this, BytecodeIndex(nextOffset));
     Vector<VirtualRegister> liveOperands;
     liveOperands.reserveInitialCapacity(liveLocals.bitCount());
     liveLocals.forEachSetBit([&] (unsigned liveLocal) {
@@ -3110,7 +3110,7 @@ void CodeBlock::validate()
 {
     BytecodeLivenessAnalysis liveness(this); // Compute directly from scratch so it doesn't effect CodeBlock footprint.
     
-    FastBitVector liveAtHead = liveness.getLivenessInfoAtBytecodeIndex(this, BytecodeIndex(0));
+    FastBitVector liveAtHead = liveness.getLivenessInfoAtInstruction(this, BytecodeIndex(0));
     
     if (liveAtHead.numBits() != static_cast<size_t>(m_numCalleeLocals)) {
         beginValidationDidFail();

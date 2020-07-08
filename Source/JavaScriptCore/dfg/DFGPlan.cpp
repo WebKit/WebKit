@@ -758,7 +758,7 @@ void Plan::cleanMustHandleValuesIfNecessary()
         return;
 
     CodeBlock* alternative = m_codeBlock->alternative();
-    FastBitVector liveness = alternative->livenessAnalysis().getLivenessInfoAtBytecodeIndex(alternative, m_osrEntryBytecodeIndex);
+    FastBitVector liveness = alternative->livenessAnalysis().getLivenessInfoAtInstruction(alternative, m_osrEntryBytecodeIndex);
 
     for (unsigned local = m_mustHandleValues.numberOfLocals(); local--;) {
         if (!liveness[local])

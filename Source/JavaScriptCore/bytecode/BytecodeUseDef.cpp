@@ -33,6 +33,7 @@ namespace JSC {
 
 #define USES_OR_DEFS(__opcode, ...) \
     case __opcode::opcodeID: { \
+        static_assert(__opcode::opcodeID >= NUMBER_OF_BYTECODE_WITH_CHECKPOINTS, "Don't use this macro for bytecodes that have checkpoints."); \
         auto __bytecode = instruction->as<__opcode>(); \
         WTF_LAZY_FOR_EACH_TERM(CALL_FUNCTOR, __VA_ARGS__) \
         return; \
@@ -41,17 +42,18 @@ namespace JSC {
 #define USES USES_OR_DEFS
 #define DEFS USES_OR_DEFS
 
-void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instruction* instruction, const Function<void(VirtualRegister)>& functor)
+void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
 {
     OpcodeID opcodeID = instruction->opcodeID();
 
-    auto handleNewArrayLike = [&](auto op) {
+
+    auto handleNewArrayLike = [&] (auto op) {
         int base = op.m_argv.offset();
         for (int i = 0; i < static_cast<int>(op.m_argc); i++)
             functor(VirtualRegister { base - i });
     };
 
-    auto handleOpCallLike = [&](auto op) {
+    auto handleOpCallLike = [&] (auto op) {
         functor(op.m_callee);
         int lastArg = -static_cast<int>(op.m_argv) + CallFrame::thisArgumentOffset();
         for (int i = 0; i < static_cast<int>(op.m_argc); i++)
@@ -59,6 +61,15 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
         if (opcodeID == op_call_eval)
             functor(scopeRegister);
         return;
+    };
+
+    auto useAtEachCheckpoint = [&] (auto... virtualRegisters) {
+        (functor(virtualRegisters), ...);
+    };
+
+    auto useAtEachCheckpointStartingWith = [&] (Checkpoint firstUse, auto... virtualRegisters) {
+        if (checkpoint >= firstUse)
+            (functor(virtualRegisters), ...);
     };
 
     switch (opcodeID) {
@@ -250,9 +261,22 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     USES(OpHasStructureProperty, base, property, enumerator)
     USES(OpHasOwnStructureProperty, base, property, enumerator)
     USES(OpInStructureProperty, base, property, enumerator)
-    USES(OpConstructVarargs, callee, thisValue, arguments)
-    USES(OpCallVarargs, callee, thisValue, arguments)
-    USES(OpTailCallVarargs, callee, thisValue, arguments)
+
+    case op_call_varargs: {
+        auto bytecode = instruction->as<OpCallVarargs>();
+        useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
+        return;
+    }
+    case op_tail_call_varargs: {
+        auto bytecode = instruction->as<OpTailCallVarargs>();
+        useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
+        return;
+    }
+    case op_construct_varargs: {
+        auto bytecode = instruction->as<OpConstructVarargs>();
+        useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
+        return;
+    }
 
     USES(OpGetDirectPname, base, property, index, enumerator)
 
@@ -265,8 +289,19 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
 
     USES(OpYield, generator, argument)
 
-    USES(OpIteratorOpen, symbolIterator, iterable)
-    USES(OpIteratorNext, iterator, next, iterable)
+    case op_iterator_open: {
+        auto bytecode = instruction->as<OpIteratorOpen>();
+        useAtEachCheckpointStartingWith(OpIteratorOpen::symbolCall, bytecode.m_symbolIterator, bytecode.m_iterable);
+        useAtEachCheckpointStartingWith(OpIteratorOpen::getNext, bytecode.m_iterator);
+        return;
+    }
+
+    case op_iterator_next: {
+        auto bytecode = instruction->as<OpIteratorNext>();
+        useAtEachCheckpoint(bytecode.m_iterator);
+        useAtEachCheckpointStartingWith(OpIteratorNext::computeNext, bytecode.m_next, bytecode.m_iterable);
+        return;
+    }
 
     case op_new_array_with_spread:
         handleNewArrayLike(instruction->as<OpNewArrayWithSpread>());
@@ -302,8 +337,14 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     }
 }
 
-void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instruction, const Function<void(VirtualRegister)>& functor)
+void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
 {
+
+    auto defAt = [&] (Checkpoint target, VirtualRegister operand) {
+        if (target == checkpoint)
+            functor(operand);
+    };
+
     switch (instruction->opcodeID()) {
     case op_wide16:
     case op_wide32:
@@ -412,10 +453,23 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instru
     DEFS(OpNewAsyncGeneratorFuncExp, dst)
     DEFS(OpNewAsyncFunc, dst)
     DEFS(OpNewAsyncFuncExp, dst)
-    DEFS(OpCallVarargs, dst)
-    DEFS(OpTailCallVarargs, dst)
+    case op_call_varargs: {
+        auto bytecode = instruction->as<OpCallVarargs>();
+        defAt(OpCallVarargs::makeCall, bytecode.m_dst);
+        return;
+    }
+    case op_tail_call_varargs: {
+        auto bytecode = instruction->as<OpTailCallVarargs>();
+        defAt(OpTailCallVarargs::makeCall, bytecode.m_dst);
+        return;
+    }
+    case op_construct_varargs: {
+        auto bytecode = instruction->as<OpConstructVarargs>();
+        defAt(OpConstructVarargs::makeCall, bytecode.m_dst);
+        return;
+    }
+
     DEFS(OpTailCallForwardArguments, dst)
-    DEFS(OpConstructVarargs, dst)
     DEFS(OpGetFromScope, dst)
     DEFS(OpCall, dst)
     DEFS(OpTailCall, dst)
@@ -501,8 +555,24 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instru
 
     DEFS(OpCatch, exception, thrownValue)
 
-    DEFS(OpIteratorOpen, iterator, next)
-    DEFS(OpIteratorNext, done, value)
+    case op_iterator_open: {
+        auto bytecode = instruction->as<OpIteratorOpen>();
+
+        defAt(OpIteratorOpen::symbolCall, bytecode.m_iterator);
+        defAt(OpIteratorOpen::getNext, bytecode.m_next);
+        return;
+    }
+
+    case op_iterator_next: {
+        auto bytecode = instruction->as<OpIteratorNext>();
+
+        defAt(OpIteratorNext::getDone, bytecode.m_done);
+        // We need to claim we set m_value here because we could early exit from the bytecode if we are done.
+        defAt(OpIteratorNext::getDone, bytecode.m_value);
+
+        defAt(OpIteratorNext::getValue, bytecode.m_value);
+        return;
+    }
 
     case op_enter: {
         for (unsigned i = numVars; i--;)

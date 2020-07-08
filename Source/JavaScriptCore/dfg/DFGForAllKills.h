@@ -79,18 +79,21 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
             ASSERT(before.bytecodeIndex().checkpoint() != after.bytecodeIndex().checkpoint());
             ASSERT_WITH_MESSAGE(before.bytecodeIndex().offset() == after.bytecodeIndex().offset() || nodeAfter->op() == ExitOK || nodeAfter->op() == InvalidationPoint, "When the DFG does code motion it should change the forExit origin to match the surrounding bytecodes.");
 
-            auto checkpointLiveBefore = livenessForCheckpoint(*codeBlock, before.bytecodeIndex());
-            auto checkpointLiveAfter = livenessForCheckpoint(*codeBlock, after.bytecodeIndex());
+            auto liveBefore = tmpLivenessForCheckpoint(*codeBlock, before.bytecodeIndex());
+            auto liveAfter = tmpLivenessForCheckpoint(*codeBlock, after.bytecodeIndex());
+            liveAfter.invert();
+            liveBefore.filter(liveAfter);
 
-            FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
-            const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex(), LivenessCalculationPoint::BeforeUse);
+            liveBefore.forEachSetBit([&] (size_t tmp) {
+                functor(remapOperand(beforeInlineCallFrame, Operand::tmp(tmp)));
+            });
+        } else if (before.bytecodeIndex().checkpoint()) {
+            // We are moving on to another bytecode, all temps should be dead now.
+            auto liveBefore = tmpLivenessForCheckpoint(*codeBlock, before.bytecodeIndex());
 
-            for (Operand operand : checkpointLiveBefore) {
-                if (checkpointLiveAfter.contains(operand) || (!operand.isTmp() && liveAfter[operand.virtualRegister().offset()]))
-                    continue;
-                functor(remapOperand(beforeInlineCallFrame, operand));
-            }
-            return;
+            liveBefore.forEachSetBit([&] (size_t tmp) {
+                functor(remapOperand(beforeInlineCallFrame, Operand::tmp(tmp)));
+            });
         }
 
         FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
