@@ -697,8 +697,6 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutex<WebKitWebSrcPri
             members->loader = members->player->createResourceLoader();
 
         PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
-        if (request.url().protocolIsBlob())
-            loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
         members->resource = members->loader->requestResource(ResourceRequest(request), loadOptions);
         if (members->resource) {
             members->resource->setClient(makeUnique<CachedResourceStreamingClient>(protector.get(), ResourceRequest(request), requestNumber));

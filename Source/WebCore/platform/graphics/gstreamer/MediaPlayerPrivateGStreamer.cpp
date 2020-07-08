@@ -2402,6 +2402,8 @@ void MediaPlayerPrivateGStreamer::updateBufferingStatus(GstBufferingMode mode, d
 
     if (!m_didDownloadFinish)
         m_isBuffering = true;
+    else
+        m_fillTimer.stop();
 
     m_bufferingPercentage = percentage;
     switch (mode) {
