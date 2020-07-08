@@ -1,3 +1,21 @@
+2020-07-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Initial installation with IceCC enabled fails
+        https://bugs.webkit.org/show_bug.cgi?id=213833
+
+        Reviewed by Adrian Perez de Castro.
+
+        Avoid attempting to use the IceCC environment during the toolchain
+        archive update. The initial SDK installation triggers this when
+        IceCC is enabled on the command-line or via CCACHE_PREFIX, after
+        resetting the internal toolchain mapping. So the solution is to
+        opt-out of this runtime configuration setup, which is useless
+        anyway when the toolchain archive is being generated.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.pack_toolchain):
+
 2020-07-07  Sam Weinig  <weinig@apple.com>
 
         Enabled testing of date/time input types for WebKit2 macOS

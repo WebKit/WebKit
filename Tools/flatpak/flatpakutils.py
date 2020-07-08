@@ -652,6 +652,7 @@ class WebkitFlatpak:
         extra_env_vars = kwargs.pop("env", {})
         stdout = kwargs.pop("stdout", sys.stdout)
         extra_flatpak_args = kwargs.pop("extra_flatpak_args", [])
+        skip_icc = kwargs.pop("skip_icc", False)
 
         if not isinstance(args, list):
             args = list(args)
@@ -780,7 +781,7 @@ class WebkitFlatpak:
             _log.debug("Overriding sccache server port to %s" % override_sccache_server_port)
             sandbox_environment["SCCACHE_SERVER_PORT"] = override_sccache_server_port
 
-        if self.use_icecream and not self.regenerate_toolchains:
+        if self.use_icecream and not skip_icc:
             _log.debug('Enabling the icecream compiler')
             if share_network_option not in flatpak_command:
                 flatpak_command.append(share_network_option)
@@ -900,7 +901,7 @@ class WebkitFlatpak:
         with tempfile.NamedTemporaryFile() as tmpfile:
             command = ['icecc', '--build-native']
             command.extend(["/usr/bin/%s" % compiler for compiler in compilers])
-            self.run_in_sandbox(*command, stdout=tmpfile, cwd=self.source_root)
+            self.run_in_sandbox(*command, stdout=tmpfile, cwd=self.source_root, skip_icc=True)
             tmpfile.flush()
             tmpfile.seek(0)
             icc_version_filename, = re.findall(br'.*creating (.*)', tmpfile.read())
