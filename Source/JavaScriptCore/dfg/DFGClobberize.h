@@ -228,7 +228,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case ArithAbs:
         if (node->child1().useKind() == Int32Use || node->child1().useKind() == DoubleRepUse)
-            def(PureValue(node));
+            def(PureValue(node, node->arithMode()));
         else {
             read(World);
             write(Heap);
@@ -248,7 +248,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         if (node->child1().useKind() == Int32Use
             || node->child1().useKind() == DoubleRepUse
             || node->child1().useKind() == Int52RepUse)
-            def(PureValue(node));
+            def(PureValue(node, node->arithMode()));
         else {
             read(World);
             write(Heap);

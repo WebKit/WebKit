@@ -1,3 +1,20 @@
+2020-03-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Missing arithMode for ArithAbs and ArithNegate in DFGClobberize
+        https://bugs.webkit.org/show_bug.cgi?id=208685
+        <rdar://problem/60115088>
+
+        Reviewed by Saam Barati.
+
+        In the pure case of ArithNegate and ArithAbs in DFGClobberize, their PureValues did not include their
+        respective ArithMode. That means that e.g. a CheckOverflow ArithNegate/Abs could be considered equivalent
+        to an Unchecked version of the same node.
+
+        Thanks to Samuel Groß of Google Project Zero for identifying this bug.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2020-02-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         [Wasm] REGRESSION(r256665): Wasm->JS call IC needs to save memory size register
