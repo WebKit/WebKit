@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            border: 1px solid black;
+            overflow: hidden;
+        }
+        .composited {
+            position: absolute;
+            left: -200px;
+            width: 800px;
+            height: 100%;
+            transform: translateZ(1px);
+        }
+        #clipped {
+            margin-left: 200px;
+            width: 600px;
+            height: 400px;
+            background-color: green;
+            clip-path: url(#boxes);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="composited">
+            <div id="clipped"></div>
+        </div>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden;">
+        <defs>
+        <clipPath id="boxes" transform="matrix(1.8, 0, 0, 1.8, 20, 30)">
+            <path d="M50,50 L150,50 L150,150 L50,150 z" fill="transparent"></path>
+            <path d="M155,50 L255,50 L255,150 L155,150 z" fill="transparent"></path>
+        </clipPath>
+    </defs>
+</svg>
+</body>
+</html>

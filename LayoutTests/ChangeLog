@@ -1,3 +1,22 @@
+2020-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Hovering over countries at https://covidinc.io/ shows bizarre rendering artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=209635
+        <rdar://problem/60935010>
+
+        Reviewed by Said Abou-Hallawa.
+        
+        Ref test that exercises the code path by painting into a tiled compositing
+        layer.
+
+        * svg/clip-path/clip-path-on-overflowing-expected.html: Added.
+        * svg/clip-path/clip-path-on-overflowing.html: Added.
+        * svg/clip-path/mask-nested-clip-path-010-expected.svg:
+        * svg/clip-path/mask-nested-clip-path-010.svg: Copied from imported/mozilla/svg/svg-integration/clipPath-html-03.xhtml,
+        and modified to have a non-zero offset for better testing of the clipping bounds computation.
+        * svg/clip-path/resource-clipper-multiple-repaints-expected.html: Added.
+        * svg/clip-path/resource-clipper-multiple-repaints.html: Added.
+
 2020-05-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Audio messages in web.whatsapp.com only play once.
