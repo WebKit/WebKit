@@ -1,3 +1,13 @@
+2020-07-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not use the initial strut baseline values when the text content is inside an inline container
+        https://bugs.webkit.org/show_bug.cgi?id=214069
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/line-heigt-when-text-is-inside-inline-container-expected.html: Added.
+        * fast/layoutformattingcontext/line-heigt-when-text-is-inside-inline-container.html: Added.
+
 2020-07-08  Chris Dumez  <cdumez@apple.com>
 
         Skip a couple of WPT webaudio tests instead of marking them as crashing.

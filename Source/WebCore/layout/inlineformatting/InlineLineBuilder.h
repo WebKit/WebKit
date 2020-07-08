@@ -183,7 +183,7 @@ private:
     void alignHorizontally(const HangingContent&, IsLastLineWithInlineContent);
     void alignContentVertically();
 
-    void adjustBaselineAndLineHeight(const Run&);
+    void adjustBaselineAndLineHeight(const Run&, const LineBoxBuilder::Baseline&);
     InlineLayoutUnit runContentHeight(const Run&) const;
 
     void justifyRuns(InlineLayoutUnit availableWidth);
