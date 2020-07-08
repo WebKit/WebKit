@@ -1,3 +1,13 @@
+2020-07-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Table width is computed as if box-sizing was border-box
+        https://bugs.webkit.org/show_bug.cgi?id=214070
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-with-padding-and-border-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-with-padding-and-border-simple.html: Added.
+
 2020-07-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The layout test webanimations/accelerated-animation-single-keyframe.html is timing out

@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableColElement.h"
+#include "HTMLTableElement.h"
 #include "InlineFormattingState.h"
 #include "InvalidationContext.h"
 #include "InvalidationState.h"
@@ -315,6 +316,9 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
     tableBoxStyle.setPosition(PositionType::Static);
     tableBoxStyle.setFloating(Float::No);
     tableBoxStyle.resetMargin();
+    // FIXME: Figure out where the spec says table width is like box-sizing: border-box;
+    if (is<HTMLTableElement>(tableRenderer.element()))
+        tableBoxStyle.setBoxSizing(BoxSizing::BorderBox);
     auto& tableBox = createContainer(Box::ElementAttributes { Box::ElementType::TableBox }, WTFMove(tableBoxStyle));
     appendChild(tableWrapperBox, tableBox);
     auto* sectionRenderer = tableChild;
