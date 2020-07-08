@@ -1,3 +1,11 @@
+2020-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed test gardening; "rebaseline" the video-orientation-canvas.html test to center the expected red color
+        results on observed output.
+
+        * media/video-orientation-canvas-expected.txt:
+        * media/video-orientation-canvas.html:
+
 2020-07-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not use the initial strut baseline values when the text content is inside an inline container
