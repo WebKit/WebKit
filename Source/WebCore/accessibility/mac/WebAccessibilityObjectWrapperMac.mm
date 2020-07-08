@@ -800,12 +800,15 @@ static id startOrEndTextmarkerForRange(AXObjectCache* cache, RefPtr<Range> range
 {
     if (!cache)
         return nil;
-    
+
+    if (!range)
+        return nil;
+
     TextMarkerData textMarkerData;
-    cache->startOrEndTextMarkerDataForRange(textMarkerData, range, isStart);
+    cache->startOrEndTextMarkerDataForRange(textMarkerData, *range, isStart);
     if (!textMarkerData.axID)
         return nil;
-    
+
     return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
@@ -878,7 +881,7 @@ static id textMarkerForCharacterOffset(AXObjectCache* cache, const CharacterOffs
     
     CharacterOffset startCharacterOffset = [self characterOffsetForTextMarker:startTextMarker];
     CharacterOffset endCharacterOffset = [self characterOffsetForTextMarker:endTextMarker];
-    return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
+    return createLiveRange(cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset));
 }
 
 static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFTypeRef textMarker)
@@ -3650,8 +3653,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (AXObjectCache* cache = self.axBackingObject->axObjectCache()) {
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:marker];
         // Create a collapsed range from the CharacterOffset object.
-        RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
-        return [self _convertToNSRange:range.get()].location;
+        auto range = cache->rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
+        return [self _convertToNSRange:createLiveRange(range).get()].location;
     }
     return NSNotFound;
 }
@@ -3771,7 +3774,7 @@ enum class TextUnit {
             return nil;
 
         auto characterOffset = characterOffsetForTextMarker(cache, textMarker);
-        RefPtr<Range> range;
+        Optional<SimpleRange> range;
         switch (textUnit) {
         case TextUnit::LeftWord:
             range = cache->leftWordRange(characterOffset);
@@ -3790,7 +3793,7 @@ enum class TextUnit {
             break;
         }
 
-        return textMarkerRangeFromRange(cache, range);
+        return textMarkerRangeFromRange(cache, createLiveRange(range));
     });
 }
 
@@ -4158,8 +4161,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (start.isNull() || end.isNull())
                 return CGRectZero;
 
-            RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
-            auto bounds = FloatRect(backingObject->boundsForRange(range));
+            auto range = cache->rangeForUnorderedCharacterOffsets(start, end);
+            auto bounds = FloatRect(backingObject->boundsForRange(createLiveRange(range)));
             return [protectedSelf convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         });
         return [NSValue valueWithRect:rect];
@@ -4185,8 +4188,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (start.isNull() || end.isNull())
                 return String();
 
-            RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
-            return backingObject->stringForRange(range);
+            auto range = cache->rangeForUnorderedCharacterOffsets(start, end);
+            return backingObject->stringForRange(createLiveRange(range));
         });
     }
 
@@ -4230,8 +4233,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
             CharacterOffset characterOffset1 = [protectedSelf characterOffsetForTextMarker:textMarker1];
             CharacterOffset characterOffset2 = [protectedSelf characterOffsetForTextMarker:textMarker2];
-            RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(characterOffset1, characterOffset2);
-            return [protectedSelf textMarkerRangeFromRange:range];
+            auto range = cache->rangeForUnorderedCharacterOffsets(characterOffset1, characterOffset2);
+            return [protectedSelf textMarkerRangeFromRange:createLiveRange(range)];
         });
     }
 
@@ -4314,7 +4317,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return 0;
 
             RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
-            return AXObjectCache::lengthForRange(range.get());
+            if (!range)
+                return 0;
+            return AXObjectCache::lengthForRange(SimpleRange { *range });
         });
         if (length < 0)
             return nil;

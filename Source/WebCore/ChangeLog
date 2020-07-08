@@ -1,3 +1,73 @@
+2020-07-08  Darin Adler  <darin@apple.com>
+
+        Remove use of live ranges from AXObject.h
+        https://bugs.webkit.org/show_bug.cgi?id=214053
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange): Take SimpleRange.
+        (WebCore::AXObjectCache::lengthForRange): Take Optional<SimpleRange>.
+        (WebCore::AXObjectCache::rangeForNodeContents): Return SimpleRange, take reference
+        rather than pointer.
+        (WebCore::characterOffsetsInOrder): Use SimpleRange.
+        (WebCore::resetNodeAndOffsetForReplacedNode): Take a reference to the node rather than
+        a pointer.
+        (WebCore::boundaryPoint): Added. Could be used to replace calls to
+        setRangeStartOrEndWithCharacterOffset.
+        (WebCore::setRangeStartOrEndWithCharacterOffset): Take SimpleRange. Also use the
+        new boundaryPoint function above.
+        (WebCore::AXObjectCache::rangeForUnorderedCharacterOffsets): Return Optional<SimpleRange>.
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange): Take SimpleRange.
+        (WebCore::AXObjectCache::startOrEndTextMarkerDataForRange): Take SimpleRange.
+        (WebCore::AXObjectCache::characterOffsetForNodeAndOffset): Use SimpleRange.
+        (WebCore::AXObjectCache::textMarkerDataForNextCharacterOffset): Ditto.
+        (WebCore::AXObjectCache::textMarkerDataForPreviousCharacterOffset): Ditto.
+        (WebCore::AXObjectCache::visiblePositionFromCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        (WebCore::AXObjectCache::leftWordRange): Return Optional<SimpleRange>.
+        (WebCore::AXObjectCache::rightWordRange): Ditto.
+        (WebCore::AXObjectCache::nextBoundary): Ditto.
+        (WebCore::AXObjectCache::previousBoundary): Ditto.
+        (WebCore::AXObjectCache::startCharacterOffsetOfParagraph): Use SimpleRange.
+        (WebCore::AXObjectCache::endCharacterOffsetOfParagraph): Ditto.
+        (WebCore::AXObjectCache::paragraphForCharacterOffset): Ditto.
+        (WebCore::AXObjectCache::sentenceForCharacterOffset): Ditto.
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset): Ditto.
+        (WebCore::AXObjectCache::characterOffsetForPoint): Ditto.
+        (WebCore::AXObjectCache::characterOffsetForIndex): Ditto.
+        (WebCore::AXObjectCache::indexForCharacterOffset): Ditto.
+
+        * accessibility/AXObjectCache.h: Remove uses of Range and include of "Range.h".
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::elementRange const): Call createLiveRange.
+        (WebCore::AccessibilityObject::rangeForPlainTextRange const): Ditto.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundsForRange const): Pass SimpleRange.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (+[WebAccessibilityTextMarker startOrEndTextMarkerForRange:isStart:cache:]): Pass SimpleRange.
+        (-[WebAccessibilityObjectWrapper positionForTextMarker:]): Call createLiveRange.
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForSelection]): Pass SimpleRange.
+        (-[WebAccessibilityObjectWrapper textMarkerForPosition:]): Ditto.
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkers:]): Call createLiveRange.
+        (-[WebAccessibilityObjectWrapper lengthForTextMarkers:]): Pass SimpleRange.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (startOrEndTextmarkerForRange):
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkerRange:]): Pass SimpleRange.
+        (-[WebAccessibilityObjectWrapper _indexForTextMarker:]): Call createLiveRange.
+        (-[WebAccessibilityObjectWrapper textMarkerRangeAtTextMarker:forUnit:]): Ditto.
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]): Ditto.
+
+        * dom/BoundaryPoint.h: Added makeBoundaryPointBefore/AfterNode.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::makeBoundaryPointBeforeNode): Added.
+        (WebCore::makeBoundaryPointAfterNode): Ditto.
+
 2020-07-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not use the initial strut baseline values when the text content is inside an inline container

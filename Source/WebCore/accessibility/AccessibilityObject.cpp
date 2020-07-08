@@ -645,8 +645,11 @@ Optional<SimpleRange> AccessibilityObject::selectionRange() const
 }
 
 RefPtr<Range> AccessibilityObject::elementRange() const
-{    
-    return AXObjectCache::rangeForNodeContents(node());
+{
+    auto node = this->node();
+    if (!node)
+        return { };
+    return createLiveRange(AXObjectCache::rangeForNodeContents(*node));
 }
 
 RefPtr<Range> AccessibilityObject::findTextRange(Vector<String> const& searchStrings, RefPtr<Range> const& start, AccessibilitySearchTextDirection direction) const
@@ -1189,7 +1192,7 @@ RefPtr<Range> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& 
     if (AXObjectCache* cache = axObjectCache()) {
         CharacterOffset start = cache->characterOffsetForIndex(range.start, this);
         CharacterOffset end = cache->characterOffsetForIndex(range.start + range.length, this);
-        return cache->rangeForUnorderedCharacterOffsets(start, end);
+        return createLiveRange(cache->rangeForUnorderedCharacterOffsets(start, end));
     }
     return nullptr;
 }

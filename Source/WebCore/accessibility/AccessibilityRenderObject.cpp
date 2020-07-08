@@ -2176,8 +2176,8 @@ IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) con
     if (!cache)
         return IntRect();
     
-    CharacterOffset start = cache->startOrEndCharacterOffsetForRange(range, true);
-    CharacterOffset end = cache->startOrEndCharacterOffsetForRange(range, false);
+    CharacterOffset start = cache->startOrEndCharacterOffsetForRange(*range, true);
+    CharacterOffset end = cache->startOrEndCharacterOffsetForRange(*range, false);
     
     LayoutRect rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
     LayoutRect rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);

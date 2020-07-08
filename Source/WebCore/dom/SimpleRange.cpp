@@ -55,6 +55,24 @@ bool operator==(const SimpleRange& a, const SimpleRange& b)
     return a.start == b.start && a.end == b.end;
 }
 
+// FIXME: Create BoundaryPoint.cpp and move this there.
+Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
+{
+    auto parent = node.parentNode();
+    if (!parent)
+        return WTF::nullopt;
+    return BoundaryPoint { *parent, node.computeNodeIndex() };
+}
+
+// FIXME: Create BoundaryPoint.cpp and move this there.
+Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
+{
+    auto parent = node.parentNode();
+    if (!parent)
+        return WTF::nullopt;
+    return BoundaryPoint { *parent, node.computeNodeIndex() + 1 };
+}
+
 Optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     auto parent = node.parentNode();
