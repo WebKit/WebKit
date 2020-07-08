@@ -276,7 +276,7 @@ enum class BindFlags {
 
 static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bindFlags = BindFlags::ReadOnly)
 {
-    if (!path)
+    if (!path || path[0] == '\0')
         return;
 
     const char* bindType;
