@@ -1,3 +1,15 @@
+2020-04-27  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Rework WebKitWebSrc threading
+        https://bugs.webkit.org/show_bug.cgi?id=209811
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A test improved its status in TestExpectations from the changes made
+        in this patch.
+
+        * platform/gtk/TestExpectations:
+
 2020-03-20  David Kilzer  <ddkilzer@apple.com>
 
         Content-Type & Nosniff Ignored on XML External Entity Resources
