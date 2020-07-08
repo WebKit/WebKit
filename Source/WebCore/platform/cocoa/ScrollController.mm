@@ -27,10 +27,12 @@
 #import "ScrollController.h"
 
 #import "LayoutSize.h"
+#import "Logging.h"
 #import "PlatformWheelEvent.h"
 #import "WheelEventTestMonitor.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
+#import <wtf/text/TextStream.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #import "ScrollSnapAnimatorState.h"
@@ -577,6 +579,23 @@ static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase,
     return WheelEventStatus::Unknown;
 }
 
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, WheelEventStatus status)
+{
+    switch (status) {
+    case WheelEventStatus::UserScrollBegin: ts << "UserScrollBegin"; break;
+    case WheelEventStatus::UserScrolling: ts << "UserScrolling"; break;
+    case WheelEventStatus::UserScrollEnd: ts << "UserScrollEnd"; break;
+    case WheelEventStatus::InertialScrollBegin: ts << "InertialScrollBegin"; break;
+    case WheelEventStatus::InertialScrolling: ts << "InertialScrolling"; break;
+    case WheelEventStatus::InertialScrollEnd: ts << "InertialScrollEnd"; break;
+    case WheelEventStatus::StatelessScrollEvent: ts << "StatelessScrollEvent"; break;
+    case WheelEventStatus::Unknown: ts << "Unknown"; break;
+    }
+    return ts;
+}
+#endif
+
 bool ScrollController::shouldOverrideInertialScrolling() const
 {
     if (!m_scrollSnapState)
@@ -634,6 +653,9 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
         return true;
 
     WheelEventStatus status = toWheelEventStatus(wheelEvent.phase(), wheelEvent.momentumPhase());
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " processWheelEventForScrollSnap: status " << status);
+
     bool isInertialScrolling = false;
     switch (status) {
     case WheelEventStatus::UserScrollBegin:
@@ -672,6 +694,8 @@ void ScrollController::startScrollSnapTimer()
     if (m_scrollSnapTimer)
         return;
 
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " startScrollSnapTimer (main thread " << isMainThread() << ")");
+
     startDeferringWheelEventTestCompletionDueToScrollSnapping();
     m_client.willStartScrollSnapAnimation();
     m_scrollSnapTimer = m_client.createTimer([this] {
@@ -684,6 +708,8 @@ void ScrollController::stopScrollSnapTimer()
 {
     if (!m_scrollSnapTimer)
         return;
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " stopScrollSnapTimer (main thread " << isMainThread() << ")");
 
     stopDeferringWheelEventTestCompletionDueToScrollSnapping();
     m_client.didStopScrollSnapAnimation();
@@ -702,6 +728,9 @@ void ScrollController::scrollSnapTimerFired()
     bool isAnimationComplete;
     auto animationOffset = m_scrollSnapState->currentAnimatedScrollOffset(isAnimationComplete);
     auto currentOffset = m_client.scrollOffset();
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " scrollSnapTimerFired - isAnimationComplete " << isAnimationComplete << " currentOffset " << currentOffset << " (main thread " << isMainThread() << ")");
+
     m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(animationOffset.x() - currentOffset.x(), animationOffset.y() - currentOffset.y()));
     if (isAnimationComplete) {
         m_scrollSnapState->transitionToDestinationReachedState();
@@ -727,6 +756,8 @@ void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableAre
             updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, { });
     } else
         updateScrollSnapPoints(ScrollEventAxis::Vertical, { }, { });
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState for " << scrollableArea << " new state " << ValueOrNull(m_scrollSnapState.get()));
 }
 
 void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)

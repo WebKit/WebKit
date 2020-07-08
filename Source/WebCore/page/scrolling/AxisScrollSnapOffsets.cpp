@@ -71,34 +71,12 @@ static LayoutUnit computeScrollSnapAlignOffset(const LayoutUnit& leftOrTop, cons
     }
 }
 
-#if !LOG_DISABLED
-
-static String snapOffsetsToString(const Vector<LayoutUnit>& snapOffsets)
+template<typename T>
+TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
 {
-    StringBuilder builder;
-    builder.appendLiteral("[ ");
-    for (auto& offset : snapOffsets)
-        builder.append(offset.toFloat(), ' ');
-    builder.append(']');
-    return builder.toString();
+    ts << "start: " << range.start << " end: " << range.end;
+    return ts;
 }
-
-static String snapOffsetRangesToString(const Vector<ScrollOffsetRange<LayoutUnit>>& ranges)
-{
-    StringBuilder builder;
-    builder.appendLiteral("[ ");
-    for (auto& range : ranges)
-        builder.append('(', range.start.toFloat(), ", ", range.end.toFloat(), ") ");
-    builder.append(']');
-    return builder.toString();
-}
-
-static String snapPortOrAreaToString(const LayoutRect& rect)
-{
-    return makeString("{{", rect.x().toFloat(), ", ", rect.y().toFloat(), "} {", rect.width().toFloat(), ", ", rect.height().toFloat(), "}}");
-}
-
-#endif
 
 template <typename LayoutType>
 static void indicesOfNearestSnapOffsetRanges(LayoutType offset, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, unsigned& lowerIndex, unsigned& upperIndex)
@@ -218,9 +196,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
 
     // The bounds of the scrolling container's snap port, where the top left of the scrolling container's border box is the origin.
     auto scrollSnapPort = computeScrollSnapPortOrAreaRect(scrollingElementBox.paddingBoxRect(), scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
-#if !LOG_DISABLED
-    LOG(Scrolling, "Computing scroll snap offsets in snap port: %s", snapPortOrAreaToString(scrollSnapPort).utf8().data());
-#endif
+    LOG_WITH_STREAM(ScrollSnap, stream << "Computing scroll snap offsets for " << scrollableArea << " in snap port " << scrollSnapPort);
     for (auto* child : scrollContainer->view().boxesWithScrollSnapPositions()) {
         if (child->enclosingScrollableContainerForSnapping() != scrollContainer)
             continue;
@@ -230,9 +206,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
         auto scrollSnapArea = LayoutRect(child->localToContainerQuad(FloatQuad(child->borderBoundingBox()), scrollingElement.renderBox()).boundingBox());
         scrollSnapArea.moveBy(containerScrollOffset);
         scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollSnapMargin(), InsetOrOutset::Outset);
-#if !LOG_DISABLED
-        LOG(Scrolling, "    Considering scroll snap area: %s", snapPortOrAreaToString(scrollSnapArea).utf8().data());
-#endif
+        LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
         auto alignment = child->style().scrollSnapAlign();
         if (hasHorizontalSnapOffsets && alignment.x != ScrollSnapAxisAlignType::None) {
             auto absoluteScrollOffset = clampTo<LayoutUnit>(computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.width(), alignment.x) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.width(), alignment.x), 0, maxScrollLeft);
@@ -252,10 +226,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
 
     if (!horizontalSnapOffsets.isEmpty()) {
         adjustAxisSnapOffsetsForScrollExtent(horizontalSnapOffsets, maxScrollLeft);
-#if !LOG_DISABLED
-        LOG(Scrolling, " => Computed horizontal scroll snap offsets: %s", snapOffsetsToString(horizontalSnapOffsets).utf8().data());
-        LOG(Scrolling, " => Computed horizontal scroll snap offset ranges: %s", snapOffsetRangesToString(horizontalSnapOffsetRanges).utf8().data());
-#endif
+        LOG_WITH_STREAM(ScrollSnap, stream << " => Computed horizontal scroll snap offsets: " << horizontalSnapOffsets);
+        LOG_WITH_STREAM(ScrollSnap, stream << " => Computed horizontal scroll snap offset ranges: " << horizontalSnapOffsetRanges);
         if (scrollSnapType.strictness == ScrollSnapStrictness::Proximity)
             computeAxisProximitySnapOffsetRanges(horizontalSnapOffsets, horizontalSnapOffsetRanges, scrollSnapPort.width());
 
@@ -266,10 +238,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
 
     if (!verticalSnapOffsets.isEmpty()) {
         adjustAxisSnapOffsetsForScrollExtent(verticalSnapOffsets, maxScrollTop);
-#if !LOG_DISABLED
-        LOG(Scrolling, " => Computed vertical scroll snap offsets: %s", snapOffsetsToString(verticalSnapOffsets).utf8().data());
-        LOG(Scrolling, " => Computed vertical scroll snap offset ranges: %s", snapOffsetRangesToString(verticalSnapOffsetRanges).utf8().data());
-#endif
+        LOG_WITH_STREAM(ScrollSnap, stream << " => Computed vertical scroll snap offsets: " << verticalSnapOffsets);
+        LOG_WITH_STREAM(ScrollSnap, stream << " => Computed vertical scroll snap offset ranges: " << verticalSnapOffsetRanges);
         if (scrollSnapType.strictness == ScrollSnapStrictness::Proximity)
             computeAxisProximitySnapOffsetRanges(verticalSnapOffsets, verticalSnapOffsetRanges, scrollSnapPort.height());
 

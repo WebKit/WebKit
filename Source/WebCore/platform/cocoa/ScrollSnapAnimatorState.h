@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollSnapAnimatorState_h
-#define ScrollSnapAnimatorState_h
+#pragma once
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
@@ -37,6 +36,10 @@
 #include "ScrollTypes.h"
 #include "ScrollingMomentumCalculator.h"
 #include <wtf/MonotonicTime.h>
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
@@ -112,8 +115,8 @@ private:
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SCROLL_SNAP)
-
-#endif // ScrollSnapAnimatorState_h

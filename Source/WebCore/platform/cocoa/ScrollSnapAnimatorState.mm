@@ -29,6 +29,7 @@
 #if ENABLE(CSS_SCROLL_SNAP)
 
 #import <wtf/MathExtras.h>
+#import <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -103,7 +104,30 @@ float ScrollSnapAnimatorState::targetOffsetForStartOffset(const Vector<LayoutUni
     targetOffset = clampTo<float>(targetOffset, minimumTargetOffset, maximumTargetOffset);
     return pageScale * targetOffset;
 }
-    
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
+{
+    ts << "start: " << range.start << " end: " << range.end;
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)
+{
+    ts << "ScrollSnapAnimatorState";
+    ts.dumpProperty("snap offsets x", state.snapOffsetsForAxis(ScrollEventAxis::Horizontal));
+    ts.dumpProperty("snap offsets y", state.snapOffsetsForAxis(ScrollEventAxis::Vertical));
+    if (!state.snapOffsetRangesForAxis(ScrollEventAxis::Horizontal).isEmpty())
+        ts.dumpProperty("snap offsets ranges x", state.snapOffsetRangesForAxis(ScrollEventAxis::Horizontal));
+    if (!state.snapOffsetRangesForAxis(ScrollEventAxis::Vertical).isEmpty())
+        ts.dumpProperty("snap offsets ranges y", state.snapOffsetRangesForAxis(ScrollEventAxis::Vertical));
+
+    ts.dumpProperty("active snap index x", state.activeSnapIndexForAxis(ScrollEventAxis::Horizontal));
+    ts.dumpProperty("active snap index y", state.activeSnapIndexForAxis(ScrollEventAxis::Vertical));
+
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // CSS_SCROLL_SNAP

@@ -570,14 +570,18 @@ void ScrollableArea::updateScrollSnapState()
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->updateScrollSnapState();
 
+    LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress());
+
     if (isScrollSnapInProgress())
         return;
 
     IntPoint currentPosition = scrollPosition();
     IntPoint correctedPosition = nearestActiveSnapPoint(currentPosition);
-    
-    if (correctedPosition != currentPosition)
+
+    if (correctedPosition != currentPosition) {
+        LOG_WITH_STREAM(ScrollSnap, stream << " adjusting position from " << currentPosition << " to " << correctedPosition);
         scrollToOffsetWithoutAnimation(correctedPosition);
+    }
 }
 #else
 void ScrollableArea::updateScrollSnapState()
