@@ -1,3 +1,15 @@
+2020-05-05  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Video loops when ran in rr record --chaos
+        https://bugs.webkit.org/show_bug.cgi?id=211182
+
+        Reviewed by Philippe Normand.
+
+        imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html
+        is now passing.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-27  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Rework WebKitWebSrc threading

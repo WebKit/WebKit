@@ -1424,7 +1424,6 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-see
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass Crash ]
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Pass Crash ]
 webkit.org/b/203078 media/media-source/media-source-seek-detach-crash.html [ Pass Crash ]
-webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Pass Crash ]

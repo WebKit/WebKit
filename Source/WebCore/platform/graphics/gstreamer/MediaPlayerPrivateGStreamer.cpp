@@ -1626,8 +1626,10 @@ GstElement* MediaPlayerPrivateGStreamer::audioSink() const
 MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
 {
     GST_TRACE_OBJECT(pipeline(), "isEndReached: %s, seeking: %s, seekTime: %s", boolForPrinting(m_isEndReached), boolForPrinting(m_isSeeking), m_seekTime.toString().utf8().data());
-    if (m_isEndReached && m_isSeeking)
+    if (m_isSeeking)
         return m_seekTime;
+    if (m_isEndReached)
+        return m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
 
     // This constant should remain lower than HTMLMediaElement's maxTimeupdateEventFrequency.
     static const Seconds positionCacheThreshold = 200_ms;
