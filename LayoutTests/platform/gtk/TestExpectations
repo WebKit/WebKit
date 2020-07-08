@@ -3138,9 +3138,6 @@ webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/
 
 webkit.org/b/163984 fast/dom/Window/child-window-focus.html [ Failure ]
 
-webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
-webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
-
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
 webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
