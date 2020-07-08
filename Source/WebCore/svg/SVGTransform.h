@@ -144,6 +144,20 @@ public:
         return { };
     }
 
+    void attach(SVGPropertyOwner* owner, SVGPropertyAccess access) override
+    {
+        Base::attach(owner, access);
+        // Reattach the SVGMatrix to the SVGTransformValue with the new SVGPropertyAccess.
+        m_value.matrix()->reattach(this, access);
+    }
+
+    void detach() override
+    {
+        Base::detach();
+        // Reattach the SVGMatrix to the SVGTransformValue with the SVGPropertyAccess::ReadWrite.
+        m_value.matrix()->reattach(this, access());
+    }
+
 private:
     using Base = SVGValueProperty<SVGTransformValue>;
 
