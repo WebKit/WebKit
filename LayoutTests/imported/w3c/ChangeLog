@@ -1,3 +1,14 @@
+2020-07-07  Lauro Moura  <lmoura@igalia.com>
+
+        Rebaseline windowclient-navigate.https after service-workers resync
+
+        This test was rebaselined in r264043 and the as the test changed to
+        an async function, the emmited messages changed.
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt:
+
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/service-workers from upstream
