@@ -1,3 +1,20 @@
+2020-07-08  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r263836): [GStreamer] Debug ASSERT hits
+        https://bugs.webkit.org/show_bug.cgi?id=214047
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Reduce the element dependency on RefPtr<MediaStreamTrackPrivate> which is not MT-safe. The
+        data we need from it are its ID and the contents required to build a GstTagList. So we now
+        create this tag-list upfront and keep track of the trackID as well.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (webkitMediaStreamSrcAddPad):
+        (ProbeData::ProbeData):
+        (webkitMediaStreamSrcPadProbeCb):
+        (webkitMediaStreamSrcSetupSrc):
+
 2020-07-07  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Fix the build on Catalina internal SDKs

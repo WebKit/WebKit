@@ -429,7 +429,7 @@ static GstFlowReturn webkitMediaStreamSrcChain(GstPad* pad, GstObject* parent, G
     return result;
 }
 
-static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* target, GstStaticPadTemplate* padTemplate, MediaStreamTrackPrivate* track)
+static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* target, GstStaticPadTemplate* padTemplate, GRefPtr<GstTagList>&& tags)
 {
     GST_DEBUG_OBJECT(self, "%s Ghosting %" GST_PTR_FORMAT, gst_object_get_path_string(GST_OBJECT_CAST(self)), target);
 
@@ -443,20 +443,22 @@ static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* targe
     gst_flow_combiner_add_pad(self->priv->flowCombiner.get(), proxyPad.get());
     gst_pad_set_chain_function(proxyPad.get(), static_cast<GstPadChainFunction>(webkitMediaStreamSrcChain));
 
-    auto tags = mediaStreamTrackPrivateGetTags(track);
     gst_pad_push_event(target, gst_event_new_tag(tags.leakRef()));
 }
 
 struct ProbeData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    ProbeData(GstElement* element, GstStaticPadTemplate* padTemplate, RefPtr<MediaStreamTrackPrivate> track)
+    ProbeData(GstElement* element, GstStaticPadTemplate* padTemplate, GRefPtr<GstTagList>&& tags, const char* trackId)
         : element(element)
         , padTemplate(padTemplate)
-        , track(track) { }
+        , tags(WTFMove(tags))
+    {
+        this->trackId.reset(g_strdup(trackId));
+    }
 
     GRefPtr<GstElement> element;
     GstStaticPadTemplate* padTemplate;
-    RefPtr<MediaStreamTrackPrivate> track;
+    GRefPtr<GstTagList> tags;
+    GUniquePtr<char> trackId;
 };
 
 static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbeInfo* info, ProbeData* data)
@@ -469,16 +471,16 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
     case GST_EVENT_STREAM_START: {
         const char* streamId;
         gst_event_parse_stream_start(event, &streamId);
-        if (!g_strcmp0(streamId, data->track->id().utf8().data())) {
+        if (!g_strcmp0(streamId, data->trackId.get())) {
             GST_INFO_OBJECT(pad, "Event has been sticked already");
             return GST_PAD_PROBE_REMOVE;
         }
 
-        auto* streamStart = gst_event_new_stream_start(data->track->id().utf8().data());
+        auto* streamStart = gst_event_new_stream_start(data->trackId.get());
         gst_event_set_group_id(streamStart, 1);
         gst_pad_push_event(pad, streamStart);
 
-        webkitMediaStreamSrcAddPad(self, pad, data->padTemplate, data->track.get());
+        webkitMediaStreamSrcAddPad(self, pad, data->padTemplate, WTFMove(data->tags));
         return GST_PAD_PROBE_REMOVE;
     }
     default:
@@ -494,14 +496,15 @@ static void webkitMediaStreamSrcSetupSrc(WebKitMediaStreamSrc* self, MediaStream
     gst_bin_add(GST_BIN_CAST(self), element);
 
     auto pad = adoptGRef(gst_element_get_static_pad(element, "src"));
+    auto tags = mediaStreamTrackPrivateGetTags(track);
     if (!onlyTrack) {
-        auto* data = new ProbeData(GST_ELEMENT_CAST(self), padTemplate, track);
+        auto* data = new ProbeData(GST_ELEMENT_CAST(self), padTemplate, WTFMove(tags), track->id().utf8().data());
         gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(webkitMediaStreamSrcPadProbeCb), data, [](gpointer data) {
             delete reinterpret_cast<ProbeData*>(data);
         });
     } else {
         gst_pad_set_active(pad.get(), TRUE);
-        webkitMediaStreamSrcAddPad(self, pad.get(), padTemplate, track);
+        webkitMediaStreamSrcAddPad(self, pad.get(), padTemplate, WTFMove(tags));
     }
 
     auto* priv = self->priv;
