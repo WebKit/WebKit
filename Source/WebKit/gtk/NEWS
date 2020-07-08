@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.29.3
+================
+
+What's new in WebKitGTK 2.29.3?
+
+  - Add webkit_authentication_request_get_security_origin.
+  - Change the cookies accept policy to always when no-third-party is set and ITP is enabled.
+  - Fix web process hangs on large GitHub pages.
+  - Bubblewrap sandbox should not attempt to bind empty paths.
+  - Add support for sndio to bubblewrap sandbox.
+  - Also handle dark themes when the name ends with -Dark.
+  - Fix a race condition causing a crash in media player.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.29.2
 ================
 

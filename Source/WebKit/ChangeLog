@@ -1,3 +1,9 @@
+2020-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.3 release
+
+        * gtk/NEWS: Add release notes for 2.29.3.
+
 2020-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Modernize FindOptions IPC code

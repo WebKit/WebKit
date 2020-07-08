@@ -1,3 +1,9 @@
+2020-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.3 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2020-07-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Fix typo in version variable assingment in FindWOFF2.cmake
