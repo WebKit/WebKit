@@ -462,6 +462,14 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     dataLogLnIf(Options::verboseOSR(),
             *codeBlock, ": Entered loop_osr with executeCounter = ",
             codeBlock->llintExecuteCounter());
+
+    if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
+        uint64_t* ptr = vm.getLoopHintExecutionCounter(pc);
+        *ptr += codeBlock->llintExecuteCounter().m_activeThreshold;
+        if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
+            LLINT_RETURN_TWO(LLInt::getCodePtr<JSEntryPtrTag>(fuzzer_return_early_from_loop_hint).executableAddress(), callFrame->topOfFrame());
+    }
+    
     
     auto loopOSREntryBytecodeIndex = BytecodeIndex(codeBlock->bytecodeOffset(pc));
 

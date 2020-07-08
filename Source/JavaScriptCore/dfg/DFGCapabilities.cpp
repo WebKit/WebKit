@@ -317,6 +317,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case checkpoint_osr_exit_from_inlined_call_trampoline:
     case checkpoint_osr_exit_trampoline:
     case handleUncaughtException:
+    case fuzzer_return_early_from_loop_hint:
     case op_iterator_open_return_location:
     case op_iterator_next_return_location:
     case op_call_return_location:

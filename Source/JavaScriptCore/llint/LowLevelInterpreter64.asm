@@ -2944,3 +2944,9 @@ end)
 llintOpWithReturn(op_in_structure_property, OpInStructureProperty, macro (size, get, dispatch, return)
     hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_in_structure_property)
 end)
+
+op(fuzzer_return_early_from_loop_hint, macro ()
+    move ValueUndefined, r0
+    doReturn()
+end)
+

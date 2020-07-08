@@ -105,6 +105,16 @@ void Code::emitDefaultPrologue(CCallHelpers& jit)
     defaultPrologueGenerator(jit, *this);
 }
 
+void Code::emitEpilogue(CCallHelpers& jit)
+{
+    if (frameSize()) {
+        jit.emitRestore(calleeSaveRegisterAtOffsetList());
+        jit.emitFunctionEpilogue();
+    } else
+        jit.emitFunctionEpilogueWithEmptyFrame();
+    jit.ret();
+}
+
 void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
 {
     regsInPriorityOrderImpl(bank) = regs;

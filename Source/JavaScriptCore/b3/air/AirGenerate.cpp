@@ -270,12 +270,7 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
             auto start = jit.labelIgnoringWatchpoints();
-            if (code.frameSize()) {
-                jit.emitRestore(code.calleeSaveRegisterAtOffsetList());
-                jit.emitFunctionEpilogue();
-            } else
-                jit.emitFunctionEpilogueWithEmptyFrame();
-            jit.ret();
+            code.emitEpilogue(jit);
             addItem(block->last());
             auto end = jit.labelIgnoringWatchpoints();
             if (disassembler)

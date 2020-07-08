@@ -1620,8 +1620,12 @@ private:
             compileDataViewSet();
             break;
 
+        case LoopHint: {
+            compileLoopHint();
+            break;
+        }
+
         case PhantomLocal:
-        case LoopHint:
         case MovHint:
         case ZombieHint:
         case ExitOK:
@@ -14696,6 +14700,50 @@ private:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+    }
+
+    void compileLoopHint()
+    {
+        if (!Options::returnEarlyFromInfiniteLoopsForFuzzing())
+            return;
+
+        CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(m_node->origin.semantic);
+        if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+            return;
+
+        BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
+        uint64_t* ptr = vm().getLoopHintExecutionCounter(instruction);
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->effects = Effects::none();
+        patchpoint->effects.exitsSideways = true;
+        patchpoint->effects.writesLocalState = true;
+        patchpoint->setGenerator([ptr] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            auto restore = [&] {
+                jit.popToRestore(GPRInfo::regT2);
+                jit.popToRestore(GPRInfo::regT1);
+                jit.popToRestore(GPRInfo::regT0);
+            };
+
+            jit.pushToSave(GPRInfo::regT0);
+            jit.pushToSave(GPRInfo::regT1);
+            jit.pushToSave(GPRInfo::regT2);
+
+            jit.move(CCallHelpers::TrustedImm64(Options::earlyReturnFromInfiniteLoopsLimit()), GPRInfo::regT2);
+            jit.move(CCallHelpers::TrustedImmPtr(ptr), GPRInfo::regT0);
+            jit.load64(CCallHelpers::Address(GPRInfo::regT0), GPRInfo::regT1);
+            auto skipEarlyReturn = jit.branch64(CCallHelpers::Below, GPRInfo::regT1, GPRInfo::regT2);
+
+            restore();
+            jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
+            params.code().emitEpilogue(jit); 
+
+            skipEarlyReturn.link(&jit);
+            jit.add64(CCallHelpers::TrustedImm32(1), GPRInfo::regT1);
+            jit.store64(GPRInfo::regT1, CCallHelpers::Address(GPRInfo::regT0));
+            restore();
+        });
     }
     
     void emitSwitchForMultiByOffset(LValue base, bool structuresChecked, Vector<SwitchCase, 2>& cases, LBasicBlock exit)

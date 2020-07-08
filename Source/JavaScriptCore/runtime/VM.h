@@ -1099,6 +1099,10 @@ public:
         SetForScope<Exception*> m_savedLastException;
     };
 
+    void addLoopHintExecutionCounter(const Instruction*);
+    uint64_t* getLoopHintExecutionCounter(const Instruction*);
+    void removeLoopHintExecutionCounter(const Instruction*);
+
 private:
     friend class LLIntOffsetsExtractor;
 
@@ -1223,6 +1227,9 @@ private:
 
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
     uintptr_t m_currentWeakRefVersion { 0 };
+
+    Lock m_loopHintExecutionCountLock;
+    HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uint64_t>>> m_loopHintExecutionCounts;
 
     VM* m_prev; // Required by DoublyLinkedListNode.
     VM* m_next; // Required by DoublyLinkedListNode.

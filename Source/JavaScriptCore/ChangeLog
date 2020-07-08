@@ -1,3 +1,49 @@
+2020-07-08  Saam Barati  <sbarati@apple.com>
+
+        Add a way to return early from detected infinite loops to aid the fuzzer
+        https://bugs.webkit.org/show_bug.cgi?id=214067
+
+        Reviewed by Yusuke Suzuki.
+
+        It's useful for the fuzzer to not get stuck in infinite loops so its
+        test cases can make forward progress trying to find bugs. This patch
+        adds a new mechanism where we can early return if we've exceeded a total
+        execution count for a static loop in bytecode. Note: this is not on a
+        per-frame basis, but it's a way to implement this in a non-invasive way
+        which is also practical for the fuzzer to use.
+
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::emitEpilogue):
+        * b3/air/AirCode.h:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generateWithAlreadyAllocatedRegisters):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::~CodeBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoopHint):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/mips.rb:
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::addLoopHintExecutionCounter):
+        (JSC::VM::getLoopHintExecutionCounter):
+        (JSC::VM::removeLoopHintExecutionCounter):
+        * runtime/VM.h:
+
 2020-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BytecodeGenerator should be robust against failed constant generation

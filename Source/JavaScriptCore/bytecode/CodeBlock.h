@@ -922,6 +922,12 @@ public:
     MetadataTable* metadataTable() { return m_metadata.get(); }
     const void* instructionsRawPointer() { return m_instructionsRawPointer; }
 
+    bool loopHintsAreEligibleForFuzzingEarlyReturn()
+    {
+        // Some builtins are required to always complete the loops they run.
+        return !m_unlinkedCode->isBuiltinFunction();
+    }
+
 protected:
     void finalizeLLIntInlineCaches();
 #if ENABLE(JIT)

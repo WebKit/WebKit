@@ -684,7 +684,7 @@ def mipsAddPICCode(list)
             # FIXME: [JSC] checkpoint_osr_exit_from_inlined_call_trampoline is a return location
             # and we should name it properly.
             # https://bugs.webkit.org/show_bug.cgi?id=208236
-            if node.name =~ /^.*_return_location(?:_(?:wide16|wide32))?$/ or node.name.start_with?("_checkpoint_osr_exit_from_inlined_call_trampoline")
+            if node.name =~ /^.*_return_location(?:_(?:wide16|wide32))?$/ or node.name.start_with?("_checkpoint_osr_exit_from_inlined_call_trampoline") or node.name.start_with?("_fuzzer_return_early_from_loop_hint")
                 # We need to have a special case for return location labels because they are always
                 # reached from a `ret` instruction. In this case, we need to proper reconfigure `$gp`
                 # using `$ra` instead of using `$t9`.

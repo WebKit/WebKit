@@ -768,6 +768,12 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             m_numberOfArgumentsToSkip = numberOfArgumentsToSkip;
             break;
         }
+
+        case op_loop_hint: {
+            if (Options::returnEarlyFromInfiniteLoopsForFuzzing())
+                vm.addLoopHintExecutionCounter(instruction.ptr());
+            break;
+        }
         
         default:
             break;
@@ -810,6 +816,13 @@ void CodeBlock::finishCreationCommon(VM& vm)
 CodeBlock::~CodeBlock()
 {
     VM& vm = *m_vm;
+
+    if (Options::returnEarlyFromInfiniteLoopsForFuzzing() && JITCode::isBaselineCode(jitType())) {
+        for (const auto& instruction : instructions()) {
+            if (instruction->is<OpLoopHint>())
+                vm.removeLoopHintExecutionCounter(instruction.ptr());
+        }
+    }
 
 #if ENABLE(DFG_JIT)
     // The JITCode (and its corresponding DFG::CommonData) may outlive the CodeBlock by

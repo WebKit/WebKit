@@ -1552,4 +1552,33 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
     vmCreationShouldCrash = shouldCrash;
 }
 
+void VM::addLoopHintExecutionCounter(const Instruction* instruction)
+{
+    auto locker = holdLock(m_loopHintExecutionCountLock);
+    auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uint64_t>>(0, nullptr));
+    if (addResult.isNewEntry) {
+        auto ptr = WTF::makeUniqueWithoutFastMallocCheck<uint64_t>();
+        *ptr = 0;
+        addResult.iterator->value.second = WTFMove(ptr);
+    }
+    ++addResult.iterator->value.first;
+}
+
+uint64_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
+{
+    auto locker = holdLock(m_loopHintExecutionCountLock);
+    auto iter = m_loopHintExecutionCounts.find(instruction);
+    return iter->value.second.get();
+}
+
+void VM::removeLoopHintExecutionCounter(const Instruction* instruction)
+{
+    auto locker = holdLock(m_loopHintExecutionCountLock);
+    auto iter = m_loopHintExecutionCounts.find(instruction);
+    RELEASE_ASSERT(!!iter->value.first);
+    --iter->value.first;
+    if (!iter->value.first)
+        m_loopHintExecutionCounts.remove(iter);
+}
+
 } // namespace JSC

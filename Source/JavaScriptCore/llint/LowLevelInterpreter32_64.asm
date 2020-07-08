@@ -2702,3 +2702,8 @@ llintOp(op_log_shadow_chicken_tail, OpLogShadowChickenTail, macro (size, get, di
     callSlowPath(_llint_slow_path_log_shadow_chicken_tail)
     dispatch()
 end)
+
+
+op(fuzzer_return_early_from_loop_hint, macro ()
+    notSupported()
+end)
