@@ -54,7 +54,7 @@ public:
     virtual void loadFinished(PlatformMediaResource&) { }
 };
 
-class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader> {
+class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader, WTF::DestructionThread::Main> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum LoadOption {
@@ -71,7 +71,7 @@ protected:
     PlatformMediaResourceLoader() = default;
 };
 
-class PlatformMediaResource : public ThreadSafeRefCounted<PlatformMediaResource> {
+class PlatformMediaResource : public ThreadSafeRefCounted<PlatformMediaResource, WTF::DestructionThread::Main> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
 public:
     PlatformMediaResource() = default;
