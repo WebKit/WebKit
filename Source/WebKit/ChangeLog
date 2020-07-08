@@ -1,3 +1,15 @@
+2020-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] MiniBrowser opens new windows too small causing failures on some WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=210206
+
+        Reviewed by Carlos Garcia Campos.
+
+        Provide the size of the default window (if is set) when windowRect is called
+        before the window is shown.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+
 2020-03-31  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Fix build breaks after r259112

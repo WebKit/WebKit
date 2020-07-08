@@ -223,6 +223,17 @@ private:
         if (WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
             gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
             gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
+        } else {
+            GdkRectangle defaultGeometry;
+            webkit_window_properties_get_geometry(webkit_web_view_get_window_properties(m_webView), &defaultGeometry);
+            if ((!defaultGeometry.width || !defaultGeometry.height) && WebCore::widgetIsOnscreenToplevelWindow(window)) {
+                int defaultWidth, defaultHeight;
+                gtk_window_get_default_size(GTK_WINDOW(window), &defaultWidth, &defaultHeight);
+                if (!defaultGeometry.width && defaultWidth != -1)
+                    geometry.width = defaultWidth;
+                if (!defaultGeometry.height && defaultHeight != -1)
+                    geometry.height = defaultHeight;
+            }
         }
         completionHandler(WebCore::FloatRect(geometry));
 #elif PLATFORM(WPE)

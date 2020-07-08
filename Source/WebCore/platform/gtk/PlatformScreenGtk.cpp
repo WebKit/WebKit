@@ -137,14 +137,25 @@ void setScreenDPIObserverHandler(Function<void()>&& handler, void* context)
     }
 }
 
+GdkMonitor* getCurrentScreenMonitor()
+{
+    GdkDisplay* display = gdk_display_get_default();
+    if (!display)
+        return nullptr;
+
+    auto* rootWindow = gdk_get_default_root_window();
+    if (!rootWindow)
+        return nullptr;
+
+    return gdk_display_get_monitor_at_window(display, rootWindow);
+}
+
+
 FloatRect screenRect(Widget*)
 {
     GdkRectangle geometry;
-    GdkDisplay* display = gdk_display_get_default();
-    if (!display)
-        return { };
 
-    auto* monitor = gdk_display_get_monitor(display, 0);
+    auto* monitor = getCurrentScreenMonitor();
     if (!monitor)
         return { };
 
@@ -156,11 +167,8 @@ FloatRect screenRect(Widget*)
 FloatRect screenAvailableRect(Widget*)
 {
     GdkRectangle workArea;
-    GdkDisplay* display = gdk_display_get_default();
-    if (!display)
-        return { };
 
-    auto* monitor = gdk_display_get_monitor(display, 0);
+    auto* monitor = getCurrentScreenMonitor();
     if (!monitor)
         return { };
 

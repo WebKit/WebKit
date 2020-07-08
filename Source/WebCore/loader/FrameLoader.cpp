@@ -4169,11 +4169,20 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
         windowRect.setX(*features.x);
     if (features.y)
         windowRect.setY(*features.y);
-    // Zero width and height mean using default size, not minumum one.
+    // Zero width and height mean using default size, not minimum one.
     if (features.width && *features.width)
         windowRect.setWidth(*features.width + (windowRect.width() - viewportSize.width()));
     if (features.height && *features.height)
         windowRect.setHeight(*features.height + (windowRect.height() - viewportSize.height()));
+
+#if PLATFORM(GTK)
+    FloatRect oldWindowRect = oldPage->chrome().windowRect();
+    // Use the size of the previous window if there is no default size.
+    if (!windowRect.width())
+        windowRect.setWidth(oldWindowRect.width());
+    if (!windowRect.height())
+        windowRect.setHeight(oldWindowRect.height());
+#endif
 
     // Ensure non-NaN values, minimum size as well as being within valid screen area.
     FloatRect newWindowRect = DOMWindow::adjustWindowRect(*page, windowRect);
