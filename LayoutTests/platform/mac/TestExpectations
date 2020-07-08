@@ -1299,8 +1299,6 @@ media/modern-media-controls/media-documents/background-color-and-centering.html 
 
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
-webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Pass Failure Timeout ]
-
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
 webkit.org/b/173068 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html [ Pass Failure ]
