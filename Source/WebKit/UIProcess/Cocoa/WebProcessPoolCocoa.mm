@@ -934,23 +934,4 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
 }
 #endif
 
-OSObjectPtr<xpc_object_t> WebProcessPool::xpcEndpointMessage() const
-{
-    return m_endpointMessage;
-}
-
-void WebProcessPool::sendNetworkProcessXPCEndpointToWebProcess(OSObjectPtr<xpc_object_t> endpointMessage)
-{
-    m_endpointMessage = endpointMessage;
-
-    for (auto process : m_processes) {
-        if (process->isLaunching())
-            continue;
-        if (!process->connection())
-            continue;
-        auto connection = process->connection()->xpcConnection();
-        xpc_connection_send_message(connection, endpointMessage.get());
-    }
-}
-
 } // namespace WebKit

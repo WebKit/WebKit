@@ -953,12 +953,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         return;
     }
 
-#if PLATFORM(COCOA)
-    auto endpointMessage = processPool().xpcEndpointMessage();
-    if (endpointMessage)
-        xpc_connection_send_message(connection()->xpcConnection(), endpointMessage.get());
-#endif
-
     RELEASE_ASSERT(!m_webConnection);
     m_webConnection = WebConnectionToWebProcess::create(this);
 

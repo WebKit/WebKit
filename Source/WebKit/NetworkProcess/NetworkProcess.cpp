@@ -97,7 +97,6 @@
 #include "NetworkCacheCoders.h"
 
 #if PLATFORM(COCOA)
-#include "LaunchServicesDatabaseObserver.h"
 #include "NetworkSessionCocoa.h"
 #endif
 
@@ -163,9 +162,6 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     addSupplement<WebCookieManager>();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
-#endif
-#if PLATFORM(COCOA)
-    addSupplement<LaunchServicesDatabaseObserver>();
 #endif
 #if PLATFORM(COCOA) && ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     LegacyCustomProtocolManager::networkProcessCreated(*this);
