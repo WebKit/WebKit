@@ -369,4 +369,13 @@ void initialize()
     });
 }
 
+// This is a compatibility hack to prevent linkage errors when launching older
+// versions of Safari. initialize() used to be named initializeThreading(), and
+// Safari.framework used to call it directly from NotificationAgentMain.
+WTF_EXPORT_PRIVATE void initializeThreading();
+void initializeThreading()
+{
+    initialize();
+}
+
 } // namespace WTF

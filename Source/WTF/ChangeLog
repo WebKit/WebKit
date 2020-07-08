@@ -1,3 +1,13 @@
+2020-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        dyld: Symbol not found: __ZN3WTF19initializeThreadingEv - webkit MacOSX
+        https://bugs.webkit.org/show_bug.cgi?id=214034
+
+        Reviewed by Mark Lam.
+
+        * wtf/Threading.cpp:
+        (WTF::initializeThreading): Export the old symbol name for compatibility.
+
 2020-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess hangs when browsing GitHub
