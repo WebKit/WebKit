@@ -54,15 +54,15 @@ namespace WebCore {
 class Color {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Color() { }
+    Color() = default;
 
-    Color(SimpleColor color)
+    Color(SRGBA<uint8_t> color)
     {
         setSimpleColor(color);
     }
 
     enum SemanticTag { Semantic };
-    Color(SimpleColor color, SemanticTag)
+    Color(SRGBA<uint8_t> color, SemanticTag)
         : Color(color)
     {
         tagAsSemantic();
@@ -193,7 +193,12 @@ public:
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
-    void setSimpleColor(SimpleColor);
+    Color(SimpleColor color)
+        : Color(color.asSRGBA<uint8_t>())
+    {
+    }
+
+    void setSimpleColor(SRGBA<uint8_t>);
 
     void tagAsSemantic() { m_colorData.simpleColorAndFlags |= isSemanticSimpleColorBit; }
     void tagAsValid() { m_colorData.simpleColorAndFlags |= validSimpleColor; }
@@ -301,12 +306,12 @@ inline const ExtendedColor& Color::asExtended() const
 inline const SimpleColor Color::asSimple() const
 {
     ASSERT(isSimple());
-    return makeSimpleColor(asSRGBA(Packed::RGBA { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) }));
+    return SimpleColor { asSRGBA(Packed::RGBA { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) }) };
 }
 
-inline void Color::setSimpleColor(SimpleColor simpleColor)
+inline void Color::setSimpleColor(SRGBA<uint8_t> color)
 {
-    m_colorData.simpleColorAndFlags = static_cast<uint64_t>(Packed::RGBA { simpleColor.asSRGBA<uint8_t>() }.value) << 32;
+    m_colorData.simpleColorAndFlags = static_cast<uint64_t>(Packed::RGBA { color }.value) << 32;
     tagAsValid();
 }
 
@@ -314,14 +319,14 @@ inline bool Color::isBlackColor(const Color& color)
 {
     if (color.isExtended())
         return color.asExtended().isBlack();
-    return color.asSimple() == Color::black;
+    return color.asSimple() == SimpleColor { Color::black };
 }
 
 inline bool Color::isWhiteColor(const Color& color)
 {
     if (color.isExtended())
         return color.asExtended().isWhite();
-    return color.asSimple() == Color::white;
+    return color.asSimple() == SimpleColor { Color::white };
 }
 
 template<class Encoder>
@@ -390,7 +395,7 @@ Optional<Color> Color::decode(Decoder& decoder)
     if (!decoder.decode(value))
         return WTF::nullopt;
 
-    return Color { makeSimpleColor(asSRGBA(Packed::RGBA { value })) };
+    return Color { asSRGBA(Packed::RGBA { value }) };
 }
 
 } // namespace WebCore

@@ -56,7 +56,7 @@ inline uint8_t convertToComponentByte(float f)
 
 constexpr uint8_t clampToComponentByte(int c)
 {
-    return static_cast<uint8_t>(std::clamp(c, 0, 0xFF));
+    return std::clamp(c, 0, 255);
 }
 
 constexpr uint8_t clampToComponentFloat(float f)

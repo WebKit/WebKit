@@ -37,11 +37,11 @@ class Color;
 class Element;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
-class SimpleColor;
 class StyleRuleBase;
 class StyleRuleKeyframe;
 class StyleSheetContents;
 class RenderStyle;
+template<typename> struct SRGBA;
 
 namespace Style {
 class BuilderState;
@@ -88,8 +88,8 @@ public:
     WEBCORE_EXPORT static Color parseColor(const String&, bool strict = false);
     static Color parseColorWorkerSafe(StringView);
     static Color parseSystemColor(StringView);
-    static Optional<SimpleColor> parseNamedColor(StringView);
-    static Optional<SimpleColor> parseHexColor(StringView);
+    static Optional<SRGBA<uint8_t>> parseNamedColor(StringView);
+    static Optional<SRGBA<uint8_t>> parseHexColor(StringView);
 
 private:
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);

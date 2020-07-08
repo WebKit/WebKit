@@ -689,7 +689,7 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     return makeExtendedColor(colorChannels[0], colorChannels[1], colorChannels[2], colorChannels[3], colorSpace);
 }
 
-static Optional<SimpleColor> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
+static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
 {
     String string;
     StringView view;

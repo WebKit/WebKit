@@ -25,17 +25,16 @@
 
 #pragma once
 
+#include "ColorBuilder.h"
 #include "ColorComponents.h"
 #include "ColorTypes.h"
 #include "ColorUtilities.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class SimpleColor {
 public:
-    constexpr SimpleColor() : m_value { } { }
-    constexpr SimpleColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_value { r, g, b, a } { }
+    constexpr explicit SimpleColor(SRGBA<uint8_t> value) : m_value { value } { }
 
     constexpr uint8_t alphaComponent() const { return m_value.alpha; }
     constexpr float alphaComponentAsFloat() const { return convertToComponentFloat(m_value.alpha); }
@@ -76,16 +75,13 @@ public:
     }
 
 private:
+    constexpr SimpleColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_value { r, g, b, a } { }
+
     SRGBA<uint8_t> m_value { 0, 0, 0, 0 };
 };
 
 bool operator==(SimpleColor, SimpleColor);
 bool operator!=(SimpleColor, SimpleColor);
-
-constexpr SimpleColor makeSimpleColor(int r, int g, int b);
-constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a);
-constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>&);
-SimpleColor makeSimpleColor(const SRGBA<float>&);
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
@@ -97,24 +93,29 @@ inline bool operator!=(SimpleColor a, SimpleColor b)
     return !(a == b);
 }
 
-constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>& sRGBA)
+constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(int r, int g, int b);
+constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(int r, int g, int b, int a);
+constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(SRGBA<uint8_t>);
+ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(const SRGBA<float>&);
+
+constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(int r, int g, int b)
 {
-    return { sRGBA.red, sRGBA.green, sRGBA.blue, sRGBA.alpha };
+    return clampToComponentBytes<SRGBA>(r, g, b, 0xFF);
 }
 
-inline SimpleColor makeSimpleColor(const SRGBA<float>& sRGBA)
+constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(int r, int g, int b, int a)
 {
-    return makeSimpleColor(convertToComponentBytes(sRGBA));
+    return clampToComponentBytes<SRGBA>(r, g, b, a);
 }
 
-constexpr SimpleColor makeSimpleColor(int r, int g, int b)
+constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(SRGBA<uint8_t> sRGBA)
 {
-    return makeSimpleColor(clampToComponentBytes<SRGBA>(r, g, b, 0xFF));
+    return sRGBA;
 }
 
-constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
+inline ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(const SRGBA<float>& sRGBA)
 {
-    return makeSimpleColor(clampToComponentBytes<SRGBA>(r, g, b, a));
+    return convertToComponentBytes(sRGBA);
 }
 
 } // namespace WebCore

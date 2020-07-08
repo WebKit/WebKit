@@ -213,22 +213,21 @@ TEST(Color, Luminance)
     EXPECT_FLOAT_EQ(Color(Color::black).luminance(), 0);
     EXPECT_FLOAT_EQ(Color(Color::white).luminance(), 1);
 
-    auto c = makeSimpleColor(85, 90, 160);
-    EXPECT_FLOAT_EQ(Color(c).luminance(), 0.11781692);
+    auto cComponents = makeSimpleColor(85, 90, 160);
+    EXPECT_FLOAT_EQ(Color(cComponents).luminance(), 0.11781692);
 
-    auto cComponents = c.asSRGBA<uint8_t>();
     EXPECT_EQ(cComponents.red, 85);
     EXPECT_EQ(cComponents.green, 90);
     EXPECT_EQ(cComponents.blue, 160);
 
-    auto cLigtened = Color(c).lightened().toSRGBALossy<uint8_t>();
-    EXPECT_FLOAT_EQ(Color(makeSimpleColor(cLigtened)).luminance(), 0.29168808);
+    auto cLigtened = Color(cComponents).lightened().toSRGBALossy<uint8_t>();
+    EXPECT_FLOAT_EQ(Color(cLigtened).luminance(), 0.29168808);
     EXPECT_EQ(cLigtened.red, 130);
     EXPECT_EQ(cLigtened.green, 137);
     EXPECT_EQ(cLigtened.blue, 244);
 
-    auto cDarkened = Color(c).darkened().toSRGBALossy<uint8_t>();
-    EXPECT_FLOAT_EQ(Color(makeSimpleColor(cDarkened)).luminance(), 0.027006727);
+    auto cDarkened = Color(cComponents).darkened().toSRGBALossy<uint8_t>();
+    EXPECT_FLOAT_EQ(Color(cDarkened).luminance(), 0.027006727);
     EXPECT_EQ(cDarkened.red, 40);
     EXPECT_EQ(cDarkened.green, 43);
     EXPECT_EQ(cDarkened.blue, 76);

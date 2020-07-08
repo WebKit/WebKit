@@ -64,7 +64,7 @@ InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
     disconnect();
 }
 
-static Optional<SimpleColor> makeSimpleColorFromARGBCFArray(CFArrayRef colorArray)
+static Optional<SRGBA<uint8_t>> makeSimpleColorFromARGBCFArray(CFArrayRef colorArray)
 {
     if (CFArrayGetCount(colorArray) < 4)
         return WTF::nullopt;

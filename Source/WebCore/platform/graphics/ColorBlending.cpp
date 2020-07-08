@@ -70,7 +70,7 @@ Color blendWithWhite(const Color& color)
 
     auto [existingR, existingG, existingB, existingAlpha] = color.toSRGBALossy<uint8_t>();
 
-    SimpleColor result;
+    SRGBA<uint8_t> result;
     for (int alpha = startAlpha; alpha <= endAlpha; alpha += alphaIncrement) {
         // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
         // at the current alpha.  Try using less transparency if the numbers end up being negative.
@@ -107,7 +107,7 @@ Color blend(const Color& from, const Color& to, double progress)
         WebCore::blend(premultipliedFrom.alpha, premultipliedTo.alpha, progress)
     );
 
-    return makeSimpleColor(unpremultiplied(premultipliedBlended));
+    return unpremultiplied(premultipliedBlended);
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
@@ -120,7 +120,7 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
     auto fromSRGB = from.toSRGBALossy<uint8_t>();
     auto toSRGB = from.toSRGBALossy<uint8_t>();
 
-    return makeSimpleColor(
+    return clampToComponentBytes<SRGBA>(
         WebCore::blend(fromSRGB.red, toSRGB.red, progress),
         WebCore::blend(fromSRGB.green, toSRGB.green, progress),
         WebCore::blend(fromSRGB.blue, toSRGB.blue, progress),

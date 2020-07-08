@@ -1,3 +1,15 @@
+2020-07-08  Sam Weinig  <weinig@apple.com>
+
+        Part 3 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=214082
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update to account for makeSimpleColor no longer returning an object that has a
+        asSRGBA<uint8_t>() function (it is already a SRGBA<uint8_t>).
+
 2020-07-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Make it possible to establish direct XPC connections between WebKit processes

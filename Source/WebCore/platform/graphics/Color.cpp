@@ -83,7 +83,7 @@ Color& Color::operator=(Color&& other)
 Color Color::lightened() const
 {
     // Hardcode this common case for speed.
-    if (isSimple() && asSimple() == black)
+    if (isSimple() && asSimple() == SimpleColor { black })
         return lightenedBlack;
 
     auto [r, g, b, a] = toSRGBALossy<float>();
@@ -100,7 +100,7 @@ Color Color::lightened() const
 Color Color::darkened() const
 {
     // Hardcode this common case for speed.
-    if (isSimple() && asSimple() == white)
+    if (isSimple() && asSimple() == SimpleColor { white })
         return darkenedWhite;
     
     auto [r, g, b, a] = toSRGBALossy<float>();
@@ -149,7 +149,7 @@ Color Color::semanticColor() const
     if (isSemantic())
         return *this;
 
-    return { makeSimpleColor(toSRGBALossy<uint8_t>()), Semantic };
+    return { toSRGBALossy<uint8_t>(), Semantic };
 }
 
 std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const

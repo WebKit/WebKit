@@ -1,3 +1,107 @@
+2020-07-08  Sam Weinig  <weinig@apple.com>
+
+        Part 3 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=214082
+
+        Reviewed by Darin Adler.
+
+        - Replaces all uses of SimpleColor that are not implementation details of Color, with SRGBA<uint8_t>.
+        - Adds ColorBuilder<T> to allow maintaining the syntax SimpleColor for constant colors. e.g:
+            
+            Color color = Color::yellow.colorWithAlpha(128);
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ColorBuilder.h
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightened const):
+        (WebCore::Color::darkened const):
+        (WebCore::Color::semanticColor const):
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+        (WebCore::Color::asSimple const):
+        (WebCore::Color::setSimpleColor):
+        (WebCore::Color::isBlackColor):
+        (WebCore::Color::isWhiteColor):
+        (WebCore::Color::encode const):
+        (WebCore::Color::decode):
+        - Make constructor taking a SimpleColor private. 
+        - Add / modifiy constructors to take SRGBA<uint8_t>.
+        - Make setSimpleColor() take a SRGBA<uint8_t> (this will be renamed along with
+          other aspects of Color's internals in a subsequent change).
+        - Update calls that still need SimpleColor to use an explicit construction from
+          SRGBA<uint8_t>.
+    
+        * platform/graphics/ColorBuilder.h: Added.
+        (WebCore::ColorBuilder::ColorBuilder):
+        (WebCore::ColorBuilder::color const):
+        (WebCore::ColorBuilder::colorWithAlpha const):
+        Added to help maintain current syntax why constructing colors. Currently it only
+        supports color type with uint8_t components, but can be expanded to support more.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::clampToComponentByte):
+        Remove unnecessary cast.
+
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::SimpleColor):
+        Restrict to explicit construction via a SRGBA<uint8_t>.
+ 
+        (WebCore::makeSimpleColor):
+        Update to return ColorBuilder<SRGBA<uint8_t>>. A future change will update
+        the function name, but kept the same here to limit the size of the change.
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        (WebCore::nsColor):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::makeSimpleColorFromCGColor):
+        (WebCore::cachedCGColor):
+        Replace direct SimpleColor usage with SRGBA<uint8_t> and simplify Packed
+        construction now that .asSRGBA<uint8_t>() is not needed for color constants.
+
+        * css/DeprecatedCSSOMRGBColor.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseNamedColor):
+        (WebCore::CSSParser::parseHexColor):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::finishParsingHexColor):
+        (WebCore::parseHexColorInternal):
+        (WebCore::parseNumericColor):
+        (WebCore::finishParsingNamedColor):
+        (WebCore::parseNamedColorInternal):
+        (WebCore::parseSimpleColorInternal):
+        (WebCore::CSSParserFastPaths::parseSimpleColor):
+        (WebCore::CSSParserFastPaths::parseHexColor):
+        (WebCore::CSSParserFastPaths::parseNamedColor):
+        * css/parser/CSSParserFastPaths.h:    
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHexColor):
+        * html/ColorInputType.cpp:
+        (WebCore::parseSimpleColorValue):
+        * html/HTMLElement.cpp:
+        (WebCore::parseLegacyColorValue):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::touchEventRegionColors):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricMemoryCategoryInfo::HistoricMemoryCategoryInfo):
+        * platform/graphics/ColorBlending.cpp:
+        (WebCore::blendWithWhite):
+        (WebCore::blend):
+        (WebCore::blendWithoutPremultiply):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::makeSimpleColorFromARGBCFArray):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::cloneLayerDebugBorderColor):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawBoxes):
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::menuBackgroundColor):
+        Replace direct SimpleColor usage with SRGBA<uint8_t>. 
+
 2020-07-08  Simon Fraser  <simon.fraser@apple.com>
 
         Make a logging channel for ScrollSnap and improve its logging

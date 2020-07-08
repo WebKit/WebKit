@@ -318,7 +318,7 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 
     boxTop += boxSize + 2;
     boxLeft = boxSize;
-    constexpr SimpleColor boxColors[] = { Color::white, Color::yellow, Color::cyan, darkGreen, magenta, red, blue };
+    constexpr SRGBA<uint8_t> boxColors[] = { Color::white, Color::yellow, Color::cyan, darkGreen, magenta, red, blue };
     for (auto& boxColor : boxColors) {
         context.fillRect(FloatRect(boxLeft, boxTop, boxSize + 1, boxSize + 1), boxColor);
         boxLeft += boxSize + 1;

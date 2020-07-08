@@ -69,7 +69,7 @@ static bool isValidSimpleColor(StringView string)
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#rules-for-parsing-simple-colour-values
-static Optional<SimpleColor> parseSimpleColorValue(StringView string)
+static Optional<SRGBA<uint8_t>> parseSimpleColorValue(StringView string)
 {
     if (!isValidSimpleColor(string))
         return WTF::nullopt;

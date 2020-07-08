@@ -124,12 +124,12 @@ Color CSSParser::parseSystemColor(StringView string)
     return RenderTheme::singleton().systemColor(keyword, { });
 }
 
-Optional<SimpleColor> CSSParser::parseNamedColor(StringView string)
+Optional<SRGBA<uint8_t>> CSSParser::parseNamedColor(StringView string)
 {
     return CSSParserFastPaths::parseNamedColor(string);
 }
 
-Optional<SimpleColor> CSSParser::parseHexColor(StringView string)
+Optional<SRGBA<uint8_t>> CSSParser::parseHexColor(StringView string)
 {
     return CSSParserFastPaths::parseHexColor(string);
 }

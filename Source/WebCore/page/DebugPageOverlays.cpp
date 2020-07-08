@@ -144,14 +144,14 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     return regionChanged;
 }
 
-static const HashMap<String, SimpleColor>& touchEventRegionColors()
+static const HashMap<String, SRGBA<uint8_t>>& touchEventRegionColors()
 {
     static const auto regionColors = makeNeverDestroyed([] {
         struct MapEntry {
             ASCIILiteral name;
-            int r;
-            int g;
-            int b;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
         };
         static const MapEntry entries[] = {
             { "touchstart"_s, 191, 191, 63 },
@@ -163,7 +163,7 @@ static const HashMap<String, SimpleColor>& touchEventRegionColors()
             { "mousemove"_s, 245, 245, 80 },
             { "mouseup"_s, 80, 245, 176 },
         };
-        HashMap<String, SimpleColor> map;
+        HashMap<String, SRGBA<uint8_t>> map;
         for (auto& entry : entries)
             map.add(entry.name, makeSimpleColor(entry.r, entry.g, entry.b, 50));
         return map;

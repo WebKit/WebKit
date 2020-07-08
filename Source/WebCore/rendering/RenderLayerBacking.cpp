@@ -3099,7 +3099,7 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
 struct PatternDescription {
     ASCIILiteral name;
     FloatSize phase;
-    SimpleColor fillColor;
+    SRGBA<uint8_t> fillColor;
 };
 
 static RefPtr<Pattern> patternForDescription(PatternDescription description, FloatSize contentOffset, GraphicsContext& destContext)

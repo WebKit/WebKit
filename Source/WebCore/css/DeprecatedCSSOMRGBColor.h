@@ -37,7 +37,7 @@ public:
     DeprecatedCSSOMPrimitiveValue& blue() { return m_blue; }
     DeprecatedCSSOMPrimitiveValue& alpha() { return m_alpha; }
 
-    SimpleColor color() const { return makeSimpleColor(m_color); }
+    SRGBA<uint8_t> color() const { return m_color; }
 
 private:
     template<typename NumberType> static Ref<DeprecatedCSSOMPrimitiveValue> createWrapper(CSSStyleDeclaration& owner, NumberType number)

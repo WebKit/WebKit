@@ -128,7 +128,7 @@ static CGColorRef createColor(float r, float g, float b, float a)
 struct HistoricMemoryCategoryInfo {
     HistoricMemoryCategoryInfo() { } // Needed for std::array.
 
-    HistoricMemoryCategoryInfo(unsigned category, SimpleColor color, String name, bool subcategory = false)
+    HistoricMemoryCategoryInfo(unsigned category, SRGBA<uint8_t> color, String name, bool subcategory = false)
         : name(WTFMove(name))
         , color(cachedCGColor(color))
         , isSubcategory(subcategory)

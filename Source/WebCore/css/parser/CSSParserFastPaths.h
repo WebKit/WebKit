@@ -36,7 +36,8 @@
 namespace WebCore {
 
 class CSSValue;
-class SimpleColor;
+
+template<typename> struct SRGBA;
 
 struct CSSParserContext;
 
@@ -50,9 +51,9 @@ public:
     static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
     // Parses numeric and named colors.
-    static Optional<SimpleColor> parseSimpleColor(StringView, bool strict = false);
-    static Optional<SimpleColor> parseHexColor(StringView); // Hex colors of length 3, 4, 6, or 8, without leading "#".
-    static Optional<SimpleColor> parseNamedColor(StringView);
+    static Optional<SRGBA<uint8_t>> parseSimpleColor(StringView, bool strict = false);
+    static Optional<SRGBA<uint8_t>> parseHexColor(StringView); // Hex colors of length 3, 4, 6, or 8, without leading "#".
+    static Optional<SRGBA<uint8_t>> parseNamedColor(StringView);
 };
 
 } // namespace WebCore

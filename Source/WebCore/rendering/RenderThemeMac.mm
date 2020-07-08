@@ -484,7 +484,7 @@ Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColor::Opt
     return colorFromNSColor([NSColor findHighlightColor]);
 }
 
-static SimpleColor menuBackgroundColor()
+static SRGBA<uint8_t> menuBackgroundColor()
 {
     RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
         bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);

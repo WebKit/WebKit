@@ -2554,7 +2554,7 @@ static Color contentsLayerDebugBorderColor(bool showingBorders)
 static const float cloneLayerBorderWidth = 2;
 static Color cloneLayerDebugBorderColor(bool showingBorders)
 {
-    return showingBorders ? makeSimpleColor(255, 122, 251) : Color();
+    return showingBorders ? makeSimpleColor(255, 122, 251) : Color { };
 }
 
 void GraphicsLayerCA::updateDebugIndicators()

@@ -62,7 +62,7 @@ bool usesTestModeFocusRingColor()
     return useOldAquaFocusRingColor;
 }
 
-static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
+static SRGBA<uint8_t> makeSimpleColorFromNSColor(NSColor *color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 
@@ -124,15 +124,15 @@ NSColor *nsColor(const Color& color)
 {
     if (color.isSimple()) {
         switch (Packed::RGBA { color.asSimple().asSRGBA<uint8_t>() }.value) {
-        case Packed::RGBA { Color::transparent.asSRGBA<uint8_t>() }.value: {
+        case Packed::RGBA { Color::transparent }.value: {
             static NSColor *clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
             return clearColor;
         }
-        case Packed::RGBA { Color::black.asSRGBA<uint8_t>() }.value: {
+        case Packed::RGBA { Color::black }.value: {
             static NSColor *blackColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1] retain];
             return blackColor;
         }
-        case Packed::RGBA { Color::white.asSRGBA<uint8_t>() }.value: {
+        case Packed::RGBA { Color::white }.value: {
             static NSColor *whiteColor = [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] retain];
             return whiteColor;
         }

@@ -51,7 +51,7 @@ RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>:
 
 namespace WebCore {
 
-static SimpleColor makeSimpleColorFromCGColor(CGColorRef color)
+static SRGBA<uint8_t> makeSimpleColorFromCGColor(CGColorRef color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 
@@ -130,15 +130,15 @@ CGColorRef cachedCGColor(const Color& color)
 {
     if (color.isSimple()) {
         switch (Packed::RGBA { color.asSimple().asSRGBA<uint8_t>() }.value) {
-        case Packed::RGBA { Color::transparent.asSRGBA<uint8_t>() }.value: {
+        case Packed::RGBA { Color::transparent }.value: {
             static CGColorRef transparentCGColor = leakCGColor(color);
             return transparentCGColor;
         }
-        case Packed::RGBA { Color::black.asSRGBA<uint8_t>() }.value: {
+        case Packed::RGBA { Color::black }.value: {
             static CGColorRef blackCGColor = leakCGColor(color);
             return blackCGColor;
         }
-        case Packed::RGBA { Color::white.asSRGBA<uint8_t>() }.value: {
+        case Packed::RGBA { Color::white }.value: {
             static CGColorRef whiteCGColor = leakCGColor(color);
             return whiteCGColor;
         }

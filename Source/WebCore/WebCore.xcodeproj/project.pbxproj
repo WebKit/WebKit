@@ -2208,6 +2208,7 @@
 		7AF9B20F18CFB5F400C64BEF /* JSVTTRegionList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */; };
 		7BE7427381FA906FBB4F0F2C /* JSSVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */; };
 		7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C029C6D2493C8F800268204 /* ColorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C14A00724B5FE21001A6C6C /* ColorBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C14A00624B5FE21001A6C6C /* ColorBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1843FE1C8B7283002EB973 /* Autofill.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1843FC1C8B7283002EB973 /* Autofill.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BB61F5E0EB90088F3E6 /* CanvasDirection.h */; };
 		7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C193BA11F5E0EAB0088F3E6 /* CanvasFillRule.h */; };
@@ -9925,6 +9926,7 @@
 		7C0CEF2E1E4A5832008DEB80 /* JSDOMBuiltinConstructorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMBuiltinConstructorBase.cpp; sourceTree = "<group>"; };
 		7C0CEF2F1E4A58AD008DEB80 /* JSDOMConstructorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConstructorBase.cpp; sourceTree = "<group>"; };
 		7C0CEF301E4A58F1008DEB80 /* JSDOMConstructorWithDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConstructorWithDocument.cpp; sourceTree = "<group>"; };
+		7C14A00624B5FE21001A6C6C /* ColorBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorBuilder.h; sourceTree = "<group>"; };
 		7C1843FB1C8B7283002EB973 /* Autofill.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Autofill.cpp; sourceTree = "<group>"; };
 		7C1843FC1C8B7283002EB973 /* Autofill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Autofill.h; sourceTree = "<group>"; };
 		7C193B9A1F5E0EA70088F3E6 /* CanvasDrawImage.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasDrawImage.idl; sourceTree = "<group>"; };
@@ -25524,6 +25526,7 @@
 				B27535390B053814002CE64F /* Color.h */,
 				7C1B4A6524A997590033727F /* ColorBlending.cpp */,
 				7C1B4A6724A997660033727F /* ColorBlending.h */,
+				7C14A00624B5FE21001A6C6C /* ColorBuilder.h */,
 				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
 				7C514E0224AF80580050710F /* ColorConversion.cpp */,
 				7C514E0024AF80580050710F /* ColorConversion.h */,
@@ -30105,6 +30108,7 @@
 				46EBEA021B7D4D6500BE4941 /* CollectionTraversal.h in Headers */,
 				93C442000F813AE100C1A634 /* CollectionType.h in Headers */,
 				B27535670B053814002CE64F /* Color.h in Headers */,
+				7C14A00724B5FE21001A6C6C /* ColorBuilder.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
 				F48D2AA52159740D00C6752B /* ColorCocoa.h in Headers */,
