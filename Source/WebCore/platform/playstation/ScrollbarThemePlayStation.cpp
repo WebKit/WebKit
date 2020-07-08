@@ -75,7 +75,7 @@ IntRect ScrollbarThemePlayStation::trackRect(Scrollbar& scrollbar, bool)
 
 void ScrollbarThemePlayStation::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& trackRect)
 {
-    context.fillRect(trackRect, scrollbar.enabled() ? Color::lightGray : Color(0xFFE0E0E0));
+    context.fillRect(trackRect, scrollbar.enabled() ? Color::lightGray : Color(makeSimpleColor(0xE0, 0xE0, 0xE0)));
 }
 
 void ScrollbarThemePlayStation::paintThumb(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& thumbRect)
