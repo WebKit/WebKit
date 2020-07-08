@@ -263,9 +263,9 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 }
 
 #if ENABLE(CONTEXT_MENUS)
-Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy&, ContextMenuContextData&& context, const UserData& userData)
+Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
 {
-    return WebContextMenuProxyWPE::create(WTFMove(context), userData);
+    return WebContextMenuProxyWPE::create(page, WTFMove(context), userData);
 }
 #endif
 

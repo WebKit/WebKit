@@ -42,7 +42,7 @@ class WebContextMenuItem;
 class WebContextMenuItemData;
 class WebPageProxy;
 
-class WebContextMenuProxyGtk : public WebContextMenuProxy {
+class WebContextMenuProxyGtk final : public WebContextMenuProxy {
 public:
     static auto create(GtkWidget* widget, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     {
@@ -56,7 +56,7 @@ public:
 
 private:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, ContextMenuContextData&&, const UserData&);
-    void show() override;
+    Vector<Ref<WebContextMenuItem>> proposedItems() const override;
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
     void append(GMenu*, const WebContextMenuItemGlib&);
     GRefPtr<GMenu> buildMenu(const Vector<WebContextMenuItemGlib>&);
@@ -64,7 +64,6 @@ private:
     Vector<WebContextMenuItemGlib> populateSubMenu(const WebContextMenuItemData&);
 
     GtkWidget* m_webView;
-    WebPageProxy* m_page;
     GtkWidget* m_menu;
     HashMap<unsigned long, void*> m_signalHandlers;
     GRefPtr<GSimpleActionGroup> m_actionGroup { adoptGRef(g_simple_action_group_new()) };

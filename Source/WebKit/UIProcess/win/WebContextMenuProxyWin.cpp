@@ -38,15 +38,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebContextMenuProxyWin::show()
-{
-    Vector<Ref<WebContextMenuItem>> proposedAPIItems;
-    for (auto& item : m_context.menuItems())
-        proposedAPIItems.append(WebContextMenuItem::create(item));
-    m_contextMenuListener = WebContextMenuListenerProxy::create(this);
-    m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, WTFMove(proposedAPIItems), *m_contextMenuListener, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get());
-}
-
 static HMENU createMenu(const ContextMenuContextData &context)
 {
     HMENU menu = ::CreatePopupMenu();
@@ -104,14 +95,13 @@ void WebContextMenuProxyWin::showContextMenuWithItems(Vector<Ref<WebContextMenuI
 
     UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL | TPM_LEFTALIGN | TPM_HORPOSANIMATION;
     POINT pt { m_context.menuLocation().x(), m_context.menuLocation().y() };
-    HWND wnd = m_page.viewWidget();
+    HWND wnd = page()->viewWidget();
     ::ClientToScreen(wnd, &pt);
-    ::TrackPopupMenuEx(m_menu, flags, pt.x, pt.y, m_page.viewWidget(), nullptr);
+    ::TrackPopupMenuEx(m_menu, flags, pt.x, pt.y, page()->viewWidget(), nullptr);
 }
 
 WebContextMenuProxyWin::WebContextMenuProxyWin(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
-    : WebContextMenuProxy(WTFMove(context), userData)
-    , m_page(page)
+    : WebContextMenuProxy(page, WTFMove(context), userData)
 {
     m_menu = createMenu(m_context);
 }

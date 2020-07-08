@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,50 +27,44 @@
 
 #if PLATFORM(MAC)
 
-#include "WKArray.h"
 #include "WebContextMenuProxy.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSMenuItem;
-OBJC_CLASS NSPopUpButtonCell;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 
 namespace WebKit {
 
-class ShareableBitmap;
-class UserData;
 class WebContextMenuItemData;
-class WebContextMenuListenerProxy;
-class WebPageProxy;
 
-class WebContextMenuProxyMac : public WebContextMenuProxy {
+class WebContextMenuProxyMac final : public WebContextMenuProxy {
 public:
-    static auto create(NSView* view, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
+    static auto create(NSView *webView, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyMac(view, page, WTFMove(context), userData));
+        return adoptRef(*new WebContextMenuProxyMac(webView, page, WTFMove(context), userData));
     }
     ~WebContextMenuProxyMac();
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
-    void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();
 #endif
 
-    WebPageProxy& page() const { return m_page; }
     NSWindow *window() const;
 
 private:
-    WebContextMenuProxyMac(NSView*, WebPageProxy&, ContextMenuContextData&&, const UserData&);
-    void show() override;
+    WebContextMenuProxyMac(NSView *, WebPageProxy&, ContextMenuContextData&&, const UserData&);
 
-    RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
+    void show() override;
+    void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
+    void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) override;
+
     void getContextMenuItem(const WebContextMenuItemData&, CompletionHandler<void(NSMenuItem *)>&&);
     void getContextMenuFromItems(const Vector<WebContextMenuItemData>&, CompletionHandler<void(NSMenu *)>&&);
-    void showContextMenu();
 
 #if ENABLE(SERVICE_CONTROLS)
     void getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&&);
@@ -79,9 +73,7 @@ private:
 #endif
 
     RetainPtr<NSMenu> m_menu;
-
-    NSView* m_webView;
-    WebPageProxy& m_page;
+    WeakObjCPtr<NSView> m_webView;
 };
 
 } // namespace WebKit

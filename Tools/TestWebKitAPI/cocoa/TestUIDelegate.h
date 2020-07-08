@@ -28,6 +28,9 @@
 @interface TestUIDelegate : NSObject <WKUIDelegate>
 
 @property (nonatomic, copy) void (^runJavaScriptAlertPanelWithMessage)(WKWebView *, NSString *, WKFrameInfo *, void (^)(void));
+#if PLATFORM(MAC)
+@property (nonatomic, copy) void (^getContextMenuFromProposedMenu)(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^)(NSMenu *));
+#endif
 
 - (NSString *)waitForAlert;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -290,11 +290,8 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     return self;
 }
 
-- (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure clickCount:(NSUInteger)clickCount
+- (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure clickCount:(NSUInteger)clickCount modifierFlags:(NSEventModifierFlags)modifierFlags mouseEventType:(NSEventType)mouseEventType
 {
-    NSEventType mouseEventType = NSEventTypeLeftMouseDown;
-
-    NSEventMask modifierFlags = 0;
     if (simulatePressure)
         modifierFlags |= NSEventMaskPressure;
 
@@ -316,9 +313,9 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     }
 }
 
-- (void)_mouseUpAtPoint:(NSPoint)point clickCount:(NSUInteger)clickCount
+- (void)_mouseUpAtPoint:(NSPoint)point clickCount:(NSUInteger)clickCount modifierFlags:(NSEventModifierFlags)modifierFlags eventType:(NSEventType)eventType
 {
-    [self sendEvent:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:_webView.eventTimestamp windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0]];
+    [self sendEvent:[NSEvent mouseEventWithType:eventType location:point modifierFlags:modifierFlags timestamp:_webView.eventTimestamp windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0]];
 }
 
 #endif
@@ -721,12 +718,22 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 - (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure
 {
-    [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:simulatePressure clickCount:1];
+    [self mouseDownAtPoint:pointInWindow simulatePressure:simulatePressure withFlags:0 eventType:NSEventTypeLeftMouseDown];
+}
+
+- (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure withFlags:(NSEventModifierFlags)flags eventType:(NSEventType)eventType
+{
+    [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:simulatePressure clickCount:1 modifierFlags:flags mouseEventType:eventType];
 }
 
 - (void)mouseUpAtPoint:(NSPoint)pointInWindow
 {
-    [_hostWindow _mouseUpAtPoint:pointInWindow clickCount:1];
+    [self mouseUpAtPoint:pointInWindow withFlags:0 eventType:NSEventTypeLeftMouseUp];
+}
+
+- (void)mouseUpAtPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags eventType:(NSEventType)eventType
+{
+    [_hostWindow _mouseUpAtPoint:pointInWindow clickCount:1 modifierFlags:flags eventType:eventType];
 }
 
 - (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags
@@ -737,8 +744,8 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 - (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks
 {
     for (NSUInteger clickCount = 1; clickCount <= numberOfClicks; ++clickCount) {
-        [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:NO clickCount:clickCount];
-        [_hostWindow _mouseUpAtPoint:pointInWindow clickCount:clickCount];
+        [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:NO clickCount:clickCount modifierFlags:0 mouseEventType:NSEventTypeLeftMouseDown];
+        [_hostWindow _mouseUpAtPoint:pointInWindow clickCount:clickCount modifierFlags:0 eventType:NSEventTypeLeftMouseUp];
     }
 }
 

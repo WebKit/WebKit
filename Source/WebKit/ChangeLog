@@ -1,3 +1,114 @@
+2020-07-08  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r207558): [Mac] Context clicks on links sometimes result in navigations
+        https://bugs.webkit.org/show_bug.cgi?id=213793
+        <rdar://problem/64294015>
+
+        Reviewed by Tim Horton.
+
+        WebPageProxy::showContextMenu was written with the assumption that WebContextMenuProxy::show
+        would present a context menu and spin a nested run loop, blocking until the menu dismisses.
+        Once WebContextMenuProxy::show returns, showContextMenu would send the
+        WebPage::ContextMenuHidden message, telling the WebContent process that it's OK to resume
+        processing mouse events.
+
+        This assumption was invalidated in r207558 (and again in several subsequent changes), which
+        added asynchronous APIs to WKPageContextMenuClient. If the context menu client provides
+        context menu items asynchronously, WebContextMenuProxy::show would return -- and the
+        WebContent process would resume processing mouse events -- before the context menu was even
+        presented. Since context menu presentation is triggered by a mouse press event, it's
+        possible that the corresponding mouse release event would be delivered after
+        getContextMenuFromProposedMenuAsync was dispatched but before the client responded with menu
+        items to present. If this happened, since mouse event processing was not disabled, the
+        WebContent process would dispatch a DOM click event to the page, possibly triggering a
+        navigation.
+
+        Fix this by teaching WebPageProxy to defer sending WebPage::ContextMenuHidden until the
+        context menu has been dismissed, even in cases where the context menu client provides menu
+        items asynchronously. Also, take the opportunity to modernize WebContextMenuProxy and its
+        subclasses by, e.g., moving duplicated subclass code into the base class, using the client
+        pattern, and using WeakPtrs instead of raw pointers/references.
+
+        New API tests: ContextMenuMouseEvents.*
+
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::showContextMenu):
+        (API::ContextMenuClient::canShowContextMenu const):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient): Added canShowContextMenu to determine whether the client
+        can show a context menu without actually showing it.
+
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createContextMenuProxy): Passed page to
+        WebContextMenuProxyWPE::create.
+
+        * UIProcess/WebContextMenuListenerProxy.cpp:
+        (WebKit::WebContextMenuListenerProxy::WebContextMenuListenerProxy):
+        (WebKit::WebContextMenuListenerProxy::useContextMenuItems):
+        (WebKit::WebContextMenuListenerProxy::invalidate): Deleted. Not needed now that m_client is
+        a WeakPtr.
+
+        * UIProcess/WebContextMenuListenerProxy.h:
+        (WebKit::WebContextMenuListenerProxy::create): Rather than store a raw pointer to a
+        WebContextMenuProxy, store a WeakPtr to a WebContextMenuListenerProxy::Client (which
+        WebContextMenuProxy implements).
+
+        * UIProcess/WebContextMenuProxy.cpp:
+        (WebKit::WebContextMenuProxy::WebContextMenuProxy): Stored a WeakPtr to a WebPageProxy
+        rather than storing a raw pointer to the same in each subclass.
+        (WebKit::WebContextMenuProxy::proposedItems const): Added a virtual function to create
+        proposed WebContextMenuItems from m_context's menu items. WebContextMenuProxyGtk overrides
+        this to do something slightly different.
+        (WebKit::WebContextMenuProxy::show): Added a base class implementation that creates a
+        WebContextMenuListenerProxy and calls ContextMenuClient::getContextMenuFromProposedMenu.
+        (WebKit::WebContextMenuProxy::useContextMenuItems): Added a base class implementation that
+        performs the work previously done in WebPageProxy::showContextMenu. Calls
+        showContextMenuWithItems, which now always synchronously presents the menu.
+
+        * UIProcess/WebContextMenuProxy.h: Inherited from WebContextMenuListenerProxy::Client.
+        (WebKit::WebContextMenuProxy::page const): Added for use by WKSharingServicePickerDelegate.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu): Moved code that assumes synchronous menu
+        presentation to WebContextMenuProxy::useContextMenuItems.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::proposedItems const): Implemented GTK's special version
+        that excludes ContextMenuItemTagShareMenu.
+        (WebKit::WebContextMenuProxyGtk::show): Deleted. WebContextMenuProxy::show handles this now.
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h: Moved m_page to WebContextMenuProxy.
+
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]): Changed now that
+        WebContextMenuProxy::page returns a pointer.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::page const): Deleted.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::WebContextMenuProxyMac):
+        (WebKit::WebContextMenuProxyMac::~WebContextMenuProxyMac): No need to invalidate
+        m_contextMenuListener now that it stores a WeakPtr to its WebContextMenuProxy.
+        (WebKit::WebContextMenuProxyMac::contextMenuItemSelected):
+        (WebKit::WebContextMenuProxyMac::showServicesMenu):
+        (WebKit::WebContextMenuProxyMac::show):
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems): Overrode to handle service menus.
+        (WebKit::WebContextMenuProxyMac::useContextMenuItems): Overrode to get the standard Mac menu
+        items and dispatch ContextMenuClient::menuFromProposedMenu before showing the menu.
+        (WebKit::WebContextMenuProxyMac::showContextMenu): Deleted. WebContextMenuProxy::show now
+        handles this.
+
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        (WebKit::WebContextMenuProxyWin::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyWin::WebContextMenuProxyWin):
+        (WebKit::WebContextMenuProxyWin::show): Deleted. WebContextMenuProxy::show now handles this.
+        * UIProcess/win/WebContextMenuProxyWin.h:
+
+        * UIProcess/wpe/WebContextMenuProxyWPE.h: Passed page to the WebContextMenuProxy ctor.
+
 2020-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         autocapitalize="words" capitalizes every word's second character

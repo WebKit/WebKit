@@ -6556,15 +6556,7 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
 
     m_activeContextMenu = pageClient().createContextMenuProxy(*this, WTFMove(contextMenuContextData), userData);
 
-    // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->stopResponsivenessTimer();
-
-    // m_activeContextMenu might get cleared if WebPageProxy code is re-entered from the menu runloop or delegates.
-    Ref<WebContextMenuProxy> protector(*m_activeContextMenu);
     m_activeContextMenu->show();
-
-    // No matter the result of internalShowContextMenu, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
-    send(Messages::WebPage::ContextMenuHidden());
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)

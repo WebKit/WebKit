@@ -1,3 +1,32 @@
+2020-07-08  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r207558): [Mac] Context clicks on links sometimes result in navigations
+        https://bugs.webkit.org/show_bug.cgi?id=213793
+        <rdar://problem/64294015>
+
+        Reviewed by Tim Horton.
+
+        Added API tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuMouseEvents.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKit/mac/ContextMenuControlClick.mm.
+        (TestWebKitAPI::runTest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:clickCount:modifierFlags:mouseEventType:]):
+        (-[TestWKWebViewHostWindow _mouseUpAtPoint:clickCount:modifierFlags:eventType:]):
+        (-[TestWKWebView mouseDownAtPoint:simulatePressure:]):
+        (-[TestWKWebView mouseDownAtPoint:simulatePressure:withFlags:eventType:]):
+        (-[TestWKWebView mouseUpAtPoint:]):
+        (-[TestWKWebView mouseUpAtPoint:withFlags:eventType:]):
+        (-[TestWKWebView sendClicksAtPoint:numberOfClicks:]):
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:clickCount:modifierFlags:]): Deleted.
+        (-[TestWKWebViewHostWindow _mouseUpAtPoint:clickCount:modifierFlags:]): Deleted.
+        (-[TestWKWebView mouseDownAtPoint:simulatePressure:withFlags:]): Deleted.
+        (-[TestWKWebView mouseUpAtPoint:withFlags:]): Deleted.
+
 2020-07-08  Jer Noble  <jer.noble@apple.com>
 
         Flaky API Test: TestWebKitAPI.SleepDisabler.NavigateBack

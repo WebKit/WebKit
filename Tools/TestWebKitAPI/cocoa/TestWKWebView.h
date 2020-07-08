@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,9 +121,11 @@
 @interface TestWKWebView (MacOnly)
 // Simulates clicking with a pressure-sensitive device, if possible.
 - (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure;
+- (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure withFlags:(NSEventModifierFlags)flags eventType:(NSEventType)eventType;
 - (void)mouseDragToPoint:(NSPoint)pointInWindow;
 - (void)mouseEnterAtPoint:(NSPoint)pointInWindow;
 - (void)mouseUpAtPoint:(NSPoint)pointInWindow;
+- (void)mouseUpAtPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags eventType:(NSEventType)eventType;
 - (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags;
 - (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks;
 - (void)sendClickAtPoint:(NSPoint)pointInWindow;

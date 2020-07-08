@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,35 +28,24 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "APIArray.h"
-#include "WKAPICast.h"
-#include "WKArray.h"
 #include "WebContextMenuItem.h"
-#include "WebContextMenuItemData.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-WebContextMenuListenerProxy::WebContextMenuListenerProxy(WebContextMenuProxy* contextMenuMac)
-    : m_contextMenuMac(contextMenuMac)
+WebContextMenuListenerProxy::WebContextMenuListenerProxy(WebContextMenuListenerProxy::Client& client)
+    : m_client(makeWeakPtr(client))
 {
 }
 
-WebContextMenuListenerProxy::~WebContextMenuListenerProxy()
-{
-}
+WebContextMenuListenerProxy::~WebContextMenuListenerProxy() = default;
 
 void WebContextMenuListenerProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& items)
 {
-    if (!m_contextMenuMac)
+    if (!m_client)
         return;
 
-    m_contextMenuMac->showContextMenuWithItems(WTFMove(items));
-}
-
-void WebContextMenuListenerProxy::invalidate()
-{
-    m_contextMenuMac = nullptr;
+    m_client->useContextMenuItems(WTFMove(items));
 }
 
 } // namespace WebKit

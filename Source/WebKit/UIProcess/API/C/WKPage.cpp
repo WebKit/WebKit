@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -926,10 +926,10 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             m_client.customContextMenuItemSelected(toAPI(&page), toAPI(WebContextMenuItem::create(itemData).ptr()), m_client.base.clientInfo);
         }
 
-        bool showContextMenu(WebPageProxy& page, const WebCore::IntPoint& menuLocation, const Vector<Ref<WebContextMenuItem>>& menuItemsVector) override
+        void showContextMenu(WebPageProxy& page, const WebCore::IntPoint& menuLocation, const Vector<Ref<WebContextMenuItem>>& menuItemsVector) override
         {
-            if (!m_client.showContextMenu)
-                return false;
+            if (!canShowContextMenu())
+                return;
 
             Vector<RefPtr<API::Object>> menuItems;
             menuItems.reserveInitialCapacity(menuItemsVector.size());
@@ -938,8 +938,11 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
                 menuItems.uncheckedAppend(menuItem.ptr());
 
             m_client.showContextMenu(toAPI(&page), toAPI(menuLocation), toAPI(API::Array::create(WTFMove(menuItems)).ptr()), m_client.base.clientInfo);
+        }
 
-            return true;
+        bool canShowContextMenu() const override
+        {
+            return m_client.showContextMenu;
         }
 
         bool hideContextMenu(WebPageProxy& page) override

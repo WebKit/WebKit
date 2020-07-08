@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,50 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "APIContextMenuClient.h"
+#include "WebPageMessages.h"
+
 namespace WebKit {
 
-WebContextMenuProxy::WebContextMenuProxy(ContextMenuContextData&& context, const UserData& userData)
+WebContextMenuProxy::WebContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     : m_context(WTFMove(context))
     , m_userData(userData)
+    , m_page(makeWeakPtr(page))
 {
 }
 
-WebContextMenuProxy::~WebContextMenuProxy()
+WebContextMenuProxy::~WebContextMenuProxy() = default;
+
+Vector<Ref<WebContextMenuItem>> WebContextMenuProxy::proposedItems() const
 {
+    return WTF::map(m_context.menuItems(), [](auto& item) {
+        return WebContextMenuItem::create(item);
+    });
+}
+
+void WebContextMenuProxy::show()
+{
+    m_contextMenuListener = WebContextMenuListenerProxy::create(*this);
+    page()->contextMenuClient().getContextMenuFromProposedMenu(*page(), proposedItems(), *m_contextMenuListener, m_context.webHitTestResultData(), page()->process().transformHandlesToObjects(m_userData.object()).get());
+}
+
+void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& items)
+{
+    m_contextMenuListener = nullptr;
+
+    auto page = makeRefPtr(this->page());
+    if (!page)
+        return;
+
+    // Since showContextMenuWithItems can spin a nested run loop we need to turn off the responsiveness timer.
+    page->process().stopResponsivenessTimer();
+
+    // Protect |this| from being deallocated if WebPageProxy code is re-entered from the menu runloop or delegates.
+    auto protectedThis = makeRef(*this);
+    showContextMenuWithItems(WTFMove(items));
+
+    // No matter the result of showContextMenuWithItems, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
+    page->send(Messages::WebPage::ContextMenuHidden());
 }
 
 } // namespace WebKit

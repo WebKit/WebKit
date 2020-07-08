@@ -40,6 +40,16 @@
         completionHandler();
 }
 
+#if PLATFORM(MAC)
+- (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler
+{
+    if (_getContextMenuFromProposedMenu)
+        _getContextMenuFromProposedMenu(menu, element, userInfo, completionHandler);
+    else
+        completionHandler(menu);
+}
+#endif // PLATFORM(MAC)
+
 - (NSString *)waitForAlert
 {
     EXPECT_FALSE(self.runJavaScriptAlertPanelWithMessage);

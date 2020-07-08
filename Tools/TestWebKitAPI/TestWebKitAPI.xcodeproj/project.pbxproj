@@ -847,6 +847,7 @@
 		A12DDBFB1E836F0700CF6CAE /* RenderedImageWithOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */; };
 		A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */; };
 		A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */; };
+		A13D1AD624AD468F003F92A8 /* context-menu-control-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A13D1AD524AD4677003F92A8 /* context-menu-control-click.html */; };
 		A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */; };
 		A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
@@ -868,6 +869,7 @@
 		A179918B1E1CA24100A505ED /* SharedBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17991891E1CA24100A505ED /* SharedBufferTest.cpp */; };
 		A17EAC55208305A00084B41B /* find.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = A17EAC542083056E0084B41B /* find.pdf */; };
 		A180C0FA1EE67DF000468F47 /* RunOpenPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */; };
+		A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */; };
 		A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1C4FB721BACD1B7003742D0 /* pages.pages */; };
 		A1DF74321C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */; };
 		A1EC11881F42541200D0146E /* PreviewConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EC11871F42541200D0146E /* PreviewConverter.cpp */; };
@@ -1305,6 +1307,7 @@
 				F41AB9A11EF4696B0083FA08 /* contenteditable-and-textarea.html in Copy Resources */,
 				F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */,
 				A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */,
+				A13D1AD624AD468F003F92A8 /* context-menu-control-click.html in Copy Resources */,
 				5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */,
 				CD0BD0A81F79982D001AB2CF /* ContextMenuImgWithVideo.html in Copy Resources */,
 				5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */,
@@ -2414,6 +2417,7 @@
 		A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptionsPlugIn.mm; sourceTree = "<group>"; };
 		A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rendered-image-excluding-overflow.html"; sourceTree = "<group>"; };
 		A12DDC011E8374F500CF6CAE /* RenderedImageWithOptionsProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderedImageWithOptionsProtocol.h; sourceTree = "<group>"; };
+		A13D1AD524AD4677003F92A8 /* context-menu-control-click.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "context-menu-control-click.html"; sourceTree = "<group>"; };
 		A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPI.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcessPlugIn.xcconfig; sourceTree = "<group>"; };
 		A13EBB541B8734E000097110 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2447,6 +2451,7 @@
 		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
 		A1B89B99221E029F00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
+		A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMouseEvents.mm; sourceTree = "<group>"; };
 		A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A1C4FB721BACD1B7003742D0 /* pages.pages */ = {isa = PBXFileReference; lastKnownFileType = file; name = pages.pages; path = ios/pages.pages; sourceTree = SOURCE_ROOT; };
 		A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AlwaysRevalidatedURLSchemes.mm; sourceTree = "<group>"; };
@@ -4415,9 +4420,11 @@
 			isa = PBXGroup;
 			children = (
 				9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */,
+				A13D1AD524AD4677003F92A8 /* context-menu-control-click.html */,
 				8349D3C11DB96DDA004A9F65 /* ContextMenuDownload.mm */,
 				CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */,
 				CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */,
+				A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */,
 				7AC7B57220D9BAF0002C09A0 /* CustomBundleObject.h */,
 				7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */,
 				7AC7B56C20D9768F002C09A0 /* CustomBundleParameter.mm */,
@@ -4913,6 +4920,7 @@
 				37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */,
 				8349D3C21DB96DDE004A9F65 /* ContextMenuDownload.mm in Sources */,
 				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
+				A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */,
 				5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
 				5C19A5241FD0F60100EEA323 /* CookiePrivateBrowsing.mm in Sources */,

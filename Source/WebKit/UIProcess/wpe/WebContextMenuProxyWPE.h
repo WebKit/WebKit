@@ -29,19 +29,19 @@
 
 namespace WebKit {
 
-class WebContextMenuProxyWPE : public WebContextMenuProxy {
+class WebContextMenuProxyWPE final : public WebContextMenuProxy {
 public:
-    static auto create(ContextMenuContextData&& context, const UserData& userData)
+    static auto create(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyWPE(WTFMove(context), userData));
+        return adoptRef(*new WebContextMenuProxyWPE(page, WTFMove(context), userData));
     }
 
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) final { }
     void show() final { };
 
 private:
-    WebContextMenuProxyWPE(ContextMenuContextData&& context, const UserData& userData)
-        : WebContextMenuProxy(WTFMove(context), userData)
+    WebContextMenuProxyWPE(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
+        : WebContextMenuProxy(page, WTFMove(context), userData)
     { }
 };
 

@@ -36,7 +36,7 @@ namespace WebKit {
 class WebContextMenuItemData;
 class WebPageProxy;
 
-class WebContextMenuProxyWin : public WebContextMenuProxy {
+class WebContextMenuProxyWin final : public WebContextMenuProxy {
 public:
     static auto create(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     {
@@ -47,10 +47,7 @@ public:
 private:
     WebContextMenuProxyWin(WebPageProxy&, ContextMenuContextData&&, const UserData&);
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
-    void show() override;
 
-    WebPageProxy& m_page;
-    RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
     HMENU m_menu;
 };
 

@@ -170,7 +170,7 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& m
         if (menuItem.action() < ContextMenuItemBaseApplicationTag) {
             g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(menuItem.action()));
             g_object_set_data_full(G_OBJECT(action), gContextMenuTitle, g_strdup(menuItem.title().utf8().data()), g_free);
-            signalHandlerId = g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
+            signalHandlerId = g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), page());
             m_signalHandlers.set(signalHandlerId, action);
         }
         break;
@@ -250,15 +250,14 @@ void WebContextMenuProxyGtk::populate(const Vector<Ref<WebContextMenuItem>>& ite
     bindModelToMenuWidget(m_menu, G_MENU_MODEL(menu.get()));
 }
 
-void WebContextMenuProxyGtk::show()
+Vector<Ref<WebContextMenuItem>> WebContextMenuProxyGtk::proposedItems() const
 {
     Vector<Ref<WebContextMenuItem>> proposedAPIItems;
     for (auto& item : m_context.menuItems()) {
         if (item.action() != ContextMenuItemTagShareMenu)
             proposedAPIItems.append(WebContextMenuItem::create(item));
     }
-
-    m_page->contextMenuClient().getContextMenuFromProposedMenu(*m_page, WTFMove(proposedAPIItems), WebContextMenuListenerProxy::create(this).get(), m_context.webHitTestResultData(), m_page->process().transformHandlesToObjects(m_userData.object()).get());
+    return proposedAPIItems;
 }
 
 void WebContextMenuProxyGtk::showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&& items)
@@ -269,16 +268,15 @@ void WebContextMenuProxyGtk::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     if (!menuWidgetHasItems(m_menu))
         return;
 
-    NativeWebMouseEvent* mouseEvent = m_page->currentlyProcessedMouseDownEvent();
+    NativeWebMouseEvent* mouseEvent = page()->currentlyProcessedMouseDownEvent();
     const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : nullptr;
     const GdkRectangle rect = { m_context.menuLocation().x(), m_context.menuLocation().y(), 1, 1 };
     popupMenuWidget(m_menu, event, rect);
 }
 
 WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
-    : WebContextMenuProxy(WTFMove(context), userData)
+    : WebContextMenuProxy(page, WTFMove(context), userData)
     , m_webView(webView)
-    , m_page(&page)
     , m_menu(createMenuWidget(m_webView))
 {
     gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, G_ACTION_GROUP(m_actionGroup.get()));

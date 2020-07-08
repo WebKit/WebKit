@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,31 +28,35 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "APIObject.h"
-#include "WKArray.h"
-#include "WebContextMenuProxy.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class WebContextMenuProxyMac;
+
+class WebContextMenuItem;
 
 class WebContextMenuListenerProxy : public API::ObjectImpl<API::Object::Type::ContextMenuListener> {
 public:
-    static Ref<WebContextMenuListenerProxy> create(WebContextMenuProxy* contextMenuMac)
+    struct Client : CanMakeWeakPtr<Client> {
+        virtual ~Client() = default;
+        virtual void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) = 0;
+    };
+
+    static Ref<WebContextMenuListenerProxy> create(Client& client)
     {
-        return adoptRef(*new WebContextMenuListenerProxy(contextMenuMac));
+        return adoptRef(*new WebContextMenuListenerProxy(client));
     }
 
     virtual ~WebContextMenuListenerProxy();
 
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&);
 
-    void invalidate();
 private:
-    explicit WebContextMenuListenerProxy(WebContextMenuProxy*);
+    explicit WebContextMenuListenerProxy(Client&);
 
-    WebContextMenuProxy* m_contextMenuMac;
+    WeakPtr<Client> m_client;
 };
-    
+
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
