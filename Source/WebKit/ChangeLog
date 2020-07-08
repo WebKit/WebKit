@@ -1,3 +1,59 @@
+2020-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        autocapitalize="words" capitalizes every word's second character
+        https://bugs.webkit.org/show_bug.cgi?id=148504
+        <rdar://problem/57814304>
+
+        Reviewed by Tim Horton.
+
+        This bug resurfaced in iOS 13 due to timing changes that caused a task added to UIKeyboardTaskQueue to no longer
+        get dequeued after the next editor state update is received in the UI process; as a result, UIKit asks us for
+        the context before the caret selection (i.e. `characterBeforeSelection`) before we have a chance to update it,
+        which means that UIKeyboardImpl's autoshift state will always be off by one character whie typing.
+
+        Note that solely deferring this update until after the next editor state update is received is insufficient to
+        fix this bug, since the keyboard's shift state will still be incorrect when typing characters very quickly (or
+        if the web process is unresponsive).
+
+        Instead, completely address this bug by adding a mechanism for WKContentView to cache the last character in the
+        string that is currently being inserted using `-insertText:`, and return it in `-_characterBeforeCaretSelection`
+        until the next editor state update comes in with the real character before the selection. This way, we're able
+        to respond to UIKit's requests immediately with a (reasonable) guess of what the character before the selection
+        should be, and then follow it up with the actual up-to-date value from the web process during the next editor
+        state update (invalidating the stale shift state if necessary). This cached last character should only be
+        incorrect in the case where the page uses script to influence what was typed, or the typed character was never
+        inserted at all (e.g. typing a newline character in a single line input element).
+
+        Test: fast/forms/ios/autocapitalize-words.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _characterBeforeCaretSelection]):
+
+        Use `_lastInsertedCharacterToOverrideCharacterBeforeSelection`, if it is set.
+
+        (-[WKContentView _characterInRelationToCaretSelection:]):
+        (-[WKContentView insertText:]):
+
+        Update `_lastInsertedCharacterToOverrideCharacterBeforeSelection` and ensure an editor state update immediately
+        after text is inserted, if we're currently editing an element with `autocapitalize="words"`. The editor state
+        update could be unnecessarily expensive, so we don't want to do this unconditionally. Also,
+        `autocapitalize="words"` is special in the sense that it is the only autocapitalization type where the platform
+        (UIKit) will ask for the last character immediately and use it to unshift the keyboard. Even in the case of
+        `autocapitalize="sentences"`, UIKit makes the decision to unshift using information from `kbd` instead.
+
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView _selectionChanged]):
+
+        Clear out `_lastInsertedCharacterToOverrideCharacterBeforeSelection` when the next editor state update is
+        received, and invalidate the current keyboard shift state by calling `-clearShiftState`. This SPI method
+        automatically schedules a shift state update, as well.
+
+        Note the extra `_usingGestureForSelection` check here, which prevents the keyboard from autoshifting and
+        unshifting while changing the selection via loupe gesture.
+
 2020-07-07  Antoine Quint  <graouts@webkit.org>
 
         [iOS] Sharing an <img> element with a base64-encoded URL shares the URL as raw text instead of an image

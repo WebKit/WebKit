@@ -390,6 +390,8 @@ struct WKAutoCorrectionData {
 
     RetainPtr<NSDictionary> _additionalContextForStrongPasswordAssistance;
 
+    Optional<UChar32> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
+
 #if ENABLE(DATA_INTERACTION)
     WebKit::DragDropInteractionState _dragDropInteractionState;
     RetainPtr<UIDragInteraction> _dragInteraction;

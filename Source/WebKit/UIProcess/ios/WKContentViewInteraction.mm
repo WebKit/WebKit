@@ -941,6 +941,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         _interactionViewsContainerView = nil;
     }
 
+    _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
@@ -4135,7 +4137,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UTF32Char)_characterBeforeCaretSelection
 {
-    return _page->editorState().postLayoutData().characterBeforeSelection;
+    return _lastInsertedCharacterToOverrideCharacterBeforeSelection.valueOr(_page->editorState().postLayoutData().characterBeforeSelection);
 }
 
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount
@@ -4144,7 +4146,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     case 0:
         return _page->editorState().postLayoutData().characterAfterSelection;
     case -1:
-        return _page->editorState().postLayoutData().characterBeforeSelection;
+        return self._characterBeforeCaretSelection;
     case -2:
         return _page->editorState().postLayoutData().twoCharacterBeforeSelection;
     default:
@@ -4826,6 +4828,11 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     options.processingUserGesture = [keyboard respondsToSelector:@selector(isCallingInputDelegate)] && keyboard.isCallingInputDelegate;
     options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
     _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
+
+    if (_focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words && aStringValue.length) {
+        _lastInsertedCharacterToOverrideCharacterBeforeSelection = [aStringValue characterAtIndex:aStringValue.length - 1];
+        _page->scheduleFullEditorStateUpdate();
+    }
 }
 
 - (void)insertText:(NSString *)aStringValue alternatives:(NSArray<NSString *> *)alternatives style:(UITextAlternativeStyle)style
@@ -6073,6 +6080,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
+
+    _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
 }
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
@@ -6552,6 +6561,12 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 #endif
     
     [_webView _didChangeEditorState];
+
+    if (!_page->editorState().isMissingPostLayoutData) {
+        _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+        if (!_usingGestureForSelection && _focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words)
+            [UIKeyboardImpl.sharedInstance clearShiftState];
+    }
 }
 
 - (void)selectWordForReplacement

@@ -1,3 +1,16 @@
+2020-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        autocapitalize="words" capitalizes every word's second character
+        https://bugs.webkit.org/show_bug.cgi?id=148504
+        <rdar://problem/57814304>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that the bug does not occur.
+
+        * fast/forms/ios/autocapitalize-words-expected.txt: Added.
+        * fast/forms/ios/autocapitalize-words.html: Added.
+
 2020-06-29  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed test gardening; "rebaseline" the video-orientation-canvas.html test to center the expected red color
