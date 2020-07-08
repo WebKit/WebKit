@@ -1,3 +1,15 @@
+2020-04-10  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] DataMutex: Add runUnlocked()
+        https://bugs.webkit.org/show_bug.cgi?id=209811
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Tests for runUnlocked() and DataMutex checks are introduced.
+
+        * TestWebKitAPI/Tests/WTF/DataMutex.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-03-25  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Add user agent quirk for auth.mayohr.com

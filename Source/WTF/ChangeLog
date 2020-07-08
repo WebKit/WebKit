@@ -1,3 +1,36 @@
+2020-04-10  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] DataMutex: Add runUnlocked()
+        https://bugs.webkit.org/show_bug.cgi?id=209811
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch introduces a runUnlocked() method in WTF::DataMutex::LockedWrapper
+        to run a lambda function without the lock. This is intended to be used for
+        small sections of the code that need to be unlocked, in cases where using
+        scoping would prove non-ergonomic or where running the unlocked section is only
+        necessary or desired when a certain condition is met -- something that cannot
+        be done with C++ scoping.
+
+        Safety mechanisms are provided. First, because this is used with a lambda, all
+        variables to be used in the unlocked section have to be specified in the
+        capture (global capture is possible but not recommended to simplify analysis).
+        Second, additional checks have been added to DataMutex to detect unlocked
+        accesses among other conditions. This will detect among other things naive
+        access to protected members by means of capturing the LockedWrapper by
+        reference.
+
+        * wtf/DataMutex.h:
+        (WTF::OwnerAwareLockAdapter::lock):
+        (WTF::OwnerAwareLockAdapter::unlock):
+        (WTF::OwnerAwareLockAdapter::tryLock):
+        (WTF::OwnerAwareLockAdapter::isLocked const):
+        (WTF::DataMutex::LockedWrapper::operator->):
+        (WTF::DataMutex::LockedWrapper::operator*):
+        (WTF::DataMutex::LockedWrapper::mutex):
+        (WTF::DataMutex::LockedWrapper::lockHolder):
+        (WTF::DataMutex::LockedWrapper::runUnlocked):
+
 2020-04-16  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed, set CeilingOnPageSize for MIPS64
