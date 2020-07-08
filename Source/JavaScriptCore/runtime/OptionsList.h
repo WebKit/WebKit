@@ -512,6 +512,9 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, usePrivateClassFields, false, Normal, "If true, the parser will understand private data fields inside classes.") \
     v(Bool, returnEarlyFromInfiniteLoopsForFuzzing, false, Normal, nullptr) \
     v(Size, earlyReturnFromInfiniteLoopsLimit, 1300000000, Normal, "When returnEarlyFromInfiniteLoopsForFuzzing is true, this determines the number of executions a loop can run for before just returning. This is helpful for the fuzzer so it doesn't get stuck in infinite loops.") \
+    v(Bool, useLICMFuzzing, false, Normal, nullptr) \
+    v(Unsigned, seedForLICMFuzzer, 424242, Normal, nullptr) \
+    v(Double, allowHoistingLICMProbability, 0.5, Normal, nullptr) \
 
 enum OptionEquivalence {
     SameOption,

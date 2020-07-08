@@ -1,5 +1,26 @@
 2020-07-08  Saam Barati  <sbarati@apple.com>
 
+        Add a fuzzing toggle for LICM
+        https://bugs.webkit.org/show_bug.cgi?id=214093
+
+        Reviewed by Yusuke Suzuki.
+
+        We have an AI based safety checker for LICM, to determine if it's safe to
+        hoist nodes. Historically, we've had bugs here, where we allow unsafe
+        hoisting. In practice, we've been saved by safety checks also being hoisted
+        at the same time as the operation they're protecting, so even if we
+        have bugs in AI-based safeToExecute, things usually just work. Since
+        we've had security bugs here before, where the safety checks don't get hoisted,
+        leading to issues, it's helpful if we can fuzz this area.  This patch implements
+        a way to says we won't hoist a node based on some probability, allowing us to play
+        with what does and doesn't get hoisted.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        * runtime/OptionsList.h:
+
+2020-07-08  Saam Barati  <sbarati@apple.com>
+
         Add a way to return early from detected infinite loops to aid the fuzzer
         https://bugs.webkit.org/show_bug.cgi?id=214067
 

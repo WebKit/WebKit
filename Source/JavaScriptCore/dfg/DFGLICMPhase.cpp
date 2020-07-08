@@ -181,6 +181,9 @@ public:
         // tend to hoist dominators before dominatees.
         Vector<const NaturalLoop*> loopStack;
         bool changed = false;
+
+        WeakRandom random { Options::seedForLICMFuzzer() };
+
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             if (!block->cfaHasVisited)
                 continue;
@@ -213,8 +216,17 @@ public:
                 Node*& nodeRef = block->at(nodeIndex);
                 if (nodeRef->op() == ForceOSRExit)
                     break;
-                for (unsigned stackIndex = loopStack.size(); stackIndex--;)
+                for (unsigned stackIndex = loopStack.size(); stackIndex--;) {
+                    if (UNLIKELY(Options::useLICMFuzzing())) {
+                        constexpr double range = static_cast<double>(std::numeric_limits<uint32_t>::max());
+                        uint32_t floor = static_cast<unsigned>((1.0 - Options::allowHoistingLICMProbability()) * range);
+                        bool shouldAttemptHoist = random.getUint32() >= floor;
+                        if (!shouldAttemptHoist)
+                            continue;
+                    }
+
                     changed |= attemptHoist(block, nodeRef, loopStack[stackIndex]);
+                }
             }
         }
 
