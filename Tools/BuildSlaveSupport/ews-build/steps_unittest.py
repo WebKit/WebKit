@@ -1886,7 +1886,9 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_run_failures', ["jquery/offset.html"])
         self.setProperty('clean_tree_run_failures', ["jquery/offset.html"])
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), 'Found 1 pre-existing test failure: jquery/offset.html')
+        return rc
 
     def test_flaky_and_consistent_failures_without_clean_tree_failures(self):
         self.configureStep()
@@ -1917,13 +1919,24 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
+    def test_flaky_failures_in_first_run(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.setProperty('second_run_failures', [])
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), ' Found flaky tests: test1, test2')
+        return rc
+
     def test_flaky_and_inconsistent_failures_with_clean_tree_failures(self):
         self.configureStep()
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test3'])
         self.setProperty('clean_tree_run_failures', ['test1', 'test2', 'test3'])
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), 'Found 3 pre-existing test failures: test1, test2, test3 Found flaky tests: test1, test2, test3')
+        return rc
 
     def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
         self.configureStep()
@@ -1935,11 +1948,13 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_mildly_flaky_patch_with_some_tree_redness_and_flakiness(self):
         self.configureStep()
-        self.setProperty('first_run_failures', ['PreExistingFail1', 'PreExistingFail2', 'Fail1'])
-        self.setProperty('second_run_failures', ['PreExistingFail1', 'PreExistingFail2'])
-        self.setProperty('clean_tree_run_failures', ['PreExistingFail1', 'PreExistingFail2', 'Fail2'])
+        self.setProperty('first_run_failures', ['test1', 'test2', 'test3'])
+        self.setProperty('second_run_failures', ['test1', 'test2'])
+        self.setProperty('clean_tree_run_failures', ['test1', 'test2', 'test4'])
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), 'Found 3 pre-existing test failures: test1, test2, test4 Found flaky test: test3')
+        return rc
 
     def test_first_run_exceed_failure_limit(self):
         self.configureStep()
@@ -1983,8 +1998,32 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 10)])
-        self.expectOutcome(result=FAILURE, state_string='Found 30 new test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8, test24, test25, test26, test27, test20, test21, test22, test23, test28, test29, test19, test18, test11, test10, test13, test12, test15, test14, test17, test16 (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
         return self.runStep()
+
+    def test_clean_tree_has_lot_of_failures_and_no_new_failure(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1'])
+        self.setProperty('second_run_failures', ['test1'])
+        self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 20)])
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), 'Found 20 pre-existing test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ...')
+        return rc
+
+    def test_patch_introduces_lot_of_failures(self):
+        self.configureStep()
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 300)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 300)])
+        failure_message = 'Found 300 new test failures: test0, test1, test10, test100, test101, test102, test103, test104, test105, test106 ...'
+        self.expectOutcome(result=FAILURE, state_string=failure_message + ' (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), failure_message)
+        self.assertEqual(self.getProperty('build_finish_summary'), failure_message)
+        return rc
 
 class TestCheckOutSpecificRevision(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

@@ -1920,13 +1920,16 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
     name = 'analyze-layout-tests-results'
     description = ['analyze-layout-test-results']
     descriptionDone = ['analyze-layout-tests-results']
+    NUM_FAILURES_TO_DISPLAY = 10
 
     def report_failure(self, new_failures):
         self.finished(FAILURE)
         self.build.results = FAILURE
         pluralSuffix = 's' if len(new_failures) > 1 else ''
-        new_failures_string = ', '.join([failure_name for failure_name in new_failures])
+        new_failures_string = ', '.join(sorted(new_failures)[:self.NUM_FAILURES_TO_DISPLAY])
         message = 'Found {} new test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
+        if len(new_failures) > self.NUM_FAILURES_TO_DISPLAY:
+            message += ' ...'
         self.descriptionDone = message
 
         if self.getProperty('buildername', '').lower() == 'commit-queue':
@@ -1943,13 +1946,17 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         self.descriptionDone = 'Passed layout tests'
         message = ''
         if clean_tree_failures:
-            clean_tree_failures_string = ', '.join([failure_name for failure_name in clean_tree_failures])
+            clean_tree_failures_string = ', '.join(sorted(clean_tree_failures)[:self.NUM_FAILURES_TO_DISPLAY])
             pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
             message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+            if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
         if flaky_failures:
-            flaky_failures_string = ', '.join(flaky_failures)
+            flaky_failures_string = ', '.join(sorted(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY])
             pluralSuffix = 's' if len(flaky_failures) > 1 else ''
             message += ' Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
+            if len(flaky_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
         self.setProperty('build_summary', message)
         return defer.succeed(None)
 

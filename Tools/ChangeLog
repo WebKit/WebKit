@@ -1,3 +1,22 @@
+2020-07-08  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Limit layout tests failures to display in the status-bubble tooltip and buildbot summary
+        https://bugs.webkit.org/show_bug.cgi?id=214085
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/steps.py: Limit NUM_FAILURES_TO_DISPLAY to 10.
+        (AnalyzeLayoutTestsResults.report_failure):
+        (AnalyzeLayoutTestsResults.report_pre_existing_failures):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeLayoutTestsResults.test_clean_tree_has_some_failures): Updated as per new behavior.
+        (TestAnalyzeLayoutTestsResults.test_failure_on_clean_tree): Updated to also test for build_summary.
+        (TestAnalyzeLayoutTestsResults.test_flaky_and_inconsistent_failures_with_clean_tree_failures): Ditto.
+        (TestAnalyzeLayoutTestsResults.test_mildly_flaky_patch_with_some_tree_redness_and_flakiness): Ditto.
+        (TestAnalyzeLayoutTestsResults.test_flaky_failures_in_first_run): Added unit-test.
+        (TestAnalyzeLayoutTestsResults.test_clean_tree_has_lot_of_failures_and_no_new_failure): Added unit-test.
+        (TestAnalyzeLayoutTestsResults.test_patch_introduces_lot_of_failures): Added unit-test.
+
 2020-07-08  Sihui Liu  <sihui_liu@appe.com>
 
         Text manipulation should ignore white spaces between nodes
