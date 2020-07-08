@@ -1,3 +1,18 @@
+2020-07-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [Flatpak] Avoid error message 'error: org.webkit.Sdk/*unspecified*/*unspecified*' not installed
+        https://bugs.webkit.org/show_bug.cgi?id=213871
+
+        Reviewed by Philippe Normand.
+
+        The error message happens when requesting a Flatpak SDK version but there's no Flatpak SDK installed yet.
+        In that case, ignore stderr to filter out the message.
+
+        * flatpak/flatpakutils.py:
+        (run_sanitized):
+        (FlatpakObject.flatpak):
+        (FlatpakObject.version):
+
 2020-07-08  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Initial installation with IceCC enabled fails

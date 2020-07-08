@@ -119,7 +119,7 @@ class Console:
         cls.colored_message_if_supported(Colors.WARNING, str_format, *args)
 
 
-def run_sanitized(command, gather_output=False):
+def run_sanitized(command, gather_output=False, ignore_stderr=False):
     """ Runs a command in a santized environment and optionally returns decoded output or raises
         subprocess.CalledProcessError
     """
@@ -132,7 +132,11 @@ def run_sanitized(command, gather_output=False):
 
     keywords = dict(env=sanitized_env)
     if gather_output:
-        output = subprocess.check_output(command, **keywords)
+        if ignore_stderr:
+            with open(os.devnull, 'w') as devnull:
+                output = subprocess.check_output(command, stderr=devnull, **keywords)
+        else:
+            output = subprocess.check_output(command, **keywords)
         return output.decode('utf-8')
     else:
         keywords["stdout"] = sys.stdout
@@ -179,6 +183,7 @@ class FlatpakObject:
     def flatpak(self, command, *args, **kwargs):
         comment = kwargs.pop("comment", None)
         gather_output = kwargs.get("gather_output", False)
+        ignore_stderr = kwargs.get("ignore_stderr", False)
         if comment:
             Console.message(comment)
 
@@ -194,11 +199,11 @@ class FlatpakObject:
         command.extend(args)
 
         _log.debug("Executing %s" % ' '.join(command))
-        return run_sanitized(command, gather_output=gather_output)
+        return run_sanitized(command, gather_output=gather_output, ignore_stderr=ignore_stderr)
 
     def version(self, ref_id):
         try:
-            output = self.flatpak("info", ref_id, gather_output=True)
+            output = self.flatpak("info", ref_id, gather_output=True, ignore_stderr=True)
         except subprocess.CalledProcessError:
             # ref is likely not installed
             return ""
