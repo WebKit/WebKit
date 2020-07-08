@@ -1,3 +1,12 @@
+2020-07-08  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: (r263222-263223): [ macOS wk2 debug ] accessibility/textarea-selected-text-range.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=214078
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-08  Chris Dumez  <cdumez@apple.com>
 
         Resync all remaining web-platform-tests/html tests from upstream
