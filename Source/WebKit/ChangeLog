@@ -1,3 +1,15 @@
+2020-07-08  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][Qt] Deprecation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=214074
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::updatePaintNode): Switch to new createTextureFromNativeObject API when building against Qt 5.15.
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp:
+        (WPEQtViewBackend::dispatchWheelEvent): Switch to new WPE axis 2D event API.
+
 2020-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.3 release

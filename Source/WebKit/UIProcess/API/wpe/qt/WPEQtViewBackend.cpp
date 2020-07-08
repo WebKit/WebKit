@@ -300,14 +300,16 @@ void WPEQtViewBackend::dispatchMouseReleaseEvent(QMouseEvent* event)
 void WPEQtViewBackend::dispatchWheelEvent(QWheelEvent* event)
 {
     QPoint delta = event->angleDelta();
-    uint32_t axis = delta.y() == event->y();
     QPoint numDegrees = delta / 8;
-    QPoint numSteps = numDegrees / 15;
-    int32_t length = numSteps.y() ? numSteps.y() : numSteps.x();
-    struct wpe_input_axis_event wpeEvent = { wpe_input_axis_event_type_motion,
-        static_cast<uint32_t>(event->timestamp()),
-        event->x(), event->y(), axis, length, modifiers() };
-    wpe_view_backend_dispatch_axis_event(backend(), &wpeEvent);
+    struct wpe_input_axis_2d_event wpeEvent;
+    if (delta.y() == event->position().y())
+        wpeEvent.x_axis = numDegrees.x();
+    else
+        wpeEvent.y_axis = numDegrees.y();
+    wpeEvent.base.type = static_cast<wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth);
+    wpeEvent.base.x = event->position().x();
+    wpeEvent.base.y = event->position().y();
+    wpe_view_backend_dispatch_axis_event(backend(), &wpeEvent.base);
 }
 
 void WPEQtViewBackend::dispatchKeyEvent(QKeyEvent* event, bool state)
