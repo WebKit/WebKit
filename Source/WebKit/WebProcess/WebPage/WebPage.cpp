@@ -4186,12 +4186,12 @@ void WebPage::setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&
     m_activeOpenPanelResultListener = WTFMove(openPanelResultListener);
 }
 
-bool WebPage::findStringFromInjectedBundle(const String& target, FindOptions options)
+bool WebPage::findStringFromInjectedBundle(const String& target, OptionSet<FindOptions> options)
 {
     return m_page->findString(target, core(options));
 }
 
-void WebPage::findStringMatchesFromInjectedBundle(const String& target, FindOptions options)
+void WebPage::findStringMatchesFromInjectedBundle(const String& target, OptionSet<FindOptions> options)
 {
     findController().findStringMatches(target, options, 0);
 }
@@ -4201,14 +4201,14 @@ void WebPage::replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& mat
     findController().replaceMatches(matchIndices, replacementText, selectionOnly);
 }
 
-void WebPage::findString(const String& string, uint32_t options, uint32_t maxMatchCount, Optional<CallbackID> callbackID)
+void WebPage::findString(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
 {
-    findController().findString(string, static_cast<FindOptions>(options), maxMatchCount, callbackID);
+    findController().findString(string, options, maxMatchCount, WTFMove(completionHandler));
 }
 
-void WebPage::findStringMatches(const String& string, uint32_t options, uint32_t maxMatchCount)
+void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount)
 {
-    findController().findStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
+    findController().findStringMatches(string, options, maxMatchCount);
 }
 
 void WebPage::getImageForFindMatch(uint32_t matchIndex)
@@ -4231,9 +4231,9 @@ void WebPage::hideFindUI()
     findController().hideFindUI();
 }
 
-void WebPage::countStringMatches(const String& string, uint32_t options, uint32_t maxMatchCount)
+void WebPage::countStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount)
 {
-    findController().countStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
+    findController().countStringMatches(string, options, maxMatchCount);
 }
 
 void WebPage::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CallbackID callbackID)

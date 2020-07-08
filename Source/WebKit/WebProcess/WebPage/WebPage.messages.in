@@ -296,13 +296,13 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PostInjectedBundleMessage(String messageName, WebKit::UserData messageBody)
 
     # Find.
-    FindString(String string, uint32_t findOptions, unsigned maxMatchCount, Optional<WebKit::CallbackID> callbackID)
-    FindStringMatches(String string, uint32_t findOptions, unsigned maxMatchCount)
+    FindString(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (bool found) Async
+    FindStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount)
     GetImageForFindMatch(uint32_t matchIndex)
     SelectFindMatch(uint32_t matchIndex)
     IndicateFindMatch(uint32_t matchIndex)
     HideFindUI()
-    CountStringMatches(String string, uint32_t findOptions, unsigned maxMatchCount)
+    CountStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount)
     ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly, WebKit::CallbackID callbackID)
     
     AddMIMETypeWithCustomContentProvider(String mimeType)

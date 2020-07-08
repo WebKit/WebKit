@@ -4027,7 +4027,7 @@ void WebPageProxy::pluginZoomFactorDidChange(double pluginZoomFactor)
     m_pluginZoomFactor = pluginZoomFactor;
 }
 
-void WebPageProxy::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
     if (string.isEmpty()) {
         didFindStringMatches(string, Vector<Vector<WebCore::IntRect>> (), 0);
@@ -4037,22 +4037,9 @@ void WebPageProxy::findStringMatches(const String& string, FindOptions options, 
     send(Messages::WebPage::FindStringMatches(string, options, maxMatchCount));
 }
 
-void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount, Function<void (bool, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
-    Optional<CallbackID> callbackID;
-    if (callbackFunction)
-        callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::findString"_s));
-
-    send(Messages::WebPage::FindString(string, options, maxMatchCount, callbackID));
-}
-
-void WebPageProxy::findStringCallback(bool found, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<BoolCallback>(callbackID);
-    if (!callback)
-        return;
-
-    callback->performCallbackWithReturnValue(found);
+    sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::getImageForFindMatch(int32_t matchIndex)
@@ -4075,7 +4062,7 @@ void WebPageProxy::hideFindUI()
     send(Messages::WebPage::HideFindUI());
 }
 
-void WebPageProxy::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
     if (!hasRunningProcess())
         return;

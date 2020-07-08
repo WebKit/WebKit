@@ -662,6 +662,7 @@ def headers_for_type(type):
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
+        'WebKit::FindOptions': ['"WebFindOptions.h"'],
         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],
         'WebKit::GestureType': ['"GestureTypes.h"'],
         'WebKit::LayerHostingContextID': ['"LayerHostingContext.h"'],

@@ -25,19 +25,41 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebKit {
 
-enum FindOptions : uint16_t {
-    FindOptionsCaseInsensitive = 1 << 0,
-    FindOptionsAtWordStarts = 1 << 1,
-    FindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
-    FindOptionsBackwards = 1 << 3,
-    FindOptionsWrapAround = 1 << 4,
-    FindOptionsShowOverlay = 1 << 5,
-    FindOptionsShowFindIndicator = 1 << 6,
-    FindOptionsShowHighlight = 1 << 7,
-    FindOptionsDetermineMatchIndex = 1 << 8,
-    FindOptionsNoIndexChange = 1 << 9,
+enum class FindOptions : uint16_t {
+    CaseInsensitive = 1 << 0,
+    AtWordStarts = 1 << 1,
+    TreatMedialCapitalAsWordStart = 1 << 2,
+    Backwards = 1 << 3,
+    WrapAround = 1 << 4,
+    ShowOverlay = 1 << 5,
+    ShowFindIndicator = 1 << 6,
+    ShowHighlight = 1 << 7,
+    DetermineMatchIndex = 1 << 8,
+    NoIndexChange = 1 << 9,
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::FindOptions> {
+    using values = EnumValues<
+        WebKit::FindOptions,
+        WebKit::FindOptions::CaseInsensitive,
+        WebKit::FindOptions::AtWordStarts,
+        WebKit::FindOptions::TreatMedialCapitalAsWordStart,
+        WebKit::FindOptions::Backwards,
+        WebKit::FindOptions::WrapAround,
+        WebKit::FindOptions::ShowOverlay,
+        WebKit::FindOptions::ShowFindIndicator,
+        WebKit::FindOptions::ShowHighlight,
+        WebKit::FindOptions::DetermineMatchIndex,
+        WebKit::FindOptions::NoIndexChange
+    >;
+};
+
+} // namespace WTF

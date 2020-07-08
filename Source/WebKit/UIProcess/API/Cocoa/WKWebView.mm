@@ -1124,18 +1124,18 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
     return _page->pageZoomFactor();
 }
 
-inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
+inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configuration)
 {
-    unsigned findOptions = 0;
+    OptionSet<WebKit::FindOptions> findOptions;
 
     if (!configuration.caseSensitive)
-        findOptions |= WebKit::FindOptionsCaseInsensitive;
+        findOptions.add(WebKit::FindOptions::CaseInsensitive);
     if (configuration.backwards)
-        findOptions |= WebKit::FindOptionsBackwards;
+        findOptions.add(WebKit::FindOptions::Backwards);
     if (configuration.wraps)
-        findOptions |= WebKit::FindOptionsWrapAround;
+        findOptions.add(WebKit::FindOptions::WrapAround);
 
-    return static_cast<WebKit::FindOptions>(findOptions);
+    return findOptions;
 }
 
 - (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
@@ -1145,8 +1145,8 @@ inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
         return;
     }
 
-    _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found, WebKit::CallbackBase::Error error) {
-        handler([[[WKFindResult alloc] _initWithMatchFound:(error == WebKit::CallbackBase::Error::None && found)] autorelease]);
+    _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found) {
+        handler([[[WKFindResult alloc] _initWithMatchFound:found] autorelease]);
     });
 }
 
@@ -2569,32 +2569,32 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
     static_cast<WebKit::FindClient&>(_page->findClient()).setDelegate(findDelegate);
 }
 
-static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
+static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFindOptions)
 {
-    unsigned findOptions = 0;
+    OptionSet<WebKit::FindOptions> findOptions;
 
     if (wkFindOptions & _WKFindOptionsCaseInsensitive)
-        findOptions |= WebKit::FindOptionsCaseInsensitive;
+        findOptions.add(WebKit::FindOptions::CaseInsensitive);
     if (wkFindOptions & _WKFindOptionsAtWordStarts)
-        findOptions |= WebKit::FindOptionsAtWordStarts;
+        findOptions.add(WebKit::FindOptions::AtWordStarts);
     if (wkFindOptions & _WKFindOptionsTreatMedialCapitalAsWordStart)
-        findOptions |= WebKit::FindOptionsTreatMedialCapitalAsWordStart;
+        findOptions.add(WebKit::FindOptions::TreatMedialCapitalAsWordStart);
     if (wkFindOptions & _WKFindOptionsBackwards)
-        findOptions |= WebKit::FindOptionsBackwards;
+        findOptions.add(WebKit::FindOptions::Backwards);
     if (wkFindOptions & _WKFindOptionsWrapAround)
-        findOptions |= WebKit::FindOptionsWrapAround;
+        findOptions.add(WebKit::FindOptions::WrapAround);
     if (wkFindOptions & _WKFindOptionsShowOverlay)
-        findOptions |= WebKit::FindOptionsShowOverlay;
+        findOptions.add(WebKit::FindOptions::ShowOverlay);
     if (wkFindOptions & _WKFindOptionsShowFindIndicator)
-        findOptions |= WebKit::FindOptionsShowFindIndicator;
+        findOptions.add(WebKit::FindOptions::ShowFindIndicator);
     if (wkFindOptions & _WKFindOptionsShowHighlight)
-        findOptions |= WebKit::FindOptionsShowHighlight;
+        findOptions.add(WebKit::FindOptions::ShowHighlight);
     if (wkFindOptions & _WKFindOptionsNoIndexChange)
-        findOptions |= WebKit::FindOptionsNoIndexChange;
+        findOptions.add(WebKit::FindOptions::NoIndexChange);
     if (wkFindOptions & _WKFindOptionsDetermineMatchIndex)
-        findOptions |= WebKit::FindOptionsDetermineMatchIndex;
+        findOptions.add(WebKit::FindOptions::DetermineMatchIndex);
 
-    return static_cast<WebKit::FindOptions>(findOptions);
+    return findOptions;
 }
 
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount

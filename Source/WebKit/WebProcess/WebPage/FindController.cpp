@@ -55,18 +55,18 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebCore::FindOptions core(FindOptions options)
+WebCore::FindOptions core(OptionSet<FindOptions> options)
 {
     WebCore::FindOptions result;
-    if (options & FindOptionsCaseInsensitive)
+    if (options.contains(FindOptions::CaseInsensitive))
         result.add(WebCore::CaseInsensitive);
-    if (options & FindOptionsAtWordStarts)
+    if (options.contains(FindOptions::AtWordStarts))
         result.add(WebCore::AtWordStarts);
-    if (options & FindOptionsTreatMedialCapitalAsWordStart)
+    if (options.contains(FindOptions::TreatMedialCapitalAsWordStart))
         result.add(WebCore::TreatMedialCapitalAsWordStart);
-    if (options & FindOptionsBackwards)
+    if (options.contains(FindOptions::Backwards))
         result.add(WebCore::Backwards);
-    if (options & FindOptionsWrapAround)
+    if (options.contains(FindOptions::WrapAround))
         result.add(WebCore::WrapAround);
     return result;
 }
@@ -80,7 +80,7 @@ FindController::~FindController()
 {
 }
 
-void FindController::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+void FindController::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
     if (maxMatchCount == std::numeric_limits<unsigned>::max())
         --maxMatchCount;
@@ -132,7 +132,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator)
+void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator)
 {
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
     
@@ -153,9 +153,9 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
         m_webPage->send(Messages::WebPageProxy::DidFailToFindString(string));
     } else {
-        shouldShowOverlay = options & FindOptionsShowOverlay;
-        bool shouldShowHighlight = options & FindOptionsShowHighlight;
-        bool shouldDetermineMatchIndex = options & FindOptionsDetermineMatchIndex;
+        shouldShowOverlay = options.contains(FindOptions::ShowOverlay);
+        bool shouldShowHighlight = options.contains(FindOptions::ShowHighlight);
+        bool shouldDetermineMatchIndex = options.contains(FindOptions::DetermineMatchIndex);
         unsigned matchCount = 1;
 
         if (shouldDetermineMatchIndex) {
@@ -221,11 +221,11 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         m_findPageOverlay->setNeedsDisplay();
     }
     
-    if (found && (!(options & FindOptionsShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay)))
+    if (found && (!options.contains(FindOptions::ShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay)))
         hideFindIndicator();
 }
 
-void FindController::findString(const String& string, FindOptions options, unsigned maxMatchCount, Optional<CallbackID> callbackID)
+void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* pluginView = WebPage::pluginViewForFrame(m_webPage->mainFrame());
 
@@ -267,9 +267,9 @@ void FindController::findString(const String& string, FindOptions options, unsig
         didFindString();
 
         if (!foundStringStartsAfterSelection) {
-            if (options & FindOptionsBackwards)
+            if (options.contains(FindOptions::Backwards))
                 m_foundStringMatchIndex--;
-            else if (!(options & FindOptionsNoIndexChange))
+            else if (!options.contains(FindOptions::NoIndexChange))
                 m_foundStringMatchIndex++;
         }
     }
@@ -279,11 +279,10 @@ void FindController::findString(const String& string, FindOptions options, unsig
         protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap, FindUIOriginator::FindString);
     });
 
-    if (callbackID)
-        m_webPage->send(Messages::WebPageProxy::FindStringCallback(found, *callbackID));
+    completionHandler(found);
 }
 
-void FindController::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
     m_findMatches.clear();
     int indexForSelection;
@@ -296,7 +295,7 @@ void FindController::findStringMatches(const String& string, FindOptions options
 
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
 
-    if (!(options & FindOptionsShowOverlay || options & FindOptionsShowFindIndicator))
+    if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))
         return;
 
     bool found = !m_findMatches.isEmpty();

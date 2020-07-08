@@ -57,13 +57,13 @@ public:
     explicit FindController(WebPage*);
     virtual ~FindController();
 
-    void findString(const String&, FindOptions, unsigned maxMatchCount, Optional<CallbackID>);
-    void findStringMatches(const String&, FindOptions, unsigned maxMatchCount);
+    void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+    void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void getImageForFindMatch(uint32_t matchIndex);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);
     void hideFindUI();
-    void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
+    void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
     
     void hideFindIndicator();
@@ -88,7 +88,7 @@ private:
     bool updateFindIndicator(WebCore::Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
 
     enum class FindUIOriginator : uint8_t { FindString, FindStringMatches };
-    void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount, WebCore::DidWrap, FindUIOriginator);
+    void updateFindUIAfterPageScroll(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, WebCore::DidWrap, FindUIOriginator);
 
     void willFindString();
     void didFindString();
@@ -116,6 +116,6 @@ private:
 #endif
 };
 
-WebCore::FindOptions core(FindOptions);
+WebCore::FindOptions core(OptionSet<FindOptions>);
 
 } // namespace WebKit

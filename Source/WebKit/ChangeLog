@@ -1,3 +1,38 @@
+2020-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize FindOptions IPC code
+        https://bugs.webkit.org/show_bug.cgi?id=214063
+
+        Reviewed by Chris Dumez.
+
+        Use callWithAsyncReply instead of GenericCallback.
+        Use OptionSet<FindOptions> instead of FindOptions or uint32_t.
+        No change in behavior.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toFindOptions):
+        * Shared/WebFindOptions.h:
+        (): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (toFindOptions):
+        (-[WKWebView findString:withConfiguration:completionHandler:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findStringMatches):
+        (WebKit::WebPageProxy::findString):
+        (WebKit::WebPageProxy::countStringMatches):
+        (WebKit::WebPageProxy::findStringCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::findString):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::core):
+        (WebKit::FindController::countStringMatches):
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::findString):
+        (WebKit::FindController::findStringMatches):
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-07-07  Sam Weinig  <weinig@apple.com>
 
         Part 2 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them

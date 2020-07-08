@@ -208,21 +208,21 @@ private:
     // proportional to document length.
     maxResults = std::min(maxResults, maximumFindMatches);
 
-    unsigned kitFindOptions = 0;
+    OptionSet<WebKit::FindOptions> kitFindOptions;
 
     if (findOptions & NSTextFinderAsynchronousDocumentFindOptionsBackwards)
-        kitFindOptions |= WebKit::FindOptionsBackwards;
+        kitFindOptions.add(WebKit::FindOptions::Backwards);
     if (findOptions & NSTextFinderAsynchronousDocumentFindOptionsWrap)
-        kitFindOptions |= WebKit::FindOptionsWrapAround;
+        kitFindOptions.add(WebKit::FindOptions::WrapAround);
     if (findOptions & NSTextFinderAsynchronousDocumentFindOptionsCaseInsensitive)
-        kitFindOptions |= WebKit::FindOptionsCaseInsensitive;
+        kitFindOptions.add(WebKit::FindOptions::CaseInsensitive);
     if (findOptions & NSTextFinderAsynchronousDocumentFindOptionsStartsWith)
-        kitFindOptions |= WebKit::FindOptionsAtWordStarts;
+        kitFindOptions.add(WebKit::FindOptions::AtWordStarts);
 
     if (!_usePlatformFindUI) {
-        kitFindOptions |= WebKit::FindOptionsShowOverlay;
-        kitFindOptions |= WebKit::FindOptionsShowFindIndicator;
-        kitFindOptions |= WebKit::FindOptionsDetermineMatchIndex;
+        kitFindOptions.add(WebKit::FindOptions::ShowOverlay);
+        kitFindOptions.add(WebKit::FindOptions::ShowFindIndicator);
+        kitFindOptions.add(WebKit::FindOptions::DetermineMatchIndex);
     }
 
     RetainPtr<NSProgress> progress = [NSProgress progressWithTotalUnitCount:1];
@@ -234,9 +234,9 @@ private:
     });
 
     if (maxResults == 1)
-        _page->findString(targetString, static_cast<WebKit::FindOptions>(kitFindOptions), maxResults);
+        _page->findString(targetString, kitFindOptions, maxResults);
     else
-        _page->findStringMatches(targetString, static_cast<WebKit::FindOptions>(kitFindOptions), maxResults);
+        _page->findStringMatches(targetString, kitFindOptions, maxResults);
 }
 
 - (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler

@@ -200,7 +200,6 @@ messages -> WebPageProxy {
     DrawToPDFCallback(IPC::DataReference pdfData, WebKit::CallbackID callbackID)
     NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
 #endif
-    FindStringCallback(bool found, WebKit::CallbackID callbackID)
 
     PageScaleFactorDidChange(double scaleFactor)
     PluginScaleFactorDidChange(double zoomFactor)

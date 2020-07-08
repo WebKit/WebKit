@@ -753,28 +753,28 @@ inline WKContextMenuItemType toAPI(WebCore::ContextMenuItemType type)
     }
 }
 
-inline FindOptions toFindOptions(WKFindOptions wkFindOptions)
+inline OptionSet<FindOptions> toFindOptions(WKFindOptions wkFindOptions)
 {
-    unsigned findOptions = 0;
+    OptionSet<FindOptions> findOptions;
 
     if (wkFindOptions & kWKFindOptionsCaseInsensitive)
-        findOptions |= FindOptionsCaseInsensitive;
+        findOptions.add(FindOptions::CaseInsensitive);
     if (wkFindOptions & kWKFindOptionsAtWordStarts)
-        findOptions |= FindOptionsAtWordStarts;
+        findOptions.add(FindOptions::AtWordStarts);
     if (wkFindOptions & kWKFindOptionsTreatMedialCapitalAsWordStart)
-        findOptions |= FindOptionsTreatMedialCapitalAsWordStart;
+        findOptions.add(FindOptions::TreatMedialCapitalAsWordStart);
     if (wkFindOptions & kWKFindOptionsBackwards)
-        findOptions |= FindOptionsBackwards;
+        findOptions.add(FindOptions::Backwards);
     if (wkFindOptions & kWKFindOptionsWrapAround)
-        findOptions |= FindOptionsWrapAround;
+        findOptions.add(FindOptions::WrapAround);
     if (wkFindOptions & kWKFindOptionsShowOverlay)
-        findOptions |= FindOptionsShowOverlay;
+        findOptions.add(FindOptions::ShowOverlay);
     if (wkFindOptions & kWKFindOptionsShowFindIndicator)
-        findOptions |= FindOptionsShowFindIndicator;
+        findOptions.add(FindOptions::ShowFindIndicator);
     if (wkFindOptions & kWKFindOptionsShowHighlight)
-        findOptions |= FindOptionsShowHighlight;
+        findOptions.add(FindOptions::ShowHighlight);
 
-    return static_cast<FindOptions>(findOptions);
+    return findOptions;
 }
 
 inline WKFrameNavigationType toAPI(WebCore::NavigationType type)
