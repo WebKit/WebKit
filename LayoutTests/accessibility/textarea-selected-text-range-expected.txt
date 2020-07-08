@@ -1,6 +1,6 @@
-{4, 0}
-{8, 2}
-{25, 0}
+PASS: textArea.selectedTextRange is {4, 0}
+PASS: textArea.selectedTextRange is {8, 2}
+PASS: textArea.selectedTextRange is {25, 0}
 PASS successfullyParsed is true
 
 TEST COMPLETE

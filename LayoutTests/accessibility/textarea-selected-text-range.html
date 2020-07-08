@@ -11,30 +11,48 @@ line 3
     </textarea>
 
 <script>
+    function waitFor(condition)
+    {
+        return new Promise((resolve, reject) => {
+            let interval = setInterval(() => {
+                if (condition()) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 0);
+        });
+    }
+
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
         var area1 = document.getElementById("area1");
         area1.focus();
-        setTimeout(function() {
+
+        setTimeout(async function() {
             var textArea = accessibilityController.focusedElement;
+
+            // accessibilityController runs its code on a secondary thread without
+            // explicit synchronization, so changes show up at unpredictable times.
+
             textArea.setSelectedTextRange(4, 0);
+            await waitFor(() => {
+                return textArea.selectedTextRange == "{4, 0}";
+            });
+            debug("PASS: textArea.selectedTextRange is {4, 0}");
 
-            // After setting a property through accessibility, the value won't be updated immediately, so we
-            // must check after a timeout to re-verify the value.
-            setTimeout(function() {
-                debug(textArea.selectedTextRange);
+            textArea.setSelectedTextRange(8, 2);
+            await waitFor(() => {
+                return textArea.selectedTextRange == "{8, 2}";
+            });
+            debug("PASS: textArea.selectedTextRange is {8, 2}");
 
-                textArea.setSelectedTextRange(8,2);
-                setTimeout(function() {
-                    debug(textArea.selectedTextRange);
+            textArea.setSelectedTextRange(100, 0);
+            await waitFor(() => {
+                return textArea.selectedTextRange == "{25, 0}";
+            });
+            debug("PASS: textArea.selectedTextRange is {25, 0}");
 
-                    textArea.setSelectedTextRange(100,0);
-                    setTimeout(function() {
-                        debug(textArea.selectedTextRange);
-                        finishJSTest();
-                    }, 0);
-                }, 0);
-            }, 0);
+            finishJSTest();
         }, 0);
     }
 </script>
