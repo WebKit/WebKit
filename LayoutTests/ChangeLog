@@ -1,3 +1,9 @@
+2020-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add iOS-specific baseline for WPT test after resync in r264117.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional-expected.txt: Added.
+
 2020-07-08  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r263222-263223): [ macOS wk2 debug ] accessibility/textarea-selected-text-range.html is flaky failing
