@@ -1,3 +1,13 @@
+2020-07-08  Darin Adler  <darin@apple.com>
+
+        Fix adjust-angle-include-paths.sh error seen building ANGLE library
+        https://bugs.webkit.org/show_bug.cgi?id=214059
+
+        Reviewed by Alexey Proskuryakov.
+
+        * ANGLE.xcodeproj/project.pbxproj: Remove the build step that adjusts paths.
+        Dean Jackson told me we don't need it for the static library target.
+
 2020-06-30  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable the "My Mac (Mac Catalyst)" destination in WebKit Xcode projects

@@ -3767,7 +3767,6 @@
 				A30307A1230625C6002DA972 /* android_util.h in Headers */,
 				A303079923060253002DA972 /* angle_gl.h in Headers */,
 				5C1DBDD41B0438D300235552 /* angletypes.h in Headers */,
-				31DB79602491C87000982878 /* gl3.h in Headers */,
 				5CC7D46B19102620000B8C1F /* angleutils.h in Headers */,
 				A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */,
 				5C55D68A22826B9F00B5BA2C /* ArrayReturnValueToOutParameter.h in Headers */,
@@ -3794,12 +3793,9 @@
 				5C55D65B22826B9F00B5BA2C /* ClampPointSize.h in Headers */,
 				315EBDC11FCE44BF00AC7A89 /* ClearMultiviewGL.h in Headers */,
 				315EBD9A1FCE443600AC7A89 /* CollectVariables.h in Headers */,
-				31DB795E2491C86800982878 /* gl2ext_angle.h in Headers */,
 				5CCD818E1DBFEA10006066B8 /* Color.h in Headers */,
 				31012E1618B97B9B0039062F /* Common.h in Headers */,
-				31DB796B2491C8EC00982878 /* entry_points_gles_3_0_autogen.h in Headers */,
 				5C1DBDDD1B0438D300235552 /* Compiler.h in Headers */,
-				31DB79662491C88200982878 /* khrplatform.h in Headers */,
 				5C1DBC2C1B04375F00235552 /* Compiler.h in Headers */,
 				5CB3011B1DE39F1A00D2C405 /* CompilerGL.h in Headers */,
 				5CB304DC1DE4164800D2C405 /* CompilerImpl.h in Headers */,
@@ -3814,7 +3810,6 @@
 				5CB304DE1DE4164800D2C405 /* ContextImpl.h in Headers */,
 				5CCD598E2284FC400018F2D8 /* copyimage.h in Headers */,
 				5CCD81731DBFE999006066B8 /* Debug.h in Headers */,
-				31DB79672491C88B00982878 /* export.h in Headers */,
 				5CC7D46F19102621000B8C1F /* debug.h in Headers */,
 				5C55D734228274DE00B5BA2C /* Declarator.h in Headers */,
 				5C55D65E22826B9F00B5BA2C /* DeclareAndInitBuiltinsForInstancedMultiview.h in Headers */,
@@ -3836,23 +3831,30 @@
 				5CB304E21DE4164800D2C405 /* DisplayImpl.h in Headers */,
 				315EBDC91FCE44E400AC7A89 /* driver_utils.h in Headers */,
 				6EB01C1D2477279A00E50B35 /* EarlyFragmentTestsOptimization.h in Headers */,
+				31DB79582491C84500982878 /* egl.h in Headers */,
+				31DB79592491C84500982878 /* eglext.h in Headers */,
+				31DB795A2491C84500982878 /* eglext_angle.h in Headers */,
 				5CB304E31DE4164800D2C405 /* EGLImplFactory.h in Headers */,
+				31DB795B2491C84500982878 /* eglplatform.h in Headers */,
 				5CCD59672284F7960018F2D8 /* EGLSync.h in Headers */,
 				5C55D66A22826B9F00B5BA2C /* EmulateGLFragColorBroadcast.h in Headers */,
 				A30306F72305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.h in Headers */,
 				5C55D6A322826B9F00B5BA2C /* EmulatePrecision.h in Headers */,
-				31DB79582491C84500982878 /* egl.h in Headers */,
+				31DB79682491C8D900982878 /* entry_points_egl.h in Headers */,
+				31DB79692491C8DF00982878 /* entry_points_egl_ext.h in Headers */,
 				A30307262305F7C4002DA972 /* entry_points_enum_autogen.h in Headers */,
 				A30B5822238DF7500079FDDC /* entry_points_gles_1_0_autogen.h in Headers */,
+				31DB796A2491C8E600982878 /* entry_points_gles_2_0_autogen.h in Headers */,
+				31DB796B2491C8EC00982878 /* entry_points_gles_3_0_autogen.h in Headers */,
 				A30B582B238DF8260079FDDC /* entry_points_gles_3_2_autogen.h in Headers */,
+				31DB796C2491C8F500982878 /* entry_points_gles_ext_autogen.h in Headers */,
 				A30307252305F7C4002DA972 /* entry_points_utils.h in Headers */,
 				5C1DBDEB1B0438D300235552 /* Error.h in Headers */,
 				315EBDE91FCE452D00AC7A89 /* ErrorStrings.h in Headers */,
 				5CC7D47119102621000B8C1F /* event_tracer.h in Headers */,
 				5C55D66322826B9F00B5BA2C /* ExpandIntegerPowExpressions.h in Headers */,
+				31DB79672491C88B00982878 /* export.h in Headers */,
 				A264F8B316974DED006FAA5A /* ExpressionParser.h in Headers */,
-				31DB79652491C87600982878 /* ShaderVars.h in Headers */,
-				31DB79592491C84500982878 /* eglext.h in Headers */,
 				31012E2A18B97B9B0039062F /* ExtensionBehavior.h in Headers */,
 				5C315D031CC5B6DA00776697 /* ExtensionGLSL.h in Headers */,
 				5C55D7232282747700B5BA2C /* FastVector.h in Headers */,
@@ -3877,10 +3879,18 @@
 				5CB304EA1DE4164800D2C405 /* FramebufferImpl_mock.h in Headers */,
 				5C55D6E922826C7900B5BA2C /* FunctionLookup.h in Headers */,
 				5CB3012C1DE39F1A00D2C405 /* FunctionsGL.h in Headers */,
+				31DB796D2491C9E400982878 /* functionsgl_enums.h in Headers */,
 				5CB3012A1DE39F1A00D2C405 /* functionsgl_typedefs.h in Headers */,
 				5CCD59942284FC400018F2D8 /* generatemip.h in Headers */,
-				31DB79642491C87600982878 /* ShaderLang.h in Headers */,
 				6ED70A0C22CD630E008688CE /* gl.h in Headers */,
+				31DB795C2491C86800982878 /* gl2.h in Headers */,
+				31DB795D2491C86800982878 /* gl2ext.h in Headers */,
+				31DB795E2491C86800982878 /* gl2ext_angle.h in Headers */,
+				31DB795F2491C86800982878 /* gl2platform.h in Headers */,
+				31DB79602491C87000982878 /* gl3.h in Headers */,
+				31DB79612491C87000982878 /* gl31.h in Headers */,
+				31DB79622491C87000982878 /* gl32.h in Headers */,
+				31DB79632491C87000982878 /* gl3platform.h in Headers */,
 				5CCD59602284F7960018F2D8 /* GLES1Renderer.h in Headers */,
 				5CCD59622284F7960018F2D8 /* GLES1State.h in Headers */,
 				6ED70A0D22CD630E008688CE /* glext.h in Headers */,
@@ -3911,7 +3921,6 @@
 				31012E3A18B97B9B0039062F /* InitializeGlobals.h in Headers */,
 				5C55D67B22826B9F00B5BA2C /* InitializeVariables.h in Headers */,
 				A264F8B516974DED006FAA5A /* Input.h in Headers */,
-				31DB796C2491C8F500982878 /* entry_points_gles_ext_autogen.h in Headers */,
 				5C1DBC311B04375F00235552 /* IntermNode.h in Headers */,
 				5C55D6FE22826CB300B5BA2C /* IntermNode_util.h in Headers */,
 				5C55D70822826CB300B5BA2C /* IntermNodePatternMatcher.h in Headers */,
@@ -3919,19 +3928,16 @@
 				5CCD59772284FA830018F2D8 /* IOSurfaceSurfaceCGL.h in Headers */,
 				313BCE552361133A00FC39E5 /* IOSurfaceSurfaceEAGL.h in Headers */,
 				315EBD8E1FCE443600AC7A89 /* IsASTDepthBelowLimit.h in Headers */,
+				31DB79662491C88200982878 /* khrplatform.h in Headers */,
 				5C1DBC321B04375F00235552 /* length_limits.h in Headers */,
 				A264F8B716974DED006FAA5A /* Lexer.h in Headers */,
-				31DB796D2491C9E400982878 /* functionsgl_enums.h in Headers */,
 				5CB304F01DE4164800D2C405 /* load_functions_table.h in Headers */,
 				5CCD59902284FC400018F2D8 /* loadimage.h in Headers */,
 				315EBDF11FCE452D00AC7A89 /* LoggingAnnotator.h in Headers */,
-				31DB79692491C8DF00982878 /* entry_points_egl_ext.h in Headers */,
 				A264F8B916974DED006FAA5A /* Macro.h in Headers */,
 				A264F8BB16974DED006FAA5A /* MacroExpander.h in Headers */,
 				5CC7D47319102621000B8C1F /* mathutil.h in Headers */,
 				5CCD81901DBFEA10006066B8 /* matrix_utils.h in Headers */,
-				31DB795A2491C84500982878 /* eglext_angle.h in Headers */,
-				31DB795B2491C84500982878 /* eglplatform.h in Headers */,
 				5C1DBBF21B0436EC00235552 /* MemoryBuffer.h in Headers */,
 				5CCD596C2284F7960018F2D8 /* MemoryObject.h in Headers */,
 				A303078C2305F8F0002DA972 /* MemoryObjectGL.h in Headers */,
@@ -3941,7 +3947,6 @@
 				A303070B2305F6B5002DA972 /* no_destructor.h in Headers */,
 				5C55D70722826CB300B5BA2C /* NodeSearch.h in Headers */,
 				315EBDC21FCE44BF00AC7A89 /* null_functions.h in Headers */,
-				31DB79622491C87000982878 /* gl32.h in Headers */,
 				A264F8BC16974DED006FAA5A /* numeric_lex.h in Headers */,
 				5CCD59662284F7960018F2D8 /* Observer.h in Headers */,
 				5C1DBC341B04375F00235552 /* Operator.h in Headers */,
@@ -3952,9 +3957,7 @@
 				315EBD9B1FCE443600AC7A89 /* OutputTree.h in Headers */,
 				315EBD821FCE443600AC7A89 /* OutputVulkanGLSL.h in Headers */,
 				A315988923299037000619B9 /* Overlay.h in Headers */,
-				31DB796A2491C8E600982878 /* entry_points_gles_2_0_autogen.h in Headers */,
 				A315988A23299037000619B9 /* Overlay_font_autogen.h in Headers */,
-				31DB79612491C87000982878 /* gl31.h in Headers */,
 				A315988E23299037000619B9 /* OverlayWidgets.h in Headers */,
 				5C55D72F2282747700B5BA2C /* PackedEGLEnums_autogen.h in Headers */,
 				5C55D72A2282747700B5BA2C /* PackedEnums.h in Headers */,
@@ -3962,7 +3965,6 @@
 				31012E5518B97B9B0039062F /* ParseContext.h in Headers */,
 				5CB301511DE39F4700D2C405 /* PbufferSurfaceCGL.h in Headers */,
 				313BCE5D2361133A00FC39E5 /* PbufferSurfaceEAGL.h in Headers */,
-				31DB795F2491C86800982878 /* gl2platform.h in Headers */,
 				5C1DBBF51B0436EC00235552 /* platform.h in Headers */,
 				315EBE291FCF808C00AC7A89 /* PMurHash.h in Headers */,
 				5C55D7272282747700B5BA2C /* PoolAlloc.h in Headers */,
@@ -3999,7 +4001,6 @@
 				5C55D67A22826B9F00B5BA2C /* RemoveSwitchFallThrough.h in Headers */,
 				5C55D6A722826B9F00B5BA2C /* RemoveUnreferencedVariables.h in Headers */,
 				5C1DBE081B0438D300235552 /* Renderbuffer.h in Headers */,
-				31DB795D2491C86800982878 /* gl2ext.h in Headers */,
 				5CB301341DE39F1A00D2C405 /* RenderbufferGL.h in Headers */,
 				5CB304F61DE4164800D2C405 /* RenderbufferImpl.h in Headers */,
 				5CB304F51DE4164800D2C405 /* RenderbufferImpl_mock.h in Headers */,
@@ -4049,6 +4050,8 @@
 				5C1DBF2A1B0438D300235552 /* Shader.h in Headers */,
 				5CB3013C1DE39F1A00D2C405 /* ShaderGL.h in Headers */,
 				5CB304FA1DE4164800D2C405 /* ShaderImpl.h in Headers */,
+				31DB79642491C87600982878 /* ShaderLang.h in Headers */,
+				31DB79652491C87600982878 /* ShaderVars.h in Headers */,
 				5C55D66122826B9F00B5BA2C /* SimplifyLoopConditions.h in Headers */,
 				315EBDF01FCE452D00AC7A89 /* SizedMRUCache.h in Headers */,
 				A264F8C016974DED006FAA5A /* SourceLocation.h in Headers */,
@@ -4066,7 +4069,6 @@
 				31012E6518B97B9B0039062F /* SymbolTable.h in Headers */,
 				5C55D70D2282741400B5BA2C /* SymbolTable_autogen.h in Headers */,
 				315EBD851FCE443600AC7A89 /* SymbolUniqueId.h in Headers */,
-				31DB79632491C87000982878 /* gl3platform.h in Headers */,
 				315EBDB91FCE44BF00AC7A89 /* SyncGL.h in Headers */,
 				315EBDCB1FCE44E400AC7A89 /* SyncImpl.h in Headers */,
 				31A331C71EA5ED5F00FD2203 /* system_utils.h in Headers */,
@@ -4123,7 +4125,6 @@
 				A303077F2305F89F002DA972 /* validationGL12_autogen.h in Headers */,
 				A30307792305F89F002DA972 /* validationGL13_autogen.h in Headers */,
 				A30307632305F89F002DA972 /* validationGL14_autogen.h in Headers */,
-				31DB795C2491C86800982878 /* gl2.h in Headers */,
 				A30307752305F89F002DA972 /* validationGL15_autogen.h in Headers */,
 				A30307832305F89F002DA972 /* validationGL1_autogen.h in Headers */,
 				A30307712305F89F002DA972 /* validationGL21_autogen.h in Headers */,
@@ -4134,7 +4135,6 @@
 				A303076F2305F89F002DA972 /* validationGL3_autogen.h in Headers */,
 				A30307692305F89F002DA972 /* validationGL41_autogen.h in Headers */,
 				A303075C2305F89F002DA972 /* validationGL42_autogen.h in Headers */,
-				31DB79682491C8D900982878 /* entry_points_egl.h in Headers */,
 				A303076B2305F89F002DA972 /* validationGL43_autogen.h in Headers */,
 				A303076C2305F89F002DA972 /* validationGL44_autogen.h in Headers */,
 				A30307772305F89F002DA972 /* validationGL45_autogen.h in Headers */,
@@ -4191,7 +4191,6 @@
 				FB39D77B1201110C00088E69 /* Headers */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
-				6E28B8742294DD8000717E69 /* Adjust ANGLE Paths */,
 			);
 			buildRules = (
 				53E934DB230609D800DE060C /* PBXBuildRule */,
@@ -4243,24 +4242,6 @@
 
 /* Begin PBXShellScriptBuildPhase section */
 		31CD00D2249197FD00486F27 /* Adjust ANGLE Paths */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Adjust ANGLE Paths";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.sh\"\n";
-		};
-		6E28B8742294DD8000717E69 /* Adjust ANGLE Paths */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
