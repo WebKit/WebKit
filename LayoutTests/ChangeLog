@@ -1,3 +1,17 @@
+2020-07-07  Lauro Moura  <lmoura@igalia.com>
+
+        Add missing resource file for some imported/blink/compositing/squashing tests
+        https://bugs.webkit.org/show_bug.cgi?id=154076
+
+        Unreviewed test gardening.
+
+        Based on original patch by Danilo Cesar Lemes de Paula <danilo.cesar@collabora.co.uk>.
+
+        All but one test ran as expected for GTK/WPE.
+
+        * TestExpectations:
+        * imported/blink/compositing/squashing/resources/blue.png: Added.
+
 2020-07-07  Chris Dumez  <cdumez@apple.com>
 
         Mark 3 WPT tests imported in r264035 as failing in iOS Simulator.
