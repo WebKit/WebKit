@@ -196,7 +196,6 @@ fast/history/page-cache-notification-suspendable.html
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/98936 fast/forms/date [ Skip ]
-webkit.org/b/98936 fast/forms/datetime [ Skip ]
 webkit.org/b/98936 fast/forms/datetimelocal [ Skip ]
 webkit.org/b/98936 fast/forms/month [ Skip ]
 webkit.org/b/98936 fast/forms/time [ Skip ]

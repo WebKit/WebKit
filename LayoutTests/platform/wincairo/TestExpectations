@@ -72,7 +72,6 @@ fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
 # ENABLE_INPUT_TYPE_* are disabled.
 # See: webkit.org/b/29359
 fast/forms/date [ Skip ]
-fast/forms/datetime [ Skip ]
 fast/forms/datetimelocal [ Skip ]
 fast/forms/month [ Skip ]
 fast/forms/time [ Skip ]

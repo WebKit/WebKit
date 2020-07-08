@@ -1,3 +1,20 @@
+2020-07-08  Sam Weinig  <weinig@apple.com>
+
+        Remove LayoutTests/fast/forms/datetime now that <input type="datetime"> code has been removed
+        https://bugs.webkit.org/show_bug.cgi?id=214064
+
+        Reviewed by Dan Bernstein.
+
+        * fast/forms/datetime: Removed.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Stop skipping the removed tests.
+
 2020-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         autocapitalize="words" capitalizes every word's second character

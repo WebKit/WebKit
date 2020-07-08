@@ -338,7 +338,6 @@ fast/forms/color/ [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/29359 fast/forms/date [ Skip ]
-webkit.org/b/29359 fast/forms/datetime [ Skip ]
 webkit.org/b/29359 fast/forms/datetimelocal [ Skip ]
 webkit.org/b/29359 fast/forms/month [ Skip ]
 webkit.org/b/29359 fast/forms/time [ Skip ]
