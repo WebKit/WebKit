@@ -49,10 +49,8 @@ def main(argv):
     if not options.configuration:
         options.configuration = "Release"
 
-    if set(args).issubset(["-h", "--help"]) and not options.platform:
-        option_parser.print_help()
-        print("\nTo see the available options on a specific platform, supply it on the command-line, for example --gtk --help")
-        return 0
+    if not options.platform:
+        options.platform = "mac"
 
     try:
         port = factory.PortFactory(Host()).get(options.platform, options=options)
