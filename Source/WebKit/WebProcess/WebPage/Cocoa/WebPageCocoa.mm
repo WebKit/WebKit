@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "InsertTextOptions.h"
+#import "LaunchServicesDatabaseManager.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "WKAccessibilityWebPageObjectBase.h"
@@ -56,12 +57,22 @@
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
+
 #if PLATFORM(COCOA)
 
 namespace WebKit {
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+    LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
+#if ASSERT_ENABLED
+    auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
+    ASSERT(!String(uti.get()).isEmpty());
+#endif
+
     m_dataDetectionContext = parameters.dataDetectionContext;
 
     if (parameters.neHelperExtensionHandle)

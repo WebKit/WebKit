@@ -25,16 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+#include <wtf/spi/darwin/XPCSPI.h>
+
 #if USE(APPLE_INTERNAL_SDK)
-
-#if PLATFORM(MAC)
 #import <CoreServices/CoreServicesPriv.h>
-#elif PLATFORM(IOS_FAMILY)
-#import <MobileCoreServices/LSAppLinkPriv.h>
-#elif PLATFORM(IOS)
-#import <MobileCoreServices/MobileCoreServicesPriv.h>
-#endif
-
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(APP_LINKS)
@@ -85,11 +79,14 @@ enum LSSessionID {
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 
-@interface _LSDService : NSObject <NSXPCListenerDelegate>
-+ (NSXPCConnection *)XPCConnectionToService;
+@interface LSDatabaseContext : NSObject
+@property (class, readonly) LSDatabaseContext *sharedDatabaseContext;
 @end
 
-@interface _LSDReadService : _LSDService
+@interface LSDatabaseContext (WebKitChangeTracking)
+- (id <NSObject>)addDatabaseChangeObserver4WebKit:(void (^)(xpc_object_t change))observer;
+- (void)removeDatabaseChangeObserver4WebKit:(id <NSObject>)token;
+- (void)observeDatabaseChange4WebKit:(xpc_object_t)change;
 @end
 
 #if PLATFORM(MAC)
