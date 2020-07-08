@@ -1,3 +1,17 @@
+2020-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Allow WebCoreNSURLSession sendH2Ping:pongHandler: to be called from any thread like the rest of WebCoreNSURLSession methods
+        https://bugs.webkit.org/show_bug.cgi?id=214065
+
+        Reviewed by Jer Noble.
+
+        Otherwise horrible crashes happen.
+        The WebCore function calls and loading IPC calls need to happen on the main thread,
+        and the callback should happen on the NSOperationQueue given when constructing the WebCoreNSURLSession.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession sendH2Ping:pongHandler:]):
+
 2020-07-07  Sam Weinig  <weinig@apple.com>
 
         Part 2 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them

@@ -468,14 +468,22 @@ NS_ASSUME_NONNULL_END
 
 - (void)sendH2Ping:(NSURL *)url pongHandler:(void (^)(NSError *error, NSTimeInterval interval))pongHandler
 {
-    if (_invalidated)
-        return pongHandler(adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil]).get(), 0);
+    callOnMainThread([self, strongSelf = retainPtr(self), url = retainPtr(url), pongHandler = makeBlockPtr(pongHandler)] () mutable {
 
-    self.loader.sendH2Ping(url, [pongHandler = makeBlockPtr(pongHandler)] (Expected<Seconds, ResourceError>&& result) {
-        if (result)
-            pongHandler(nil, result.value().value());
-        else
-            pongHandler(result.error(), 0);
+        if (_invalidated)
+            return pongHandler(adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil]).get(), 0);
+
+        self.loader.sendH2Ping(url.get(), [self, strongSelf = WTFMove(strongSelf), pongHandler = WTFMove(pongHandler)] (Expected<Seconds, ResourceError>&& result) mutable {
+            NSTimeInterval interval = 0;
+            RetainPtr<NSError> error;
+            if (result)
+                interval = result.value().value();
+            else
+                error = result.error();
+            [self addDelegateOperation:[pongHandler = WTFMove(pongHandler), error = WTFMove(error), interval] {
+                pongHandler(error.get(), interval);
+            }];
+        });
     });
 }
 
