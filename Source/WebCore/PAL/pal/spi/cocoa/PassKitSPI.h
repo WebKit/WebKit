@@ -301,11 +301,6 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
     PKPaymentSetupFeatureTypeApplePay_X API_DEPRECATED_WITH_REPLACEMENT("PKPaymentSetupFeatureTypeAppleCard", ios(12.3, 12.3), macos(10.14.5, 10.14.5)) = PKPaymentSetupFeatureTypeAppleCard,
 };
 
-typedef NS_OPTIONS(NSInteger, PKPaymentSetupFeatureSupportedOptions) {
-    PKPaymentSetupFeatureSupportedOptionsNone = 0,
-    PKPaymentSetupFeatureSupportedOptionsInstallments = 1 << 0,
-};
-
 @interface PKPaymentSetupConfiguration : NSObject <NSSecureCoding>
 @property (nonatomic, copy) NSString *referrerIdentifier;
 @end
@@ -325,7 +320,6 @@ typedef NS_OPTIONS(NSInteger, PKPaymentSetupFeatureSupportedOptions) {
 @interface PKPaymentSetupFeature : NSObject <NSSecureCoding, NSCopying>
 @property (nonatomic, assign, readonly) PKPaymentSetupFeatureType type;
 @property (nonatomic, assign, readonly) PKPaymentSetupFeatureState state;
-@property (nonatomic, assign, readonly) PKPaymentSetupFeatureSupportedOptions supportedOptions;
 @end
 
 @interface PKPaymentSetupRequest : NSObject <NSSecureCoding>

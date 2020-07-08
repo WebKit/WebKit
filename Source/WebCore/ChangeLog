@@ -1,3 +1,36 @@
+2020-07-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r264058. rdar://problem/65195012
+
+    [Apple Pay] Fix the build on Catalina internal SDKs
+    https://bugs.webkit.org/show_bug.cgi?id=214066
+    
+    Unreviewed build fix for the 10.15.0 Internal SDK.
+    
+    
+    Source/WebCore:
+    
+    * Modules/applepay/ApplePaySetupFeature.mm:
+    (WebCore::ApplePaySetupFeature::supportsInstallments const):
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/PassKitInstallmentsSPI.h:
+    * pal/spi/cocoa/PassKitSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@264058 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-07-07  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Fix the build on Catalina internal SDKs
+            https://bugs.webkit.org/show_bug.cgi?id=214066
+
+            Unreviewed build fix for the 10.15.0 Internal SDK.
+
+            * Modules/applepay/ApplePaySetupFeature.mm:
+            (WebCore::ApplePaySetupFeature::supportsInstallments const):
+
 2020-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Change the cookies accept policy when ITP is enabled
