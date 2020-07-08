@@ -1805,8 +1805,8 @@ void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const Box
     ASSERT(style == BorderStyle::Inset || style == BorderStyle::Outset);
 
     // This values were derived empirically.
-    constexpr float baseDarkColorLuminance { 0.014443844f }; // Luminance of SimpleColor { 0xFF202020 }
-    constexpr float baseLightColorLuminance { 0.83077f }; // Luminance of SimpleColor { 0xFFEBEBEB }
+    constexpr float baseDarkColorLuminance { 0.014443844f }; // Luminance of SRGBA<uint8_t> { 32, 32, 32 }
+    constexpr float baseLightColorLuminance { 0.83077f }; // Luminance of SRGBA<uint8_t> { 235, 235, 235 }
 
     enum Operation { Darken, Lighten };
 

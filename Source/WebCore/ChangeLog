@@ -1,3 +1,135 @@
+2020-07-07  Sam Weinig  <weinig@apple.com>
+
+        Part 2 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=213981
+
+        Reviewed by Darin Adler.
+
+        - Replaces internal representation of SimpleColor based on an ARGB uint32_t with SRGBA<uint8_t>.
+        - Removes SimpleColor constructor taking a uint32_t. Callers that still need to convert from ARGB
+          now do makeSimpleColor(asSRGBA(Packed::ARGB { value })).
+        - Removes value() and valueAsARGB() member functions from SimpleColor. Callers that need a packed
+          representation now do Packed::ARGB { simpleColor.asSRGBA<uint8_t>() }.value.
+
+        * css/StyleColor.cpp:
+        (WebCore::StyleColor::colorFromKeyword):
+        Use asSRGBA(Packed::ARGB{...}) to constuct the color.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::finishParsingNamedColor):
+        Use asSRGBA(Packed::ARGB{...}) (or in one case, Packed::RGBA) to constuct the color.
+        These can almost certainly be simplified, but in the interest of keeping things smallish,
+        I have left that for a subsequent change.
+
+        * editing/CompositionHighlight.h:
+        Switch to using auto/makeSimpleColor.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        Switch to using makeSimpleColor.
+
+        (WebCore::HistoricMemoryCategoryInfo::HistoricMemoryCategoryInfo):
+        (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+        Switch to using auto/makeSimpleColor.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        Switch to using auto/makeSimpleColor.
+
+        * platform/graphics/Color.cpp:
+        * platform/graphics/Color.h:
+        - Switch to using auto/makeSimpleColor for named colors.
+        - Switch to storing/encoding the inline SimpleColor as a Packed::RGBA value.
+
+        * platform/graphics/ColorBlending.cpp:
+        (WebCore::blend):
+        Update for new name of clampToComponentBytes.
+
+        * platform/graphics/ColorTypes.h:
+        (WebCore::Packed::RGBA::RGBA):
+        (WebCore::Packed::ARGB::ARGB):
+        (WebCore::asSRGBA):
+        Rename WebCore::ARGB to WebCore::Packed::ARGB. Adds companion, WebCore::Packed::RGBA. And adds constructors
+        which make a packed type from an SRGBA<uint8_t>.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::clampToComponentByte):
+        (WebCore::clampToComponentFloat):
+        Extract out helper functions which just do the clamping for the type. 
+
+        (WebCore::clampToComponentBytes):
+        (WebCore::clampToComponentFloats):
+        Rename conversion functions that just clamp to use "clamp" prefix rather than "convert". Make use
+        of extracted helpers.
+
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::blendPixel):
+        (WebCore::ImageBackingStore::pixelValue const):
+        Update using new packed color types and funtions. 
+
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::SimpleColor):
+        (WebCore::SimpleColor::alphaComponent const):
+        (WebCore::SimpleColor::alphaComponentAsFloat const):
+        (WebCore::SimpleColor::isOpaque const):
+        (WebCore::SimpleColor::isVisible const):
+        (WebCore::SimpleColor::colorWithAlpha const):
+        (WebCore::SimpleColor::invertedColorWithAlpha const):
+        (WebCore::SimpleColor::asSRGBA const):
+        (WebCore::SimpleColor::get const):
+        (WebCore::makeSimpleColor):
+        (WebCore::SimpleColor::valueAsARGB const): Deleted.
+        (WebCore::SimpleColor::value const): Deleted.
+        (WebCore::SimpleColor::redComponent const): Deleted.
+        (WebCore::SimpleColor::greenComponent const): Deleted.
+        (WebCore::SimpleColor::blueComponent const): Deleted.
+        - Removes constructor taking an ARGB uint32_t.
+        - Removes valueAsARGB()/value() functions (can use Packed::ARGB directly if needed).
+        - Switches internal representation to SRGBA<uint8_t>.
+        - Streamline makeSimpleColor functions to use shared helpers from ColorUtilities.h
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::cachedCGColor):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::nsColor):
+        Use Packed::RGBA to extract uint32_t for quick lookup of transparent/white/black SimpleColors. Despite the
+        length of the calls, SimpleColor is fully constexpr, so these actually collapse down to the uint32_t representation
+        at compile time.
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        Switch to using auto/makeSimpleColor.
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices):
+        Switch to using makeSimpleColor.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawBoxes):
+        Switch to using auto/makeSimpleColor.
+
+        * platform/mock/ScrollbarThemeMock.cpp:
+        (WebCore::ScrollbarThemeMock::paintTrackBackground):
+        Switch to using makeSimpleColor.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::calculateBorderStyleColor):
+        Update comment to use per-component values.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor const):
+        Switch to using makeSimpleColor.
+
+        * rendering/RenderThemeAdwaita.cpp:
+        Switch to using auto/makeSimpleColor.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintProgressBar):
+        Switch to using auto/makeSimpleColor.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+        Switch to using auto/makeSimpleColor.
+
 2020-07-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Web content process hangs in AccessibilityRenderObject::setSelectedVisiblePositionRange in some corner cases.

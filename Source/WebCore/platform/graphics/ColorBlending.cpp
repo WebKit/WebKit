@@ -100,7 +100,7 @@ Color blend(const Color& from, const Color& to, double progress)
     auto premultipliedFrom = premultipliedCeiling(from.toSRGBALossy<uint8_t>());
     auto premultipliedTo = premultipliedCeiling(to.toSRGBALossy<uint8_t>());
 
-    auto premultipliedBlended = convertToComponentBytes<SRGBA>(
+    auto premultipliedBlended = clampToComponentBytes<SRGBA>(
         WebCore::blend(premultipliedFrom.red, premultipliedTo.red, progress),
         WebCore::blend(premultipliedFrom.green, premultipliedTo.green, progress),
         WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, progress),

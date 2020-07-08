@@ -32,38 +32,33 @@
 
 namespace WebCore {
 
-// Color value with 8-bit components for red, green, blue, and alpha.
-// For historical reasons, stored as a 32-bit integer, with alpha in the high bits: ARGB.
 class SimpleColor {
 public:
-    constexpr SimpleColor(uint32_t value = 0) : m_value { value } { }
-    constexpr SimpleColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_value { static_cast<unsigned>(a << 24 | r << 16 | g << 8 | b) } { }
+    constexpr SimpleColor() : m_value { } { }
+    constexpr SimpleColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_value { r, g, b, a } { }
 
-    constexpr uint32_t valueAsARGB() const { return m_value; }
-    constexpr uint32_t value() const { return m_value; }
+    constexpr uint8_t alphaComponent() const { return m_value.alpha; }
+    constexpr float alphaComponentAsFloat() const { return convertToComponentFloat(m_value.alpha); }
 
-    constexpr uint8_t alphaComponent() const { return m_value >> 24; }
-    constexpr float alphaComponentAsFloat() const { return convertToComponentFloat(alphaComponent()); }
-
-    constexpr bool isOpaque() const { return alphaComponent() == 0xFF; }
-    constexpr bool isVisible() const { return alphaComponent(); }
+    constexpr bool isOpaque() const { return m_value.alpha == 0xFF; }
+    constexpr bool isVisible() const { return m_value.alpha; }
 
     constexpr SimpleColor colorWithAlpha(uint8_t alpha) const
     {
-        return { (m_value & 0x00FFFFFF) | alpha << 24 };
+        return { m_value.red, m_value.green, m_value.blue, alpha };
     }
 
     constexpr SimpleColor invertedColorWithAlpha(uint8_t alpha) const
     {
-        return { static_cast<uint8_t>(0xFF - redComponent()), static_cast<uint8_t>(0xFF - greenComponent()), static_cast<uint8_t>(0xFF - blueComponent()), alpha };
+        return { static_cast<uint8_t>(0xFF - m_value.red), static_cast<uint8_t>(0xFF - m_value.green), static_cast<uint8_t>(0xFF - m_value.blue), alpha };
     }
 
     template<typename T> constexpr SRGBA<T> asSRGBA() const
     {
         if constexpr (std::is_same_v<T, float>)
-            return { convertToComponentFloat(redComponent()), convertToComponentFloat(greenComponent()), convertToComponentFloat(blueComponent()),  convertToComponentFloat(alphaComponent()) };
+            return convertToComponentFloats(m_value);
         else if constexpr (std::is_same_v<T, uint8_t>)
-            return { redComponent(), greenComponent(), blueComponent(), alphaComponent() };
+            return m_value;
     }
 
     template<std::size_t N>
@@ -71,21 +66,17 @@ public:
     {
         static_assert(N < 4);
         if constexpr (!N)
-            return redComponent();
+            return m_value.red;
         else if constexpr (N == 1)
-            return greenComponent();
+            return m_value.green;
         else if constexpr (N == 2)
-            return blueComponent();
+            return m_value.blue;
         else if constexpr (N == 3)
-            return alphaComponent();
+            return m_value.alpha;
     }
 
 private:
-    constexpr uint8_t redComponent() const { return m_value >> 16; }
-    constexpr uint8_t greenComponent() const { return m_value >> 8; }
-    constexpr uint8_t blueComponent() const { return m_value; }
-
-    uint32_t m_value { 0 };
+    SRGBA<uint8_t> m_value { 0, 0, 0, 0 };
 };
 
 bool operator==(SimpleColor, SimpleColor);
@@ -98,22 +89,12 @@ SimpleColor makeSimpleColor(const SRGBA<float>&);
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
-    return a.value() == b.value();
+    return a.asSRGBA<uint8_t>() == b.asSRGBA<uint8_t>();
 }
 
 inline bool operator!=(SimpleColor a, SimpleColor b)
 {
     return !(a == b);
-}
-
-constexpr SimpleColor makeSimpleColor(int r, int g, int b)
-{
-    return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), 0xFF };
-}
-
-constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
-{
-    return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), static_cast<uint8_t>(std::clamp(a, 0, 0xFF)) };
 }
 
 constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>& sRGBA)
@@ -124,6 +105,16 @@ constexpr SimpleColor makeSimpleColor(const SRGBA<uint8_t>& sRGBA)
 inline SimpleColor makeSimpleColor(const SRGBA<float>& sRGBA)
 {
     return makeSimpleColor(convertToComponentBytes(sRGBA));
+}
+
+constexpr SimpleColor makeSimpleColor(int r, int g, int b)
+{
+    return makeSimpleColor(clampToComponentBytes<SRGBA>(r, g, b, 0xFF));
+}
+
+constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
+{
+    return makeSimpleColor(clampToComponentBytes<SRGBA>(r, g, b, a));
 }
 
 } // namespace WebCore

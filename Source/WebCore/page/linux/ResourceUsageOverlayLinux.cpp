@@ -89,7 +89,7 @@ private:
     {
         GraphicsContextStateSaver stateSaver(context);
         context.fillRect(clip, makeSimpleColor(0, 0, 0, 204));
-        context.setFillColor(makeSimpleColor(230, 230, 230, 255));
+        context.setFillColor(makeSimpleColor(230, 230, 230));
 
         FloatPoint position = { 10, 20 };
         String string =  "CPU: " + cpuUsageString(gData.cpu);

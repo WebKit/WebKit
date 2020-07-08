@@ -74,11 +74,11 @@ static const int borderRadius = 12;
 static const int borderThickness = 2;
 
 // Colors
-static const unsigned int backgroundColor = 0xA0202020;
-static const unsigned int borderColor = 0xFFA0A0A0;
-static const unsigned int sliderGutterColor = 0xFF141414;
-static const unsigned int sliderButtonColor = 0xFF808080;
-static const unsigned int textColor = 0xFFFFFFFF;
+static constexpr auto backgroundColor = makeSimpleColor(32, 32, 32, 160);
+static constexpr auto borderColor = makeSimpleColor(160, 160, 160);
+static constexpr auto sliderGutterColor = makeSimpleColor(20, 20, 20);
+static constexpr auto sliderButtonColor = makeSimpleColor(128, 128, 128);
+static constexpr auto textColor = makeSimpleColor(255, 255, 255);
 
 HUDButton::HUDButton(HUDButtonType type, const IntPoint& position)
     : HUDWidget(IntRect(position, IntSize()))

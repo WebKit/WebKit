@@ -917,10 +917,10 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
 
     const float verticalRenderingPosition = rect.y() + verticalOffset;
     auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-    strokeGradient->addColorStop(0.0, makeSimpleColor(0x8d, 0x8d, 0x8d));
-    strokeGradient->addColorStop(0.45, makeSimpleColor(0xee, 0xee, 0xee));
-    strokeGradient->addColorStop(0.55, makeSimpleColor(0xee, 0xee, 0xee));
-    strokeGradient->addColorStop(1.0, makeSimpleColor(0x8d, 0x8d, 0x8d));
+    strokeGradient->addColorStop(0.0, makeSimpleColor(141, 141, 141));
+    strokeGradient->addColorStop(0.45, makeSimpleColor(238, 238, 238));
+    strokeGradient->addColorStop(0.55, makeSimpleColor(238, 238, 238));
+    strokeGradient->addColorStop(1.0, makeSimpleColor(141, 141, 141));
     context.setStrokeGradient(WTFMove(strokeGradient));
 
     context.setFillColor(Color::black);
@@ -1383,10 +1383,10 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 const CGSize attachmentSize = { 160, 119 };
 
 const CGFloat attachmentBorderRadius = 16;
-constexpr SimpleColor attachmentBorderColor = makeSimpleColor(204, 204, 204);
+constexpr auto attachmentBorderColor = makeSimpleColor(204, 204, 204);
 static CGFloat attachmentBorderThickness = 1;
 
-constexpr SimpleColor attachmentProgressColor = makeSimpleColor(222, 222, 222);
+constexpr auto attachmentProgressColor = makeSimpleColor(222, 222, 222);
 const CGFloat attachmentProgressBorderThickness = 3;
 
 const CGFloat attachmentProgressSize = 36;

@@ -129,23 +129,21 @@ static CGColorRef leakCGColor(const Color& color)
 CGColorRef cachedCGColor(const Color& color)
 {
     if (color.isSimple()) {
-        switch (color.asSimple().value()) {
-        case Color::transparent.value(): {
+        switch (Packed::RGBA { color.asSimple().asSRGBA<uint8_t>() }.value) {
+        case Packed::RGBA { Color::transparent.asSRGBA<uint8_t>() }.value: {
             static CGColorRef transparentCGColor = leakCGColor(color);
             return transparentCGColor;
         }
-        case Color::black.value(): {
+        case Packed::RGBA { Color::black.asSRGBA<uint8_t>() }.value: {
             static CGColorRef blackCGColor = leakCGColor(color);
             return blackCGColor;
         }
-        case Color::white.value(): {
+        case Packed::RGBA { Color::white.asSRGBA<uint8_t>() }.value: {
             static CGColorRef whiteCGColor = leakCGColor(color);
             return whiteCGColor;
         }
         }
     }
-
-    ASSERT(color.isExtended() || color.asSimple().value());
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
     return cache.get().get(color).get();

@@ -46,7 +46,7 @@ int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize, Scr
 
 void ScrollbarThemeMock::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& trackRect)
 {
-    context.fillRect(trackRect, scrollbar.enabled() ? Color::lightGray : SimpleColor { 0xFFE0E0E0 });
+    context.fillRect(trackRect, scrollbar.enabled() ? Color::lightGray : makeSimpleColor(224, 224, 224));
 }
 
 void ScrollbarThemeMock::paintThumb(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& thumbRect)

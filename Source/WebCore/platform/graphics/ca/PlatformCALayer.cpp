@@ -84,9 +84,9 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     const float verticalMargin = 2.5;
     const float horizontalMargin = 5;
     const unsigned fontSize = 22;
-    constexpr auto backgroundColor = makeSimpleColor(128, 64, 255, 255);
-    constexpr auto acceleratedContextLabelColor = makeSimpleColor(255, 0, 0, 255);
-    constexpr auto unacceleratedContextLabelColor = makeSimpleColor(255, 255, 255, 255);
+    constexpr auto backgroundColor = makeSimpleColor(128, 64, 255);
+    constexpr auto acceleratedContextLabelColor = makeSimpleColor(255, 0, 0);
+    constexpr auto unacceleratedContextLabelColor = makeSimpleColor(255, 255, 255);
     constexpr auto linearGlyphMaskOutlineColor = makeSimpleColor(0, 0, 0, 192);
     constexpr auto displayListBorderColor = makeSimpleColor(0, 0, 0, 166);
 

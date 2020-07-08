@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-static constexpr SimpleColor lightenedBlack { 0xFF545454 };
-static constexpr SimpleColor darkenedWhite { 0xFFABABAB };
+static constexpr auto lightenedBlack = makeSimpleColor(84, 84, 84);
+static constexpr auto darkenedWhite = makeSimpleColor(171, 171, 171);
 
 Color::Color(const Color& other)
     : m_colorData(other.m_colorData)

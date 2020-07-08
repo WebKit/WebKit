@@ -54,6 +54,16 @@ inline uint8_t convertToComponentByte(float f)
     return std::clamp(std::lround(f * 255.0f), 0l, 255l);
 }
 
+constexpr uint8_t clampToComponentByte(int c)
+{
+    return static_cast<uint8_t>(std::clamp(c, 0, 0xFF));
+}
+
+constexpr uint8_t clampToComponentFloat(float f)
+{
+    return std::clamp(f, 0.0f, 1.0f);
+}
+
 constexpr float convertToComponentFloat(uint8_t byte)
 {
     return byte / 255.0f;
@@ -65,20 +75,20 @@ template<template<typename> typename ColorType> inline ColorType<uint8_t> conver
     return { convertToComponentByte(components[0]), convertToComponentByte(components[1]), convertToComponentByte(components[2]), convertToComponentByte(components[3]) };
 }
 
-template<template<typename> typename ColorType> constexpr ColorType<uint8_t> convertToComponentBytes(int r, int g, int b, int a)
-{
-    return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), static_cast<uint8_t>(std::clamp(a, 0, 0xFF)) };
-}
-
 template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(const ColorType<uint8_t>& color)
 {
     auto components = asColorComponents(color);
     return { convertToComponentFloat(components[0]), convertToComponentFloat(components[1]), convertToComponentFloat(components[2]), convertToComponentFloat(components[3]) };
 }
 
-template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(float r, float g, float b, float a)
+template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b, int a)
 {
-    return { std::clamp(r, 0.0f, 1.0f), std::clamp(g, 0.0f, 1.0f), std::clamp(b, 0.0f, 1.0f), std::clamp(a, 0.0f, 1.0f) };
+    return { clampToComponentByte(r), clampToComponentByte(g), clampToComponentByte(b), clampToComponentByte(a) };
+}
+
+template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b, float a)
+{
+    return { clampToComponentFloat(r), clampToComponentFloat(g), clampToComponentFloat(b), clampToComponentFloat(a) };
 }
 
 constexpr uint16_t fastMultiplyBy255(uint16_t value)

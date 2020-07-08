@@ -195,7 +195,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     context.fillRoundedRect(FloatRoundedRect(rect, radii, radii, radii, radii), backgroundColor);
  
     // Draw the text
-    constexpr auto topColor = makeSimpleColor(0, 0, 0, 255); // original alpha = 0.75
+    constexpr auto topColor = makeSimpleColor(0, 0, 0); // original alpha = 0.75
     constexpr auto bottomColor = makeSimpleColor(255, 255, 255, 127); // original alpha = 0.5
     if (drawURLString) {
         if (clipURLString)

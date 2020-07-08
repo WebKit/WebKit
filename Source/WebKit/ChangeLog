@@ -1,3 +1,16 @@
+2020-07-07  Sam Weinig  <weinig@apple.com>
+
+        Part 2 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=213981
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::paintSnapshotAtSize):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        Make calls to makeSimpleColor more consistent. Use decimal rather than hex, don't pass unncessary
+        255 as the 4th argument.
+
 2020-07-07  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply instead of EditingRangeCallback

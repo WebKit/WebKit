@@ -49,7 +49,7 @@ static bool useOldAquaFocusRingColor;
 
 Color oldAquaFocusRingColor()
 {
-    return SimpleColor { 0xFF7DADD9 };
+    return makeSimpleColor(125, 173, 217);
 }
 
 void setUsesTestModeFocusRingColor(bool newValue)
@@ -123,16 +123,16 @@ Color semanticColorFromNSColor(NSColor *color)
 NSColor *nsColor(const Color& color)
 {
     if (color.isSimple()) {
-        switch (color.asSimple().value()) {
-        case Color::transparent.value(): {
+        switch (Packed::RGBA { color.asSimple().asSRGBA<uint8_t>() }.value) {
+        case Packed::RGBA { Color::transparent.asSRGBA<uint8_t>() }.value: {
             static NSColor *clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
             return clearColor;
         }
-        case Color::black.value(): {
+        case Packed::RGBA { Color::black.asSRGBA<uint8_t>() }.value: {
             static NSColor *blackColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1] retain];
             return blackColor;
         }
-        case Color::white.value(): {
+        case Packed::RGBA { Color::white.asSRGBA<uint8_t>() }.value: {
             static NSColor *whiteColor = [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] retain];
             return whiteColor;
         }

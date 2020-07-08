@@ -163,14 +163,14 @@ public:
     WEBCORE_EXPORT operator D2D1_VECTOR_4F() const;
 #endif
 
-    static constexpr SimpleColor black { 0xFF000000 };
-    static constexpr SimpleColor white { 0xFFFFFFFF };
-    static constexpr SimpleColor darkGray { 0xFF808080 };
-    static constexpr SimpleColor gray { 0xFFA0A0A0 };
-    static constexpr SimpleColor lightGray { 0xFFC0C0C0 };
-    static constexpr SimpleColor transparent { 0x00000000 };
-    static constexpr SimpleColor cyan { 0xFF00FFFF };
-    static constexpr SimpleColor yellow { 0xFFFFFF00 };
+    static constexpr auto black = makeSimpleColor(0, 0, 0);
+    static constexpr auto white = makeSimpleColor(255, 255, 255);
+    static constexpr auto darkGray = makeSimpleColor(128, 128, 128);
+    static constexpr auto gray = makeSimpleColor(160, 160, 160);
+    static constexpr auto lightGray = makeSimpleColor(192, 192, 192);
+    static constexpr auto transparent = makeSimpleColor(0, 0, 0, 0);
+    static constexpr auto cyan = makeSimpleColor(0, 255, 255);
+    static constexpr auto yellow = makeSimpleColor(255, 255, 0);
 
     bool isExtended() const { return !(m_colorData.simpleColorAndFlags & invalidSimpleColor); }
     bool isSimple() const { return !isExtended(); }
@@ -301,12 +301,12 @@ inline const ExtendedColor& Color::asExtended() const
 inline const SimpleColor Color::asSimple() const
 {
     ASSERT(isSimple());
-    return { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) };
+    return makeSimpleColor(asSRGBA(Packed::RGBA { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) }));
 }
 
 inline void Color::setSimpleColor(SimpleColor simpleColor)
 {
-    m_colorData.simpleColorAndFlags = static_cast<uint64_t>(simpleColor.value()) << 32;
+    m_colorData.simpleColorAndFlags = static_cast<uint64_t>(Packed::RGBA { simpleColor.asSRGBA<uint8_t>() }.value) << 32;
     tagAsValid();
 }
 
@@ -350,7 +350,7 @@ void Color::encode(Encoder& encoder) const
     // FIXME: This should encode whether the color is semantic.
 
     encoder << true;
-    encoder << asSimple().value();
+    encoder << Packed::RGBA { asSimple().asSRGBA<uint8_t>() }.value;
 }
 
 template<class Decoder>
@@ -390,7 +390,7 @@ Optional<Color> Color::decode(Decoder& decoder)
     if (!decoder.decode(value))
         return WTF::nullopt;
 
-    return Color { SimpleColor { value } };
+    return Color { makeSimpleColor(asSRGBA(Packed::RGBA { value })) };
 }
 
 } // namespace WebCore

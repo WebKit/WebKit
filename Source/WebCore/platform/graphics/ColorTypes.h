@@ -240,16 +240,44 @@ template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& 
 
 // Packed Color Formats
 
-struct ARGB {
+namespace Packed {
+
+struct RGBA {
+    constexpr explicit RGBA(uint32_t rgba)
+        : value { rgba }
+    {
+    }
+
+    constexpr explicit RGBA(SRGBA<uint8_t> color)
+        : value { static_cast<uint32_t>(color.red << 24 | color.green << 16 | color.blue << 8 | color.alpha) }
+    {
+    }
+
     uint32_t value;
 };
 
-constexpr ARGB asARGB(SRGBA<uint8_t> color)
-{
-    return { static_cast<unsigned>(color.alpha << 24 | color.red << 16 | color.green << 8 | color.blue) };
+struct ARGB {
+    constexpr explicit ARGB(uint32_t argb)
+        : value { argb }
+    {
+    }
+
+    constexpr explicit ARGB(SRGBA<uint8_t> color)
+        : value { static_cast<uint32_t>(color.alpha << 24 | color.red << 16 | color.green << 8 | color.blue) }
+    {
+    }
+
+    uint32_t value;
+};
+
 }
 
-constexpr SRGBA<uint8_t> asSRGBA(ARGB color)
+constexpr SRGBA<uint8_t> asSRGBA(Packed::RGBA color)
+{
+    return { static_cast<uint8_t>(color.value >> 24), static_cast<uint8_t>(color.value >> 16), static_cast<uint8_t>(color.value >> 8), static_cast<uint8_t>(color.value) };
+}
+
+constexpr SRGBA<uint8_t> asSRGBA(Packed::ARGB color)
 {
     return { static_cast<uint8_t>(color.value >> 16), static_cast<uint8_t>(color.value >> 8), static_cast<uint8_t>(color.value), static_cast<uint8_t>(color.value >> 24) };
 }

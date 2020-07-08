@@ -45,10 +45,10 @@
 namespace WebCore {
 
 static const int textFieldBorderSize = 1;
-static const Color textFieldBorderColor = makeSimpleColor(205, 199, 194);
-static const Color textFieldBorderDisabledColor = makeSimpleColor(213, 208, 204);
-static const Color textFieldBackgroundColor = makeSimpleColor(255, 255, 255);
-static const Color textFieldBackgroundDisabledColor = makeSimpleColor(252, 252, 252);
+static constexpr auto textFieldBorderColor = makeSimpleColor(205, 199, 194);
+static constexpr auto textFieldBorderDisabledColor = makeSimpleColor(213, 208, 204);
+static constexpr auto textFieldBackgroundColor = makeSimpleColor(255, 255, 255);
+static constexpr auto textFieldBackgroundDisabledColor = makeSimpleColor(252, 252, 252);
 static const unsigned menuListButtonArrowSize = 16;
 static const int menuListButtonFocusOffset = -3;
 static const unsigned menuListButtonPadding = 5;
@@ -57,23 +57,23 @@ static const unsigned progressActivityBlocks = 5;
 static const unsigned progressAnimationFrameCount = 75;
 static const Seconds progressAnimationFrameRate = 33_ms; // 30fps.
 static const unsigned progressBarSize = 6;
-static const Color progressBarBorderColor = makeSimpleColor(205, 199, 194);
-static const Color progressBarBackgroundColor = makeSimpleColor(225, 222, 219);
+static constexpr auto progressBarBorderColor = makeSimpleColor(205, 199, 194);
+static constexpr auto progressBarBackgroundColor = makeSimpleColor(225, 222, 219);
 static const unsigned sliderTrackSize = 6;
 static const int sliderTrackBorderSize = 1;
-static const Color sliderTrackBorderColor = makeSimpleColor(205, 199, 194);
-static const Color sliderTrackBackgroundColor = makeSimpleColor(225, 222, 219);
+static constexpr auto sliderTrackBorderColor = makeSimpleColor(205, 199, 194);
+static constexpr auto sliderTrackBackgroundColor = makeSimpleColor(225, 222, 219);
 static const int sliderTrackFocusOffset = 2;
 static const int sliderThumbSize = 20;
 static const int sliderThumbBorderSize = 1;
-static const Color sliderThumbBorderColor = makeSimpleColor(205, 199, 194);
-static const Color sliderThumbBackgroundColor = makeSimpleColor(244, 242, 241);
-static const Color sliderThumbBackgroundHoveredColor = makeSimpleColor(248, 248, 247);
-static const Color sliderThumbBackgroundDisabledColor = makeSimpleColor(244, 242, 241);
+static constexpr auto sliderThumbBorderColor = makeSimpleColor(205, 199, 194);
+static constexpr auto sliderThumbBackgroundColor = makeSimpleColor(244, 242, 241);
+static constexpr auto sliderThumbBackgroundHoveredColor = makeSimpleColor(248, 248, 247);
+static constexpr auto sliderThumbBackgroundDisabledColor = makeSimpleColor(244, 242, 241);
 #if ENABLE(VIDEO)
-static const Color mediaSliderTrackBackgroundcolor = makeSimpleColor(77, 77, 77);
-static const Color mediaSliderTrackBufferedColor = makeSimpleColor(173, 173, 173);
-static const Color mediaSliderTrackActiveColor = makeSimpleColor(252, 252, 252);
+static constexpr auto mediaSliderTrackBackgroundcolor = makeSimpleColor(77, 77, 77);
+static constexpr auto mediaSliderTrackBufferedColor = makeSimpleColor(173, 173, 173);
+static constexpr auto mediaSliderTrackActiveColor = makeSimpleColor(252, 252, 252);
 #endif
 
 #if !PLATFORM(GTK)

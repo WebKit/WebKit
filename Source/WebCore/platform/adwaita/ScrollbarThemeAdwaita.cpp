@@ -43,13 +43,13 @@ static const unsigned overlayThumbSize = 5;
 static const unsigned minimumThumbSize = 40;
 static const unsigned thumbSize = 6;
 static const double scrollbarOpacity = 0.8;
-static const Color scrollbarBackgroundColor = makeSimpleColor(252, 252, 252);
-static const Color scrollbarBorderColor = makeSimpleColor(220, 223, 227);
-static const Color overlayThumbBorderColor = makeSimpleColor(255, 255, 255, 100);
-static const Color overlayThumbColor = makeSimpleColor(46, 52, 54, 100);
-static const Color thumbHoveredColor = makeSimpleColor(86, 91, 92);
-static const Color thumbPressedColor = makeSimpleColor(27, 106, 203);
-static const Color thumbColor = makeSimpleColor(126, 129, 130);
+static constexpr auto scrollbarBackgroundColor = makeSimpleColor(252, 252, 252);
+static constexpr auto scrollbarBorderColor = makeSimpleColor(220, 223, 227);
+static constexpr auto overlayThumbBorderColor = makeSimpleColor(255, 255, 255, 100);
+static constexpr auto overlayThumbColor = makeSimpleColor(46, 52, 54, 100);
+static constexpr auto thumbHoveredColor = makeSimpleColor(86, 91, 92);
+static constexpr auto thumbPressedColor = makeSimpleColor(27, 106, 203);
+static constexpr auto thumbColor = makeSimpleColor(126, 129, 130);
 
 bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 {

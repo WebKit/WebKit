@@ -128,12 +128,12 @@ static CGColorRef createColor(float r, float g, float b, float a)
 struct HistoricMemoryCategoryInfo {
     HistoricMemoryCategoryInfo() { } // Needed for std::array.
 
-    HistoricMemoryCategoryInfo(unsigned category, uint32_t argb, String name, bool subcategory = false)
+    HistoricMemoryCategoryInfo(unsigned category, SimpleColor color, String name, bool subcategory = false)
         : name(WTFMove(name))
+        , color(cachedCGColor(color))
         , isSubcategory(subcategory)
         , type(category)
     {
-        color = cachedCGColor(SimpleColor { argb });
     }
 
     String name;
@@ -160,18 +160,18 @@ struct HistoricResourceUsageData {
 HistoricResourceUsageData::HistoricResourceUsageData()
 {
     // VM tag categories.
-    categories[MemoryCategory::JSJIT] = HistoricMemoryCategoryInfo(MemoryCategory::JSJIT, 0xFFFF60FF, "JS JIT");
-    categories[MemoryCategory::Gigacage] = HistoricMemoryCategoryInfo(MemoryCategory::Gigacage, 0xFF654FF0, "Gigacage");
-    categories[MemoryCategory::Images] = HistoricMemoryCategoryInfo(MemoryCategory::Images, 0xFFFFFF00, "Images");
-    categories[MemoryCategory::Layers] = HistoricMemoryCategoryInfo(MemoryCategory::Layers, 0xFF00FFFF, "Layers");
-    categories[MemoryCategory::LibcMalloc] = HistoricMemoryCategoryInfo(MemoryCategory::LibcMalloc, 0xFF00FF00, "libc malloc");
-    categories[MemoryCategory::bmalloc] = HistoricMemoryCategoryInfo(MemoryCategory::bmalloc, 0xFFFF6060, "bmalloc");
-    categories[MemoryCategory::IsoHeap] = HistoricMemoryCategoryInfo(MemoryCategory::IsoHeap, 0xFF809F40, "IsoHeap");
-    categories[MemoryCategory::Other] = HistoricMemoryCategoryInfo(MemoryCategory::Other, 0xFFC0FF00, "Other");
+    categories[MemoryCategory::JSJIT] = HistoricMemoryCategoryInfo(MemoryCategory::JSJIT, makeSimpleColor(255, 96, 255), "JS JIT");
+    categories[MemoryCategory::Gigacage] = HistoricMemoryCategoryInfo(MemoryCategory::Gigacage, makeSimpleColor(101, 79, 240), "Gigacage");
+    categories[MemoryCategory::Images] = HistoricMemoryCategoryInfo(MemoryCategory::Images, makeSimpleColor(255, 255, 0), "Images");
+    categories[MemoryCategory::Layers] = HistoricMemoryCategoryInfo(MemoryCategory::Layers, makeSimpleColor(0, 255, 255), "Layers");
+    categories[MemoryCategory::LibcMalloc] = HistoricMemoryCategoryInfo(MemoryCategory::LibcMalloc, makeSimpleColor(0, 255, 0), "libc malloc");
+    categories[MemoryCategory::bmalloc] = HistoricMemoryCategoryInfo(MemoryCategory::bmalloc, makeSimpleColor(255, 96, 96), "bmalloc");
+    categories[MemoryCategory::IsoHeap] = HistoricMemoryCategoryInfo(MemoryCategory::IsoHeap, makeSimpleColor(128, 159, 64), "IsoHeap");
+    categories[MemoryCategory::Other] = HistoricMemoryCategoryInfo(MemoryCategory::Other, makeSimpleColor(192, 255, 0), "Other");
 
     // Sub categories (e.g breakdown of bmalloc tag.)
-    categories[MemoryCategory::GCHeap] = HistoricMemoryCategoryInfo(MemoryCategory::GCHeap, 0xFFA0A0FF, "GC heap", true);
-    categories[MemoryCategory::GCOwned] = HistoricMemoryCategoryInfo(MemoryCategory::GCOwned, 0xFFFFC060, "GC owned", true);
+    categories[MemoryCategory::GCHeap] = HistoricMemoryCategoryInfo(MemoryCategory::GCHeap, makeSimpleColor(160, 160, 255), "GC heap", true);
+    categories[MemoryCategory::GCOwned] = HistoricMemoryCategoryInfo(MemoryCategory::GCOwned, makeSimpleColor(255, 192, 96), "GC owned", true);
 
 #ifndef NDEBUG
     // Ensure this aligns with ResourceUsageData's category order.

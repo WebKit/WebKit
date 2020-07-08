@@ -76,7 +76,7 @@ static const float replacementArrowCirclePadding = 3;
 
 constexpr auto replacementTextRoundedRectPressedColor = makeSimpleColor(105, 105, 105, 242);
 constexpr auto replacementTextRoundedRectColor = makeSimpleColor(125, 125, 125, 242);
-constexpr auto replacementTextColor = makeSimpleColor(240, 240, 240, 255);
+constexpr auto replacementTextColor = makeSimpleColor(240, 240, 240);
 constexpr auto unavailablePluginBorderColor = makeSimpleColor(255, 255, 255, 216);
 
 RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, RenderStyle&& style)

@@ -1,3 +1,13 @@
+2020-07-07  Sam Weinig  <weinig@apple.com>
+
+        Part 2 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=213981
+
+        Reviewed by Darin Adler.
+
+        * FullscreenVideoController.cpp:
+        Switch to using auto/makeSimpleColor.
+
 2020-07-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Change the names of MIMETypeRegistry methods to comply with webkit naming style

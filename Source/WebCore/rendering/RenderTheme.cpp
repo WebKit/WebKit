@@ -1334,30 +1334,30 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
 {
     switch (cssValueId) {
     case CSSValueWebkitLink:
-        return options.contains(StyleColor::Options::ForVisitedLink) ? SimpleColor { 0xFF551A8B } : SimpleColor { 0xFF0000EE };
+        return options.contains(StyleColor::Options::ForVisitedLink) ? makeSimpleColor(85, 26, 139) : makeSimpleColor(0, 0, 238);
     case CSSValueWebkitActivelink:
     case CSSValueActivetext:
-        return SimpleColor { 0xFFFF0000 };
+        return makeSimpleColor(255, 0, 0);
     case CSSValueLinktext:
-        return SimpleColor { 0xFF0000EE };
+        return makeSimpleColor(0, 0, 238);
     case CSSValueVisitedtext:
-        return SimpleColor { 0xFF551A8B };
+        return makeSimpleColor(85, 26, 139);
     case CSSValueActiveborder:
         return Color::white;
     case CSSValueActivebuttontext:
         return Color::black;
     case CSSValueActivecaption:
-        return SimpleColor { 0xFFCCCCCC };
+        return makeSimpleColor(204, 204, 204);
     case CSSValueAppworkspace:
         return Color::white;
     case CSSValueBackground:
-        return SimpleColor { 0xFF6363CE };
+        return makeSimpleColor(99, 99, 206);
     case CSSValueButtonface:
         return Color::lightGray;
     case CSSValueButtonhighlight:
-        return SimpleColor { 0xFFDDDDDD };
+        return makeSimpleColor(221, 221, 221);
     case CSSValueButtonshadow:
-        return SimpleColor { 0xFF888888 };
+        return makeSimpleColor(136, 136, 136);
     case CSSValueButtontext:
         return Color::black;
     case CSSValueCaptiontext:
@@ -1371,9 +1371,9 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueFieldtext:
         return Color::black;
     case CSSValueGraytext:
-        return SimpleColor { 0xFF808080 };
+        return makeSimpleColor(128, 128, 128);
     case CSSValueHighlight:
-        return SimpleColor { 0xFFB5D5FF };
+        return makeSimpleColor(181, 213, 255);
     case CSSValueHighlighttext:
         return Color::black;
     case CSSValueInactiveborder:
@@ -1381,9 +1381,9 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueInactivecaption:
         return Color::white;
     case CSSValueInactivecaptiontext:
-        return SimpleColor { 0xFF7F7F7F };
+        return makeSimpleColor(127, 127, 127);
     case CSSValueInfobackground:
-        return SimpleColor { 0xFFFBFCC5 };
+        return makeSimpleColor(251, 252, 197);
     case CSSValueInfotext:
         return Color::black;
     case CSSValueMenu:
@@ -1395,19 +1395,19 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueText:
         return Color::black;
     case CSSValueThreeddarkshadow:
-        return SimpleColor { 0xFF666666 };
+        return makeSimpleColor(102, 102, 102);
     case CSSValueThreedface:
         return Color::lightGray;
     case CSSValueThreedhighlight:
-        return SimpleColor { 0xFFDDDDDD };
+        return makeSimpleColor(221, 221, 221);
     case CSSValueThreedlightshadow:
         return Color::lightGray;
     case CSSValueThreedshadow:
-        return SimpleColor { 0xFF888888 };
+        return makeSimpleColor(136, 136, 136);
     case CSSValueWindow:
         return Color::white;
     case CSSValueWindowframe:
-        return SimpleColor { 0xFFCCCCCC };
+        return makeSimpleColor(204, 204, 204);
     case CSSValueWindowtext:
         return Color::black;
     default:
