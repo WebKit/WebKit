@@ -126,6 +126,9 @@ public:
     // rather than an HTML document.
     WEBCORE_EXPORT static bool isXMLMIMEType(const String& mimeType);
 
+    // Check to see if a MIME type is for an XML external entity resource.
+    WEBCORE_EXPORT static bool isXMLEntityMIMEType(StringView mimeType);
+
     // Used in page load algorithm to decide whether to display as a text
     // document in a frame. Not a good idea to use elsewhere, because that code
     // makes this test is after many other tests are done on the MIME type.

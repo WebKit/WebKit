@@ -635,6 +635,12 @@ bool MIMETypeRegistry::isXMLMIMEType(const String& mimeType)
     return true;
 }
 
+bool MIMETypeRegistry::isXMLEntityMIMEType(StringView mimeType)
+{
+    return equalLettersIgnoringASCIICase(mimeType, "text/xml-external-parsed-entity")
+        || equalLettersIgnoringASCIICase(mimeType, "application/xml-external-parsed-entity");
+}
+
 bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
 {
     // Since this set is very limited and is likely to remain so we won't bother with the overhead
