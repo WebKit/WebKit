@@ -685,7 +685,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutex<WebKitWebSrcPri
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
 
     ASSERT(!isMainThread());
-    RunLoop::main().dispatch([protector = WTF::ensureGRef(src), request = WTFMove(request), requestNumber = members->requestNumber, src] {
+    RunLoop::main().dispatch([protector = WTF::ensureGRef(src), request = WTFMove(request), requestNumber = members->requestNumber] {
         WebKitWebSrcPrivate* priv = protector->priv;
         DataMutex<WebKitWebSrcPrivate::StreamingMembers>::LockedWrapper members(priv->dataMutex);
         // Ignore this task (not making any HTTP request) if by now WebKitWebSrc streaming thread is already waiting
