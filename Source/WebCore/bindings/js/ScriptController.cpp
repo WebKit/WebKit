@@ -811,16 +811,27 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, RefPtr<SecurityOri
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
+    JSDOMGlobalObject* globalObject = jsWindowProxy(mainThreadNormalWorld()).window();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     String decodedURL = decodeURLEscapeSequences(url.string());
     auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength));
+    RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!
     if (!m_frame.page())
         return true;
 
+    if (!result)
+        return true;
+
     String scriptResult;
-    if (!result || !result.getString(jsWindowProxy(mainThreadNormalWorld()).window(), scriptResult))
+    bool isString = result.getString(globalObject, scriptResult);
+    RETURN_IF_EXCEPTION(throwScope, true);
+
+    if (!isString)
         return true;
 
     // FIXME: We should always replace the document, but doing so
