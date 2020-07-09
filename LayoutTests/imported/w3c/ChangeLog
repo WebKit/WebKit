@@ -1,3 +1,24 @@
+2020-07-09  Antti Koivisto  <antti@apple.com>
+
+        Update css/selectors WPT tests for :is and :where
+        https://bugs.webkit.org/show_bug.cgi?id=214137
+
+        Reviewed by Chris Dumez.
+
+        Some more PASSes.
+
+        * web-platform-tests/css/selectors/attribute-selectors/attribute-case/semantics-expected.txt:
+        * web-platform-tests/css/selectors/attribute-selectors/attribute-case/semantics.html:
+        * web-platform-tests/css/selectors/is-nested-expected.txt:
+        * web-platform-tests/css/selectors/is-nested.html:
+        * web-platform-tests/css/selectors/is-specificity-expected.txt:
+        * web-platform-tests/css/selectors/is-specificity.html:
+        * web-platform-tests/css/selectors/is-where-parsing-expected.txt: Added.
+        * web-platform-tests/css/selectors/is-where-parsing.html: Added.
+        * web-platform-tests/css/selectors/selectors-case-sensitive-001-expected.txt:
+        * web-platform-tests/css/selectors/selectors-case-sensitive-001.html:
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2020-07-09  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/url from upstream

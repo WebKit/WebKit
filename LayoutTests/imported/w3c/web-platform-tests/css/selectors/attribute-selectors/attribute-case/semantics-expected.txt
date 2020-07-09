@@ -189,6 +189,22 @@ PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in standards mode
 PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in standards mode 
 PASS [foo='bar' i] <div baz="BAR"> in standards mode 
 PASS [foo='bar' i] <div baz="BAR"> with querySelector in standards mode 
+PASS [foo^='é' i] <div foo="É"> in standards mode 
+PASS [foo^='é' i] <div foo="É"> with querySelector in standards mode 
+PASS [foo$='é' i] <div foo="É"> in standards mode 
+PASS [foo$='é' i] <div foo="É"> with querySelector in standards mode 
+PASS [foo*='é' i] <div foo="É"> in standards mode 
+PASS [foo*='é' i] <div foo="É"> with querySelector in standards mode 
+PASS [foo|='é' i] <div foo="É"> in standards mode 
+PASS [foo|='é' i] <div foo="É"> with querySelector in standards mode 
+PASS [foo^='É' i] <div foo="é"> in standards mode 
+PASS [foo^='É' i] <div foo="é"> with querySelector in standards mode 
+PASS [foo$='É' i] <div foo="é"> in standards mode 
+PASS [foo$='É' i] <div foo="é"> with querySelector in standards mode 
+PASS [foo*='É' i] <div foo="é"> in standards mode 
+PASS [foo*='É' i] <div foo="é"> with querySelector in standards mode 
+PASS [foo|='É' i] <div foo="é"> in standards mode 
+PASS [foo|='É' i] <div foo="é"> with querySelector in standards mode 
 FAIL [foo='' s] <div foo="BAR"> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='' s] <div foo="BAR"> with querySelector in standards mode The string did not match the expected pattern.
 FAIL [foo='\0' s] /* \0 in selector */ <div foo=""> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -494,6 +510,22 @@ PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in quirks mode
 PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in quirks mode 
 PASS [foo='bar' i] <div baz="BAR"> in quirks mode 
 PASS [foo='bar' i] <div baz="BAR"> with querySelector in quirks mode 
+PASS [foo^='é' i] <div foo="É"> in quirks mode 
+PASS [foo^='é' i] <div foo="É"> with querySelector in quirks mode 
+PASS [foo$='é' i] <div foo="É"> in quirks mode 
+PASS [foo$='é' i] <div foo="É"> with querySelector in quirks mode 
+PASS [foo*='é' i] <div foo="É"> in quirks mode 
+PASS [foo*='é' i] <div foo="É"> with querySelector in quirks mode 
+PASS [foo|='é' i] <div foo="É"> in quirks mode 
+PASS [foo|='é' i] <div foo="É"> with querySelector in quirks mode 
+PASS [foo^='É' i] <div foo="é"> in quirks mode 
+PASS [foo^='É' i] <div foo="é"> with querySelector in quirks mode 
+PASS [foo$='É' i] <div foo="é"> in quirks mode 
+PASS [foo$='É' i] <div foo="é"> with querySelector in quirks mode 
+PASS [foo*='É' i] <div foo="é"> in quirks mode 
+PASS [foo*='É' i] <div foo="é"> with querySelector in quirks mode 
+PASS [foo|='É' i] <div foo="é"> in quirks mode 
+PASS [foo|='É' i] <div foo="é"> with querySelector in quirks mode 
 FAIL [foo='' s] <div foo="BAR"> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='' s] <div foo="BAR"> with querySelector in quirks mode The string did not match the expected pattern.
 FAIL [foo='\0' s] /* \0 in selector */ <div foo=""> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -791,6 +823,22 @@ PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in XML
 PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in XML 
 PASS [foo='bar' i] <div baz="BAR"> in XML 
 PASS [foo='bar' i] <div baz="BAR"> with querySelector in XML 
+PASS [foo^='é' i] <div foo="É"> in XML 
+PASS [foo^='é' i] <div foo="É"> with querySelector in XML 
+PASS [foo$='é' i] <div foo="É"> in XML 
+PASS [foo$='é' i] <div foo="É"> with querySelector in XML 
+PASS [foo*='é' i] <div foo="É"> in XML 
+PASS [foo*='é' i] <div foo="É"> with querySelector in XML 
+PASS [foo|='é' i] <div foo="É"> in XML 
+PASS [foo|='é' i] <div foo="É"> with querySelector in XML 
+PASS [foo^='É' i] <div foo="é"> in XML 
+PASS [foo^='É' i] <div foo="é"> with querySelector in XML 
+PASS [foo$='É' i] <div foo="é"> in XML 
+PASS [foo$='É' i] <div foo="é"> with querySelector in XML 
+PASS [foo*='É' i] <div foo="é"> in XML 
+PASS [foo*='É' i] <div foo="é"> with querySelector in XML 
+PASS [foo|='É' i] <div foo="é"> in XML 
+PASS [foo|='É' i] <div foo="é"> with querySelector in XML 
 FAIL [foo='' s] <div foo="BAR"> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='' s] <div foo="BAR"> with querySelector in XML The string did not match the expected pattern.
 FAIL [foo='\0' s] /* \0 in selector */ <div foo=""> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0

@@ -65,6 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/historical-xmlid.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-specificity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/missing-right-token.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/not-links-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/not-links.html
