@@ -82,6 +82,8 @@ protected:
 
     PlatformMediaSession* nowPlayingEligibleSession();
 
+    GenericTaskQueue<Timer>& taskQueue() { return m_taskQueue; }
+
 private:
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSessionManagerCocoa"; }

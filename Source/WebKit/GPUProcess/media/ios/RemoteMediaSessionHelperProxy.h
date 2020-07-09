@@ -61,7 +61,6 @@ private:
     void activeAudioRouteDidChange(ShouldPause) final;
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<WebCore::MediaPlaybackTarget>&&) final;
 
-    bool m_providedApplicationPID { false };
     bool m_isMonitoringWirelessRoutes { false };
     GPUConnectionToWebProcess& m_gpuConnection;
 };

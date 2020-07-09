@@ -615,14 +615,18 @@ void AVVideoCaptureSource::generatePresets()
 #if PLATFORM(IOS_FAMILY)
 void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 {
-    ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, [[error localizedDescription] UTF8String]);
+    auto identifier = LOGIDENTIFIER;
+    ERROR_LOG_IF(loggerPtr(), identifier, [error code], ", ", [[error localizedDescription] UTF8String]);
 
     if (!m_isRunning || error.get().code != AVErrorMediaServicesWereReset)
         return;
 
-    // Try to restart the session, but reset m_isRunning immediately so if it fails we won't try again.
-    [m_session startRunning];
-    m_isRunning = [m_session isRunning];
+    scheduleDeferredTask([this, identifier] {
+        // Try to restart the session, but reset m_isRunning immediately so if it fails we won't try again.
+        ERROR_LOG_IF(loggerPtr(), identifier, "restarting session");
+        [m_session startRunning];
+        m_isRunning = [m_session isRunning];
+    });
 }
 
 void AVVideoCaptureSource::captureSessionBeginInterruption(RetainPtr<NSNotification> notification)

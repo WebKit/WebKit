@@ -1,3 +1,17 @@
+2020-07-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reset AVSystemController_PIDToInheritApplicationStateFrom when mediaserverd dies
+        https://bugs.webkit.org/show_bug.cgi?id=214112
+        <rdar://problem/65229214>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp:
+        (WebKit::RemoteMediaSessionHelperProxy::providePresentingApplicationPID): Don't bother
+        tracking whether or not providePresentingApplicationPID has been called, the session
+        helper already does that.
+        * GPUProcess/media/ios/RemoteMediaSessionHelperProxy.h:
+
 2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Occasional crash under -[UIView _setViewDelegate:] when presenting date and time pickers

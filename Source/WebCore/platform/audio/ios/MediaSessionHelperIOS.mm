@@ -98,7 +98,7 @@ public:
     void applicationWillBecomeInactive();
     void applicationDidBecomeActive();
 #if HAVE(CELESTIAL)
-    void carPlayServerDied();
+    void mediaServerConnectionDied();
     void updateCarPlayIsConnected(Optional<bool>&&);
 #endif
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
@@ -226,9 +226,16 @@ void MediaSessionHelperiOS::stopMonitoringWirelessRoutes()
 }
 
 #if HAVE(CELESTIAL)
-void MediaSessionHelperiOS::carPlayServerDied()
+void MediaSessionHelperiOS::mediaServerConnectionDied()
 {
     updateCarPlayIsConnected(WTF::nullopt);
+
+    if (!m_havePresentedApplicationPID)
+        return;
+
+    m_havePresentedApplicationPID = false;
+    for (auto& client : m_clients)
+        client.mediaServerConnectionDied();
 }
 
 void MediaSessionHelperiOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIsConnected)
@@ -333,7 +340,7 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
 
 #if HAVE(CELESTIAL)
     if (canLoadAVSystemController_ServerConnectionDiedNotification())
-        [center addObserver:self selector:@selector(carPlayServerDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
+        [center addObserver:self selector:@selector(mediaServerConnectionDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
     if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification())
         [center addObserver:self selector:@selector(carPlayIsConnectedDidChange:) name:getAVSystemController_CarPlayIsConnectedDidChangeNotification() object:nil];
 #endif
@@ -512,16 +519,16 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
 }
 
 #if HAVE(CELESTIAL)
-- (void)carPlayServerDied:(NSNotification *)notification
+- (void)mediaServerConnectionDied:(NSNotification *)notification
 {
     if (!_callback)
         return;
 
-    LOG(Media, "-[WebMediaSessionHelper carPlayServerDied:]");
+    LOG(Media, "-[WebMediaSessionHelper mediaServerConnectionDied:]");
     UNUSED_PARAM(notification);
     callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self)]() mutable {
         if (auto* callback = protectedSelf->_callback)
-            callback->carPlayServerDied();
+            callback->mediaServerConnectionDied();
     });
 }
 

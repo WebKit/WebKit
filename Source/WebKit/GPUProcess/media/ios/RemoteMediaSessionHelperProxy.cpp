@@ -67,10 +67,6 @@ void RemoteMediaSessionHelperProxy::stopMonitoringWirelessRoutes()
 
 void RemoteMediaSessionHelperProxy::providePresentingApplicationPID(int pid)
 {
-    if (m_providedApplicationPID)
-        return;
-
-    m_providedApplicationPID = true;
     MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid);
 }
 

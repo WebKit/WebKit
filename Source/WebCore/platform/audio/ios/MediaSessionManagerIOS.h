@@ -76,6 +76,7 @@ private:
     void applicationDidEnterBackground(SuspendedUnderLock) final;
     void applicationWillBecomeInactive() final;
     void applicationDidBecomeActive() final;
+    void mediaServerConnectionDied() final;
     void externalOutputDeviceAvailableDidChange(HasAvailableTargets) final;
     void activeAudioRouteDidChange(ShouldPause) final;
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) final;

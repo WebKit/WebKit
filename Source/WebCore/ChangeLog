@@ -1,3 +1,36 @@
+2020-07-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reset AVSystemController_PIDToInheritApplicationStateFrom when mediaserverd dies
+        https://bugs.webkit.org/show_bug.cgi?id=214112
+        <rdar://problem/65229214>
+
+        Reviewed by Jer Noble.
+
+        Tested manually because this can only be tested by killing a system process while
+        capturing on iOS hardware.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h: Add task queue accessor.
+        (WebCore::MediaSessionManagerCocoa::taskQueue):
+
+        * platform/audio/ios/MediaSessionHelperIOS.h:
+        (WebCore::MediaSessionHelperClient::mediaServerConnectionDied):
+        * platform/audio/ios/MediaSessionHelperIOS.mm:
+        (MediaSessionHelperiOS::mediaServerConnectionDied): Renamed from carPlayServerDied. 
+        Inform clients if we previously set the PID proxy.
+        (-[WebMediaSessionHelper initWithCallback:]): Call mediaServerConnectionDied.
+        (-[WebMediaSessionHelper mediaServerConnectionDied:]): Ditto.
+        (MediaSessionHelperiOS::carPlayServerDied): Deleted.
+        (-[WebMediaSessionHelper carPlayServerDied:]): Deleted.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::mediaServerConnectionDied): Call providePresentingApplicationPID
+        if we previously set the PID proxy.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::captureSessionRuntimeError): Don't try to restart the
+        session immediately since this is called directly from the notification handler.
+
 2020-07-09  Clark Wang  <clark_wang@apple.com>
 
         Set Restrictions for channelCount, channelCountMode for PannerNode
