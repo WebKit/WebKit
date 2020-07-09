@@ -1,7 +1,16 @@
 
+Harness Error (FAIL), message = Unhandled rejection: Description type incompatible with current signaling state
+
 PASS setRemoteDescription with valid offer should succeed 
 PASS setRemoteDescription multiple times should succeed 
 PASS setRemoteDescription multiple times with different offer should succeed 
 FAIL setRemoteDescription(offer) with invalid SDP should reject with RTCError assert_equals: Expect error detail field to set to sdp-syntax-error expected (string) "sdp-syntax-error" but got (undefined) undefined
-PASS setRemoteDescription(offer) from have-local-offer state should reject with InvalidStateError 
+FAIL setRemoteDescription(offer) from have-local-offer should roll back and succeed promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+TIMEOUT setRemoteDescription(offer) from have-local-offer fires signalingstatechange twice Test timed out
+NOTRUN setRemoteDescription(offer) in stable should update internal state with a queued task, in the right order 
+NOTRUN setRemoteDescription(offer) in have-local-offer should update internal state with a queued task, in the right order 
+NOTRUN Naive rollback approach is not glare-proof (control) 
+NOTRUN setRemoteDescription(offer) from have-local-offer is glare-proof 
+NOTRUN setRemoteDescription(invalidOffer) from have-local-offer does not undo rollback 
+NOTRUN repeated sRD(offer) works 
 

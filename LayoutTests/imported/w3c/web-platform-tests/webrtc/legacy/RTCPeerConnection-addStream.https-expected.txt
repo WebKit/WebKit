@@ -1,0 +1,3 @@
+
+FAIL Legacy addStream(): Media stream stats references track stats pc.addStream is not a function. (In 'pc.addStream(stream)', 'pc.addStream' is undefined)
+

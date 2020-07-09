@@ -24,9 +24,9 @@ PASS checkReplaceTrackNullDoesntPreventPairing
 PASS checkRemoveAndReadd 
 PASS checkAddTrackExistingTransceiverThenRemove 
 FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
-TIMEOUT checkMute Test timed out
-NOTRUN checkStop 
-NOTRUN checkStopAfterCreateOffer 
+FAIL checkMute assert_true: expected true got false
+FAIL checkStop assert_equals: expected "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}},stopped:true}]" but got "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null},stopped:true}]"
+TIMEOUT checkStopAfterCreateOffer Test timed out
 NOTRUN checkStopAfterSetLocalOffer 
 NOTRUN checkStopAfterSetRemoteOffer 
 NOTRUN checkStopAfterCreateAnswer 
@@ -36,4 +36,7 @@ NOTRUN checkLocalRollback
 NOTRUN checkRollbackAndSetRemoteOfferWithDifferentType 
 NOTRUN checkRemoteRollback 
 NOTRUN checkMsectionReuse 
+NOTRUN checkStopAfterCreateOfferWithReusedMsection 
+NOTRUN checkAddIceCandidateToStoppedTransceiver 
+NOTRUN checkBundleTagRejected 
 

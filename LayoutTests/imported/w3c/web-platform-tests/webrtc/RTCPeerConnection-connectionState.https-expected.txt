@@ -1,0 +1,9 @@
+
+PASS Initial connectionState should be new 
+PASS Closing the connection should set connectionState to closed 
+PASS connection with one data channel should eventually have connected connection state 
+FAIL connection with one data channel should eventually have transports in connected state undefined is not an object (evaluating 'sctpTransport.transport')
+FAIL connectionState remains new when not adding remote ice candidates assert_equals: expected "new" but got "checking"
+PASS connectionState transitions to connected via connecting 
+PASS Closing a PeerConnection should not fire connectionstatechange event 
+

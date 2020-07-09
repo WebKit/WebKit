@@ -2729,7 +2729,40 @@
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState-disconnected.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-track-stats.https.html": [
@@ -2738,10 +2771,46 @@
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transceivers.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCRtpSender-transport.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-addStream.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/ice-ufragpwd.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/simulcast/vp8.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/websockets/binary/002.html": [

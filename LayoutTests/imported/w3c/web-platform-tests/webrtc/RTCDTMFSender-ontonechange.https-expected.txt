@@ -9,7 +9,8 @@ PASS insertDTMF() with transceiver stopped in the middle should stop future tone
 PASS Calling insertDTMF() in the middle of tonechange events should cause future tonechanges to be updated to new tones 
 PASS Calling insertDTMF() multiple times in the middle of tonechange events should cause future tonechanges to be updated the last provided tones 
 PASS Calling insertDTMF('') in the middle of tonechange events should stop future tonechange events from firing 
-FAIL Setting transceiver.currentDirection to recvonly in the middle of tonechange events should stop future tonechange events from firing Cannot insert DTMF
+PASS Setting transceiver.currentDirection to recvonly in the middle of tonechange events should stop future tonechange events from firing 
 PASS Tone change event constructor works 
 PASS Tone change event with unexpected name should not crash 
+PASS Tone change event init optional parameters 
 

@@ -1,4 +1,6 @@
 
-FAIL setRemoteDescription() with answer containing data media should initialize pc.sctp assert_equals: expected (object) null but got (undefined) undefined
-FAIL setLocalDescription() with answer containing data media should initialize pc.sctp assert_equals: expected (object) null but got (undefined) undefined
+FAIL setRemoteDescription() with answer not containing data media should not initialize pc.sctp assert_equals: RTCSctpTransport must be null expected (object) null but got (undefined) undefined
+FAIL setLocalDescription() with answer not containing data media should not initialize pc.sctp assert_equals: RTCSctpTransport must be null expected (object) null but got (undefined) undefined
+FAIL setRemoteDescription() with answer containing data media should initialize pc.sctp assert_equals: RTCSctpTransport must be null expected (object) null but got (undefined) undefined
+FAIL setLocalDescription() with answer containing data media should initialize pc.sctp assert_equals: RTCSctpTransport must be null expected (object) null but got (undefined) undefined
 

@@ -14,6 +14,8 @@ FAIL gather() returns at least one host candidate promise_test: Unhandled reject
 FAIL gather() returns no candidates with { gatherPolicy: 'relay'} and no turn servers promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
 FAIL start() throws if closed function is not a constructor (evaluating 'new RTCIceTransport()')
 FAIL start() throws if usernameFragment or password not set function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL start() throws if usernameFragment does not conform to syntax function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL start() throws if password does not conform to syntax function is not a constructor (evaluating 'new RTCIceTransport()')
 FAIL start() does not transition state to 'checking' if no remote candidates added function is not a constructor (evaluating 'new RTCIceTransport()')
 FAIL start() with default role sets role attribute to 'controlled' function is not a constructor (evaluating 'new RTCIceTransport()')
 FAIL start() sets role attribute to 'controlling' function is not a constructor (evaluating 'new RTCIceTransport()')

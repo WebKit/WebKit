@@ -1,6 +1,25 @@
 
+Harness Error (FAIL), message = Unhandled rejection: Description type incompatible with current signaling state
+
 FAIL setRemoteDescription(rollback) in have-remote-offer state should revert to stable state promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 PASS setRemoteDescription(rollback) from stable state should reject with InvalidStateError 
 FAIL setRemoteDescription(rollback) should ignore invalid sdp content and succeed promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 FAIL local offer created before setRemoteDescription(remote offer) then rollback should still be usable promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL local offer created before setRemoteDescription(remote offer) with different transceiver level assignments then rollback should still be usable promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer should remove a transceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer should remove touched transceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer should keep a transceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer should keep a transceiver created by addtrack promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer should keep a transceiver without tracks promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL explicit rollback of local offer should remove transceivers and transport promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL when using addTransceiver, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded until we settle in stable promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL when using addTrack, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer to negotiated stable state should enable applying of a local offer promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a local offer to negotiated stable state should enable applying of a remote offer promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback a local offer with audio direction change to negotiated stable state and then add video receiver promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL two transceivers with same mids promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL onremovetrack fires during remote rollback promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL rollback of a remote offer with stream changes promise_test: Unhandled rejection with value: object "TypeError: pc1.getTransceivers()[0].sender.setStreams is not a function. (In 'pc1.getTransceivers()[0].sender.setStreams(stream2)', 'pc1.getTransceivers()[0].sender.setStreams' is undefined)"
+PASS removeTrack() with a sender being rolled back does not crash or throw 
+FAIL Implicit rollback with only a datachannel works promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 

@@ -1,4 +1,4 @@
 
-FAIL sender.getStats() via addTransceiver should return stats report containing outbound-rtp stats assert_equals: Expect dictionary.audioLevel to be number expected "number" but got "undefined"
-FAIL sender.getStats() via addTrack should return stats report containing outbound-rtp stats assert_equals: Expect dictionary.audioLevel to be number expected "number" but got "undefined"
+FAIL sender.getStats() via addTransceiver should return stats report containing outbound-rtp stats assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined"
+FAIL sender.getStats() via addTrack should return stats report containing outbound-rtp stats assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined"
 

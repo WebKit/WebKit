@@ -1,3 +1,4 @@
 
-PASS RTCPeerConnection onsignalingstatechanged 
+PASS Negotiation methods fire signalingstatechange events 
+FAIL Closing a PeerConnection should not fire signalingstatechange event assert_unreached: Reached unreachable code
 

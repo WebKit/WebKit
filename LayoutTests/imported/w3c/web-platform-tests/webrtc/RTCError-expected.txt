@@ -1,18 +1,24 @@
 
 FAIL RTCError constructor with errorDetail and message Can't find variable: RTCError
 FAIL RTCError constructor's message argument is optional Can't find variable: RTCError
-FAIL RTCError constructor throws TypeError if arguments are missing assert_throws: function "() => {
+FAIL RTCError constructor throws TypeError if arguments are missing assert_throws_js: function "() => {
     new RTCError();
-  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL RTCError constructor throws TypeError if the errorDetail is invalid assert_throws: function "() => {
+  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL RTCError constructor throws TypeError if the errorDetail is invalid assert_throws_js: function "() => {
     new RTCError({errorDetail:'invalid-error-detail'}, 'message');
-  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL RTCError.name is 'RTCError' Can't find variable: RTCError
+  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL RTCError.name is 'OperationError' Can't find variable: RTCError
 FAIL RTCError.code is 0 Can't find variable: RTCError
 FAIL RTCError.errorDetail is readonly. Can't find variable: RTCError
-FAIL RTCErrorInit.errorDetail is the only required attribute assert_throws: function "() => {
+FAIL RTCErrorInit.errorDetail is the only required attribute assert_throws_js: function "() => {
     new RTCError({}, 'message');
-  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected object "TypeError" ("TypeError")
+  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 FAIL RTCError.sdpLineNumber is null by default Can't find variable: RTCError
 FAIL RTCError.sdpLineNumber is settable by constructor Can't find variable: RTCError
 FAIL RTCError.sdpLineNumber is readonly Can't find variable: RTCError

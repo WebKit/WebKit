@@ -2,6 +2,9 @@
 FAIL RTCRtpSender.transport is null when unconnected assert_equals: expected (object) null but got (undefined) undefined
 FAIL RTCRtpSender/receiver.transport has a value when connected promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'sender.transport.iceTransport')"
 FAIL RTCRtpSender/receiver.transport at the right time, with bundle policy balanced assert_equals: expected (object) null but got (undefined) undefined
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy balanced assert_equals: expected (object) null but got (undefined) undefined
 FAIL RTCRtpSender/receiver.transport at the right time, with bundle policy max-bundle assert_equals: expected (object) null but got (undefined) undefined
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-bundle assert_equals: expected (object) null but got (undefined) undefined
 FAIL RTCRtpSender/receiver.transport at the right time, with bundle policy max-compat assert_equals: expected (object) null but got (undefined) undefined
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-compat assert_equals: expected (object) null but got (undefined) undefined
 

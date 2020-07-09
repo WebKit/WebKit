@@ -1,5 +1,6 @@
 
 PASS RTCDataChannel member reliable should not exist 
+PASS RTCDataChannel member maxRetransmitTime should not exist 
 PASS RTCPeerConnection member addStream should not exist 
 PASS RTCPeerConnection member createDTMFSender should not exist 
 PASS RTCPeerConnection member getLocalStreams should not exist 

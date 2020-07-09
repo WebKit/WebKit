@@ -1,0 +1,20 @@
+
+FAIL createOffer() with offerToReceiveAudio should add audio line to all subsequent created offers assert_equals: Expect created offer to have audio line expected 1 but got 0
+FAIL createOffer() with offerToReceiveVideo should add video line to all subsequent created offers assert_equals: Expect created offer to have video line expected 1 but got 0
+FAIL createOffer() with offerToReceiveAudio:true, then with offerToReceiveVideo:true, should have result offer with both audio and video line assert_equals: Expect audio line to be found in created offer expected 1 but got 0
+PASS createOffer() with offerToReceiveAudio set to false should not create a transceiver 
+FAIL createOffer() with offerToReceiveAudio should create a "recvonly" transceiver assert_equals: Expect pc to have one transceiver expected 1 but got 0
+FAIL offerToReceiveAudio option should be ignored if a non-stopped "recvonly" transceiver exists assert_equals: Expect pc to have one transceiver expected 1 but got 0
+PASS offerToReceiveAudio option should be ignored if a non-stopped "sendrecv" transceiver exists 
+FAIL offerToReceiveAudio set to false with a track should create a "sendonly" transceiver assert_equals: Expect transceiver to have "sendonly" direction expected "sendonly" but got "sendrecv"
+FAIL offerToReceiveAudio set to false with a "recvonly" transceiver should change the direction to "inactive" assert_equals: Expect transceiver to have "inactive" direction expected "inactive" but got "recvonly"
+FAIL subsequent offerToReceiveAudio set to false with a track should change the direction to "sendonly" assert_equals: Expect transceiver to have "sendonly" direction expected "sendonly" but got "sendrecv"
+PASS createOffer() with offerToReceiveVideo set to false should not create a transceiver 
+FAIL createOffer() with offerToReceiveVideo should create a "recvonly" transceiver assert_equals: Expect pc to have one transceiver expected 1 but got 0
+FAIL offerToReceiveVideo option should be ignored if a non-stopped "recvonly" transceiver exists assert_equals: Expect pc to have one transceiver expected 1 but got 0
+PASS offerToReceiveVideo option should be ignored if a non-stopped "sendrecv" transceiver exists 
+FAIL offerToReceiveVideo set to false with a track should create a "sendonly" transceiver assert_equals: Expect transceiver to have "sendonly" direction expected "sendonly" but got "sendrecv"
+FAIL offerToReceiveVideo set to false with a "recvonly" transceiver should change the direction to "inactive" assert_equals: Expect transceiver to have "inactive" direction expected "inactive" but got "recvonly"
+FAIL subsequent offerToReceiveVideo set to false with a track should change the direction to "sendonly" assert_equals: Expect transceiver to have "sendonly" direction expected "sendonly" but got "sendrecv"
+FAIL offerToReceiveAudio and Video should create two "recvonly" transceivers assert_equals: Expect pc to have two transceivers expected 2 but got 0
+

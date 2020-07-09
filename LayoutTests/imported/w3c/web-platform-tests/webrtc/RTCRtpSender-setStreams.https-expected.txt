@@ -1,0 +1,7 @@
+
+FAIL setStreams causes streams to be reported via ontrack on callee promise_test: Unhandled rejection with value: object "TypeError: sender.setStreams is not a function. (In 'sender.setStreams(stream1, stream2)', 'sender.setStreams' is undefined)"
+FAIL setStreams can be used to reconstruct a stream with a track on the remote side promise_test: Unhandled rejection with value: object "TypeError: sender.setStreams is not a function. (In 'sender.setStreams(stream)', 'sender.setStreams' is undefined)"
+FAIL Adding streams and changing direction causes new streams to be reported via ontrack on callee promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.setStreams is not a function. (In 'transceiver.sender.setStreams(stream1, stream2)', 'transceiver.sender.setStreams' is undefined)"
+FAIL Adding streams to an active transceiver causes new streams to be reported via ontrack on callee promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.setStreams is not a function. (In 'transceiver.sender.setStreams(stream1, stream2)', 'transceiver.sender.setStreams' is undefined)"
+FAIL setStreams() fires InvalidStateError on a closed peer connection. assert_throws_dom: function "() => transceiver.sender.setStreams(stream1, stream2)" threw object "TypeError: transceiver.sender.setStreams is not a function. (In 'transceiver.sender.setStreams(stream1, stream2)', 'transceiver.sender.setStreams' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

@@ -1,0 +1,7 @@
+
+
+PASS Setup audio call 
+FAIL Inactivate the audio transceiver assert_equals: expected "live" but got "ended"
+FAIL Reactivate the audio transceiver assert_equals: expected "live" but got "ended"
+PASS Clean-up 
+

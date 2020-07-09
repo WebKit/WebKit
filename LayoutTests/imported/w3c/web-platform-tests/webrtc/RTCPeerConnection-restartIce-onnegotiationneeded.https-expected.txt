@@ -1,0 +1,3 @@
+
+FAIL Negotiation needed when returning to stable does not fire too early promise_test: Unhandled rejection with value: object "TypeError: pc1.restartIce is not a function. (In 'pc1.restartIce()', 'pc1.restartIce' is undefined)"
+

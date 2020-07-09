@@ -41,4 +41,6 @@ PASS addTransceiver does not reuse reusable transceivers
 PASS Can setup two-way call using a single transceiver 
 PASS Closing the PC stops the transceivers 
 PASS Changing transceiver direction to 'sendrecv' makes ontrack fire 
+FAIL transceiver.sender.track does not revert to an old state promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.getReceivers()[0].track')"
+FAIL transceiver.direction does not revert to an old state promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.getTransceivers()[0].direction = 'inactive'')"
 

@@ -42,9 +42,10 @@
             iframe.contentWindow.postMessage(certificate, "*");
             let certificate2 = await promise;
 
-            new RTCPeerConnection({certificates: [certificate]});
-
-            new RTCPeerConnection({certificates: [certificate2]});
+            const pc1 = new RTCPeerConnection({certificates: [certificate]});
+            t.add_cleanup(() => pc1.close());
+            const pc2 = new RTCPeerConnection({certificates: [certificate2]});
+            t.add_cleanup(() => pc2.close());
 
             assert_equals(certificate.expires, certificate2.expires);
             for (let fingerprint of certificate2.getFingerprints())
@@ -70,7 +71,7 @@
         iframe.contentWindow.postMessage(null, "*");
         let certificate2 = await promise;
 
-        assert_throws("InvalidAccessError", () => { new RTCPeerConnection({certificates: [certificate2]}) });
+        assert_throws_dom("InvalidAccessError", () => { new RTCPeerConnection({certificates: [certificate2]}) });
         iframe.remove();
     }, "Check cross-origin created RTCCertificate");
 </script>

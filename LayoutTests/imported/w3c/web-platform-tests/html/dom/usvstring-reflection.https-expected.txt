@@ -19,5 +19,5 @@ PASS sendBeacon URL: unpaired surrogate codepoint should not make any exceptions
 FAIL RegisterProtocolHandler URL: unpaired surrogate codepoint should not make any exceptions. window.navigator.registerProtocolHandler is not a function. (In 'window.navigator.registerProtocolHandler('web+myprotocol', "custom-scheme\uD800/url=%s", "title")', 'window.navigator.registerProtocolHandler' is undefined)
 FAIL UnregisterProtocolHandler URL: unpaired surrogate codepoint should not make any exceptions. window.navigator.unregisterProtocolHandler is not a function. (In 'window.navigator.unregisterProtocolHandler('web+myprotocol', "custom-scheme\uD800/url=%s")', 'window.navigator.unregisterProtocolHandler' is undefined)
 PASS Document URLs: unpaired surrogate codepoint should be replaced with U+FFFD 
-FAIL RTCDataChannel.send: unpaired surrogate codepoint should be replaced with U+FFFD. pc1.createDataChannel is not a function. (In 'pc1.createDataChannel('')', 'pc1.createDataChannel' is undefined)
+FAIL RTCDataChannel.send: unpaired surrogate codepoint should be replaced with U+FFFD. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'options.negotiated')"
 

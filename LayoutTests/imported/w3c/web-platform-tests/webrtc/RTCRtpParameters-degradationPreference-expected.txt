@@ -1,4 +1,0 @@
-
-FAIL setParameters with degradationPreference set should succeed assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
-FAIL setParameters with degradationPreference unset should succeed assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
-

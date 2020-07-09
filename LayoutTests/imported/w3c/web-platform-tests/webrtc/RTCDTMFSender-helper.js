@@ -8,7 +8,7 @@
 
 // The following helper functions are called from RTCPeerConnection-helper.js:
 //   getTrackFromUserMedia
-//   doSignalingHandshake
+//   exchangeOfferAnswer
 
 // Create a RTCDTMFSender using getUserMedia()
 // Connect the PeerConnection to another PC and wait until it is
@@ -26,7 +26,7 @@ function createDtmfSender(pc = new RTCPeerConnection()) {
     const pc2 = new RTCPeerConnection();
     Object.defineProperty(pc, 'otherPc', { value: pc2 });
     exchangeIceCandidates(pc, pc2);
-    return doSignalingHandshake(pc, pc2);
+    return exchangeOfferAnswer(pc, pc2);
   }).then(() => {
     if (!('canInsertDTMF' in dtmfSender)) {
       return Promise.resolve();
@@ -78,18 +78,24 @@ function createDtmfSender(pc = new RTCPeerConnection()) {
       Test description.
  */
 function test_tone_change_events(testFunc, toneChanges, desc) {
-  promise_test(t => {
-    let done, fail;
-    const promise = new Promise((resolve, reject) => {
-        done = resolve;
-        fail = reject;
-    });
+  // Convert to cumulative time
+  let cumulativeTime = 0;
+  const cumulativeToneChanges = toneChanges.map(c => {
+    cumulativeTime += c[2];
+    return [c[0], c[1], cumulativeTime];
+  });
+
+  // Wait for same duration as last expected duration + 100ms
+  // before passing test in case there are new tone events fired,
+  // in which case the test should fail.
+  const lastWait = toneChanges.pop()[2] + 100;
+
+  promise_test(async t => {
     const pc = new RTCPeerConnection();
+    const dtmfSender = await createDtmfSender(pc);
+    const start = Date.now();
 
-    createDtmfSender(pc)
-    .then(dtmfSender => {
-      let lastEventTime = Date.now();
-
+    const allEventsReceived = new Promise(resolve => {
       const onToneChange = t.step_func(ev => {
         assert_true(ev instanceof RTCDTMFToneChangeEvent,
           'Expect tone change event object to be an RTCDTMFToneChangeEvent');
@@ -98,12 +104,12 @@ function test_tone_change_events(testFunc, toneChanges, desc) {
         assert_equals(typeof tone, 'string',
           'Expect event.tone to be the tone string');
 
-        assert_greater_than(toneChanges.length, 0,
+        assert_greater_than(cumulativeToneChanges.length, 0,
           'More tonechange event is fired than expected');
 
         const [
-          expectedTone, expectedToneBuffer, expectedDuration
-        ] = toneChanges.shift();
+          expectedTone, expectedToneBuffer, expectedTime
+        ] = cumulativeToneChanges.shift();
 
         assert_equals(tone, expectedTone,
           `Expect current event.tone to be ${expectedTone}`);
@@ -111,38 +117,24 @@ function test_tone_change_events(testFunc, toneChanges, desc) {
         assert_equals(dtmfSender.toneBuffer, expectedToneBuffer,
           `Expect dtmfSender.toneBuffer to be updated to ${expectedToneBuffer}`);
 
-        const now = Date.now();
-        const duration = now - lastEventTime;
-
-        // We check that the delay is at least the expected one, but
-        // system load may cause random delay, so we do not put any
-        // realistic upper bound on the timing of the event.
-        assert_between_inclusive(duration, expectedDuration,
-                                 expectedDuration + 4000,
-          `Expect tonechange event for "${tone}" to be fired approximately after ${expectedDuration} milliseconds`);
-
-        lastEventTime = now;
-
-        if (toneChanges.length === 0) {
-          // Wait for same duration as last expected duration + 100ms
-          // before passing test in case there are new tone events fired,
-          // in which case the test should fail.
-          t.step_timeout(
-            t.step_func(() => {
-              done();
-              pc.close();
-              pc.otherPc.close();
-            }), expectedDuration + 100);
+        // We check that the cumulative delay is at least the expected one, but
+        // system load may cause random delays, so we do not put any
+        // realistic upper bound on the timing of the events.
+        assert_between_inclusive(Date.now() - start, expectedTime,
+                                 expectedTime + 4000,
+          `Expect tonechange event for "${tone}" to be fired approximately after ${expectedTime} milliseconds`);
+        if (cumulativeToneChanges.length === 0) {
+          resolve();
         }
       });
 
       dtmfSender.addEventListener('tonechange', onToneChange);
-      testFunc(t, dtmfSender, pc);
-    })
-    .catch(t.step_func(err => {
-      assert_unreached(`Unexpected promise rejection: ${err}`);
-    }));
-    return promise;
+    });
+
+    testFunc(t, dtmfSender, pc);
+    await allEventsReceived;
+    const wait = ms => new Promise(resolve => t.step_timeout(resolve, ms));
+    await wait(lastWait);
   }, desc);
 }
 

@@ -1,4 +1,6 @@
 
-FAIL DTLS client uses odd data channel IDs assert_equals: id expected 1 but got 0
-FAIL DTLS server uses even data channel IDs assert_not_equals: got disallowed value null
+FAIL DTLS client uses odd data channel IDs assert_equals: Channel created by the DTLS server role must be odd (was null) expected 1 but got 0
+FAIL DTLS server uses even data channel IDs assert_true: Channel ID null should be unique expected true got false
+FAIL In-band negotiation with a specific ID should not work assert_equals: expected (object) null but got (number) 42
+FAIL Odd/even role should not be violated when mixing with negotiated channels assert_equals: Channel created by the DTLS server role must be odd (was null) expected 1 but got 0
 

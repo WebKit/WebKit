@@ -2841,7 +2841,6 @@ http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 # <rdar://problem/34051745>
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
 
 # <rdar://problem/34209038>
 webgl/1.0.3/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]

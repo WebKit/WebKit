@@ -1,0 +1,63 @@
+
+Harness Error (FAIL), message = Unhandled rejection: Expect line: v=
+
+PASS promiseState helper works 
+PASS promiseStateFinal helper works 
+FAIL createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite) assert_equals: expected "InvalidStateError" but got "Error"
+PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite) 
+PASS SLD(rollback) must detect InvalidStateError synchronously when chain is empty 
+FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "TypeError"
+PASS replaceTrack must detect InvalidStateError synchronously when chain is empty and transceiver is stopped 
+PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped 
+FAIL pc.getStats must detect InvalidAccessError synchronously always assert_equals: expected "InvalidAccessError" but got "Error"
+PASS isOperationsChainEmpty detects empty in stable 
+PASS isOperationsChainEmpty detects empty in have-local-offer 
+FAIL isOperationsChainEmpty detects empty in have-remote-offer assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS createOffer uses operations chain 
+FAIL createAnswer uses operations chain assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS setLocalDescription uses operations chain 
+PASS setRemoteDescription uses operations chain 
+FAIL addIceCandidate uses operations chain assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS Firing of negotiationneeded does NOT use operations chain 
+FAIL Negotiationneeded only fires once operations chain is empty promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL replaceTrack uses operations chain assert_false: Non-empty chain expected false got true
+FAIL setParameters does NOT use the operations chain assert_equals: Method is async expected "pending" but got "fulfilled"
+PASS pc.getStats does NOT use the operations chain 
+PASS sender.getStats does NOT use the operations chain 
+PASS receiver.getStats does NOT use the operations chain 
+FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "Error"
+FAIL Operations queue not vulnerable to recursion by chained negotiationneeded promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Pack operations queue with implicit offer and answer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
+TIMEOUT Negotiate solely by operations queue and signaling state Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: Expect line: v=
+
+PASS promiseState helper works 
+PASS promiseStateFinal helper works 
+FAIL createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite) assert_equals: expected "InvalidStateError" but got "Error"
+PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite) 
+PASS SLD(rollback) must detect InvalidStateError synchronously when chain is empty 
+FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "TypeError"
+PASS replaceTrack must detect InvalidStateError synchronously when chain is empty and transceiver is stopped 
+PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped 
+FAIL pc.getStats must detect InvalidAccessError synchronously always assert_equals: expected "InvalidAccessError" but got "Error"
+PASS isOperationsChainEmpty detects empty in stable 
+PASS isOperationsChainEmpty detects empty in have-local-offer 
+FAIL isOperationsChainEmpty detects empty in have-remote-offer assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS createOffer uses operations chain 
+FAIL createAnswer uses operations chain assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS setLocalDescription uses operations chain 
+PASS setRemoteDescription uses operations chain 
+FAIL addIceCandidate uses operations chain assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS Firing of negotiationneeded does NOT use operations chain 
+FAIL Negotiationneeded only fires once operations chain is empty promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL replaceTrack uses operations chain assert_false: Non-empty chain expected false got true
+FAIL setParameters does NOT use the operations chain assert_equals: Method is async expected "pending" but got "fulfilled"
+PASS pc.getStats does NOT use the operations chain 
+PASS sender.getStats does NOT use the operations chain 
+PASS receiver.getStats does NOT use the operations chain 
+FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "Error"
+FAIL Operations queue not vulnerable to recursion by chained negotiationneeded promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Pack operations queue with implicit offer and answer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
+TIMEOUT Negotiate solely by operations queue and signaling state Test timed out
+

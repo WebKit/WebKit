@@ -1,0 +1,12 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Close datachannel causes onclosing and onclose to be called assert_true: Closing event was seen expected true got false
+FAIL Close datachannel causes closing and close event to be called assert_true: Closing event was seen expected true got false
+FAIL Close peerconnection causes close event and error to be called on datachannel assert_array_equals: lengths differ, expected array ["error", "close"] length 2, got ["close"] length 1
+TIMEOUT Close peerconnection after datachannel close causes no events Test timed out
+NOTRUN Close negotiated datachannel causes onclosing and onclose to be called 
+NOTRUN Close negotiated datachannel causes closing and close event to be called 
+NOTRUN Close peerconnection causes close event and error to be called on negotiated datachannel 
+NOTRUN Close peerconnection after negotiated datachannel close causes no events 
+

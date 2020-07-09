@@ -1,0 +1,10 @@
+
+FAIL Perfect negotiation setup connects Not enough arguments
+FAIL Perfect negotiation setup connects with roles reversed Not enough arguments
+FAIL Perfect negotiation glare Not enough arguments
+FAIL Perfect negotiation glare with roles reversed Not enough arguments
+FAIL Perfect negotiation stress glare Not enough arguments
+FAIL Perfect negotiation stress glare with roles reversed Not enough arguments
+FAIL Perfect negotiation stress glare linear Not enough arguments
+FAIL Perfect negotiation stress glare linear with roles reversed Not enough arguments
+

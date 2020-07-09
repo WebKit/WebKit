@@ -15,7 +15,7 @@ async function initiateSingleTrackCallAndReturnReceiver(t, kind) {
   const pc2 = new RTCPeerConnection();
   t.add_cleanup(() => pc2.close());
 
-  const stream = await navigator.mediaDevices.getUserMedia({[kind]:true});
+  const stream = await getNoiseStream({[kind]:true});
   const [track] = stream.getTracks();
   t.add_cleanup(() => track.stop());
   pc1.addTrack(track, stream);
@@ -40,6 +40,15 @@ for (const kind of ['audio', 'video']) {
     assert_equals(typeof ssrc.timestamp, 'number');
     assert_true(ssrc.timestamp >= startTime);
   }, '[' + kind + '] RTCRtpSynchronizationSource.timestamp is a number');
+
+  promise_test(async t => {
+    const receiver = await initiateSingleTrackCallAndReturnReceiver(t, kind);
+    const [ssrc] = await listenForSSRCs(t, receiver);
+    assert_equals(typeof ssrc.rtpTimestamp, 'number');
+    assert_greater_than_equal(ssrc.rtpTimestamp, 0);
+    assert_less_than_equal(ssrc.rtpTimestamp, 0xffffffff);
+  }, '[' + kind + '] RTCRtpSynchronizationSource.rtpTimestamp is a number ' +
+     '[0, 2^32-1]');
 
   promise_test(async t => {
     const receiver = await initiateSingleTrackCallAndReturnReceiver(t, kind);

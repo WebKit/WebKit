@@ -1,12 +1,23 @@
 
 PASS Calling send() when data channel is in connecting state should throw InvalidStateError 
-PASS Data channel should be able to send simple string and receive as string 
-PASS Data channel should be able to send unicode string and receive as unicode string 
-PASS Data channel should ignore binaryType and always receive string message as string 
-PASS Data channel should be able to send Uint8Array message and receive as ArrayBuffer 
-PASS Data channel should be able to send ArrayBuffer message and receive as ArrayBuffer 
-PASS Data channel should be able to send Blob message and receive as ArrayBuffer 
-PASS Data channel should be able to send ArrayBuffer message and receive as Blob 
-FAIL Data channel binaryType should receive message as Blob by default assert_equals: Expect initial binaryType value to be blob expected "blob" but got "arraybuffer"
-PASS Sending multiple messages with different types should succeed and be received 
+PASS Datachannel should be able to send simple string and receive as string 
+PASS Datachannel should be able to send unicode string and receive as unicode string 
+PASS Datachannel should ignore binaryType and always receive string message as string 
+PASS Datachannel should be able to send Uint8Array message and receive as ArrayBuffer 
+PASS Datachannel should be able to send ArrayBuffer message and receive as ArrayBuffer 
+PASS Datachannel should be able to send Blob message and receive as ArrayBuffer 
+PASS Datachannel should be able to send ArrayBuffer message and receive as Blob 
+FAIL Datachannel binaryType should receive message as Blob by default assert_equals: Expect initial binaryType value to be blob expected "blob" but got "arraybuffer"
+PASS Datachannel sending multiple messages with different types should succeed and be received 
+FAIL Datachannel send() up to max size should succeed, above max size should fail promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.maxMessageSize')"
+PASS Negotiated datachannel should be able to send simple string and receive as string 
+PASS Negotiated datachannel should be able to send unicode string and receive as unicode string 
+PASS Negotiated datachannel should ignore binaryType and always receive string message as string 
+PASS Negotiated datachannel should be able to send Uint8Array message and receive as ArrayBuffer 
+PASS Negotiated datachannel should be able to send ArrayBuffer message and receive as ArrayBuffer 
+PASS Negotiated datachannel should be able to send Blob message and receive as ArrayBuffer 
+PASS Negotiated datachannel should be able to send ArrayBuffer message and receive as Blob 
+FAIL Negotiated datachannel binaryType should receive message as Blob by default assert_equals: Expect initial binaryType value to be blob expected "blob" but got "arraybuffer"
+PASS Negotiated datachannel sending multiple messages with different types should succeed and be received 
+FAIL Negotiated datachannel send() up to max size should succeed, above max size should fail promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.maxMessageSize')"
 

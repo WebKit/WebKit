@@ -1,9 +1,0 @@
-
-PASS Setting iceCandidatePoolSize to a valid value: 10 
-PASS Setting iceCandidatePoolSize to a valid value: 0 
-PASS Setting iceCandidatePoolSize to a valid value: null 
-PASS Setting iceCandidatePoolSize to a valid value: undefined 
-PASS Setting iceCandidatePoolSize to an invalid value: -1 
-PASS Setting iceCandidatePoolSize to an invalid value: 1000 
-PASS Setting iceCandidatePoolSize to an invalid value: string 
-

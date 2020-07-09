@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS getStats() with no argument should succeed 
 PASS getStats(null) should succeed 
 FAIL getStats() with track not added to connection should reject with InvalidAccessError assert_unreached: Should have rejected: undefined Reached unreachable code
@@ -9,9 +7,9 @@ PASS getStats() with track added via addTransceiver should succeed
 FAIL getStats() with track associated with more than one sender should reject with InvalidAccessError assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL getStats() with track associated with both sender and receiver should reject with InvalidAccessError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS getStats() with no argument should return stats report containing peer-connection stats on an empty PC 
-FAIL getStats() with no argument should return stats report containing peer-connection stats and outbound-track-stats assert_equals: Expect dictionary.audioLevel to be number expected "number" but got "undefined"
-FAIL getStats() with no argument should return stats for no-stream tracks assert_equals: Expect dictionary.audioLevel to be number expected "number" but got "undefined"
-FAIL getStats() on track associated with RtpSender should return stats report containing outbound-rtp stats assert_equals: Expect dictionary.ip to be string expected "string" but got "undefined"
-TIMEOUT getStats() on track associated with RtpReceiver should return stats report containing inbound-rtp stats Test timed out
-FAIL getStats() with connected peer connections having tracks and data channel should return all mandatory to implement stats assert_unreached: test failed with error: Error: assert_true: Expect dictionary.dataChannelIdentifier to be integer expected true got false Reached unreachable code
+FAIL getStats() with no argument should return stats report containing peer-connection stats and outbound-track-stats assert_true: Expect statsReport to contain stats object of type outbound-rtp expected true got false
+FAIL getStats() with no argument should return stats for no-stream tracks assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined"
+FAIL getStats() on track associated with RtpSender should return stats report containing outbound-rtp stats assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined"
+FAIL getStats() on track associated with RtpReceiver should return stats report containing inbound-rtp stats assert_equals: Expect dictionary.codecId to be string expected "string" but got "undefined"
+FAIL getStats() with connected peer connections having tracks and data channel should return all mandatory to implement stats assert_unreached: test failed with error: Error: assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined" Reached unreachable code
 

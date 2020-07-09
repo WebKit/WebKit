@@ -1,3 +1,14 @@
+2020-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/webrtc from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214151
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/webrtc from upstream cef93b58e7cf31f1d47.
+
+        * web-platform-tests/webrtc/*: Updated.
+
 2020-07-09  Antti Koivisto  <antti@apple.com>
 
         Update css/selectors WPT tests for :is and :where

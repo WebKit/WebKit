@@ -1,0 +1,15 @@
+
+FAIL Parameterless SLD() in 'stable' goes to 'have-local-offer' promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() in 'stable' sets pendingLocalDescription promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() in 'stable' assigns transceiver.mid promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() in 'have-remote-offer' goes to 'stable' promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() in 'have-remote-offer' sets currentLocalDescription promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() in 'have-remote-offer' sets transceiver.currentDirection promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() uses [[LastCreatedOffer]] if it is still valid promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() uses [[LastCreatedAnswer]] if it is still valid promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() rejects with InvalidStateError if already closed assert_equals: expected "InvalidStateError" but got "TypeError"
+FAIL Parameterless SLD() never settles if closed while pending promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Parameterless SLD() in a full O/A exchange succeeds promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Parameterless SRD() rejects with TypeError. 
+PASS RTCSessionDescription constructed without type throws TypeError 
+

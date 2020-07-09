@@ -1,0 +1,7 @@
+
+PASS Two way ICE exchange works 
+FAIL Adding only caller -> callee candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+FAIL Adding only callee -> caller candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc2.sctp.transport')"
+FAIL Adding callee -> caller candidates from end-of-candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc2.sctp.transport')"
+FAIL Explicit offer/answer exchange gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+

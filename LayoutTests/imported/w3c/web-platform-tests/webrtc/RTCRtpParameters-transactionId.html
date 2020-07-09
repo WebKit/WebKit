@@ -48,7 +48,6 @@
         sequence<RTCRtpHeaderExtensionParameters> headerExtensions;
         RTCRtcpParameters                         rtcp;
         sequence<RTCRtpCodecParameters>           codecs;
-        RTCDegradationPreference                  degradationPreference;
       };
 
       getParameters
@@ -63,6 +62,7 @@
    */
   promise_test(async t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     const { sender } = pc.addTransceiver('audio');
     await doOfferAnswerExchange(t, pc);
 
@@ -73,7 +73,6 @@
     validateSenderRtpParameters(param2);
 
     assert_not_equals(param1.transactionId, param2.transactionId);
-
   }, `sender.getParameters() should return different transaction IDs for each call`);
 
   /*
@@ -97,7 +96,7 @@
     const { transactionId } = param;
     param.transactionId = `${transactionId}-modified`;
 
-    return promise_rejects(t, 'InvalidModificationError',
+    return promise_rejects_dom(t, 'InvalidModificationError',
       sender.setParameters(param));
   }, `sender.setParameters() with transaction ID different from last getParameters() should reject with InvalidModificationError`);
 
@@ -112,7 +111,7 @@
 
     param.transactionId = undefined;
 
-    return promise_rejects(t, new TypeError(),
+    return promise_rejects_js(t, TypeError,
       sender.setParameters(param));
   }, `sender.setParameters() with transaction ID unset should reject with TypeError`);
 
@@ -127,7 +126,7 @@
 
     return sender.setParameters(param)
     .then(() =>
-      promise_rejects(t, 'InvalidStateError',
+      promise_rejects_dom(t, 'InvalidStateError',
         sender.setParameters(param)));
   }, `setParameters() twice with the same parameters should reject with InvalidStateError`);
 
@@ -145,7 +144,7 @@
 
     assert_not_equals(param1.transactionId, param2.transactionId);
 
-    return promise_rejects(t, 'InvalidModificationError',
+    return promise_rejects_dom(t, 'InvalidModificationError',
       sender.setParameters(param1));
   }, `setParameters() with parameters older than last getParameters() should reject with InvalidModificationError`);
 
