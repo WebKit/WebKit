@@ -1,3 +1,37 @@
+2020-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for shm buffers in AcceleratedBackingStoreWayland when using the WPE renderer
+        https://bugs.webkit.org/show_bug.cgi?id=214135
+
+        Reviewed by Žan Doberšek.
+
+        It's available since wpe-fdo 1.7.0. This makes accelerated compositing work in platforms where
+        EGL_WL_bind_wayland_display is not available. It can also be forced with the environment variable
+        LIBGL_ALWAYS_SOFTWARE.
+
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Use AcceleratedBackingStoreWayland::checkRequirements()
+        instead of calling wpe_fdo_initialize_for_egl_display() again.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::tryInitializeEGL): Moved EGL specific initialization here.
+        (WebKit::tryInitializeSHM): Added SHM initialization.
+        (WebKit::AcceleratedBackingStoreWayland::checkRequirements): Try to initialize EGL first and then SHM if EGL failed.
+        (WebKit::AcceleratedBackingStoreWayland::AcceleratedBackingStoreWayland): Create a EGL exportable only when
+        using EGL implementation.
+        (WebKit::AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland): Release EGL resources only when using
+        EGL implementation.
+        (WebKit::AcceleratedBackingStoreWayland::unrealize): Ditto.
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureGLContext): Return early when not using EGL implementation.
+        (WebKit::AcceleratedBackingStoreWayland::update): Add implementation for the SHM case.
+        (WebKit::AcceleratedBackingStoreWayland::displayImage): Renamed.
+        (WebKit::AcceleratedBackingStoreWayland::displayBuffer): SHM implementation, copy the shm buffer into a cairo
+        image surface.
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureTexture):
+        (WebKit::AcceleratedBackingStoreWayland::downloadTexture):
+        (WebKit::AcceleratedBackingStoreWayland::snapshot): Handle the SHM case.
+        (WebKit::AcceleratedBackingStoreWayland::paint): Ditto.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+
 2020-07-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r264148.

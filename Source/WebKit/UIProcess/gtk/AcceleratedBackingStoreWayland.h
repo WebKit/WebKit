@@ -40,6 +40,7 @@
 typedef void* EGLImageKHR;
 typedef struct _GdkGLContext GdkGLContext;
 struct wpe_fdo_egl_exported_image;
+struct wpe_fdo_shm_exported_buffer;
 
 namespace WebCore {
 class GLContext;
@@ -62,7 +63,10 @@ private:
 
     void tryEnsureGLContext();
 #if USE(WPE_RENDERER)
-    void displayBuffer(struct wpe_fdo_egl_exported_image*);
+    void displayImage(struct wpe_fdo_egl_exported_image*);
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+    void displayBuffer(struct wpe_fdo_shm_exported_buffer*);
+#endif
 #endif
     bool tryEnsureTexture(unsigned&, WebCore::IntSize&);
     void downloadTexture(unsigned, const WebCore::IntSize&);
@@ -88,9 +92,17 @@ private:
 #if USE(WPE_RENDERER)
     struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
     uint64_t m_surfaceID { 0 };
-    unsigned m_viewTexture { 0 };
-    struct wpe_fdo_egl_exported_image* m_committedImage { nullptr };
-    struct wpe_fdo_egl_exported_image* m_pendingImage { nullptr };
+    struct {
+        unsigned viewTexture { 0 };
+        struct wpe_fdo_egl_exported_image* committedImage { nullptr };
+        struct wpe_fdo_egl_exported_image* pendingImage { nullptr };
+    } m_egl;
+
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+    struct {
+        bool pendingFrame { false };
+    } m_shm;
+#endif
 #endif
 };
 
