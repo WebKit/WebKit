@@ -2607,6 +2607,11 @@ void FrameView::updateCompositingLayersAfterScrolling()
 
 bool FrameView::isUserScrollInProgress() const
 {
+    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+        if (scrollingCoordinator->isUserScrollInProgress(scrollingNodeID()))
+            return true;
+    }
+
     if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isUserScrollInProgress();
 

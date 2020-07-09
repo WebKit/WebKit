@@ -826,9 +826,20 @@ void AsyncScrollingCoordinator::windowScreenDidChange(PlatformDisplayID displayI
         m_scrollingTree->windowScreenDidChange(displayID, nominalFramesPerSecond);
 }
 
+bool AsyncScrollingCoordinator::isUserScrollInProgress(ScrollingNodeID nodeID) const
+{
+    if (m_scrollingTree)
+        return m_scrollingTree->isUserScrollInProgressForNode(nodeID);
+
+    return false;
+}
+
 bool AsyncScrollingCoordinator::isRubberBandInProgress() const
 {
-    return scrollingTree()->isRubberBandInProgress();
+    if (m_scrollingTree)
+        return m_scrollingTree->isRubberBandInProgress();
+
+    return false;
 }
 
 void AsyncScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior pinning)
@@ -906,7 +917,10 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
 #if ENABLE(CSS_SCROLL_SNAP)
 bool AsyncScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID nodeID) const
 {
-    return scrollingTree()->isScrollSnapInProgressForNode(nodeID);
+    if (m_scrollingTree)
+        return m_scrollingTree->isScrollSnapInProgressForNode(nodeID);
+
+    return false;
 }
 
 void AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView)

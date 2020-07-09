@@ -139,7 +139,11 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
         deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::HandlingWheelEvent);
 #endif
 
+    bool wasInUserScroll = m_scrollController.isUserScrollInProgress();
     m_scrollController.updateGestureInProgressState(wheelEvent);
+    bool isInUserScroll = m_scrollController.isUserScrollInProgress();
+    if (isInUserScroll != wasInUserScroll)
+        scrollingNode().setUserScrollInProgress(isInUserScroll);
 
     // PlatformWheelEventPhaseMayBegin fires when two fingers touch the trackpad, and is used to flash overlay scrollbars.
     // We know we're scrollable at this point, so handle the event.

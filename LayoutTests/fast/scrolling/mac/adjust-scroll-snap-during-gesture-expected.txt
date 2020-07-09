@@ -1,0 +1,7 @@
+        
+PASS beforeChangeScrollLeft > 0 is true
+PASS beforeChangeScrollLeft is scroller.scrollLeft
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

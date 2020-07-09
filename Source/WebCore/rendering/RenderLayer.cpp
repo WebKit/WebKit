@@ -1876,6 +1876,11 @@ bool RenderLayer::isUserScrollInProgress() const
     if (!scrollsOverflow())
         return false;
 
+    if (auto scrollingCoordinator = page().scrollingCoordinator()) {
+        if (scrollingCoordinator->isUserScrollInProgress(scrollingNodeID()))
+            return true;
+    }
+
     if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isUserScrollInProgress();
     

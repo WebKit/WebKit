@@ -110,8 +110,10 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         if (!asyncFrameOrOverflowScrollingEnabled())
             return m_rootNode->handleWheelEvent(wheelEvent);
 
-        if (m_gestureState.handleGestureCancel(wheelEvent))
+        if (m_gestureState.handleGestureCancel(wheelEvent)) {
+            clearNodesWithUserScrollInProgress();
             return WheelEventHandlingResult::handled();
+        }
 
         m_gestureState.receivedWheelEvent(wheelEvent);
 
@@ -464,6 +466,32 @@ void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
 {
     LockHolder locker(m_treeStateMutex);
     m_treeState.mainFrameIsRubberBanding = isRubberBanding;
+}
+
+// Can be called from the main thread.
+bool ScrollingTree::isUserScrollInProgressForNode(ScrollingNodeID nodeID)
+{
+    if (!nodeID)
+        return false;
+
+    LockHolder lock(m_treeStateMutex);
+    return m_treeState.nodesWithActiveUserScrolls.contains(nodeID);
+}
+    
+void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool isScrolling)
+{
+    ASSERT(nodeID);
+    LockHolder locker(m_treeStateMutex);
+    if (isScrolling)
+        m_treeState.nodesWithActiveUserScrolls.add(nodeID);
+    else
+        m_treeState.nodesWithActiveUserScrolls.remove(nodeID);
+}
+
+void ScrollingTree::clearNodesWithUserScrollInProgress()
+{
+    LockHolder locker(m_treeStateMutex);
+    m_treeState.nodesWithActiveUserScrolls.clear();
 }
 
 // Can be called from the main thread.

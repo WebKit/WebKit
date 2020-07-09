@@ -128,6 +128,7 @@ private:
 
     WEBCORE_EXPORT void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) final;
 
+    WEBCORE_EXPORT bool isUserScrollInProgress(ScrollingNodeID) const override;
     bool isRubberBandInProgress() const override;
     void setScrollPinningBehavior(ScrollPinningBehavior) override;
 

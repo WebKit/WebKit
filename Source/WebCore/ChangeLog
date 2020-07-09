@@ -1,3 +1,48 @@
+2020-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS] Stuttery scrolling on tesla.com
+        https://bugs.webkit.org/show_bug.cgi?id=214159
+        <rdar://problem/64555500>
+
+        Reviewed by Wenson Hsieh.
+        
+        tesla.com uses scroll snapping, and also triggers layout during scrolling that could
+        cause scroll snap to yank the scroll position. This manifested as a change that affected
+        getBoundingClientRect which is used an an input to some transform math, causing the images
+        to move around.
+
+        Fix by ensuring that layout-triggered scroll snap does not happen if a user scroll is in progress,
+        when that scroll occurs via the scrolling thread. ScrollingTreeScrollingNodeDelegateMac has a 
+        ScrollController that tracks when a gesture is in progress; push this state to
+        the ScrollingTree so it can be consulted from the main thread. The two subclasses
+        of ScrollableArea, RenderLayer and FrameView, then consult the ScrollingCoordinator
+        to ask whether a user scroll is in progress for their scrolling tree node.
+
+        Test: fast/scrolling/mac/adjust-scroll-snap-during-gesture.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isUserScrollInProgress const):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::isUserScrollInProgress const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::isUserScrollInProgress const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::isUserScrollInProgressForNode):
+        (WebCore::ScrollingTree::setUserScrollInProgressForNode):
+        (WebCore::ScrollingTree::clearNodesWithUserScrollInProgress):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::isUserScrollProgress const):
+        (WebCore::ScrollingTreeScrollingNode::setUserScrollInProgress):
+        (WebCore::ScrollingTreeScrollingNode::setScrollSnapInProgress):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isUserScrollInProgress const):
+
 2020-07-09  Chris Dumez  <cdumez@apple.com>
 
         [Bindings] Add default value support for union types in dictionary members

@@ -219,14 +219,24 @@ bool ScrollingTreeScrollingNode::isRubberBanding() const
         || scrollPosition.y() > maxScrollPosition.y();
 }
 
-void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
+bool ScrollingTreeScrollingNode::isUserScrollProgress() const
 {
-    scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
+    return scrollingTree().isUserScrollInProgressForNode(scrollingNodeID());
+}
+
+void ScrollingTreeScrollingNode::setUserScrollInProgress(bool isUserScrolling)
+{
+    scrollingTree().setUserScrollInProgressForNode(scrollingNodeID(), isUserScrolling);
 }
 
 bool ScrollingTreeScrollingNode::isScrollSnapInProgress() const
 {
     return scrollingTree().isScrollSnapInProgressForNode(scrollingNodeID());
+}
+
+void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
+{
+    scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
