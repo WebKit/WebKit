@@ -175,9 +175,6 @@ fast/images/pdf-as-background.html [ WontFix Pass ]
 fast/images/pdf-as-image.html [ WontFix Pass ]
 fast/images/pdf-as-tiled-background.html [ WontFix Pass ]
 
-# Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
-http/tests/cookies/third-party-cookie-relaxing.html [ WontFix Failure ]
-
 # This test is specific to QuickTime media engine.
 media/video-does-not-loop.html [ WontFix Timeout Crash ]
 

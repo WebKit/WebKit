@@ -689,7 +689,7 @@ private:
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)
-    WebCore::HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain };
+    WebCore::HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain };
     WebCore::SoupNetworkProxySettings m_networkProxySettings;
 #endif
 

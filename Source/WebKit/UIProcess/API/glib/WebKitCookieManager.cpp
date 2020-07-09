@@ -95,12 +95,12 @@ static inline WebKitCookieAcceptPolicy toWebKitCookieAcceptPolicy(WebCore::HTTPC
         return WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS;
     case WebCore::HTTPCookieAcceptPolicy::Never:
         return WEBKIT_COOKIE_POLICY_ACCEPT_NEVER;
-    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         return WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY;
-    default:
-        ASSERT_NOT_REACHED();
-        return WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS;
+    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+        break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static inline WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCookieAcceptPolicy kitPolicy)
@@ -111,11 +111,9 @@ static inline WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCoo
     case WEBKIT_COOKIE_POLICY_ACCEPT_NEVER:
         return WebCore::HTTPCookieAcceptPolicy::Never;
     case WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY:
-        return WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
-    default:
-        ASSERT_NOT_REACHED();
-        return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
+        return WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static void webkit_cookie_manager_class_init(WebKitCookieManagerClass* findClass)

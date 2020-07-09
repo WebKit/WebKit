@@ -241,9 +241,9 @@
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/sources/libsoup/2.69/libsoup-${version}.tar.xz" version="2.69.90"
+    <branch module="/sources/libsoup/2.71/libsoup-${version}.tar.xz" version="2.71.0"
             repo="download.gnome.org"
-            hash="sha256:8ed18092cfb27d870a7c7c45992f3a216bd22dd6fd6d2c9fbf1adc2d6957cab8">
+            hash="sha256:88e24fad72d16e1cb692c8782688dbee4bf44151efb0d9ed25b14f3849d9896e">
     </branch>
   </meson>
 

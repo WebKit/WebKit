@@ -631,10 +631,6 @@ http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip 
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html [ Skip ]
 webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html [ Failure ]
 webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Failure ]
-webkit.org/b/213954 http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html [ Failure ]
-webkit.org/b/213954 http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Failure ]
-webkit.org/b/213954 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-database.html [ Failure ]
-webkit.org/b/213954 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Failure ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 

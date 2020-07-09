@@ -1,3 +1,15 @@
+2020-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain
+        https://bugs.webkit.org/show_bug.cgi?id=213954
+
+        Reviewed by Michael Catanzaro.
+
+        Update libsoup to version 2.71.0.
+
+        * buildstream/elements/sdk/libsoup.bst:
+        * gtk/jhbuild.modules:
+
 2020-07-08  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Windows] Fix errors from calls to uname when not available

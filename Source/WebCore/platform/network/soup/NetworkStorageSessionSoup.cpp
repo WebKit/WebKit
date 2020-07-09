@@ -56,7 +56,7 @@ namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
-    , m_cookieAcceptPolicy(HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain)
+    , m_cookieAcceptPolicy(HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain)
     , m_cookieStorage(adoptGRef(soup_cookie_jar_new()))
 {
     setCookieAcceptPolicy(m_cookieAcceptPolicy);
@@ -248,7 +248,7 @@ void NetworkStorageSession::setCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
     if (m_isResourceLoadStatisticsEnabled && m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::All) {
         m_cookieAcceptPolicy = policy;
-        if (m_cookieAcceptPolicy == HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain)
+        if (m_cookieAcceptPolicy == HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain)
             policy = HTTPCookieAcceptPolicy::AlwaysAccept;
     }
 
@@ -261,10 +261,14 @@ void NetworkStorageSession::setCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
         break;
     case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+#if SOUP_CHECK_VERSION(2, 71, 0)
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_GRANDFATHERED_THIRD_PARTY;
         break;
+#else
+        FALLTHROUGH;
+#endif
     case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
-        ASSERT_NOT_REACHED();
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
         break;
     }
 
@@ -277,7 +281,11 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
     case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
         return HTTPCookieAcceptPolicy::AlwaysAccept;
     case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
+        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
+#if SOUP_CHECK_VERSION(2, 71, 0)
+    case SOUP_COOKIE_JAR_ACCEPT_GRANDFATHERED_THIRD_PARTY:
         return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+#endif
     case SOUP_COOKIE_JAR_ACCEPT_NEVER:
         return HTTPCookieAcceptPolicy::Never;
     }
@@ -289,7 +297,7 @@ void NetworkStorageSession::setResourceLoadStatisticsEnabled(bool enabled)
 {
     if (enabled) {
         m_cookieAcceptPolicy = cookieAcceptPolicy();
-        if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::All && m_cookieAcceptPolicy == HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain)
+        if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::All && m_cookieAcceptPolicy == HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain)
             setCookieAcceptPolicy(HTTPCookieAcceptPolicy::AlwaysAccept);
         m_isResourceLoadStatisticsEnabled = true;
     } else {
