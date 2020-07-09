@@ -389,7 +389,7 @@ public:
 
     // Network Process Management
     NetworkProcessProxy& ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore = nullptr);
-    NetworkProcessProxy* networkProcess() const { return m_networkProcess.get(); }
+    NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
     void networkProcessCrashed(NetworkProcessProxy&);
 
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
@@ -539,11 +539,6 @@ public:
     const String& webProcessPath() const { return m_resolvedPaths.webProcessPath; }
     const String& networkProcessPath() const { return m_resolvedPaths.networkProcessPath; }
     int32_t userId() const { return m_userId; }
-#endif
-
-#if PLATFORM(COCOA)
-    OSObjectPtr<xpc_object_t> xpcEndpointMessage() const;
-    void sendNetworkProcessXPCEndpointToWebProcess(OSObjectPtr<xpc_object_t> endpointMessage);
 #endif
 
 private:
@@ -829,10 +824,6 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
-#endif
-
-#if PLATFORM(COCOA)
-    OSObjectPtr<xpc_object_t> m_endpointMessage;
 #endif
 };
 

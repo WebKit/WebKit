@@ -29,7 +29,6 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
-#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>

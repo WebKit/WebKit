@@ -1684,11 +1684,8 @@
 		C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */; };
 		C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = C11E1692212B87C500985FF6 /* WKMockDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */; };
-		C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */; };
 		C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */; };
-		C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */; };
-		C1710CF724AA643200D7C112 /* LaunchServicesDatabaseObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */; };
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
 		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
@@ -5021,20 +5018,13 @@
 		C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisClient.h; sourceTree = "<group>"; };
 		C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechSynthesisClient.cpp; sourceTree = "<group>"; };
 		C149380A223853BE000CD707 /* WebSpeechSynthesisVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisVoice.h; sourceTree = "<group>"; };
-		C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchServicesDatabaseManager.h; sourceTree = "<group>"; };
-		C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LaunchServicesDatabaseManager.mm; sourceTree = "<group>"; };
 		C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceObserver.mm; sourceTree = "<group>"; };
-		C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchServicesDatabaseXPCConstants.h; sourceTree = "<group>"; };
-		C1710CF224A7BD0300D7C112 /* XPCEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCEventHandler.h; sourceTree = "<group>"; };
-		C1710CF524AA634500D7C112 /* LaunchServicesDatabaseObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchServicesDatabaseObserver.h; sourceTree = "<group>"; };
-		C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LaunchServicesDatabaseObserver.mm; sourceTree = "<group>"; };
 		C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMac.cpp; sourceTree = "<group>"; };
 		C18173602058424700DFDA65 /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		C1817362205844A900DFDA65 /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
 		C18FB51D242F9F76007E9875 /* WebSleepDisablerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSleepDisablerClient.cpp; sourceTree = "<group>"; };
 		C18FB51E242F9F77007E9875 /* WebSleepDisablerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSleepDisablerClient.h; sourceTree = "<group>"; };
 		C1E123B920A11572002646F4 /* PDFContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFContextMenu.h; sourceTree = "<group>"; };
-		C1ED723724A5690E003F6CD3 /* NetworkProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
 		C54256AF18BEC18B00DE4179 /* WKDateTimeInputControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKDateTimeInputControl.h; path = ios/forms/WKDateTimeInputControl.h; sourceTree = "<group>"; };
@@ -6394,7 +6384,6 @@
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
-				C1710CF224A7BD0300D7C112 /* XPCEventHandler.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -7492,7 +7481,6 @@
 				C55F916D1C595E440029E92D /* DataDetectionResult.mm */,
 				CE550E132283744400D28791 /* InsertTextOptions.cpp */,
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
-				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
 				CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */,
 				CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */,
@@ -7856,7 +7844,6 @@
 		510CC7E716138E7200D03ED3 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				C1ED723624A568F5003F6CD3 /* cocoa */,
 				29AD3091164B4C100072DEA9 /* CustomProtocols */,
 				516319931628980E00E22F00 /* mac */,
 				510CC7EA16138E7200D03ED3 /* NetworkProcessProxy.cpp */,
@@ -8387,8 +8374,6 @@
 			children = (
 				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
 				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
-				C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */,
-				C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */,
 				446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
@@ -8440,8 +8425,6 @@
 			children = (
 				2D0C56FB229F1DEA00BD33E7 /* DeviceManagementSoftLink.h */,
 				2D0C56FC229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm */,
-				C1710CF524AA634500D7C112 /* LaunchServicesDatabaseObserver.h */,
-				C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */,
 				5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */,
 				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
@@ -10269,14 +10252,6 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
-		C1ED723624A568F5003F6CD3 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				C1ED723724A5690E003F6CD3 /* NetworkProcessProxyCocoa.mm */,
-			);
-			name = cocoa;
-			sourceTree = "<group>";
-		};
 		C54256AE18BEC16100DE4179 /* forms */ = {
 			isa = PBXGroup;
 			children = (
@@ -10883,7 +10858,6 @@
 				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
-				C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */,
@@ -12752,8 +12726,6 @@
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				2D913441212CF9F000128AFD /* JSNPMethod.cpp in Sources */,
 				2D913442212CF9F000128AFD /* JSNPObject.cpp in Sources */,
-				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,
-				C1710CF724AA643200D7C112 /* LaunchServicesDatabaseObserver.mm in Sources */,
 				2984F588164BA095004BC0C6 /* LegacyCustomProtocolManagerMessageReceiver.cpp in Sources */,
 				2984F57C164B915F004BC0C6 /* LegacyCustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281C /* LibWebRTCNetworkMessageReceiver.cpp in Sources */,
