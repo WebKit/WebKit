@@ -1,3 +1,56 @@
+2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r259840): Pressing Esc or ⌘+"." does not dismiss time picker on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=214122
+        <rdar://problem/64940487>
+
+        Reviewed by Tim Horton.
+
+        Prior to r259840, when presenting context menus for certain input types (i.e. "time" and "datetime-local") on
+        iOS, UIKit would tell the presented view controller's view (a `UIDatePicker` in this case) to become first
+        responder. As a result, `WKContentView` would resign first responder, which (by default) blurs the focused
+        element and dismisses the context menu. The result is thats time pickers would immediately dismiss upon
+        presentation.
+
+        To mitigate this, r259840 adopted the existing active focus retaining mechanism to temporarily decouple
+        WKContentView's first responder status from the currently focused form element. However, this also causes
+        `-endEditingAndUpdateFocusAppearanceWithReason:` to bail, due to `self.webView._retainingActiveFocusedState`
+        returning `YES`. This means that codepaths meant to immediately dismiss UI for the focused element (for example,
+        when pressing Escape on a hardware keyboard on iOS) will not be able to dismiss UI.
+
+        To fix this, push the flag that keeps track of whether we're relinquishing first responder to the focused
+        element down into `WKContentView`, and have `WKContentView` automatically stop relinquishing first responder to
+        the focused element in `-[WKContentView accessoryDone]`.
+
+        Fixes an existing test: fast/forms/ios/dismiss-picker-using-keyboard.html
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView accessoryDone]):
+
+        Stop relinquishing focus to the focused element, so that form elements that require first responder can be
+        dismissed when triggering `-accessoryDone` (e.g. when pressing the Esc key on a hardware keyboard).
+
+        (-[WKContentView startRelinquishingFirstResponderToFocusedElement]):
+        (-[WKContentView stopRelinquishingFirstResponderToFocusedElement]):
+
+        Renamed from `-preserveFocus` and `-releaseFocus`, respectively. Also, made these methods idempotent using a new
+        `BOOL` flag, `_isRelinquishingFirstResponderToFocusedElement`.
+
+        (-[WKContentView preserveFocus]): Deleted.
+        (-[WKContentView releaseFocus]): Deleted.
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker controlBeginEditing]):
+        (-[WKDateTimePicker controlEndEditing]):
+
+        Use the renamed WKContentView methods, and also remove the `_preservingFocus` flag.
+
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        (-[WKRotatingPopover presentPopoverAnimated:]):
+        (-[WKRotatingPopover dismissPopoverAnimated:]):
+
+        Use the renamed WKContentView methods.
+
 2020-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Stop telemetry collection for the 'hw.cpu64bit_capable' sysctl

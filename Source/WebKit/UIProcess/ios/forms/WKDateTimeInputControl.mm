@@ -370,16 +370,15 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 - (void)controlBeginEditing
 {
-    
     if (_presenting)
         return;
+
     _presenting = YES;
 
-    if (!_preservingFocus && (_view.focusedElementInformation.elementType == InputType::Time || _view.focusedElementInformation.elementType == InputType::DateTimeLocal)) {
-        [_view preserveFocus];
-        _preservingFocus = YES;
-    }
-    
+    auto elementType = _view.focusedElementInformation.elementType;
+    if (elementType == InputType::Time || elementType == InputType::DateTimeLocal)
+        [_view startRelinquishingFirstResponderToFocusedElement];
+
     // Set the time zone in case it changed.
     _datePicker.get().timeZone = [NSTimeZone localTimeZone];
 
@@ -413,10 +412,9 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 - (void)controlEndEditing
 {
     _presenting = NO;
-    if (_preservingFocus) {
-        [_view releaseFocus];
-        _preservingFocus = NO;
-    }
+
+    [_view stopRelinquishingFirstResponderToFocusedElement];
+
 #if USE(UICONTEXTMENU)
     [self removeContextMenuInteraction];
 #endif

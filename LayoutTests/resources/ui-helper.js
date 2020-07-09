@@ -466,12 +466,18 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`
                 (function() {
+                    if (!uiController.isShowingKeyboard && !uiController.isShowingContextMenu && !uiController.isShowingPopover) {
+                        uiController.uiScriptComplete();
+                        return;
+                    }
+
                     function clearCallbacksAndScriptComplete() {
                         uiController.didHideKeyboardCallback = null;
                         uiController.didDismissPopoverCallback = null;
                         uiController.didHideContextMenuCallback = null;
                         uiController.uiScriptComplete();
                     }
+
                     uiController.didHideKeyboardCallback = clearCallbacksAndScriptComplete;
                     uiController.didDismissPopoverCallback = clearCallbacksAndScriptComplete;
                     uiController.didHideContextMenuCallback = clearCallbacksAndScriptComplete;

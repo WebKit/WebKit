@@ -20,12 +20,14 @@ async function runTest() {
     await UIHelper.activateElementAndWaitForInputSession(time);
     await UIHelper.setTimePickerValue(9, 41);
     await UIHelper.dismissFormAccessoryView();
-    await UIHelper.waitForKeyboardToHide();
+    await UIHelper.waitForInputSessionToDismiss();
     await UIHelper.activateElementAndWaitForInputSession(time);
     pickerValues = await UIHelper.timerPickerValues();
 
     shouldBe("pickerValues.hour", "9");
     shouldBe("pickerValues.minute", "41");
+    await UIHelper.dismissFormAccessoryView();
+    await UIHelper.waitForInputSessionToDismiss();
     finishJSTest();
 }
 </script>

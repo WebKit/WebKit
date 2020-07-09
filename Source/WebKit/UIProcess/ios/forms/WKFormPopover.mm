@@ -134,10 +134,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)presentPopoverAnimated:(BOOL)animated
 {
 #if PLATFORM(MACCATALYST)
-    if (!_isPreservingFocus) {
-        _isPreservingFocus = YES;
-        [_view preserveFocus];
-    }
+    [_view startRelinquishingFirstResponderToFocusedElement];
 #endif
 
     UIPopoverArrowDirection directions = [self popoverArrowDirections];
@@ -161,10 +158,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)dismissPopoverAnimated:(BOOL)animated
 {
 #if PLATFORM(MACCATALYST)
-    if (_isPreservingFocus) {
-        _isPreservingFocus = NO;
-        [_view releaseFocus];
-    }
+    [_view stopRelinquishingFirstResponderToFocusedElement];
 #endif
 
     [_popoverController dismissPopoverAnimated:animated];

@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <head>
     <script src="../../../resources/ui-helper.js"></script>
     <meta name=viewport content="width=device-width">
@@ -46,11 +47,12 @@
                 const [calendar, locale] = calendarAndLocale;
                 await UIHelper.setDefaultCalendarType(calendar, locale);
                 for (const element of [target0, target1]) {
-                    await UIHelper.activateFormControl(element);
+                    await UIHelper.activateElementAndWaitForInputSession(element);
                     const isCreditCardField = element.getAttribute("autocomplete") === "cc-exp";
                     appendOutput(`Date input control${isCreditCardField ? "" : " not"} marked as 'cc-exp' (default calendar set to ${calendar}):`);
                     appendOutput(`{ calendarType = ${await UIHelper.calendarType()} }`);
-                    await UIHelper.deactivateFormControl(element);
+                    element.blur();
+                    await UIHelper.waitForInputSessionToDismiss(element);
                 }
             }
 

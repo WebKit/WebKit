@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <head>
 <script src="../../../resources/js-test.js"></script>
 <script src="../../../resources/ui-helper.js"></script>
@@ -69,7 +70,7 @@ async function runTest()
             debug(`<br>For ${elementToTest.dataset.testName}:`);
             let expectedValue = elementToTest.value;
             await UIHelper.activateElementAndWaitForInputSession(elementToTest);
-            UIHelper.keyDown(keyCommand.key, keyCommand.modifiers);
+            await UIHelper.keyDown(keyCommand.key, keyCommand.modifiers);
             await UIHelper.waitForInputSessionToDismiss();
             shouldBeEqualToString("elementToTest.value", expectedValue);
         }

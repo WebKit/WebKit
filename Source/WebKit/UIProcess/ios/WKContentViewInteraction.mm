@@ -4368,6 +4368,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryDone
 {
+    [self stopRelinquishingFirstResponderToFocusedElement];
     [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonAccessoryDone];
     _page->setIsShowingInputViewForFocusedElement(false);
 }
@@ -6851,13 +6852,21 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return NO;
 }
 
-- (void)preserveFocus
+- (void)startRelinquishingFirstResponderToFocusedElement
 {
+    if (_isRelinquishingFirstResponderToFocusedElement)
+        return;
+
+    _isRelinquishingFirstResponderToFocusedElement = YES;
     [_webView _incrementFocusPreservationCount];
 }
 
-- (void)releaseFocus
+- (void)stopRelinquishingFirstResponderToFocusedElement
 {
+    if (!_isRelinquishingFirstResponderToFocusedElement)
+        return;
+
+    _isRelinquishingFirstResponderToFocusedElement = NO;
     [_webView _decrementFocusPreservationCount];
 }
 
