@@ -371,8 +371,15 @@ sub determineNativeArchitecture(;$$)
     if (isAppleCocoaWebKit() && $output ne "x86_64") {
         $output = "arm64";
     }
+
+    if (isAppleCocoaWebKit() && $output eq "arm64") {
+        determineXcodeSDK();
+        if ($xcodeSDK eq "macosx.internal") {
+            $output = "arm64e";
+        }
+    }
+
     $output = "arm" if $output eq "armv7l";
-    die "'arm64e' is an invalid native architecture" if $output eq "arm64e";
     $nativeArchitectureMap{"$target:$port"} = $output;
 }
 
@@ -632,7 +639,11 @@ sub determineXcodeSDK
     if (checkForArgumentAndRemoveFromARGV("--maccatalyst")) {
         $xcodeSDK ||= "maccatalyst";
     }
-    return if !defined $xcodeSDK;
+
+    # Finally, fall back to macOS if no platform is specified.
+    if (!defined $xcodeSDK) {
+        $xcodeSDK = "macosx";
+    }
     
     # Prefer the internal version of an sdk, if it exists.
     my @availableSDKs = availableXcodeSDKs();

@@ -1,3 +1,21 @@
+2020-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        Local internal builds fail on Apple Silicon (building yasm)
+        https://bugs.webkit.org/show_bug.cgi?id=214129
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture):
+        Build for arm64e when building with the internal SDK.
+        Importantly, this matches the ARCHS_STANDARD_* build settings, so this way we
+        won't set an ARCH that isn't in VALID_ARCHS for projects who use ARCHS_STANDARD_*.
+
+        (determineXcodeSDK):
+        Fall back to "macosx", so that other code can correctly identify that we're building for macOS.
+        This logic needs to be here, instead of in the caller (who could assume undefined means macOS),
+        because we want the ".internal" search to take place as well.
+
 2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Occasional crash under -[UIView _setViewDelegate:] when presenting date and time pickers
