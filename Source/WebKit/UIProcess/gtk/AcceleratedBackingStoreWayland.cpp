@@ -528,7 +528,8 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
         break;
     }
     case WaylandImpl::SHM:
-#if USE(WPE_RENDERER) && WPE_FDO_CHECK_VERSION(1, 7, 0)
+#if USE(WPE_RENDERER)
+#if WPE_FDO_CHECK_VERSION(1, 7, 0)
         if (m_shm.pendingFrame) {
             wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
             m_shm.pendingFrame = false;
@@ -537,6 +538,9 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
         if (!m_surface)
             return;
         break;
+#else
+        FALLTHROUGH;
+#endif // WPE_FDO_CHECK_VERSION
 #else
         FALLTHROUGH;
 #endif

@@ -1,3 +1,17 @@
+2020-07-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Buildfix when WPEBackend-fdo is not available
+
+        Using the && operator for WPE_FDO_CHECK_VERSION was giving the
+        "missing binary operator before(" error as the macro was not defined
+        when the backend is not installed, like in the LTS/Debian vanilla
+        bots.
+
+        Unreviewed build fix.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::snapshot):
+
 2020-07-09  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Update Launch Services database in the WebContent process from the Network process
