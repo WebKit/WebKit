@@ -42,7 +42,6 @@ public:
 
     virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) = 0;
     virtual MediaTime duration() const = 0;
-    virtual void durationChanged(const MediaTime&) = 0;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
     virtual void seekToTime(const MediaTime&) = 0;
     virtual void monitorSourceBuffers() = 0;

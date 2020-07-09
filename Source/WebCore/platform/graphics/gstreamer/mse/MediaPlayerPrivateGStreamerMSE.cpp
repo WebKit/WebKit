@@ -707,7 +707,6 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
             m_playbackPipeline->notifyDurationChanged();
         } else
             m_shouldReportDurationWhenUnblocking = true;
-        m_mediaSource->durationChanged(m_mediaTimeDuration);
     }
 }
 

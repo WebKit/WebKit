@@ -79,7 +79,6 @@ public:
     void streamEndedWithError(Optional<EndOfStreamError>);
 
     MediaTime duration() const final;
-    void durationChanged(const MediaTime&) final;
     std::unique_ptr<PlatformTimeRanges> buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);

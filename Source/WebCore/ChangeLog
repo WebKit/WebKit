@@ -1,3 +1,37 @@
+2020-07-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Make duration changes one way
+        https://bugs.webkit.org/show_bug.cgi?id=214083
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Until now, AppendPipeline emitted duration changes for the
+        MediaSource. This was done with
+        MediaSourcePrivateClient::durationChanged(const MediaTime&), a
+        method which was added to MediaSource in r207889 just to implement
+        this in the GStreamer port.
+
+        This is not necessary though. AppendPipeline only needs to inform
+        MediaSource of the duration of the initialization segment, and
+        MediaSource will in turn set duration from the multi-platform code.
+
+        This patch removes MediaSourcePrivateClient::durationChanged(const
+        MediaTime&) from the multi-platform API, along with its usages in the
+        GStreamer port, giving the multi-platform code sole responsibility on
+        duration changes.
+
+        This is a code cleanup and it's covered by existing tests.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::durationChanged): Deleted.
+        * Modules/mediasource/MediaSource.h:
+        * platform/graphics/MediaSourcePrivateClient.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::didReceiveInitializationSegment):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+
 2020-07-09  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MSE] AV1 support
