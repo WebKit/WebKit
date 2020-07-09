@@ -1,3 +1,20 @@
+2020-07-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Windows] Fix errors from calls to uname when not available
+        https://bugs.webkit.org/show_bug.cgi?id=214101
+
+        Reviewed by Darin Adler.
+
+        As bare windows doesn't default to having uname, avoid calls
+        to it for architecture determination.
+
+        * Scripts/webkitdirs.pm:
+          Do not call uname on windows (non-cygwin) perl
+        * Scripts/webkitpy/common/system/platforminfo.py:
+          Do not call uname for windows (non-cygwin) python,
+          os.uname() also doesn't necessarily exist there, 
+          so use platform.uname() instead.
+
 2020-07-08  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILURE: Completion handlers not invalidated when WebPage::~WebPage() invoked navigating to docs.google.com and signing in

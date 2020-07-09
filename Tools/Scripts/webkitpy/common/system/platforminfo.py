@@ -31,6 +31,7 @@ import os
 import logging
 import re
 import sys
+import platform
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
@@ -109,6 +110,11 @@ class PlatformInfo(object):
     @memoized
     def architecture(self):
         try:
+            # Windows doesn't have built in uname, nor guarantee of
+            # os.uname()
+            if os.name == 'nt':
+                return platform.uname()[4]
+
             # os.uname() won't work on embedded devices, we may support multiple architectures for a single embedded platform
             output = self._executive.run_command(['uname', '-m']).rstrip()
             if output:

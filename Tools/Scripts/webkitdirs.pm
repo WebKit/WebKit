@@ -360,11 +360,11 @@ sub determineNativeArchitecture(;$$)
 
     my $output;
     if ($target eq "") {
-        $output = `uname -m`;
+        $output = `uname -m` unless isWindows();
     } else {
         $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
     }
-    chomp $output;
+    chomp $output if defined $output;
     $output = "x86_64" if (not defined $output);
 
     # FIXME: Remove this when <rdar://problem/64208532> is resolved
