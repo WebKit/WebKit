@@ -145,6 +145,7 @@ public:
     void setAllowsViewportShrinkToFit(bool) override;
     void copyText(JSStringRef) override;
     void installTapGestureOnWindow(JSValueRef) override;
+    bool isShowingContextMenu() const override;
 
     bool mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height) override;
 

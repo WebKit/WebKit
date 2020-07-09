@@ -944,7 +944,7 @@ void UIScriptControllerIOS::setDidDismissContextMenuCallback(JSValueRef callback
     webView().didDismissContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
         if (!m_context)
             return;
-        m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
+        m_context->fireCallback(CallbackTypeDidDismissContextMenu);
     }).get();
 }
 
@@ -1297,6 +1297,11 @@ void UIScriptControllerIOS::installTapGestureOnWindow(JSValueRef callback)
             return;
         m_context->fireCallback(CallbackTypeWindowTapRecognized);
     }).get();
+}
+
+bool UIScriptControllerIOS::isShowingContextMenu() const
+{
+    return webView().showingContextMenu;
 }
 
 }

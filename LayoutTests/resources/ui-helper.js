@@ -448,10 +448,12 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`
                 (function() {
                     function clearCallbacksAndScriptComplete() {
+                        uiController.didShowContextMenuCallback = null;
                         uiController.didShowKeyboardCallback = null;
                         uiController.willPresentPopoverCallback = null;
                         uiController.uiScriptComplete();
                     }
+                    uiController.didShowContextMenuCallback = clearCallbacksAndScriptComplete;
                     uiController.didShowKeyboardCallback = clearCallbacksAndScriptComplete;
                     uiController.willPresentPopoverCallback = clearCallbacksAndScriptComplete;
                     uiController.singleTapAtPoint(${x}, ${y}, function() { });
@@ -467,10 +469,12 @@ window.UIHelper = class UIHelper {
                     function clearCallbacksAndScriptComplete() {
                         uiController.didHideKeyboardCallback = null;
                         uiController.didDismissPopoverCallback = null;
+                        uiController.didHideContextMenuCallback = null;
                         uiController.uiScriptComplete();
                     }
                     uiController.didHideKeyboardCallback = clearCallbacksAndScriptComplete;
                     uiController.didDismissPopoverCallback = clearCallbacksAndScriptComplete;
+                    uiController.didHideContextMenuCallback = clearCallbacksAndScriptComplete;
                 })()`, resolve);
         });
     }
@@ -579,6 +583,22 @@ window.UIHelper = class UIHelper {
                 (function() {
                     if (uiController.isShowingPopover)
                         uiController.didDismissPopoverCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
+    static waitForContextMenuToHide()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (uiController.isShowingContextMenu)
+                        uiController.didDismissContextMenuCallback = () => uiController.uiScriptComplete();
                     else
                         uiController.uiScriptComplete();
                 })()`, resolve);

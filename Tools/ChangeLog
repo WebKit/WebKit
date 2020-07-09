@@ -1,3 +1,34 @@
+2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Occasional crash under -[UIView _setViewDelegate:] when presenting date and time pickers
+        https://bugs.webkit.org/show_bug.cgi?id=214120
+        <rdar://problem/65246918>
+
+        Reviewed by Darin Adler.
+
+        Implement additional support for testing date and time pickers presented using context menus on iOS 14. 
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::isShowingContextMenu const):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _didShowContextMenu]):
+        (-[TestRunnerWKWebView _didDismissContextMenu]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::setDidDismissContextMenuCallback):
+
+        Call the completion callback with `CallbackTypeDidDismissContextMenu`, rather than
+        `CallbackTypeDidEndFormControlInteraction`.
+
+        (WTR::UIScriptControllerIOS::isShowingContextMenu const):
+
+        Add a new script controller to ask whether we're currently presenting a context menu. This is useful in the case
+        where we want to wait until we're no longer showing a context menu, since we'll either immediately invoke script
+        completion, or stash a completion callback on `didDismissContextMenuCallback` to invoke script completion after
+        the context menu is finished dismissing.
+
 2020-07-09  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Unable to build without Internet connection

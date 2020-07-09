@@ -1,3 +1,31 @@
+2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Occasional crash under -[UIView _setViewDelegate:] when presenting date and time pickers
+        https://bugs.webkit.org/show_bug.cgi?id=214120
+        <rdar://problem/65246918>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test to verify that presenting a date picker twice does not result in a crash.
+
+        * fast/forms/ios/show-and-dismiss-date-input-expected.txt: Added.
+        * fast/forms/ios/show-and-dismiss-date-input.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.activateAndWaitForInputSessionAt.return.new.Promise.):
+
+        Teach this helper method to wait for context menus as well (for the case of date and time pickers on iOS).
+
+        (window.UIHelper.waitForInputSessionToDismiss.return.new.Promise.):
+        (window.UIHelper.waitForInputSessionToDismiss.return.new.Promise):
+        (window.UIHelper.waitForInputSessionToDismiss):
+
+        Likewise, teach this to wait for context menu dismissal.
+
+        (window.UIHelper.waitForContextMenuToHide.return.new.Promise):
+        (window.UIHelper.waitForContextMenuToHide):
+
+        Add a new helper to wait for context menus to hide.
+
 2020-07-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Verification] Use the table wrapper box's margin when checking the table box

@@ -77,6 +77,7 @@ struct CustomMenuActionInfo {
 @property (nonatomic, getter=isShowingMenu, setter=setIsShowingMenu:) BOOL showingMenu;
 @property (nonatomic, getter=isDismissingMenu, setter=setIsDismissingMenu:) BOOL dismissingMenu;
 @property (nonatomic, getter=isShowingPopover, setter=setIsShowingPopover:) BOOL showingPopover;
+@property (nonatomic, getter=isShowingContextMenu, setter=setIsShowingContextMenu:) BOOL showingContextMenu;
 
 @end
 
@@ -217,12 +218,20 @@ IGNORE_WARNINGS_END
 
 - (void)_didShowContextMenu
 {
+    if (self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = YES;
     if (self.didShowContextMenuCallback)
         self.didShowContextMenuCallback();
 }
 
 - (void)_didDismissContextMenu
 {
+    if (!self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = NO;
     if (self.didDismissContextMenuCallback)
         self.didDismissContextMenuCallback();
 }

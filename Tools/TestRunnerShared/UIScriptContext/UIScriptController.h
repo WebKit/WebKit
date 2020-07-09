@@ -253,6 +253,7 @@ public:
     virtual bool isShowingMenu() const { notImplemented(); return false; }
     virtual JSObjectRef rectForMenuAction(JSStringRef action) const { notImplemented(); return nullptr; }
     virtual JSObjectRef menuRect() const { notImplemented(); return nullptr; }
+    virtual bool isShowingContextMenu() const { notImplemented(); return false; }
 
     // Selection
 

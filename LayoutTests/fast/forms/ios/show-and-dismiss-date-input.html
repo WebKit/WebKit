@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="date" value="1976-04-01">
+<script>
+jsTestIsAsync = true;
+setTimeout(finishJSTest, 5000)
+
+description("Tests that repeatedly showing and dismissing a date picker on iOS does not result in a crash.");
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    const input = document.querySelector("input");
+    const numberOfIterations = 2;
+    for (let i = 1; i <= numberOfIterations; ++i) {
+        await UIHelper.activateElementAndWaitForInputSession(input);
+        await UIHelper.activateAt(1, 1);
+        await UIHelper.waitForContextMenuToHide();
+        testPassed(`Presented and dismissed date picker (${i}/${numberOfIterations})`);
+    }
+    finishJSTest();
+});
+</script>
+</body>
+</html>

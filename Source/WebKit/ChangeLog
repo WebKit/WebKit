@@ -1,3 +1,38 @@
+2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Occasional crash under -[UIView _setViewDelegate:] when presenting date and time pickers
+        https://bugs.webkit.org/show_bug.cgi?id=214120
+        <rdar://problem/65246918>
+
+        Reviewed by Darin Adler.
+
+        This crash happens when attempting to present a date picker (`<input type=date>`) immediately after dismissing
+        it. We encounter an Objective-C exception thrown by UIKit, due to the `WKDateTimeContextMenuViewController`'s
+        view (the `UIDatePicker`) being presented while it is still owned by the preview view controller. We often avoid
+        this crash because the `WKDateTimeContextMenuViewController` is usually only owned by `WKDateTimePicker`, so
+        when we set `_viewController` to a new instance of `WKDateTimeContextMenuViewController`, the old view
+        controller is destroyed, and thus no longer owns the `UIDatePicker` view.
+
+        However, it's possible for anything (e.g. animation blocks in UIKit) to cause the old view controller to live
+        past the creation of the new view controller. If this happens, when we go and call `-setView:` on the new view
+        controller with the date picker view, the date picker view may still be the view of the old controller, and we
+        end up crashing.
+
+        To fix this, explicitly unload the old view controller's view before attempting to create the new view
+        controller.
+
+        Test: fast/forms/ios/show-and-dismiss-date-input.html
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKDateTimePicker contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+        (-[WKDateTimePicker contextMenuInteraction:willEndForConfiguration:animator:]):
+
+        Make it possible to test date and time picker presentation and dismissal by calling into the private testing-
+        only subclassing hooks on `WKWebView` when we finish presenting and dismissing the date picker context menu.
+
+        (-[WKDateTimePicker removeContextMenuInteraction]):
+
 2020-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for shm buffers in AcceleratedBackingStoreWayland when using the WPE renderer
