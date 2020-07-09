@@ -1,5 +1,7 @@
 
-FAIL Should throw if no name is provided assert_throws: function "() => new BroadcastChannel()" threw object "ReferenceError: Can't find variable: BroadcastChannel" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL Should throw if no name is provided assert_throws_js: function "() => new BroadcastChannel()" threw object "ReferenceError: Can't find variable: BroadcastChannel" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 FAIL Null name should not throw Can't find variable: BroadcastChannel
 FAIL Undefined name should not throw Can't find variable: BroadcastChannel
 FAIL Non-empty name should not throw Can't find variable: BroadcastChannel

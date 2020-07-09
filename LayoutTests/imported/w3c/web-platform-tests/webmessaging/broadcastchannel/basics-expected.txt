@@ -2,6 +2,7 @@
 FAIL postMessage results in correct event Can't find variable: BroadcastChannel
 FAIL messages are delivered in port creation order Can't find variable: BroadcastChannel
 FAIL messages aren't delivered to a closed port Can't find variable: BroadcastChannel
+FAIL messages aren't delivered to a port closed after calling postMessage. Can't find variable: BroadcastChannel
 FAIL closing and creating channels during message delivery works correctly Can't find variable: BroadcastChannel
-FAIL Closing a channel in onmessage doesn't cancel already queued events Can't find variable: BroadcastChannel
+FAIL Closing a channel in onmessage prevents already queued tasks from firing onmessage events Can't find variable: BroadcastChannel
 

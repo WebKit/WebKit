@@ -9,7 +9,7 @@
 <div id=log></div>
 
 <div style="display:none">
-    <iframe width="70%" onload="PostMessageTest()" src="{{location[scheme]}}://{{domains[www]}}:{{location[port]}}/webmessaging/support/ChildWindowPostMessage.htm"></iframe>
+    <iframe width="70%" onload="PostMessageTest()" src="{{location[scheme]}}://{{hosts[alt][]}}:{{location[port]}}/webmessaging/support/ChildWindowPostMessage.htm"></iframe>
     <iframe width="70%" onload="PostMessageTest()" src="./support/ChildWindowPostMessage.htm"></iframe>
 </div>
 
@@ -25,7 +25,7 @@
     var TYPE = "string";
     var TARGET1 = document.querySelectorAll("iframe")[0];
     var TARGET2 = document.querySelectorAll("iframe")[1];
-    var XORIGIN = "{{location[scheme]}}://{{domains[www]}}" + PORT;
+    var XORIGIN = "{{location[scheme]}}://{{hosts[alt][]}}" + PORT;
     var SORIGIN = "{{location[scheme]}}://{{host}}" + PORT;
     var ExpectedResult = [DATA, TYPE, DATA, TYPE];
     var ActualResult = [];

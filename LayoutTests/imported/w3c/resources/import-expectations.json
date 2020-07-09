@@ -405,7 +405,7 @@
     "web-platform-tests/webauthn": "skip", 
     "web-platform-tests/webdriver": "skip", 
     "web-platform-tests/webgl": "skip", 
-    "web-platform-tests/webmessaging": "skip", 
+    "web-platform-tests/webmessaging": "import", 
     "web-platform-tests/webmessaging/": "import", 
     "web-platform-tests/webrtc": "import", 
     "web-platform-tests/webrtc/legacy": "skip", 
