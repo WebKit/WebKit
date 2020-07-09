@@ -48,15 +48,15 @@
 namespace WebCore {
 
 #if ENABLE(RUBBER_BANDING)
-static const float scrollVelocityZeroingTimeout = 0.10f;
+static const Seconds scrollVelocityZeroingTimeout = 100_ms;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
 #endif
 
 #if PLATFORM(MAC)
-static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, float elapsedTime)
+static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, Seconds elapsedTime)
 {
-    return _NSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime);
+    return _NSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime.seconds());
 }
 
 static float elasticDeltaForReboundDelta(float delta)
@@ -140,8 +140,8 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_inScrollGesture = true;
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
-        m_lastMomentumScrollTimestamp = 0;
-        m_momentumVelocity = FloatSize();
+        m_lastMomentumScrollTimestamp = { };
+        m_momentumVelocity = { };
 
         IntSize stretchAmount = m_client.stretchAmount();
         m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
@@ -206,14 +206,14 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhaseBegan || momentumPhase == PlatformWheelEventPhaseChanged))
         m_momentumScrollInProgress = true;
 
-    CFTimeInterval timeDelta = wheelEvent.timestamp().secondsSinceEpoch().value() - m_lastMomentumScrollTimestamp;
+    auto timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
     if (m_inScrollGesture || m_momentumScrollInProgress) {
-        if (m_lastMomentumScrollTimestamp && timeDelta > 0 && timeDelta < scrollVelocityZeroingTimeout) {
-            m_momentumVelocity.setWidth(eventCoalescedDeltaX / (float)timeDelta);
-            m_momentumVelocity.setHeight(eventCoalescedDeltaY / (float)timeDelta);
-            m_lastMomentumScrollTimestamp = wheelEvent.timestamp().secondsSinceEpoch().value();
+        if (m_lastMomentumScrollTimestamp && timeDelta > 0_s && timeDelta < scrollVelocityZeroingTimeout) {
+            m_momentumVelocity.setWidth(eventCoalescedDeltaX / timeDelta.seconds());
+            m_momentumVelocity.setHeight(eventCoalescedDeltaY / timeDelta.seconds());
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
         } else {
-            m_lastMomentumScrollTimestamp = wheelEvent.timestamp().secondsSinceEpoch().value();
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
             m_momentumVelocity = FloatSize();
         }
 
@@ -311,7 +311,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhaseEnded) {
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
-        m_lastMomentumScrollTimestamp = 0;
+        m_lastMomentumScrollTimestamp = { };
     }
 
     return handled;
@@ -398,15 +398,15 @@ void ScrollController::snapRubberBandTimerFired()
         return;
     
     if (!m_momentumScrollInProgress || m_ignoreMomentumScrolls) {
-        CFTimeInterval timeDelta = [NSDate timeIntervalSinceReferenceDate] - m_startTime;
+        auto timeDelta = MonotonicTime::now() - m_startTime;
 
-        if (m_startStretch == FloatSize()) {
+        if (m_startStretch.isZero()) {
             m_startStretch = m_client.stretchAmount();
             if (m_startStretch == FloatSize()) {
                 stopSnapRubberbandTimer();
 
                 m_stretchScrollForce = { };
-                m_startTime = 0;
+                m_startTime = { };
                 m_startStretch = { };
                 m_origVelocity = { };
                 return;
@@ -427,8 +427,8 @@ void ScrollController::snapRubberBandTimerFired()
                 m_origVelocity.setHeight(0);
         }
 
-        FloatPoint delta(roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.width(), -m_origVelocity.width(), (float)timeDelta)),
-            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), (float)timeDelta)));
+        FloatPoint delta(roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.width(), -m_origVelocity.width(), timeDelta)),
+            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), timeDelta)));
 
         if (fabs(delta.x()) >= 1 || fabs(delta.y()) >= 1) {
             m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_client.stretchAmount());
@@ -442,12 +442,12 @@ void ScrollController::snapRubberBandTimerFired()
 
             stopSnapRubberbandTimer();
             m_stretchScrollForce = { };
-            m_startTime = 0;
+            m_startTime = { };
             m_startStretch = { };
             m_origVelocity = { };
         }
     } else {
-        m_startTime = [NSDate timeIntervalSinceReferenceDate];
+        m_startTime = MonotonicTime::now();
         m_startStretch = { };
         if (!isRubberBandInProgress())
             stopSnapRubberbandTimer();
@@ -504,16 +504,16 @@ void ScrollController::stopSnapRubberbandTimer()
 
 void ScrollController::snapRubberBand()
 {
-    CFTimeInterval timeDelta = [NSProcessInfo processInfo].systemUptime - m_lastMomentumScrollTimestamp;
+    auto timeDelta = WallTime::now() - m_lastMomentumScrollTimestamp;
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
-        m_momentumVelocity = FloatSize();
+        m_momentumVelocity = { };
 
     m_inScrollGesture = false;
 
     if (m_snapRubberbandTimer)
         return;
 
-    m_startTime = [NSDate timeIntervalSinceReferenceDate];
+    m_startTime = MonotonicTime::now();
     m_startStretch = { };
     m_origVelocity = { };
 

@@ -1,3 +1,20 @@
+2020-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up time values in ScrollController
+        https://bugs.webkit.org/show_bug.cgi?id=214117
+
+        Reviewed by Wenson Hsieh.
+
+        ScrollController used a mixture of [NSDate timeIntervalSinceReferenceDate], [NSProcessInfo processInfo].systemUptime
+        and wheelEvent.timestamp().secondsSinceEpoch(). Standardize on Seconds/MonotonicTime/WallTime.
+
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::elasticDeltaForTimeDelta):
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::snapRubberBandTimerFired):
+        (WebCore::ScrollController::snapRubberBand):
+
 2020-07-08  Brady Eidson  <beidson@apple.com>
 
         Aggressively prime GameController.framework gamepad provider.

@@ -190,7 +190,7 @@ private:
     ScrollControllerClient& m_client;
 
 #if PLATFORM(MAC)
-    CFTimeInterval m_lastMomentumScrollTimestamp { 0 };
+    WallTime m_lastMomentumScrollTimestamp;
 #endif
     FloatSize m_overflowScrollDelta;
     FloatSize m_stretchScrollForce;
@@ -198,7 +198,7 @@ private:
 
 #if ENABLE(RUBBER_BANDING)
     // Rubber band state.
-    CFTimeInterval m_startTime { 0 };
+    MonotonicTime m_startTime;
     FloatSize m_startStretch;
     FloatSize m_origVelocity;
     std::unique_ptr<ScrollControllerTimer> m_snapRubberbandTimer;
