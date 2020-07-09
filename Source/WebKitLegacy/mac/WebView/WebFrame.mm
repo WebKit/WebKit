@@ -1067,10 +1067,10 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     case FrameLoadType::Replace:
         return WebFrameLoadTypeReplace;
     case FrameLoadType::ReloadFromOrigin:
-        return WebFrameLoadTypeReloadFromOrigin;
     case FrameLoadType::ReloadExpiredOnly:
-        ASSERT_NOT_REACHED();
-        return WebFrameLoadTypeReload;
+        // NOTE: reloading via remote inspection may trigger ReloadExpiredOnly, but otherwise
+        // it is not a supported load type as it was added after WebKit1 became WebKitLegacy.
+        return WebFrameLoadTypeReloadFromOrigin;
     }
 }
 

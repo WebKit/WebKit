@@ -1,3 +1,19 @@
+2020-07-09  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r217248): ASSERT_NOT_REACHED() in toWebFrameLoadType()
+        https://bugs.webkit.org/show_bug.cgi?id=214149
+
+        Reviewed by Joseph Pecoraro.
+
+        ASSERT_NOT_REACHED() is hit when the type is FrameLoadType::ReloadExpiredOnly. This happens
+        when remote inspection triggers a reload via InspectorPageAgent::reload() and the
+        'revalidateAllResources' optional argument is false or not specified.
+
+        * WebView/WebFrame.mm:
+        (toWebFrameLoadType):
+        Remove the assert and add a note explaining why this load type that does not
+        naturally occur in WK1 may nonetheless be triggered while remote inspecting.
+
 2020-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS should not have trailing semicolons
