@@ -1,3 +1,14 @@
+2020-07-09  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r262302): ITMLKit debuggables in listings are missing a title, use UUID instead
+        https://bugs.webkit.org/show_bug.cgi?id=214153
+
+        Reviewed by Devin Rousso.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+        Looks like this is due to copypasta.
+
 2020-07-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         ErrorInstance::finishCreation() puts "message" twice, with different attributes
