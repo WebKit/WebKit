@@ -53,7 +53,7 @@ webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 webkit.org/b/newbug accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
 webkit.org/b/newbug accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
 
-webkit.org/b/214068 accessibility/textarea-selected-text-range.html [ Failure ]
+webkit.org/b/214068 accessibility/textarea-selected-text-range.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
@@ -446,6 +446,11 @@ webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ 
 webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
 
 webkit.org/b/214033 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate.html [ Failure ]
+
+# Main baseline imported in r264117, but it is indeed failing (i.e. the textarea is scrolled)
+webkit.org/b/178583 imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea.html [ Failure ]
+
+webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

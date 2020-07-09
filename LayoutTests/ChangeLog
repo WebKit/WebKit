@@ -1,3 +1,15 @@
+2020-07-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening after latest wpt resyncs
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/flex-expected.txt: Added.
+
 2020-07-08  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/fetch from upstream
