@@ -1,3 +1,16 @@
+2020-07-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Stop telemetry collection for the 'hw.cpu64bit_capable' sysctl
+        https://bugs.webkit.org/show_bug.cgi?id=214148
+        <rdar://problem/65222086>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry shows that SQLite3 on iOS-based builds needs read access to the
+        'hw.cpu64bit_capable' sysctl. We can stop logging this.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-07-09  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Buildfix when WPEBackend-fdo is not available

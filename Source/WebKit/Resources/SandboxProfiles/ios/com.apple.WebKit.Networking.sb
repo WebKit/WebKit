@@ -440,7 +440,6 @@
     (sysctl-name "hw.byteorder")
     (sysctl-name "hw.cachelinesize")
     (sysctl-name "hw.cachelinesize_compat")
-    (sysctl-name "hw.cpu64bit_capable")
     (sysctl-name "hw.cpufamily")
     (sysctl-name "hw.cpufrequency")
     (sysctl-name "hw.cpufrequency_compat")
@@ -550,6 +549,7 @@
     (sysctl-name
         "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
+        "hw.cpu64bit_capable"
         "hw.ncpu"
         "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
         "hw.model" ;; Needed for bundle loading
