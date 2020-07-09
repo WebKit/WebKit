@@ -2,9 +2,9 @@
 
 "use strict";
 
-async function assert_request(t, input, init) {
-  assert_throws(new TypeError(), () => new Request(input, init), "new Request()");
-  await promise_rejects(t, new TypeError(), fetch(input, init));
+async function assert_request(test, input, init) {
+  assert_throws_js(TypeError, () => new Request(input, init), "new Request()");
+  await promise_rejects_js(test, TypeError, fetch(input, init), "fetch()");
 }
 
 promise_test(async (t) => {

@@ -10,10 +10,20 @@ PASS Fetch with POST with Float32Array body
 PASS Fetch with POST with Float64Array body 
 PASS Fetch with POST with DataView body 
 PASS Fetch with POST with Blob body with mime type 
-FAIL Fetch with POST with ReadableStream assert_equals: expected "Test" but got ""
-FAIL Fetch with POST with ReadableStream containing String undefined is not an object (evaluating 'promise.then')
-FAIL Fetch with POST with ReadableStream containing null undefined is not an object (evaluating 'promise.then')
-FAIL Fetch with POST with ReadableStream containing number undefined is not an object (evaluating 'promise.then')
-FAIL Fetch with POST with ReadableStream containing ArrayBuffer undefined is not an object (evaluating 'promise.then')
-FAIL Fetch with POST with ReadableStream containing Blob undefined is not an object (evaluating 'promise.then')
+FAIL Fetch with POST with ReadableStream promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Fetch with POST with ReadableStream containing String promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing null promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing number promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing ArrayBuffer promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Fetch with POST with ReadableStream containing Blob promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

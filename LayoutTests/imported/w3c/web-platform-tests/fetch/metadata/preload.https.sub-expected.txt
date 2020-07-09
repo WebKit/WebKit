@@ -1,0 +1,59 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=fetch1d05a9a6-8b8e-48b4-a5fe-fe5a322187c0
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=fetch30e3e8ca-7b9e-47d8-85b7-3cd39a698393
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=font2d925818-bed3-4b58-8c94-8762dca04c22
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=font37e4a72d-d66f-442f-8ade-9cecf5bc856e
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=image67d1bf58-3292-4437-bf52-d5ff55adfb87
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=imagec30ffece-6260-47f2-89f1-f4e916eb3468
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=script0ddc60ff-b6b1-4498-8e44-a15009de95a0
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=script5a85f4f4-ec0e-476f-be0d-9fab9f34e7b4
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=style7eee1049-bd32-4574-80ba-d6dddcb7d10d
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=stylecf2e207d-ad29-46c0-ae11-c9fe362777ae
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=track82e49c2a-fb46-4be6-9a2c-f5c6829deb48
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=trackcc215f4f-2ffb-49e1-876e-238860a28947
+
+Harness Error (TIMEOUT), message = null
+
+PASS Browser supports preload. 
+PASS <link rel='preload' as='fetch' href='https://localhost:9443/...'> 
+TIMEOUT <link rel='preload' as='fetch' href='https://www.localhost:9443/...'> Test timed out
+TIMEOUT <link rel='preload' as='fetch' href='https://www.127.0.0.1:9443/...'> Test timed out
+PASS <link rel='preload' as='font' href='https://localhost:9443/...'> 
+FAIL <link rel='preload' as='font' href='https://www.localhost:9443/...'> assert_not_equals: got disallowed value "No header has been recorded"
+FAIL <link rel='preload' as='font' href='https://www.127.0.0.1:9443/...'> assert_not_equals: got disallowed value "No header has been recorded"
+PASS <link rel='preload' as='image' href='https://localhost:9443/...'> 
+TIMEOUT <link rel='preload' as='image' href='https://www.localhost:9443/...'> Test timed out
+TIMEOUT <link rel='preload' as='image' href='https://www.127.0.0.1:9443/...'> Test timed out
+PASS <link rel='preload' as='script' href='https://localhost:9443/...'> 
+TIMEOUT <link rel='preload' as='script' href='https://www.localhost:9443/...'> Test timed out
+TIMEOUT <link rel='preload' as='script' href='https://www.127.0.0.1:9443/...'> Test timed out
+PASS <link rel='preload' as='style' href='https://localhost:9443/...'> 
+TIMEOUT <link rel='preload' as='style' href='https://www.localhost:9443/...'> Test timed out
+TIMEOUT <link rel='preload' as='style' href='https://www.127.0.0.1:9443/...'> Test timed out
+PASS <link rel='preload' as='track' href='https://localhost:9443/...'> 
+TIMEOUT <link rel='preload' as='track' href='https://www.localhost:9443/...'> Test timed out
+TIMEOUT <link rel='preload' as='track' href='https://www.127.0.0.1:9443/...'> Test timed out
+FAIL preload font localhost:9443: sec-fetch-dest assert_equals: expected "font" but got ""
+FAIL preload font localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL preload font localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS preload font localhost:9443: sec-fetch-user 
+FAIL preload style localhost:9443: sec-fetch-dest assert_equals: expected "style" but got ""
+FAIL preload style localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL preload style localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS preload style localhost:9443: sec-fetch-user 
+FAIL preload track localhost:9443: sec-fetch-dest assert_equals: expected "track" but got ""
+FAIL preload track localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL preload track localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS preload track localhost:9443: sec-fetch-user 
+FAIL preload fetch localhost:9443: sec-fetch-dest assert_equals: expected "empty" but got ""
+FAIL preload fetch localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL preload fetch localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS preload fetch localhost:9443: sec-fetch-user 
+FAIL preload image localhost:9443: sec-fetch-dest assert_equals: expected "image" but got ""
+FAIL preload image localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL preload image localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS preload image localhost:9443: sec-fetch-user 
+FAIL preload script localhost:9443: sec-fetch-dest assert_equals: expected "script" but got ""
+FAIL preload script localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL preload script localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS preload script localhost:9443: sec-fetch-user 
+

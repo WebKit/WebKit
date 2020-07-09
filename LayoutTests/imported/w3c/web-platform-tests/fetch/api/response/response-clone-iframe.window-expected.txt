@@ -1,0 +1,3 @@
+
+PASS clone within removed iframe should not crash 
+

@@ -8,7 +8,7 @@ PASS Request has text method
 PASS Check method attribute 
 PASS Check url attribute 
 PASS Check headers attribute 
-PASS Check destination attribute 
+FAIL Check destination attribute assert_equals: Attribute destination is read only. Default value is empty expected "empty" but got ""
 PASS Check referrer attribute 
 PASS Check referrerPolicy attribute 
 PASS Check mode attribute 

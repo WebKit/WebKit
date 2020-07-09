@@ -5,4 +5,5 @@ PASS Parsing Cross-Origin-Resource-Policy: SAME-ORIGIN
 PASS Parsing Cross-Origin-Resource-Policy: Same-Origin 
 PASS Parsing Cross-Origin-Resource-Policy: same-origin, <> 
 PASS Parsing Cross-Origin-Resource-Policy: same-origin, same-origin 
+PASS Parsing Cross-Origin-Resource-Policy: https://www.example.com 
 

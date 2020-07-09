@@ -1,3 +1,4 @@
 
 PASS Check response returned by static method error() 
+PASS the 'guard' of the Headers instance should be immutable 
 

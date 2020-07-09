@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch-sw.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/stale-while-revalidate/revalidate-not-blocked-by-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-css.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-image.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-script.html

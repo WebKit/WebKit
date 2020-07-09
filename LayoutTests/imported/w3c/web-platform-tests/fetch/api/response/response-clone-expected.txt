@@ -4,7 +4,7 @@ PASS Check Response's clone has the expected attribute values
 PASS Check orginal response's body after cloning 
 PASS Check cloned response's body 
 PASS Cannot clone a disturbed response 
-FAIL Cloned responses should provide the same data assert_array_equals: cloned responses should provide the same data value is object "[object ArrayBuffer]", expected array
+PASS Cloned responses should provide the same data 
 PASS Cancelling stream should not affect cloned one 
 PASS Check response clone use structureClone for teed ReadableStreams (Int8Arraychunk) 
 PASS Check response clone use structureClone for teed ReadableStreams (Int16Arraychunk) 

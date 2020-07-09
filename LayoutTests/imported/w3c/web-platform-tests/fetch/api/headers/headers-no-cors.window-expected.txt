@@ -21,4 +21,5 @@ PASS "no-cors" Headers object cannot have downlink/1 as header
 PASS "no-cors" Headers object cannot have save-data/on as header 
 PASS "no-cors" Headers object cannot have viewport-width/100 as header 
 PASS "no-cors" Headers object cannot have width/100 as header 
+PASS "no-cors" Headers object cannot have unknown/doesitmatter as header 
 

@@ -1,4 +1,5 @@
 
+
 PASS Initialize global state 
-PASS iframe fetches with a "document" Request.destination 
+FAIL iframe fetches with a "iframe" Request.destination assert_unreached: Wrong destination. Reached unreachable code
 

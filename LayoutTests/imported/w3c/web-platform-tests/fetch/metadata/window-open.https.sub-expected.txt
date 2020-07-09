@@ -1,0 +1,32 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/post-to-owner.py
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/post-to-owner.py
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/post-to-owner.py
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/post-to-owner.py
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/post-to-owner.py
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/post-to-owner.py
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Same-origin window, forced 
+TIMEOUT Same-site window, forced Test timed out
+TIMEOUT Cross-site window, forced Test timed out
+PASS Same-origin window, forced, reloaded 
+TIMEOUT Same-site window, forced, reloaded Test timed out
+TIMEOUT Cross-site window, forced, reloaded Test timed out
+PASS Same-origin window, user-activated 
+TIMEOUT Same-site window, user-activated Test timed out
+TIMEOUT Cross-site window, user-activated Test timed out
+FAIL Same-origin window, forced: sec-fetch-dest assert_equals: expected "document" but got ""
+FAIL Same-origin window, forced: sec-fetch-mode assert_equals: expected "navigate" but got ""
+FAIL Same-origin window, forced: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin window, forced: sec-fetch-user 
+FAIL Same-origin window, forced, reloaded: sec-fetch-dest assert_equals: expected "document" but got ""
+FAIL Same-origin window, forced, reloaded: sec-fetch-mode assert_equals: expected "navigate" but got ""
+FAIL Same-origin window, forced, reloaded: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin window, forced, reloaded: sec-fetch-user 
+FAIL Same-origin window, user-activated: sec-fetch-dest assert_equals: expected "document" but got ""
+FAIL Same-origin window, user-activated: sec-fetch-mode assert_equals: expected "navigate" but got ""
+FAIL Same-origin window, user-activated: sec-fetch-site assert_equals: expected "same-origin" but got ""
+FAIL Same-origin window, user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+

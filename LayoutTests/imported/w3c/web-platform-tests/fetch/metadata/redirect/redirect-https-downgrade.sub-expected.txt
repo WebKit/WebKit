@@ -1,0 +1,45 @@
+Downgraded font
+ 
+
+Harness Error (TIMEOUT), message = null
+
+PASS Https downgrade iframe 
+PASS Https downgrade top level navigation 
+PASS Https downgrade embed 
+PASS Https downgrade fetch() api 
+PASS Https downgrade object 
+PASS Https downgrade preload 
+PASS Https downgrade stylesheet 
+TIMEOUT Https downgrade track Test timed out
+NOTRUN Https downgrade image => No headers 
+PASS Https downgrade script => No headers 
+PASS Https downgrade script => No headers: sec-fetch-mode 
+PASS Https downgrade script => No headers: sec-fetch-site 
+PASS Https downgrade script => No headers: sec-fetch-user 
+PASS Https downgrade script => No headers: sec-fetch-dest 
+PASS Https downgrade iframe: sec-fetch-dest 
+PASS Https downgrade iframe: sec-fetch-mode 
+PASS Https downgrade iframe: sec-fetch-site 
+PASS Https downgrade iframe: sec-fetch-user 
+PASS Https downgrade top level navigation: sec-fetch-dest 
+PASS Https downgrade top level navigation: sec-fetch-mode 
+PASS Https downgrade top level navigation: sec-fetch-site 
+PASS Https downgrade top level navigation: sec-fetch-user 
+NOTRUN Https downgrade font => No headers 
+PASS Https downgrade embed: sec-fetch-dest 
+PASS Https downgrade embed: sec-fetch-mode 
+PASS Https downgrade embed: sec-fetch-site 
+PASS Https downgrade embed: sec-fetch-user 
+PASS Https downgrade fetch() api: sec-fetch-dest 
+PASS Https downgrade fetch() api: sec-fetch-mode 
+PASS Https downgrade fetch() api: sec-fetch-site 
+PASS Https downgrade fetch() api: sec-fetch-user 
+PASS Https downgrade object: sec-fetch-dest 
+PASS Https downgrade object: sec-fetch-mode 
+PASS Https downgrade object: sec-fetch-site 
+PASS Https downgrade object: sec-fetch-user 
+PASS Https downgrade stylesheet: sec-fetch-dest 
+PASS Https downgrade stylesheet: sec-fetch-mode 
+PASS Https downgrade stylesheet: sec-fetch-site 
+PASS Https downgrade stylesheet: sec-fetch-user 
+

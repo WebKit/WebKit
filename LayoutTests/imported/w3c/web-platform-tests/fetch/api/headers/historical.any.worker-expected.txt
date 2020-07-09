@@ -1,3 +1,0 @@
-
-PASS Headers object no longer has a getAll() method 
-

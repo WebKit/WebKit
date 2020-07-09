@@ -1,3 +1,0 @@
-
-FAIL trailer() test promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'res.trailer.then')"
-

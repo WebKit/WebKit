@@ -13,6 +13,9 @@ DATEHDRS = set(['date', 'expires', 'last-modified'])
 def main(request, response):
     dispatch = request.GET.first("dispatch", None)
     uuid = request.GET.first("uuid", None)
+
+    if request.method == "OPTIONS":
+        return handle_preflight(uuid, request, response)
     if not uuid:
         response.status = (404, "Not Found")
         response.headers.set("Content-Type", "text/plain")
@@ -24,6 +27,14 @@ def main(request, response):
     response.status = (404, "Not Found")
     response.headers.set("Content-Type", "text/plain")
     return "Fallthrough"
+
+def handle_preflight(uuid, request, response):
+    response.status = (200, "OK")
+    response.headers.set("Access-Control-Allow-Origin", "*")
+    response.headers.set("Access-Control-Allow-Methods", "GET")
+    response.headers.set("Access-Control-Allow-Headers", "*")
+    response.headers.set("Access-Control-Max-Age", "86400")
+    return "Preflight request"
 
 def handle_state(uuid, request, response):
     response.headers.set("Content-Type", "text/plain")
@@ -46,7 +57,10 @@ def handle_test(uuid, request, response):
     now = time.time()
     for header in config.get('response_headers', []):
         if header[0].lower() in LOCATIONHDRS: # magic locations
-            header[1] = "%s&target=%s" % (request.url, header[1])
+            if (len(header[1]) > 0):
+                header[1] = "%s&target=%s" % (request.url, header[1])
+            else:
+                header[1] = request.url
         if header[0].lower() in DATEHDRS and isinstance(header[1], int):  # magic dates
             header[1] = http_date(now, header[1])
         response.headers.set(header[0], header[1])

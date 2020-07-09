@@ -16,3 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/redirect-navigate/302-found-post-handler.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/redirect-navigate/302-found-post.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment.html

@@ -26,10 +26,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-not-cors-safelisted.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/data-url-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/data-url-shared-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/data-url-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/sandboxed-iframe.html

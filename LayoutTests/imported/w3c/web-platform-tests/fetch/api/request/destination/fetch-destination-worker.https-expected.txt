@@ -1,4 +1,5 @@
 
 PASS Initialize global state 
-PASS Worker fetches with a "worker" Request.destination 
+PASS DedicatedWorker fetches with a "worker" Request.destination 
+FAIL SharedWorker fetches with a "sharedworker" Request.destination promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SharedWorker("dummy.html?t=sharedworker&dest=sharedworker")')"
 

@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/header-value-null-byte.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/keepalive.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mediasource.window.js

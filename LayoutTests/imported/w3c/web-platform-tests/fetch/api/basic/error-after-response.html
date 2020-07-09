@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Fetch: network timeout after receiving the HTTP response headers</title>
+    <meta name="timeout" content="long">
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
     <script src="../resources/utils.js"></script>
@@ -13,7 +14,7 @@ function checkReader(test, reader, promiseToTest)
 {
     return reader.read().then((value) => {
         validateBufferFromString(value.value, "TEST_CHUNK", "Should receive first chunk");
-        return promise_rejects(test, new TypeError(), promiseToTest(reader));
+        return promise_rejects_js(test, TypeError, promiseToTest(reader));
     });
 }
 

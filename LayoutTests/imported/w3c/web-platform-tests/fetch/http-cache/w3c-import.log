@@ -24,5 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/http-cache.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/partial.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/post-patch.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/status.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/vary.html

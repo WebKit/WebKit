@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/corb/script-js-mislabeled-as-html-nosniff.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/corb/script-js-mislabeled-as-html.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/corb/script-resource-with-json-parser-breaker.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/script-resource-with-nonsniffable-types.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/corb/style-css-mislabeled-as-html-nosniff.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/corb/style-css-mislabeled-as-html.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/corb/style-css-with-json-parser-breaker.sub.html

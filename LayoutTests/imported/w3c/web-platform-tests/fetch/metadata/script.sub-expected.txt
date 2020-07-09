@@ -1,0 +1,21 @@
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/echo-as-script.py
+Blocked access to external URL http://www.127.0.0.1:8800/fetch/metadata/resources/echo-as-script.py
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/echo-as-script.py
+Blocked access to external URL http://www.127.0.0.1:8800/fetch/metadata/resources/echo-as-script.py
+
+PASS Non-secure same-origin script => No headers 
+PASS Non-secure same-origin script => No headers: sec-fetch-dest 
+PASS Non-secure same-origin script => No headers: sec-fetch-mode 
+PASS Non-secure same-origin script => No headers: sec-fetch-site 
+PASS Non-secure same-origin script => No headers: sec-fetch-user 
+PASS Non-secure same-site script => No headers 
+FAIL Non-secure same-site script => No headers: sec-fetch-dest null is not an object (evaluating 'value.dest')
+FAIL Non-secure same-site script => No headers: sec-fetch-mode null is not an object (evaluating 'value.mode')
+FAIL Non-secure same-site script => No headers: sec-fetch-site null is not an object (evaluating 'value.site')
+FAIL Non-secure same-site script => No headers: sec-fetch-user null is not an object (evaluating 'value.user')
+PASS Non-secure cross-site script => No headers 
+FAIL Non-secure cross-site script => No headers: sec-fetch-dest null is not an object (evaluating 'value.dest')
+FAIL Non-secure cross-site script => No headers: sec-fetch-mode null is not an object (evaluating 'value.mode')
+FAIL Non-secure cross-site script => No headers: sec-fetch-site null is not an object (evaluating 'value.site')
+FAIL Non-secure cross-site script => No headers: sec-fetch-user null is not an object (evaluating 'value.user')
+

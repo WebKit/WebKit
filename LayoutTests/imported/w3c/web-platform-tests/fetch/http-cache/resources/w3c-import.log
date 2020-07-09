@@ -16,3 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/resources/http-cache.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/resources/securedimage.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/resources/split-cache-popup-with-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/resources/split-cache-popup.html

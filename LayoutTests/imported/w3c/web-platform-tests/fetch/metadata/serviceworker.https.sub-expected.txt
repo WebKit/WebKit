@@ -1,0 +1,11 @@
+
+PASS metadata for service worker scripts 
+FAIL Register service worker: sec-fetch-dest assert_equals: expected "serviceworker" but got ""
+FAIL Register service worker: sec-fetch-mode assert_equals: expected "same-origin" but got ""
+FAIL Register service worker: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Register service worker: sec-fetch-user 
+FAIL Update service worker: sec-fetch-dest assert_equals: expected "serviceworker" but got ""
+FAIL Update service worker: sec-fetch-mode assert_equals: expected "same-origin" but got ""
+FAIL Update service worker: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Update service worker: sec-fetch-user 
+

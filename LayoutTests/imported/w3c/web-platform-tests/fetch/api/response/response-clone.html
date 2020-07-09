@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Response clone</title>
+    <meta name="timeout" content="long">
     <meta name="help" href="https://fetch.spec.whatwg.org/#response">
     <meta name="author" title="Canon Research France" href="https://www.crf.canon.fr">
     <script src="/resources/testharness.js"></script>
@@ -57,7 +58,7 @@
         var disturbedResponse = new Response("data");
         return disturbedResponse.text().then(function() {
             assert_true(disturbedResponse.bodyUsed, "response is disturbed");
-            assert_throws(new TypeError() , function() { disturbedResponse.clone(); },
+            assert_throws_js(TypeError, function() { disturbedResponse.clone(); },
               "Expect TypeError exception");
         });
       }, "Cannot clone a disturbed response");
@@ -69,13 +70,13 @@
         return fetch('../resources/trickle.py?count=2&delay=100').then(function(res) {
             clone = res.clone();
             response = res;
-            return clone.arrayBuffer();
+            return clone.text();
         }).then(function(r) {
-            assert_equals(r.byteLength, 26);
+            assert_equals(r.length, 26);
             result = r;
-            return response.arrayBuffer();
+            return response.text();
         }).then(function(r) {
-            assert_array_equals(r, result, "cloned responses should provide the same data");
+            assert_equals(r, result, "cloned responses should provide the same data");
         });
      }, 'Cloned responses should provide the same data');
 

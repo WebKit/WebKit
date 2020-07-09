@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/README.md
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/embed.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/favicon.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/fetch-preflight.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/fetch-via-serviceworker--fallback.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/fetch-via-serviceworker--respondWith.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/fetch.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/fetch.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/font.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/form.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/history.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/iframe.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/img.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/navigation.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/object.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/portal.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/prefetch.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/script.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/serviceworker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/sharedworker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/track.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/trailing-dot.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/unload.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/worker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/xslt.https.sub.html

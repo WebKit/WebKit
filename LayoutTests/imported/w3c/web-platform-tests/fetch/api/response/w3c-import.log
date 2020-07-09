@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-cancel-stream.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-clone-iframe.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-clone.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume-stream.html
@@ -32,5 +33,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-4.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-5.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-by-pipe.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-with-broken-then.any.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-trailer.html

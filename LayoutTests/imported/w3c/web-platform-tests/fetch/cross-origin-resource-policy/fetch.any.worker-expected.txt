@@ -5,7 +5,7 @@ PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' 
 PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
 PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
 PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-FAIL Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-site' response header. promise_test: Unhandled rejection with value: object "TypeError: Cancelled load to https://localhost:9443/fetch/cross-origin-resource-policy/resources/hello.py?corp=same-site because it violates the resource's Cross-Origin-Resource-Policy response header."
+PASS Cross-scheme (HTTP to HTTPS) no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-site' response header. 
 PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
 PASS Valid cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
 PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a redirection. 

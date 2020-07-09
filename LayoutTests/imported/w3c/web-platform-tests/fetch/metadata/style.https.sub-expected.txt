@@ -1,0 +1,13 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=style-same-site61f53f70-24ae-47a7-8683-79e2740c53e5
+
+Harness Error (TIMEOUT), message = null
+
+PASS Same-Origin style 
+TIMEOUT Same-Site style Test timed out
+NOTRUN Cross-Site style 
+NOTRUN Same-Origin, cors style 
+FAIL Same-Origin style: sec-fetch-dest assert_equals: expected "style" but got ""
+FAIL Same-Origin style: sec-fetch-mode assert_equals: expected "no-cors" but got ""
+FAIL Same-Origin style: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-Origin style: sec-fetch-user 
+

@@ -17,7 +17,7 @@ async_test(t => {
   t.step_timeout(() => {
     assert_equals(frame.contentDocument, null);
     t.done();
-  }, 2000);
+  }, 1000);
   document.body.append(frame);
 }, "Expect network error for frame navigation to resource with 0x00 in a header");
 

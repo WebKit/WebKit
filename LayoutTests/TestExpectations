@@ -867,6 +867,7 @@ imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Im
 
 # Fetch fetatures that are not implemented.
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/ [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata [ Skip ]
 
 # These fetch tests time out

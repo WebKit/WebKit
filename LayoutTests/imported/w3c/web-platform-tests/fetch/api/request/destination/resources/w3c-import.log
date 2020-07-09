@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_video.mp4
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_video.ogv
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/empty.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker-frame.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker-iframe.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker-no-load-event.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker.js

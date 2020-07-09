@@ -1,0 +1,7 @@
+
+PASS Same-Origin worker 
+FAIL undefined: sec-fetch-dest assert_equals: expected "worker" but got ""
+FAIL undefined: sec-fetch-mode assert_equals: expected "same-origin" but got ""
+FAIL undefined: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS undefined: sec-fetch-user 
+

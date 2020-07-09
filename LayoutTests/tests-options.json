@@ -1364,6 +1364,9 @@
     "imported/w3c/web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.html": [
         "slow"
     ],
@@ -1376,10 +1379,16 @@
     "imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/api/request/request-cache-default-conditional.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/api/request/request-cache.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/api/response/response-clone.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/http-cache/304-update.html": [
@@ -1398,6 +1407,18 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/http-cache/partial.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/post-patch.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/status.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html": [

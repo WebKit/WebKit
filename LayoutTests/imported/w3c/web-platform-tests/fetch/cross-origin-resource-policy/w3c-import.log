@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/fetch.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/fetch.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/iframe-loads.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/image-loads.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.any.js

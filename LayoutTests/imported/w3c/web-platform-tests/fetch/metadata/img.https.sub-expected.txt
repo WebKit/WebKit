@@ -1,0 +1,12 @@
+Blocked access to external URL https://www.localhost:9443/common/security-features/subresource/image.py
+Blocked access to external URL https://www.127.0.0.1:9443/common/security-features/subresource/image.py
+ 
+
+PASS Same-origin image 
+FAIL Same-site image promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL Cross-site image promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL Same-origin image: sec-fetch-dest assert_equals: expected (string) "image" but got (undefined) undefined
+FAIL Same-origin image: sec-fetch-mode assert_equals: expected (string) "cors" but got (undefined) undefined
+FAIL Same-origin image: sec-fetch-site assert_equals: expected (string) "same-origin" but got (undefined) undefined
+PASS Same-origin image: sec-fetch-user 
+

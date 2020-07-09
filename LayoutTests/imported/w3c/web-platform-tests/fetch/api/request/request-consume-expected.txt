@@ -33,8 +33,16 @@ PASS Consume JSON from text: '"null"'
 PASS Consume JSON from text: '"1"' 
 PASS Consume JSON from text: '"true"' 
 PASS Consume JSON from text: '"\"string\""' 
-PASS Trying to consume bad JSON text as JSON: 'undefined' 
-PASS Trying to consume bad JSON text as JSON: '{' 
-PASS Trying to consume bad JSON text as JSON: 'a' 
-PASS Trying to consume bad JSON text as JSON: '[' 
+FAIL Trying to consume bad JSON text as JSON: 'undefined' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL Trying to consume bad JSON text as JSON: '{' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL Trying to consume bad JSON text as JSON: 'a' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL Trying to consume bad JSON text as JSON: '[' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
 

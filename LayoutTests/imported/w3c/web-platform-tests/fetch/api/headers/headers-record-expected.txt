@@ -10,6 +10,6 @@ PASS Correct operation ordering with two properties one of which has an invalid 
 PASS Correct operation ordering with non-enumerable properties 
 PASS Correct operation ordering with undefined descriptors 
 PASS Correct operation ordering with repeated keys 
-FAIL Basic operation with Symbol keys assert_throws: function "function () { var h = new Headers(proxy); }" did not throw
+FAIL Basic operation with Symbol keys assert_throws_js: function "function () { var h = new Headers(proxy); }" did not throw
 FAIL Operation with non-enumerable Symbol keys assert_equals: expected 9 but got 8
 

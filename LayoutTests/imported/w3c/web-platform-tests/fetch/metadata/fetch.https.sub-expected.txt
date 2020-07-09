@@ -1,0 +1,26 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/echo-as-json.py
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/echo-as-json.py
+
+PASS Same-origin fetch 
+FAIL Same-site fetch promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-site fetch promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Same-origin mode 
+PASS CORS mode 
+PASS no-CORS mode 
+FAIL Same-origin fetch: sec-fetch-dest assert_equals: expected "empty" but got ""
+FAIL Same-origin fetch: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL Same-origin fetch: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin fetch: sec-fetch-user 
+FAIL Same-origin mode: sec-fetch-dest assert_equals: expected "empty" but got ""
+FAIL Same-origin mode: sec-fetch-mode assert_equals: expected "same-origin" but got ""
+FAIL Same-origin mode: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin mode: sec-fetch-user 
+FAIL CORS mode: sec-fetch-dest assert_equals: expected "empty" but got ""
+FAIL CORS mode: sec-fetch-mode assert_equals: expected "cors" but got ""
+FAIL CORS mode: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS CORS mode: sec-fetch-user 
+FAIL no-CORS mode: sec-fetch-dest assert_equals: expected "empty" but got ""
+FAIL no-CORS mode: sec-fetch-mode assert_equals: expected "no-cors" but got ""
+FAIL no-CORS mode: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS no-CORS mode: sec-fetch-user 
+

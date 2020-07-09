@@ -3,9 +3,9 @@ PASS Consume request's body as text
 PASS Consume request's body as blob 
 PASS Consume request's body as arrayBuffer 
 PASS Consume request's body as json (error case) 
-FAIL Consume request's body as formData with correct multipart type (error case) assert_throws: function "function () { throw e }" threw undefined with type "undefined", not an object
+FAIL Consume request's body as formData with correct multipart type (error case) promise_rejects_js: function "function () { throw e }" threw undefined with type "undefined", not an object
 FAIL Consume request's body as formData with correct urlencoded type promise_test: Unhandled rejection with value: undefined
-FAIL Consume request's body as formData without correct type (error case) assert_throws: function "function () { throw e }" threw undefined with type "undefined", not an object
+FAIL Consume request's body as formData without correct type (error case) promise_rejects_js: function "function () { throw e }" threw undefined with type "undefined", not an object
 PASS Consume empty blob request body as arrayBuffer 
 PASS Consume empty text request body as arrayBuffer 
 PASS Consume empty blob request body as text 

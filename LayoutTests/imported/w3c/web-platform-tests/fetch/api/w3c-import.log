@@ -14,4 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/idl.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/idlharness.any.js
