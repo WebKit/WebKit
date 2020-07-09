@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNode.h"
 #include "AudioNodeOutput.h"
+#include "ChannelCountMode.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -144,8 +145,8 @@ void AudioNodeInput::updateInternalBus()
 
 unsigned AudioNodeInput::numberOfChannels() const
 {
-    AudioNode::ChannelCountMode mode = node()->internalChannelCountMode();
-    if (mode == AudioNode::Explicit)
+    auto mode = node()->channelCountMode();
+    if (mode == ChannelCountMode::Explicit)
         return node()->channelCount();
 
     // Find the number of channels of the connection with the largest number of channels.
@@ -157,7 +158,7 @@ unsigned AudioNodeInput::numberOfChannels() const
         maxChannels = std::max(maxChannels, output->numberOfChannels());
     }
 
-    if (mode == AudioNode::ClampedMax)
+    if (mode == ChannelCountMode::ClampedMax)
         maxChannels = std::min(maxChannels, static_cast<unsigned>(node()->channelCount()));
 
     return maxChannels;
@@ -168,7 +169,7 @@ AudioBus* AudioNodeInput::bus()
     ASSERT(context().isAudioThread());
 
     // Handle single connection specially to allow for in-place processing.
-    if (numberOfRenderingConnections() == 1 && node()->internalChannelCountMode() == AudioNode::Max)
+    if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max)
         return renderingOutput(0)->bus();
 
     // Multiple connections case or complex ChannelCountMode (or no connections).
@@ -187,7 +188,7 @@ void AudioNodeInput::sumAllConnections(AudioBus* summingBus, size_t framesToProc
     ASSERT(context().isAudioThread());
 
     // We shouldn't be calling this method if there's only one connection, since it's less efficient.
-    ASSERT(numberOfRenderingConnections() > 1 || node()->internalChannelCountMode() != AudioNode::Max);
+    ASSERT(numberOfRenderingConnections() > 1 || node()->channelCountMode() != ChannelCountMode::Max);
 
     ASSERT(summingBus);
     if (!summingBus)
@@ -195,7 +196,7 @@ void AudioNodeInput::sumAllConnections(AudioBus* summingBus, size_t framesToProc
         
     summingBus->zero();
 
-    AudioBus::ChannelInterpretation interpretation = node()->internalChannelInterpretation();
+    auto interpretation = node()->channelInterpretation();
 
     for (auto& output : m_renderingOutputs) {
         ASSERT(output);
@@ -213,7 +214,7 @@ AudioBus* AudioNodeInput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     ASSERT(context().isAudioThread());
 
     // Handle single connection case.
-    if (numberOfRenderingConnections() == 1 && node()->internalChannelCountMode() == AudioNode::Max) {
+    if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max) {
         // The output will optimize processing using inPlaceBus if it's able.
         AudioNodeOutput* output = this->renderingOutput(0);
         return output->pull(inPlaceBus, framesToProcess);

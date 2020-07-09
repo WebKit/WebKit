@@ -2701,6 +2701,8 @@ JSCanvasTextBaseline.cpp
 JSCanvasTextDrawingStyles.cpp
 JSCanvasTransform.cpp
 JSCanvasUserInterface.cpp
+JSChannelCountMode.cpp
+JSChannelInterpretation.cpp
 JSChannelMergerNode.cpp
 JSChannelSplitterNode.cpp
 JSCharacterData.cpp

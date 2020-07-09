@@ -106,8 +106,8 @@ AudioNode::AudioNode(BaseAudioContext& context, float sampleRate)
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
 #endif
     , m_channelCount(2)
-    , m_channelCountMode(Max)
-    , m_channelInterpretation(AudioBus::Speakers)
+    , m_channelCountMode(ChannelCountMode::Max)
+    , m_channelInterpretation(ChannelInterpretation::Speakers)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
@@ -268,11 +268,6 @@ ExceptionOr<void> AudioNode::disconnect(unsigned outputIndex)
     return { };
 }
 
-unsigned AudioNode::channelCount()
-{
-    return m_channelCount;
-}
-
 ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
 {
     ASSERT(isMainThread());
@@ -287,26 +282,12 @@ ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
         return { };
 
     m_channelCount = channelCount;
-    if (m_channelCountMode != Max)
+    if (m_channelCountMode != ChannelCountMode::Max)
         updateChannelsForInputs();
     return { };
 }
 
-String AudioNode::channelCountMode()
-{
-    switch (m_channelCountMode) {
-    case Max:
-        return "max"_s;
-    case ClampedMax:
-        return "clamped-max"_s;
-    case Explicit:
-        return "explicit"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return emptyString();
-}
-
-ExceptionOr<void> AudioNode::setChannelCountMode(const String& mode)
+ExceptionOr<void> AudioNode::setChannelCountMode(ChannelCountMode mode)
 {
     ASSERT(isMainThread());
     BaseAudioContext::AutoLocker locker(context());
@@ -314,15 +295,7 @@ ExceptionOr<void> AudioNode::setChannelCountMode(const String& mode)
     ALWAYS_LOG(LOGIDENTIFIER, mode);
     
     ChannelCountMode oldMode = m_channelCountMode;
-
-    if (mode == "max")
-        m_channelCountMode = Max;
-    else if (mode == "clamped-max")
-        m_channelCountMode = ClampedMax;
-    else if (mode == "explicit")
-        m_channelCountMode = Explicit;
-    else
-        return Exception { InvalidStateError };
+    m_channelCountMode = mode;
 
     if (m_channelCountMode != oldMode)
         updateChannelsForInputs();
@@ -330,31 +303,14 @@ ExceptionOr<void> AudioNode::setChannelCountMode(const String& mode)
     return { };
 }
 
-String AudioNode::channelInterpretation()
-{
-    switch (m_channelInterpretation) {
-    case AudioBus::Speakers:
-        return "speakers"_s;
-    case AudioBus::Discrete:
-        return "discrete"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return emptyString();
-}
-
-ExceptionOr<void> AudioNode::setChannelInterpretation(const String& interpretation)
+ExceptionOr<void> AudioNode::setChannelInterpretation(ChannelInterpretation interpretation)
 {
     ASSERT(isMainThread());
     BaseAudioContext::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, interpretation);
     
-    if (interpretation == "speakers")
-        m_channelInterpretation = AudioBus::Speakers;
-    else if (interpretation == "discrete")
-        m_channelInterpretation = AudioBus::Discrete;
-    else
-        return Exception { InvalidStateError };
+    m_channelInterpretation = interpretation;
 
     return { };
 }

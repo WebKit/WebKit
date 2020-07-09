@@ -26,10 +26,6 @@
     Conditional=WEB_AUDIO,
 ] dictionary AudioNodeOptions {
     unsigned long channelCount;
-    
-    // FIXME: Should be updated to use ChannelCountMode enum type.
-    DOMString channelCountMode;
-    
-    // FIXME: Should be updated to use ChannelInterpretation enum type.
-    DOMString channelInterpretation;
+    ChannelCountMode channelCountMode;
+    ChannelInterpretation channelInterpretation;
 };

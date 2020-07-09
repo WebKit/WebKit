@@ -308,6 +308,8 @@ $(PROJECT_DIR)/Modules/webaudio/AudioParam.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/BaseAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterNode.idl
+$(PROJECT_DIR)/Modules/webaudio/ChannelCountMode.idl
+$(PROJECT_DIR)/Modules/webaudio/ChannelInterpretation.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelMergerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelSplitterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverNode.idl

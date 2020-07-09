@@ -32,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "ChannelCountMode.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "ScriptExecutionContext.h"
@@ -75,8 +76,8 @@ PannerNode::PannerNode(BaseAudioContext& context, float sampleRate)
 
     // Node-specific default mixing rules.
     m_channelCount = 2;
-    m_channelCountMode = ClampedMax;
-    m_channelInterpretation = AudioBus::Speakers;
+    m_channelCountMode = ChannelCountMode::ClampedMax;
+    m_channelInterpretation = ChannelInterpretation::Speakers;
 
     m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
@@ -113,11 +114,11 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
     if (result.hasException())
         return result.releaseException();
     
-    result = panner->setChannelCountMode(options.channelCountMode.isNull() ? "clamped-max"_str : options.channelCountMode);
+    result = panner->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::ClampedMax));
     if (result.hasException())
         return result.releaseException();
     
-    result = panner->setChannelInterpretation(options.channelInterpretation.isNull() ? "speakers"_str : options.channelInterpretation);
+    result = panner->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
     if (result.hasException())
         return result.releaseException();
     
@@ -333,6 +334,22 @@ ExceptionOr<void> PannerNode::setConeOuterGain(double gain)
     
     m_coneEffect.setOuterGain(gain);
     return { };
+}
+
+ExceptionOr<void> PannerNode::setChannelCount(unsigned channelCount)
+{
+    if (channelCount > 2)
+        return Exception { NotSupportedError, "PannerNode's channelCount cannot be greater than 2"_s };
+    
+    return AudioNode::setChannelCount(channelCount);
+}
+
+ExceptionOr<void> PannerNode::setChannelCountMode(ChannelCountMode mode)
+{
+    if (mode == ChannelCountMode::Max)
+        return Exception { NotSupportedError, "PannerNode's channelCountMode cannot be max"_s };
+    
+    return AudioNode::setChannelCountMode(mode);
 }
 
 void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)

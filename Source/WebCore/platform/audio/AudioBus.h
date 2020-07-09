@@ -40,6 +40,12 @@ namespace WebCore {
 // An AudioBus represents a collection of one or more AudioChannels.
 // The data layout is "planar" as opposed to "interleaved".
 // An AudioBus with one channel is mono, an AudioBus with two channels is stereo, etc.
+
+enum class ChannelInterpretation {
+    Speakers,
+    Discrete,
+};
+
 class AudioBus final : public ThreadSafeRefCounted<AudioBus> {
     WTF_MAKE_NONCOPYABLE(AudioBus);
 public:
@@ -56,11 +62,6 @@ public:
     enum {
         LayoutCanonical = 0
         // Can define non-standard layouts here
-    };
-
-    enum ChannelInterpretation {
-        Speakers,
-        Discrete,
     };
 
     // allocate indicates whether or not to initially have the AudioChannels created with managed storage.
@@ -126,11 +127,11 @@ public:
 
     // Copies the samples from the source bus to this one.
     // This is just a simple per-channel copy if the number of channels match, otherwise an up-mix or down-mix is done.
-    WEBCORE_EXPORT void copyFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
+    WEBCORE_EXPORT void copyFrom(const AudioBus& sourceBus, ChannelInterpretation = ChannelInterpretation::Speakers);
 
     // Sums the samples from the source bus to this one.
     // This is just a simple per-channel summing if the number of channels match, otherwise an up-mix or down-mix is done.
-    void sumFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
+    void sumFrom(const AudioBus& sourceBus, ChannelInterpretation = ChannelInterpretation::Speakers);
 
     // Copy each channel from sourceBus into our corresponding channel.
     // We scale by targetGain (and our own internal gain m_busGain), performing "de-zippering" to smoothly change from *lastMixGain to (targetGain*m_busGain).

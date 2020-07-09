@@ -301,6 +301,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelCountMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelCountMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelInterpretation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelInterpretation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelMergerNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelMergerNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterNode.cpp

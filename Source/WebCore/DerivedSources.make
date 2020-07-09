@@ -391,6 +391,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
     $(WebCore)/Modules/webaudio/BaseAudioContext.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
+    $(WebCore)/Modules/webaudio/ChannelCountMode.idl \
+    $(WebCore)/Modules/webaudio/ChannelInterpretation.idl \
     $(WebCore)/Modules/webaudio/ChannelMergerNode.idl \
     $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \

@@ -44,27 +44,27 @@ PASS   node2.channelCount is equal to 2.
 PASS   new PannerNode(c, {"channelCount":0}) threw InvalidStateError: "The object is in an invalid state.". 
 PASS   node.channelCount = 0 threw InvalidStateError: "The object is in an invalid state.". 
 PASS   node.channelCount after setting to 0 is equal to 2. 
-FAIL X new PannerNode(c, {"channelCount":3}) did not throw an exception. assert_true: expected true got false
-FAIL X node.channelCount = 3 did not throw an exception. assert_true: expected true got false
-FAIL X node.channelCount after setting to 3 is not equal to 2. Got 3. assert_true: expected true got false
-PASS   new PannerNode(c, {"channelCount":99}) threw InvalidStateError: "The object is in an invalid state.". 
-PASS   node.channelCount = 99 threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new PannerNode(c, {"channelCount":3}) threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 
+PASS   node.channelCount = 3 threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 
+PASS   node.channelCount after setting to 3 is equal to 2. 
+PASS   new PannerNode(c, {"channelCount":99}) threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 
+PASS   node.channelCount = 99 threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 
 PASS   node.channelCount after setting to 99 is equal to 2. 
 PASS   node3 = new PannerNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception. 
 PASS   node3.channelCountMode is equal to clamped-max. 
 PASS   node4 = new PannerNode(c, {"channelCountMode":"explicit"}) did not throw an exception. 
 PASS   node4.channelCountMode is equal to explicit. 
-FAIL X new PannerNode(c, {"channelCountMode":"max"}) did not throw an exception. assert_true: expected true got false
-FAIL X node.channelCountMode = max did not throw an exception. assert_true: expected true got false
-FAIL X node.channelCountMode after setting to max is not equal to clamped-max. Got max. assert_true: expected true got false
-FAIL X new PannerNode(c, " + JSON.stringify(options) + ") threw "InvalidStateError" instead of EcmaScript error TypeError. assert_true: expected true got false
-FAIL X node.channelCountMode = foobar incorrectly threw InvalidStateError: "The object is in an invalid state.". assert_true: expected true got false
+PASS   new PannerNode(c, {"channelCountMode":"max"}) threw NotSupportedError: "PannerNode's channelCountMode cannot be max". 
+PASS   node.channelCountMode = max threw NotSupportedError: "PannerNode's channelCountMode cannot be max". 
+PASS   node.channelCountMode after setting to max is equal to clamped-max. 
+PASS   new PannerNode(c, " + JSON.stringify(options) + ") threw TypeError: "Type error". 
+PASS   node.channelCountMode = foobar did not throw an exception. 
 PASS   node.channelCountMode after setting to foobar is equal to clamped-max. 
 PASS   node5 = new PannerNode(c, {"channelInterpretation":"speakers"}) did not throw an exception. 
 PASS   node5.channelInterpretation is equal to speakers. 
 PASS   node6 = new PannerNode(c, {"channelInterpretation":"discrete"}) did not throw an exception. 
 PASS   node6.channelInterpretation is equal to discrete. 
-FAIL X new PannerNode(c, {"channelInterpretation":"foobar"}) threw "InvalidStateError" instead of EcmaScript error TypeError. assert_true: expected true got false
+PASS   new PannerNode(c, {"channelInterpretation":"foobar"}) threw TypeError: "Type error". 
 PASS   new PannerNode(c, {"maxDistance":-1}) threw RangeError: "maxDistance cannot be set to a non-positive value". 
 PASS   node.maxDistance = -1 threw RangeError: "maxDistance cannot be set to a non-positive value". 
 PASS   node.maxDistance after setting to -1 is equal to 10000. 
@@ -91,7 +91,7 @@ PASS   node9 = new PannerNode(c, {"coneOuterGain":0.5}) did not throw an excepti
 PASS   node9.coneOuterGain is equal to 0.5. 
 PASS   node9 = new PannerNode(c, {"coneOuterGain":1}) did not throw an exception. 
 PASS   node9.coneOuterGain is equal to 1. 
-FAIL < [test AudioNodeOptions] 9 out of 54 assertions were failed. assert_true: expected true got false
+PASS < [test AudioNodeOptions] All assertions passed. (total 54 assertions) 
 PASS > [constructor with options]  
 PASS   node = new PannerNode(c, {"panningModel":"HRTF","positionX":1.4142135623730951,"positionY":2.8284271247461903,"positionZ":4.242640687119286,"orientationX":-1.4142135623730951,"orientationY":-2.8284271247461903,"orientationZ":-4.242640687119286,"distanceModel":"linear","refDistance":3.141592653589793,"maxDistance":6.283185307179586,"rolloffFactor":9.42477796076938,"coneInnerAngle":12.566370614359172,"coneOuterAngle":15.707963267948966,"coneOuterGain":0.3141592653589793}) did not throw an exception. 
 PASS   node instanceof PannerNode is equal to true. 
@@ -113,5 +113,5 @@ PASS   node.channelCount is equal to 2.
 PASS   node.channelCountMode is equal to clamped-max. 
 PASS   node.channelInterpretation is equal to speakers. 
 PASS < [constructor with options] All assertions passed. (total 19 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 5 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

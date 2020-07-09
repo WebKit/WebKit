@@ -127,6 +127,9 @@ public:
 
     double coneOuterGain() const { return m_coneEffect.outerGain(); }
     ExceptionOr<void> setConeOuterGain(double);
+    
+    ExceptionOr<void> setChannelCount(unsigned) final;
+    ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
 
     void getAzimuthElevation(double* outAzimuth, double* outElevation);
     float dopplerRate() final;

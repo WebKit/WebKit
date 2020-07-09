@@ -1,3 +1,65 @@
+2020-07-09  Clark Wang  <clark_wang@apple.com>
+
+        Set Restrictions for channelCount, channelCountMode for PannerNode
+        https://bugs.webkit.org/show_bug.cgi?id=213992
+
+        Reviewed by Chris Dumez.
+
+        Added setter methods to PannerNode that handle exceptions for channelCount, channelCountMode, according to spec:
+        https://www.w3.org/TR/webaudio/#dom-audionode-channelcount.
+        Moved ChannelCount, ChannelCountMode enums into their own files.
+
+        Re-baselined tests that now pass.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::setChannelCount):
+        (WebCore::AudioNode::setChannelCountMode):
+        (WebCore::AudioNode::setChannelInterpretation):
+        (WebCore::AudioNode::channelCount): Deleted.
+        (WebCore::AudioNode::channelCountMode): Deleted.
+        (WebCore::AudioNode::channelInterpretation): Deleted.
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::channelCount const):
+        (WebCore::AudioNode::channelCountMode const):
+        (WebCore::AudioNode::channelInterpretation const):
+        (WebCore::AudioNode::internalChannelCountMode const): Deleted.
+        (WebCore::AudioNode::internalChannelInterpretation const): Deleted.
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::numberOfChannels const):
+        (WebCore::AudioNodeInput::bus):
+        (WebCore::AudioNodeInput::sumAllConnections):
+        (WebCore::AudioNodeInput::pull):
+        * Modules/webaudio/AudioNodeOptions.h:
+        * Modules/webaudio/AudioNodeOptions.idl:
+        * Modules/webaudio/ChannelCountMode.h: Copied from Source/WebCore/Modules/webaudio/AudioNodeOptions.h.
+        * Modules/webaudio/ChannelCountMode.idl: Copied from Source/WebCore/Modules/webaudio/AudioNodeOptions.idl.
+        * Modules/webaudio/ChannelInterpretation.h: Copied from Source/WebCore/Modules/webaudio/AudioNodeOptions.h.
+        * Modules/webaudio/ChannelInterpretation.idl: Copied from Source/WebCore/Modules/webaudio/AudioNodeOptions.idl.
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::PannerNode):
+        (WebCore::PannerNode::create):
+        (WebCore::PannerNode::setChannelCount):
+        (WebCore::PannerNode::setChannelCountMode):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::WebKitAudioPannerNode):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::copyFrom):
+        (WebCore::AudioBus::sumFrom):
+        * platform/audio/AudioBus.h:
+
 2020-07-09  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove m_appendPipelinesMap

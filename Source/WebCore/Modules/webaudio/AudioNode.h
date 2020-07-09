@@ -25,6 +25,8 @@
 #pragma once
 
 #include "AudioBus.h"
+#include "ChannelCountMode.h"
+#include "ChannelInterpretation.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include <wtf/Forward.h>
@@ -90,12 +92,6 @@ public:
         NodeTypeWaveShaper,
         NodeTypeBasicInspector,
         NodeTypeEnd
-    };
-
-    enum ChannelCountMode {
-        Max,
-        ClampedMax,
-        Explicit
     };
 
     NodeType nodeType() const { return m_nodeType; }
@@ -177,17 +173,14 @@ public:
     void enableOutputsIfNecessary();
     void disableOutputsIfNecessary();
 
-    unsigned channelCount();
+    unsigned channelCount() const { return m_channelCount; }
     virtual ExceptionOr<void> setChannelCount(unsigned);
 
-    String channelCountMode();
-    ExceptionOr<void> setChannelCountMode(const String&);
+    ChannelCountMode channelCountMode() const { return m_channelCountMode; }
+    virtual ExceptionOr<void> setChannelCountMode(ChannelCountMode);
 
-    String channelInterpretation();
-    ExceptionOr<void> setChannelInterpretation(const String&);
-
-    ChannelCountMode internalChannelCountMode() const { return m_channelCountMode; }
-    AudioBus::ChannelInterpretation internalChannelInterpretation() const { return m_channelInterpretation; }
+    ChannelInterpretation channelInterpretation() const { return m_channelInterpretation; }
+    ExceptionOr<void> setChannelInterpretation(ChannelInterpretation);
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
@@ -251,7 +244,7 @@ private:
 protected:
     unsigned m_channelCount;
     ChannelCountMode m_channelCountMode;
-    AudioBus::ChannelInterpretation m_channelInterpretation;
+    ChannelInterpretation m_channelInterpretation;
 };
 
 String convertEnumerationToString(AudioNode::NodeType);

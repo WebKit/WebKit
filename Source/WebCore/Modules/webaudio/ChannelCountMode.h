@@ -25,20 +25,12 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUDIO)
-
-#include "ChannelCountMode.h"
-#include "ChannelInterpretation.h"
-#include <wtf/Optional.h>
-
 namespace WebCore {
 
-struct AudioNodeOptions {
-    Optional<unsigned> channelCount;
-    Optional<ChannelCountMode> channelCountMode;
-    Optional<ChannelInterpretation> channelInterpretation;
+enum class ChannelCountMode {
+    Max,
+    ClampedMax,
+    Explicit,
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_AUDIO)

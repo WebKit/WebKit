@@ -5045,6 +5045,8 @@
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E71467B324ABAEF200FB2F50 /* AudioNodeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */; };
 		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
+		E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D91124B4D1B10014DB21 /* ChannelCountMode.h */; };
+		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -15790,6 +15792,10 @@
 		E71467B424ABAF0B00FB2F50 /* AudioNodeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioNodeOptions.idl; sourceTree = "<group>"; };
 		E71467B524ABAF1D00FB2F50 /* PannerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerOptions.h; sourceTree = "<group>"; };
 		E71467B724ABAF2C00FB2F50 /* PannerOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PannerOptions.idl; sourceTree = "<group>"; };
+		E785D91124B4D1B10014DB21 /* ChannelCountMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelCountMode.h; sourceTree = "<group>"; };
+		E785D91324B4D1B10014DB21 /* ChannelCountMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelCountMode.idl; sourceTree = "<group>"; };
+		E785D93124B636FF0014DB21 /* ChannelInterpretation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelInterpretation.h; sourceTree = "<group>"; };
+		E785D93324B636FF0014DB21 /* ChannelInterpretation.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelInterpretation.idl; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29370,6 +29376,10 @@
 				FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */,
 				FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */,
 				FD315FDD12B0267600C1A359 /* BiquadProcessor.h */,
+				E785D91124B4D1B10014DB21 /* ChannelCountMode.h */,
+				E785D91324B4D1B10014DB21 /* ChannelCountMode.idl */,
+				E785D93124B636FF0014DB21 /* ChannelInterpretation.h */,
+				E785D93324B636FF0014DB21 /* ChannelInterpretation.idl */,
 				FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */,
 				FD315FB512B0267500C1A359 /* ChannelMergerNode.h */,
 				FD315FB612B0267500C1A359 /* ChannelMergerNode.idl */,
@@ -30077,6 +30087,8 @@
 				91B8F0B521953D65000C2B00 /* CertificateInfoBase.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
 				97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */,
+				E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */,
+				E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */,
 				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
 				FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,

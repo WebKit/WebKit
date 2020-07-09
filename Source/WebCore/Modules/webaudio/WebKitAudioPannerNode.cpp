@@ -64,8 +64,8 @@ WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context, float 
 
     // Node-specific default mixing rules.
     m_channelCount = 2;
-    m_channelCountMode = ClampedMax;
-    m_channelInterpretation = AudioBus::Speakers;
+    m_channelCountMode = ChannelCountMode::ClampedMax;
+    m_channelInterpretation = ChannelInterpretation::Speakers;
 
     m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
