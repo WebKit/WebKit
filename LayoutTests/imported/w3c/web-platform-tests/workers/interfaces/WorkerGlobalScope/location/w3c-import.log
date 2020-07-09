@@ -22,8 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-sharedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect.js
-/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/setting-members.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/setting-members.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/worker-separate-file.html

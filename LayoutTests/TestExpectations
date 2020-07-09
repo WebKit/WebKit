@@ -577,7 +577,6 @@ imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.any.work
 imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.any.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/multiple-workers/005.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-MessageEvent-source.any.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-MessageEvent-source.any.worker.html [ Skip ]

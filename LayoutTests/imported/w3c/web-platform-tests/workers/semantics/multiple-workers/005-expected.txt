@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
-
-TIMEOUT dedicated worker in shared worker in dedicated worker Test timed out
-

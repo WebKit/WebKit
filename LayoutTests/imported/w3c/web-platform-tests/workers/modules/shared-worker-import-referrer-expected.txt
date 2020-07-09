@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+
+FAIL Same-origin top-level module script loading with "no-referrer" referrer policy promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin top-level module script loading with "origin" referrer policy promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin top-level module script loading with "same-origin" referrer policy promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin static import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin static import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin dynamic import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin dynamic import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin dynamic import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin dynamic import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin dynamic import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin dynamic import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

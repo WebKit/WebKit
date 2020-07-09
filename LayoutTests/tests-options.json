@@ -2807,7 +2807,19 @@
     "imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html": [

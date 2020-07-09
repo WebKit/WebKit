@@ -23,10 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004-1.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004-2.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/005.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/006-1.js
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/006.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/007.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/008-1.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/008.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/008.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/multiple-workers/exposure.any.js

@@ -44,6 +44,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerSendingPerformanceNow.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerTerminate.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/WorkerText.txt
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/abrupt-completion.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/check-error-arguments.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/empty-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/iframe_sw_dataUrl.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-1.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-2.js
@@ -54,6 +57,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/name.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/nosiniff-error-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/parent_of_nested_worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/post-message-on-load-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/postMessage_block_worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/postMessage_block_worker.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/sandboxed-tests.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/shared-name.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/sync_xhr.js

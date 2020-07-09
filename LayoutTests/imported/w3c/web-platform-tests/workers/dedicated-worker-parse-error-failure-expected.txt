@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token ';'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
+
+FAIL Classic worker construction for script with syntax error should dispatch an event named error. assert_equals: expected function "function Event() {
+    [native code]
+}" but got function "function ErrorEvent() {
+    [native code]
+}"
+FAIL Static import on classic worker should dispatch an event named error. assert_equals: expected function "function Event() {
+    [native code]
+}" but got function "function ErrorEvent() {
+    [native code]
+}"
+

@@ -14,5 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/self.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/self.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/self.any.js

@@ -16,6 +16,10 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/1
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/1.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/Infinity
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/Infinity-arguments.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/NaN
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/NaN-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/URLMismatchError.htm
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/connect-event.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/SharedWorker/connect-event.js

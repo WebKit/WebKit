@@ -1,0 +1,17 @@
+
+FAIL Test worker construction with the default worker type. Can't find variable: SharedWorker
+FAIL Test worker construction with the "classic" worker type. Can't find variable: SharedWorker
+FAIL Test worker construction with the "module" worker type. Can't find variable: SharedWorker
+FAIL Test worker construction with an empty worker type. assert_throws_js: Worker construction with an empty type should throw an exception function "() => {
+        new SharedWorker('resources/post-message-on-load-worker.js',
+                         { name: 'blank', type : '' });
+      }" threw object "ReferenceError: Can't find variable: SharedWorker" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Test worker construction with an unknown worker type. assert_throws_js: Worker construction with an unknown type should throw an exception function "() => {
+        new SharedWorker('resources/post-message-on-load-worker.js',
+                         { name: 'unknown', type : 'unknown' });
+      }" threw object "ReferenceError: Can't find variable: SharedWorker" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

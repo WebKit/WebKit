@@ -24,3 +24,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-type.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-parse-error-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-blob-url.window.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.window.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-meta.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import.window.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-options-type.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-parse-error-failure.html
