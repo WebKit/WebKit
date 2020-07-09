@@ -74,7 +74,7 @@ protected:
     };
     void fillMimeTypeSetFromCapsMapping(Vector<GstCapsWebKitMapping>&);
 
-    RegistryLookupResult hasElementForMediaType(GList* elementFactories, const char* capsString, bool shouldCheckHardwareClassifier = false) const;
+    RegistryLookupResult hasElementForMediaType(GList* elementFactories, const char* capsString, bool shouldCheckHardwareClassifier = false, Optional<Vector<String>> blackList = WTF::nullopt) const;
 
     bool isAVC1CodecSupported(const String& codec, bool shouldCheckForHardwareUse) const;
 

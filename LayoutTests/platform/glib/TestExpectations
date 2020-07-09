@@ -159,6 +159,8 @@ webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/214031 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html [ ImageOnlyFailure ]
 
+webkit.org/b/207547 media/media-can-play-av1.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
