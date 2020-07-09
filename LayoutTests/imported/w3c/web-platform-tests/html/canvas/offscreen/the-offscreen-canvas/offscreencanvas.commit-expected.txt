@@ -1,4 +1,0 @@
-
-FAIL Test that calling OffscreenCanvas's commit pushes its contents to its placeholder. placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
-FAIL Test that calling commit on an OffscreenCanvas that is not transferred from a HTMLCanvasElement is a noop. ctx.commit is not a function. (In 'ctx.commit()', 'ctx.commit' is undefined)
-

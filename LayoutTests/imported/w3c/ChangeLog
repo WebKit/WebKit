@@ -1,3 +1,23 @@
+2020-07-08  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed. Remove uneeded the-offscreen-canvas files after update.
+
+        The HTML tests for these expectations were removed in r264117.
+
+        Also removing two HTML placeholders for already removed JS files from
+        the same revision.
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.commit-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.constructor-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.constructor.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.constructor.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.getcontext-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.getcontext.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.getcontext.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen-expected.txt: Removed.
+
 2020-07-08  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/websockets from upstream
