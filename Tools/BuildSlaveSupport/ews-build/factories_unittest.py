@@ -157,6 +157,58 @@ class TestTestsFactory(TestCase):
 
 
 class TestBuildFactory(TestCase):
+    def test_macos_build_factory(self):
+        factory = factories.macOSBuildFactory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit),
+        ])
+
+    def test_ios_build_factory(self):
+        factory = factories.iOSBuildFactory(platform='ios-13', configuration='release', architectures=["arm64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='ios-13', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit),
+        ])
+
+    def test_watchos_build_factory(self):
+        factory = factories.iOSBuildFactory(platform='watchos-6', configuration='release', architectures=["arm64_32"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='watchos-6', configuration='release', architectures=["arm64_32"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit),
+        ])
+
+    def test_tvos_build_factory(self):
+        factory = factories.iOSBuildFactory(platform='tvos-13', configuration='release', architectures=["arm64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='tvos-13', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit),
+        ])
+
     def test_jsc_mipsel_factory(self):
         factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["mipsel"])
         self.assertBuildSteps(factory.steps, [

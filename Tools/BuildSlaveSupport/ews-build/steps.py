@@ -1231,12 +1231,12 @@ class InstallWpeDependencies(shell.ShellCommand):
 
 def appendCustomBuildFlags(step, platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.
-    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
+    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
         return
-    if fullPlatform.startswith('ios-simulator'):
-        platform = 'ios-simulator'
-    elif platform == 'ios':
-        platform = 'device'
+    if 'simulator' in fullPlatform:
+        platform = platform + '-simulator'
+    elif platform in ['ios', 'tvos', 'watchos']:
+        platform = platform + '-device'
     step.setCommand(step.command + ['--' + platform])
 
 
@@ -1286,11 +1286,11 @@ class CompileWebKit(shell.Compile):
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
-        if platform in ('mac', 'ios') and architecture:
+        if platform in ('mac', 'ios', 'tvos', 'watchos') and architecture:
             self.setCommand(self.command + ['ARCHS=' + architecture])
             if platform == 'ios':
                 self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
-        if platform in ('mac', 'ios') and buildOnly:
+        if platform in ('mac', 'ios', 'tvos', 'watchos') and buildOnly:
             # For build-only bots, the expectation is that tests will be run on separate machines,
             # so we need to package debug info as dSYMs. Only generating line tables makes
             # this much faster than full debug info, and crash logs still have line numbers.
@@ -2464,7 +2464,7 @@ class PrintConfiguration(steps.ShellSequence):
         platform = self.getProperty('platform', '*')
         if platform != 'jsc-only':
             platform = platform.split('-')[0]
-        if platform in ('mac', 'ios', '*'):
+        if platform in ('mac', 'ios', 'tvos', 'watchos', '*'):
             command_list.extend(self.command_list_apple)
         elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)

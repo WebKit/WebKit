@@ -436,6 +436,46 @@
       "workernames": ["ews112", "ews113", "ews115", "ews117"]
     },
     {
+      "name": "watchOS-6-Build-EWS",
+      "shortname": "watch",
+      "icon": "buildOnly",
+      "factory": "watchOSBuildFactory",
+      "platform": "watchos-6",
+      "configuration": "release",
+      "architectures": ["arm64_32"],
+      "workernames": ["ews163", "ews164", "ews165"]
+    },
+    {
+      "name": "watchOS-6-Simulator-Build-EWS",
+      "shortname": "watch-sim",
+      "icon": "buildOnly",
+      "factory": "watchOSBuildFactory",
+      "platform": "watchos-simulator-6",
+      "configuration": "release",
+      "architectures": ["i386"],
+      "workernames": ["ews164", "ews165", "ews166"]
+    },
+     {
+      "name": "tvOS-13-Build-EWS",
+      "shortname": "tv",
+      "icon": "buildOnly",
+      "factory": "tvOSBuildFactory",
+      "platform": "tvos-13",
+      "configuration": "release",
+      "architectures": ["arm64"],
+      "workernames": ["ews167", "ews168", "ews169"]
+    },
+    {
+      "name": "tvOS-13-Simulator-Build-EWS",
+      "shortname": "tv-sim",
+      "icon": "buildOnly",
+      "factory": "tvOSBuildFactory",
+      "platform": "tvos-simulator-13",
+      "configuration": "release",
+      "architectures": ["x86_64"],
+      "workernames": ["ews168", "ews169", "ews170"]
+    },
+    {
       "name": "Windows-EWS",
       "shortname": "win",
       "icon": "buildAndTest",
@@ -606,7 +646,9 @@
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
                        "JSC-ARMv7-32bits-Build-EWS", "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS",
                        "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
-                       "Services-EWS", "Style-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"]
+                       "Services-EWS", "Style-EWS",
+                       "tvOS-13-Build-EWS", "tvOS-13-Simulator-Build-EWS", "watchOS-6-Build-EWS", "watchOS-6-Simulator-Build-EWS",
+                       "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"]
     },
     {
       "type": "Try_Userpass",

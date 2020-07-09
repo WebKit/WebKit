@@ -163,6 +163,14 @@ class macOSBuildFactory(BuildFactory):
     pass
 
 
+class watchOSBuildFactory(BuildFactory):
+    pass
+
+
+class tvOSBuildFactory(BuildFactory):
+    pass
+
+
 class macOSWK1Factory(TestFactory):
     LayoutTestClass = RunWebKit1Tests
     willTriggerCrashLogSubmission = True

@@ -1,3 +1,22 @@
+2020-07-09  Aakash Jain  <aakash_jain@apple.com>
+
+        Add EWS queues for tvOS and watchOS builders
+        https://bugs.webkit.org/show_bug.cgi?id=214147
+
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Added status-bubbles for tvos and watchos queues.
+        * BuildSlaveSupport/ews-build/config.json: Added watchos and tvos builders.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (watchOSBuildFactory):
+        (tvOSBuildFactory):
+        * BuildSlaveSupport/ews-build/factories_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        * BuildSlaveSupport/ews-build/steps.py:
+        (appendCustomBuildFlags): Added support for tvos and watchos.
+        (CompileWebKit.start): Ditto.
+        (PrintConfiguration.run): Ditto.
+
 2020-07-09  Tim Horton  <timothy_horton@apple.com>
 
         Local internal builds fail on Apple Silicon (building yasm)
