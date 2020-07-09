@@ -107,8 +107,8 @@ void MediaPlayerPrivateMediaFoundation::registerMediaEngine(MediaEngineRegistrar
 
 bool MediaPlayerPrivateMediaFoundation::isAvailable() 
 {
-    notImplemented();
-    return true;
+    static bool isMediaFoundationAvailable = LoadLibrary(L"mf.dll");
+    return isMediaFoundationAvailable;
 }
 
 static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()

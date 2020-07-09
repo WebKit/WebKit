@@ -1,3 +1,19 @@
+2020-07-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MediaFoundation] Use /DELAYLOAD for mf.dll
+        https://bugs.webkit.org/show_bug.cgi?id=213330
+
+        Reviewed by Per Arne Vollan.
+
+        WinCairo failed to start up due to a missing dependency on some
+        versions of Windows in which Media Foundation is not available
+        such like Windows 10 N. Use delay load for Media Foundation. And,
+        check the availability.
+
+        * PlatformWinCairo.cmake: Link with delayimp.lib. Added /DELAYLOAD linker options.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::isAvailable): Check mf.dll is available.
+
 2020-07-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reset AVSystemController_PIDToInheritApplicationStateFrom when mediaserverd dies
