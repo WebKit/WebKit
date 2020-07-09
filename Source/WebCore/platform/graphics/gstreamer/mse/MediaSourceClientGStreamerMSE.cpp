@@ -62,10 +62,6 @@ MediaSourcePrivate::AddStatus MediaSourceClientGStreamerMSE::addSourceBuffer(Ref
     ASSERT(m_playerPrivate.m_playbackPipeline);
     ASSERT(sourceBufferPrivate);
 
-    RefPtr<AppendPipeline> appendPipeline = adoptRef(new AppendPipeline(*this, *sourceBufferPrivate, m_playerPrivate));
-    GST_TRACE("Adding SourceBuffer to AppendPipeline: this=%p sourceBuffer=%p appendPipeline=%p", this, sourceBufferPrivate.get(), appendPipeline.get());
-    m_playerPrivate.m_appendPipelinesMap.add(sourceBufferPrivate, appendPipeline);
-
     return m_playerPrivate.m_playbackPipeline->addSourceBuffer(sourceBufferPrivate);
 }
 
@@ -93,11 +89,7 @@ void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> s
 
     GST_DEBUG("aborting");
 
-    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
-
-    ASSERT(appendPipeline);
-
-    appendPipeline->resetParserState();
+    sourceBufferPrivate->appendPipeline().resetParserState();
 }
 
 void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
@@ -106,11 +98,7 @@ void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateG
 
     GST_DEBUG("resetting parser state");
 
-    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
-
-    ASSERT(appendPipeline);
-
-    appendPipeline->resetParserState();
+    sourceBufferPrivate->appendPipeline().resetParserState();
 }
 
 void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, Vector<unsigned char>&& data)
@@ -118,10 +106,6 @@ void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
     ASSERT(WTF::isMainThread());
 
     GST_DEBUG("Appending %zu bytes", data.size());
-
-    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
-
-    ASSERT(appendPipeline);
 
     // Wrap the whole Vector object in case the data is stored in the inlined buffer.
     auto* bufferData = data.data();
@@ -132,7 +116,7 @@ void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
             delete static_cast<Vector<unsigned char>*>(data);
         }));
 
-    appendPipeline->pushNewBuffer(WTFMove(buffer));
+    sourceBufferPrivate->appendPipeline().pushNewBuffer(WTFMove(buffer));
 }
 
 void MediaSourceClientGStreamerMSE::markEndOfStream(MediaSourcePrivate::EndOfStreamStatus status)
@@ -147,11 +131,6 @@ void MediaSourceClientGStreamerMSE::removedFromMediaSource(RefPtr<SourceBufferPr
     ASSERT(WTF::isMainThread());
 
     ASSERT(m_playerPrivate.m_playbackPipeline);
-
-    // Remove the AppendPipeline from the map. This should cause its destruction since there should be no alive
-    // references at this point.
-    ASSERT(m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate)->hasOneRef());
-    m_playerPrivate.m_appendPipelinesMap.remove(sourceBufferPrivate);
 
     m_playerPrivate.m_playbackPipeline->removeSourceBuffer(sourceBufferPrivate);
 }

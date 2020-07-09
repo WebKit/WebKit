@@ -440,7 +440,7 @@ void AppendPipeline::appsinkCapsChanged()
 
     if (m_appsinkCaps != caps) {
         m_appsinkCaps = WTFMove(caps);
-        m_playerPrivate->trackDetected(this, m_track, previousCapsWereNull);
+        m_playerPrivate->trackDetected(*this, m_track, previousCapsWereNull);
     }
 }
 
@@ -792,7 +792,7 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     }
 
     m_appsinkCaps = WTFMove(caps);
-    m_playerPrivate->trackDetected(this, m_track, true);
+    m_playerPrivate->trackDetected(*this, m_track, true);
 }
 
 void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*)

@@ -1,3 +1,50 @@
+2020-07-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove m_appendPipelinesMap
+        https://bugs.webkit.org/show_bug.cgi?id=214132
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        m_appendPipelinesMap was owned by MediaPlayerPrivateGStreamerMSE but
+        was only used by MediaPlayerPrivateGStreamerMSE to clear it during
+        destruction, while the other uses were in
+        MediaSourceClientGStreamerMSE.
+
+        After analysis, it was found keeping a HashMap of AppendPipelines is not
+        necessary. An AppendPipeline only needs to be used by the SourceBuffer
+        receiving the muxed data: making AppendPipeline a member of
+        SourceBufferPrivateGStreamer reflects this dependency in a much
+        clearer way. No need for a HashMap of AppendPipeline's.
+
+        Moreso, there are no other users of AppendPipeline, which means
+        AppendPipeline doesn't need to be ref counted. This patch removes that
+        feature, using std::unique_ptr<AppendPipeline> for ownership instead.
+
+        This patch is a refactor: it doesn't introduce behavior changes and
+        it's covered by existing tests.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamerMSE::abort):
+        (WebCore::MediaSourceClientGStreamerMSE::resetParserState):
+        (WebCore::MediaSourceClientGStreamerMSE::append):
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp:
+        (WebCore::MediaSourcePrivateGStreamer::addSourceBuffer):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::create):
+        (WebCore::SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer):
+        (WebCore::SourceBufferPrivateGStreamer::finishCreation):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
 2020-07-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Verification] Use the table wrapper box's margin when checking the table box

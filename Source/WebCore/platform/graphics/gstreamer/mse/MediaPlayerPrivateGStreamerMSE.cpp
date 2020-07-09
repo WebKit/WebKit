@@ -114,14 +114,6 @@ MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE()
 {
     GST_TRACE("destroying the player (%p)", this);
 
-    // Clear the AppendPipeline map. This should cause the destruction of all the AppendPipeline's since there should
-    // be no alive references at this point.
-#ifndef NDEBUG
-    for (auto iterator : m_appendPipelinesMap)
-        ASSERT(iterator.value->hasOneRef());
-#endif
-    m_appendPipelinesMap.clear();
-
     if (m_source) {
         webKitMediaSrcSetMediaPlayerPrivate(WEBKIT_MEDIA_SRC(m_source.get()), nullptr);
         g_signal_handlers_disconnect_by_data(m_source.get(), this);
@@ -710,11 +702,11 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     }
 }
 
-void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> appendPipeline, RefPtr<WebCore::TrackPrivateBase> newTrack, bool firstTrackDetected)
+void MediaPlayerPrivateGStreamerMSE::trackDetected(AppendPipeline& appendPipeline, RefPtr<WebCore::TrackPrivateBase> newTrack, bool firstTrackDetected)
 {
-    ASSERT(appendPipeline->track() == newTrack);
+    ASSERT(appendPipeline.track() == newTrack);
 
-    GstCaps* caps = appendPipeline->appsinkCaps();
+    GstCaps* caps = appendPipeline.appsinkCaps();
     ASSERT(caps);
     GST_DEBUG("track ID: %s, caps: %" GST_PTR_FORMAT, newTrack->id().string().latin1().data(), caps);
 
@@ -725,9 +717,9 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> append
     }
 
     if (firstTrackDetected)
-        m_playbackPipeline->attachTrack(appendPipeline->sourceBufferPrivate(), newTrack, caps);
+        m_playbackPipeline->attachTrack(appendPipeline.sourceBufferPrivate(), newTrack, caps);
     else
-        m_playbackPipeline->reattachTrack(appendPipeline->sourceBufferPrivate(), newTrack, caps);
+        m_playbackPipeline->reattachTrack(appendPipeline.sourceBufferPrivate(), newTrack, caps);
 }
 
 void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)

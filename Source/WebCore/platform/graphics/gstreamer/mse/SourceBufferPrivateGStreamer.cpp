@@ -37,6 +37,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
+#include "AppendPipeline.h"
 #include "ContentType.h"
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
@@ -48,21 +49,24 @@
 
 namespace WebCore {
 
-Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
+Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
 {
-    return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, client.get(), contentType));
+    return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, client.get(), contentType, playerPrivate));
 }
 
-SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType)
+SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : SourceBufferPrivate()
     , m_mediaSource(mediaSource)
     , m_type(contentType)
     , m_client(client.get())
+    , m_playerPrivate(playerPrivate)
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSource->logger())
     , m_logIdentifier(mediaSource->nextSourceBufferLogIdentifier())
 #endif
 {
+    relaxAdoptionRequirement();
+    m_appendPipeline = WTF::makeUnique<AppendPipeline>(m_client, makeRef(*this), m_playerPrivate);
 }
 
 void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)

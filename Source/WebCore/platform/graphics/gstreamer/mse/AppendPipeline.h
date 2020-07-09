@@ -44,7 +44,8 @@ struct PadProbeInformation {
 };
 #endif
 
-class AppendPipeline : public ThreadSafeRefCounted<AppendPipeline> {
+class AppendPipeline {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AppendPipeline(Ref<MediaSourceClientGStreamerMSE>, Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
