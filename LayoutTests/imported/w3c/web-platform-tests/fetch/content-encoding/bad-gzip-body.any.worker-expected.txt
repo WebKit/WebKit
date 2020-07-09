@@ -2,7 +2,9 @@
 PASS Fetching a resource with bad gzip content should still resolve 
 PASS Consuming the body of a resource with bad gzip content with arrayBuffer() should reject 
 PASS Consuming the body of a resource with bad gzip content with blob() should reject 
-FAIL Consuming the body of a resource with bad gzip content with formData() should reject assert_throws: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected object "TypeError" ("TypeError")
+FAIL Consuming the body of a resource with bad gzip content with formData() should reject promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS Consuming the body of a resource with bad gzip content with json() should reject 
 PASS Consuming the body of a resource with bad gzip content with text() should reject 
 

@@ -1,3 +1,9 @@
+2020-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline fetch test after resync in r264144.
+
+        * web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker-expected.txt:
+
 2020-07-08  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. Remove uneeded the-offscreen-canvas files after update.
