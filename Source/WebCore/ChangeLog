@@ -1,3 +1,18 @@
+2020-07-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Verification] Use the table wrapper box's margin when checking the table box
+        https://bugs.webkit.org/show_bug.cgi?id=214119
+
+        Reviewed by Darin Adler.
+
+        Table margins are propagated to the table wrapper box.
+
+        Test: fast/layoutformattingcontext/table-with-margin-simple.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+
 2020-07-09  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Don't cache duration in MediaSourceClientGStreamerMSE

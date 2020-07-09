@@ -233,7 +233,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         stream.nextLine();
     };
 
-    auto renderBoxLikeMarginBox = [&] (auto& displayBox) {
+    auto renderBoxLikeMarginBox = [&] (const auto& displayBox) {
         if (layoutBox.isInitialContainingBlock())
             return displayBox.rect();
 
@@ -277,6 +277,9 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         // while the actual table box is static, inflow.
         auto& tableWrapperDisplayBox = layoutState.displayBoxForLayoutBox(layoutBox.containingBlock());
         displayBox.moveBy(tableWrapperDisplayBox.topLeft());
+        // Table wrapper box has the margin values for the table.
+        displayBox.setHorizontalMargin(tableWrapperDisplayBox.horizontalMargin());
+        displayBox.setVerticalMargin(tableWrapperDisplayBox.verticalMargin());
     }
 
     if (is<RenderTableRow>(renderer) || is<RenderTableSection>(renderer)) {
