@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited
+//@ skip if $memoryLimited and not ["mips"].include?($architecture)
 //@ requireOptions("-e", "let iterations=40000") if ["mips"].include?($architecture)
 //@ runDefault("--jitPolicyScale=0")
 
