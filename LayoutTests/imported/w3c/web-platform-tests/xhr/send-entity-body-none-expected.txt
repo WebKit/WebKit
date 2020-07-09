@@ -1,7 +1,7 @@
 
 PASS No content type (POST) 
 PASS No content type (PUT) 
-PASS No content type (HEAD) 
+FAIL No content type (HEAD) assert_equals: expected "NO" but got "0"
 PASS Explicit content type (POST) 
 PASS Explicit content type (PUT) 
 FAIL Explicit content type (HEAD) assert_equals: expected "NO" but got "0"

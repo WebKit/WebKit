@@ -1,0 +1,11 @@
+
+PASS invalid unicode '\u{d83d}' should be fixed with replacement character 
+PASS invalid unicode '\u{d83d}ab' should be fixed with replacement character 
+PASS invalid unicode 'a\u{d83d}b' should be fixed with replacement character 
+PASS invalid unicode 'ab\u{d83d}' should be fixed with replacement character 
+PASS invalid unicode '\u{dc94}' should be fixed with replacement character 
+PASS invalid unicode '\u{dc94}ab' should be fixed with replacement character 
+PASS invalid unicode 'a\u{dc94}b' should be fixed with replacement character 
+PASS invalid unicode 'ab\u{dc94}' should be fixed with replacement character 
+PASS valid unicode should be sent correctly 
+

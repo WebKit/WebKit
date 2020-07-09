@@ -2,6 +2,7 @@
 PASS sending a plain empty object 
 PASS sending the ES Math object 
 PASS sending a new XHR instance 
+PASS sending a new ReadableStream instance 
 PASS sending object that stringifies to undefined 
 PASS sending object that stringifies to null 
 PASS object that stringifies to query string 

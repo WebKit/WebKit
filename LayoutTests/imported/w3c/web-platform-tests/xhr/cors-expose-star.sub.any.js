@@ -5,7 +5,6 @@ const url = "http://{{host}}:{{ports[http][1]}}" + dirname(location.pathname) + 
 
 async_test(function() {
   const headers = "header(Access-Control-Allow-Origin,*)"
-    console.log(url);
   var client = new XMLHttpRequest();
   client.open("GET", url + sharedHeaders + headers);
   client.send();

@@ -83,6 +83,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/send-after-setting-document-domain-window-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/shift-jis-html.py
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/status.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/top.txt
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/trickle.py
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/upload.py
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/utf16-bom.json

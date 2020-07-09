@@ -1,5 +1,5 @@
 
-FAIL XMLHttpRequest: open() resolving URLs (multi-Window; 3; evil) assert_throws: send() when associated document's IFRAME is removed function "function () {
+FAIL XMLHttpRequest: open() resolving URLs (multi-Window; 3; evil) assert_throws_dom: send() when associated document's IFRAME is removed function "function () {
             client.send(null)
           }" did not throw
 

@@ -1,0 +1,35 @@
+
+FAIL sending a SharedArrayBuffer assert_throws_js: function "function () {
+        xhr.send(buf)
+    }" did not throw
+FAIL sending a Int8Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Uint8Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Uint8ClampedArray backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Int16Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Uint16Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Int32Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Uint32Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Float32Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a Float64Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a DataView backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+

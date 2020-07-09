@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: open() in document that is not fully active (but may be active) should throw 
+FAIL XMLHttpRequest: open() in document that is not fully active (but may be active) should throw assert_throws_dom: function "function () { client.open("GET", "...") }" threw an exception from the wrong global
 
