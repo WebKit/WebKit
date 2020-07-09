@@ -46,7 +46,6 @@ Ref<MediaSourceClientGStreamerMSE> MediaSourceClientGStreamerMSE::create(MediaPl
 
 MediaSourceClientGStreamerMSE::MediaSourceClientGStreamerMSE(MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : m_playerPrivate(playerPrivate)
-    , m_duration(MediaTime::invalidTime())
 {
     ASSERT(WTF::isMainThread());
 }
@@ -70,11 +69,11 @@ MediaSourcePrivate::AddStatus MediaSourceClientGStreamerMSE::addSourceBuffer(Ref
     return m_playerPrivate.m_playbackPipeline->addSourceBuffer(sourceBufferPrivate);
 }
 
-const MediaTime& MediaSourceClientGStreamerMSE::duration()
+MediaTime MediaSourceClientGStreamerMSE::duration()
 {
     ASSERT(WTF::isMainThread());
 
-    return m_duration;
+    return m_playerPrivate.mediaSourcePrivateClient()->duration();
 }
 
 void MediaSourceClientGStreamerMSE::durationChanged(const MediaTime& duration)
@@ -85,7 +84,6 @@ void MediaSourceClientGStreamerMSE::durationChanged(const MediaTime& duration)
     if (!duration.isValid() || duration.isPositiveInfinite() || duration.isNegativeInfinite())
         return;
 
-    m_duration = duration;
     m_playerPrivate.durationChanged();
 }
 

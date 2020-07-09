@@ -54,14 +54,13 @@ public:
     void enqueueSample(Ref<MediaSample>&&);
     void allSamplesInTrackEnqueued(const AtomString&);
 
-    const MediaTime& duration();
+    MediaTime duration();
     GRefPtr<WebKitMediaSrc> webKitMediaSrc();
 
 private:
     MediaSourceClientGStreamerMSE(MediaPlayerPrivateGStreamerMSE&);
 
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
-    MediaTime m_duration;
 };
 
 } // namespace WebCore.

@@ -1,5 +1,25 @@
 2020-07-09  Alicia Boya García  <aboya@igalia.com>
 
+        [MSE][GStreamer] Don't cache duration in MediaSourceClientGStreamerMSE
+        https://bugs.webkit.org/show_bug.cgi?id=214128
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        MediaSource should be the single source of truth for the duration of
+        the MediaSource, and querying it to MediaSource is efficient enough
+        (trivial getter). There is no reason for MediaSourceClientGStreamerMSE
+        to store a separate m_duration field.
+
+        This patch introduces no behavior changes.
+
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::MediaSourceClientGStreamerMSE):
+        (WebCore::MediaSourceClientGStreamerMSE::duration):
+        (WebCore::MediaSourceClientGStreamerMSE::durationChanged):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+
+2020-07-09  Alicia Boya García  <aboya@igalia.com>
+
         [MSE][GStreamer] Make duration changes one way
         https://bugs.webkit.org/show_bug.cgi?id=214083
 
