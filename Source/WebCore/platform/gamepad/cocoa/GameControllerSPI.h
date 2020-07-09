@@ -25,6 +25,10 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(COCOA)
 
-// FIXME: Refactor more GC framework stuff into this header
+#import <GameController/GCController.h>
+
+@interface GCController ()
++ (void)__openXPC_and_CBApplicationDidBecomeActive__;
+@end
 
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)

@@ -54,6 +54,7 @@ public:
     WEBCORE_EXPORT void startMonitoringInput();
 
     void gamepadHadInput(GameControllerGamepad&, bool hadButtonPresses);
+    void prewarmGameControllerDevicesIfNecessary();
 
 private:
     GameControllerGamepadProvider();

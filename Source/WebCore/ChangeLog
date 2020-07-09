@@ -1,3 +1,26 @@
+2020-07-08  Brady Eidson  <beidson@apple.com>
+
+        Aggressively prime GameController.framework gamepad provider.
+        https://bugs.webkit.org/show_bug.cgi?id=214094
+
+        Reviewed by Darin Adler.
+
+        GameController.framework gets itself going by listening for application activation, 
+        assuming that it is hard linked.
+        
+        Soft linking breaks this.
+        
+        There's an SPI to manually kickstart it.
+        
+        Also add some logging I'd added while exploring issues around this.
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.h:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect):
+        (WebCore::GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary):
+        (WebCore::GameControllerGamepadProvider::startMonitoringGamepads):
+        * platform/gamepad/cocoa/GameControllerSPI.h:
+
 2020-07-08  Sam Weinig  <weinig@apple.com>
 
         Part 3 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
