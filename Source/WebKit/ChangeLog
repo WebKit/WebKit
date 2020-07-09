@@ -1,3 +1,16 @@
+2020-07-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Adopt the WebKit-specific PAC key and entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=214162
+        <rdar://problem/65099687>
+
+        Reviewed by Geoffrey Garen.
+
+        Add the relevant entitlements for PAC use and exceptions on macOS. This will be
+        ignored on Intel, but will be a great thing on Apple Silicon!
+
+        * Scripts/process-entitlements.sh:
+
 2020-07-09  Per Arne Vollan  <pvollan@apple.com>
 
         Move XPCEndpoint and XPCEndpointClient classes from WebCore to WebKit

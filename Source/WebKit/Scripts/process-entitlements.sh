@@ -17,6 +17,11 @@ function mac_process_webcontent_entitlements()
     then
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+        then
+            plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+            plistbuddy Add :com.apple.private.pac.exception bool YES
+        fi
     fi
 
     mac_process_webcontent_or_plugin_entitlements
@@ -99,6 +104,11 @@ function maccatalyst_process_webcontent_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+    then
+        plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+        plistbuddy Add :com.apple.private.pac.exception bool YES
+    fi
 }
 
 function maccatalyst_process_gpu_entitlements()
