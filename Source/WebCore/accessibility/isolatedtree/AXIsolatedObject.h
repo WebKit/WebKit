@@ -647,10 +647,11 @@ private:
     bool preventKeyboardDOMEventDispatch() const override;
 
     PlainTextRange selectedTextRange() const override;
+    VisibleSelection selection() const override;
+    void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     // TODO: Text ranges and selection.
     unsigned selectionStart() const override { return 0; }
     unsigned selectionEnd() const override { return 0; }
-    VisibleSelection selection() const override { return VisibleSelection(); }
     String selectedText() const override { return String(); }
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
@@ -670,7 +671,6 @@ private:
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
     IntRect boundsForRange(const RefPtr<Range>) const override { return IntRect(); }
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const override { return 0; }
-    void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
     VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const override { return VisiblePosition(); }
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override { return VisiblePosition(); }
     VisiblePosition nextVisiblePosition(const VisiblePosition&) const override { return VisiblePosition(); }

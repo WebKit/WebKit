@@ -3538,7 +3538,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // handle the command
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
         ASSERT(textMarkerRange);
-        backingObject->setSelectedVisiblePositionRange([self visiblePositionRangeForTextMarkerRange:textMarkerRange]);
+        Accessibility::performFunctionOnMainThread([&textMarkerRange, protectedSelf = retainPtr(self)] {
+            if (auto* backingObject = protectedSelf.get().axBackingObject)
+                backingObject->setSelectedVisiblePositionRange([protectedSelf visiblePositionRangeForTextMarkerRange:textMarkerRange]);
+        });
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         [self baseAccessibilitySetFocus:[number boolValue]];
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {

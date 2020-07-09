@@ -1081,6 +1081,22 @@ PlainTextRange AXIsolatedObject::selectedTextRange() const
     });
 }
 
+VisibleSelection AXIsolatedObject::selection() const
+{
+    ASSERT(isMainThread());
+
+    auto* object = associatedAXObject();
+    return object ? object->selection() : VisibleSelection();
+}
+
+void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
+{
+    ASSERT(isMainThread());
+
+    if (auto* object = associatedAXObject())
+        object->setSelectedVisiblePositionRange(visiblePositionRange);
+}
+
 bool AXIsolatedObject::isListBoxOption() const
 {
     ASSERT_NOT_REACHED();
