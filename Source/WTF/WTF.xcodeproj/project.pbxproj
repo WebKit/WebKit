@@ -258,6 +258,7 @@
 		0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilationThread.h; sourceTree = "<group>"; };
 		0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversionMode.h; sourceTree = "<group>"; };
 		0F93274A1C17F4B700CF6564 /* Box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box.h; sourceTree = "<group>"; };
+		0F93274A1C17F4B700CF6566 /* BoxPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxPtr.h; sourceTree = "<group>"; };
 		0F9495831C571CC900413A48 /* OrderMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderMaker.h; sourceTree = "<group>"; };
 		0F95B63120CB4B7700479635 /* DebugHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugHeap.h; sourceTree = "<group>"; };
 		0F95B63220CB4B7700479635 /* DebugHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugHeap.cpp; sourceTree = "<group>"; };
@@ -957,6 +958,7 @@
 				A8A47265151A825A004123FF /* BloomFilter.h */,
 				0FB399B820AF5A580017E213 /* BooleanLattice.h */,
 				0F93274A1C17F4B700CF6564 /* Box.h */,
+				0F93274A1C17F4B700CF6566 /* BoxPtr.h */,
 				7C3F72391D78811900674E26 /* Brigand.h */,
 				0F4570441BE834410062A629 /* BubbleSort.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,

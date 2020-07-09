@@ -1,3 +1,25 @@
+2020-07-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [WTF] Implement new BoxPtr alias
+        https://bugs.webkit.org/show_bug.cgi?id=212379
+
+        Reviewed by Darin Adler.
+
+        Added BoxPtr.h that includes BoxPtr<T> as alias of
+        Box<std::unique_ptr<T>>. We discussed about this class on bugzilla
+        and we agreed on this alias being the best idea. Apart from the
+        alias I'm adding a couple of helpers like a create function and
+        the operator== and operator!=.
+
+        Tests: BoxPtr API tests added.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BoxPtr.h: Added.
+        (WTF::createBoxPtr):
+        (WTF::operator==):
+        (WTF::operator!=):
+        * wtf/CMakeLists.txt:
+
 2020-07-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Update Launch Services database in the WebContent process from the Network process

@@ -17,6 +17,7 @@ set(WTF_PUBLIC_HEADERS
     BloomFilter.h
     BooleanLattice.h
     Box.h
+    BoxPtr.h
     Brigand.h
     BubbleSort.h
     BumpPointerAllocator.h

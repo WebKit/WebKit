@@ -559,6 +559,7 @@
 		7C83DF141D0A590C00FEBCF3 /* Ref.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427AA180DA26400CD24D7 /* Ref.cpp */; };
 		7C83DF151D0A590C00FEBCF3 /* RefCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BD19971A2DB05B006DCF0A /* RefCounter.cpp */; };
 		7C83DF161D0A590C00FEBCF3 /* RefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427A8180D9B0700CD24D7 /* RefPtr.cpp */; };
+		7C83DF181D0A590C00FEBCF3 /* BoxPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427AE180DA60F00CD24D7 /* BoxPtr.cpp */; };
 		7C83DF1D1D0A590C00FEBCF3 /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFC45A41B73EBE20085BD62 /* Lock.cpp */; };
 		7C83DF241D0A590C00FEBCF3 /* RetainPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC029B1B1486B25900817DA9 /* RetainPtr.mm */; };
 		7C83DF261D0A590C00FEBCF3 /* SaturatedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */; };
@@ -2348,6 +2349,7 @@
 		93A427AA180DA26400CD24D7 /* Ref.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ref.cpp; sourceTree = "<group>"; };
 		93A427AC180DA60F00CD24D7 /* MoveOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveOnly.h; sourceTree = "<group>"; };
 		93A427AD180DA60F00CD24D7 /* RefLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefLogger.h; sourceTree = "<group>"; };
+		93A427AE180DA60F00CD24D7 /* BoxPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoxPtr.cpp; sourceTree = "<group>"; };
 		93A720E518F1A0E800A848E1 /* CalculationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculationValue.cpp; sourceTree = "<group>"; };
 		93ABA80816DDAB91002DB2FA /* StringHasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringHasher.cpp; sourceTree = "<group>"; };
 		93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages.cpp; sourceTree = "<group>"; };
@@ -4035,6 +4037,7 @@
 				26F1B44215CA434F00D1E4BF /* AtomString.cpp */,
 				FE2D9473245EB2DF00E48135 /* Bitmap.cpp */,
 				E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */,
+				93A427AE180DA60F00CD24D7 /* BoxPtr.cpp */,
 				0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */,
 				A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */,
 				E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */,
@@ -4754,6 +4757,7 @@
 				FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */,
 				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
 				7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */,
+				7C83DF181D0A590C00FEBCF3 /* BoxPtr.cpp in Sources */,
 				04DB2396235E43EC00328F17 /* BumpPointerAllocator.cpp in Sources */,
 				7C83DEA01D0A590C00FEBCF3 /* CheckedArithmeticOperations.cpp in Sources */,
 				E302BDAA2404B92400865277 /* CompactRefPtrTuple.cpp in Sources */,
