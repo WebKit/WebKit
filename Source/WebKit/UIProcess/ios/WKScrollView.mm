@@ -344,11 +344,9 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 {
     CGSize currentContentSize = [self contentSize];
 
-    if (CGSizeEqualToSize(currentContentSize, contentSize))
-        return;
-
     BOOL mightBeRubberbanding = self.isDragging || self.isVerticalBouncing || self.isHorizontalBouncing;
-    if (!mightBeRubberbanding || CGSizeEqualToSize(currentContentSize, CGSizeZero) || self.zoomScale < self.minimumZoomScale) {
+    if (!mightBeRubberbanding || CGSizeEqualToSize(currentContentSize, CGSizeZero) || CGSizeEqualToSize(currentContentSize, contentSize) || self.zoomScale < self.minimumZoomScale) {
+        // FIXME: rdar://problem/65277759 Find out why iOS Mail needs this call even when the contentSize has not changed.
         [self setContentSize:contentSize];
         return;
     }

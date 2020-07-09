@@ -1,3 +1,17 @@
+2020-07-09  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Conversation view messages in Mail are too small and scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=214157
+        <rdar://problem/64788069>
+
+        Reviewed by Wenson Hsieh.
+
+        Revert the drive-by contentSize set optimization introduced in r262721.
+        iOS Mail relies on this delayed/late setContentSize call on WKScrollView (see rdar://problem/65277759).
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _setContentSizePreservingContentOffsetDuringRubberband:]):
+
 2020-07-09  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Remaining build fix after r264179
