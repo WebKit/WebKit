@@ -25,30 +25,28 @@
 
 #pragma once
 
+#include "WKDeclarationSpecifiers.h"
+#include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class XPCEndpoint {
+class XPCEndpointClient {
 public:
-    WEBCORE_EXPORT XPCEndpoint();
-    WEBCORE_EXPORT virtual ~XPCEndpoint() = default;
+    virtual ~XPCEndpointClient() { }
 
-    WEBCORE_EXPORT void sendEndpointToConnection(xpc_connection_t);
+    WK_EXPORT void setEndpoint(xpc_endpoint_t);
 
-    WEBCORE_EXPORT OSObjectPtr<xpc_endpoint_t> endpoint() const;
-
-    static constexpr auto xpcMessageNameKey = "message-name";
+protected:
+    WK_EXPORT OSObjectPtr<xpc_connection_t> connection();
 
 private:
-    virtual const char* xpcEndpointMessageNameKey() const = 0;
-    virtual const char* xpcEndpointMessageName() const = 0;
-    virtual const char* xpcEndpointNameKey() const = 0;
-    virtual void handleEvent(xpc_connection_t, xpc_object_t) = 0;
+    virtual void handleEvent(xpc_object_t) = 0;
+    virtual void didConnect() = 0;
 
     OSObjectPtr<xpc_connection_t> m_connection;
-    OSObjectPtr<xpc_endpoint_t> m_endpoint;
+    Lock m_lock;
 };
 
 }

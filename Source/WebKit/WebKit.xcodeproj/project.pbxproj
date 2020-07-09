@@ -1684,9 +1684,13 @@
 		C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */; };
 		C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = C11E1692212B87C500985FF6 /* WKMockDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */; };
+		C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D306524B794E700480387 /* XPCEndpoint.mm */; };
+		C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D306624B794E700480387 /* XPCEndpointClient.mm */; };
 		C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */; };
 		C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */; };
+		C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */; };
 		C1710CF724AA643200D7C112 /* LaunchServicesDatabaseObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */; };
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
@@ -5021,6 +5025,10 @@
 		C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisClient.h; sourceTree = "<group>"; };
 		C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechSynthesisClient.cpp; sourceTree = "<group>"; };
 		C149380A223853BE000CD707 /* WebSpeechSynthesisVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisVoice.h; sourceTree = "<group>"; };
+		C14D306524B794E700480387 /* XPCEndpoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCEndpoint.mm; sourceTree = "<group>"; };
+		C14D306624B794E700480387 /* XPCEndpointClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCEndpointClient.mm; sourceTree = "<group>"; };
+		C14D306724B794E700480387 /* XPCEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCEndpoint.h; sourceTree = "<group>"; };
+		C14D306824B794E700480387 /* XPCEndpointClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCEndpointClient.h; sourceTree = "<group>"; };
 		C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchServicesDatabaseManager.h; sourceTree = "<group>"; };
 		C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LaunchServicesDatabaseManager.mm; sourceTree = "<group>"; };
 		C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceObserver.mm; sourceTree = "<group>"; };
@@ -7526,6 +7534,10 @@
 				37BF2F051947DEB400723C48 /* WKNSURLRequest.mm */,
 				378E1A3F181EDA010031007A /* WKObject.h */,
 				374436871820E7240049579F /* WKObject.mm */,
+				C14D306724B794E700480387 /* XPCEndpoint.h */,
+				C14D306524B794E700480387 /* XPCEndpoint.mm */,
+				C14D306824B794E700480387 /* XPCEndpointClient.h */,
+				C14D306624B794E700480387 /* XPCEndpointClient.mm */,
 			);
 			name = cocoa;
 			path = Cocoa;
@@ -11865,6 +11877,8 @@
 				1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */,
 				6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */,
 				1A7C0DF71B7D1F1000A9B848 /* WKWindowFeaturesRef.h in Headers */,
+				C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */,
+				C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */,
 				BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -13114,6 +13128,8 @@
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
 				CE212160240EE571006ED443 /* WKTextPlaceholder.mm in Sources */,
+				C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */,
+				C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

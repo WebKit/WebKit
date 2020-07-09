@@ -27,15 +27,13 @@
 #import "LaunchServicesDatabaseManager.h"
 
 #import "LaunchServicesDatabaseXPCConstants.h"
-#import <WebCore/XPCEndpoint.h>
+#import "XPCEndpoint.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
-
-using namespace WebCore;
 
 LaunchServicesDatabaseManager& LaunchServicesDatabaseManager::singleton()
 {

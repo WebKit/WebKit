@@ -1,3 +1,27 @@
+2020-07-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Move XPCEndpoint and XPCEndpointClient classes from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=214099
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.h:
+        * Shared/Cocoa/XPCEndpoint.h: Copied from Source/WebCore/platform/cocoa/XPCEndpoint.h.
+        * Shared/Cocoa/XPCEndpoint.mm: Copied from Source/WebCore/platform/cocoa/XPCEndpoint.mm.
+        (WebCore::XPCEndpoint::XPCEndpoint): Deleted.
+        (WebCore::XPCEndpoint::sendEndpointToConnection): Deleted.
+        (WebCore::XPCEndpoint::endpoint const): Deleted.
+        * Shared/Cocoa/XPCEndpointClient.h: Copied from Source/WebCore/platform/cocoa/XPCEndpointClient.h.
+        (WebCore::XPCEndpointClient::~XPCEndpointClient): Deleted.
+        * Shared/Cocoa/XPCEndpointClient.mm: Copied from Source/WebCore/platform/cocoa/XPCEndpointClient.mm.
+        (WebCore::XPCEndpointClient::setEndpoint): Deleted.
+        (WebCore::XPCEndpointClient::connection): Deleted.
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.h:
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2020-07-09  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Conversation view messages in Mail are too small and scrollable

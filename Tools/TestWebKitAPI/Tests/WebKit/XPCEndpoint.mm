@@ -26,8 +26,8 @@
 #import "config.h"
 #import "PlatformUtilities.h"
 
-#import <WebCore/XPCEndpoint.h>
-#import <WebCore/XPCEndpointClient.h>
+#import <WebKit/XPCEndpoint.h>
+#import <WebKit/XPCEndpointClient.h>
 #import <wtf/text/WTFString.h>
 
 static bool clientConnectedToEndpoint = false;
@@ -37,7 +37,7 @@ static bool clientReceivedMessageFromEndpoint = false;
 static constexpr auto testMessageFromEndpoint = "test-message-from-endpoint";
 static constexpr auto testMessageFromClient = "test-message-from-client";
 
-class XPCEndpoint : public WebCore::XPCEndpoint {
+class XPCEndpoint : public WebKit::XPCEndpoint {
 private:
     const char* xpcEndpointMessageNameKey() const override
     {
@@ -64,7 +64,7 @@ private:
     }
 };
 
-class XPCEndpointClient : public WebCore::XPCEndpointClient {
+class XPCEndpointClient : public WebKit::XPCEndpointClient {
 private:
     void handleEvent(xpc_object_t event) override
     {

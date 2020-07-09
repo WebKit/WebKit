@@ -50,6 +50,7 @@
 #import "WebProcessProxyMessages.h"
 #import "WebSleepDisablerClient.h"
 #import "WebsiteDataStoreParameters.h"
+#import "XPCEndpoint.h"
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AVAssetMIMETypeCache.h>
@@ -71,7 +72,6 @@
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
 #import <WebCore/UTIUtilities.h>
-#import <WebCore/XPCEndpoint.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>

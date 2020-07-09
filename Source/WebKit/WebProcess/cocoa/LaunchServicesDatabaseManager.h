@@ -25,13 +25,13 @@
 
 #pragma once
 
-#import <WebCore/XPCEndpointClient.h>
+#import "XPCEndpointClient.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 
-class LaunchServicesDatabaseManager : public WebCore::XPCEndpointClient {
+class LaunchServicesDatabaseManager : public WebKit::XPCEndpointClient {
 public:
     static LaunchServicesDatabaseManager& singleton();
 

@@ -1,3 +1,20 @@
+2020-07-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Move XPCEndpoint and XPCEndpointClient classes from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=214099
+
+        Reviewed by Alex Christensen.
+
+        These classes should not be in WebCore, but in WebKit, since they are only expected to be used there.
+
+        No new tests, since this patch is only moving source files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/XPCEndpoint.h: Removed.
+        * platform/cocoa/XPCEndpoint.mm: Removed.
+        * platform/cocoa/XPCEndpointClient.h: Removed.
+        * platform/cocoa/XPCEndpointClient.mm: Removed.
+
 2020-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         After a scroll gesture, content changes don't trigger re-snapping with scroll snap

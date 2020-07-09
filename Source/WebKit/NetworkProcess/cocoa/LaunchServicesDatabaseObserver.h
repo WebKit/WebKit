@@ -27,13 +27,13 @@
 
 #include "NetworkProcess.h"
 #include "NetworkProcessSupplement.h"
-#include <WebCore/XPCEndpoint.h>
+#include "XPCEndpoint.h"
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-class LaunchServicesDatabaseObserver : public WebCore::XPCEndpoint, public NetworkProcessSupplement {
+class LaunchServicesDatabaseObserver : public WebKit::XPCEndpoint, public NetworkProcessSupplement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LaunchServicesDatabaseObserver(NetworkProcess&);

@@ -28,7 +28,7 @@
 
 #import "LaunchServicesDatabaseXPCConstants.h"
 #import "WebProcessPool.h"
-#import <WebCore/XPCEndpoint.h>
+#import "XPCEndpoint.h"
 
 namespace WebKit {
 

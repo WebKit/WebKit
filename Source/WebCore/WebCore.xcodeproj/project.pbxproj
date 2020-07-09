@@ -4003,10 +4003,6 @@
 		C149D55D242EA6B9003EBB12 /* SleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = C149D55A242EA4F9003EBB12 /* SleepDisabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C149D55F242EA7B8003EBB12 /* SleepDisablerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149D55B242EA4FA003EBB12 /* SleepDisablerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C149D567242EB84A003EBB12 /* SleepDisablerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = C149D565242EB765003EBB12 /* SleepDisablerIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C14D304924B4EAB100480387 /* XPCEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D304724B4EAA800480387 /* XPCEndpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C14D304B24B4F7EF00480387 /* XPCEndpoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D304A24B4EB1E00480387 /* XPCEndpoint.mm */; };
-		C14D304E24B4F8FA00480387 /* XPCEndpointClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D304C24B4F8F600480387 /* XPCEndpointClient.mm */; };
-		C14D304F24B4F8FF00480387 /* XPCEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D304D24B4F8F700480387 /* XPCEndpointClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DD123D23ABD006E88F7 /* SystemBattery.mm */; };
 		C1692DD523D23E08006E88F7 /* SystemBattery.h in Headers */ = {isa = PBXBuildFile; fileRef = C1692DD423D23AE0006E88F7 /* SystemBattery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1E1D236203DF15400584665 /* ScreenProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E1D235203DF15400584665 /* ScreenProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13738,10 +13734,6 @@
 		C149D55A242EA4F9003EBB12 /* SleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisabler.h; sourceTree = "<group>"; };
 		C149D55B242EA4FA003EBB12 /* SleepDisablerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisablerClient.h; sourceTree = "<group>"; };
 		C149D565242EB765003EBB12 /* SleepDisablerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SleepDisablerIdentifier.h; sourceTree = "<group>"; };
-		C14D304724B4EAA800480387 /* XPCEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCEndpoint.h; sourceTree = "<group>"; };
-		C14D304A24B4EB1E00480387 /* XPCEndpoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCEndpoint.mm; sourceTree = "<group>"; };
-		C14D304C24B4F8F600480387 /* XPCEndpointClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCEndpointClient.mm; sourceTree = "<group>"; };
-		C14D304D24B4F8F700480387 /* XPCEndpointClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCEndpointClient.h; sourceTree = "<group>"; };
 		C1692DD123D23ABD006E88F7 /* SystemBattery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemBattery.mm; sourceTree = "<group>"; };
 		C1692DD423D23AE0006E88F7 /* SystemBattery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemBattery.h; sourceTree = "<group>"; };
 		C18FB518242F9382007E9875 /* SleepDisablerClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisablerClient.cpp; sourceTree = "<group>"; };
@@ -23648,10 +23640,6 @@
 				CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */,
 				CDC979F21C498C0900DB50D4 /* WebCoreNSErrorExtras.mm */,
 				5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */,
-				C14D304724B4EAA800480387 /* XPCEndpoint.h */,
-				C14D304A24B4EB1E00480387 /* XPCEndpoint.mm */,
-				C14D304D24B4F8F700480387 /* XPCEndpointClient.h */,
-				C14D304C24B4F8F600480387 /* XPCEndpointClient.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -34018,8 +34006,6 @@
 				1AB7FC840A8B92EC00D9D37B /* XPathUtil.h in Headers */,
 				1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */,
 				1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */,
-				C14D304924B4EAB100480387 /* XPCEndpoint.h in Headers */,
-				C14D304F24B4F8FF00480387 /* XPCEndpointClient.h in Headers */,
 				E1EE8B9C2413195000E794D6 /* XREnvironmentBlendMode.h in Headers */,
 				E1EE8B972413195000E794D6 /* XREye.h in Headers */,
 				E1EE8B8F2413195000E794D6 /* XRFrameRequestCallback.h in Headers */,
@@ -35215,8 +35201,6 @@
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
-				C14D304B24B4F7EF00480387 /* XPCEndpoint.mm in Sources */,
-				C14D304E24B4F8FA00480387 /* XPCEndpointClient.mm in Sources */,
 				E1EE8B7A2413191F00E794D6 /* XRInputSourceEvent.cpp in Sources */,
 				E1EE8BA72413196300E794D6 /* XRInputSourcesChangeEvent.cpp in Sources */,
 				E1EE8B952413195000E794D6 /* XRReferenceSpaceEvent.cpp in Sources */,

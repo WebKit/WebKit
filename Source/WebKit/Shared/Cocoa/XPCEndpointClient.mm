@@ -28,7 +28,7 @@
 
 #import <wtf/cocoa/Entitlements.h>
 
-namespace WebCore {
+namespace WebKit {
 
 void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
 {
