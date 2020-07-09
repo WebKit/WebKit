@@ -1,3 +1,23 @@
+2020-07-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove orphan code in SourceBufferPrivateGStreamer::append()
+        https://bugs.webkit.org/show_bug.cgi?id=214086
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A refactor in r240784 missed this line, which was unreachable code
+        before and should have removed.
+
+        Instead, it has been run every time after sending an append to the
+        AppendPipeline, and it just happens it doesn't have visible
+        consequences.
+
+        This patch cleans that up removing that line. No visible behavior
+        changes are introduced.
+
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::append):
+
 2020-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Initialize m_allowCookies and m_acceptEncoding in ResourceRequest::updateFromSoupMessage

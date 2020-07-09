@@ -78,7 +78,6 @@ void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
         return;
 
     m_client->append(this, WTFMove(data));
-    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ReadStreamFailed);
 }
 
 void SourceBufferPrivateGStreamer::abort()
