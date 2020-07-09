@@ -1,3 +1,12 @@
+2020-07-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ErrorInstance::finishCreation() puts "message" twice, with different attributes
+        https://bugs.webkit.org/show_bug.cgi?id=214089
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/error-source-appender.js: Added.
+
 2020-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BytecodeGenerator should be robust against failed constant generation

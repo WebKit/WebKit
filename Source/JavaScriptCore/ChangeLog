@@ -1,3 +1,25 @@
+2020-07-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ErrorInstance::finishCreation() puts "message" twice, with different attributes
+        https://bugs.webkit.org/show_bug.cgi?id=214089
+
+        Reviewed by Yusuke Suzuki.
+
+        This change refactors appendSourceToError() to return new message, making it almost pure
+        and eliminating extra JSString -> String -> JSString conversion and {get,put}Direct() calls
+        from ErrorInstance::finishCreation(). Also, moves null message check as early as possible.
+
+        Removed putDirect() call didn't pass PropertyAttribute::DontEnum. An implementation detail,
+        that is about to change in https://webkit.org/b/142933, prevented "message" property from
+        beind redefined with PropertyAttribute::None.
+
+        No behavior change. Advances provided microbenchmark by 5%.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToErrorMessage):
+        (JSC::ErrorInstance::finishCreation):
+        (JSC::appendSourceToError): Deleted.
+
 2020-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] B3 PureCSE should ignore values which are moved to new BasicBlock

@@ -48,15 +48,15 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
     return create(globalObject, vm, structure, messageString, appender, type, useCurrentFrame);
 }
 
-static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex)
+static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
 {
     ErrorInstance::SourceAppender appender = exception->sourceAppender();
     exception->clearSourceAppender();
     RuntimeType type = exception->runtimeTypeForCause();
     exception->clearRuntimeTypeForCause();
 
-    if (!callFrame->codeBlock()->hasExpressionInfo())
-        return;
+    if (!callFrame->codeBlock()->hasExpressionInfo() || message.isNull())
+        return message;
     
     int startOffset = 0;
     int endOffset = 0;
@@ -78,35 +78,26 @@ static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFra
 
     StringView sourceString = codeBlock->source().provider()->source();
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
-        return;
+        return message;
     
-    VM& vm = globalObject->vm();
-    JSValue jsMessage = exception->getDirect(vm, vm.propertyNames->message);
-    if (!jsMessage || !jsMessage.isString())
-        return;
-    
-    String message = asString(jsMessage)->value(globalObject);
     if (expressionStart < expressionStop)
-        message = appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop).toString(), type, ErrorInstance::FoundExactSource);
-    else {
-        // No range information, so give a few characters of context.
-        int dataLength = sourceString.length();
-        int start = expressionStart;
-        int stop = expressionStart;
-        // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
-        // Then strip whitespace.
-        while (start > 0 && (expressionStart - start < 20) && sourceString[start - 1] != '\n')
-            start--;
-        while (start < (expressionStart - 1) && isStrWhiteSpace(sourceString[start]))
-            start++;
-        while (stop < dataLength && (stop - expressionStart < 20) && sourceString[stop] != '\n')
-            stop++;
-        while (stop > expressionStart && isStrWhiteSpace(sourceString[stop - 1]))
-            stop--;
-        message = appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
-    }
-    exception->putDirect(vm, vm.propertyNames->message, jsString(vm, message));
+        return appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop).toString(), type, ErrorInstance::FoundExactSource);
 
+    // No range information, so give a few characters of context.
+    int dataLength = sourceString.length();
+    int start = expressionStart;
+    int stop = expressionStart;
+    // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
+    // Then strip whitespace.
+    while (start > 0 && (expressionStart - start < 20) && sourceString[start - 1] != '\n')
+        start--;
+    while (start < (expressionStart - 1) && isStrWhiteSpace(sourceString[start]))
+        start++;
+    while (stop < dataLength && (stop - expressionStart < 20) && sourceString[stop] != '\n')
+        stop++;
+    while (stop > expressionStart && isStrWhiteSpace(sourceString[stop - 1]))
+        stop--;
+    return appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
 }
 
 void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
@@ -117,9 +108,6 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
 
-    if (!message.isNull())
-        putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
-
     std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(globalObject, vm, this, useCurrentFrame);
     {
         auto locker = holdLock(cellLock());
@@ -127,13 +115,17 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     }
     vm.heap.writeBarrier(this);
 
+    String messageWithSource = message;
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
         BytecodeIndex bytecodeIndex;
         CallFrame* callFrame;
         getBytecodeIndex(vm, vm.topCallFrame, m_stackTrace.get(), callFrame, bytecodeIndex);
         if (callFrame && callFrame->codeBlock() && !callFrame->callee().isWasm())
-            appendSourceToError(globalObject, callFrame, this, bytecodeIndex);
+            messageWithSource = appendSourceToErrorMessage(callFrame, this, bytecodeIndex, message);
     }
+
+    if (!messageWithSource.isNull())
+        putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
