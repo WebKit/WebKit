@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.28.3
+================
+
+What's new in WebKitGTK 2.28.3?
+
+  - Enable kinetic scrolling with async scrolling.
+  - Fix web process hangs on large GitHub pages.
+  - Bubblewrap sandbox should not attempt to bind empty paths.
+  - Fix threading issues in the media player.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.28.2
 ================
 

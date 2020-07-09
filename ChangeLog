@@ -1,3 +1,9 @@
+2020-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.28.3 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2020-04-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.28.2 release
