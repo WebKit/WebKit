@@ -512,7 +512,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto variantDefaultArg = argument0.value().isUndefined() ? "" : convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value());
+    auto variantDefaultArg = argument0.value().isUndefined() ? emptyString() : convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithDefaultVariantArgument"_s, { variantDefaultArg });

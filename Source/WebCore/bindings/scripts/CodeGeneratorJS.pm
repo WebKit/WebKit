@@ -2210,28 +2210,6 @@ sub GenerateDefaultValue
 {
     my ($typeScope, $context, $type, $defaultValue) = @_;
 
-    if ($codeGenerator->IsStringType($type)) {
-        my $useAtomString = $type->extendedAttributes->{AtomString};
-        if ($defaultValue eq "null") {
-            return $useAtomString ? "nullAtom()" : "String()";
-        } elsif ($defaultValue eq "\"\"") {
-            return $useAtomString ? "emptyAtom()" : "emptyString()";
-        } else {
-            return $useAtomString ? "AtomString(${defaultValue}, AtomString::ConstructFromLiteral)" : "${defaultValue}_s";
-        }
-    }
-
-    if ($codeGenerator->IsEnumType($type)) {
-        # FIXME: Would be nice to report an error if the value does not have quote marks around it.
-        # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
-        if ($defaultValue eq "null") {
-            die if !$type->isNullable;
-            return "WTF::nullopt";
-        }
-        my $className = GetEnumerationClassName($type, $typeScope);
-        my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
-        return $className . "::" . $enumerationValueName;
-    }
     if ($defaultValue eq "null") {
         if ($type->isUnion) {
             return "WTF::nullopt" if $type->isNullable;
@@ -2242,7 +2220,10 @@ sub GenerateDefaultValue
 
         return "jsNull()" if $type->name eq "any";
         return "nullptr" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsBufferSourceType($type);
-        return "String()" if $codeGenerator->IsStringType($type);
+        if ($codeGenerator->IsStringType($type)) {
+            my $useAtomString = $type->extendedAttributes->{AtomString};
+            return $useAtomString ? "nullAtom()" : "String()";
+        }
         return "WTF::nullopt";
     }
 
@@ -2253,6 +2234,32 @@ sub GenerateDefaultValue
 
     return "jsUndefined()" if $defaultValue eq "undefined";
     return "PNaN" if $defaultValue eq "NaN";
+
+    if (substr($defaultValue, 0, 1) eq "\"") {
+        # Default value is a quoted string so the type should be a DOMString or an enumeration.
+        if ($type->isUnion) {
+            foreach my $memberType (GetFlattenedMemberTypes($type)) {
+                if ($codeGenerator->IsStringType($memberType) || $codeGenerator->IsEnumType($memberType)) {
+                    $type = $memberType;
+                    last;
+                }
+            }
+        }
+        if ($codeGenerator->IsStringType($type)) {
+            my $useAtomString = $type->extendedAttributes->{AtomString};
+            if ($defaultValue eq "\"\"") {
+                return $useAtomString ? "emptyAtom()" : "emptyString()";
+            } else {
+                return $useAtomString ? "AtomString(${defaultValue}, AtomString::ConstructFromLiteral)" : "${defaultValue}_s";
+            }
+        }
+
+        if ($codeGenerator->IsEnumType($type)) {
+            my $className = GetEnumerationClassName($type, $typeScope);
+            my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
+            return $className . "::" . $enumerationValueName;
+        }
+    }
 
     return $defaultValue;
 }

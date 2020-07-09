@@ -38,4 +38,6 @@ enum TestEnumInStandaloneDictionaryFile { "enumValue1", "enumValue2" };
     DOMString stringMember;
     TestEnumInStandaloneDictionaryFile enumMember;
     VoidCallback callbackMember;
+    (TestEnumInStandaloneDictionaryFile or double) unionMemberWithDefaultValue = "enumValue1";
+    (DOMString or boolean)? nullableUnionWithNullDefaultValue = null;
 };

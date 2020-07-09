@@ -27,8 +27,10 @@
 #include "Document.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertCallbacks.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMGlobalObject.h"
 #include "JSVoidCallback.h"
 #include "Settings.h"
@@ -36,6 +38,7 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Variant.h>
 
 
 namespace WebCore {
@@ -87,6 +90,18 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSGlobalObje
         result.enumMember = convert<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(lexicalGlobalObject, enumMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
+    JSValue nullableUnionWithNullDefaultValueValue;
+    if (isNullOrUndefined)
+        nullableUnionWithNullDefaultValueValue = jsUndefined();
+    else {
+        nullableUnionWithNullDefaultValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableUnionWithNullDefaultValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!nullableUnionWithNullDefaultValueValue.isUndefined()) {
+        result.nullableUnionWithNullDefaultValue = convert<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>(lexicalGlobalObject, nullableUnionWithNullDefaultValueValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    } else
+        result.nullableUnionWithNullDefaultValue = WTF::nullopt;
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     JSValue partialBooleanMemberValue;
     if (isNullOrUndefined)
@@ -205,6 +220,18 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSGlobalObje
         result.stringMember = convert<IDLDOMString>(lexicalGlobalObject, stringMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
+    JSValue unionMemberWithDefaultValueValue;
+    if (isNullOrUndefined)
+        unionMemberWithDefaultValueValue = jsUndefined();
+    else {
+        unionMemberWithDefaultValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unionMemberWithDefaultValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!unionMemberWithDefaultValueValue.isUndefined()) {
+        result.unionMemberWithDefaultValue = convert<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>>(lexicalGlobalObject, unionMemberWithDefaultValueValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    } else
+        result.unionMemberWithDefaultValue = TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1;
     return result;
 }
 
@@ -226,6 +253,8 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         auto enumMemberValue = toJS<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(lexicalGlobalObject, IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>::extractValueFromNullable(dictionary.enumMember));
         result->putDirect(vm, JSC::Identifier::fromString(vm, "enumMember"), enumMemberValue);
     }
+    auto nullableUnionWithNullDefaultValueValue = toJS<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>(lexicalGlobalObject, globalObject, dictionary.nullableUnionWithNullDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableUnionWithNullDefaultValue"), nullableUnionWithNullDefaultValueValue);
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     if (!IDLBoolean::isNullValue(dictionary.partialBooleanMember)) {
         auto partialBooleanMemberValue = toJS<IDLBoolean>(IDLBoolean::extractValueFromNullable(dictionary.partialBooleanMember));
@@ -278,6 +307,8 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         auto stringMemberValue = toJS<IDLDOMString>(lexicalGlobalObject, IDLDOMString::extractValueFromNullable(dictionary.stringMember));
         result->putDirect(vm, JSC::Identifier::fromString(vm, "stringMember"), stringMemberValue);
     }
+    auto unionMemberWithDefaultValueValue = toJS<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>>(lexicalGlobalObject, globalObject, dictionary.unionMemberWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unionMemberWithDefaultValue"), unionMemberWithDefaultValueValue);
     return result;
 }
 

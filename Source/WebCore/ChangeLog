@@ -1,3 +1,25 @@
+2020-07-09  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Add default value support for union types in dictionary members
+        https://bugs.webkit.org/show_bug.cgi?id=214160
+
+        Reviewed by Sam Weinig.
+
+        Add default value support for union types in dictionary members. This is needed for the WebAudio specification:
+        - https://www.w3.org/TR/webaudio/#AudioContextOptions
+        """
+        (AudioContextLatencyCategory or double) latencyHint = "interactive";
+        """
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Body):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/TestStandaloneDictionary.idl:
+
 2020-07-09  Per Arne Vollan  <pvollan@apple.com>
 
         Move XPCEndpoint and XPCEndpointClient classes from WebCore to WebKit
