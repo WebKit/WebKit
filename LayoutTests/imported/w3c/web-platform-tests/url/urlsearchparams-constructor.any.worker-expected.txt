@@ -1,0 +1,27 @@
+
+PASS Basic URLSearchParams construction 
+PASS URLSearchParams constructor, no arguments 
+PASS URLSearchParams constructor, remove leading "?" 
+PASS URLSearchParams constructor, DOMException as argument 
+PASS URLSearchParams constructor, empty string as argument 
+PASS URLSearchParams constructor, {} as argument 
+PASS URLSearchParams constructor, string. 
+PASS URLSearchParams constructor, object. 
+PASS URLSearchParams constructor, FormData. 
+PASS Parse + 
+PASS Parse encoded + 
+PASS Parse space 
+PASS Parse %20 
+PASS Parse \0 
+PASS Parse %00 
+PASS Parse ⎄ 
+PASS Parse %e2%8e%84 
+PASS Parse 💩 
+PASS Parse %f0%9f%92%a9 
+PASS Constructor with sequence of sequences of strings 
+PASS Construct with object with + 
+PASS Construct with object with two keys 
+PASS Construct with array with two keys 
+PASS Construct with object with NULL, non-ASCII, and surrogate keys 
+PASS Custom [Symbol.iterator] 
+

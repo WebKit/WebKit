@@ -1,8 +1,4 @@
 
-PASS URL.searchParams getter 
-PASS URL.searchParams updating, clearing 
-PASS URL.searchParams setter, invalid values 
-PASS URL.searchParams and URL.search setters, update propagation 
 PASS Loading data… 
 PASS Parsing: <http://example	.
 org> against <http://example.org/foo/bar> 
@@ -83,7 +79,7 @@ PASS Parsing: <ftp:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <https:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <madeupscheme:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <file:/example.com/> against <http://example.org/foo/bar> 
-FAIL Parsing: <file://example:1/> against <about:blank> assert_throws: function "function () {
+FAIL Parsing: <file://example:1/> against <about:blank> assert_throws_js: function "function () {
           bURL(expected.input, expected.base)
         }" did not throw
 PASS Parsing: <file://example:test/> against <about:blank> 
@@ -392,7 +388,7 @@ a\rg> against <about:blank>
 PASS Parsing: <?a=b&c=d> against <http://example.org/foo/bar> 
 PASS Parsing: <??a=b&c=d> against <http://example.org/foo/bar> 
 PASS Parsing: <http:> against <http://example.org/foo/bar> 
-FAIL Parsing: <http:> against <https://example.org/foo/bar> assert_throws: function "function () {
+FAIL Parsing: <http:> against <https://example.org/foo/bar> assert_throws_js: function "function () {
           bURL(expected.input, expected.base)
         }" did not throw
 PASS Parsing: <sc:> against <https://example.org/foo/bar> 
@@ -560,7 +556,8 @@ PASS Parsing: <file://a­b/p> against <about:blank>
 PASS Parsing: <file://a%C2%ADb/p> against <about:blank> 
 PASS Parsing: <file://­/p> against <about:blank> 
 PASS Parsing: <file://%C2%AD/p> against <about:blank> 
-FAIL Parsing: <file://xn--/p> against <about:blank> assert_throws: function "function () {
+FAIL Parsing: <file://xn--/p> against <about:blank> assert_throws_js: function "function () {
           bURL(expected.input, expected.base)
         }" did not throw
+PASS Parsing: <#link> against <https://example.org/##link> 
 

@@ -1,0 +1,104 @@
+
+PASS URLSearchParams constructed with: test 
+FAIL request.formData() with input: test promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: test promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: ﻿test=﻿ 
+FAIL request.formData() with input: ﻿test=﻿ promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: ﻿test=﻿ promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: %EF%BB%BFtest=%EF%BB%BF 
+FAIL request.formData() with input: %EF%BB%BFtest=%EF%BB%BF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %EF%BB%BFtest=%EF%BB%BF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL URLSearchParams constructed with: %FE%FF assert_array_equals: expected property 0 to be "\ufffd\ufffd" but got "" (expected array ["\ufffd\ufffd", ""] got ["", ""])
+FAIL request.formData() with input: %FE%FF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %FE%FF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL URLSearchParams constructed with: %FF%FE assert_array_equals: expected property 0 to be "\ufffd\ufffd" but got "" (expected array ["\ufffd\ufffd", ""] got ["", ""])
+FAIL request.formData() with input: %FF%FE promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %FF%FE promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: †&†=x 
+FAIL request.formData() with input: †&†=x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: †&†=x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL URLSearchParams constructed with: %C2 assert_array_equals: expected property 0 to be "\ufffd" but got "" (expected array ["\ufffd", ""] got ["", ""])
+FAIL request.formData() with input: %C2 promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %C2 promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL URLSearchParams constructed with: %C2x assert_array_equals: expected property 0 to be "\ufffdx" but got "" (expected array ["\ufffdx", ""] got ["", ""])
+FAIL request.formData() with input: %C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL URLSearchParams constructed with: _charset_=windows-1252&test=%C2x assert_array_equals: expected property 1 to be "\ufffdx" but got "" (expected array ["test", "\ufffdx"] got ["test", ""])
+FAIL request.formData() with input: _charset_=windows-1252&test=%C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: _charset_=windows-1252&test=%C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with:  
+FAIL request.formData() with input:  promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input:  promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a 
+FAIL request.formData() with input: a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a=b 
+FAIL request.formData() with input: a=b promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a=b promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a= 
+FAIL request.formData() with input: a= promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a= promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: =b 
+FAIL request.formData() with input: =b promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: =b promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: & 
+FAIL request.formData() with input: & promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: & promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: &a 
+FAIL request.formData() with input: &a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: &a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a& 
+FAIL request.formData() with input: a& promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a& promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a&a 
+FAIL request.formData() with input: a&a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a&a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a&b&c 
+FAIL request.formData() with input: a&b&c promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a&b&c promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a=b&c=d 
+FAIL request.formData() with input: a=b&c=d promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a=b&c=d promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a=b&c=d& 
+FAIL request.formData() with input: a=b&c=d& promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a=b&c=d& promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: &&&a=b&&&&c=d& 
+FAIL request.formData() with input: &&&a=b&&&&c=d& promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: &&&a=b&&&&c=d& promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a=a&a=b&a=c 
+FAIL request.formData() with input: a=a&a=b&a=c promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a=a&a=b&a=c promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a==a 
+FAIL request.formData() with input: a==a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a==a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: a=a+b+c+d 
+FAIL request.formData() with input: a=a+b+c+d promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: a=a+b+c+d promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: %=a 
+FAIL request.formData() with input: %=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: %a=a 
+FAIL request.formData() with input: %a=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %a=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: %a_=a 
+FAIL request.formData() with input: %a_=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %a_=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: %61=a 
+FAIL request.formData() with input: %61=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %61=a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: %61+%4d%4D= 
+FAIL request.formData() with input: %61+%4d%4D= promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: %61+%4d%4D= promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: id=0&value=% 
+FAIL request.formData() with input: id=0&value=% promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: id=0&value=% promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: b=%2sf%2a 
+FAIL request.formData() with input: b=%2sf%2a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: b=%2sf%2a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: b=%2%2af%2a 
+FAIL request.formData() with input: b=%2%2af%2a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: b=%2%2af%2a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS URLSearchParams constructed with: b=%%2a 
+FAIL request.formData() with input: b=%%2a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL response.formData() with input: b=%%2a promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+

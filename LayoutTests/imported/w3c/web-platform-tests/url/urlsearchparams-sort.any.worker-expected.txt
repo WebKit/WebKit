@@ -1,0 +1,19 @@
+
+PASS Parse and sort: z=b&a=b&z=a&a=a 
+PASS URL parse and sort: z=b&a=b&z=a&a=a 
+PASS Parse and sort: �=x&￼&�=a 
+PASS URL parse and sort: �=x&￼&�=a 
+PASS Parse and sort: ﬃ&🌈 
+PASS URL parse and sort: ﬃ&🌈 
+PASS Parse and sort: é&e�&é 
+PASS URL parse and sort: é&e�&é 
+PASS Parse and sort: z=z&a=a&z=y&a=b&z=x&a=c&z=w&a=d&z=v&a=e&z=u&a=f&z=t&a=g 
+PASS URL parse and sort: z=z&a=a&z=y&a=b&z=x&a=c&z=w&a=d&z=v&a=e&z=u&a=f&z=t&a=g 
+PASS Parse and sort: bbb&bb&aaa&aa=x&aa=y 
+PASS URL parse and sort: bbb&bb&aaa&aa=x&aa=y 
+PASS Parse and sort: z=z&=f&=t&=x 
+PASS URL parse and sort: z=z&=f&=t&=x 
+PASS Parse and sort: a🌈&a💩 
+PASS URL parse and sort: a🌈&a💩 
+PASS Sorting non-existent params removes ? from URL 
+

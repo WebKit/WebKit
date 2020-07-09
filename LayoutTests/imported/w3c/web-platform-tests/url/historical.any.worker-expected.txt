@@ -1,6 +1,6 @@
 
 PASS searchParams on location object 
-FAIL Setting URL's href attribute and base URLs assert_throws: function "function () {
+FAIL Setting URL's href attribute and base URLs assert_throws_js: function "function () {
     url.href = "./bar";
   }" did not throw
 PASS URL.domainToASCII should be undefined 

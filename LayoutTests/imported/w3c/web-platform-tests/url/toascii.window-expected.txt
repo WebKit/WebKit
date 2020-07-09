@@ -1,0 +1,345 @@
+
+PASS Loading data… 
+PASS aa-- (using URL) 
+PASS aa-- (using URL.host) 
+PASS aa-- (using URL.hostname) 
+PASS aa-- (using <a>) 
+PASS aa-- (using <a>.host) 
+PASS aa-- (using <a>.hostname) 
+PASS aa-- (using <area>) 
+PASS aa-- (using <area>.host) 
+PASS aa-- (using <area>.hostname) 
+FAIL a†-- (using URL) Type error
+FAIL a†-- (using URL.host) assert_equals: expected "xn--a---kp0a" but got "x"
+FAIL a†-- (using URL.hostname) assert_equals: expected "xn--a---kp0a" but got "x"
+FAIL a†-- (using <a>) Type error
+FAIL a†-- (using <a>.host) assert_equals: expected "xn--a---kp0a" but got "x"
+FAIL a†-- (using <a>.hostname) assert_equals: expected "xn--a---kp0a" but got "x"
+FAIL a†-- (using <area>) Type error
+FAIL a†-- (using <area>.host) assert_equals: expected "xn--a---kp0a" but got "x"
+FAIL a†-- (using <area>.hostname) assert_equals: expected "xn--a---kp0a" but got "x"
+PASS ab--c (using URL) 
+PASS ab--c (using URL.host) 
+PASS ab--c (using URL.hostname) 
+PASS ab--c (using <a>) 
+PASS ab--c (using <a>.host) 
+PASS ab--c (using <a>.hostname) 
+PASS ab--c (using <area>) 
+PASS ab--c (using <area>.host) 
+PASS ab--c (using <area>.hostname) 
+PASS -x (using URL) 
+PASS -x (using URL.host) 
+PASS -x (using URL.hostname) 
+PASS -x (using <a>) 
+PASS -x (using <a>.host) 
+PASS -x (using <a>.hostname) 
+PASS -x (using <area>) 
+PASS -x (using <area>.host) 
+PASS -x (using <area>.hostname) 
+FAIL -† (using URL) Type error
+FAIL -† (using URL.host) assert_equals: expected "xn----xhn" but got "x"
+FAIL -† (using URL.hostname) assert_equals: expected "xn----xhn" but got "x"
+FAIL -† (using <a>) Type error
+FAIL -† (using <a>.host) assert_equals: expected "xn----xhn" but got "x"
+FAIL -† (using <a>.hostname) assert_equals: expected "xn----xhn" but got "x"
+FAIL -† (using <area>) Type error
+FAIL -† (using <area>.host) assert_equals: expected "xn----xhn" but got "x"
+FAIL -† (using <area>.hostname) assert_equals: expected "xn----xhn" but got "x"
+PASS -x.xn--nxa (using URL) 
+PASS -x.xn--nxa (using URL.host) 
+PASS -x.xn--nxa (using URL.hostname) 
+PASS -x.xn--nxa (using <a>) 
+PASS -x.xn--nxa (using <a>.host) 
+PASS -x.xn--nxa (using <a>.hostname) 
+PASS -x.xn--nxa (using <area>) 
+PASS -x.xn--nxa (using <area>.host) 
+PASS -x.xn--nxa (using <area>.hostname) 
+FAIL -x.β (using URL) Type error
+FAIL -x.β (using URL.host) assert_equals: expected "-x.xn--nxa" but got "x"
+FAIL -x.β (using URL.hostname) assert_equals: expected "-x.xn--nxa" but got "x"
+FAIL -x.β (using <a>) Type error
+FAIL -x.β (using <a>.host) assert_equals: expected "-x.xn--nxa" but got "x"
+FAIL -x.β (using <a>.hostname) assert_equals: expected "-x.xn--nxa" but got "x"
+FAIL -x.β (using <area>) Type error
+FAIL -x.β (using <area>.host) assert_equals: expected "-x.xn--nxa" but got "x"
+FAIL -x.β (using <area>.hostname) assert_equals: expected "-x.xn--nxa" but got "x"
+PASS x-.xn--nxa (using URL) 
+PASS x-.xn--nxa (using URL.host) 
+PASS x-.xn--nxa (using URL.hostname) 
+PASS x-.xn--nxa (using <a>) 
+PASS x-.xn--nxa (using <a>.host) 
+PASS x-.xn--nxa (using <a>.hostname) 
+PASS x-.xn--nxa (using <area>) 
+PASS x-.xn--nxa (using <area>.host) 
+PASS x-.xn--nxa (using <area>.hostname) 
+FAIL x-.β (using URL) Type error
+FAIL x-.β (using URL.host) assert_equals: expected "x-.xn--nxa" but got "x"
+FAIL x-.β (using URL.hostname) assert_equals: expected "x-.xn--nxa" but got "x"
+FAIL x-.β (using <a>) Type error
+FAIL x-.β (using <a>.host) assert_equals: expected "x-.xn--nxa" but got "x"
+FAIL x-.β (using <a>.hostname) assert_equals: expected "x-.xn--nxa" but got "x"
+FAIL x-.β (using <area>) Type error
+FAIL x-.β (using <area>.host) assert_equals: expected "x-.xn--nxa" but got "x"
+FAIL x-.β (using <area>.hostname) assert_equals: expected "x-.xn--nxa" but got "x"
+PASS x..xn--nxa (using URL) 
+PASS x..xn--nxa (using URL.host) 
+PASS x..xn--nxa (using URL.hostname) 
+PASS x..xn--nxa (using <a>) 
+PASS x..xn--nxa (using <a>.host) 
+PASS x..xn--nxa (using <a>.hostname) 
+PASS x..xn--nxa (using <area>) 
+PASS x..xn--nxa (using <area>.host) 
+PASS x..xn--nxa (using <area>.hostname) 
+FAIL x..β (using URL) Type error
+FAIL x..β (using URL.host) assert_equals: expected "x..xn--nxa" but got "x"
+FAIL x..β (using URL.hostname) assert_equals: expected "x..xn--nxa" but got "x"
+FAIL x..β (using <a>) Type error
+FAIL x..β (using <a>.host) assert_equals: expected "x..xn--nxa" but got "x"
+FAIL x..β (using <a>.hostname) assert_equals: expected "x..xn--nxa" but got "x"
+FAIL x..β (using <area>) Type error
+FAIL x..β (using <area>.host) assert_equals: expected "x..xn--nxa" but got "x"
+FAIL x..β (using <area>.hostname) assert_equals: expected "x..xn--nxa" but got "x"
+FAIL xn--a (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
+FAIL xn--a (using URL.host) assert_equals: expected "x" but got "xn--a"
+FAIL xn--a (using URL.hostname) assert_equals: expected "x" but got "xn--a"
+FAIL xn--a (using <a>) assert_equals: expected "" but got "xn--a"
+FAIL xn--a (using <a>.host) assert_equals: expected "x" but got "xn--a"
+FAIL xn--a (using <a>.hostname) assert_equals: expected "x" but got "xn--a"
+FAIL xn--a (using <area>) assert_equals: expected "" but got "xn--a"
+FAIL xn--a (using <area>.host) assert_equals: expected "x" but got "xn--a"
+FAIL xn--a (using <area>.hostname) assert_equals: expected "x" but got "xn--a"
+FAIL xn--a.xn--nxa (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
+FAIL xn--a.xn--nxa (using URL.host) assert_equals: expected "x" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using URL.hostname) assert_equals: expected "x" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using <a>) assert_equals: expected "" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using <a>.host) assert_equals: expected "x" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using <a>.hostname) assert_equals: expected "x" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using <area>) assert_equals: expected "" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using <area>.host) assert_equals: expected "x" but got "xn--a.xn--nxa"
+FAIL xn--a.xn--nxa (using <area>.hostname) assert_equals: expected "x" but got "xn--a.xn--nxa"
+PASS xn--a.β (using URL) 
+PASS xn--a.β (using URL.host) 
+PASS xn--a.β (using URL.hostname) 
+PASS xn--a.β (using <a>) 
+PASS xn--a.β (using <a>.host) 
+PASS xn--a.β (using <a>.hostname) 
+PASS xn--a.β (using <area>) 
+PASS xn--a.β (using <area>.host) 
+PASS xn--a.β (using <area>.hostname) 
+PASS xn--nxa.xn--nxa (using URL) 
+PASS xn--nxa.xn--nxa (using URL.host) 
+PASS xn--nxa.xn--nxa (using URL.hostname) 
+PASS xn--nxa.xn--nxa (using <a>) 
+PASS xn--nxa.xn--nxa (using <a>.host) 
+PASS xn--nxa.xn--nxa (using <a>.hostname) 
+PASS xn--nxa.xn--nxa (using <area>) 
+PASS xn--nxa.xn--nxa (using <area>.host) 
+PASS xn--nxa.xn--nxa (using <area>.hostname) 
+PASS xn--nxa.β (using URL) 
+PASS xn--nxa.β (using URL.host) 
+PASS xn--nxa.β (using URL.hostname) 
+PASS xn--nxa.β (using <a>) 
+PASS xn--nxa.β (using <a>.host) 
+PASS xn--nxa.β (using <a>.hostname) 
+PASS xn--nxa.β (using <area>) 
+PASS xn--nxa.β (using <area>.host) 
+PASS xn--nxa.β (using <area>.hostname) 
+PASS ab--c.xn--nxa (using URL) 
+PASS ab--c.xn--nxa (using URL.host) 
+PASS ab--c.xn--nxa (using URL.hostname) 
+PASS ab--c.xn--nxa (using <a>) 
+PASS ab--c.xn--nxa (using <a>.host) 
+PASS ab--c.xn--nxa (using <a>.hostname) 
+PASS ab--c.xn--nxa (using <area>) 
+PASS ab--c.xn--nxa (using <area>.host) 
+PASS ab--c.xn--nxa (using <area>.hostname) 
+FAIL ab--c.β (using URL) Type error
+FAIL ab--c.β (using URL.host) assert_equals: expected "ab--c.xn--nxa" but got "x"
+FAIL ab--c.β (using URL.hostname) assert_equals: expected "ab--c.xn--nxa" but got "x"
+FAIL ab--c.β (using <a>) Type error
+FAIL ab--c.β (using <a>.host) assert_equals: expected "ab--c.xn--nxa" but got "x"
+FAIL ab--c.β (using <a>.hostname) assert_equals: expected "ab--c.xn--nxa" but got "x"
+FAIL ab--c.β (using <area>) Type error
+FAIL ab--c.β (using <area>.host) assert_equals: expected "ab--c.xn--nxa" but got "x"
+FAIL ab--c.β (using <area>.hostname) assert_equals: expected "ab--c.xn--nxa" but got "x"
+PASS ‍.example (using URL) 
+PASS ‍.example (using URL.host) 
+PASS ‍.example (using URL.hostname) 
+PASS ‍.example (using <a>) 
+PASS ‍.example (using <a>.host) 
+PASS ‍.example (using <a>.hostname) 
+PASS ‍.example (using <area>) 
+PASS ‍.example (using <area>.host) 
+PASS ‍.example (using <area>.hostname) 
+FAIL xn--1ug.example (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
+FAIL xn--1ug.example (using URL.host) assert_equals: expected "x" but got "xn--1ug.example"
+FAIL xn--1ug.example (using URL.hostname) assert_equals: expected "x" but got "xn--1ug.example"
+FAIL xn--1ug.example (using <a>) assert_equals: expected "" but got "xn--1ug.example"
+FAIL xn--1ug.example (using <a>.host) assert_equals: expected "x" but got "xn--1ug.example"
+FAIL xn--1ug.example (using <a>.hostname) assert_equals: expected "x" but got "xn--1ug.example"
+FAIL xn--1ug.example (using <area>) assert_equals: expected "" but got "xn--1ug.example"
+FAIL xn--1ug.example (using <area>.host) assert_equals: expected "x" but got "xn--1ug.example"
+FAIL xn--1ug.example (using <area>.hostname) assert_equals: expected "x" but got "xn--1ug.example"
+PASS يa (using URL) 
+PASS يa (using URL.host) 
+PASS يa (using URL.hostname) 
+PASS يa (using <a>) 
+PASS يa (using <a>.host) 
+PASS يa (using <a>.hostname) 
+PASS يa (using <area>) 
+PASS يa (using <area>.host) 
+PASS يa (using <area>.hostname) 
+FAIL xn--a-yoc (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
+FAIL xn--a-yoc (using URL.host) assert_equals: expected "x" but got "xn--a-yoc"
+FAIL xn--a-yoc (using URL.hostname) assert_equals: expected "x" but got "xn--a-yoc"
+FAIL xn--a-yoc (using <a>) assert_equals: expected "" but got "xn--a-yoc"
+FAIL xn--a-yoc (using <a>.host) assert_equals: expected "x" but got "xn--a-yoc"
+FAIL xn--a-yoc (using <a>.hostname) assert_equals: expected "x" but got "xn--a-yoc"
+FAIL xn--a-yoc (using <area>) assert_equals: expected "" but got "xn--a-yoc"
+FAIL xn--a-yoc (using <area>.host) assert_equals: expected "x" but got "xn--a-yoc"
+FAIL xn--a-yoc (using <area>.hostname) assert_equals: expected "x" but got "xn--a-yoc"
+PASS ශ්‍රී (using URL) 
+PASS ශ්‍රී (using URL.host) 
+PASS ශ්‍රී (using URL.hostname) 
+PASS ශ්‍රී (using <a>) 
+PASS ශ්‍රී (using <a>.host) 
+PASS ශ්‍රී (using <a>.hostname) 
+PASS ශ්‍රී (using <area>) 
+PASS ශ්‍රී (using <area>.host) 
+PASS ශ්‍රී (using <area>.hostname) 
+PASS نامه‌ای (using URL) 
+PASS نامه‌ای (using URL.host) 
+PASS نامه‌ای (using URL.hostname) 
+PASS نامه‌ای (using <a>) 
+PASS نامه‌ای (using <a>.host) 
+PASS نامه‌ای (using <a>.hostname) 
+PASS نامه‌ای (using <area>) 
+PASS نامه‌ای (using <area>.host) 
+PASS نامه‌ای (using <area>.hostname) 
+PASS �.com (using URL) 
+PASS �.com (using URL.host) 
+PASS �.com (using URL.hostname) 
+PASS �.com (using <a>) 
+PASS �.com (using <a>.host) 
+PASS �.com (using <a>.hostname) 
+PASS �.com (using <area>) 
+PASS �.com (using <area>.host) 
+PASS �.com (using <area>.hostname) 
+FAIL xn--zn7c.com (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
+FAIL xn--zn7c.com (using URL.host) assert_equals: expected "x" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using URL.hostname) assert_equals: expected "x" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using <a>) assert_equals: expected "" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using <a>.host) assert_equals: expected "x" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using <a>.hostname) assert_equals: expected "x" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using <area>) assert_equals: expected "" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using <area>.host) assert_equals: expected "x" but got "xn--zn7c.com"
+FAIL xn--zn7c.com (using <area>.hostname) assert_equals: expected "x" but got "xn--zn7c.com"
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using URL) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using URL.host) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using URL.hostname) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using <a>) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using <a>.host) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using <a>.hostname) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using <area>) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using <area>.host) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x (using <area>.hostname) 
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using URL) Type error
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using URL.host) assert_equals: expected "xn--x01234567890123456789012345678901234567890123456789012345678901-6963b" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using URL.hostname) assert_equals: expected "xn--x01234567890123456789012345678901234567890123456789012345678901-6963b" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using <a>) Type error
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using <a>.host) assert_equals: expected "xn--x01234567890123456789012345678901234567890123456789012345678901-6963b" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using <a>.hostname) assert_equals: expected "xn--x01234567890123456789012345678901234567890123456789012345678901-6963b" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using <area>) Type error
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using <area>.host) assert_equals: expected "xn--x01234567890123456789012345678901234567890123456789012345678901-6963b" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901† (using <area>.hostname) assert_equals: expected "xn--x01234567890123456789012345678901234567890123456789012345678901-6963b" but got "x"
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using URL) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using URL.host) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using URL.hostname) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using <a>) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using <a>.host) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using <a>.hostname) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using <area>) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using <area>.host) 
+PASS x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa (using <area>.hostname) 
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using URL) Type error
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using URL.host) assert_equals: expected "x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using URL.hostname) assert_equals: expected "x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using <a>) Type error
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using <a>.host) assert_equals: expected "x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using <a>.hostname) assert_equals: expected "x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using <area>) Type error
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using <area>.host) assert_equals: expected "x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa" but got "x"
+FAIL x01234567890123456789012345678901234567890123456789012345678901x.β (using <area>.hostname) assert_equals: expected "x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa" but got "x"
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using URL) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using URL.host) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using URL.hostname) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using <a>) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using <a>.host) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using <a>.hostname) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using <area>) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using <area>.host) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x (using <area>.hostname) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using URL) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using URL.host) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using URL.hostname) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using <a>) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using <a>.host) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using <a>.hostname) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using <area>) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using <area>.host) 
+PASS 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa (using <area>.hostname) 
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using URL) Type error
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using URL.host) assert_equals: expected "01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa" but got "x"
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using URL.hostname) assert_equals: expected "01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa" but got "x"
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using <a>) Type error
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using <a>.host) assert_equals: expected "01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa" but got "x"
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using <a>.hostname) assert_equals: expected "01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa" but got "x"
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using <area>) Type error
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using <area>.host) assert_equals: expected "01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa" but got "x"
+FAIL 01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β (using <area>.hostname) assert_equals: expected "01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa" but got "x"
+PASS a­b (using URL) 
+PASS a­b (using URL.host) 
+PASS a­b (using URL.hostname) 
+PASS a­b (using <a>) 
+PASS a­b (using <a>.host) 
+PASS a­b (using <a>.hostname) 
+PASS a­b (using <area>) 
+PASS a­b (using <area>.host) 
+PASS a­b (using <area>.hostname) 
+PASS a%C2%ADb (using URL) 
+PASS a%C2%ADb (using URL.host) 
+PASS a%C2%ADb (using URL.hostname) 
+PASS a%C2%ADb (using <a>) 
+PASS a%C2%ADb (using <a>.host) 
+PASS a%C2%ADb (using <a>.hostname) 
+PASS a%C2%ADb (using <area>) 
+PASS a%C2%ADb (using <area>.host) 
+PASS a%C2%ADb (using <area>.hostname) 
+PASS ­ (using URL) 
+PASS ­ (using URL.host) 
+PASS ­ (using URL.hostname) 
+PASS ­ (using <a>) 
+PASS ­ (using <a>.host) 
+PASS ­ (using <a>.hostname) 
+PASS ­ (using <area>) 
+PASS ­ (using <area>.host) 
+PASS ­ (using <area>.hostname) 
+PASS %C2%AD (using URL) 
+PASS %C2%AD (using URL.host) 
+PASS %C2%AD (using URL.hostname) 
+PASS %C2%AD (using <a>) 
+PASS %C2%AD (using <a>.host) 
+PASS %C2%AD (using <a>.hostname) 
+PASS %C2%AD (using <area>) 
+PASS %C2%AD (using <area>.host) 
+PASS %C2%AD (using <area>.hostname) 
+FAIL xn-- (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
+FAIL xn-- (using URL.host) assert_equals: expected "x" but got "xn--"
+FAIL xn-- (using URL.hostname) assert_equals: expected "x" but got "xn--"
+FAIL xn-- (using <a>) assert_equals: expected "" but got "xn--"
+FAIL xn-- (using <a>.host) assert_equals: expected "x" but got "xn--"
+FAIL xn-- (using <a>.hostname) assert_equals: expected "x" but got "xn--"
+FAIL xn-- (using <area>) assert_equals: expected "" but got "xn--"
+FAIL xn-- (using <area>.host) assert_equals: expected "x" but got "xn--"
+FAIL xn-- (using <area>.hostname) assert_equals: expected "x" but got "xn--"
+

@@ -1,0 +1,4 @@
+
+
+FAIL Data URI parsing of fragments assert_equals: expected "<p id=\"foo\">This should be the only visible text.</p>" but got "<p id=\"foo\">This should be the only visible text.</p>#foo"
+

@@ -1,12 +1,4 @@
-async_test(t => {
-  const request = new XMLHttpRequest()
-  request.open("GET", "toascii.json")
-  request.send()
-  request.responseType = "json"
-  request.onload = t.step_func_done(() => {
-    runTests(request.response)
-  })
-}, "Loading data…")
+promise_test(() => fetch("resources/toascii.json").then(res => res.json()).then(runTests), "Loading data…");
 
 function makeURL(type, input) {
   input = "https://" + input + "/x"
@@ -36,7 +28,7 @@ function runTests(tests) {
           assert_equals(url.href, "https://" + hostTest.output + "/x")
         } else {
           if(type === "url") {
-            assert_throws(new TypeError, () => makeURL("url", hostTest.input))
+            assert_throws_js(TypeError, () => makeURL("url", hostTest.input))
           } else {
             const url = makeURL(type, hostTest.input)
             assert_equals(url.host, "")

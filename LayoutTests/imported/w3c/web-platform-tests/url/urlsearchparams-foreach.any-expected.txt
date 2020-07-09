@@ -1,0 +1,8 @@
+
+PASS ForEach Check 
+PASS For-of Check 
+PASS empty 
+PASS delete next param during iteration 
+PASS delete current param during iteration 
+PASS delete every param seen during iteration 
+

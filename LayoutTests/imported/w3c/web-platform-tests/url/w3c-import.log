@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,33 +14,31 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/url/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/url/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/url/README.md
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin.html
-/LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin.js
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element.html
-/LayoutTests/imported/w3c/web-platform-tests/url/a-element.js
+/LayoutTests/imported/w3c/web-platform-tests/url/data-uri-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/url/failure.html
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.any.js
-/LayoutTests/imported/w3c/web-platform-tests/url/interfaces.any.js
-/LayoutTests/imported/w3c/web-platform-tests/url/setters_tests.json
-/LayoutTests/imported/w3c/web-platform-tests/url/toascii.json
+/LayoutTests/imported/w3c/web-platform-tests/url/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/toascii.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/url/url-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/url/url-searchparams.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/url-setters-stripping.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.html
-/LayoutTests/imported/w3c/web-platform-tests/url/url-tojson.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlencoded-parser.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-constructor.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-delete.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-foreach.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-get.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-getall.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-has.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-set.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-sort.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-stringifier.html
-/LayoutTests/imported/w3c/web-platform-tests/url/urltestdata.json
+/LayoutTests/imported/w3c/web-platform-tests/url/url-tojson.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlencoded-parser.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-constructor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-delete.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-foreach.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-get.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-getall.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-has.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-set.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-sort.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-stringifier.any.js

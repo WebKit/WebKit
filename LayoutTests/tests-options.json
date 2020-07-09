@@ -2708,6 +2708,9 @@
     "imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-3.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/url/failure.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html": [
         "slow"
     ],

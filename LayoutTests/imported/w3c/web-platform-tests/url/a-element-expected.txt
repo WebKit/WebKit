@@ -554,4 +554,5 @@ PASS Parsing: <file://a%C2%ADb/p> against <about:blank>
 PASS Parsing: <file://­/p> against <about:blank> 
 PASS Parsing: <file://%C2%AD/p> against <about:blank> 
 FAIL Parsing: <file://xn--/p> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <#link> against <https://example.org/##link> 
 
