@@ -1400,6 +1400,9 @@ webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_ope
 
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
 
+# Newly imported WPT test that is flaky on iOS only.
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html [ ImageOnlyFailure Pass ]
+
 webkit.org/b/209205 fast/events/autoscroll-in-iframe.html [ Pass Failure ]
 
 webkit.org/b/209139 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Pass Failure ]

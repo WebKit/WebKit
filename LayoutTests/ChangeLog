@@ -1,3 +1,9 @@
+2020-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark ref-test as flaky on iOS since import in r263987.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Occasional crash under -[UIView _setViewDelegate:] when presenting date and time pickers
