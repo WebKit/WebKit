@@ -119,9 +119,9 @@ enum class WheelEventStatus {
     UserScrollBegin,
     UserScrolling,
     UserScrollEnd,
-    InertialScrollBegin,
-    InertialScrolling,
-    InertialScrollEnd,
+    MomentumScrollBegin,
+    MomentumScrolling,
+    MomentumScrollEnd,
     StatelessScrollEvent,
     Unknown
 };
@@ -137,6 +137,8 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 #endif
 
+    bool usesScrollSnap() const;
+
     bool isUserScrollInProgress() const;
     bool isRubberBandInProgress() const;
     bool isScrollSnapInProgress() const;
@@ -149,6 +151,9 @@ public:
     void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void updateScrollSnapState(const ScrollableArea&);
+
+    void updateGestureInProgressState(const PlatformWheelEvent&);
+
 #if PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 #endif
@@ -179,7 +184,7 @@ private:
     void startScrollSnapTimer();
     void stopScrollSnapTimer();
 
-    bool shouldOverrideInertialScrolling() const;
+    bool shouldOverrideMomentumScrolling() const;
     void statelessSnapTransitionTimerFired();
     void scheduleStatelessScrollSnap();
 

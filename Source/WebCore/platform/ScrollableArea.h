@@ -88,6 +88,8 @@ public:
 
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
 
+    bool usesScrollSnap() const;
+
 #if ENABLE(CSS_SCROLL_SNAP)
     WEBCORE_EXPORT const Vector<LayoutUnit>* horizontalSnapOffsets() const;
     WEBCORE_EXPORT const Vector<LayoutUnit>* verticalSnapOffsets() const;

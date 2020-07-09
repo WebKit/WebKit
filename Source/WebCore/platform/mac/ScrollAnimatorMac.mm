@@ -1272,6 +1272,8 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!wheelEvent.hasPreciseScrollingDeltas() || !rubberBandingEnabledForSystem())
         return ScrollAnimator::handleWheelEvent(wheelEvent);
 
+    m_scrollController.updateGestureInProgressState(wheelEvent);
+
     // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
     // up to the parent scrollable area. It takes advantage of the fact that
     // the base class implementation of handleWheelEvent will not accept the

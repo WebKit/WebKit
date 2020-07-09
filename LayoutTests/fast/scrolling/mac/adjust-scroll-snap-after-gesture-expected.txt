@@ -1,0 +1,10 @@
+        
+
+Scrolling
+PASS scroller.scrollLeft is 258
+Scroller should re-snap
+PASS scroller.scrollLeft is 278
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

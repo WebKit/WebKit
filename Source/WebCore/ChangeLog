@@ -1,3 +1,54 @@
+2020-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        After a scroll gesture, content changes don't trigger re-snapping with scroll snap
+        https://bugs.webkit.org/show_bug.cgi?id=214123
+
+        Reviewed by Wenson Hsieh.
+
+        ScrollController::m_inScrollGesture could get stuck as true after a scroll gesture, because
+        ScrollAnimatorMac::handleWheelEvent() didn't reliably call m_scrollController.handleWheelEvent() for
+        the event event based on the hokey shouldForwardWheelEventsToParent() code.
+
+        Fix by explicitly calling m_scrollController.updateGestureInProgressState() which maintains
+        m_inScrollGesture.
+
+        When m_inScrollGesture was stuck as true, ScrollableArea::updateScrollSnapState() would return early
+        because isScrollSnapInProgress() would return true. In addition,
+        ScrollController::isScrollSnapInProgress() was a lie for non-scroll-snapping scrollable areas, so
+        explicitly check for snap points there, using an explicit usesScrollSnap() function.
+
+        Rename some WheelEventStatus values to use "momentum" rather than "inertia".
+
+        Test: fast/scrolling/mac/adjust-scroll-snap-after-gesture.html
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::usesScrollSnap const):
+        (WebCore::ScrollableArea::updateScrollSnapState):
+        * platform/ScrollableArea.h:
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::usesScrollSnap const):
+        (WebCore::ScrollController::isScrollSnapInProgress const):
+        (WebCore::ScrollController::snapRubberBand):
+        (WebCore::toWheelEventStatus):
+        (WebCore::operator<<):
+        (WebCore::ScrollController::shouldOverrideMomentumScrolling const):
+        (WebCore::ScrollController::scheduleStatelessScrollSnap):
+        (WebCore::ScrollController::statelessSnapTransitionTimerFired):
+        (WebCore::ScrollController::processWheelEventForScrollSnap):
+        (WebCore::ScrollController::updateGestureInProgressState):
+        (WebCore::ScrollController::scrollSnapTimerFired):
+        (WebCore::ScrollController::activeScrollSnapIndexForAxis const):
+        (WebCore::ScrollController::setActiveScrollSnapIndexForAxis):
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollController::setActiveScrollSnapIndicesForOffset):
+        (WebCore::ScrollController::shouldOverrideInertialScrolling const): Deleted.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+
 2020-07-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MediaFoundation] Use /DELAYLOAD for mf.dll

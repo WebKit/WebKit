@@ -137,7 +137,6 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         if (direction && m_client.pinnedInDirection(FloatSize(0, -wheelEvent.deltaY())) && !shouldRubberBandInDirection(direction.value()))
             return false;
 
-        m_inScrollGesture = true;
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = { };
@@ -455,6 +454,15 @@ void ScrollController::snapRubberBandTimerFired()
 }
 #endif
 
+bool ScrollController::usesScrollSnap() const
+{
+#if ENABLE(CSS_SCROLL_SNAP)
+    return !!m_scrollSnapState;
+#else
+    return false;
+#endif
+}
+
 bool ScrollController::isUserScrollInProgress() const
 {
 #if PLATFORM(MAC)
@@ -478,6 +486,9 @@ bool ScrollController::isRubberBandInProgress() const
 
 bool ScrollController::isScrollSnapInProgress() const
 {
+    if (!usesScrollSnap())
+        return false;
+
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     if (m_inScrollGesture || m_momentumScrollInProgress || m_scrollSnapTimer)
         return true;
@@ -517,8 +528,6 @@ void ScrollController::snapRubberBand()
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
         m_momentumVelocity = { };
 
-    m_inScrollGesture = false;
-
     if (m_snapRubberbandTimer)
         return;
 
@@ -553,13 +562,13 @@ static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase,
     if (phase == PlatformWheelEventPhaseNone) {
         switch (momentumPhase) {
         case PlatformWheelEventPhaseBegan:
-            return WheelEventStatus::InertialScrollBegin;
+            return WheelEventStatus::MomentumScrollBegin;
                 
         case PlatformWheelEventPhaseChanged:
-            return WheelEventStatus::InertialScrolling;
+            return WheelEventStatus::MomentumScrolling;
                 
         case PlatformWheelEventPhaseEnded:
-            return WheelEventStatus::InertialScrollEnd;
+            return WheelEventStatus::MomentumScrollEnd;
 
         case PlatformWheelEventPhaseNone:
             return WheelEventStatus::StatelessScrollEvent;
@@ -595,9 +604,9 @@ static TextStream& operator<<(TextStream& ts, WheelEventStatus status)
     case WheelEventStatus::UserScrollBegin: ts << "UserScrollBegin"; break;
     case WheelEventStatus::UserScrolling: ts << "UserScrolling"; break;
     case WheelEventStatus::UserScrollEnd: ts << "UserScrollEnd"; break;
-    case WheelEventStatus::InertialScrollBegin: ts << "InertialScrollBegin"; break;
-    case WheelEventStatus::InertialScrolling: ts << "InertialScrolling"; break;
-    case WheelEventStatus::InertialScrollEnd: ts << "InertialScrollEnd"; break;
+    case WheelEventStatus::MomentumScrollBegin: ts << "MomentumScrollBegin"; break;
+    case WheelEventStatus::MomentumScrolling: ts << "MomentumScrolling"; break;
+    case WheelEventStatus::MomentumScrollEnd: ts << "MomentumScrollEnd"; break;
     case WheelEventStatus::StatelessScrollEvent: ts << "StatelessScrollEvent"; break;
     case WheelEventStatus::Unknown: ts << "Unknown"; break;
     }
@@ -605,9 +614,9 @@ static TextStream& operator<<(TextStream& ts, WheelEventStatus status)
 }
 #endif
 
-bool ScrollController::shouldOverrideInertialScrolling() const
+bool ScrollController::shouldOverrideMomentumScrolling() const
 {
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return false;
 
     ScrollSnapState scrollSnapState = m_scrollSnapState->currentState();
@@ -621,7 +630,7 @@ void ScrollController::scheduleStatelessScrollSnap()
         m_statelessSnapTransitionTimer->stop();
         m_statelessSnapTransitionTimer = nullptr;
     }
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return;
 
     static const Seconds statelessScrollSnapDelay = 750_ms;
@@ -636,7 +645,7 @@ void ScrollController::statelessSnapTransitionTimerFired()
 {
     m_statelessSnapTransitionTimer = nullptr;
 
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return;
 
     m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtent(), m_client.viewportSize(), m_client.pageScaleFactor(), m_client.scrollOffset());
@@ -655,17 +664,17 @@ void ScrollController::stopDeferringWheelEventTestCompletionDueToScrollSnapping(
 
 bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
 {
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return true;
 
     if (m_scrollSnapState->snapOffsetsForAxis(ScrollEventAxis::Horizontal).isEmpty() && m_scrollSnapState->snapOffsetsForAxis(ScrollEventAxis::Vertical).isEmpty())
         return true;
 
-    WheelEventStatus status = toWheelEventStatus(wheelEvent.phase(), wheelEvent.momentumPhase());
+    auto status = toWheelEventStatus(wheelEvent.phase(), wheelEvent.momentumPhase());
 
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " processWheelEventForScrollSnap: status " << status);
 
-    bool isInertialScrolling = false;
+    bool isMomentumScrolling = false;
     switch (status) {
     case WheelEventStatus::UserScrollBegin:
     case WheelEventStatus::UserScrolling:
@@ -677,14 +686,14 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
         m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtent(), m_client.viewportSize(), m_client.pageScaleFactor(), m_client.scrollOffset());
         startScrollSnapTimer();
         break;
-    case WheelEventStatus::InertialScrollBegin:
+    case WheelEventStatus::MomentumScrollBegin:
         m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtent(), m_client.viewportSize(), m_client.pageScaleFactor(), m_client.scrollOffset(), m_dragEndedScrollingVelocity, FloatSize(-wheelEvent.deltaX(), -wheelEvent.deltaY()));
         m_dragEndedScrollingVelocity = { };
-        isInertialScrolling = true;
+        isMomentumScrolling = true;
         break;
-    case WheelEventStatus::InertialScrolling:
-    case WheelEventStatus::InertialScrollEnd:
-        isInertialScrolling = true;
+    case WheelEventStatus::MomentumScrolling:
+    case WheelEventStatus::MomentumScrollEnd:
+        isMomentumScrolling = true;
         break;
     case WheelEventStatus::StatelessScrollEvent:
         m_scrollSnapState->transitionToUserInteractionState();
@@ -695,7 +704,15 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
         break;
     }
 
-    return !(isInertialScrolling && shouldOverrideInertialScrolling());
+    return !(isMomentumScrolling && shouldOverrideMomentumScrolling());
+}
+
+void ScrollController::updateGestureInProgressState(const PlatformWheelEvent& wheelEvent)
+{
+    if (wheelEvent.isGestureBegin() || wheelEvent.isTransitioningToMomentumScroll())
+        m_inScrollGesture = true;
+    else if (wheelEvent.isEndOfNonMomentumScroll() || wheelEvent.isGestureCancel() || wheelEvent.isEndOfMomentumScroll())
+        m_inScrollGesture = false;
 }
 
 void ScrollController::startScrollSnapTimer()
@@ -729,7 +746,7 @@ void ScrollController::stopScrollSnapTimer()
 
 void ScrollController::scrollSnapTimerFired()
 {
-    if (!m_scrollSnapState) {
+    if (!usesScrollSnap()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -786,7 +803,7 @@ void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return 0;
 
     return m_scrollSnapState->activeSnapIndexForAxis(axis);
@@ -794,7 +811,7 @@ unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) co
 
 void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
 {
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return;
 
     m_scrollSnapState->setActiveSnapIndexForAxis(axis, index);
@@ -802,7 +819,7 @@ void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, uns
 
 void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, int offset)
 {
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return;
 
     float scaleFactor = m_client.pageScaleFactor();
@@ -826,7 +843,7 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
 
 void ScrollController::setActiveScrollSnapIndicesForOffset(int x, int y)
 {
-    if (!m_scrollSnapState)
+    if (!usesScrollSnap())
         return;
 
     setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, x);

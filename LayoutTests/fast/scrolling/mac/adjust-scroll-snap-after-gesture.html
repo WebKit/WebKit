@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .scroller {
+            width: 620px;
+            height: 120px;
+            border: 1px solid black;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+        }
+        
+        .contents {
+            width: 200%;
+        }
+        
+        .box {
+            scroll-snap-align: start;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: blue;
+            display: inline-block;
+        }
+        
+        .scroller.changed .box {
+            width: 110px;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+
+        async function scrollTest()
+        {
+            debug('');
+            debug('Scrolling');
+            await UIHelper.mouseWheelScrollAt(20, 20, -1, 0, -20, 0);
+            shouldBe('scroller.scrollLeft', '258');
+
+            scroller.classList.add('changed');
+
+            debug('Scroller should re-snap');
+            await UIHelper.animationFrame();
+            shouldBe('scroller.scrollLeft', '278');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            document.body.addEventListener('wheel', () => {}, false); // Force sync scrolling.
+            scroller = document.querySelector('.scroller');
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

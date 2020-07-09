@@ -536,6 +536,11 @@ void ScrollableArea::clearVerticalSnapOffsets()
     m_currentVerticalSnapPointIndex = 0;
 }
 
+bool ScrollableArea::usesScrollSnap() const
+{
+    return !!m_snapOffsetsInfo;
+}
+
 IntPoint ScrollableArea::nearestActiveSnapPoint(const IntPoint& currentPosition)
 {
     if (!horizontalSnapOffsets() && !verticalSnapOffsets())
@@ -569,6 +574,9 @@ void ScrollableArea::updateScrollSnapState()
 {
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->updateScrollSnapState();
+
+    if (!usesScrollSnap())
+        return;
 
     LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
 
