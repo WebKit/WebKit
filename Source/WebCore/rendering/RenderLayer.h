@@ -1133,6 +1133,7 @@ private:
     bool isHandlingWheelEvent() const final;
     bool shouldSuspendScrollAnimations() const final;
     IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
+    bool isUserScrollInProgress() const final;
     bool isRubberBandInProgress() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
 #if ENABLE(CSS_SCROLL_SNAP)

@@ -1871,13 +1871,24 @@ IntRect RenderLayer::scrollableAreaBoundingBox(bool* isInsideFixed) const
     return renderer().absoluteBoundingBoxRect(/* useTransforms */ true, isInsideFixed);
 }
 
+bool RenderLayer::isUserScrollInProgress() const
+{
+    if (!scrollsOverflow())
+        return false;
+
+    if (auto scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->isUserScrollInProgress();
+    
+    return false;
+}
+
 bool RenderLayer::isRubberBandInProgress() const
 {
 #if ENABLE(RUBBER_BANDING)
     if (!scrollsOverflow())
         return false;
 
-    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+    if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isRubberBandInProgress();
 #endif
 

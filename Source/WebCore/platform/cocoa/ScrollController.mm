@@ -455,6 +455,15 @@ void ScrollController::snapRubberBandTimerFired()
 }
 #endif
 
+bool ScrollController::isUserScrollInProgress() const
+{
+#if PLATFORM(MAC)
+    return m_inScrollGesture;
+#else
+    return false;
+#endif
+}
+
 bool ScrollController::isRubberBandInProgress() const
 {
 #if ENABLE(RUBBER_BANDING) && PLATFORM(MAC)

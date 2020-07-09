@@ -2605,21 +2605,25 @@ void FrameView::updateCompositingLayersAfterScrolling()
     }
 }
 
+bool FrameView::isUserScrollInProgress() const
+{
+    if (auto scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->isUserScrollInProgress();
+
+    return false;
+}
+
 bool FrameView::isRubberBandInProgress() const
 {
     if (scrollbarsSuppressed())
         return false;
 
-    // If the scrolling thread updates the scroll position for this FrameView, then we should return
-    // ScrollingCoordinator::isRubberBandInProgress().
     if (auto scrollingCoordinator = this->scrollingCoordinator()) {
         if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
             return scrollingCoordinator->isRubberBandInProgress();
     }
 
-    // If the main thread updates the scroll position for this FrameView, we should return
-    // ScrollAnimator::isRubberBandInProgress().
-    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+    if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isRubberBandInProgress();
 
     return false;

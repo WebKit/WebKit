@@ -137,6 +137,7 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 #endif
 
+    bool isUserScrollInProgress() const;
     bool isRubberBandInProgress() const;
     bool isScrollSnapInProgress() const;
 

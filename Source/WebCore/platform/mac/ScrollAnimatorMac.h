@@ -134,6 +134,7 @@ private:
 
     void immediateScrollToPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
+    bool isUserScrollInProgress() const override;
     bool isRubberBandInProgress() const override;
     bool isScrollSnapInProgress() const override;
 

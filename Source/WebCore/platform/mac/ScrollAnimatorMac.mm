@@ -855,6 +855,11 @@ void ScrollAnimatorMac::immediateScrollToPosition(const FloatPoint& newPosition,
     updateActiveScrollSnapIndexForOffset();
 }
 
+bool ScrollAnimatorMac::isUserScrollInProgress() const
+{
+    return m_scrollController.isUserScrollInProgress();
+}
+
 bool ScrollAnimatorMac::isRubberBandInProgress() const
 {
 #if !ENABLE(RUBBER_BANDING)

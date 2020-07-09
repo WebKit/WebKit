@@ -570,9 +570,9 @@ void ScrollableArea::updateScrollSnapState()
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->updateScrollSnapState();
 
-    LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress());
+    LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
 
-    if (isScrollSnapInProgress())
+    if (isScrollSnapInProgress() || isUserScrollInProgress())
         return;
 
     IntPoint currentPosition = scrollPosition();
