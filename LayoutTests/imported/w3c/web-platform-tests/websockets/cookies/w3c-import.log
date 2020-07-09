@@ -20,4 +20,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/cookies/004.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/cookies/005.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/cookies/006.html
+/LayoutTests/imported/w3c/web-platform-tests/websockets/cookies/006.https.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/cookies/007.html
+/LayoutTests/imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html

@@ -99,4 +99,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/eventhandlers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/extended-payload-length.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/referrer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/websocket.sub.js

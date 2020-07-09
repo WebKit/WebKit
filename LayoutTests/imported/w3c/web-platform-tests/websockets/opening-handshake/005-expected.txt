@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebSockets: proper first line Test timed out
+PASS WebSockets: response header and close frame in same packet 
 

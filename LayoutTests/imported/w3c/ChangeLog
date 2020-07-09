@@ -1,5 +1,16 @@
 2020-07-08  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/websockets from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214107
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/websockets from upstream cef93b58e7cf31f1d47cc.
+
+        * web-platform-tests/websockets/*: Updated.
+
+2020-07-08  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/fetch from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214111
 

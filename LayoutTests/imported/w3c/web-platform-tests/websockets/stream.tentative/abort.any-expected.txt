@@ -1,0 +1,5 @@
+
+FAIL abort before constructing should prevent connection promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebSocketStream"
+FAIL abort during handshake should work promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebSocketStream"
+FAIL abort after connect should do nothing promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebSocketStream"
+

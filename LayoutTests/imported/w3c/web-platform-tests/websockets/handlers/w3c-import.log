@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/basic_auth_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/delayed-passive-close_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo-cookie_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo-query_v13_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo-query_wsh.py
@@ -23,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo_raw_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/empty-message_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_no_extensions_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_no_protocol_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_protocol_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_sleep_2_wsh.py
@@ -30,10 +32,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/origin_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_array_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/receive-backpressure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/referrer_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/send-backpressure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie-secure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie_http_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookies-samesite_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/simple_handshake_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/sleep_10_v13_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/stash_responder_wsh.py

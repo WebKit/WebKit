@@ -1,0 +1,3 @@
+
+FAIL Test that third-party cookies are accepted for WebSockets. assert_not_equals: request should contain cookies. got disallowed value "(none)"
+
