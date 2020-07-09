@@ -38,6 +38,7 @@
 #include "WebProcessPool.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/ResourceResponseBase.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -184,7 +185,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downl
     if (!m_processPool)
         return;
     
-    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, suggestedFilename, [this, protectedThis = makeRef(*this), downloadID = downloadID] (AllowOverwrite allowOverwrite, String destination) {
+    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), downloadID = downloadID] (AllowOverwrite allowOverwrite, String destination) {
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);

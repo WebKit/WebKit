@@ -1,3 +1,14 @@
+2020-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        Sanitize suggested download filename received from web process
+        https://bugs.webkit.org/show_bug.cgi?id=209300
+        <rdar://problem/59487723>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+
 2020-07-03  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Bubblewrap sandbox should not attempt to bind empty paths
