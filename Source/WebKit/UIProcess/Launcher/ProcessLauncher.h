@@ -39,6 +39,10 @@
 #include <wtf/win/Win32Handle.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "XPCEventHandler.h"
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -57,6 +61,9 @@ public:
         virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) = 0;
         virtual bool shouldConfigureJSCForTesting() const { return false; }
         virtual bool isJITEnabled() const { return true; }
+#if PLATFORM(COCOA)
+        virtual RefPtr<XPCEventHandler> xpcEventHandler() const { return nullptr; }
+#endif
     };
     
     enum class ProcessType {

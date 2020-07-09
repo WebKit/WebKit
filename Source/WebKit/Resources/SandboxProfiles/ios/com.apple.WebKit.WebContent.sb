@@ -588,7 +588,7 @@
 (allow ipc-posix-shm-read*
        (ipc-posix-name-prefix "apple.cfprefs."))
  
-(allow mach-lookup
+(deny mach-lookup
     (global-name "com.apple.lsd.mapdb"))
 
 ;; <rdar://problem/12413942>

@@ -238,18 +238,28 @@ void ProcessLauncher::launchProcess()
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
     };
 
-    auto errorHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl)] (xpc_object_t event) mutable {
-        RunLoop::main().dispatch([errorHandlerImpl = WTFMove(errorHandlerImpl), event] {
-            errorHandlerImpl(event);
-        });
+    auto eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), eventHandler = m_client->xpcEventHandler()] (xpc_object_t event) mutable {
+
+        if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
+            RunLoop::main().dispatch([errorHandlerImpl = WTFMove(errorHandlerImpl), event = OSObjectPtr(event)] {
+                errorHandlerImpl(event.get());
+            });
+            return;
+        }
+
+        if (eventHandler) {
+            RunLoop::main().dispatch([eventHandler = eventHandler, event = OSObjectPtr(event)] {
+                eventHandler->handleXPCEvent(event.get());
+            });
+        }
     };
 
-    xpc_connection_set_event_handler(m_xpcConnection.get(), errorHandler);
+    xpc_connection_set_event_handler(m_xpcConnection.get(), eventHandler);
 
     xpc_connection_resume(m_xpcConnection.get());
 
     if (UNLIKELY(m_launchOptions.shouldMakeProcessLaunchFailForTesting)) {
-        errorHandler(nullptr);
+        eventHandler(nullptr);
         return;
     }
 

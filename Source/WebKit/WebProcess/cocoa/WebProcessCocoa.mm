@@ -27,6 +27,8 @@
 #import "WebProcess.h"
 #import "WebProcessCocoa.h"
 
+#import "LaunchServicesDatabaseManager.h"
+#import "LaunchServicesDatabaseXPCConstants.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -69,6 +71,7 @@
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
 #import <WebCore/UTIUtilities.h>
+#import <WebCore/XPCEndpoint.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
@@ -161,25 +164,50 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 }
 #endif
 
+void WebProcess::handleXPCEndpointMessages() const
+{
+    if (!parentProcessConnection())
+        return;
+
+    auto connection = parentProcessConnection()->xpcConnection();
+
+    xpc_connection_set_target_queue(connection, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
+        if (xpc_get_type(event) != XPC_TYPE_DICTIONARY)
+            return;
+
+        String messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
+        if (messageName.isEmpty())
+            return;
+
+        if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
+            auto endpoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
+            LaunchServicesDatabaseManager::singleton().setEndpoint(endpoint);
+            return;
+        }
+    });
+}
+
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    // Map Launch Services database. This should be done as early as possible, as the mapping will fail
-    // if 'com.apple.lsd.mapdb' is being accessed before this.
-    if (parameters.mapDBExtensionHandle) {
-        auto extension = SandboxExtension::create(WTFMove(*parameters.mapDBExtensionHandle));
-        bool ok = extension->consume();
-        ASSERT_UNUSED(ok, ok);
-        // Perform API calls which will communicate with the database mapping service, and map the database.
-        auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
-
-        [[objc_getClass("_LSDReadService") XPCConnectionToService] invalidate];
-
-        ok = extension->revoke();
-        ASSERT_UNUSED(ok, ok);
-
-        ASSERT(String(uti.get()) == String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0)).get()));
+#if HAVE(LSDATABASECONTEXT)
+    // FIXME: Remove this entire section when the selector observeDatabaseChange4WebKit is present
+    auto context = [NSClassFromString(@"LSDatabaseContext") sharedDatabaseContext];
+    if (![context respondsToSelector:@selector(observeDatabaseChange4WebKit:)]) {
+        // Map Launch Services database. This should be done as early as possible, as the mapping will fail
+        // if 'com.apple.lsd.mapdb' is being accessed before this.
+        if (parameters.mapDBExtensionHandle) {
+            auto extension = SandboxExtension::create(WTFMove(*parameters.mapDBExtensionHandle));
+            bool ok = extension->consume();
+            ASSERT_UNUSED(ok, ok);
+            // Perform API calls which will communicate with the database mapping service, and map the database.
+            auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
+            ok = extension->revoke();
+            ASSERT_UNUSED(ok, ok);
+            ASSERT(String(uti.get()) == String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0)).get()));
+        }
     }
-
+#endif
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WebCore::initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
     WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);

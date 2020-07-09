@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "InsertTextOptions.h"
+#import "LaunchServicesDatabaseManager.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "WKAccessibilityWebPageObjectBase.h"
@@ -62,6 +63,9 @@ namespace WebKit {
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+    bool databaseUpdated =  LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
+    ASSERT_UNUSED(databaseUpdated, databaseUpdated);
+
     m_dataDetectionContext = parameters.dataDetectionContext;
 
     if (parameters.neHelperExtensionHandle)

@@ -1,3 +1,89 @@
+2020-07-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Update Launch Services database in the WebContent process from the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=213794
+
+        Reviewed by Brent Fulgham.
+
+        To be able to deny mach lookup access to the Launch Services database mapping service in the WebContent process, the database needs to be
+        sent from the Networking process to the WebContent process, represented by an xpc object. The Networking process is chosen instead of the UI
+        process, since WebKit is controlling the sandbox of the Networking process. There is already a direct connection between the Networking
+        process and the WebContent process, but this is a CoreIPC connection. Since the database is represented by an xpc object, an xpc connection
+        is requiered to transfer the database. This patch creates a direct xpc connection between the Networking process and the WebContent process,
+        by creating an xpc endpoint in the Networking process, sending this to the UI process over the bootstrap xpc connection, and then providing
+        each WebContent process with this endpoint by sending it over the bootstrap xpc connection between the UI process and the WebContent process.
+        This endpoint has to be sent via the xpc connections to the UI process, since the already existing direct connection between the Networking
+        process and the WebContent process is a lower level CoreIPC connection, which does not support transferring xpc objects like the xpc endpoint.
+        When the WebContent process receives the endpoint, it will create an xpc connection from the endpoint, which will create a direct connection
+        with the Networking process. A message is then sent over the connection to request the database xpc object. When the Networking process
+        receives this message, it checks the entitlement of the remote end to make sure it is communicating with a WebContent process, and then sends
+        the database if the entitlement check succeeds. When the WebContent process receives this message, it performs an entitlement check as well,
+        and if successful, the database object is consumed. Consuming this database object, will make sure UTI to MIME type mapping is working
+        correctly in the WebContent process.
+
+        For the UI process to be able to pick up xpc messages on the bootstrap connection, a new virtual method, handleXPCEvent, is added to the
+        ProcessLauncher Client class. This way, a ProcessLauncher client will be able to pick up xpc messages from the xpc bootstrap connection.
+        Previously the event handler for the bootstrap connection in the UI process would handle only xpc error messages. It has now been expanded
+        to handle normal messages, which are being forwarded to the ProcessLauncher client. In this case the client is the Network process proxy,
+        which will check the message received, and if it turns out to be a message containing an xpc endpoint, the message will be forwarded to
+        all Web processes. The ProcessLauncher client can be expanded to handle any xpc message, but right not the Network process proxy only
+        handles the xpc endpoint message. The handleXPCEvent virtual method return a RefPtr to an XPCEventHandler, which is captured in the event
+        handler of the bootstrap xpc connection.
+
+        No new tests, since there already exist tests for this. UTI to MIME type mapping is being used in WebKit and underlying framework, and many
+        tests would fail if this mapping was not working.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeConnection):
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.h: Added.
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm: Added.
+        (WebKit::LaunchServicesDatabaseObserver::singleton):
+        (WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver):
+        (WebKit::LaunchServicesDatabaseObserver::startObserving):
+        (WebKit::LaunchServicesDatabaseObserver::~LaunchServicesDatabaseObserver):
+        (WebKit::LaunchServicesDatabaseObserver::xpcEndpointMessageNameKey const):
+        (WebKit::LaunchServicesDatabaseObserver::xpcEndpointMessageName const):
+        (WebKit::LaunchServicesDatabaseObserver::xpcEndpointNameKey const):
+        (WebKit::LaunchServicesDatabaseObserver::handleEvent):
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Scripts/process-entitlements.sh:
+        * Shared/Cocoa/LaunchServicesDatabaseXPCConstants.h: Added.
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::xpcEndpointMessage const):
+        (WebKit::WebProcessPool::sendNetworkProcessXPCEndpointToWebProcess):
+        * UIProcess/Cocoa/XPCEventHandler.h: Added.
+        (WebKit::XPCEventHandler::~XPCEventHandler):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::Client::xpcEventHandler const):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm: Added.
+        (WebKit::NetworkProcessProxy::xpcEventHandler const):
+        (WebKit::NetworkProcessProxy::XPCEventHandler::handleXPCEvent const):
+        (WebKit::NetworkProcessProxy::XPCEventHandler::XPCEventHandler):
+        (WebKit::NetworkProcessProxy::XPCEventHandler::~XPCEventHandler):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.h: Added.
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm: Added.
+        (WebKit::LaunchServicesDatabaseManager::singleton):
+        (WebKit::LaunchServicesDatabaseManager::handleEvent):
+        (WebKit::LaunchServicesDatabaseManager::didConnect):
+        (WebKit::LaunchServicesDatabaseManager::waitForDatabaseUpdate):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::handleXPCEndpointMessages const):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-07-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reset AVSystemController_PIDToInheritApplicationStateFrom when mediaserverd dies
