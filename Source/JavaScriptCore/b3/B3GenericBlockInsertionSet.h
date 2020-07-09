@@ -55,7 +55,7 @@ public:
     // Insert a new block at a given index.
     BasicBlock* insert(unsigned index, double frequency = PNaN)
     {
-        std::unique_ptr<BasicBlock> block(new BasicBlock(UINT_MAX, frequency));
+        std::unique_ptr<BasicBlock> block(new BasicBlock(BasicBlock::uninsertedIndex, frequency));
         BasicBlock* result = block.get();
         insert(BlockInsertion(index, WTFMove(block)));
         return result;

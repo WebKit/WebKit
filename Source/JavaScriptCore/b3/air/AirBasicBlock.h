@@ -49,6 +49,7 @@ class BasicBlock {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* const dumpPrefix;
+    static constexpr unsigned uninsertedIndex = UINT_MAX;
 
     typedef Vector<Inst> InstList;
     typedef Vector<BasicBlock*, 2> PredecessorList;

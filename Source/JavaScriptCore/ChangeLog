@@ -1,3 +1,62 @@
+2020-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] B3 PureCSE should ignore values which are moved to new BasicBlock
+        https://bugs.webkit.org/show_bug.cgi?id=214115
+        <rdar://problem/65189470>
+
+        Reviewed by Saam Barati.
+
+        We are performing "Select" specialization like this.
+
+              BB#target
+                 ...
+                 @a = Select(@p, @x, 42)
+                 @b = Add(@a, 35)
+                 Check(@b)
+                 @c = ...
+
+             becomes this:
+
+               BB#predecessor
+                 ...
+                 Branch(@p, #truecase, #falsecase)
+
+               BB#truecase:
+                 @b_truecase = Add(@x, 35)
+                 Check(@b_truecase)
+                 Upsilon(@x, ^a)
+                 Upsilon(@b_truecase, ^b)
+                 Jump(#continuation)
+
+               BB#falsecase:
+                 @b_falsecase = Add(42, 35)
+                 Check(@b_falsecase)
+                 Upsilon(42, ^a)
+                 Upsilon(@b_falsecase, ^b)
+                 Jump(#continuation)
+
+               BB#continuation:
+                 @a = Phi()
+                 @b = Phi()
+                 Jump(#target)
+
+               BB#target
+                 @c = ...
+
+        In the above transformation, we create a new BasicBlock and move @a and @b to that one. This is good since we do not need to rewrite all the use of @a and @b.
+        However, this confuses PureCSE since @a and @b point to a BasicBlock (BB#continuation) which is not inserted into the graph yet.
+
+        This patch changes PureCSE so that it ignores values which owners are not inserted yet.
+
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::isInserted const):
+        * b3/B3GenericBlockInsertionSet.h:
+        (JSC::B3::GenericBlockInsertionSet::insert):
+        * b3/B3PureCSE.cpp:
+        (JSC::B3::PureCSE::findMatch):
+        (JSC::B3::PureCSE::process):
+        * b3/air/AirBasicBlock.h:
+
 2020-07-08  Saam Barati  <sbarati@apple.com>
 
         Add a fuzzing toggle for LICM
