@@ -976,9 +976,8 @@ class WebkitFlatpak:
         # FIXME: For unknown reasons, the GL extension needs to be explicitely
         # installed for Flatpak 1.2.x to be able to make use of it. Seems like
         # it's not correctly inheriting it from the SDK.
-        self.flathub_repo = self.repos.add(
-            FlatpakRepo("flathub", repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo")
-        )
+        self.flathub_repo = self.repos.add(FlatpakRepo("flathub", url="https://dl.flathub.org/repo/",
+                                                       repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
 
         packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", "19.08",
                                        self.flathub_repo, arch))

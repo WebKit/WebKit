@@ -1,3 +1,16 @@
+2020-07-09  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Unable to build without Internet connection
+        https://bugs.webkit.org/show_bug.cgi?id=213920
+
+        Reviewed by Sergio Villar Senin.
+
+        Set the flathub ostree repo url explicitely in order to avoid retrieving it from the
+        flatpakrepo remote file. This is unlikely to change.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak._get_packages):
+
 2020-07-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [WTF] Implement new BoxPtr alias
