@@ -1,3 +1,13 @@
+2020-07-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Simplify BoxPtr::create
+        https://bugs.webkit.org/show_bug.cgi?id=214144
+
+        Reviewed by Darin Adler.
+
+        * wtf/BoxPtr.h:
+        (WTF::createBoxPtr): Use the alias instead of the unrolled type.
+
 2020-07-09  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Update Launch Services database in the WebContent process from the Network process

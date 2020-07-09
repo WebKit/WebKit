@@ -48,7 +48,7 @@ template<typename T> using BoxPtr = Box<std::unique_ptr<T, BoxPtrDeleter<T>>>;
 
 template<typename T> BoxPtr<T> createBoxPtr(T* ptr)
 {
-    return Box<std::unique_ptr<T, BoxPtrDeleter<T>>>::create(ptr);
+    return BoxPtr<T>::create(ptr);
 }
 
 template<typename T> bool operator==(const BoxPtr<T>& lhs, const BoxPtr<T>& rhs)
