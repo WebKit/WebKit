@@ -15,6 +15,7 @@ function mac_process_webcontent_entitlements()
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
+        plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
     fi
 
@@ -51,6 +52,7 @@ function mac_process_network_entitlements()
             plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:0 string kTCCServiceWebKitIntelligentTrackingPrevention
         fi
 
+        plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitNetworkingSandbox bool YES
     fi
 }
@@ -144,6 +146,7 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :dynamic-codesigning bool YES
 
@@ -184,6 +187,7 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.dmd.policy bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
 
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array

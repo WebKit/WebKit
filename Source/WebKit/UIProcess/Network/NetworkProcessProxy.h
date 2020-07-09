@@ -44,6 +44,10 @@
 #include "LegacyCustomProtocolManagerProxy.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "XPCEventHandler.h"
+#endif
+
 namespace IPC {
 class FormDataReference;
 }
@@ -297,6 +301,9 @@ private:
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+#if PLATFORM(COCOA)
+    RefPtr<XPCEventHandler> xpcEventHandler() const override;
+#endif
 
     void processAuthenticationChallenge(PAL::SessionID, Ref<AuthenticationChallengeProxy>&&);
 
@@ -327,6 +334,18 @@ private:
         HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> webProcessAssertions;
     };
     Optional<UploadActivity> m_uploadActivity;
+
+#if PLATFORM(COCOA)
+    class XPCEventHandler : public WebKit::XPCEventHandler {
+    public:
+        XPCEventHandler(const NetworkProcessProxy&);
+
+        bool handleXPCEvent(xpc_object_t) const override;
+
+    private:
+        WeakPtr<NetworkProcessProxy> m_networkProcess;
+    };
+#endif
 };
 
 } // namespace WebKit
