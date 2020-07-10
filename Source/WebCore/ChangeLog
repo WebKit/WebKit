@@ -1,3 +1,15 @@
+2020-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TreeConstruction] Create block level container for unsupported renderer
+        https://bugs.webkit.org/show_bug.cgi?id=214182
+
+        Reviewed by Antti Koivisto.
+
+        It makes full LFC rendering on random pages less crashy.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
 2020-07-02  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Retrieve WebGL framebuffer resolution from XR devices

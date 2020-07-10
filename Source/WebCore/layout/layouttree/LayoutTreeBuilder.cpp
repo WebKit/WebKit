@@ -274,7 +274,9 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
                     childLayoutBox->setColumnSpan(tableColElement.span());
             } else {
                 ASSERT_NOT_IMPLEMENTED_YET();
-                return nullptr;
+                // Let's fall back to a regular block level container when the renderer type is not yet supported.
+                clonedStyle.setDisplay(DisplayType::Block);
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             }
         }
 
