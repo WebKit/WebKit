@@ -99,9 +99,8 @@ static void assertedElementSetState(GstElement* element, GstState desiredState)
     }
 }
 
-AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceClient, Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
-    : m_mediaSourceClient(mediaSourceClient.get())
-    , m_sourceBufferPrivate(sourceBufferPrivate.get())
+AppendPipeline::AppendPipeline(Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+    : m_sourceBufferPrivate(sourceBufferPrivate.get())
     , m_playerPrivate(&playerPrivate)
     , m_id(0)
     , m_wasBusAlreadyNotifiedOfAvailableSamples(false)

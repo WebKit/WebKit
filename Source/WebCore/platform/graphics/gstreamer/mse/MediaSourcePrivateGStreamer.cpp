@@ -41,8 +41,8 @@
 #include "Logging.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
-#include "MediaSourceClientGStreamerMSE.h"
 #include "NotImplemented.h"
+#include "PlaybackPipeline.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"
 #include "WebKitMediaSourceGStreamer.h"
@@ -58,7 +58,6 @@ void MediaSourcePrivateGStreamer::open(MediaSourcePrivateClient& mediaSource, Me
 
 MediaSourcePrivateGStreamer::MediaSourcePrivateGStreamer(MediaSourcePrivateClient& mediaSource, MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : MediaSourcePrivate()
-    , m_client(MediaSourceClientGStreamerMSE::create(playerPrivate))
     , m_mediaSource(mediaSource)
     , m_playerPrivate(playerPrivate)
 #if !RELEASE_LOG_DISABLED
@@ -78,10 +77,10 @@ MediaSourcePrivateGStreamer::~MediaSourcePrivateGStreamer()
 MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& sourceBufferPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
-    sourceBufferPrivate = SourceBufferPrivateGStreamer::create(this, m_client.get(), contentType, m_playerPrivate);
+    sourceBufferPrivate = SourceBufferPrivateGStreamer::create(this, contentType, m_playerPrivate);
     RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivateGStreamer = static_cast<SourceBufferPrivateGStreamer*>(sourceBufferPrivate.get());
     m_sourceBuffers.add(sourceBufferPrivateGStreamer);
-    return m_client->addSourceBuffer(sourceBufferPrivateGStreamer, contentType);
+    return m_playerPrivate.playbackPipeline()->addSourceBuffer(sourceBufferPrivateGStreamer);
 }
 
 void MediaSourcePrivateGStreamer::removeSourceBuffer(SourceBufferPrivate* sourceBufferPrivate)
@@ -96,12 +95,20 @@ void MediaSourcePrivateGStreamer::removeSourceBuffer(SourceBufferPrivate* source
 
 void MediaSourcePrivateGStreamer::durationChanged()
 {
-    m_client->durationChanged(m_mediaSource->duration());
+    ASSERT(isMainThread());
+
+    MediaTime duration = m_mediaSource->duration();
+    GST_TRACE("duration: %f", duration.toFloat());
+    if (!duration.isValid() || duration.isPositiveInfinite() || duration.isNegativeInfinite())
+        return;
+
+    m_playerPrivate.durationChanged();
 }
 
 void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus status)
 {
-    m_client->markEndOfStream(status);
+    ASSERT(isMainThread());
+    m_playerPrivate.markEndOfStream(status);
 }
 
 void MediaSourcePrivateGStreamer::unmarkEndOfStream()

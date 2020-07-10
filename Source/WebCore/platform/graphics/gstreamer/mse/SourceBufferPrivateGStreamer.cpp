@@ -42,23 +42,22 @@
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSample.h"
-#include "MediaSourceClientGStreamerMSE.h"
 #include "MediaSourcePrivateGStreamer.h"
 #include "NotImplemented.h"
+#include "PlaybackPipeline.h"
 #include "WebKitMediaSourceGStreamer.h"
 
 namespace WebCore {
 
-Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
 {
-    return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, client.get(), contentType, playerPrivate));
+    return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, contentType, playerPrivate));
 }
 
-SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer* mediaSource, Ref<MediaSourceClientGStreamerMSE> client, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer* mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : SourceBufferPrivate()
     , m_mediaSource(mediaSource)
     , m_type(contentType)
-    , m_client(client.get())
     , m_playerPrivate(playerPrivate)
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSource->logger())
@@ -66,7 +65,7 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 #endif
 {
     relaxAdoptionRequirement();
-    m_appendPipeline = WTF::makeUnique<AppendPipeline>(m_client, makeRef(*this), m_playerPrivate);
+    m_appendPipeline = WTF::makeUnique<AppendPipeline>(makeRef(*this), m_playerPrivate);
 }
 
 void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)
@@ -76,29 +75,43 @@ void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)
 
 void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
 {
+    ASSERT(isMainThread());
     ASSERT(m_mediaSource);
+    ASSERT(m_sourceBufferPrivateClient);
 
-    if (!m_sourceBufferPrivateClient)
-        return;
+    GST_DEBUG("Appending %zu bytes", data.size());
+    // Wrap the whole Vector object in case the data is stored in the inlined buffer.
+    auto* bufferData = data.data();
+    auto bufferLength = data.size();
+    GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, new Vector<unsigned char>(WTFMove(data)),
+        [](gpointer data)
+        {
+            delete static_cast<Vector<unsigned char>*>(data);
+        }));
 
-    m_client->append(this, WTFMove(data));
+    m_appendPipeline->pushNewBuffer(WTFMove(buffer));
 }
 
 void SourceBufferPrivateGStreamer::abort()
 {
-    m_client->abort(this);
+    ASSERT(isMainThread());
+    GST_DEBUG("aborting");
+    m_appendPipeline->resetParserState();
 }
 
 void SourceBufferPrivateGStreamer::resetParserState()
 {
-    m_client->resetParserState(this);
+    ASSERT(isMainThread());
+    GST_DEBUG("resetting parser state");
+    m_appendPipeline->resetParserState();
 }
 
 void SourceBufferPrivateGStreamer::removedFromMediaSource()
 {
+    ASSERT(isMainThread());
     if (m_mediaSource)
         m_mediaSource->removeSourceBuffer(this);
-    m_client->removedFromMediaSource(this);
+    m_playerPrivate.playbackPipeline()->removeSourceBuffer(this);
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
@@ -113,19 +126,25 @@ void SourceBufferPrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
 
 void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
 {
-    m_client->flush(trackId);
+    ASSERT(isMainThread());
+
+    // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
+    if (!m_playerPrivate.seeking())
+        m_playerPrivate.playbackPipeline()->flush(trackId);
 }
 
 void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
 {
+    ASSERT(isMainThread());
     m_notifyWhenReadyForMoreSamples = false;
 
-    m_client->enqueueSample(WTFMove(sample));
+    m_playerPrivate.playbackPipeline()->enqueueSample(WTFMove(sample));
 }
 
 void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& trackId)
 {
-    m_client->allSamplesInTrackEnqueued(trackId);
+    ASSERT(isMainThread());
+    m_playerPrivate.playbackPipeline()->allSamplesInTrackEnqueued(trackId);
 }
 
 bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomString&)

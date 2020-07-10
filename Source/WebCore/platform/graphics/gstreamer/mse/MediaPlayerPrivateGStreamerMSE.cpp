@@ -649,16 +649,6 @@ bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
     return result;
 }
 
-void MediaPlayerPrivateGStreamerMSE::setMediaSourceClient(Ref<MediaSourceClientGStreamerMSE> client)
-{
-    m_mediaSourceClient = client.ptr();
-}
-
-RefPtr<MediaSourceClientGStreamerMSE> MediaPlayerPrivateGStreamerMSE::mediaSourceClient()
-{
-    return m_mediaSourceClient;
-}
-
 void MediaPlayerPrivateGStreamerMSE::blockDurationChanges()
 {
     ASSERT(isMainThread());
@@ -681,13 +671,9 @@ void MediaPlayerPrivateGStreamerMSE::unblockDurationChanges()
 void MediaPlayerPrivateGStreamerMSE::durationChanged()
 {
     ASSERT(isMainThread());
-    if (!m_mediaSourceClient) {
-        GST_DEBUG("m_mediaSourceClient is null, doing nothing");
-        return;
-    }
 
     MediaTime previousDuration = m_mediaTimeDuration;
-    m_mediaTimeDuration = m_mediaSourceClient->duration();
+    m_mediaTimeDuration = m_mediaSource->duration();
 
     GST_TRACE("previous=%s, new=%s", toString(previousDuration).utf8().data(), toString(m_mediaTimeDuration).utf8().data());
 

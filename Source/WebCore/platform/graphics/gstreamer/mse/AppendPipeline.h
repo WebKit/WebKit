@@ -25,7 +25,6 @@
 #include "AbortableTaskQueue.h"
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
-#include "MediaSourceClientGStreamerMSE.h"
 #include "SourceBufferPrivateGStreamer.h"
 
 #include <atomic>
@@ -47,7 +46,7 @@ struct PadProbeInformation {
 class AppendPipeline {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AppendPipeline(Ref<MediaSourceClientGStreamerMSE>, Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
+    AppendPipeline(Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
 
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
@@ -107,7 +106,6 @@ private:
     // Used only for asserting EOS events are only caused by demuxing errors.
     bool m_errorReceived { false };
 
-    Ref<MediaSourceClientGStreamerMSE> m_mediaSourceClient;
     Ref<SourceBufferPrivateGStreamer> m_sourceBufferPrivate;
     MediaPlayerPrivateGStreamerMSE* m_playerPrivate;
 
