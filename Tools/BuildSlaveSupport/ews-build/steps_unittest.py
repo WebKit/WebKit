@@ -3057,7 +3057,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
-        self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
+        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/macOS-Sierra-Release-WK2-Tests-EWS/r2468-12/results.html')])
         return self.runStep()
 
     def test_success_with_identifier(self):
@@ -3075,7 +3075,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
-        self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
+        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/iOS-12-Simulator-WK2-Tests-EWS/r1234-12/results.html')])
         return self.runStep()
 
     def test_failure(self):
@@ -3093,7 +3093,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='failed (2) (failure)')
-        self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
+        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12/results.html')])
         return self.runStep()
 
 

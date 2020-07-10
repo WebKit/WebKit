@@ -37,6 +37,7 @@ import os
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
+S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
 EWS_BUILD_URL = 'https://ews-build.webkit.org/'
 EWS_URL = 'https://ews.webkit.org/'
 WithProperties = properties.WithProperties
@@ -2418,10 +2419,12 @@ class ExtractTestResults(master.MasterShellCommand):
         master.MasterShellCommand.__init__(self, command=self.command, logEnviron=False)
 
     def resultDirectoryURL(self):
-        return self.resultDirectory.replace('public_html/', '/') + '/'
+        path = self.resultDirectory.replace('public_html/results/', '') + '/'
+        return '{}{}'.format(S3_RESULTS_URL, path)
 
     def resultsDownloadURL(self):
-        return self.zipFile.replace('public_html/', '/')
+        path = self.zipFile.replace('public_html/results/', '')
+        return '{}{}'.format(S3_RESULTS_URL, path)
 
     def getLastBuildStepByName(self, name):
         for step in reversed(self.build.executedSteps):

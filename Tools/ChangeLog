@@ -1,3 +1,14 @@
+2020-07-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] layout-test results shouldn't be hosted on ews server
+        https://bugs.webkit.org/show_bug.cgi?id=201937
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ExtractTestResults.resultDirectoryURL):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+
 2020-07-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME][OpenCDM] Implement OpenCDM support
