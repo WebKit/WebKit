@@ -26,6 +26,11 @@ if (OpenJPEG_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENJPEG ON)
 endif ()
 
+find_package(WOFF2 1.0.2 COMPONENTS dec)
+if (WOFF2_FOUND)
+    SET_AND_EXPOSE_TO_BUILD(USE_WOFF2 ON)
+endif ()
+
 find_package(WebP COMPONENTS demux)
 if (WebP_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)

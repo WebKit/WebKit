@@ -98,6 +98,9 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype")
         || equalLettersIgnoringASCIICase(format, "opentype")
+#if USE(WOFF2)
+        || equalLettersIgnoringASCIICase(format, "woff2")
+#endif
         || equalLettersIgnoringASCIICase(format, "woff");
 }
 

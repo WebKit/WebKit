@@ -1,3 +1,12 @@
+2020-07-10  Don Olmstead  <don.olmstead@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WOFF2 font support
+        https://bugs.webkit.org/show_bug.cgi?id=214174
+
+        Reviewed by Per Arne Vollan.
+
+        * Source/cmake/OptionsWinCairo.cmake: Unmarked fast/text/woff2-totalsfntsize.html and fast/text/woff2.html.
+
 2020-07-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME][OpenCDM] Implement OpenCDM support

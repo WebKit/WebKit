@@ -57,6 +57,15 @@ list(APPEND WebCore_LIBRARIES
 
 target_link_options(WebCore PUBLIC /DELAYLOAD:mf.dll /DELAYLOAD:mfplat.dll)
 
+if (USE_WOFF2)
+    # The WOFF2 libraries don't compile as DLLs on Windows, so add in
+    # the additional libraries WOFF2::dec requires
+    list(APPEND WebCore_LIBRARIES
+        WOFF2::common
+        brotlidec
+    )
+endif ()
+
 list(APPEND WebCoreTestSupport_LIBRARIES
     Cairo::Cairo
     shlwapi
