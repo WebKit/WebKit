@@ -57,9 +57,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FB39D0D01200F0E300088E69"
-               BuildableName = "libANGLE.a"
-               BlueprintName = "ANGLE (static)"
-               ReferencedContainer = "container:Source/ThirdParty/ANGLE/ANGLE.xcodeproj">
+               BuildableName = "libwebrtc.dylib"
+               BlueprintName = "libwebrtc"
+               ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -70,10 +70,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FB39D0D01200F0E300088E69"
-               BuildableName = "libwebrtc.dylib"
-               BlueprintName = "libwebrtc"
-               ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
+               BlueprintIdentifier = "31DB794F2491C33300982878"
+               BuildableName = "ANGLE"
+               BlueprintName = "ANGLE"
+               ReferencedContainer = "container:Source/ThirdParty/ANGLE/ANGLE.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -139,15 +139,6 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D1107260486CEB800E47090"
-            BuildableName = "MiniBrowser.app"
-            BlueprintName = "MiniBrowser"
-            ReferencedContainer = "container:Tools/MiniBrowser/MiniBrowser.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
       </Testables>
    </TestAction>
