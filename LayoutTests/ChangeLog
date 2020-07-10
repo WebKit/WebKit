@@ -1,5 +1,13 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/web-platform-tests/webrtc/protocol/split.https.html as flaky.
+
+        It has been flaky since import in r264202.
+
+        * TestExpectations:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Regression (r264202): imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is consistently failing on mac-wk1
         https://bugs.webkit.org/show_bug.cgi?id=214183
         <rdar://problem/65335357>
