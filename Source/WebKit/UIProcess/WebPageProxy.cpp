@@ -6095,7 +6095,7 @@ void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const Int
 
 void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
 {
-    ASSERT(m_colorPicker);
+    MESSAGE_CHECK(m_process, m_colorPicker);
 
     m_colorPicker->setSelectedColor(color);
 }

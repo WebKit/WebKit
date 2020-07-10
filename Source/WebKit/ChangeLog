@@ -1,3 +1,15 @@
+2020-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [IPC hardening] Use MESSAGE_CHECK in WebPageProxy::setColorPickerColor()
+        https://bugs.webkit.org/show_bug.cgi?id=214168
+        <rdar://problem/58632672>
+
+        Reviewed by David Kilzer.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setColorPickerColor): Replace ASSERT with
+        MESSAGE_CHECK.
+
 2020-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Flush the cairo surface after painting when using software
