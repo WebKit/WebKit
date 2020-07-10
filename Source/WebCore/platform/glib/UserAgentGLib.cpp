@@ -31,6 +31,7 @@
 #include "UserAgentQuirks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
+#include <wtf/glib/ChassisType.h>
 #include <wtf/text/StringBuilder.h>
 
 #if OS(UNIX)
@@ -50,6 +51,8 @@ static const char* platformForUAString()
 #if OS(MAC_OS_X)
     return "Macintosh";
 #else
+    if (chassisType() == WTF::ChassisType::Mobile)
+        return "Linux";
     return "X11";
 #endif
 }
@@ -57,6 +60,9 @@ static const char* platformForUAString()
 static const String platformVersionForUAString()
 {
 #if OS(UNIX)
+    if (chassisType() == WTF::ChassisType::Mobile)
+        return "like Android 4.4";
+
     struct utsname name;
     uname(&name);
     static NeverDestroyed<const String> uaOSVersion(makeString(name.sysname, ' ', name.machine));
@@ -112,6 +118,9 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
     } else
         uaString.appendLiteral("Version/13.0 ");
+
+    if (chassisType() == WTF::ChassisType::Mobile)
+        uaString.appendLiteral("Mobile ");
     uaString.appendLiteral("Safari/");
     uaString.append(versionForUAString());
 

@@ -28,6 +28,7 @@
 
 #include "PublicSuffix.h"
 #include <wtf/URL.h>
+#include <wtf/glib/ChassisType.h>
 
 namespace WebCore {
 
@@ -119,11 +120,11 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     String baseDomain = topPrivatelyControlledDomain(domain);
 
     // At least finance.yahoo.com displays a mobile version with WebKitGTK's standard user agent.
-    if (baseDomain == "yahoo.com")
+    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "yahoo.com")
         return true;
 
     // taobao.com displays a mobile version with WebKitGTK's standard user agent.
-    if (baseDomain == "taobao.com")
+    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "taobao.com")
         return true;
 
     // web.whatsapp.com completely blocks users with WebKitGTK's standard user agent.
@@ -152,7 +153,7 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
 
 static bool urlRequiresLinuxDesktopPlatform(const URL& url)
 {
-    return isGoogle(url);
+    return isGoogle(url) && chassisType() != WTF::ChassisType::Mobile;
 }
 
 UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
