@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 #import "GameControllerGamepadProvider.h"
+#import "GameControllerSoftLink.h"
 #import <GameController/GameController.h>
 
 namespace WebCore {
@@ -53,6 +54,20 @@ GameControllerGamepad::GameControllerGamepad(GCController *controller, unsigned 
         setupAsGamepad();
 }
 
+static GCControllerButtonInput *homeButtonFromExtendedGamepad(GCExtendedGamepad *gamepad)
+{
+#if HAVE(GCEXTENDEDGAMEPAD_HOME_BUTTON)
+    if (gamepad.buttonHome)
+        return gamepad.buttonHome;
+#endif
+
+    id potentialButton = [gamepad valueForKey:@"_buttonHome"];
+    if (potentialButton && [potentialButton isKindOfClass:getGCControllerButtonInputClass()])
+        return potentialButton;
+
+    return nil;
+}
+
 void GameControllerGamepad::setupAsExtendedGamepad()
 {
     ASSERT(m_extendedGamepad);
@@ -60,13 +75,14 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     m_id = makeString(String(m_gcController.get().vendorName), " Extended Gamepad"_s);
     m_mapping = String("standard");
 
+    auto *homeButton = homeButtonFromExtendedGamepad(m_extendedGamepad.get());
+    m_buttonValues.resize(homeButton ? 17 : 16);
+
     m_extendedGamepad.get().valueChangedHandler = ^(GCExtendedGamepad *, GCControllerElement *) {
         m_lastUpdateTime = MonotonicTime::now();
         GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
         m_hadButtonPresses = false;
     };
-
-    m_buttonValues.resize(16);
 
     auto bindButton = ^(GCControllerButtonInput *button, size_t idx) {
         m_buttonValues[idx] = button.value;
@@ -94,6 +110,9 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     bindButton(m_extendedGamepad.get().dpad.down, 13);
     bindButton(m_extendedGamepad.get().dpad.left, 14);
     bindButton(m_extendedGamepad.get().dpad.right, 15);
+
+    if (homeButton)
+        bindButton(homeButton, 16);
 
     // Select, Start
 #if HAVE(GCEXTENDEDGAMEPAD_BUTTONS_OPTIONS_MENU)

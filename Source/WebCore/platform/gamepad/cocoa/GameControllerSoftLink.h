@@ -32,6 +32,7 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, GameController)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCController)
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCControllerButtonInput)
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCControllerDidConnectNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCControllerDidDisconnectNotification, NSString *)
