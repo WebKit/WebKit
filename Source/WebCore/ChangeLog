@@ -1,3 +1,10 @@
+2020-07-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove debug printf after r264219.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+
 2020-07-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Normal flow element that establishes a new block formatting context must not overlap the margin box of any floats

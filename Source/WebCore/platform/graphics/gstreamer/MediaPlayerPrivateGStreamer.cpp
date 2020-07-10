@@ -209,10 +209,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     if (is<PlatformDisplayLibWPE>(sharedDisplay))
         m_wpeVideoPlaneDisplayDmaBuf.reset(wpe_video_plane_display_dmabuf_source_create(downcast<PlatformDisplayLibWPE>(sharedDisplay).backend()));
 #endif
-    static unsigned times = 0;
-    ++times;
-    GST_INFO("created media player private (%u times) <----------------------------------------------", times);
-    fprintf(stderr, "calvaris created media player private (%u times)\n", times);
 }
 
 MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
