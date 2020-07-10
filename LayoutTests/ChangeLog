@@ -1,3 +1,13 @@
+2020-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapsing] Margins do not collapse through when the box has clearance.
+        https://bugs.webkit.org/show_bug.cgi?id=214172
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/empty-block-level-box-with-clearance-expected.html: Added.
+        * fast/layoutformattingcontext/empty-block-level-box-with-clearance.html: Added.
+
 2020-07-09  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Garden more failures/rebaselines after WPT updates.

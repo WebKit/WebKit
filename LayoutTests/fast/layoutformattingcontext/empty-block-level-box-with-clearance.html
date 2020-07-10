@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.clear_left {
+  clear: left;
+  width: 0px;
+  height: 0px;
+}
+
+.previous_sibling {
+  float: left;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+.next_sibling {
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+}
+</style>
+<div class=previous_sibling></div>
+<div class=clear_left></div>
+<div class=next_sibling></div>

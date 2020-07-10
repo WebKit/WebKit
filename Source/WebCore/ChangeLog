@@ -1,3 +1,20 @@
+2020-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapsing] Margins do not collapse through when the box has clearance.
+        https://bugs.webkit.org/show_bug.cgi?id=214172
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/box.html#collapsing-margins
+        "Two margins are adjoining if and only if: no line boxes, no clearance, no padding and no border separate them"
+
+        Only adjoining margins can collapse through.
+
+        Test: fast/layoutformattingcontext/empty-block-level-box-with-clearance.html
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+
 2020-07-10  Jan-Michael Brummer  <jan.brummer@tabos.org>
 
         [GTK][WPE] Use mobile user-agent on tablet

@@ -373,6 +373,10 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
     if (hasPaddingBefore(layoutBox) || hasPaddingAfter(layoutBox))
         return false;
 
+    // Margins are not adjoining when the box has clearance.
+    if (hasClearance(layoutBox))
+        return false;
+
     auto& style = layoutBox.style();
     auto computedHeightValueIsZero = style.height().isFixed() && !style.height().value();
     if (!(style.height().isAuto() || computedHeightValueIsZero))
