@@ -225,6 +225,28 @@ static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *lis
         if (!title || !*title)
             title = webkit_back_forward_list_item_get_uri(item);
 
+        char *displayTitle;
+#define MAX_TITLE 100
+#if GTK_CHECK_VERSION(3, 98, 5)
+        char *escapedTitle = g_markup_escape_text(title, -1);
+        if (strlen(escapedTitle) > MAX_TITLE) {
+            displayTitle = g_strndup(escapedTitle, MAX_TITLE);
+            g_free(escapedTitle);
+            displayTitle[MAX_TITLE - 1] = 0xA6;
+            displayTitle[MAX_TITLE - 2] = 0x80;
+            displayTitle[MAX_TITLE - 3] = 0xE2;
+        } else
+            displayTitle = escapedTitle;
+#else
+        displayTitle = g_strndup(title, MIN(MAX_TITLE, strlen(title)));
+        if (strlen(title) > MAX_TITLE) {
+            displayTitle[MAX_TITLE - 1] = 0xA6;
+            displayTitle[MAX_TITLE - 2] = 0x80;
+            displayTitle[MAX_TITLE - 3] = 0xE2;
+        }
+#endif
+#undef MAX_TITLE
+
         char *actionName = g_strdup_printf("action-%lu", ++actionId);
         GSimpleAction *action = g_simple_action_new(actionName, NULL);
         g_object_set_data_full(G_OBJECT(action), "back-forward-list-item", g_object_ref(item), g_object_unref);
@@ -233,10 +255,11 @@ static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *lis
         g_object_unref(action);
 
         char *detailedActionName = g_strdup_printf("%s.%s", isBack ? "bf-back" : "bf-forward", actionName);
-        GMenuItem *menuItem = g_menu_item_new(title, detailedActionName);
+        GMenuItem *menuItem = g_menu_item_new(displayTitle, detailedActionName);
         g_menu_append_item(menu, menuItem);
         g_object_unref(menuItem);
 
+        g_free(displayTitle);
         g_free(detailedActionName);
         g_free(actionName);
     }

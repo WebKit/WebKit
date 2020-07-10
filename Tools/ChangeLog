@@ -1,3 +1,16 @@
+2020-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser: title of back-forward menu items needs to be truncated when it's too large
+        https://bugs.webkit.org/show_bug.cgi?id=214180
+
+        Reviewed by Adrian Perez de Castro.
+
+        The popover menu doesn't set ellipsize on the inner label, so we need to do it manually. In the case of GTK4 we
+        also need to markup escape it.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowCreateBackForwardMenu):
+
 2020-07-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add Slack-aware WebKitBot implementation
