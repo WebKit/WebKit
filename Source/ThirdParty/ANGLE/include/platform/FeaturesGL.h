@@ -418,12 +418,6 @@ struct FeaturesGL : FeatureSetBase
         "Rewrite row major matrices in shaders as column major as a driver bug workaround",
         &members, "http://anglebug.com/2273"};
 
-    // Flush before glBindFramebuffer as a driver bug workaround if necessary.
-    Feature flushBeforeBindFramebuffer = {
-        "flush_before_bindframebuffer", FeatureCategory::OpenGLWorkarounds,
-        "Flush before glBindFramebuffer as a driver bug workaround",
-        &members, "https://bugs.webkit.org/show_bug.cgi?id=206625"};
-
     // Bugs exist in various OpenGL Intel drivers on Windows that produce incorrect
     // values for GL_COMPRESSED_SRGB_S3TC_DXT1_EXT format. Replace it with
     // GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT as it's the closest option allowed by

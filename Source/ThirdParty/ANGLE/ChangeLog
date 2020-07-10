@@ -1,3 +1,19 @@
+2020-07-10  Kenneth Russell  <kbr@chromium.org>
+
+        Remove glBindFramebuffer flush workaround from ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=214104
+
+        Reviewed by Dean Jackson.
+
+        Remove this driver bug workaround, which very likely had no
+        effect, and which was never upstreamed to ANGLE.
+
+        * include/platform/FeaturesGL.h:
+        * src/libANGLE/renderer/gl/StateManagerGL.cpp:
+        (rx::StateManagerGL::bindFramebuffer):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-07-08  Darin Adler  <darin@apple.com>
 
         Fix adjust-angle-include-paths.sh error seen building ANGLE library

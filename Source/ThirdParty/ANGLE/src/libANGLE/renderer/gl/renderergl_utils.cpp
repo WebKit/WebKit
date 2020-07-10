@@ -1711,9 +1711,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
                             // TODO(anglebug.com/2273): diagnose crashes with this workaround.
                             false);
 
-    // bugs.webkit.org/show_bug.cgi?id=206625
-    ANGLE_FEATURE_CONDITION(features, flushBeforeBindFramebuffer, IsApple() && isIntel);
-
     // Workaround for incorrect sampling from DXT1 sRGB textures in Intel OpenGL on Windows.
     ANGLE_FEATURE_CONDITION(features, avoidDXT1sRGBTextureFormat, IsWindows() && isIntel);
 
