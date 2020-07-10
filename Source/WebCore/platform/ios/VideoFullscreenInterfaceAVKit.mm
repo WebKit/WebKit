@@ -1078,6 +1078,7 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::didStartPictureInPicture(%p)", this);
     setMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     [m_playerViewController setShowsPlaybackControls:YES];
+    [m_viewController _setIgnoreAppSupportedOrientations:NO];
 
     if (m_currentMode.hasFullscreen()) {
         m_shouldReturnToFullscreenWhenStoppingPiP = YES;
@@ -1140,6 +1141,7 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::didStopPictureInPicture(%p)", this);
     m_targetMode.setPictureInPicture(false);
+    [m_viewController _setIgnoreAppSupportedOrientations:YES];
 
     if (m_currentMode.hasFullscreen() || m_restoringFullscreenForPictureInPictureStop) {
         clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);

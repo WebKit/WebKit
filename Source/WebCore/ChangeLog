@@ -1,3 +1,16 @@
+2020-07-10  Peng Liu  <peng.liu6@apple.com>
+
+        MobileSafari rotates its scene to portrait upside down if it has a PiP on screen
+        https://bugs.webkit.org/show_bug.cgi?id=214169
+
+        Reviewed by Jer Noble.
+
+        The UIViewController for video fullscreen/picture-in-picture should not ignore
+        the App's supported orientations when the video element is in picture-in-picture.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::doSetup):
+
 2020-07-10  Don Olmstead  <don.olmstead@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WOFF2 font support
