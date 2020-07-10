@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD) && PLATFORM(MAC)
+#if ENABLE(GAMEPAD) && HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 
 #include "GamepadProvider.h"
 #include "GamepadProviderClient.h"
@@ -91,4 +91,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD) && HAVE(MULTIGAMEPADPROVIDER_SUPPORT)

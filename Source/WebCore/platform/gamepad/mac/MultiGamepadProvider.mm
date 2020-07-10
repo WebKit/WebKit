@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MultiGamepadProvider.h"
 
-#if ENABLE(GAMEPAD) && PLATFORM(MAC)
+#if ENABLE(GAMEPAD) && HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 
 #import "GameControllerGamepadProvider.h"
 #import "HIDGamepadProvider.h"
@@ -129,4 +129,4 @@ void MultiGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisibl
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD) && HAVE(MULTIGAMEPADPROVIDER_SUPPORT)

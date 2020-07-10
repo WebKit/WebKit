@@ -33,6 +33,7 @@
 #else
 
 WTF_EXTERN_C_BEGIN
+typedef struct CF_BRIDGED_TYPE(id) __IOHIDServiceClient * IOHIDServiceClientRef;
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
 IOHIDEventSystemClientRef IOHIDEventSystemClientCreate(CFAllocatorRef);
 void IOHIDEventSystemClientSetMatching(IOHIDEventSystemClientRef, CFDictionaryRef);

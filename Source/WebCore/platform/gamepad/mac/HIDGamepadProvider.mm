@@ -179,6 +179,7 @@ void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
         closeAndUnscheduleManager();
 }
 
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 static bool gameControllerFrameworkWillHandleHIDDevice(IOHIDDeviceRef device)
 {
     if (!isGameControllerFrameworkAvailable())
@@ -222,14 +223,19 @@ static bool gameControllerFrameworkWillHandleHIDDevice(IOHIDDeviceRef device)
 
     return ControllerClassForService(serviceClient.get());
 }
+#endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
+
+
 
 void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 {
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
     if (m_ignoresGameControllerFrameworkDevices && gameControllerFrameworkWillHandleHIDDevice(device)) {
         LOG(Gamepad, "GameController framework will handle attached device %p - HIDGamepadProvider ignoring it", device);
         m_gameControllerManagedGamepads.add(device);
         return;
     }
+#endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 
     ASSERT(!m_gamepadMap.get(device));
 

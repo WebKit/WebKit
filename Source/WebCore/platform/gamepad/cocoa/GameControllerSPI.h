@@ -31,7 +31,7 @@
 + (void)__openXPC_and_CBApplicationDidBecomeActive__;
 @end
 
-#if PLATFORM(MAC)
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 #if USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
@@ -41,10 +41,10 @@ WTF_EXTERN_C_END
 #else
 
 WTF_EXTERN_C_BEGIN
-typedef struct CF_BRIDGED_TYPE(id) IOHIDServiceClient * IOHIDServiceClientRef;
+typedef struct CF_BRIDGED_TYPE(id) __IOHIDServiceClient * IOHIDServiceClientRef;
 Class ControllerClassForService(IOHIDServiceClientRef);
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-#endif // PLATFORM(MAC)
+#endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)

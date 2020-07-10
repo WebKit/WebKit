@@ -53,9 +53,14 @@ void UIGamepadProvider::platformSetDefaultGamepadProvider()
 #else
     if (useGameControllerFramework)
         GamepadProvider::setSharedProvider(GameControllerGamepadProvider::singleton());
-    else
+    else {
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
         GamepadProvider::setSharedProvider(MultiGamepadProvider::singleton());
-#endif
+#else
+        GamepadProvider::setSharedProvider(HIDGamepadProvider::singleton());
+#endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
+    }
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 void UIGamepadProvider::platformStopMonitoringInput()

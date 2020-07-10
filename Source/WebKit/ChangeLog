@@ -1,3 +1,13 @@
+2020-07-10  Brady Eidson  <beidson@apple.com>
+
+        Limit MultiGamepadProvider to Catalina and Big Sur.
+        https://bugs.webkit.org/show_bug.cgi?id=214190
+
+        Unreviewed build fix.
+
+        * UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm:
+        (WebKit::UIGamepadProvider::platformSetDefaultGamepadProvider):
+
 2020-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         [IPC hardening] Use MESSAGE_CHECK in WebPageProxy::setColorPickerColor()
