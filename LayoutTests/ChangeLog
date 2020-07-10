@@ -1,3 +1,9 @@
+2020-07-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK/WPE gardening
+
+        * platform/glib/TestExpectations: Mark a few GStreamer-related tests as crashing on Debug.
+
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html in Debug.
