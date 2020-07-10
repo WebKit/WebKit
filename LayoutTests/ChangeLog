@@ -1,5 +1,13 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html in Debug.
+
+        This test has been crashing in Debug since its import in r264202.
+
+        * TestExpectations:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark imported/w3c/web-platform-tests/webrtc/protocol/split.https.html as flaky.
 
         It has been flaky since import in r264202.
