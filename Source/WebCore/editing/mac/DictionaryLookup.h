@@ -28,38 +28,40 @@
 #if PLATFORM(COCOA)
 
 #include "DictionaryPopupInfo.h"
-#if PLATFORM(MAC)
-#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
-#endif // PLATFORM(MAC)
 #include <wtf/Function.h>
 
-OBJC_CLASS NSView;
-OBJC_CLASS UIView;
-OBJC_CLASS PDFSelection;
+#if PLATFORM(MAC)
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#endif
+
+@class NSView;
+@class PDFSelection;
+@class UIView;
 
 #if PLATFORM(MAC)
-typedef id <NSImmediateActionAnimationController> WKRevealController;
-using RevealView = NSView;
+using WKRevealController = id <NSImmediateActionAnimationController>;
+using CocoaView = NSView;
 #else
-typedef id WKRevealController;
-using RevealView = UIView;
-#endif // PLATFORM(MAC)
+using WKRevealController = id;
+using CocoaView = UIView;
+#endif
 
 namespace WebCore {
 
 class HitTestResult;
-class Range;
 class VisibleSelection;
+
+struct SimpleRange;
 
 class DictionaryLookup {
 public:
-    WEBCORE_EXPORT static std::tuple<RefPtr<Range>, NSDictionary *> rangeForSelection(const VisibleSelection&);
-    WEBCORE_EXPORT static std::tuple<RefPtr<Range>, NSDictionary *> rangeAtHitTestResult(const HitTestResult&);
+    WEBCORE_EXPORT static Optional<std::tuple<SimpleRange, NSDictionary *>> rangeForSelection(const VisibleSelection&);
+    WEBCORE_EXPORT static Optional<std::tuple<SimpleRange, NSDictionary *>> rangeAtHitTestResult(const HitTestResult&);
     WEBCORE_EXPORT static std::tuple<NSString *, NSDictionary *> stringForPDFSelection(PDFSelection *);
 
     // FIXME: Should move/unify dictionaryPopupInfoForRange here too.
 
-    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, RevealView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
+    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, CocoaView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
     WEBCORE_EXPORT static void hidePopup();
     
 #if PLATFORM(MAC)
@@ -70,4 +72,4 @@ public:
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif

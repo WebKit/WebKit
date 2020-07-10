@@ -115,6 +115,11 @@ class DOMWindow;
 class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
+class DeviceMotionClient;
+class DeviceMotionController;
+class DeviceOrientationAndMotionAccessController;
+class DeviceOrientationClient;
+class DeviceOrientationController;
 class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
@@ -137,6 +142,7 @@ class FrameView;
 class FullscreenManager;
 class GPUCanvasContext;
 class HTMLAllCollection;
+class HTMLAttachmentElement;
 class HTMLBodyElement;
 class HTMLCanvasElement;
 class HTMLCollection;
@@ -157,6 +163,7 @@ class IdleCallbackController;
 class IdleRequestCallback;
 class ImageBitmapRenderingContext;
 class IntPoint;
+class IntersectionObserver;
 class JSNode;
 class LayoutPoint;
 class LayoutRect;
@@ -169,6 +176,7 @@ class MediaPlaybackTarget;
 class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
+class MediaSession;
 class MessagePortChannelProvider;
 class MouseEventWithHitTestResults;
 class NodeFilter;
@@ -183,6 +191,7 @@ class Range;
 class RenderTreeBuilder;
 class RenderView;
 class RequestAnimationFrameCallback;
+class ResizeObserver;
 class SVGDocumentExtensions;
 class SVGSVGElement;
 class SVGUseElement;
@@ -202,8 +211,10 @@ class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
 class Text;
+class TextAutoSizing;
 class TextManipulationController;
 class TextResourceDecoder;
+class TransformSource;
 class TreeWalker;
 class UndoManager;
 class VisibilityChangeClient;
@@ -219,6 +230,9 @@ class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
 
+struct BoundaryPoint;
+struct IntersectionObserverData;
+
 template<typename> class ExceptionOr;
 
 enum CollectionType;
@@ -228,48 +242,12 @@ enum class ShouldOpenExternalURLsPolicy : uint8_t;
 
 using PlatformDisplayID = uint32_t;
 
-#if ENABLE(XSLT)
-class TransformSource;
-#endif
-
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-class DeviceMotionClient;
-class DeviceMotionController;
-class DeviceOrientationClient;
-class DeviceOrientationController;
-#endif
-
-#if ENABLE(DEVICE_ORIENTATION)
-class DeviceOrientationAndMotionAccessController;
-#endif
-
-#if ENABLE(TEXT_AUTOSIZING)
-class TextAutoSizing;
-#endif
-
-#if ENABLE(MEDIA_SESSION)
-class MediaSession;
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-class HTMLAttachmentElement;
-#endif
-
-#if ENABLE(INTERSECTION_OBSERVER)
-class IntersectionObserver;
-struct IntersectionObserverData;
-#endif
-
-#if ENABLE(RESIZE_OBSERVER)
-class ResizeObserver;
-#endif
-
 namespace Style {
 class Resolver;
 class Scope;
-};
+}
 
-const uint64_t HTMLMediaElementInvalidID = 0;
+constexpr uint64_t HTMLMediaElementInvalidID = 0;
 
 enum PageshowEventPersistence { PageshowEventNotPersisted, PageshowEventPersisted };
 
@@ -286,7 +264,7 @@ enum NodeListInvalidationType {
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
 
 enum class EventHandlerRemoval { One, All };
-typedef HashCountedSet<Node*> EventTargetSet;
+using EventTargetSet = HashCountedSet<Node*>;
 
 enum DocumentClass {
     DefaultDocumentClass = 0,
@@ -299,7 +277,7 @@ enum DocumentClass {
     TextDocumentClass = 1 << 6,
     XMLDocumentClass = 1 << 7,
 };
-typedef unsigned char DocumentClassFlags;
+using DocumentClassFlags = unsigned char;
 
 enum class DocumentCompatibilityMode : unsigned char {
     NoQuirksMode = 1,
@@ -459,7 +437,7 @@ public:
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
-    RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
+    Optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint);
 
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();
@@ -1288,7 +1266,7 @@ public:
     bool hasWheelEventHandlers() const { return m_wheelEventTargets.get() ? m_wheelEventTargets->size() : false; }
     const EventTargetSet* wheelEventTargets() const { return m_wheelEventTargets.get(); }
 
-    typedef std::pair<Region, bool> RegionFixedPair;
+    using RegionFixedPair = std::pair<Region, bool>;
     RegionFixedPair absoluteEventRegionForNode(Node&);
     RegionFixedPair absoluteRegionForEventTargets(const EventTargetSet*);
 
@@ -1606,7 +1584,7 @@ public:
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
+    Document(Frame*, const URL&, DocumentClassFlags = DefaultDocumentClass, unsigned constructionFlags = 0);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
@@ -1937,7 +1915,7 @@ private:
 
     std::unique_ptr<DocumentSharedObjectPool> m_sharedObjectPool;
 
-    typedef HashMap<AtomString, std::unique_ptr<Locale>> LocaleIdentifierToLocaleMap;
+    using LocaleIdentifierToLocaleMap = HashMap<AtomString, std::unique_ptr<Locale>>;
     LocaleIdentifierToLocaleMap m_localeCache;
 
     RefPtr<Document> m_templateDocument;

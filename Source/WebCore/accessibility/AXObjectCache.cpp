@@ -2862,21 +2862,22 @@ IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffs
     return absoluteBoundsForLocalCaretRect(caretPainter, localRect);
 }
 
-CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint &point, AXCoreObject* obj)
+CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint& point, AXCoreObject* object)
 {
-    if (!obj)
-        return CharacterOffset();
-    
-    auto boundary = makeBoundaryPoint(obj->visiblePositionForPoint(point));
+    if (!object)
+        return { };
+    auto boundary = makeBoundaryPoint(object->visiblePositionForPoint(point));
     if (!boundary)
         return { };
-
     return startOrEndCharacterOffsetForRange({ *boundary, *boundary }, true);
 }
 
-CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint &point)
+CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint& point)
 {
-    return startOrEndCharacterOffsetForRange(*m_document.caretRangeFromPoint(LayoutPoint(point)), true);
+    auto boundary = m_document.caretPositionFromPoint(point);
+    if (!boundary)
+        return { };
+    return startOrEndCharacterOffsetForRange({ *boundary, *boundary }, true);
 }
 
 CharacterOffset AXObjectCache::characterOffsetForBounds(const IntRect& rect, bool first)

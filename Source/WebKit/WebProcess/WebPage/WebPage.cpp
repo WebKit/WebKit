@@ -6289,13 +6289,13 @@ bool WebPage::plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& plugInImageEl
 
 #endif // ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 
-RefPtr<Range> WebPage::currentSelectionAsRange()
+Optional<SimpleRange> WebPage::currentSelectionAsRange()
 {
     auto* frame = frameWithSelection(m_page.get());
     if (!frame)
-        return nullptr;
+        return WTF::nullopt;
 
-    return createLiveRange(frame->selection().selection().toNormalizedRange());
+    return frame->selection().selection().toNormalizedRange();
 }
 
 void WebPage::reportUsedFeatures()

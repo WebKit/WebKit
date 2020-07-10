@@ -368,11 +368,11 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (WKDOMRange *)selectedRange
 {
-    RefPtr<WebCore::Range> range = _page->currentSelectionAsRange();
+    auto range = _page->currentSelectionAsRange();
     if (!range)
         return nil;
 
-    return WebKit::toWKDOMRange(range.get());
+    return WebKit::toWKDOMRange(createLiveRange(*range).ptr());
 }
 
 - (WKWebProcessPlugInFrame *)mainFrame

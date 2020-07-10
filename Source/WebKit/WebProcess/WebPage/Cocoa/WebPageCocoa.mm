@@ -52,6 +52,7 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
+#import <WebCore/TextIterator.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/ParentalControlsContentFilter.h>
@@ -113,23 +114,28 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     
     // Find the frame the point is over.
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)), hitType);
-    auto [range, options] = DictionaryLookup::rangeAtHitTestResult(result);
-    if (!range)
-        return;
-    
+    auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)), hitType);
+
     auto* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
-    
-    performDictionaryLookupForRange(*frame, *range, options, TextIndicatorPresentationTransition::Bounce);
+
+    auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result);
+    if (!rangeResult)
+        return;
+
+    auto [range, options] = WTFMove(*rangeResult);
+    performDictionaryLookupForRange(*frame, createLiveRange(range), options, TextIndicatorPresentationTransition::Bounce);
 }
 
 void WebPage::performDictionaryLookupForSelection(Frame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
-    auto [selectedRange, options] = DictionaryLookup::rangeForSelection(selection);
-    if (selectedRange)
-        performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
+    auto result = DictionaryLookup::rangeForSelection(selection);
+    if (!result)
+        return;
+
+    auto [range, options] = WTFMove(*result);
+    performDictionaryLookupForRange(frame, createLiveRange(range), options, presentationTransition);
 }
 
 void WebPage::performDictionaryLookupOfCurrentSelection()
@@ -138,27 +144,29 @@ void WebPage::performDictionaryLookupOfCurrentSelection()
     performDictionaryLookupForSelection(frame, frame.selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
     
-void WebPage::performDictionaryLookupForRange(Frame& frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+void WebPage::performDictionaryLookupForRange(Frame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
 {
     send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, options, presentationTransition)));
 }
 
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
 {
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
 
-    DictionaryPopupInfo dictionaryPopupInfo;
-    if (range.text().stripWhiteSpace().isEmpty()) {
+    // FIXME: Inefficient to call stripWhiteSpace to detect whether a string has a non-whitespace character in it.
+    if (plainText(range).stripWhiteSpace().isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
-        return dictionaryPopupInfo;
+        return { };
     }
 
     auto quads = RenderObject::absoluteTextQuads(range);
     if (quads.isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
-        return dictionaryPopupInfo;
+        return { };
     }
+
+    DictionaryPopupInfo dictionaryPopupInfo;
 
     IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
 

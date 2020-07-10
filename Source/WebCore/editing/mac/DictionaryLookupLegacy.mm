@@ -75,11 +75,11 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     return createLiveRange(*selectedRange)->contains(position);
 }
 
-std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
+Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
     auto selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     // Since we already have the range we want, we just need to grab the returned options.
     auto selectionStart = selection.visibleStart();
@@ -89,7 +89,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
     auto paragraphEnd = makeBoundaryPoint(endOfParagraph(selectionEnd));
     if (!paragraphStart || !paragraphEnd)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto selectionRange = SimpleRange { *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) };
     auto paragraphRange = SimpleRange { *paragraphStart, *paragraphEnd };
@@ -97,23 +97,23 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     NSDictionary *options = nil;
     tokenRange(plainText(paragraphRange), characterRange(paragraphRange, selectionRange), &options);
 
-    return { createLiveRange(*selectedRange), options };
+    return { { *selectedRange, options } };
 }
 
-std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
+Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
 {
     auto* node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto* frame = node->document().frame();
     if (!frame)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     // Don't do anything if there is no character at the point.
     auto framePoint = hitTestResult.roundedPointInInnerNodeFrame();
     if (!frame->rangeForPoint(framePoint))
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto position = frame->visiblePositionForPoint(framePoint);
     if (position.isNull())
@@ -131,12 +131,12 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     // As context, we are going to use 250 characters of text before and after the point.
     auto fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
     if (!fullCharacterRange)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto fullCharacterStart = makeBoundaryPoint(fullCharacterRange->startPosition());
     auto positionBoundary = makeBoundaryPoint(position);
     if (!fullCharacterStart || !positionBoundary)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     NSRange rangeToPass = NSMakeRange(characterCount({ *fullCharacterStart, *positionBoundary }), 0);
     NSDictionary *options = nil;
@@ -145,9 +145,9 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     // tokenRange sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
     // FIXME (159063): We shouldn't need to check for zero length here.
     if (extractedRange.location == NSNotFound || !extractedRange.length)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
-    return { createLiveRange(resolveCharacterRange(*fullCharacterRange, extractedRange)), options };
+    return { { resolveCharacterRange(*fullCharacterRange, extractedRange), options } };
 }
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)

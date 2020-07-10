@@ -550,19 +550,20 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!PAL::getLULookupDefinitionModuleClass())
         return nil;
 
-    WebCore::Node* node = _hitTestResult.innerNode();
+    auto node = _hitTestResult.innerNode();
     if (!node)
         return nil;
 
-    WebCore::Frame* frame = node->document().frame();
+    auto frame = node->document().frame();
     if (!frame)
         return nil;
 
-    auto [dictionaryRange, options] = WebCore::DictionaryLookup::rangeAtHitTestResult(_hitTestResult);
-    if (!dictionaryRange)
+    auto range = WebCore::DictionaryLookup::rangeAtHitTestResult(_hitTestResult);
+    if (!range)
         return nil;
 
-    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:{ } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
+    auto [dictionaryRange, options] = WTFMove(*range);
+    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions: { } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 

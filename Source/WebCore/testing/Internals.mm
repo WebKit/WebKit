@@ -35,6 +35,7 @@
 #import "HitTestResult.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
+#import "SimpleRange.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -72,10 +73,12 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
     document->updateLayoutIgnorePendingStylesheets();
 
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
-    HitTestResult result = document->frame()->mainFrame().eventHandler().hitTestResultAtPoint(IntPoint(x, y), hitType);
-    RefPtr<Range> range;
-    std::tie(range, std::ignore) = DictionaryLookup::rangeAtHitTestResult(result);
-    return WTFMove(range);
+    auto result = document->frame()->mainFrame().eventHandler().hitTestResultAtPoint(IntPoint(x, y), hitType);
+    auto range = DictionaryLookup::rangeAtHitTestResult(result);
+    if (!range)
+        return nullptr;
+
+    return RefPtr<Range> { createLiveRange(std::get<SimpleRange>(*range)) };
 }
 
 #endif
@@ -95,13 +98,10 @@ double Internals::privatePlayerVolume(const HTMLMediaElement& element)
 
 String Internals::encodedPreferenceValue(const String& domain, const String& key)
 {
-    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName: domain]);
-    id value = [userDefaults.get() objectForKey:key];
-    NSError *e = nil;
-    auto data = adoptNS([NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:&e]);
-    ASSERT(!e);
-    auto encodedString = [data base64EncodedStringWithOptions:0];
-    return encodedString;
+    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:domain]);
+    id value = [userDefaults objectForKey:key];
+    auto data = adoptNS([NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:nullptr]);
+    return [data base64EncodedStringWithOptions:0];
 }
 
 String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)

@@ -1,3 +1,70 @@
+2020-07-08  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from Document.h, AlternativeTextController.h, DictionaryLookup.h, and WebPage.h
+        https://bugs.webkit.org/show_bug.cgi?id=214109
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetForPoint): Updated to call
+        caretPositionFromPoint, internal function, instead of caretRangeFromPoint,
+        public DOM function.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Changed documentClasses argument to DocumentClassFlags.
+        (WebCore::Document::caretRangeFromPoint): Refactored so this calls createLiveRange,
+        since it's a DOM function that returns a live range.
+        (WebCore::Document::caretPositionFromPoint): Renamed so this is not just an overload
+        and changed to return a BoundaryPoint rather than a live range.
+
+        * dom/Document.h: Simplified forward declarations by getting rid of all the conditionals.
+        Tweaked a few typedef things. Updated for the changes above.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::startAlternativeTextUITimer): Updated since
+        m_rangeWithAlternative is an Optional<SimpleRange>.
+        (WebCore::AlternativeTextController::stopAlternativeTextUITimer): Ditto.
+        (WebCore::AlternativeTextController::applyPendingCorrection): Ditto.
+        (WebCore::AlternativeTextController::hasPendingCorrection const): Ditto.
+        (WebCore::AlternativeTextController::isSpellingMarkerAllowed const): Take SimpleRange.
+        (WebCore::AlternativeTextController::show): Ditto.
+        (WebCore::AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate):
+        Updated since m_rangeWithAlternative is an Optional<SimpleRange>.
+        (WebCore::AlternativeTextController::timerFired): Ditto.
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult): Ditto.
+        (WebCore::AlternativeTextController::markReversed): Take SimpleRange.
+        (WebCore::AlternativeTextController::markCorrection): Ditto.
+        (WebCore::AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection): Ditto.
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult): Ditto.
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord): Use SimpleRange
+        instead of a live range.
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange): Take SimpleRange.
+        * editing/AlternativeTextController.h: Use SimpleRange instead of live ranges.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeForSelection): Return SimpleRange.
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Ditto.
+        (WebCore::showPopupOrCreateAnimationController): Renamed type from RevealView to CocoaView.
+        (WebCore::DictionaryLookup::showPopup): Ditto.
+        * editing/mac/DictionaryLookup.h: Simplified header since it is included only from
+        Objective-C files. Use SimpleRange instead of live ranges.
+
+        * editing/mac/DictionaryLookupLegacy.mm:
+        (WebCore::DictionaryLookup::rangeForSelection): Return SimpleRange.
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Ditto.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup): Updated
+        since DictionaryLookup::rangeAtHitTestResult returns SimpleRange.
+        (WebCore::autoscrollAdjustmentFactorForScreenBoundaries): Use constexpr instead of
+        macros for constants.
+
+        * testing/Internals.mm:
+        (WebCore::Internals::rangeForDictionaryLookupAtLocation): Updated
+        since DictionaryLookup::rangeAtHitTestResult returns SimpleRange.
+        (WebCore::Internals::encodedPreferenceValue): Removed unneeded error local, and
+        fixed formatting.
+
 2020-07-10  Brady Eidson  <beidson@apple.com>
 
         GameController.framework gamepads should support Home buttons.

@@ -859,14 +859,12 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     if (!absoluteLinkURL.isEmpty() && URLElement)
         immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(*URLElement), { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
 
-    auto lookupResult = lookupTextAtLocation(locationInViewCoordinates);
-    if (auto* lookupRange = std::get<RefPtr<Range>>(lookupResult).get()) {
-        immediateActionResult.lookupText = lookupRange->text();
+    if (auto lookupResult = lookupTextAtLocation(locationInViewCoordinates)) {
+        auto [lookupRange, options] = WTFMove(*lookupResult);
+        immediateActionResult.lookupText = plainText(lookupRange);
         if (auto* node = hitTestResult.innerNode()) {
-            if (auto* frame = node->document().frame()) {
-                auto options = std::get<NSDictionary *>(lookupResult);
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, *lookupRange, options, TextIndicatorPresentationTransition::FadeIn);
-            }
+            if (auto* frame = node->document().frame())
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, lookupRange, options, TextIndicatorPresentationTransition::FadeIn);
         }
     }
 
@@ -936,11 +934,11 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-std::tuple<RefPtr<WebCore::Range>, NSDictionary *> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
+Optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
 {
     auto& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto point = roundedIntPoint(locationInViewCoordinates);
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };

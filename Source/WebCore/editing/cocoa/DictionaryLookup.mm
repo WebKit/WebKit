@@ -260,12 +260,12 @@ namespace WebCore {
 
 #if ENABLE(REVEAL)
 
-std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
+Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     // Since we already have the range we want, we just need to grab the returned options.
     auto selectionStart = selection.visibleStart();
@@ -275,7 +275,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     auto paragraphStart = startOfParagraph(selectionStart);
     auto paragraphEnd = endOfParagraph(selectionEnd);
     if (paragraphStart.isNull() || paragraphEnd.isNull())
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto lengthToSelectionStart = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) });
     auto selectionCharacterCount = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) });
@@ -285,32 +285,32 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     String itemString = plainText(*fullCharacterRange);
     NSRange highlightRange = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]).get().highlightRange;
 
-    return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };
+    return { { resolveCharacterRange(*fullCharacterRange, highlightRange), nil } };
 
     END_BLOCK_OBJC_EXCEPTIONS
 
-    return { nullptr, nil };
+    return WTF::nullopt;
 }
 
-std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
+Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
-        return { nullptr, nil };
+        return WTF::nullopt;
     
     auto* node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto* frame = node->document().frame();
     if (!frame)
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     // Don't do anything if there is no character at the point.
     auto framePoint = hitTestResult.roundedPointInInnerNodeFrame();
     if (!frame->rangeForPoint(framePoint))
-        return { nullptr, nil };
+        return WTF::nullopt;
 
     auto position = frame->visiblePositionForPoint(framePoint);
     if (position.isNull())
@@ -319,35 +319,36 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     auto selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
     NSRange selectionRange;
     NSUInteger hitIndex;
-    RefPtr<Range> fullCharacterRange;
+    Optional<SimpleRange> fullCharacterRange;
     
     if (selection.selectionType() == VisibleSelection::RangeSelection) {
         auto selectionStart = selection.visibleStart();
         auto selectionEnd = selection.visibleEnd();
 
         // As context, we are going to use the surrounding paragraphs of text.
-        auto paragraphStart = startOfParagraph(selectionStart);
-        auto paragraphEnd = endOfParagraph(selectionEnd);
-        
-        fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
-        if (!fullCharacterRange)
-            return { nullptr, nil };
+        auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
+        auto paragraphEnd = makeBoundaryPoint(endOfParagraph(selectionEnd));
+        if (!paragraphStart || !paragraphEnd)
+            return WTF::nullopt;
 
-        selectionRange = NSMakeRange(characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) }),
+        fullCharacterRange = { { *paragraphStart, *paragraphEnd } };
+        selectionRange = NSMakeRange(characterCount({ *paragraphStart, *makeBoundaryPoint(selectionStart) }),
             characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) }));
-        hitIndex = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(position) });
+        hitIndex = characterCount({ *paragraphStart, *makeBoundaryPoint(position) });
     } else {
         VisibleSelection selectionAccountingForLineRules { position };
         selectionAccountingForLineRules.expandUsingGranularity(TextGranularity::WordGranularity);
         position = selectionAccountingForLineRules.start();
 
         // As context, we are going to use 250 characters of text before and after the point.
-        fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
-        if (!fullCharacterRange)
-            return { nullptr, nil };
+        auto expandedRange = rangeExpandedAroundPositionByCharacters(position, 250);
+        if (!expandedRange)
+            return WTF::nullopt;
+
+        fullCharacterRange = { *expandedRange };
 
         selectionRange = NSMakeRange(NSNotFound, 0);
-        hitIndex = characterCount({ *makeBoundaryPoint(fullCharacterRange->startPosition()), *makeBoundaryPoint(position) });
+        hitIndex = characterCount({ fullCharacterRange->start, *makeBoundaryPoint(position) });
     }
 
     NSRange selectedRange = [getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
@@ -356,13 +357,13 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     auto highlightRange = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]).get().highlightRange;
 
     if (highlightRange.location == NSNotFound || !highlightRange.length)
-        return { nullptr, nil };
+        return WTF::nullopt;
     
-    return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };
+    return { { resolveCharacterRange(*fullCharacterRange, highlightRange), nil } };
     
     END_BLOCK_OBJC_EXCEPTIONS
     
-    return { nullptr, nil };
+    return WTF::nullopt;
     
 }
 
@@ -423,7 +424,7 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     return { @"", nil };
 }
 
-static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, RevealView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
+static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, CocoaView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -513,7 +514,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     
 }
 
-void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, RevealView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
+void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, CocoaView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
 }

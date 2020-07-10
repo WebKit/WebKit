@@ -1,3 +1,43 @@
+2020-07-08  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from Document.h, AlternativeTextController.h, DictionaryLookup.h, and WebPage.h
+        https://bugs.webkit.org/show_bug.cgi?id=214109
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController selectedRange]): Updated since
+        WebPage::currentSelectionAsRange returns SimpleRange.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Updated since
+        DictionaryLookup::rangeAtHitTestResult returns SimpleRange.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Updated since
+        DictionaryLookup::rangeForSelection returns SimpleRange.
+        (WebKit::WebPage::performDictionaryLookupForRange): Take SimpleRange.
+        (WebKit::WebPage::dictionaryPopupInfoForRange): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::currentSelectionAsRange): Return SimpleRange.
+
+        * WebProcess/WebPage/WebPage.h: Use SimpleRange instead of live ranges.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture): Updated since m_startingGestureRange
+        is SimpleRange.
+        (WebKit::WebPage::clearSelection): Ditto.
+        (WebKit::WebPage::rangeForGranularityAtPoint): Return SimpleRange.
+        (WebKit::WebPage::selectTextWithGranularityAtPoint): Update since
+        rangeForGranularityAtPoint returns SimpleRange.
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary): Use
+        SimpleRange.
+        (WebKit::WebPage::updateSelectionWithExtentPoint): Use auto.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation): Update
+        since lookupTextAtLocation returns SimpleRange.
+        (WebKit::WebPage::lookupTextAtLocation): Return SimpleRange.
+
 2020-07-10  Brady Eidson  <beidson@apple.com>
 
         Limit MultiGamepadProvider to Catalina and Big Sur.

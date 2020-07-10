@@ -1137,14 +1137,13 @@ void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent& whee
 VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)
 {
     if (!m_frame.editor().behavior().shouldSelectBasedOnDictionaryLookup())
-        return VisibleSelection();
+        return { };
 
-    RefPtr<Range> range;
-    std::tie(range, std::ignore) = DictionaryLookup::rangeAtHitTestResult(result);
+    auto range = DictionaryLookup::rangeAtHitTestResult(result);
     if (!range)
-        return VisibleSelection();
+        return { };
 
-    return VisibleSelection(*range);
+    return std::get<SimpleRange>(*range);
 }
 
 static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& screenPoint, const FloatRect& screenRect)
@@ -1155,38 +1154,38 @@ static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& scr
     // will occur as excpected. This function figures out just how much to adjust the autoscroll amount by
     // in order to get autoscrolling to feel natural in this situation.
 
+    constexpr float edgeDistanceThreshold = 50;
+    constexpr float pixelsMultiplier = 20;
+
     IntSize adjustmentFactor;
     
-#define EDGE_DISTANCE_THRESHOLD 50
-#define PIXELS_MULTIPLIER 20
-
     float screenLeftEdge = screenRect.x();
-    float insetScreenLeftEdge = screenLeftEdge + EDGE_DISTANCE_THRESHOLD;
+    float insetScreenLeftEdge = screenLeftEdge + edgeDistanceThreshold;
     float screenRightEdge = screenRect.maxX();
-    float insetScreenRightEdge = screenRightEdge - EDGE_DISTANCE_THRESHOLD;
+    float insetScreenRightEdge = screenRightEdge - edgeDistanceThreshold;
     if (screenPoint.x() >= screenLeftEdge && screenPoint.x() < insetScreenLeftEdge) {
-        float distanceFromEdge = screenPoint.x() - screenLeftEdge - EDGE_DISTANCE_THRESHOLD;
+        float distanceFromEdge = screenPoint.x() - screenLeftEdge - edgeDistanceThreshold;
         if (distanceFromEdge < 0)
-            adjustmentFactor.setWidth((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+            adjustmentFactor.setWidth((distanceFromEdge / edgeDistanceThreshold) * pixelsMultiplier);
     } else if (screenPoint.x() >= insetScreenRightEdge && screenPoint.x() < screenRightEdge) {
-        float distanceFromEdge = EDGE_DISTANCE_THRESHOLD - (screenRightEdge - screenPoint.x());
+        float distanceFromEdge = edgeDistanceThreshold - (screenRightEdge - screenPoint.x());
         if (distanceFromEdge > 0)
-            adjustmentFactor.setWidth((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+            adjustmentFactor.setWidth((distanceFromEdge / edgeDistanceThreshold) * pixelsMultiplier);
     }
 
     float screenTopEdge = screenRect.y();
-    float insetScreenTopEdge = screenTopEdge + EDGE_DISTANCE_THRESHOLD;
+    float insetScreenTopEdge = screenTopEdge + edgeDistanceThreshold;
     float screenBottomEdge = screenRect.maxY();
-    float insetScreenBottomEdge = screenBottomEdge - EDGE_DISTANCE_THRESHOLD;
+    float insetScreenBottomEdge = screenBottomEdge - edgeDistanceThreshold;
 
     if (screenPoint.y() >= screenTopEdge && screenPoint.y() < insetScreenTopEdge) {
-        float distanceFromEdge = screenPoint.y() - screenTopEdge - EDGE_DISTANCE_THRESHOLD;
+        float distanceFromEdge = screenPoint.y() - screenTopEdge - edgeDistanceThreshold;
         if (distanceFromEdge < 0)
-            adjustmentFactor.setHeight((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+            adjustmentFactor.setHeight((distanceFromEdge / edgeDistanceThreshold) * pixelsMultiplier);
     } else if (screenPoint.y() >= insetScreenBottomEdge && screenPoint.y() < screenBottomEdge) {
-        float distanceFromEdge = EDGE_DISTANCE_THRESHOLD - (screenBottomEdge - screenPoint.y());
+        float distanceFromEdge = edgeDistanceThreshold - (screenBottomEdge - screenPoint.y());
         if (distanceFromEdge > 0)
-            adjustmentFactor.setHeight((distanceFromEdge / EDGE_DISTANCE_THRESHOLD) * PIXELS_MULTIPLIER);
+            adjustmentFactor.setHeight((distanceFromEdge / edgeDistanceThreshold) * pixelsMultiplier);
     }
 
     return adjustmentFactor;

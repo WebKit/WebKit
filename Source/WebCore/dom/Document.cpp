@@ -536,7 +536,7 @@ static inline int currentOrientation(Frame* frame)
     return 0;
 }
 
-Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
+Document::Document(Frame* frame, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , FrameDestructionObserver(frame)
@@ -1508,32 +1508,35 @@ String Document::contentType() const
 
 RefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
-    return caretRangeFromPoint(LayoutPoint(x, y));
+    auto boundary = caretPositionFromPoint(LayoutPoint(x, y));
+    if (!boundary)
+        return nullptr;
+    return createLiveRange({ *boundary, *boundary });
 }
 
-RefPtr<Range> Document::caretRangeFromPoint(const LayoutPoint& clientPoint)
+Optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint& clientPoint)
 {
     if (!hasLivingRenderTree())
-        return nullptr;
+        return WTF::nullopt;
 
     LayoutPoint localPoint;
     auto node = nodeFromPoint(clientPoint, &localPoint);
     if (!node)
-        return nullptr;
+        return WTF::nullopt;
 
     auto* renderer = node->renderer();
     if (!renderer)
-        return nullptr;
+        return WTF::nullopt;
     auto rangeCompliantPosition = renderer->positionForPoint(localPoint).parentAnchoredEquivalent();
     if (rangeCompliantPosition.isNull())
-        return nullptr;
+        return WTF::nullopt;
 
-    auto offset = rangeCompliantPosition.offsetInContainerNode();
+    unsigned offset = rangeCompliantPosition.offsetInContainerNode();
     node = retargetToScope(*rangeCompliantPosition.containerNode());
     if (node != rangeCompliantPosition.containerNode())
         offset = 0;
 
-    return Range::create(*this, node.get(), offset, node.get(), offset);
+    return { { *node, offset } };
 }
 
 bool Document::isBodyPotentiallyScrollable(HTMLBodyElement& body)
