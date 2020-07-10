@@ -325,6 +325,18 @@ webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# Transitions-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
+webkit.org/b/190001 [ Release ] transitions/start-transform-transition.html [ Pass Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Transitions-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # WebAnimations-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -399,6 +411,7 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
+webkit.org/b/175585 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
 
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure Pass ]
 
@@ -453,6 +466,7 @@ webkit.org/b/214033 imported/w3c/web-platform-tests/html/semantics/forms/the-inp
 webkit.org/b/178583 imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea.html [ Failure ]
 
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
+webkit.org/b/214173 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
@@ -688,8 +702,6 @@ Bug(GTK) jquery/traversing.html [ Slow Pass ]
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
-
-webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
 
 webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Crash ImageOnlyFailure Timeout Pass ]
 

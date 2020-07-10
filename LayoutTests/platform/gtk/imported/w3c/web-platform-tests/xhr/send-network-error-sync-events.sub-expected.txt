@@ -1,8 +1,0 @@
-Blocked access to external URL http://nonexistent.localhost:8800/
-
-PASS http URL 
-FAIL data URL assert_throws: function "function ()
-            {
-                xhr.send("Test Message");
-            }" did not throw
-

@@ -1,3 +1,17 @@
+2020-07-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Garden more failures/rebaselines after WPT updates.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Added.
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub-expected.txt:
+          Removed. This test is actually failing for gtk/wpe. Removed to
+          fallback to the w3c baseline and marked it as a failure.
+
 2020-07-09  Andres Gonzalez  <andresg_22@apple.com>
 
         Make accessibility/Mac/selected-visible-position-range.html time-deterministic.

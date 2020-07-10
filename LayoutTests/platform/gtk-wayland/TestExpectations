@@ -14,6 +14,7 @@ webkit.org/b/198830 media/video-colorspace-yuv422.html [ Pass ]
 webkit.org/b/210360 webrtc/video-update-often.html [ Pass ]
 webkit.org/b/210370 media/track/text-track-cue-is-reachable.html [ Pass ]
 webkit.org/b/210848 compositing/video/video-border-radius-clipping.html [ Pass ]
+webkit.org/b/190001 [ Release ] transitions/start-transform-transition.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
