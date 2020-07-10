@@ -28,7 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Node-prototype-cloneNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Range-prototype-insertNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/ShadowRoot-interface.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slotable-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slottable-mixin.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html
@@ -46,6 +46,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/getElementById-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/innerHTML-setter.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-element-list.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-type-radio.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned-expected.html
@@ -59,5 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-fallback-in-document.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-imperative-api-slotchange.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-imperative-slot-api.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-outside-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots.html

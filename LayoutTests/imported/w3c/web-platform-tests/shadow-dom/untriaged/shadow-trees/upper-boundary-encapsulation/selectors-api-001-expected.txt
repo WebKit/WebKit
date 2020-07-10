@@ -1,0 +1,4 @@
+
+PASS Elements in a shadow tree should not be accessible from owner document's querySelector() method. 
+PASS Elements in a shadow tree should not be accessible from owner document's querySelectorAll() method. 
+

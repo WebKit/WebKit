@@ -1,0 +1,16 @@
+
+PASS <head> and <body> in a shadow tree should not be accessible from owner document's "head" and "body" properties, respectively. 
+PASS The content of title element in a shadow tree should not be accessible from owner document's "title" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "images" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "embeds" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "plugins" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "links" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "forms" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "scripts" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's getElementsByName() method. 
+PASS Elements in a shadow tree should not be accessible from owner document's "anchors" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's "all" attribute. 
+PASS Elements in a shadow tree should not be accessible from owner document's getElementsByTagName() method. 
+PASS Elements in a shadow tree should not be accessible from owner document's getElementsByTagNameNS() method. 
+PASS Elements in a shadow tree should not be accessible from owner document's getElementById() method. 
+

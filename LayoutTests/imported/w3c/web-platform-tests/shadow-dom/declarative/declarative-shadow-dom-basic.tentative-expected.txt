@@ -1,0 +1,21 @@
+
+FAIL Declarative Shadow DOM: Basic test assert_equals: No leftover template node expected null but got Element node <template shadowroot="open">
+    <slot id="s1" name="slot...
+FAIL Declarative Shadow DOM: Feature detection assert_true: Unable to feature detect expected true got false
+FAIL Declarative Shadow DOM: Fragment parser basic test assert_equals: No leftover template node expected null but got Element node <template shadowroot="open">
+        <slot id="s1" name="...
+PASS Declarative Shadow DOM: Invalid shadow root attribute 
+FAIL Declarative Shadow DOM: Closed shadow root attribute assert_equals: No template - converted to shadow root expected null but got Element node <template shadowroot="closed">
+      </template>
+FAIL Declarative Shadow DOM: Missing closing tag assert_equals: No leftover template node expected null but got Element node <template shadowroot="open">
+        <slot id="s1" name="...
+FAIL Declarative Shadow DOM: delegates focus attribute assert_true: No shadow root found expected true got false
+PASS Declarative Shadow DOM: innerHTML root element 
+FAIL Declarative Shadow DOM: Multiple roots assert_equals: No leftover template nodes from either root expected null but got Element node <template shadowroot="open">
+    <span>root 1</span>
+  </...
+FAIL Declarative Shadow DOM: template containing declarative shadow root assert_true: Inner div should have a shadow root expected true got false
+FAIL Declarative Shadow DOM: template containing declarative shadow root and UA shadow root assert_true: Inner div should have a shadow root expected true got false
+PASS Declarative Shadow DOM: template containing closed declarative shadow root and UA shadow root 
+PASS Declarative Shadow DOM: template root element 
+

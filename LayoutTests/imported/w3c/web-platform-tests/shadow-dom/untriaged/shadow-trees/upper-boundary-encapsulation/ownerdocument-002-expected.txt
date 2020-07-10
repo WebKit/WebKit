@@ -1,0 +1,19 @@
+
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "article" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "aside" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "blockquote" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "body" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "div" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "footer" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h1" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h2" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h3" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h4" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h5" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h6" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "header" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "nav" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "p" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "section" element. 
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "span" element. 
+

@@ -1,0 +1,6 @@
+
+PASS The parentNode attribute of a shadow root must always return null. 
+PASS The parentElement attribute of a shadow root must always return null. 
+PASS The parentNode attribute of a shadow root must always return null, even if the shadow root is nested inside another shadow root. 
+PASS The parentElement attribute of a shadow root must always return null, even if the shadow root is nested inside another shadow root. 
+

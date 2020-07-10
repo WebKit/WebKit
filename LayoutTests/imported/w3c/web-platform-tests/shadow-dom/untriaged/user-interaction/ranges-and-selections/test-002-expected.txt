@@ -1,0 +1,4 @@
+
+FAIL A_07_01_02_T01 s.getSelection is not a function. (In 's.getSelection()', 's.getSelection' is undefined)
+FAIL A_07_07_02_T02 s.getSelection is not a function. (In 's.getSelection()', 's.getSelection' is undefined)
+

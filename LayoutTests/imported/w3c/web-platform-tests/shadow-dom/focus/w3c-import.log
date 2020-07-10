@@ -15,11 +15,20 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/DocumentOrShadowRoot-activeElement.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-slot-one.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-tabindex.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-negative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-not-set-scrollable.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-not-set.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-one.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-scrollable.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero.html

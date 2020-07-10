@@ -1,0 +1,19 @@
+
+FAIL attachShadow can take slotAssignment parameter. assert_throws_js: others should throw exception function "() => {
+    tTree.host3.attachShadow({ mode: 'open', slotAssignment: 'exceptional' })}" did not throw
+FAIL Imperative slot API throws exception when not slotAssignment != 'manual'. assert_throws_dom: function "() => { tTree.s1.assign([]); }" threw object "TypeError: tTree.s1.assign is not a function. (In 'tTree.s1.assign([])', 'tTree.s1.assign' is undefined)" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL Imperative slot API throws exception when slottable parentNode != slot's host. assert_throws_dom: function "() => { tTree.s2.assign([tTree.c2]); }" threw object "TypeError: tTree.s2.assign is not a function. (In 'tTree.s2.assign([tTree.c2])', 'tTree.s2.assign' is undefined)" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL Imperative slot API can assign nodes in manual slot assignment. assert_equals: expected null but got Element node <slot id="s1"></slot>
+FAIL Order of slottables is preserved in manual slot assignment. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c2, tTree.c3, tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Previously assigned slottable is moved to new slot when it's reassigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c2, tTree.c3, tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Order and assignment of nodes are preserved during multiple assignment in a row. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Assigning invalid nodes causes exception and slot returns to its previous state. assert_equals: expected "NotAllowedError" but got "TypeError"
+FAIL Moving a slot to a new host, the slot loses its previously assigned slottables. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2, tTree.c3])', 'tTree.s1.assign' is undefined)
+FAIL Moving a slot's tree order position within a shadow host has no impact on its assigned slottables. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2, tTree.c3])', 'tTree.s1.assign' is undefined)
+FAIL Appending slottable to different host, it loses slot assignment. It can be re-assigned within a new host. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2, tTree.c3])', 'tTree.s1.assign' is undefined)
+FAIL Previously assigned node should not be assigned if slot moved to a new shadow root. The slot remains empty when moved back, no trigger recalc. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Previously assigned node should not be assigned if slot moved to a new shadow root. The slot remains empty when moved back, trigger recalc. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Assignment with the same node in parameters should be ignored, last one wins. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c1, tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Removing a slot from DOM resets its slottable's slot assignment. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2, tTree.c3])', 'tTree.s1.assign' is undefined)
+FAIL A slot should be cleared of assigned nodes even if it's re-inserted into the same shadow root. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+

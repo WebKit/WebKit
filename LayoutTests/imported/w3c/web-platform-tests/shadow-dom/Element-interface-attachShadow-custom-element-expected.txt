@@ -4,7 +4,7 @@ Harness Error (FAIL), message = TypeError: The superclass is not a constructor.
 
 PASS Element.attachShadow must create an instance of ShadowRoot for autonomous custom elements 
 PASS Element.attachShadow must create an instance of ShadowRoot for undefined autonomous custom elements 
-FAIL Element.attachShadow for an autonomous custom element with disabledFeatures=["shadow"] should throw a NotSupportedError assert_throws: Definition, not a host function "() => {
+FAIL Element.attachShadow for an autonomous custom element with disabledFeatures=["shadow"] should throw a NotSupportedError assert_throws_dom: Definition, not a host function "() => {
     document.createElement('shadow-disabled-element').attachShadow({mode: 'closed'});
   }" did not throw
 FAIL Element.attachShadow for a customized built-in element with disabledFeatures=["shadow"] should throw a NotSupportedError The superclass is not a constructor.

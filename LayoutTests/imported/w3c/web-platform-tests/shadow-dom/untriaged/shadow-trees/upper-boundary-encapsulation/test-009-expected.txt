@@ -1,0 +1,16 @@
+
+PASS A_04_01_09_T01 
+PASS A_04_01_09_T03 
+PASS A_04_01_09_T05 
+PASS A_04_01_09_T06 
+PASS A_04_01_09_T07 
+PASS A_04_01_09_T08 
+PASS A_04_01_09_T09 
+PASS A_04_01_09_T10 
+PASS A_04_01_09_T11 
+FAIL A_04_01_09_T12 assert_equals: d.querySelectorAll('div:last-child') return wrong result expected 2 but got 1
+PASS A_04_01_09_T13 
+PASS A_04_01_09_T14 
+PASS A_04_01_09_T15 
+PASS A_04_01_09_T16 
+
