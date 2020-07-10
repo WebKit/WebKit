@@ -33,9 +33,11 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class HTMLCanvasElement;
 class WebXRWebGLLayer;
 struct XRRenderStateInit;
 
@@ -49,6 +51,7 @@ public:
     double depthFar() const;
     Optional<double> inlineVerticalFieldOfView() const;
     RefPtr<WebXRWebGLLayer> baseLayer() const;
+    HTMLCanvasElement* outputCanvas() const;
 
 private:
     explicit WebXRRenderState(Optional<double>&& fieldOfView);
@@ -61,6 +64,7 @@ private:
     } m_depth;
     Optional<double> m_inlineVerticalFieldOfView; // in radians
     RefPtr<WebXRWebGLLayer> m_baseLayer;
+    WeakPtr<HTMLCanvasElement> m_outputCanvas;
 };
 
 } // namespace WebCore

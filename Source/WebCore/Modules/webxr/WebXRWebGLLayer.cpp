@@ -91,19 +91,6 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& se
     );
 }
 
-// https://immersive-web.github.io/webxr/#native-webgl-framebuffer-resolution
-IntSize WebXRWebGLLayer::computeNativeWebGLFramebufferResolution()
-{
-    // FIXME: implement this
-    return { 1, 1 };
-}
-
-// https://immersive-web.github.io/webxr/#recommended-webgl-framebuffer-resolution
-IntSize WebXRWebGLLayer::computeRecommendedWebGLFramebufferResolution()
-{
-    return computeNativeWebGLFramebufferResolution();
-}
-
 WebXRWebGLLayer::WebXRWebGLLayer(Ref<WebXRSession>&& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
     : WebXRLayer(session->scriptExecutionContext())
     , m_session(WTFMove(session))
@@ -127,7 +114,7 @@ WebXRWebGLLayer::WebXRWebGLLayer(Ref<WebXRSession>&& session, WebXRRenderingCont
         m_antialias = init.antialias;
 
         //  2. Let framebufferSize be the recommended WebGL framebuffer resolution multiplied by layerInit's framebufferScaleFactor.
-        IntSize recommendedSize = computeRecommendedWebGLFramebufferResolution();
+        IntSize recommendedSize = m_session->recommendedWebGLFramebufferResolution();
         m_framebuffer.width = recommendedSize.width() * init.framebufferScaleFactor;
         m_framebuffer.height = recommendedSize.height() * init.framebufferScaleFactor;
 
@@ -204,8 +191,8 @@ double WebXRWebGLLayer::getNativeFramebufferScaleFactor(const WebXRSession& sess
     if (session.ended())
         return 0.0;
 
-    IntSize nativeSize = computeNativeWebGLFramebufferResolution();
-    IntSize recommendedSize = computeRecommendedWebGLFramebufferResolution();
+    IntSize nativeSize = session.nativeWebGLFramebufferResolution();
+    IntSize recommendedSize = session.recommendedWebGLFramebufferResolution();
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!recommendedSize.isZero());
     return (nativeSize / recommendedSize).width();

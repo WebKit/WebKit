@@ -238,6 +238,24 @@ void WebXRSession::cancelAnimationFrame(unsigned callbackId)
         m_runningCallbacks[position]->cancel();
 }
 
+// https://immersive-web.github.io/webxr/#native-webgl-framebuffer-resolution
+IntSize WebXRSession::nativeWebGLFramebufferResolution() const
+{
+    if (m_mode == XRSessionMode::Inline) {
+        // FIXME: replace the conditional by ASSERTs once we properly initialize the outputCanvas.
+        return m_activeRenderState && m_activeRenderState->outputCanvas() ? m_activeRenderState->outputCanvas()->size() : IntSize(1, 1);
+    }
+
+    return recommendedWebGLFramebufferResolution();
+}
+
+// https://immersive-web.github.io/webxr/#recommended-webgl-framebuffer-resolution
+IntSize WebXRSession::recommendedWebGLFramebufferResolution() const
+{
+    ASSERT(m_device);
+    return m_device->recommendedResolution(m_mode);
+}
+
 // https://immersive-web.github.io/webxr/#shut-down-the-session
 void WebXRSession::shutdown()
 {

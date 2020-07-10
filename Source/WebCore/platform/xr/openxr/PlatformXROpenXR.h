@@ -22,6 +22,8 @@
 #if ENABLE(WEBXR)
 #include "PlatformXR.h"
 
+#include <wtf/HashMap.h>
+
 #if USE_OPENXR
 #include <openxr/openxr.h>
 
@@ -45,6 +47,14 @@ public:
     XrSystemId xrSystemId() const { return m_systemId; }
 private:
     void collectSupportedSessionModes();
+    void enumerateConfigurationViews();
+
+    WebCore::IntSize recommendedResolution(SessionMode) final;
+
+    using ViewConfigurationPropertiesMap = HashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
+    ViewConfigurationPropertiesMap m_viewConfigurationProperties;
+    using ViewConfigurationViewsMap = HashMap<XrViewConfigurationType, Vector<XrViewConfigurationView>, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
+    ViewConfigurationViewsMap m_configurationViews;
 
     XrSystemId m_systemId;
     XrInstance m_instance;

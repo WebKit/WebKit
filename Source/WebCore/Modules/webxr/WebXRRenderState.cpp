@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "HTMLCanvasElement.h"
 #include "WebXRWebGLLayer.h"
 #include "XRRenderStateInit.h"
 #include <wtf/IsoMallocInlines.h>
@@ -73,6 +74,11 @@ Optional<double> WebXRRenderState::inlineVerticalFieldOfView() const
 RefPtr<WebXRWebGLLayer> WebXRRenderState::baseLayer() const
 {
     return m_baseLayer;
+}
+
+HTMLCanvasElement* WebXRRenderState::outputCanvas() const
+{
+    return m_outputCanvas.get();
 }
 
 } // namespace WebCore

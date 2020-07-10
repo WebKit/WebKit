@@ -1,3 +1,45 @@
+2020-07-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Retrieve WebGL framebuffer resolution from XR devices
+        https://bugs.webkit.org/show_bug.cgi?id=213886
+
+        Reviewed by Carlos Garcia Campos.
+
+        The recommended WebGL framebuffer resolution should be retrieved from the actual XR device being used.
+        Implemented the OpenXR machinery to retrieve it from the XR system. We are also moving the methods that
+        call the platform code to the XRSession as specs define, instead of having them inside the XRWebGLLayer.
+
+        Finally this patch is also removing a unused definition in OpenXR plaform code and properly initializing
+        a OpenXR struct. The missing initialization was the source of errors when querying api layer properties.
+        The patch is also properly setting the SessionMode::Inline when XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO
+        is found. It used to set SessionMode::ImmersiveAr instead, but that's wrong, we should only care about
+        ImmersiveAr session mode once the WebXR AR module is implemented.
+
+        * Modules/webxr/WebXRRenderState.cpp:
+        (WebCore::WebXRRenderState::outputCanvas const): Return render state's canvas.
+        * Modules/webxr/WebXRRenderState.h: Added a m_outputCanvas member with its getter.
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::nativeWebGLFramebufferResolution const): Moved from WebXRWebGLLayer and reimplemented.
+        (WebCore::WebXRSession::recommendedWebGLFramebufferResolution const): Ditto.
+        * Modules/webxr/WebXRSession.h:
+        * Modules/webxr/WebXRWebGLLayer.cpp:
+        (WebCore::WebXRWebGLLayer::WebXRWebGLLayer):
+        (WebCore::WebXRWebGLLayer::getNativeFramebufferScaleFactor): Call the session to get native and recommended
+        resolutions.
+        (WebCore::WebXRWebGLLayer::computeNativeWebGLFramebufferResolution): Deleted.
+        (WebCore::WebXRWebGLLayer::computeRecommendedWebGLFramebufferResolution): Ditto.
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::recommendedResolution): New virtual method with default implementation.
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::Instance::Impl::enumerateApiLayerProperties const): Added initialization of the XrApiLayerProperties
+        objects. The call to xrEnumerateApiLayerProperties succeeds now.
+        (PlatformXR::OpenXRDevice::OpenXRDevice): Call enumerateConfigurationViews().
+        (PlatformXR::OpenXRDevice::collectSupportedSessionModes): Fill in the m_viewConfigurationProperties map.
+        (PlatformXR::OpenXRDevice::enumerateConfigurationViews): New method that retrieves the XR device views for each
+        supported configuration.
+        (PlatformXR::OpenXRDevice::recommendedResolution): Return the recommended resolution for a given SessionMode.
+        * platform/xr/openxr/PlatformXROpenXR.h: Added some new methods and attributes.
+
 2020-07-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][MarginCollapsing] Margins do not collapse through when the box has clearance.

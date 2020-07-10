@@ -76,11 +76,13 @@ public:
     unsigned requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
     void cancelAnimationFrame(unsigned callbackId);
 
+    IntSize nativeWebGLFramebufferResolution() const;
+    IntSize recommendedWebGLFramebufferResolution() const;
+
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     void end(EndPromise&&);
-
     bool ended() const { return m_ended; }
 
     XRSessionMode mode() const { return m_mode; }

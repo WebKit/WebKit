@@ -70,7 +70,6 @@ public:
     ~Impl();
 
 #if USE_OPENXR
-    Optional<Vector<SessionMode>> collectSupportedSessionModes(OpenXRDevice&);
     XrInstance xrInstance() const { return m_instance; }
 #endif
 
@@ -95,8 +94,15 @@ void Instance::Impl::enumerateApiLayerProperties() const
         return;
     }
 
-    Vector<XrApiLayerProperties> properties(propertyCountOutput);
-    result = xrEnumerateApiLayerProperties(propertyCountOutput, nullptr, properties.data());
+    Vector<XrApiLayerProperties> properties(propertyCountOutput,
+        [] {
+            XrApiLayerProperties object;
+            std::memset(&object, 0, sizeof(XrApiLayerProperties));
+            object.type = XR_TYPE_API_LAYER_PROPERTIES;
+            return object;
+        }());
+    result = xrEnumerateApiLayerProperties(propertyCountOutput, &propertyCountOutput, properties.data());
+
     RETURN_IF_FAILED(result, "xrEnumerateApiLayerProperties()", m_instance);
     LOG(XR, "xrEnumerateApiLayerProperties(): %zu properties\n", properties.size());
 }
@@ -213,6 +219,7 @@ OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance)
         LOG(XR, "xrGetSystemProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
 
     collectSupportedSessionModes();
+    enumerateConfigurationViews();
 }
 
 void OpenXRDevice::collectSupportedSessionModes()
@@ -232,18 +239,56 @@ void OpenXRDevice::collectSupportedSessionModes()
             LOG(XR, "xrGetViewConfigurationProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
             continue;
         }
-        switch (viewConfigurationProperties.viewConfigurationType) {
+        auto configType = viewConfigurationProperties.viewConfigurationType;
+        switch (configType) {
         case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO:
-            setEnabledFeatures(SessionMode::ImmersiveAr, { });
+            setEnabledFeatures(SessionMode::Inline, { });
             break;
         case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO:
             setEnabledFeatures(SessionMode::ImmersiveVr, { });
             break;
         default:
-            break;
+            continue;
         };
+        m_viewConfigurationProperties.add(configType, WTFMove(viewConfigurationProperties));
     }
 }
+
+void OpenXRDevice::enumerateConfigurationViews()
+{
+    for (auto& config : m_viewConfigurationProperties.values()) {
+        uint32_t viewCount;
+        auto configType = config.viewConfigurationType;
+        auto result = xrEnumerateViewConfigurationViews(m_instance, m_systemId, configType, 0, &viewCount, nullptr);
+        if (result != XR_SUCCESS) {
+            LOG(XR, "%s %s: %s\n", __func__, "xrEnumerateViewConfigurationViews", resultToString(result, m_instance).utf8().data());
+            continue;
+        }
+
+        Vector<XrViewConfigurationView> configViews(viewCount,
+            [] {
+                XrViewConfigurationView object;
+                std::memset(&object, 0, sizeof(XrViewConfigurationView));
+                object.type = XR_TYPE_VIEW_CONFIGURATION_VIEW;
+                return object;
+            }());
+        result = xrEnumerateViewConfigurationViews(m_instance, m_systemId, configType, viewCount, &viewCount, configViews.data());
+        if (result != XR_SUCCESS)
+            continue;
+        m_configurationViews.add(configType, WTFMove(configViews));
+    }
+}
+
+WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
+{
+    auto configType = mode == SessionMode::Inline ? XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO : XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+    auto viewsIterator = m_configurationViews.find(configType);
+    if (viewsIterator != m_configurationViews.end())
+        return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
+    return Device::recommendedResolution(mode);
+}
+
+
 #endif // USE_OPENXR
 
 } // namespace PlatformXR

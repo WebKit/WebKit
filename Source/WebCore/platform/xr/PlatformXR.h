@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include "IntSize.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
@@ -52,6 +53,8 @@ public:
     bool supports(SessionMode mode) const { return m_enabledFeaturesMap.contains(mode); }
     void setEnabledFeatures(SessionMode mode, const ListOfEnabledFeatures& features) { m_enabledFeaturesMap.set(mode, features); }
     ListOfEnabledFeatures enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
+
+    virtual WebCore::IntSize recommendedResolution(SessionMode) { return { 1, 1 }; }
 
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
 
