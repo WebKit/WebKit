@@ -1,5 +1,12 @@
 2020-07-10  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Unreviewed, prospective API test bot fix...
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setVolume): I suppose changing the audio volume to 0 wasn't intended :)
+
+2020-07-10  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, remove debug printf after r264219.
 
         * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
