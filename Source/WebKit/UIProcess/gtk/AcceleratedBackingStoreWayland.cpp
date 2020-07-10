@@ -559,6 +559,8 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
     cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
     cairo_set_operator(cr.get(), CAIRO_OPERATOR_OVER);
     cairo_paint(cr.get());
+
+    cairo_surface_flush(m_surface.get());
 }
 #else
 bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
@@ -615,6 +617,8 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     cairo_fill(cr);
 
     cairo_restore(cr);
+
+    cairo_surface_flush(m_surface.get());
 
     return true;
 }

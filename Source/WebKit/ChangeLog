@@ -1,5 +1,19 @@
 2020-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Flush the cairo surface after painting when using software
+        https://bugs.webkit.org/show_bug.cgi?id=214177
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is similar to bug #210636 but it happens under wayland when using GTK4. It's good idea to flush always
+        after painting in any case, so we do ity in case of GTK3 as well.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::snapshot): Call cairo_surface_flush() after drawing.
+        (WebKit::AcceleratedBackingStoreWayland::paint): Ditto.
+
+2020-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK4 build
 
         * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
