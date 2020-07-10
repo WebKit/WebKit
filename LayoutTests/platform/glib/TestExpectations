@@ -59,6 +59,19 @@ webkit.org/b/214068 accessibility/textarea-selected-text-range.html [ Timeout ]
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Cairo-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/214192 [ Debug ] imported/blink/fast/gradients/large-horizontal-gradient.html [ Crash ]
+webkit.org/b/214192 [ Debug ] imported/blink/fast/gradients/large-vertical-gradient.html [ Crash ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Cairo-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -415,7 +428,7 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
-webkit.org/b/175585 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
+webkit.org/b/175586 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
 
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure Pass ]
 
