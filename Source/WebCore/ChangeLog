@@ -1,3 +1,110 @@
+2020-07-10  Sam Weinig  <weinig@apple.com>
+
+        Part 4 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them
+        https://bugs.webkit.org/show_bug.cgi?id=214158
+
+        Reviewed by Darin Adler.
+
+        Removes SimpleColor!
+        
+        Alas, makeSimpleColor() remains for now, seeking a new name in a follow up.
+
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::SimpleColor): Deleted.
+        (WebCore::SimpleColor::alphaComponent const): Deleted.
+        (WebCore::SimpleColor::alphaComponentAsFloat const): Deleted.
+        (WebCore::SimpleColor::isOpaque const): Deleted.
+        (WebCore::SimpleColor::isVisible const): Deleted.
+        (WebCore::SimpleColor::colorWithAlpha const): Deleted.
+        (WebCore::SimpleColor::invertedColorWithAlpha const): Deleted.
+        (WebCore::SimpleColor::asSRGBA const): Deleted.
+        (WebCore::SimpleColor::get const): Deleted.
+        (): Deleted.
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        Remove the SimpleColor class.  
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::operator=):
+        (WebCore::Color::lightened const):
+        (WebCore::Color::darkened const):
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::invertedColorWithAlpha const):
+        (WebCore::Color::colorSpaceAndComponents const):
+        * platform/graphics/Color.h:
+        (WebCore::Color::isHashTableDeletedValue const):
+        (WebCore::Color::isValid const):
+        (WebCore::Color::isSemantic const):
+        (WebCore::Color::isOpaque const):
+        (WebCore::Color::isVisible const):
+        (WebCore::Color::alpha const):
+        (WebCore::Color::alphaAsFloat const):
+        (WebCore::Color::isExtended const):
+        (WebCore::Color::isInline const):
+        (WebCore::Color::tagAsSemantic):
+        (WebCore::Color::tagAsValid):
+        (WebCore::operator==):
+        (WebCore::equalIgnoringSemanticColor):
+        (WebCore::Color::Color):
+        (WebCore::Color::~Color):
+        (WebCore::Color::hash const):
+        (WebCore::Color::toSRGBALossy const):
+        (WebCore::Color::asInline const):
+        (WebCore::Color::setInlineColor):
+        (WebCore::Color::setExtendedColor):
+        (WebCore::Color::isBlackColor):
+        (WebCore::Color::isWhiteColor):
+        (WebCore::Color::encode const):
+        (WebCore::Color::isSimple const): Deleted.
+        (WebCore::Color::asSimple const): Deleted.
+        (WebCore::Color::setSimpleColor): Deleted.
+        - Rename existing uses of Simple with Inline, denoting the inline SRGBA<uint8_t>.
+        - Move multiline functions out of line in the header.
+        - Adds new constructor functions taking Optional<SRGBA<uint8_t>> to make Color(CGColorRef)
+          constructors more straightforward.
+        - Replaces uses of SimpleColor's interface with use of ColorUtilities.h helpers. e.g.
+          Color::invertedColorWithAlpha() now uses the new invertedColorWithOverridenAlpha()
+          helper function. Use of these utilities will be expanded to ExtendedColor in a follow
+          up, allowing us to have just one implementation of these algorithms.
+        
+        * platform/graphics/ColorSerialization.cpp:
+        (WebCore::serializationForCSS):
+        (WebCore::serializationForHTML):
+        (WebCore::serializationForRenderTreeAsText):
+        * platform/graphics/ColorSerialization.h:
+        Replace serialization of SimpleColor with serialization of SRGBA<uint8_t>.
+        
+        * platform/graphics/ColorTypes.h:
+        (WebCore::forEachNonAlphaComponent): Deleted.
+        Removed forEachNonAlphaComponent. Uses replaced by new colorByModifingEachNonAlphaComponent
+        function in ColorUtilities.h
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::colorByModifingEachNonAlphaComponent):
+        (WebCore::convertComponentByteTo<uint8_t>):
+        (WebCore::convertComponentByteTo<float>):
+        (WebCore::convertComponentFloatTo<uint8_t>):
+        (WebCore::convertComponentFloatTo<float>):
+        (WebCore::colorWithOverridenAlpha):
+        (WebCore::invertComponent):
+        (WebCore::invertedColorWithOverridenAlpha):
+        Added heplers to implement color mutation behaviors.
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::makeSimpleColorFromCGColor):
+        (WebCore::Color::Color):
+        (WebCore::cachedCGColor):
+        Switch makeSimpleColorFromCGColor to return an Optional<SRGBA<uint8_t>> to streamline
+        the constructors. Update to use is/asInline functions.
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::nsColor):
+        Update to use is/asInline functions.
+        
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicComponentTransferFilterOperation::transformColor const):
+        Switch to using colorByModifingEachNonAlphaComponent().
+
 2020-07-10  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Unreviewed, prospective API test bot fix...

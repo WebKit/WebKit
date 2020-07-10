@@ -58,13 +58,6 @@ template<typename T> constexpr bool operator!=(const SRGBA<T>& a, const SRGBA<T>
     return !(a == b);
 }
 
-template<typename T, typename Functor> void forEachNonAlphaComponent(SRGBA<T>& color, Functor&& f)
-{
-    color.red = f(color.red);
-    color.green = f(color.green);
-    color.blue = f(color.blue);
-}
-
 
 template<typename T> struct LinearSRGBA {
     T red;

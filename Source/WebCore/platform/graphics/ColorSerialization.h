@@ -29,15 +29,16 @@ namespace WebCore {
 
 class Color;
 class ExtendedColor;
-class SimpleColor;
+
+template<typename> struct SRGBA;
 
 // serializationForHTML returns the color serialized according to HTML5 <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
 // serializationForCSS returns the color serialized according to CSS
 // serializationForRenderTreeAsText returns the color serialized for DumpRenderTree, #RRGGBB, #RRGGBBAA or the CSS serialization
 
-WEBCORE_EXPORT String serializationForCSS(SimpleColor);
-WEBCORE_EXPORT String serializationForHTML(SimpleColor);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(SimpleColor);
+WEBCORE_EXPORT String serializationForCSS(SRGBA<uint8_t>);
+WEBCORE_EXPORT String serializationForHTML(SRGBA<uint8_t>);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(SRGBA<uint8_t>);
 
 WEBCORE_EXPORT String serializationForCSS(const ExtendedColor&);
 WEBCORE_EXPORT String serializationForHTML(const ExtendedColor&);

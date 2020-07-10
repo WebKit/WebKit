@@ -158,20 +158,20 @@ bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) 
         return true;
     case INVERT: {
         float oneMinusAmount = 1.0f - m_amount;
-        forEachNonAlphaComponent(color, [&](float component) {
+        color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
             return 1.0f - (oneMinusAmount + component * (m_amount - oneMinusAmount));
         });
         return true;
     }
     case CONTRAST: {
         float intercept = -(0.5f * m_amount) + 0.5f;
-        forEachNonAlphaComponent(color, [&](float component) {
+        color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
             return std::clamp<float>(intercept + m_amount * component, 0.0f, 1.0f);
         });
         return true;
     }
     case BRIGHTNESS:
-        forEachNonAlphaComponent(color, [&](float component) {
+        color = colorByModifingEachNonAlphaComponent(color, [&](float component) {
             return std::max<float>(m_amount * component, 0.0f);
         });
         return true;

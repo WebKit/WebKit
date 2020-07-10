@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-// SimpleColor overloads
+// SRGBA<uint8_t> overloads
 
 static char decimalDigit(unsigned number)
 {
@@ -53,7 +53,7 @@ static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
     return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
 }
 
-String serializationForCSS(SimpleColor color)
+String serializationForCSS(SRGBA<uint8_t> color)
 {
     auto [red, green, blue, alpha] = color;
     switch (alpha) {
@@ -66,15 +66,15 @@ String serializationForCSS(SimpleColor color)
     }
 }
 
-String serializationForHTML(SimpleColor color)
+String serializationForHTML(SRGBA<uint8_t> color)
 {
     auto [red, green, blue, alpha] = color;
-    if (color.isOpaque())
+    if (alpha == 0xFF)
         return makeString('#', hex(red, 2, Lowercase), hex(green, 2, Lowercase), hex(blue, 2, Lowercase));
     return serializationForCSS(color);
 }
 
-String serializationForRenderTreeAsText(SimpleColor color)
+String serializationForRenderTreeAsText(SRGBA<uint8_t> color)
 {
     auto [red, green, blue, alpha] = color;
     if (alpha < 0xFF)
@@ -124,21 +124,21 @@ String serializationForCSS(const Color& color)
 {
     if (color.isExtended())
         return serializationForCSS(color.asExtended());
-    return serializationForCSS(color.asSimple());
+    return serializationForCSS(color.asInline());
 }
 
 String serializationForHTML(const Color& color)
 {
     if (color.isExtended())
         return serializationForHTML(color.asExtended());
-    return serializationForHTML(color.asSimple());
+    return serializationForHTML(color.asInline());
 }
 
 String serializationForRenderTreeAsText(const Color& color)
 {
     if (color.isExtended())
         return serializationForRenderTreeAsText(color.asExtended());
-    return serializationForRenderTreeAsText(color.asSimple());
+    return serializationForRenderTreeAsText(color.asInline());
 }
 
 }

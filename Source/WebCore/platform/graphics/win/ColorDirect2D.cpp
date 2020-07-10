@@ -35,7 +35,7 @@ namespace WebCore {
 
 Color::Color(D2D1_COLOR_F color)
 {
-    setSimpleColor(makeSimpleColor(SRGBA { color.r, color.g, color.b, color.a }));
+    setInlineColor(convertToComponentBytes(SRGBA { color.r, color.g, color.b, color.a }));
 }
 
 Color::operator D2D1_COLOR_F() const

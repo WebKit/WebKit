@@ -122,8 +122,8 @@ Color semanticColorFromNSColor(NSColor *color)
 
 NSColor *nsColor(const Color& color)
 {
-    if (color.isSimple()) {
-        switch (Packed::RGBA { color.asSimple().asSRGBA<uint8_t>() }.value) {
+    if (color.isInline()) {
+        switch (Packed::RGBA { color.asInline() }.value) {
         case Packed::RGBA { Color::transparent }.value: {
             static NSColor *clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
             return clearColor;

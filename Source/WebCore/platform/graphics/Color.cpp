@@ -75,7 +75,7 @@ Color& Color::operator=(Color&& other)
         m_colorData.extendedColor->deref();
 
     m_colorData = other.m_colorData;
-    other.m_colorData.simpleColorAndFlags = invalidSimpleColor;
+    other.m_colorData.inlineColorAndFlags = invalidInlineColor;
 
     return *this;
 }
@@ -83,7 +83,7 @@ Color& Color::operator=(Color&& other)
 Color Color::lightened() const
 {
     // Hardcode this common case for speed.
-    if (isSimple() && asSimple() == SimpleColor { black })
+    if (isInline() && asInline() == black)
         return lightenedBlack;
 
     auto [r, g, b, a] = toSRGBALossy<float>();
@@ -100,7 +100,7 @@ Color Color::lightened() const
 Color Color::darkened() const
 {
     // Hardcode this common case for speed.
-    if (isSimple() && asSimple() == SimpleColor { white })
+    if (isInline() && asInline() == white)
         return darkenedWhite;
     
     auto [r, g, b, a] = toSRGBALossy<float>();
@@ -129,7 +129,7 @@ Color Color::colorWithAlpha(float alpha) const
     if (isExtended())
         return asExtended().colorWithAlpha(alpha);
 
-    Color result = asSimple().colorWithAlpha(convertToComponentByte(alpha));
+    Color result = colorWithOverridenAlpha(asInline(), alpha);
 
     // FIXME: Why is preserving the semantic bit desired and/or correct here?
     if (isSemantic())
@@ -141,7 +141,7 @@ Color Color::invertedColorWithAlpha(float alpha) const
 {
     if (isExtended())
         return asExtended().invertedColorWithAlpha(alpha);
-    return asSimple().invertedColorWithAlpha(convertToComponentByte(alpha));
+    return invertedColorWithOverridenAlpha(asInline(), alpha);
 }
 
 Color Color::semanticColor() const
@@ -156,7 +156,7 @@ std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() c
 {
     if (isExtended())
         return { asExtended().colorSpace(), asExtended().components() };
-    return { ColorSpace::SRGB, asColorComponents(asSimple().asSRGBA<float>()) };
+    return { ColorSpace::SRGB, asColorComponents(convertToComponentFloats(asInline())) };
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

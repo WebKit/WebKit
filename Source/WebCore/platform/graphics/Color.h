@@ -56,65 +56,34 @@ class Color {
 public:
     Color() = default;
 
-    Color(SRGBA<uint8_t> color)
-    {
-        setSimpleColor(color);
-    }
+    Color(SRGBA<uint8_t>);
+    Color(Optional<SRGBA<uint8_t>>);
 
     enum SemanticTag { Semantic };
-    Color(SRGBA<uint8_t> color, SemanticTag)
-        : Color(color)
-    {
-        tagAsSemantic();
-    }
+    Color(SRGBA<uint8_t>, SemanticTag);
+    Color(Optional<SRGBA<uint8_t>>, SemanticTag);
 
-    Color(Ref<ExtendedColor>&& extendedColor)
-    {
-        // Zero the union, just in case a 32-bit system only assigns the
-        // top 32 bits when copying the ExtendedColor pointer below.
-        m_colorData.simpleColorAndFlags = 0;
-        m_colorData.extendedColor = &extendedColor.leakRef();
-        ASSERT(isExtended());
-    }
+    Color(Ref<ExtendedColor>&&);
 
-    explicit Color(WTF::HashTableDeletedValueType)
-    {
-        static_assert(deletedHashValue & invalidSimpleColor, "Color's deleted hash value must not look like an ExtendedColor");
-        static_assert(!(deletedHashValue & validSimpleColorBit), "Color's deleted hash value must not look like a valid SimpleColor");
-        static_assert(deletedHashValue & (1 << 4), "Color's deleted hash value must have some bits set that an SimpleColor wouldn't have");
-        m_colorData.simpleColorAndFlags = deletedHashValue;
-        ASSERT(!isExtended());
-    }
-
-    bool isHashTableDeletedValue() const
-    {
-        return m_colorData.simpleColorAndFlags == deletedHashValue;
-    }
-
-    explicit Color(WTF::HashTableEmptyValueType)
-    {
-        static_assert(emptyHashValue & invalidSimpleColor, "Color's empty hash value must not look like an ExtendedColor");
-        static_assert(emptyHashValue & (1 << 4), "Color's deleted hash value must have some bits set that an SimpleColor wouldn't have");
-        m_colorData.simpleColorAndFlags = emptyHashValue;
-        ASSERT(!isExtended());
-    }
+    explicit Color(WTF::HashTableEmptyValueType);
+    explicit Color(WTF::HashTableDeletedValueType);
+    bool isHashTableDeletedValue() const { return m_colorData.inlineColorAndFlags == deletedHashValue; }
 
     WEBCORE_EXPORT Color(const Color&);
     WEBCORE_EXPORT Color(Color&&);
 
-    ~Color()
-    {
-        if (isExtended())
-            m_colorData.extendedColor->deref();
-    }
+    ~Color();
 
-    bool isValid() const { return isExtended() || (m_colorData.simpleColorAndFlags & validSimpleColorBit); }
+    bool isValid() const { return isExtended() || (m_colorData.inlineColorAndFlags & validInlineColorBit); }
 
-    bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asSimple().isOpaque(); }
-    bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asSimple().isVisible(); }
+    // True if the color originated from a CSS semantic color name.
+    bool isSemantic() const { return isInline() && (m_colorData.inlineColorAndFlags & isSemanticInlineColorBit); }
 
-    uint8_t alpha() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asSimple().alphaComponent(); }
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : asSimple().alphaComponentAsFloat(); }
+    bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asInline().alpha == 255; }
+    bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asInline().alpha > 0; }
+
+    uint8_t alpha() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asInline().alpha; }
+    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertToComponentFloat(asInline().alpha); }
 
     unsigned hash() const;
 
@@ -144,9 +113,6 @@ public:
 
     Color semanticColor() const;
 
-    // True if the color originated from a CSS semantic color name.
-    bool isSemantic() const { return isSimple() && (m_colorData.simpleColorAndFlags & isSemanticSimpleColorBit); }
-
 #if PLATFORM(GTK)
     Color(const GdkRGBA&);
     operator GdkRGBA() const;
@@ -172,11 +138,11 @@ public:
     static constexpr auto cyan = makeSimpleColor(0, 255, 255);
     static constexpr auto yellow = makeSimpleColor(255, 255, 0);
 
-    bool isExtended() const { return !(m_colorData.simpleColorAndFlags & invalidSimpleColor); }
-    bool isSimple() const { return !isExtended(); }
+    bool isExtended() const { return !(m_colorData.inlineColorAndFlags & invalidInlineColor); }
+    bool isInline() const { return !isExtended(); }
 
     const ExtendedColor& asExtended() const;
-    const SimpleColor asSimple() const;
+    SRGBA<uint8_t> asInline() const;
 
     WEBCORE_EXPORT Color& operator=(const Color&);
     WEBCORE_EXPORT Color& operator=(Color&&);
@@ -193,30 +159,26 @@ public:
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
-    Color(SimpleColor color)
-        : Color(color.asSRGBA<uint8_t>())
-    {
-    }
+    void setInlineColor(SRGBA<uint8_t>);
+    void setExtendedColor(Ref<ExtendedColor>&&);
 
-    void setSimpleColor(SRGBA<uint8_t>);
-
-    void tagAsSemantic() { m_colorData.simpleColorAndFlags |= isSemanticSimpleColorBit; }
-    void tagAsValid() { m_colorData.simpleColorAndFlags |= validSimpleColor; }
+    void tagAsSemantic() { m_colorData.inlineColorAndFlags |= isSemanticInlineColorBit; }
+    void tagAsValid() { m_colorData.inlineColorAndFlags |= validInlineColor; }
 
     // 0x_______00 is an ExtendedColor pointer.
-    // 0x_______01 is an invalid SimpleColor.
-    // 0x_______11 is a valid SimpleColor.
+    // 0x_______01 is an invalid inline color.
+    // 0x_______11 is a valid inline color.
     static const uint64_t extendedColor = 0x0;
-    static const uint64_t invalidSimpleColor = 0x1;
-    static const uint64_t validSimpleColorBit = 0x2;
-    static const uint64_t validSimpleColor = 0x3;
-    static const uint64_t isSemanticSimpleColorBit = 0x4;
+    static const uint64_t invalidInlineColor = 0x1;
+    static const uint64_t validInlineColorBit = 0x2;
+    static const uint64_t validInlineColor = 0x3;
+    static const uint64_t isSemanticInlineColorBit = 0x4;
 
     static const uint64_t deletedHashValue = 0xFFFFFFFFFFFFFFFD;
     static const uint64_t emptyHashValue = 0xFFFFFFFFFFFFFFFB;
 
     union {
-        uint64_t simpleColorAndFlags { invalidSimpleColor };
+        uint64_t inlineColorAndFlags { invalidInlineColor };
         ExtendedColor* extendedColor;
     } m_colorData;
 };
@@ -239,7 +201,7 @@ inline bool operator==(const Color& a, const Color& b)
     if (a.isExtended() || b.isExtended())
         return extendedColorsEqual(a, b);
 
-    return a.m_colorData.simpleColorAndFlags == b.m_colorData.simpleColorAndFlags;
+    return a.m_colorData.inlineColorAndFlags == b.m_colorData.inlineColorAndFlags;
 }
 
 inline bool operator!=(const Color& a, const Color& b)
@@ -260,21 +222,77 @@ inline bool equalIgnoringSemanticColor(const Color& a, const Color& b)
 {
     if (a.isExtended() || b.isExtended())
         return extendedColorsEqual(a, b);
-    return (a.m_colorData.simpleColorAndFlags & ~Color::isSemanticSimpleColorBit) == (b.m_colorData.simpleColorAndFlags & ~Color::isSemanticSimpleColorBit);
+    return (a.m_colorData.inlineColorAndFlags & ~Color::isSemanticInlineColorBit) == (b.m_colorData.inlineColorAndFlags & ~Color::isSemanticInlineColorBit);
+}
+
+inline Color::Color(SRGBA<uint8_t> color)
+{
+    setInlineColor(color);
+}
+
+inline Color::Color(Optional<SRGBA<uint8_t>> color)
+{
+    if (color)
+        setInlineColor(*color);
+}
+
+inline Color::Color(SRGBA<uint8_t> color, SemanticTag)
+{
+    setInlineColor(color);
+    tagAsSemantic();
+}
+
+inline Color::Color(Optional<SRGBA<uint8_t>> color, SemanticTag)
+{
+    if (color) {
+        setInlineColor(*color);
+        tagAsSemantic();
+    }
+}
+
+inline Color::Color(Ref<ExtendedColor>&& extendedColor)
+{
+    setExtendedColor(WTFMove(extendedColor));
+}
+
+inline Color::Color(WTF::HashTableDeletedValueType)
+{
+    static_assert(deletedHashValue & invalidInlineColor, "Color's deleted hash value must not look like an ExtendedColor");
+    static_assert(!(deletedHashValue & validInlineColorBit), "Color's deleted hash value must not look like a valid InlineColor");
+    static_assert(deletedHashValue & (1 << 4), "Color's deleted hash value must have some bits set that an InlineColor wouldn't have");
+    m_colorData.inlineColorAndFlags = deletedHashValue;
+    ASSERT(!isExtended());
+}
+
+inline Color::Color(WTF::HashTableEmptyValueType)
+{
+    static_assert(emptyHashValue & invalidInlineColor, "Color's empty hash value must not look like an ExtendedColor");
+    static_assert(emptyHashValue & (1 << 4), "Color's deleted hash value must have some bits set that an InlineColor wouldn't have");
+    m_colorData.inlineColorAndFlags = emptyHashValue;
+    ASSERT(!isExtended());
+}
+
+inline Color::~Color()
+{
+    if (isExtended())
+        m_colorData.extendedColor->deref();
 }
 
 inline unsigned Color::hash() const
 {
     if (isExtended())
         return asExtended().hash();
-    return WTF::intHash(m_colorData.simpleColorAndFlags);
+    return WTF::intHash(m_colorData.inlineColorAndFlags);
 }
 
 template<typename T> SRGBA<T> Color::toSRGBALossy() const
 {
     if (isExtended())
         return asExtended().toSRGBALossy<T>();
-    return asSimple().asSRGBA<T>();
+    if constexpr (std::is_same_v<T, uint8_t>)
+        return asInline();
+    if constexpr (std::is_same_v<T, float>)
+        return convertToComponentFloats(asInline());
 }
 
 inline Color Color::invertedColorWithAlpha(Optional<float> alpha) const
@@ -303,30 +321,39 @@ inline const ExtendedColor& Color::asExtended() const
     return *m_colorData.extendedColor;
 }
 
-inline const SimpleColor Color::asSimple() const
+inline SRGBA<uint8_t> Color::asInline() const
 {
-    ASSERT(isSimple());
-    return SimpleColor { asSRGBA(Packed::RGBA { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) }) };
+    ASSERT(isInline());
+    return asSRGBA(Packed::RGBA { static_cast<uint32_t>(m_colorData.inlineColorAndFlags >> 32) });
 }
 
-inline void Color::setSimpleColor(SRGBA<uint8_t> color)
+inline void Color::setInlineColor(SRGBA<uint8_t> color)
 {
-    m_colorData.simpleColorAndFlags = static_cast<uint64_t>(Packed::RGBA { color }.value) << 32;
+    m_colorData.inlineColorAndFlags = static_cast<uint64_t>(Packed::RGBA { color }.value) << 32;
     tagAsValid();
+}
+
+inline void Color::setExtendedColor(Ref<ExtendedColor>&& extendedColor)
+{
+    // Zero the union, just in case a 32-bit system only assigns the
+    // top 32 bits when copying the ExtendedColor pointer below.
+    m_colorData.inlineColorAndFlags = 0;
+    m_colorData.extendedColor = &extendedColor.leakRef();
+    ASSERT(isExtended());
 }
 
 inline bool Color::isBlackColor(const Color& color)
 {
     if (color.isExtended())
         return color.asExtended().isBlack();
-    return color.asSimple() == SimpleColor { Color::black };
+    return color.asInline() == Color::black;
 }
 
 inline bool Color::isWhiteColor(const Color& color)
 {
     if (color.isExtended())
         return color.asExtended().isWhite();
-    return color.asSimple() == SimpleColor { Color::white };
+    return color.asInline() == Color::white;
 }
 
 template<class Encoder>
@@ -355,7 +382,7 @@ void Color::encode(Encoder& encoder) const
     // FIXME: This should encode whether the color is semantic.
 
     encoder << true;
-    encoder << Packed::RGBA { asSimple().asSRGBA<uint8_t>() }.value;
+    encoder << Packed::RGBA { asInline() }.value;
 }
 
 template<class Decoder>
