@@ -47,6 +47,8 @@ public:
     const Vector<double>& axisValues() const final { return m_axisValues; }
     const Vector<double>& buttonValues() const final { return m_buttonValues; }
 
+    const char* source() const final { return "GameController"_s; }
+
 private:
     void setupAsExtendedGamepad();
     void setupAsGamepad();

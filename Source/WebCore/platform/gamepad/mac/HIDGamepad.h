@@ -121,6 +121,8 @@ public:
     const Vector<double>& axisValues() const final { return m_axisValues; }
     const Vector<double>& buttonValues() const final { return m_buttonValues; }
 
+    const char* source() const final { return "HID"_s; }
+
 private:
     void initElements();
     void initElementsFromArray(CFArrayRef);

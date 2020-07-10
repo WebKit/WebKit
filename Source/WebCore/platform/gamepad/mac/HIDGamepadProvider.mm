@@ -31,12 +31,15 @@
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import "PlatformGamepad.h"
+#import <pal/spi/mac/IOKitSPIMac.h>
 #import <wtf/NeverDestroyed.h>
+
+#import "GameControllerSoftLink.h"
 
 namespace WebCore {
 
 static const Seconds connectionDelayInterval { 500_ms };
-static const Seconds inputNotificationDelay { 50_ms };
+static const Seconds hidInputNotificationDelay { 50_ms };
 
 static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, uint32_t usage)
 {
@@ -176,8 +179,58 @@ void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
         closeAndUnscheduleManager();
 }
 
+static bool gameControllerFrameworkWillHandleHIDDevice(IOHIDDeviceRef device)
+{
+    if (!isGameControllerFrameworkAvailable())
+        return false;
+
+    auto deviceService = IOHIDDeviceGetService(device);
+    if (!deviceService)
+        return false;
+
+    // Check the service directly backing this device
+    uint64_t registryID;
+    if (IORegistryEntryGetRegistryEntryID(deviceService, &registryID) != KERN_SUCCESS)
+        return false;
+
+    auto eventSystemClient = adoptCF(IOHIDEventSystemClientCreate(nullptr));
+    IOHIDEventSystemClientSetMatching(eventSystemClient.get(), nullptr);
+    auto serviceClient = adoptCF(IOHIDEventSystemClientCopyServiceForRegistryID(eventSystemClient.get(), registryID));
+    if (serviceClient) {
+        if (ControllerClassForService(serviceClient.get()))
+            return true;
+    }
+
+    // Otherwise, check its grandchild service
+    io_registry_entry_t child;
+    if (IORegistryEntryGetChildEntry(deviceService, kIOServicePlane, &child) != KERN_SUCCESS)
+        return false;
+    if (!child)
+        return false;
+
+    if (IORegistryEntryGetChildEntry(child, kIOServicePlane, &child) != KERN_SUCCESS)
+        return false;
+    if (!child)
+        return false;
+
+    if (IORegistryEntryGetRegistryEntryID(child, &registryID) != KERN_SUCCESS)
+        return false;
+
+    serviceClient = adoptCF(IOHIDEventSystemClientCopyServiceForRegistryID(eventSystemClient.get(), registryID));
+    if (!serviceClient)
+        return false;
+
+    return ControllerClassForService(serviceClient.get());
+}
+
 void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 {
+    if (m_ignoresGameControllerFrameworkDevices && gameControllerFrameworkWillHandleHIDDevice(device)) {
+        LOG(Gamepad, "GameController framework will handle attached device %p - HIDGamepadProvider ignoring it", device);
+        m_gameControllerManagedGamepads.add(device);
+        return;
+    }
+
     ASSERT(!m_gamepadMap.get(device));
 
     LOG(Gamepad, "HIDGamepadProvider device %p added", device);
@@ -201,16 +254,28 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
             m_initialGamepadsConnectedTimer.startOneShot(0_s);
     }
 
+    auto eventVisibility = m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No;
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
+        client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
+
+    // If we are working together with the GameController provider, let it know
+    // that gamepads should now be visible.
+    if (m_ignoresGameControllerFrameworkDevices && eventVisibility == EventMakesGamepadsVisible::Yes)
+        GameControllerGamepadProvider::singleton().makeInvisibleGamepadsVisible();
 }
 
 void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 {
-    LOG(Gamepad, "HIDGamepadProvider device %p removed", device);
-
     std::unique_ptr<HIDGamepad> removedGamepad = removeGamepadForDevice(device);
-    ASSERT(removedGamepad);
+
+    if (!removedGamepad) {
+        auto taken = m_gameControllerManagedGamepads.take(device);
+        ASSERT_UNUSED(taken, taken);
+        LOG(Gamepad, "HIDGamepadProvider informed of removal of device %p, which is managed by GameController framework. Ignoring.", device);
+        return;
+    }
+
+    LOG(Gamepad, "HIDGamepadProvider device %p removed", device);
 
     for (auto& client : m_clients)
         client->platformGamepadDisconnected(*removedGamepad);
@@ -232,7 +297,7 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
     // This isActive check is necessary as we want to delay input notifications from the time of the first input,
     // and not push the notification out on every subsequent input.
     if (!m_inputNotificationTimer.isActive())
-        m_inputNotificationTimer.startOneShot(inputNotificationDelay);
+        m_inputNotificationTimer.startOneShot(hidInputNotificationDelay);
 }
 
 void HIDGamepadProvider::inputNotificationTimerFired()
@@ -249,7 +314,8 @@ void HIDGamepadProvider::inputNotificationTimerFired()
 std::unique_ptr<HIDGamepad> HIDGamepadProvider::removeGamepadForDevice(IOHIDDeviceRef device)
 {
     std::unique_ptr<HIDGamepad> result = m_gamepadMap.take(device);
-    ASSERT(result);
+    if (!result)
+        return nullptr;
 
     auto i = m_gamepadVector.find(result.get());
     if (i != notFound)

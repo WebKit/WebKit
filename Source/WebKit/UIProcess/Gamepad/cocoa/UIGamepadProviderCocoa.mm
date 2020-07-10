@@ -31,6 +31,7 @@
 #import <WebCore/GameControllerGamepadProvider.h>
 #import <WebCore/HIDGamepadProvider.h>
 #import <WebCore/MockGamepadProvider.h>
+#import <WebCore/MultiGamepadProvider.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -53,7 +54,7 @@ void UIGamepadProvider::platformSetDefaultGamepadProvider()
     if (useGameControllerFramework)
         GamepadProvider::setSharedProvider(GameControllerGamepadProvider::singleton());
     else
-        GamepadProvider::setSharedProvider(HIDGamepadProvider::singleton());
+        GamepadProvider::setSharedProvider(MultiGamepadProvider::singleton());
 #endif
 }
 

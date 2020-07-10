@@ -25,19 +25,19 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD) && PLATFORM(COCOA)
-
-#import "GameControllerSPI.h"
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, GameController)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCController)
-
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCControllerDidConnectNotification, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCControllerDidDisconnectNotification, NSString *)
-
 #if PLATFORM(MAC)
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
-#endif
+#if USE(APPLE_INTERNAL_SDK)
 
-#endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
+#import <IOKit/hid/IOHIDEventSystemClient.h>
+
+#else
+
+WTF_EXTERN_C_BEGIN
+typedef struct CF_BRIDGED_TYPE(id) __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
+IOHIDEventSystemClientRef IOHIDEventSystemClientCreate(CFAllocatorRef);
+void IOHIDEventSystemClientSetMatching(IOHIDEventSystemClientRef, CFDictionaryRef);
+IOHIDServiceClientRef IOHIDEventSystemClientCopyServiceForRegistryID(IOHIDEventSystemClientRef, uint64_t registryID);
+WTF_EXTERN_C_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // PLATFORM(MAC)

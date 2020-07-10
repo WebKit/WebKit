@@ -257,7 +257,8 @@ platform/cocoa/WebCoreNSErrorExtras.mm
 platform/gamepad/cocoa/GameControllerGamepad.mm
 platform/gamepad/cocoa/GameControllerGamepadProvider.mm
 platform/gamepad/mac/HIDGamepad.cpp
-platform/gamepad/mac/HIDGamepadProvider.cpp
+platform/gamepad/mac/HIDGamepadProvider.mm
+platform/gamepad/mac/MultiGamepadProvider.mm
 platform/graphics/MediaPlaybackTargetPicker.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify

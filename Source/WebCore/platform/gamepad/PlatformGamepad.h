@@ -41,10 +41,12 @@ public:
     const String& id() const { return m_id; }
     const String& mapping() const { return m_mapping; }
     unsigned index() const { return m_index; }
-    MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
+    virtual MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     MonotonicTime connectTime() const { return m_connectTime; }
     virtual const Vector<double>& axisValues() const = 0;
     virtual const Vector<double>& buttonValues() const = 0;
+
+    virtual const char* source() const { return "Unknown"_s; }
 
 protected:
     explicit PlatformGamepad(unsigned index)

@@ -29,11 +29,12 @@
 #if ENABLE(GAMEPAD)
 
 #import "GameControllerGamepad.h"
-#import "GameControllerSoftLink.h"
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import <GameController/GameController.h>
 #import <wtf/NeverDestroyed.h>
+
+#import "GameControllerSoftLink.h"
 
 namespace WebCore {
 
@@ -75,7 +76,7 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         return;
     }
 
-    makeInvisibileGamepadsVisible();
+    makeInvisibleGamepadsVisible();
 
     for (auto& client : m_clients)
         client->platformGamepadConnected(*m_gamepadVector[index], EventMakesGamepadsVisible::Yes);
@@ -170,10 +171,10 @@ void GameControllerGamepadProvider::gamepadHadInput(GameControllerGamepad&, bool
         m_inputNotificationTimer.startOneShot(inputNotificationDelay);
 
     if (hadButtonPresses)
-        m_shouldMakeInvisibileGamepadsVisible = true;
+        m_shouldMakeInvisibleGamepadsVisible = true;
 }
 
-void GameControllerGamepadProvider::makeInvisibileGamepadsVisible()
+void GameControllerGamepadProvider::makeInvisibleGamepadsVisible()
 {
     for (auto* gamepad : m_invisibleGamepads) {
         for (auto& client : m_clients)
@@ -185,12 +186,12 @@ void GameControllerGamepadProvider::makeInvisibileGamepadsVisible()
 
 void GameControllerGamepadProvider::inputNotificationTimerFired()
 {
-    if (m_shouldMakeInvisibileGamepadsVisible) {
+    if (m_shouldMakeInvisibleGamepadsVisible) {
         setShouldMakeGamepadsVisibile();
-        makeInvisibileGamepadsVisible();
+        makeInvisibleGamepadsVisible();
     }
 
-    m_shouldMakeInvisibileGamepadsVisible = false;
+    m_shouldMakeInvisibleGamepadsVisible = false;
 
     dispatchPlatformGamepadInputActivity();
 }

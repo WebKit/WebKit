@@ -36,4 +36,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebCore, GameController, GCController)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCControllerDidConnectNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCControllerDidDisconnectNotification, NSString *)
 
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
+#endif
+
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)

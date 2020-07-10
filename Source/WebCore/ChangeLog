@@ -1,3 +1,72 @@
+2020-07-09  Brady Eidson  <beidson@apple.com>
+
+        Multiplex the HID and GameController gamepad providers on Mac.
+        <rdar://problem/63192532> and https://bugs.webkit.org/show_bug.cgi?id=214126
+
+        Reviewed by Tim Horton.
+        
+        Mac has already supported both the HID provider and GameController provider.
+        
+        By adding an intermediate provider to multiplex both and tweaking a few other things,
+        it can support both at the same time.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/gamepad/PlatformGamepad.h:
+        (WebCore::PlatformGamepad::lastUpdateTime const):
+        (WebCore::PlatformGamepad::source const):
+
+        * platform/gamepad/cocoa/GameControllerGamepad.h:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.h:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect):
+        (WebCore::GameControllerGamepadProvider::gamepadHadInput):
+        (WebCore::GameControllerGamepadProvider::makeInvisibleGamepadsVisible):
+        (WebCore::GameControllerGamepadProvider::inputNotificationTimerFired):
+        (WebCore::GameControllerGamepadProvider::makeInvisibileGamepadsVisible): Deleted.
+
+        * platform/gamepad/cocoa/GameControllerSPI.h:
+        * platform/gamepad/cocoa/GameControllerSoftLink.h:
+        * platform/gamepad/cocoa/GameControllerSoftLink.mm:
+
+        * platform/gamepad/mac/HIDGamepad.h:
+        * platform/gamepad/mac/HIDGamepadProvider.h:
+        (WebCore::HIDGamepadProvider::ignoreGameControllerFrameworkDevices):
+        * platform/gamepad/mac/HIDGamepadProvider.mm: Renamed from Source/WebCore/platform/gamepad/mac/HIDGamepadProvider.cpp.
+        (WebCore::deviceMatchingDictionary):
+        (WebCore::deviceAddedCallback):
+        (WebCore::deviceRemovedCallback):
+        (WebCore::deviceValuesChangedCallback):
+        (WebCore::HIDGamepadProvider::singleton):
+        (WebCore::HIDGamepadProvider::HIDGamepadProvider):
+        (WebCore::HIDGamepadProvider::stopMonitoringInput):
+        (WebCore::HIDGamepadProvider::startMonitoringInput):
+        (WebCore::HIDGamepadProvider::indexForNewlyConnectedDevice):
+        (WebCore::HIDGamepadProvider::initialGamepadsConnectedTimerFired):
+        (WebCore::HIDGamepadProvider::openAndScheduleManager):
+        (WebCore::HIDGamepadProvider::closeAndUnscheduleManager):
+        (WebCore::HIDGamepadProvider::startMonitoringGamepads):
+        (WebCore::HIDGamepadProvider::stopMonitoringGamepads):
+        (WebCore::gameControllerFrameworkWillHandleHIDDevice):
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+        (WebCore::HIDGamepadProvider::valuesChanged):
+        (WebCore::HIDGamepadProvider::inputNotificationTimerFired):
+        (WebCore::HIDGamepadProvider::removeGamepadForDevice):
+
+        * platform/gamepad/mac/MultiGamepadProvider.h: Added.
+        (WebCore::MultiGamepadProvider::isMockGamepadProvider const):
+        (WebCore::MultiGamepadProvider::PlatformGamepadWrapper::PlatformGamepadWrapper):
+        * platform/gamepad/mac/MultiGamepadProvider.mm: Added.
+        (WebCore::MultiGamepadProvider::singleton):
+        (WebCore::MultiGamepadProvider::startMonitoringGamepads):
+        (WebCore::MultiGamepadProvider::stopMonitoringGamepads):
+        (WebCore::MultiGamepadProvider::indexForNewlyConnectedDevice):
+        (WebCore::MultiGamepadProvider::platformGamepadConnected):
+        (WebCore::MultiGamepadProvider::platformGamepadDisconnected):
+        (WebCore::MultiGamepadProvider::platformGamepadInputActivity):
+
 2020-07-09  Tim Horton  <timothy_horton@apple.com>
 
         "ESPN Fantasy Sports" does not respond to mouse events, only touch events

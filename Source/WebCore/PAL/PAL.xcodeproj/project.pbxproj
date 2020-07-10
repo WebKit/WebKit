@@ -127,6 +127,7 @@
 		4450FCA021F5F602004DFA56 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */; };
 		44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
+		517E03F924B7C0070054895A /* IOKitSPIMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517E03F824B7C0060054895A /* IOKitSPIMac.h */; };
 		570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */; };
 		570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */; };
 		572A107822B456F500F410C8 /* AuthKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A107722B456F500F410C8 /* AuthKitSPI.h */; };
@@ -313,6 +314,7 @@
 		4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
 		44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LookupSoftLink.h; sourceTree = "<group>"; };
 		44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LookupSoftLink.mm; sourceTree = "<group>"; };
+		517E03F824B7C0060054895A /* IOKitSPIMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPIMac.h; sourceTree = "<group>"; };
 		570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxySPI.h; sourceTree = "<group>"; };
 		570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSXPCConnectionSPI.h; sourceTree = "<group>"; };
 		572A107722B456F500F410C8 /* AuthKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthKitSPI.h; sourceTree = "<group>"; };
@@ -514,6 +516,7 @@
 				0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */,
 				A102658D1F567E9D00B4C844 /* HIServicesSPI.h */,
 				A10265881F56747A00B4C844 /* HIToolboxSPI.h */,
+				517E03F824B7C0060054895A /* IOKitSPIMac.h */,
 				0C7785721F45130F00F4EBB6 /* LookupSPI.h */,
 				0C7785731F45130F00F4EBB6 /* MediaRemoteSPI.h */,
 				1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */,
@@ -877,6 +880,7 @@
 				2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */,
 				0C5AF9221F43A4C7002EAC02 /* UIKitSPI.h in Headers */,
 				0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */,
+				517E03F924B7C0070054895A /* IOKitSPIMac.h in Headers */,
 				07611DB6243FA5BF00D80704 /* UsageTrackingSoftLink.h in Headers */,
 				0C2DA1591F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h in Headers */,
 				A10826F91F576292004772AC /* WebPanel.h in Headers */,

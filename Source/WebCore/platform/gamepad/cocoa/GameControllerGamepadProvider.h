@@ -56,6 +56,8 @@ public:
     void gamepadHadInput(GameControllerGamepad&, bool hadButtonPresses);
     void prewarmGameControllerDevicesIfNecessary();
 
+    void makeInvisibleGamepadsVisible();
+
 private:
     GameControllerGamepadProvider();
 
@@ -71,8 +73,6 @@ private:
 
     void inputNotificationTimerFired();
 
-    void makeInvisibileGamepadsVisible();
-
     HashMap<CFTypeRef, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
     Vector<PlatformGamepad*> m_gamepadVector;
     HashSet<PlatformGamepad*> m_invisibleGamepads;
@@ -81,7 +81,7 @@ private:
     RetainPtr<NSObject> m_disconnectObserver;
 
     RunLoop::Timer<GameControllerGamepadProvider> m_inputNotificationTimer;
-    bool m_shouldMakeInvisibileGamepadsVisible { false };
+    bool m_shouldMakeInvisibleGamepadsVisible { false };
 };
 
 } // namespace WebCore
