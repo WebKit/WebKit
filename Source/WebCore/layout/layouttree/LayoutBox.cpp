@@ -177,7 +177,7 @@ bool Box::isFloatAvoider() const
     if (isFloatingPositioned() || hasFloatClear())
         return true;
 
-    return establishesTableFormattingContext() || establishesIndependentFormattingContext() || (establishesBlockFormattingContext() && !establishesInlineFormattingContext());
+    return establishesTableFormattingContext() || establishesIndependentFormattingContext() || establishesBlockFormattingContext();
 }
 
 const ContainerBox& Box::containingBlock() const

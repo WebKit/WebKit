@@ -1,3 +1,19 @@
+2020-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Normal flow element that establishes a new block formatting context must not overlap the margin box of any floats
+        https://bugs.webkit.org/show_bug.cgi?id=214185
+
+        Reviewed by Antti Koivisto.
+
+        BFCs in general should avoid floats. This code was confusing the cases where the block container box (not necessarily a BFC) establishes an IFC.
+          <div>The div establishes an IFC only. It should not avoid floats.</div> 
+          <div style="overflow: hidden">The div establishes both a new BFC and an IFC. It should avoid floats.</div>
+
+        Test: fast/layoutformattingcontext/float-avoider-with-inline-content.html
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isFloatAvoider const):
+
 2020-07-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME][OpenCDM] Implement OpenCDM support
