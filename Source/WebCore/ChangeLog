@@ -1,3 +1,20 @@
+2020-07-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS VoiceOver should support definition lists
+        https://bugs.webkit.org/show_bug.cgi?id=210214
+        <rdar://problem/61478299>
+
+        Reviewed by Darin Adler.
+
+        Expose bits to make definition lists accessibility on iOS.
+
+        Test: accessibility/ios-simulator/definition-list.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityDescriptionListAncestor]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsInDescriptionListTerm]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsInDescriptionListDefinition]):
+
 2020-07-10  Brady Eidson  <beidson@apple.com>
 
         Limit MultiGamepadProvider to Catalina and Big Sur.

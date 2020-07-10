@@ -77,6 +77,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
+- (BOOL)accessibilityIsInDescriptionListDefinition;
+- (BOOL)accessibilityIsInDescriptionListTerm;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
@@ -772,6 +774,16 @@ bool AccessibilityUIElement::isTextArea() const
 bool AccessibilityUIElement::isSearchField() const
 {
     return ([m_element accessibilityTraits] & [m_element _axSearchFieldTrait]) == [m_element _axSearchFieldTrait];
+}
+
+bool AccessibilityUIElement::isInDefinitionListDefinition() const
+{
+    return [m_element accessibilityIsInDescriptionListDefinition];
+}
+
+bool AccessibilityUIElement::isInDefinitionListTerm() const
+{
+    return [m_element accessibilityIsInDescriptionListTerm];
 }
     
 int AccessibilityUIElement::rowCount()

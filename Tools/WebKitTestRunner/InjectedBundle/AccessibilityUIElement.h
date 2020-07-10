@@ -353,7 +353,9 @@ public:
     void assistiveTechnologySimulatedFocus();
     bool isSearchField() const;
     bool isTextArea() const;
-    
+    bool isInDefinitionListDefinition() const;
+    bool isInDefinitionListTerm() const;
+
     bool scrollPageUp();
     bool scrollPageDown();
     bool scrollPageLeft();

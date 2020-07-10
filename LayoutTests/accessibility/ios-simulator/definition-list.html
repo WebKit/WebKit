@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<dl>
+<dt id="term"><b>term 1</b></dt>
+<dd id="def">def 1</dd>
+</dl>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the definition lists are exposed on ios.");
+
+    if (window.accessibilityController) {
+
+        var term = accessibilityController.accessibleElementById("term").childAtIndex(0);
+        var def = accessibilityController.accessibleElementById("def").childAtIndex(0);
+        shouldBeTrue("term.isInDefinitionListTerm");
+        shouldBeTrue("def.isInDefinitionListDefinition");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

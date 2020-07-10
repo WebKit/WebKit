@@ -267,6 +267,8 @@
     void assistiveTechnologySimulatedFocus();
     readonly attribute boolean isSearchField;
     readonly attribute boolean isTextArea;
+    readonly attribute boolean isInDefinitionListDefinition;
+    readonly attribute boolean isInDefinitionListTerm;
 
     // Fieldset
     readonly attribute boolean hasContainedByFieldsetTrait;

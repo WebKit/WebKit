@@ -560,6 +560,17 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return nil;
 }
 
+- (AccessibilityObjectWrapper*)_accessibilityDescriptionListAncestor
+{
+    auto matchFunc = [] (const AXCoreObject& object) {
+        return object.roleValue() == AccessibilityRole::DescriptionList;
+    };
+    
+    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
+        return parent->wrapper();
+    return nil;
+}
+
 - (AccessibilityObjectWrapper*)_accessibilityListAncestor
 {
     auto matchFunc = [] (const AXCoreObject& object) {
@@ -1491,6 +1502,26 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return NO;
 
     return self.axBackingObject->roleValue() == AccessibilityRole::ComboBox;
+}
+
+- (BOOL)accessibilityIsInDescriptionListTerm
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
+        return object.roleValue() == AccessibilityRole::DescriptionListTerm;
+    });
+}
+
+- (BOOL)accessibilityIsInDescriptionListDefinition
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
+        return object.roleValue() == AccessibilityRole::DescriptionListDetail;
+    });
 }
 
 - (NSString *)accessibilityHint
