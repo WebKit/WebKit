@@ -42,6 +42,7 @@ struct _WebKitMediaClearKeyDecryptPrivate {
 };
 
 static void finalize(GObject*);
+static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt*);
 static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, const RefPtr<CDMProxy>&);
 static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffer* keyid, GstBuffer* sample, unsigned subSamplesCount, GstBuffer* subSamples);
 
@@ -83,7 +84,7 @@ static void webkit_media_clear_key_decrypt_class_init(WebKitMediaClearKeyDecrypt
         "webkitclearkey", 0, "ClearKey decryptor");
 
     WebKitMediaCommonEncryptionDecryptClass* cencClass = WEBKIT_MEDIA_CENC_DECRYPT_CLASS(klass);
-    cencClass->protectionSystemId = GStreamerEMEUtilities::s_ClearKeyUUID;
+    cencClass->protectionSystemId = GST_DEBUG_FUNCPTR(protectionSystemId);
     cencClass->cdmProxyAttached = GST_DEBUG_FUNCPTR(cdmProxyAttached);
     cencClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
 
@@ -104,6 +105,11 @@ static void finalize(GObject* object)
     priv->~WebKitMediaClearKeyDecryptPrivate();
 
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
+}
+
+static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt*)
+{
+    return GStreamerEMEUtilities::s_ClearKeyUUID;
 }
 
 static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, const RefPtr<CDMProxy>& cdmProxy)

@@ -50,6 +50,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "WebKitClearKeyDecryptorGStreamer.h"
+#if ENABLE(THUNDER)
+#include "WebKitThunderDecryptorGStreamer.h"
+#endif
 #endif
 
 #if ENABLE(VIDEO)
@@ -275,6 +278,22 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
     return isGStreamerInitialized;
 }
 
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
+// WebM does not specify a protection system ID so it can happen that
+// the ClearKey decryptor is chosen instead of the Thunder one for
+// Widevine (and viceversa) which can can create chaos. This is an
+// environment variable to set in run time if we prefer to rank higher
+// Thunder or ClearKey. If we want to run tests with Thunder, we need
+// to set this environment variable to Thunder and that decryptor will
+// be ranked higher when there is no protection system set (as in
+// WebM).
+bool isThunderRanked()
+{
+    const char* value = g_getenv("WEBKIT_GST_EME_RANK_PRIORITY");
+    return value && equalIgnoringASCIICase(value, "Thunder");
+}
+#endif
+
 bool initializeGStreamerAndRegisterWebKitElements()
 {
     if (!initializeGStreamer())
@@ -283,7 +302,11 @@ bool initializeGStreamerAndRegisterWebKitElements()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(ENCRYPTED_MEDIA)
-        gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+        gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 200, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+#if ENABLE(THUNDER)
+        unsigned thunderRank = isThunderRanked() ? 300 : 100;
+        gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
+#endif
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -380,6 +403,13 @@ Ref<SharedBuffer> GstMappedBuffer::createSharedBuffer()
     RELEASE_ASSERT(isSharable());
 
     return SharedBuffer::create(*this);
+}
+
+Vector<uint8_t> GstMappedBuffer::createVector()
+{
+    Vector<uint8_t> vector;
+    vector.append(data(), size());
+    return vector;
 }
 
 bool isGStreamerPluginAvailable(const char* name)

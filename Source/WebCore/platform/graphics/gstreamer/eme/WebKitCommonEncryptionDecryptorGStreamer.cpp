@@ -134,14 +134,14 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
             // can cause caps negotiation failures with adaptive bitrate streams.
             gst_structure_remove_fields(outgoingStructure.get(), "base-profile", "codec_data", "height", "framerate", "level", "pixel-aspect-ratio", "profile", "rate", "width", nullptr);
 
-            gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId,
+            gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId(self),
                 "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);
 
             // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
             // developement git master which will ship as version 1.16.0.
             gst_structure_set_name(outgoingStructure.get(),
 #if GST_CHECK_VERSION(1, 15, 0)
-                !g_strcmp0(klass->protectionSystemId, GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" :
+                !g_strcmp0(klass->protectionSystemId(self), GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" :
 #endif
                 "application/x-cenc");
         }
@@ -177,6 +177,12 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(base);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
 
+    GstProtectionMeta* protectionMeta = reinterpret_cast<GstProtectionMeta*>(gst_buffer_get_protection_meta(buffer));
+    if (!protectionMeta) {
+        GST_TRACE_OBJECT(self, "Buffer %p does not contain protection meta, not decrypting", buffer);
+        return GST_FLOW_OK;
+    }
+
     LockHolder locker(priv->cdmAttachmentMutex);
 
     // The CDM instance needs to be negotiated before we can begin decryption.
@@ -190,12 +196,6 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
             return GST_FLOW_NOT_SUPPORTED;
         }
         GST_DEBUG_OBJECT(self, "CDM now available with address %p", priv->cdmProxy.get());
-    }
-
-    GstProtectionMeta* protectionMeta = reinterpret_cast<GstProtectionMeta*>(gst_buffer_get_protection_meta(buffer));
-    if (!protectionMeta) {
-        GST_ERROR_OBJECT(self, "Failed to get GstProtection metadata from buffer %p", buffer);
-        return GST_FLOW_NOT_SUPPORTED;
     }
     auto removeProtectionMetaOnReturn = makeScopeExit([buffer, protectionMeta] {
         gst_buffer_remove_meta(buffer, reinterpret_cast<GstMeta*>(protectionMeta));

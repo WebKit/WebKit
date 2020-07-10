@@ -134,6 +134,7 @@ my (
     $networkCacheStaleWhileRevalidateSupport,
     $notificationsSupport,
     $offscreenCanvasSupport,
+    $thunderSupport,
     $orientationEventsSupport,
     $overflowScrollingTouchSupport,
     $paymentRequestSupport,
@@ -443,6 +444,9 @@ my @features = (
 
     { option => "offscreen-canvas", desc => "Toggle OffscreenCanvas support",
       define => "ENABLE_OFFSCREEN_CANVAS", value => \$offscreenCanvasSupport },
+
+    { option => "thunder", desc => "Toggle Thunder CDM support",
+      define => "ENABLE_THUNDER", value => \$thunderSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
       define => "ENABLE_ORIENTATION_EVENTS", value => \$orientationEventsSupport },

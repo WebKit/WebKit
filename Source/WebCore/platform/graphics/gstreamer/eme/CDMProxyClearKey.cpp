@@ -121,11 +121,14 @@ bool CDMProxyClearKey::cencSetDecryptionKey(const cencDecryptContext& in)
     Vector<uint8_t> keyIDVec;
     keyIDVec.append(in.keyID, in.keyIDSizeInBytes);
 
-    auto keyData = getOrWaitForKey(keyIDVec);
+    auto keyData = getOrWaitForKeyValue(keyIDVec);
     if (!keyData)
         return false;
 
-    if (gcry_error_t cipherError = gcry_cipher_setkey(gCryptHandle(), keyData->data(), keyData->size())) {
+    ASSERT(WTF::holds_alternative<Vector<uint8_t>>(keyData.value()));
+    auto& keyDataValue = WTF::get<Vector<uint8_t>>(keyData.value());
+
+    if (gcry_error_t cipherError = gcry_cipher_setkey(gCryptHandle(), keyDataValue.data(), keyDataValue.size())) {
 #if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_setkey): %s", gpg_strerror(cipherError));
 #else

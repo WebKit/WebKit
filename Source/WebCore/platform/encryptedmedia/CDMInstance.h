@@ -75,6 +75,9 @@ public:
         ClearKey,
         FairPlayStreaming,
         Remote,
+#if ENABLE(THUNDER)
+        Thunder,
+#endif
     };
     virtual ImplementationType implementationType() const = 0;
 

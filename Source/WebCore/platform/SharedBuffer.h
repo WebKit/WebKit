@@ -106,6 +106,7 @@ public:
     // Iterate the segments using begin() and end() instead.
     // FIXME: Audit the call sites of this function and replace them with iteration if possible.
     const char* data() const;
+    const uint8_t* dataAsUInt8Ptr() const;
 
     // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
     // ArrayBuffer without merging segmented buffers into a flat buffer.

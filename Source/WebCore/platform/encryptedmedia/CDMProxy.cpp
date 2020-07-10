@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -91,35 +92,42 @@ static String vectorToHexString(const Vector<uint8_t>& vec)
 
 } // namespace {}
 
-String Key::idAsString() const
+String KeyHandle::idAsString() const
 {
     return makeString("[", vectorToHexString(m_id), "]");
 }
 
-String Key::valueAsString() const
+bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
 {
-    return makeString("[", vectorToHexString(m_value), "]");
+    if (m_value != value) {
+        m_value = WTFMove(value);
+        return true;
+    }
+    return false;
 }
 
-bool KeyStore::containsKeyID(const Vector<uint8_t>& keyID) const
+bool KeyStore::containsKeyID(const KeyIDType& keyID) const
 {
-    return m_keys.findMatching([&](const RefPtr<Key>& storedKey) {
+    return m_keys.findMatching([&](const RefPtr<KeyHandle>& storedKey) {
         return *storedKey == keyID;
     }) != WTF::notFound;
 }
 
 void KeyStore::merge(const KeyStore& other)
 {
+    ASSERT(isMainThread());
     LOG(EME, "EME - CDMProxy - merging %u new keys into a key store of %u keys", other.numKeys(), numKeys());
     for (const auto& key : other) {
         // NOTE: Do we care that we will not append a key if it matches a key ID
         // in the keystore and has different data. Should we overwrite? Which is "newer"?
         // Don't think we need this extra complexity.
-        if (m_keys.findMatching([&] (const RefPtr<Key>& storedKey) { return *key == *storedKey; }) == WTF::notFound)
+        size_t keyWithMatchingKeyIDIndex = m_keys.findMatching([&] (const RefPtr<KeyHandle>& storedKey) { return *key == *storedKey; });
+        if (keyWithMatchingKeyIDIndex == WTF::notFound)
             m_keys.append(key);
-        else
-            // NOTE: This does happen with DASH players, it seems harmless to ignore it.
-            LOG(EME, "EME - CDMProxy - ignored a key with the same ID and different data");
+        else {
+            LOG(EME, "EME - CDMProxy - keys with the same ID!");
+            ASSERT(key->value() == m_keys[keyWithMatchingKeyIDIndex]->value());
+        }
     }
 
 #if !LOG_DISABLED
@@ -129,15 +137,15 @@ void KeyStore::merge(const KeyStore& other)
 #endif // !LOG_DISABLED
 }
 
-CDMInstanceSession::KeyStatusVector KeyStore::allKeysAsReleased() const
+CDMInstanceSession::KeyStatusVector KeyStore::allKeysAs(CDMInstanceSession::KeyStatus status) const
 {
     CDMInstanceSession::KeyStatusVector keyStatusVector = convertToJSKeyStatusVector();
     for (auto& keyStatus : keyStatusVector)
-        keyStatus.second = CDMInstanceSession::KeyStatus::Released;
+        keyStatus.second = status;
     return keyStatusVector;
 }
 
-bool KeyStore::addKeys(Vector<RefPtr<Key>>&& newKeys)
+bool KeyStore::addKeys(Vector<RefPtr<KeyHandle>>&& newKeys)
 {
     bool didKeyStoreChange = false;
     for (auto& key : newKeys) {
@@ -147,16 +155,18 @@ bool KeyStore::addKeys(Vector<RefPtr<Key>>&& newKeys)
     return didKeyStoreChange;
 }
 
-bool KeyStore::add(RefPtr<Key>&& key)
+bool KeyStore::add(RefPtr<KeyHandle>&& key)
 {
     bool didStoreChange = false;
-    size_t keyWithMatchingKeyIDIndex = m_keys.findMatching([&] (const RefPtr<Key>& storedKey) {
+    size_t keyWithMatchingKeyIDIndex = m_keys.findMatching([&] (const RefPtr<KeyHandle>& storedKey) {
         return *key == *storedKey;
     });
 
     if (keyWithMatchingKeyIDIndex != WTF::notFound) {
         auto& keyWithMatchingKeyID = m_keys[keyWithMatchingKeyIDIndex];
-        RELEASE_ASSERT(keyWithMatchingKeyID->value() == key->value(), "Can this really happen?");
+        didStoreChange = keyWithMatchingKeyID == key;
+        if (didStoreChange)
+            keyWithMatchingKeyID = key;
     } else {
         LOG(EME, "EME - ClearKey - New key with ID %s getting added to key store", key->idAsString().ascii().data());      
         m_keys.append(key);
@@ -168,7 +178,7 @@ bool KeyStore::add(RefPtr<Key>&& key)
         // NOTE: This is not as pathological as it may seem, for all
         // practical purposes the store has a maximum of 2 keys.
         std::sort(m_keys.begin(), m_keys.end(),
-            [](const RefPtr<Key>& a, const RefPtr<Key>& b) {
+            [](const RefPtr<KeyHandle>& a, const RefPtr<KeyHandle>& b) {
                 return *a < *b;
             });
     }
@@ -183,7 +193,7 @@ void KeyStore::removeAllKeysFrom(const KeyStore& other)
         remove(key);
 }
 
-bool KeyStore::remove(const RefPtr<Key>& key)
+bool KeyStore::remove(const RefPtr<KeyHandle>& key)
 {
     bool storeChanged = false;
 
@@ -204,11 +214,11 @@ bool KeyStore::remove(const RefPtr<Key>& key)
     return storeChanged;
 }
 
-const Vector<uint8_t>& KeyStore::keyValue(const Vector<uint8_t>& keyID) const
+const RefPtr<KeyHandle>& KeyStore::keyHandle(const KeyIDType& keyID) const
 {
     for (const auto& key : m_keys) {
         if (*key == keyID)
-            return key->value();
+            return key;
     }
     
     RELEASE_ASSERT(false && "key must exist to call this method");
@@ -238,11 +248,11 @@ void CDMProxy::setInstance(CDMInstanceProxy* instance)
     m_instance = instance;
 }
 
-Vector<uint8_t> CDMProxy::keyValue(const Vector<uint8_t>& keyID) const
+RefPtr<KeyHandle> CDMProxy::keyHandle(const KeyIDType& keyID) const
 {
     auto locker = holdLock(m_keysMutex);
     ASSERT(m_keyStore.containsKeyID(keyID));
-    return m_keyStore.keyValue(keyID);
+    return m_keyStore.keyHandle(keyID);
 }
 
 void CDMProxy::startedWaitingForKey() const
@@ -261,7 +271,7 @@ void CDMProxy::stoppedWaitingForKey() const
     m_instance->stoppedWaitingForKey();
 }
 
-Optional<Vector<uint8_t>> CDMProxy::tryWaitForKey(const Vector<uint8_t>& keyID) const
+Optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID) const
 {
     startedWaitingForKey();
     // Unconditionally saying we have stopped waiting for a key means that decryptors only get
@@ -281,32 +291,41 @@ Optional<Vector<uint8_t>> CDMProxy::tryWaitForKey(const Vector<uint8_t>& keyID) 
 
     if (wasKeyReceived) {
         LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", vectorToHexString(keyID).ascii().data());
-        return keyValue(keyID);
+        RefPtr<KeyHandle> handle = keyHandle(keyID);
+        return makeOptional(handle.releaseNonNull());
     }
     
     LOG(EME, "EME - CDMProxy - key ID %s not available", vectorToHexString(keyID).ascii().data());
     return WTF::nullopt;
 }
 
-bool CDMProxy::keyAvailableUnlocked(const Vector<uint8_t>& keyID) const
+bool CDMProxy::keyAvailableUnlocked(const KeyIDType& keyID) const
 {
     return m_keyStore.containsKeyID(keyID);
 }
 
-bool CDMProxy::keyAvailable(const Vector<uint8_t>& keyID) const
+bool CDMProxy::keyAvailable(const KeyIDType& keyID) const
 {
     auto locker = holdLock(m_keysMutex);
     return keyAvailableUnlocked(keyID);
 }
 
-Optional<Vector<uint8_t>> CDMProxy::getOrWaitForKey(const Vector<uint8_t>& keyID) const
+Optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID) const
 {
     if (!keyAvailable(keyID)) {
         LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
-        return tryWaitForKey(keyID);
+        return tryWaitForKeyHandle(keyID);
     }
 
-    return keyValue(keyID);
+    RefPtr<KeyHandle> handle = keyHandle(keyID);
+    return makeOptional(handle.releaseNonNull());
+}
+
+Optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID) const
+{
+    if (auto keyHandle = getOrWaitForKeyHandle(keyID))
+        return makeOptional((*keyHandle)->value());
+    return WTF::nullopt;
 }
 
 void CDMInstanceProxy::startedWaitingForKey()
@@ -358,6 +377,18 @@ void CDMInstanceProxy::trackSession(const CDMInstanceSessionProxy& session)
 {
     ASSERT(!m_sessions.contains(session));
     m_sessions.add(session);
+}
+
+CDMInstanceSessionProxy::CDMInstanceSessionProxy(CDMInstanceProxy& instance)
+    : m_instance(makeWeakPtr(instance))
+{
+}
+
+void CDMInstanceSessionProxy::removeFromInstanceProxy()
+{
+    if (!m_instance)
+        return;
+    m_instance->removeSession(*this);
 }
 
 } // namespace WebCore

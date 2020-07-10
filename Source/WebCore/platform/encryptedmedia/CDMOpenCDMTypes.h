@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2020 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CDMFactory.h"
+#pragma once
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
 
-#include "CDMProxyClearKey.h"
+#include <open_cdm.h>
+#include <wtf/BoxPtr.h>
 
-#if ENABLE(THUNDER)
-#include "CDMThunder.h"
-#endif
+namespace WTF {
 
-namespace WebCore {
+WTF_DEFINE_BOXPTR_DELETER(OpenCDMSession, opencdm_destruct_session)
 
-void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
-{
-    factories.append(&CDMFactoryClearKey::singleton());
-#if ENABLE(THUNDER)
-    factories.append(&CDMFactoryThunder::singleton());
-#endif
 }
 
-Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
-{
-    Vector<CDMProxyFactory*> factories;
-#if ENABLE(THUNDER)
-    factories.reserveInitialCapacity(2);
-    factories.uncheckedAppend(&CDMFactoryThunder::singleton());
-#else
-    factories.reserveInitialCapacity(1);
-#endif
-    factories.uncheckedAppend(&CDMProxyFactoryClearKey::singleton());
-    return factories;
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(ENCRYPTED_MEDIA)
+#endif // ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)

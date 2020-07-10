@@ -11,6 +11,12 @@
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
       <dep package="gstreamer-vaapi"/>
+      <if condition-set="Thunder">
+        <dep package="thunder"/>
+        <dep package="widevine"/>
+        <dep package="thunder-cdmi-widevine"/>
+        <dep package="thunder-nanoservices"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -19,6 +25,8 @@
       href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="github-tarball"
       href="https://github.com/"/>
+  <repository type="git" name="github-ssh"
+      href="git@github.com:"/>
   <repository type="git" name="chromium.googlesource.com"
       href="https://chromium.googlesource.com/webm/"/>
   <repository type="git" name="aomedia.googlesource.com"
@@ -79,6 +87,7 @@
 
     <branch hash="sha256:40bb3bafda25c0b739c8fc36e48380fccf61c4d3f83747e97ac3f9b0171b1319" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.2">
       <patch file="good-0001-qtdemux-Specify-REDIRECT-information-in-error-messag.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.3 -->
+      <patch file="gst-plugins-good-0002-Check-if-an-upstream-demuxer-provided-a-default-kid.patch" strip="1" />
     </branch>
   </meson>
 
@@ -92,6 +101,7 @@
     </dependencies>
     <branch hash="sha256:f1cb7aa2389569a5343661aae473f0a940a90b872001824bc47fa8072a041e74" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.2">
       <patch file="gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch" strip="1"/> <!-- Merged, discussing backporting https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/386-->
+      <patch file="gst-plugins-bad-0006-mssdemux-parse-protection-data.patch" strip="1" />
     </branch>
   </meson>
 
@@ -124,5 +134,90 @@
             hash="sha256:68ca8d071dcb84ac82e3c6d7f02a55937d9f690fcb215853f4aa1de8d459812f"
            checkoutdir="libva-${version}" repo="github-tarball"/>
   </meson>
+
+  <cmake id="thunder"
+         cmakeargs="-DBUILD_REFERENCE=${version} -DPORT=8081
+                    -DBINDING=0.0.0.0 -DIDLE_TIME=180
+                    -DPERSISTENT_PATH=/tmp/thunder/persistent
+                    -DVOLATILE_PATH=/tmp/thunder/volatile
+                    -DDATA_PATH=${prefix}/share/WPEFramework
+                    -DSYSTEM_PATH=${prefix}/lib/wpeframework/plugins
+                    -DPROXYSTUB_PATH=${prefix}/lib/wpeframework/proxystubs
+                    -DOOMADJUST= -DBUILD_TYPE=ReleaseSymbols
+                    -DBLUETOOTH_SUPPORT=OFF -DVIRTUALINPUT=OFF
+                    -DCOMPOSITORCLIENT=OFF -DCOMPOSITORCLIENT=OFF
+                    -DBROADCAST=OFF -DCDMI=ON -DCDMI_BCM_NEXUS_SVP=OFF
+                    -DCDMI_ADAPTER_IMPLEMENTATION=gstreamer
+                    -DGSTREAMERCLIENT=OFF -DPROVISIONPROXY=OFF
+                    -DSECURITYAGENT=OFF -DCOMPOSITORSERVERPLUGIN=OFF
+                    -DPLUGIN_WEBKITBROWSER=OFF -DPLUGIN_WEBSERVER=OFF
+                    -DPLUGIN_ESPIAL=OFF -DNETWORKCONTROL=OFF">
+    <branch repo="github-tarball" module="rdkcentral/Thunder/tarball/${version}" version="6adeee006fecdd1b2bc49bd360d49fc5718deb61" checkoutdir="thunder"/>
+  </cmake>
+
+  <autotools id="widevine" supports-non-srcdir-builds="no"
+             autogen-sh="build.py" autogenargs="x86-64 -r -DOEMCRYPTO_KEYBOX_PATH_PREFIX=${prefix}"
+             makeargs="BUILDTYPE=Release -j1"
+             makeinstallargs="BUILDTYPE=Release -j1 -f Makefile.install" >
+    <dependencies>
+      <dep package="thunder"/>
+    </dependencies>
+    <branch repo="github-ssh" module="Metrological/widevine.git" checkoutdir="widevine" tag="264c137501b289e356b11dacc329b05636ea9396"/>
+  </autotools>
+
+  <cmake id="thunder-cdmi-widevine" cmakeargs="-DCMAKE_BUILD_TYPE=RelWithDebInfo">
+    <branch repo="github-tarball"
+            module="WebPlatformForEmbedded/OCDM-Widevine/tarball/${version}"
+            version="9dc3964b0339abb70d66e4f931632324a075d6d4" checkoutdir="thunder-cdmi-widevine"/>
+    <dependencies>
+      <dep package="thunder"/>
+      <dep package="widevine"/>
+    </dependencies>
+  </cmake>
+
+  <cmake id="thunder-nanoservices"
+         cmakeargs="-DBUILD_REFERENCE=${version} -DBUILD_TYPE=ReleaseSymbols
+                    -DPLUGIN_COBALT=OFF -DPLUGIN_COMMANDER=OFF
+                    -DPLUGIN_DEVICEINFO=OFF -DPLUGIN_DISPLAYINFO=OFF
+                    -DPLUGIN_DEVICEIDENTIFICATION=OFF
+                    -DPLUGIN_DSRESOLUTION=OFF -DPLUGIN_DHCPSERVER=OFF
+                    -DPLUGIN_DIALSERVER=OFF -DPLUGIN_DICTIONARY=OFF
+                    -DPLUGIN_IOCONNECTOR=OFF -DPLUGIN_EGLTEST=OFF
+                    -DPLUGIN_FRONTPANEL=OFF -DPLUGIN_LOCATIONSYNC=OFF
+                    -DPLUGIN_MONITOR=OFF -DPLUGIN_NETWORKCONTROL=OFF
+                    -DPLUGIN_OPENCDMI=ON
+                    -DPLUGIN_OPENCDMI_AUTOSTART=true
+                    -DPLUGIN_OPENCDMI_OOP=true
+                    -DPLUGIN_OPENCDMI_WIDEVINE=ON
+                    -DPLUGIN_OPENCDMI_CLEARKEY=OFF
+                    -DPLUGIN_OPENCDMI_PLAYREADY=OFF
+                    -DPLUGIN_OPENCDMI_NAGRA=OFF
+                    -DPLUGIN_OPENCDMI_NCAS=OFF -DPLUGIN_BLUETOOTH=OFF
+                    -DPLUGIN_BLUETOOTHREMOTECONTROL=OFF
+                    -DPLUGIN_REMOTECONTROL=OFF -DPLUGIN_SNAPSHOT=OFF
+                    -DPLUGIN_SYSTEMCOMMANDS=OFF
+                    -DPLUGIN_FILETRANSFER=OFF
+                    -DPLUGIN_TESTCONTROLLER=OFF -DPLUGIN_JSONRPC=OFF
+                    -DPLUGIN_TESTUTILITY=OFF -DPLUGIN_TIMESYNC=OFF
+                    -DPLUGIN_TRACECONTROL=OFF
+                    -DPLUGIN_VOLUMECONTROL=OFF
+                    -DPLUGIN_WEBKITBROWSER=OFF -DPLUGIN_RTSPCLIENT=OFF
+                    -DPLUGIN_WEBPA=OFF -DPLUGIN_WEBPROXY=OFF
+                    -DPLUGIN_WEBSERVER=OFF -DPLUGIN_WEBSHELL=OFF
+                    -DPLUGIN_WIFICONTROL=OFF -DPLUGIN_PACKAGER=OFF
+                    -DPLUGIN_PLAYERINFO=OFF -DPLUGIN_POWER=OFF
+                    -DPLUGIN_PROCESSMONITOR=OFF -DPLUGIN_STREAMER=OFF
+                    -DPLUGIN_SPARK=OFF -DPLATFORM_LINUX=ON
+                    -DPLUGIN_MESSENGER=OFF -DPLUGIN_SECURITYAGENT=OFF
+                    -DPLUGIN_RPCLINK=OFF -DPLUGIN_COMPOSITOR=OFF">
+    <branch repo="github-tarball"
+            module="rdkcentral/ThunderNanoServices/tarball/${version}"
+            version="de9f3d40d8408ee811c48f486c9b14f752c97345"
+            checkoutdir="thunder-nanoservices"/>
+    <dependencies>
+      <dep package="thunder"/>
+      <dep package="thunder-cdmi-widevine"/>
+    </dependencies>
+  </cmake>
 
 </moduleset>

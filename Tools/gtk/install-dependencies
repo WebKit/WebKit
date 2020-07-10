@@ -190,6 +190,7 @@ function installDependenciesWithApt {
         git \
         gobject-introspection \
         gsettings-desktop-schemas-dev \
+        gyp \
         icon-naming-utils \
         libcroco3-dev \
         libcups2-dev \
@@ -387,6 +388,7 @@ function installDependenciesWithPacman {
         gnutls \
         gobject-introspection \
         gsettings-desktop-schemas \
+        gyp \
         icon-naming-utils \
         libcroco \
         libcups \
@@ -578,6 +580,7 @@ function installDependenciesWithDnf {
         gnutls-devel \
         gobject-introspection \
         gsettings-desktop-schemas-devel \
+        gyp \
         icon-naming-utils \
         itstool \
         libXfont2-devel \

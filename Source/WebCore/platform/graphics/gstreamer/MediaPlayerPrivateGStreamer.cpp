@@ -209,6 +209,10 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     if (is<PlatformDisplayLibWPE>(sharedDisplay))
         m_wpeVideoPlaneDisplayDmaBuf.reset(wpe_video_plane_display_dmabuf_source_create(downcast<PlatformDisplayLibWPE>(sharedDisplay).backend()));
 #endif
+    static unsigned times = 0;
+    ++times;
+    GST_INFO("created media player private (%u times) <----------------------------------------------", times);
+    fprintf(stderr, "calvaris created media player private (%u times)\n", times);
 }
 
 MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
@@ -1596,6 +1600,15 @@ void MediaPlayerPrivateGStreamer::setPipeline(GstElement* pipeline)
 
 bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
 {
+    if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_ERROR && !g_strcmp0(g_getenv("WEBKIT_CRASH_ON_GSTREAMER_ERROR"), "sync")) {
+        GUniqueOutPtr<GError> err;
+        GUniqueOutPtr<gchar> debug;
+        gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
+        GST_ERROR("Error %d from %s: %s (url=%s)", err->code, GST_MESSAGE_SRC_NAME(message), err->message, m_url.string().utf8().data());
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video-sync-error");
+        ASSERT_NOT_REACHED();
+    }
+
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION && !m_isLegacyPlaybin) {
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_stream_collection(message, &collection.outPtr());
@@ -1763,7 +1776,7 @@ void MediaPlayerPrivateGStreamer::setVolume(float volume)
         return;
 
     GST_DEBUG_OBJECT(pipeline(), "Setting volume: %f", volume);
-    gst_stream_volume_set_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR, static_cast<double>(volume));
+    gst_stream_volume_set_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR, static_cast<double>(0));
 }
 
 float MediaPlayerPrivateGStreamer::volume() const
@@ -1869,6 +1882,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         GST_ERROR("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
 
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video.error");
+
+        if (!g_strcmp0(g_getenv("WEBKIT_CRASH_ON_GSTREAMER_ERROR"), "async"))
+            CRASH();
 
         error = MediaPlayer::NetworkState::Empty;
         if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_CODEC_NOT_FOUND)
@@ -3518,7 +3534,8 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
         if (!weakThis)
             return;
 
-        GST_DEBUG("scheduling initializationDataEncountered event of size %zu", initData.payload()->size());
+        GST_DEBUG("scheduling initializationDataEncountered %s event of size %zu", initData.payloadContainerType().utf8().data(),
+            initData.payload()->size());
         GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.payload()->data()), initData.payload()->size());
         weakThis->m_player->initializationDataEncountered(initData.payloadContainerType(), initData.payload()->tryCreateArrayBuffer());
     });

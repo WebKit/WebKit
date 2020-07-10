@@ -1,3 +1,27 @@
+2020-07-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME][OpenCDM] Implement OpenCDM support
+        https://bugs.webkit.org/show_bug.cgi?id=213550
+
+        Reviewed by Philippe Normand.
+
+        Added support to build OpenCDM and its dependencies. There is an
+        opt in env var to get JHBuild building Thunder its Widevine
+        dependencies. We also include a couple of GStreamer patches needed
+        to get key IDs in the decryptors.
+
+        Widevine is obviously proprietary and as you need to be licensed
+        to access it, you need credentials to build it.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/gst-plugins-bad-0006-mssdemux-parse-protection-data.patch: Added.
+        * gstreamer/patches/gst-plugins-good-0002-Check-if-an-upstream-demuxer-provided-a-default-kid.patch: Added.
+        * gtk/install-dependencies:
+        * jhbuild/jhbuildrc_common.py:
+        (init):
+        * wpe/install-dependencies:
+
 2020-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: title of back-forward menu items needs to be truncated when it's too large

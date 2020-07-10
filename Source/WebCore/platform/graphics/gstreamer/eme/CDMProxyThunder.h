@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2020 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CDMFactory.h"
+#pragma once
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
 
-#include "CDMProxyClearKey.h"
-
-#if ENABLE(THUNDER)
+#include "CDMInstanceSession.h"
 #include "CDMThunder.h"
-#endif
+#include "GStreamerEMEUtilities.h"
+#include "MediaPlayerPrivate.h"
+#include "SharedBuffer.h"
+#include <wtf/Condition.h>
+#include <wtf/VectorHash.h>
 
 namespace WebCore {
 
-void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
-{
-    factories.append(&CDMFactoryClearKey::singleton());
-#if ENABLE(THUNDER)
-    factories.append(&CDMFactoryThunder::singleton());
-#endif
-}
+// This is the thread-safe API that decode threads should use to make use of a platform CDM module.
+class CDMProxyThunder final : public CDMProxy, public CanMakeWeakPtr<CDMProxyThunder, WeakPtrFactoryInitialization::Eager> {
+public:
+    CDMProxyThunder(const String& keySystem)
+        : m_keySystem(keySystem) { }
+    virtual ~CDMProxyThunder() = default;
 
-Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
-{
-    Vector<CDMProxyFactory*> factories;
-#if ENABLE(THUNDER)
-    factories.reserveInitialCapacity(2);
-    factories.uncheckedAppend(&CDMFactoryThunder::singleton());
-#else
-    factories.reserveInitialCapacity(1);
-#endif
-    factories.uncheckedAppend(&CDMProxyFactoryClearKey::singleton());
-    return factories;
-}
+    struct DecryptionContext {
+        GstBuffer* keyIDBuffer;
+        GstBuffer* ivBuffer;
+        GstBuffer* dataBuffer;
+        GstBuffer* subsamplesBuffer;
+        size_t numSubsamples;
+    };
+
+    bool decrypt(DecryptionContext&);
+    const String& keySystem() { return m_keySystem; }
+
+private:
+    BoxPtr<OpenCDMSession> getDecryptionSession(const DecryptionContext&) const;
+    String m_keySystem;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(ENCRYPTED_MEDIA)
+#endif // ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)

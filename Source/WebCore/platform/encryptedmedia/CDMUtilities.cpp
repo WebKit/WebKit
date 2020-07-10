@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2020 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +27,36 @@
  */
 
 #include "config.h"
-#include "CDMFactory.h"
+#include "CDMUtilities.h"
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMProxyClearKey.h"
-
-#if ENABLE(THUNDER)
-#include "CDMThunder.h"
-#endif
+#include "SharedBuffer.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
+namespace CDMUtilities {
+
+RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
 {
-    factories.append(&CDMFactoryClearKey::singleton());
-#if ENABLE(THUNDER)
-    factories.append(&CDMFactoryThunder::singleton());
-#endif
+    // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
+    size_t size = buffer.size();
+    if (size > std::numeric_limits<unsigned>::max())
+        return nullptr;
+
+    // Parse the buffer contents as JSON, returning the root object (if any).
+    String json { buffer.data(), static_cast<unsigned>(size) };
+    RefPtr<JSON::Value> value;
+    RefPtr<JSON::Object> object;
+    if (!JSON::Value::parseJSON(json, value) || !value->asObject(object))
+        return nullptr;
+
+    return object;
 }
 
-Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
-{
-    Vector<CDMProxyFactory*> factories;
-#if ENABLE(THUNDER)
-    factories.reserveInitialCapacity(2);
-    factories.uncheckedAppend(&CDMFactoryThunder::singleton());
-#else
-    factories.reserveInitialCapacity(1);
-#endif
-    factories.uncheckedAppend(&CDMProxyFactoryClearKey::singleton());
-    return factories;
-}
+};
 
-} // namespace WebCore
+};
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

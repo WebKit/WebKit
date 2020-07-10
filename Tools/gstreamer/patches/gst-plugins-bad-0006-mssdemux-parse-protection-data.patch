@@ -1,0 +1,247 @@
+From 0052f3d8315e8cefb04a62a64cac17cbfbc6b8b6 Mon Sep 17 00:00:00 2001
+From: Charlie Turner <chturne@gmail.com>
+Date: Fri, 25 May 2018 09:43:30 +0100
+Subject: [PATCH] Parse playready payload.
+
+Look at the playready specific data payload to extract default key ids
+for decrypting samples. The format of this payload seems to be
+proprietary.
+
+Signed-off-by: Xabier Rodriguez Calvar <calvaris@igalia.com>
+---
+ ext/smoothstreaming/gstmssdemux.c    |  14 ++-
+ ext/smoothstreaming/gstmssmanifest.c | 138 +++++++++++++++++++++++++++
+ ext/smoothstreaming/gstmssmanifest.h |   1 +
+ 3 files changed, 152 insertions(+), 1 deletion(-)
+
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index bcea8ca..4fa95b9 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -495,7 +495,19 @@ gst_mss_demux_setup_streams (GstAdaptiveDemux * demux)
+           gst_event_new_protection (protection_system_id, protection_buffer,
+           "smooth-streaming");
+ 
+-      GST_LOG_OBJECT (stream, "Queueing Protection event on source pad");
++      GstBuffer *key_id = gst_mss_manifest_get_key_id (mssdemux->manifest);
++      if (!gst_buffer_get_size (key_id)) {
++        GST_WARNING_OBJECT (stream,
++            "protected manifest, but no key ids available");
++      } else {
++        GST_LOG_OBJECT (stream,
++            "Adding key id to the protection event of size %lu",
++            gst_buffer_get_size (key_id));
++        GstStructure *structure = gst_event_writable_structure (event);
++        gst_structure_set (structure, "key_id", GST_TYPE_BUFFER, key_id, NULL);
++      }
++
++      GST_LOG_OBJECT (stream, "Queuing Protection event on source pad");
+       gst_adaptive_demux_stream_queue_event ((GstAdaptiveDemuxStream *) stream,
+           event);
+       gst_buffer_unref (protection_buffer);
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index c855cb3..df31330 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -28,6 +28,8 @@
+ #include <ctype.h>
+ #include <libxml/parser.h>
+ #include <libxml/tree.h>
++#include <libxml/xpath.h>
++#include <libxml/xpathInternals.h>
+ 
+ /* for parsing h264 codec data */
+ #include <gst/codecparsers/gsth264parser.h>
+@@ -109,6 +111,10 @@ struct _GstMssManifest
+   GString *protection_system_id;
+   gchar *protection_data;
+ 
++  // FIXME: There can be multiple key ids present in protected manifests.
++  gchar *key_id;
++  gsize key_id_len;
++
+   GSList *streams;
+ };
+ 
+@@ -300,6 +306,122 @@ _gst_mss_stream_init (GstMssManifest * manifest, GstMssStream * stream,
+   gst_mss_fragment_parser_init (&stream->fragment_parser);
+ }
+ 
++static void
++_gst_mss_parse_protection_data (GstMssManifest * manifest)
++{
++  guchar *decoded_protection_data = NULL;
++  gsize decoded_protection_data_len = 0;
++  xmlChar *protection_data_text = NULL;
++  int protection_data_text_len = 0;
++  xmlDocPtr protection_data_xml = NULL;
++  // Note, this does not need to free'd, freeing the doc ptr will free this.
++  xmlNode *protection_data_root_element = NULL;
++  const xmlChar *protection_data_namespace = NULL;
++  xmlXPathContextPtr xpath_ctx = NULL;
++  xmlXPathObjectPtr xpath_obj = NULL;
++  xmlNodeSetPtr key_id_node = NULL;
++  gsize protection_data_xml_len = 0;
++  guchar *start_tag = NULL;
++
++  decoded_protection_data =
++      g_base64_decode (manifest->protection_data, &decoded_protection_data_len);
++
++  start_tag = decoded_protection_data;
++
++  // The protection data starts with a 10-byte PlayReady version
++  // header that needs to be skipped over to avoid XML parsing
++  // errors.
++  while (start_tag && *start_tag != '<')
++    start_tag++;
++
++  if (!start_tag) {
++    GST_ERROR ("failed to find a start tag in protection data payload");
++    goto beach;
++  }
++
++  protection_data_xml_len =
++      decoded_protection_data_len - (start_tag - decoded_protection_data);
++  protection_data_xml =
++      xmlReadMemory ((const gchar *) start_tag, protection_data_xml_len,
++      "protection_data", "utf-16", 0);
++
++  if (!protection_data_xml) {
++    GST_ERROR ("failed to parse protection data XML");
++    goto beach;
++  }
++
++  if (gst_debug_category_get_threshold (GST_CAT_DEFAULT) >= GST_LEVEL_MEMDUMP) {
++    xmlDocDumpMemoryEnc (protection_data_xml, &protection_data_text,
++        &protection_data_text_len, "utf8");
++    GST_MEMDUMP ("protection data XML", protection_data_text,
++        protection_data_text_len);
++    xmlFree (protection_data_text);
++  }
++
++  protection_data_root_element = xmlDocGetRootElement (protection_data_xml);
++  if (protection_data_root_element->type != XML_ELEMENT_NODE ||
++      xmlStrcmp (protection_data_root_element->name,
++          (const xmlChar *) "WRMHEADER") || !protection_data_root_element->ns) {
++    GST_ERROR ("invalid protection data XML");
++    goto beach;
++  }
++
++  xpath_ctx = xmlXPathNewContext (protection_data_xml);
++  if (!xpath_ctx) {
++    GST_ERROR ("failed to create xpath context");
++    goto beach;
++  }
++
++  protection_data_namespace = protection_data_root_element->ns->href;
++  if (xmlXPathRegisterNs (xpath_ctx, (const xmlChar *) "prhdr",
++          protection_data_namespace) < 0) {
++    GST_ERROR ("failed to register XML namespace");
++    goto beach;
++  }
++
++  xpath_obj =
++      xmlXPathEvalExpression ((const xmlChar *) "//prhdr:KID", xpath_ctx);
++  if (!xpath_obj) {
++    GST_DEBUG ("failed to eval XPath expression");
++    goto beach;
++  }
++
++  key_id_node = xpath_obj->nodesetval;
++  int num_key_ids = key_id_node ? key_id_node->nodeNr : 0;
++
++  GST_DEBUG ("found %d key ids", num_key_ids);
++
++  if (num_key_ids != 0 && (key_id_node->nodeTab[0]->type == XML_ELEMENT_NODE)) {
++    xmlChar *encoded_key_id = xmlNodeGetContent (key_id_node->nodeTab[0]);
++    gsize decoded_key_id_len;
++    guchar *decoded_key_id =
++        g_base64_decode ((const gchar *) encoded_key_id, &decoded_key_id_len);
++
++    GST_MEMDUMP ("key retrieved", decoded_key_id, decoded_key_id_len);
++
++    manifest->key_id = g_realloc (manifest->key_id, decoded_key_id_len);
++    memcpy (manifest->key_id, decoded_key_id, decoded_key_id_len);
++    manifest->key_id_len = decoded_key_id_len;
++
++    xmlFree (encoded_key_id);
++    g_free (decoded_key_id);
++  } else {
++    GST_ERROR ("invalid XML payload");
++    goto beach;
++  }
++
++beach:
++  if (decoded_protection_data)
++    g_free (decoded_protection_data);
++  if (xpath_ctx)
++    xmlXPathFreeContext (xpath_ctx);
++  if (xpath_obj)
++    xmlXPathFreeObject (xpath_obj);
++  if (protection_data_xml)
++    xmlFreeDoc (protection_data_xml);
++
++  return;
++}
+ 
+ static void
+ _gst_mss_parse_protection (GstMssManifest * manifest,
+@@ -329,6 +451,7 @@ _gst_mss_parse_protection (GstMssManifest * manifest,
+ 
+       manifest->protection_system_id = system_id;
+       manifest->protection_data = (gchar *) xmlNodeGetContent (nodeiter);
++      _gst_mss_parse_protection_data (manifest);
+       xmlFree (system_id_attribute);
+       break;
+     }
+@@ -394,6 +517,9 @@ gst_mss_manifest_new (GstBuffer * data)
+     }
+   }
+ 
++  manifest->key_id = NULL;
++  manifest->key_id_len = 0;
++
+   for (nodeiter = root->children; nodeiter; nodeiter = nodeiter->next) {
+     if (nodeiter->type == XML_ELEMENT_NODE
+         && (strcmp ((const char *) nodeiter->name, "StreamIndex") == 0)) {
+@@ -440,6 +566,9 @@ gst_mss_manifest_free (GstMssManifest * manifest)
+ 
+   g_slist_free_full (manifest->streams, (GDestroyNotify) gst_mss_stream_free);
+ 
++  if (manifest->key_id)
++    g_free (manifest->key_id);
++
+   if (manifest->protection_system_id != NULL)
+     g_string_free (manifest->protection_system_id, TRUE);
+   xmlFree (manifest->protection_data);
+@@ -462,6 +591,15 @@ gst_mss_manifest_get_protection_data (GstMssManifest * manifest)
+   return manifest->protection_data;
+ }
+ 
++GstBuffer *
++gst_mss_manifest_get_key_id (GstMssManifest * manifest)
++{
++  GstBuffer *key_id_buffer =
++      gst_buffer_new_allocate (NULL, manifest->key_id_len, NULL);
++  gst_buffer_fill (key_id_buffer, 0, manifest->key_id, manifest->key_id_len);
++  return key_id_buffer;
++}
++
+ GSList *
+ gst_mss_manifest_get_streams (GstMssManifest * manifest)
+ {
+diff --git a/ext/smoothstreaming/gstmssmanifest.h b/ext/smoothstreaming/gstmssmanifest.h
+index 03b066a..4e6ad73 100644
+--- a/ext/smoothstreaming/gstmssmanifest.h
++++ b/ext/smoothstreaming/gstmssmanifest.h
+@@ -56,6 +56,7 @@ GstClockTime gst_mss_manifest_get_min_fragment_duration (GstMssManifest * manife
+ const gchar * gst_mss_manifest_get_protection_system_id (GstMssManifest * manifest);
+ const gchar * gst_mss_manifest_get_protection_data (GstMssManifest * manifest);
+ gboolean gst_mss_manifest_get_live_seek_range (GstMssManifest * manifest, gint64 * start, gint64 * stop);
++GstBuffer * gst_mss_manifest_get_key_id (GstMssManifest * manifest);
+ 
+ GstMssStreamType gst_mss_stream_get_type (GstMssStream *stream);
+ GstCaps * gst_mss_stream_get_caps (GstMssStream * stream);
+-- 
+2.20.1
+

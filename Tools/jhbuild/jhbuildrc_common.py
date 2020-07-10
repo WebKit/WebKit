@@ -95,3 +95,8 @@ def init(jhbuildrc_globals, jhbuild_platform):
 
     if 'x86_64' in platform.machine():
         jhbuildrc_globals['conditions'].add('x86_64')
+
+    if 'JHBUILD_ENABLE_THUNDER' in os.environ:
+        jhbuild_enable_thunder = os.environ['JHBUILD_ENABLE_THUNDER'].lower()
+        if jhbuild_enable_thunder == 'yes' or jhbuild_enable_thunder == '1' or jhbuild_enable_thunder == 'true':
+            jhbuildrc_globals['conditions'].add('Thunder')

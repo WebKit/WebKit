@@ -91,7 +91,7 @@ public:
     Optional<String> sanitizeSessionId(const String&) const final;
 };
 
-class CDMInstanceClearKey final : public CDMInstanceProxy, public CanMakeWeakPtr<CDMInstanceClearKey> {
+class CDMInstanceClearKey final : public CDMInstanceProxy {
 public:
     CDMInstanceClearKey();
     virtual ~CDMInstanceClearKey();
@@ -108,7 +108,7 @@ public:
 class CDMInstanceSessionClearKey final : public CDMInstanceSessionProxy {
 public:
     CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
-        : m_parentInstance(parent) { }
+        : CDMInstanceSessionProxy(parent) { }
     void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
     void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
@@ -116,8 +116,9 @@ public:
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String&) final;
 private:
+    CDMInstanceClearKey& parentInstance() const;
+
     String m_sessionID;
-    CDMInstanceClearKey& m_parentInstance;
     KeyStore m_keyStore;
 };
 

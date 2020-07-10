@@ -397,6 +397,10 @@
 #define ENABLE_OFFSCREEN_CANVAS 0
 #endif
 
+#if !defined(ENABLE_THUNDER)
+#define ENABLE_THUNDER 0
+#endif
+
 #if !defined(ENABLE_ORIENTATION_EVENTS)
 #define ENABLE_ORIENTATION_EVENTS 0
 #endif

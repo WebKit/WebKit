@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2020 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CDMFactory.h"
+#pragma once
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMProxyClearKey.h"
-
-#if ENABLE(THUNDER)
-#include "CDMThunder.h"
-#endif
+#include <wtf/JSONValues.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
-{
-    factories.append(&CDMFactoryClearKey::singleton());
-#if ENABLE(THUNDER)
-    factories.append(&CDMFactoryThunder::singleton());
-#endif
-}
+class SharedBuffer;
 
-Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
-{
-    Vector<CDMProxyFactory*> factories;
-#if ENABLE(THUNDER)
-    factories.reserveInitialCapacity(2);
-    factories.uncheckedAppend(&CDMFactoryThunder::singleton());
-#else
-    factories.reserveInitialCapacity(1);
-#endif
-    factories.uncheckedAppend(&CDMProxyFactoryClearKey::singleton());
-    return factories;
-}
+namespace CDMUtilities {
 
-} // namespace WebCore
+RefPtr<JSON::Object> parseJSONObject(const SharedBuffer&);
+
+};
+
+};
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

@@ -73,6 +73,9 @@ bool initializeGStreamer(Optional<Vector<String>>&& = WTF::nullopt);
 bool initializeGStreamerAndRegisterWebKitElements();
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
+#if ENABLE(THUNDER)
+bool isThunderRanked();
+#endif
 
 inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
 {
@@ -81,6 +84,11 @@ inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
 
 class GstMappedBuffer : public ThreadSafeRefCounted<GstMappedBuffer> {
 public:
+    static RefPtr<GstMappedBuffer> create(const GRefPtr<GstBuffer>& buffer, GstMapFlags flags)
+    {
+        return create(buffer.get(), flags);
+    }
+
     static RefPtr<GstMappedBuffer> create(GstBuffer* buffer, GstMapFlags flags)
     {
         GstMapInfo info;
@@ -106,6 +114,7 @@ public:
     size_t size() const { return static_cast<size_t>(m_info.size); }
     bool isSharable() const { return !(m_info.flags & GST_MAP_WRITE); }
     Ref<SharedBuffer> createSharedBuffer();
+    Vector<uint8_t> createVector();
 
 private:
     GstMappedBuffer(GstBuffer* buffer, GstMapInfo&& info)

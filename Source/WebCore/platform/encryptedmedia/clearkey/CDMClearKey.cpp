@@ -34,36 +34,19 @@
 #include "CDMKeySystemConfiguration.h"
 #include "CDMRestrictions.h"
 #include "CDMSessionType.h"
+#include "CDMUtilities.h"
 #include "InitDataRegistry.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include <algorithm>
 #include <iterator>
-#include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
 
-static RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
-{
-    // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
-    size_t size = buffer.size();
-    if (size > std::numeric_limits<unsigned>::max())
-        return nullptr;
-
-    // Parse the buffer contents as JSON, returning the root object (if any).
-    String json { buffer.data(), static_cast<unsigned>(size) };
-    RefPtr<JSON::Value> value;
-    RefPtr<JSON::Object> object;
-    if (!JSON::Value::parseJSON(json, value) || !value->asObject(object))
-        return nullptr;
-
-    return object;
-}
-
-static Optional<Vector<RefPtr<Key>>> parseLicenseFormat(const JSON::Object& root)
+static Optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::Object& root)
 {
     // If the 'keys' key is present in the root object, parse the JSON further
     // according to the specified 'license' format.
@@ -76,7 +59,7 @@ static Optional<Vector<RefPtr<Key>>> parseLicenseFormat(const JSON::Object& root
     if (!it->value->asArray(keysArray))
         return WTF::nullopt;
 
-    Vector<RefPtr<Key>> decodedKeys;
+    Vector<RefPtr<KeyHandle>> decodedKeys;
     bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
         [&decodedKeys] (const auto& value) {
             RefPtr<JSON::Object> keyObject;
@@ -91,11 +74,12 @@ static Optional<Vector<RefPtr<Key>>> parseLicenseFormat(const JSON::Object& root
             if (!keyObject->getString("kid", keyID) || !keyObject->getString("k", keyValue))
                 return false;
 
-            Vector<uint8_t> keyIDData, keyValueData;
-            if (!WTF::base64URLDecode(keyID, { keyIDData }) || !WTF::base64URLDecode(keyValue, { keyValueData }))
+            KeyIDType keyIDData;
+            Vector<uint8_t> keyHandleValueData;
+            if (!WTF::base64URLDecode(keyID, { keyIDData }) || !WTF::base64URLDecode(keyValue, { keyHandleValueData }))
                 return false;
 
-            decodedKeys.append(Key::create(CDMInstanceSession::KeyStatus::Usable, WTFMove(keyIDData), WTFMove(keyValueData)));
+            decodedKeys.append(KeyHandle::create(CDMInstanceSession::KeyStatus::Usable, WTFMove(keyIDData), WTFMove(keyHandleValueData)));
             return true;
         });
     if (!validFormat)
@@ -401,7 +385,7 @@ bool CDMPrivateClearKey::supportsSessions() const
 bool CDMPrivateClearKey::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
 {
     // Validate the initData buffer as an JSON object in keyids case.
-    if (equalLettersIgnoringASCIICase(initDataType, "keyids") && parseJSONObject(initData))
+    if (equalLettersIgnoringASCIICase(initDataType, "keyids") && CDMUtilities::parseJSONObject(initData))
         return true;
 
     // Validate the initData buffer as CENC initData.
@@ -418,7 +402,7 @@ bool CDMPrivateClearKey::supportsInitData(const AtomString& initDataType, const 
 RefPtr<SharedBuffer> CDMPrivateClearKey::sanitizeResponse(const SharedBuffer& response) const
 {
     // Validate the response buffer as an JSON object.
-    if (!parseJSONObject(response))
+    if (!CDMUtilities::parseJSONObject(response))
         return nullptr;
 
     return response.copy();
@@ -507,7 +491,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
                 });
         };
 
-    RefPtr<JSON::Object> root = parseJSONObject(response);
+    RefPtr<JSON::Object> root = CDMUtilities::parseJSONObject(response);
     if (!root) {
         LOG(EME, "EME - ClearKey - session %s update payload was not valid JSON", sessionId.utf8().data());
         dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
@@ -524,7 +508,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
         Optional<KeyStatusVector> changedKeys;
         if (keysChanged) {
             LOG(EME, "EME - ClearKey - session %s has changed keys", sessionId.utf8().data());
-            m_parentInstance.mergeKeysFrom(m_keyStore);
+            parentInstance().mergeKeysFrom(m_keyStore);
             changedKeys = m_keyStore.convertToJSKeyStatusVector();
         }
 
@@ -534,7 +518,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
 
     if (parseLicenseReleaseAcknowledgementFormat(*root)) {
         LOG(EME, "EME - ClearKey - session %s release acknowledged, clearing all known keys", sessionId.utf8().data());
-        m_parentInstance.removeAllKeysFrom(m_keyStore);
+        parentInstance().removeAllKeysFrom(m_keyStore);
         m_keyStore.removeAllKeys();
         dispatchCallback(true, WTF::nullopt, SuccessValue::Succeeded);
         return;
@@ -592,7 +576,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
 
     // Construct the KeyStatusVector object, representing released keys, and the message in the
     // 'license release' format.
-    KeyStatusVector keyStatusVector = m_keyStore.allKeysAsReleased();
+    KeyStatusVector keyStatusVector = m_keyStore.allKeysAs(CDMInstanceSession::KeyStatus::Released);
     RefPtr<SharedBuffer> message;
     {
         // Construct JSON that represents the 'license release' format, creating a 'kids' array
@@ -619,6 +603,13 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
 
 void CDMInstanceSessionClearKey::storeRecordOfKeyUsage(const String&)
 {
+}
+
+CDMInstanceClearKey& CDMInstanceSessionClearKey::parentInstance() const
+{
+    auto instance = cdmInstanceProxy();
+    ASSERT(instance);
+    return static_cast<CDMInstanceClearKey&>(*instance);
 }
 
 } // namespace WebCore

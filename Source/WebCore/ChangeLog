@@ -1,3 +1,173 @@
+2020-07-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME][OpenCDM] Implement OpenCDM support
+        https://bugs.webkit.org/show_bug.cgi?id=213550
+
+        Reviewed by Philippe Normand.
+
+        Implemented the OpenCDM support in the CDMOpenCDM and
+        CDMProxyOpenCDM related classes. CDMOpenCDM classes check for
+        Widevine support in OpenCDM and glues the JavaScript API to the
+        OpenCDM/Thunder framework. Building this is optional and --opencdm
+        parameter needs to be passed to build-webkit to get it.
+
+        CDMProxy related needed changes because of several reasons. First
+        is that Key was considering only a Vector<uint8_t> as a type and
+        OpenCDM has session objects. Key is also renamed to KeyHandle as
+        this name reflects in a better way the purpose of the class. This
+        bleeds out to all CDMProxy related classes. CDMInstanceSessionProxy
+        gets support to remove itself from the CDMSessionProxy.
+
+        Regarding ClearKey, we adapt the changes to the CDMProxy classes
+        and de-cable protection system from the decryptors as the OpenCDM
+        decryptor could handle more than one system.
+
+        No new tests. YouTube TV 2019 tests are green.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/GStreamer.cmake:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::dataAsUInt8Ptr const):
+        * platform/SharedBuffer.h:
+        * platform/encryptedmedia/CDMInstance.h:
+        * platform/encryptedmedia/CDMOpenCDMTypes.h: Copied from Source/WebCore/platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp.
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::KeyHandle::idAsString const):
+        (WebCore::KeyHandle::takeValueIfDifferent):
+        (WebCore::KeyStore::containsKeyID const):
+        (WebCore::KeyStore::merge):
+        (WebCore::KeyStore::allKeysAs const):
+        (WebCore::KeyStore::addKeys):
+        (WebCore::KeyStore::add):
+        (WebCore::KeyStore::remove):
+        (WebCore::KeyStore::keyHandle const):
+        (WebCore::CDMProxy::keyHandle const):
+        (WebCore::CDMProxy::tryWaitForKeyHandle const):
+        (WebCore::CDMProxy::keyAvailableUnlocked const):
+        (WebCore::CDMProxy::keyAvailable const):
+        (WebCore::CDMProxy::getOrWaitForKeyHandle const):
+        (WebCore::CDMProxy::getOrWaitForKeyValue const):
+        (WebCore::CDMInstanceSessionProxy::CDMInstanceSessionProxy):
+        (WebCore::CDMInstanceSessionProxy::removeFromInstanceProxy):
+        * platform/encryptedmedia/CDMProxy.h:
+        (WebCore::KeyHandle::create):
+        (WebCore::KeyHandle::id const):
+        (WebCore::KeyHandle::value const):
+        (WebCore::KeyHandle::value):
+        (WebCore::KeyHandle::isStatusCurrentlyValid):
+        (WebCore::KeyHandle::operator==):
+        (WebCore::KeyHandle::operator<):
+        (WebCore::KeyHandle::KeyHandle):
+        (WebCore::KeyStore::isEmpty const):
+        (WebCore::CDMProxy::instance const):
+        (WebCore::CDMInstanceSessionProxy::releaseDecryptionResources):
+        (WebCore::CDMInstanceSessionProxy::cdmInstanceProxy const):
+        (WebCore::CDMInstanceProxy::proxy const):
+        (WebCore::CDMInstanceProxy::removeSession):
+        * platform/encryptedmedia/CDMUtilities.cpp: Copied from Source/WebCore/platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp.
+        (WebCore::CDMUtilities::parseJSONObject):
+        * platform/encryptedmedia/CDMUtilities.h: Copied from Source/WebCore/platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp.
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseLicenseFormat):
+        (WebCore::CDMPrivateClearKey::supportsInitData const):
+        (WebCore::CDMPrivateClearKey::sanitizeResponse const):
+        (WebCore::CDMInstanceSessionClearKey::updateLicense):
+        (WebCore::CDMInstanceSessionClearKey::removeSessionData):
+        (WebCore::CDMInstanceSessionClearKey::parentInstance const):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::isOpenCDMRanked):
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        (WebCore::GstMappedBuffer::createVector):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (WebCore::GstMappedBuffer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::waitForCDMAttachment):
+        * platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp:
+        (WebCore::CDMFactory::platformRegisterFactories):
+        * platform/graphics/gstreamer/eme/CDMOpenCDM.cpp: Added.
+        (openCDMLicenseType):
+        (WebCore::initDataMD5):
+        (WebCore::sessionLoadFailureFromOpenCDM):
+        (WebCore::OpenCDM::destructOpenCDMSession):
+        (WebCore::OpenCDM::createSharedOpenCDMSession):
+        (WebCore::CDMFactoryOpenCDM::singleton):
+        (WebCore::CDMFactoryOpenCDM::createCDM):
+        (WebCore::CDMFactoryOpenCDM::createCDMProxy):
+        (WebCore::CDMFactoryOpenCDM::supportedKeySystems const):
+        (WebCore::CDMFactoryOpenCDM::supportsKeySystem):
+        (WebCore::CDMPrivateOpenCDM::supportedInitDataTypes const):
+        (WebCore::CDMPrivateOpenCDM::supportsConfiguration const):
+        (WebCore::CDMPrivateOpenCDM::supportedRobustnesses const):
+        (WebCore::CDMPrivateOpenCDM::distinctiveIdentifiersRequirement const):
+        (WebCore::CDMPrivateOpenCDM::persistentStateRequirement const):
+        (WebCore::CDMPrivateOpenCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable const):
+        (WebCore::CDMPrivateOpenCDM::createInstance):
+        (WebCore::CDMPrivateOpenCDM::loadAndInitialize):
+        (WebCore::CDMPrivateOpenCDM::supportsServerCertificates const):
+        (WebCore::CDMPrivateOpenCDM::supportsSessions const):
+        (WebCore::CDMPrivateOpenCDM::supportsInitData const):
+        (WebCore::CDMPrivateOpenCDM::sanitizeResponse const):
+        (WebCore::CDMPrivateOpenCDM::sanitizeSessionId const):
+        (WebCore::CDMInstanceOpenCDM::CDMInstanceOpenCDM):
+        (WebCore::CDMInstanceOpenCDM::initializeWithConfiguration):
+        (WebCore::CDMInstanceOpenCDM::setServerCertificate):
+        (WebCore::CDMInstanceOpenCDM::setStorageDirectory):
+        (WebCore::CDMInstanceSessionOpenCDM::CDMInstanceSessionOpenCDM):
+        (WebCore::CDMInstanceOpenCDM::createSession):
+        (WebCore::ParsedResponseMessage::ParsedResponseMessage):
+        (WebCore::ParsedResponseMessage::hasPayload const):
+        (WebCore::ParsedResponseMessage::payload const):
+        (WebCore::ParsedResponseMessage::payload):
+        (WebCore::ParsedResponseMessage::hasType const):
+        (WebCore::ParsedResponseMessage::type const):
+        (WebCore::ParsedResponseMessage::typeOr const):
+        (WebCore::CDMInstanceSessionOpenCDM::challengeGeneratedCallback):
+        (WebCore::toString):
+        (WebCore::CDMInstanceSessionOpenCDM::status const):
+        (WebCore::CDMInstanceSessionOpenCDM::keyUpdatedCallback):
+        (WebCore::CDMInstanceSessionOpenCDM::keysUpdateDoneCallback):
+        (WebCore::CDMInstanceSessionOpenCDM::errorCallback):
+        (WebCore::CDMInstanceSessionOpenCDM::requestLicense):
+        (WebCore::CDMInstanceSessionOpenCDM::sessionFailure):
+        (WebCore::CDMInstanceSessionOpenCDM::updateLicense):
+        (WebCore::CDMInstanceSessionOpenCDM::loadSession):
+        (WebCore::CDMInstanceSessionOpenCDM::closeSession):
+        (WebCore::CDMInstanceSessionOpenCDM::removeSessionData):
+        (WebCore::CDMInstanceSessionOpenCDM::storeRecordOfKeyUsage):
+        (WebCore:: const):
+        * platform/graphics/gstreamer/eme/CDMOpenCDM.h: Added.
+        (WebCore::OpenCDM::OpenCDMSystemDeleter::operator() const):
+        (WebCore::OpenCDM::OpenCDMSessionDeleter::operator() const):
+        * platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp:
+        (WebCore::CDMProxyClearKey::cencSetDecryptionKey):
+        * platform/graphics/gstreamer/eme/CDMProxyOpenCDM.cpp: Added.
+        (WebCore::CDMProxyOpenCDM::getDecryptionSession const):
+        (WebCore::CDMProxyOpenCDM::decrypt):
+        * platform/graphics/gstreamer/eme/CDMProxyOpenCDM.h: Copied from Source/WebCore/platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp.
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        (WebCore::InitData::InitData):
+        (WebCore::InitData::payload const):
+        (WebCore::GStreamerEMEUtilities::isWidevineKeySystem):
+        (WebCore::GStreamerEMEUtilities::keySystemToUuid):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_class_init):
+        (protectionSystemId):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (transformCaps):
+        (transformInPlace):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+        * platform/graphics/gstreamer/eme/WebKitOpenCDMDecryptorGStreamer.cpp: Added.
+        (webkit_media_opencdm_decrypt_class_init):
+        (webkit_media_opencdm_decrypt_init):
+        (finalize):
+        (protectionSystemId):
+        (cdmProxyAttached):
+        (decrypt):
+        * platform/graphics/gstreamer/eme/WebKitOpenCDMDecryptorGStreamer.h: Added.
+
 2020-07-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TreeConstruction] Create block level container for unsupported renderer

@@ -54,7 +54,7 @@ struct _WebKitMediaCommonEncryptionDecrypt {
 struct _WebKitMediaCommonEncryptionDecryptClass {
     GstBaseTransformClass parentClass;
 
-    const char* protectionSystemId;
+    const char* (*protectionSystemId)(WebKitMediaCommonEncryptionDecrypt*);
     bool (*cdmProxyAttached)(WebKitMediaCommonEncryptionDecrypt*, const RefPtr<WebCore::CDMProxy>&);
     bool (*decrypt)(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* ivBuffer, GstBuffer* keyIDBuffer, GstBuffer* buffer, unsigned subsamplesCount, GstBuffer* subsamplesBuffer);
 };

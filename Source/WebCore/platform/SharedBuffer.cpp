@@ -123,6 +123,11 @@ const char* SharedBuffer::data() const
     return m_segments[0].segment->data();
 }
 
+const uint8_t* SharedBuffer::dataAsUInt8Ptr() const
+{
+    return reinterpret_cast<const uint8_t*>(data());
+}
+
 SharedBufferDataView SharedBuffer::getSomeData(size_t position) const
 {
     RELEASE_ASSERT(position < m_size);
