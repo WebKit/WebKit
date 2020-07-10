@@ -1441,6 +1441,9 @@ void AccessibilityUIElement::dismiss()
 
 bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange* markerRange)
 {
+    if (!markerRange)
+        return false;
+
     setAttributeValue(m_element.get(), NSAccessibilitySelectedTextMarkerRangeAttribute, markerRange->platformTextMarkerRange());
 
     return true;
@@ -1816,14 +1819,14 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForM
     
     return nullptr;
 }
-    
+
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::selectedTextMarkerRange()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextMarkerRangeAttribute];
+    id textMarkerRange = attributeValue(m_element.get(), NSAccessibilitySelectedTextMarkerRangeAttribute);
     return AccessibilityTextMarkerRange::create(textMarkerRange);
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 

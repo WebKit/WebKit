@@ -89,3 +89,15 @@ function spinnerForTextInput(accessibilityObject) {
     var index = accessibilityController.platformName == "atk" ? 0 : 1;
     return accessibilityObject.childAtIndex(index);
 }
+
+function waitFor(condition)
+{
+    return new Promise((resolve, reject) => {
+        let interval = setInterval(() => {
+            if (condition()) {
+                clearInterval(interval);
+                resolve();
+            }
+        }, 0);
+    });
+}

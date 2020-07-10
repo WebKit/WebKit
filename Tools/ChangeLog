@@ -1,3 +1,18 @@
+2020-07-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make accessibility/Mac/selected-visible-position-range.html time-deterministic.
+        https://bugs.webkit.org/show_bug.cgi?id=214154
+
+        Reviewed by Chris Fleizach.
+
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange):
+        Check passed parameter for null.
+
+        (WTR::AccessibilityUIElement::selectedTextMarkerRange):
+        Use attributeValue to run on secondary AX thread.
+
 2020-07-09  Per Arne Vollan  <pvollan@apple.com>
 
         Move XPCEndpoint and XPCEndpointClient classes from WebCore to WebKit

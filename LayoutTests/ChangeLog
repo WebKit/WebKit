@@ -1,3 +1,29 @@
+2020-07-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make accessibility/Mac/selected-visible-position-range.html time-deterministic.
+        https://bugs.webkit.org/show_bug.cgi?id=214154
+
+        Reviewed by Chris Fleizach.
+
+        [WebAccessibilityObjectWrapper accessibilitySetValue] sets the selection
+        range and other properties asynchronously by dispatching the call to
+        another cycle of the run loop using callOnMainThread. thus for the JS to
+        retrieve the new value, it is necessary to wait until the value is
+        updated. this is even more so in isolated tree mode where all wrapper
+        calls come on the secondary AX thread. JS setTimeout doesn't help with
+        synchronizing these calls, so instead we are using Promises in the
+        function waitFor in accessibility-helper.js (thanks to Geoff Garen for
+        showing the way).
+
+        * accessibility/mac/selected-visible-position-range-expected.txt:
+        * accessibility/mac/selected-visible-position-range.html:
+
+        MOved waitFor(condition) to the accessibility-helper.js file to be used
+        in multiple tests.
+        * accessibility/textarea-selected-text-range.html:
+        * resources/accessibility-helper.js:
+        (waitFor):
+
 2020-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Stuttery scrolling on tesla.com

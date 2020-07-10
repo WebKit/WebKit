@@ -7,12 +7,12 @@ This tests getting and setting the selected VisiblePosition range.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS selectedString is 'Last paragraph.'
-selectedString must be the text of the first paragraph: First paragraph.
+PASS current selection is 'Last paragraph.'
+PASS current selection is 'First paragraph.
 
-
-selectedString must be an empty string: 
-selectedString must be an empty string: 
+'
+PASS current selection is ''
+PASS current selection is ''
 PASS successfullyParsed is true
 
 TEST COMPLETE
