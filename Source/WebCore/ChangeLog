@@ -1,3 +1,32 @@
+2020-07-10  Guowei Yang  <guowei_yang@apple.com>
+
+        Removing usage of "using namespace WebCore" from TextTrackRepresentationCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=214196
+
+        Reviewed by Tim Horton.
+
+        The line "using namespace WebCore" will cause problems 
+        when compiling unified source. Removing this line and 
+        replace it with WebCore::prefix and namespace WebCore{ }
+        to enclose C++ calls.
+
+        No new tests are requied as this is a code style fix
+
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm: removed usage 
+          of "using namespace WebCore" to avoid future errors while compiling
+        (-[WebCoreTextTrackRepresentationCocoaHelper initWithParent:]): added "WebCore::" prefix
+        (-[WebCoreTextTrackRepresentationCocoaHelper setParent:]): ditto
+        (-[WebCoreTextTrackRepresentationCocoaHelper parent]): ditto
+        (TextTrackRepresentation::create): enclosed inside namespace WebCore{ }
+        (TextTrackRepresentationCocoa::TextTrackRepresentationCocoa): Deleted. 
+          enclosed inside namespace WebCore{ }
+        (TextTrackRepresentationCocoa::~TextTrackRepresentationCocoa): ditto
+        (TextTrackRepresentationCocoa::update): ditto
+        (TextTrackRepresentationCocoa::setContentScale): ditto
+        (TextTrackRepresentationCocoa::setHidden const): ditto
+        (TextTrackRepresentationCocoa::bounds const): ditto
+        (TextTrackRepresentationCocoa::boundsChanged): ditto
+
 2020-07-10  Peng Liu  <peng.liu6@apple.com>
 
         MobileSafari rotates its scene to portrait upside down if it has a PiP on screen
