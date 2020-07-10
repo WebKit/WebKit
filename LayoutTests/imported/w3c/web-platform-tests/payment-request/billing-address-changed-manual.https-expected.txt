@@ -1,0 +1,15 @@
+Request billing address
+
+Click on each button in sequence from top to bottom without refreshing the page. Each button will bring up the Payment Request UI window.
+
+When the payment sheet is presented, select a payment method (e.g., a credit card).
+
+When no billing address is requested, `PaymentMethodChangeEvent.methodDetails.billingAddress` is null.
+When billing address is requested,`PaymentMethodChangeEvent.methodDetails.billingAddress` is a `PaymentAddress`.
+Done!
+If you find a buggy test, please file a bug and tag one of the suggested reviewers.
+
+Harness Error (TIMEOUT), message = null
+
+PASS onpaymentmethodchange is in prototype 
+

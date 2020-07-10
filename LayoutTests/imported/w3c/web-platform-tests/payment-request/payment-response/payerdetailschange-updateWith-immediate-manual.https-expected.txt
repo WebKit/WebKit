@@ -1,0 +1,16 @@
+Handling PaymentResponse.prototype.onpayerdetailchange events
+
+The test brings up the Payment Request UI window. When shown the payment sheet, use any details and hit pay.
+
+When asked to retry the payment:
+
+Change payer's name to anything.
+
+updateWith() must be called immediately, otherwise must throw an InvalidStateError.
+DONE!
+If you find a buggy test, please file a bug and tag one of the owners.
+
+Harness Error (TIMEOUT), message = null
+
+PASS Can construct a payment request (smoke test). 
+

@@ -1,0 +1,28 @@
+Manual Tests - Please run in order!
+
+Please open the developer console. Each of the tests below should generate a warning in the developer console.
+
+When presented with the payment sheet, hit pay twice.
+
+Show warning if `requestPayerName` if false, and `errorFields.payer.name` is present.
+Show warning if `requestPayerEmail` if false, and `errorFields.payer.email` is present.
+Show warning if `requestPayerPhone` if false, and `errorFields.payer.phone` is present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.addressLine` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.city` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.country` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.dependentLocality` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.organization` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.phone` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.postalCode` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.recipient` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.region` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.regionCode` member present.
+Show warning if `requestShipping` if false, and `errorFields.shippingAddress.sortingCode` member present.
+Done!
+
+Harness Error (TIMEOUT), message = null
+
+PASS Can construct a payment request (smoke test). 
+PASS PaymentResponse.prototype must have a retry() function (smoke test). 
+

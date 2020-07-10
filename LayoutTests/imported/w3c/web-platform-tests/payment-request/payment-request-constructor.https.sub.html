@@ -8,7 +8,7 @@
 <script>
 "use strict";
 const testMethod = Object.freeze({
-  supportedMethods: "https://wpt.fyi/payment-request",
+  supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
 });
 const defaultMethods = Object.freeze([testMethod]);
 const defaultAmount = Object.freeze({
@@ -108,8 +108,21 @@ test(() => {
 
 test(() => {
   smokeTest();
-  assert_throws(new TypeError(), () => new PaymentRequest([], defaultDetails));
+  assert_throws_js(TypeError, () => new PaymentRequest([], defaultDetails));
 }, "If the length of the methodData sequence is zero, then throw a TypeError");
+
+test(() => {
+  smokeTest();
+  const duplicateMethods = [
+    {
+      supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
+    },
+    {
+      supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
+    },
+  ];
+  assert_throws_js(RangeError, () => new PaymentRequest(duplicateMethods, defaultDetails));
+}, "If payment method is duplicate, then throw a RangeError");
 
 test(() => {
   smokeTest();
@@ -118,7 +131,7 @@ test(() => {
     try {
       const methods = [
         {
-          supportedMethods: "https://wpt.fyi/payment-request",
+          supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
           data,
         },
       ];
@@ -137,30 +150,30 @@ test(() => {
   smokeTest();
   const recursiveDictionary = {};
   recursiveDictionary.foo = recursiveDictionary;
-  assert_throws(new TypeError(), () => {
+  assert_throws_js(TypeError, () => {
     const methods = [
       {
-        supportedMethods: "https://wpt.fyi/payment-request",
+        supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
         data: recursiveDictionary,
       },
     ];
     new PaymentRequest(methods, defaultDetails);
   });
-  assert_throws(new TypeError(), () => {
+  assert_throws_js(TypeError, () => {
     const methods = [
       {
-        supportedMethods: "https://wpt.fyi/payment-request",
+        supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
         data: "a string",
       },
     ];
     new PaymentRequest(methods, defaultDetails);
   });
-  assert_throws(
-    new TypeError(),
+  assert_throws_js(
+    TypeError,
     () => {
       const methods = [
         {
-          supportedMethods: "https://wpt.fyi/payment-request",
+          supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
           data: null,
         },
       ];
@@ -215,8 +228,8 @@ test(() => {
         },
       },
     };
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         new PaymentRequest(defaultMethods, invalidDetails);
       },
@@ -238,7 +251,7 @@ test(() => {
 
 test(() => {
   smokeTest();
-  assert_throws(new TypeError(), () => {
+  assert_throws_js(TypeError, () => {
     new PaymentRequest(defaultMethods, {
       total: {
         label: "",
@@ -266,8 +279,8 @@ test(() => {
         },
       ],
     };
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         new PaymentRequest(defaultMethods, invalidDetails);
       },
@@ -282,7 +295,7 @@ test(() => {
     new PaymentRequest(
       [
         {
-          supportedMethods: "https://wpt.fyi/payment-request",
+          supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
         },
       ],
       {
@@ -372,8 +385,8 @@ test(() => {
     const details = Object.assign({}, defaultDetails, {
       shippingOptions: [invalidShippingOption],
     });
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         new PaymentRequest(defaultMethods, details, { requestShipping: true });
       },
@@ -490,8 +503,8 @@ test(() => {
     null,
     "shippingOption must be null, because requestShipping is false"
   );
-  assert_throws(
-    new TypeError(),
+  assert_throws_js(
+    TypeError,
     () => {
       new PaymentRequest(defaultMethods, details, { requestShipping: true });
     },
@@ -519,8 +532,8 @@ test(() => {
     null,
     "shippingOption must be null, because requestShipping is false"
   );
-  assert_throws(
-    new TypeError(),
+  assert_throws_js(
+    TypeError,
     () => {
       new PaymentRequest(defaultMethods, details, { requestShipping: true });
     },
@@ -533,7 +546,7 @@ test(() => {
   smokeTest();
   for (const invalidTotal of invalidTotalAmounts) {
     const invalidModifier = {
-      supportedMethods: "https://wpt.fyi/payment-request",
+      supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
       total: {
         label: "",
         amount: {
@@ -542,8 +555,8 @@ test(() => {
         },
       },
     };
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         new PaymentRequest(defaultMethods, {
           modifiers: [invalidModifier],
@@ -559,7 +572,7 @@ test(() => {
   smokeTest();
   for (const invalidAmount of invalidAmounts) {
     const invalidModifier = {
-      supportedMethods: "https://wpt.fyi/payment-request",
+      supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
       total: defaultTotal,
       additionalDisplayItems: [
         {
@@ -571,8 +584,8 @@ test(() => {
         },
       ],
     };
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         new PaymentRequest(defaultMethods, {
           modifiers: [invalidModifier],
@@ -589,7 +602,7 @@ test(() => {
   const modifiedDetails = Object.assign({}, defaultDetails, {
     modifiers: [
       {
-        supportedMethods: "https://wpt.fyi/payment-request",
+        supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
         data: ["some-data"],
       },
     ],
@@ -608,7 +621,7 @@ test(() => {
   const modifiedDetails = Object.assign({}, defaultDetails, {
     modifiers: [
       {
-        supportedMethods: "https://wpt.fyi/payment-request",
+        supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
         data: {
           some: "data",
         },
@@ -631,12 +644,12 @@ test(() => {
   const modifiedDetails = Object.assign({}, defaultDetails, {
     modifiers: [
       {
-        supportedMethods: "https://wpt.fyi/payment-request",
+        supportedMethods: "https://{{domains[nonexistent]}}/payment-request",
         data: recursiveDictionary,
       },
     ],
   });
-  assert_throws(new TypeError(), () => {
+  assert_throws_js(TypeError, () => {
     new PaymentRequest(defaultMethods, modifiedDetails);
   });
 }, "Rethrow any exceptions of JSON-serializing modifier.data");
@@ -644,7 +657,7 @@ test(() => {
 //Setting ShippingType attribute during construction
 test(() => {
   smokeTest();
-  assert_throws(new TypeError(), () => {
+  assert_throws_js(TypeError, () => {
     new PaymentRequest(defaultMethods, defaultDetails, {
       shippingType: "invalid",
     });

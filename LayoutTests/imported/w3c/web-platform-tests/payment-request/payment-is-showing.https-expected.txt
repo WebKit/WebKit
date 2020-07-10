@@ -1,0 +1,15 @@
+This test requires user interaction.
+Please click here to allow testing one payment sheet per window.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT The top browsing context can only show one payment sheet at a time. Test timed out
+NOTRUN If an iframe shows a payment request, the top-level browsing context can't also show one. 
+NOTRUN An iframe cannot show a payment request if the top-level window is already showing one. 
+NOTRUN Using a popup window prevents the top-browsing context from showing a payment request 
+NOTRUN Given multiple nested browsing contexts, and window calls show() first, other nested browsing contexts can't show a request. 
+NOTRUN Given multiple nested browsing contexts, and popup calls show() first, other nested browsing contexts can't show a request. 
+NOTRUN Given multiple nested browsing contexts, and an iframe calls show() first, other nested browsing contexts can't show a request. 
+NOTRUN Navigating an iframe as a nested browsing context sets 'payment request is showing boolean' to false. 
+NOTRUN Navigating a popup as a nested browsing context sets 'payment request is showing boolean' to false. 
+

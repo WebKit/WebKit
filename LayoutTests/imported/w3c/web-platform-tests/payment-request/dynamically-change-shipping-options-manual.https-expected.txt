@@ -1,0 +1,15 @@
+PaymentRequest shippingOption attribute
+
+Click on each button in sequence from top to bottom without refreshing the page. Each button (except the 'Done' button) will bring up the Payment Request UI window.
+
+When the payment sheet is presented, view options for Shipping Method. There should only be one: "Default shipping method"
+Change your Shipping Address - either update your existing one by changing something (name, address, etc), or select a different Shipping Address, or add a new Shipping Address and select it.
+Go back to Shipping Method, and there is now an option called "Dynamically added shipping option". Select it
+Click on the 'Done' button
+When the address is changed, shipping methods can be updated
+Done
+If you find a buggy test, please file a bug and tag one of the suggested reviewers.
+
+Harness Error (TIMEOUT), message = null
+
+

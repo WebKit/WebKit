@@ -1,0 +1,15 @@
+Manual tests for hasEnrolledInstrument() method
+
+Follow the instructions from top to bottom. Click on each button in sequence without refreshing the page. Some of the tests will bring up the Payment Request UI and close them automatically. If a payment sheet stays open, the test has failed.
+
+Follow browser-specific instructions to remove all cards from the test profile.
+hasEnrolledInstrument() resolves to false when user has no enrolled instrument.
+Add a test Visa card to your test profile, e.g. 4012888888881881.
+hasEnrolledInstrument() resolves to true when user has an enrolled instrument.
+hasEnrolledInstrument() can be called multiple times if the payment method details are identical.
+Done!
+If you find a buggy test, please file a bug and tag one of the suggested reviewers.
+
+Harness Error (TIMEOUT), message = null
+
+

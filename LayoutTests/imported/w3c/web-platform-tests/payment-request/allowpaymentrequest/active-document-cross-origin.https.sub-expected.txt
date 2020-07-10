@@ -1,5 +1,7 @@
 Blocked access to external URL https://www1.localhost:9443/common/blank.html
 
 
-PASS PaymentRequest <iframe allowpaymentrequest> in non-active document (cross-origin) 
+FAIL PaymentRequest <iframe allowpaymentrequest> in non-active document (cross-origin) assert_throws_dom: function "() => {
+        new grabbedPaymentRequest(...paymentArgs);
+      }" threw an exception from the wrong global
 

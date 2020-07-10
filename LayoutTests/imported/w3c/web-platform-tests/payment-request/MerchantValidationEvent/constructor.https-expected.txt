@@ -5,6 +5,7 @@ PASS MerchantValidationEvent can be dispatched, even if not trusted.
 PASS Must have a validationURL IDL attribute, which is initialized with to the validationURL dictionary value. 
 PASS Must throw TypeError if initialized with an invalid URL. 
 PASS Relative validationURLs use the document as the base. 
+FAIL Relative validationURLs use the document.baseURI as the base. assert_equals: expected "https://pass.com/pass" but got "https://localhost:9443/payment-request/MerchantValidationEvent/pass"
 PASS Must have a methodName IDL attribute, which is initialized with to the methodName dictionary value. 
 PASS When no methodName is passed, methodName attribute defaults to the empty string 
 PASS MerchantValidationEvent can be constructed with valid PMIs 

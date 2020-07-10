@@ -23,6 +23,13 @@ const validMethods = Object.freeze([
   },
   {
     supportedMethods: "https://apple.com/apple-pay",
+    data: {
+      version: 3,
+      merchantIdentifier: "merchant.com.example",
+      countryCode: "US",
+      merchantCapabilities: ["supports3DS"],
+      supportedNetworks: ["visa"],
+    }
   },
 ]);
 
@@ -157,9 +164,9 @@ const neutralDetails = Object.freeze({
 function smokeTest() {
   promise_test(async t => {
     const request = new PaymentRequest(validMethods, failDetails);
-    await promise_rejects(
+    await promise_rejects_js(
       t,
-      new TypeError(),
+      TypeError,
       request.show({
         total: "This throws a TypeError",
       }),
@@ -173,16 +180,17 @@ function runUpdateDetailsAlgorithm(
   details,
   options = {
     requestShipping: true,
-  }
+  },
+  initialDetails = failDetails,
 ) {
   const testAssertion = buttonElement.textContent.trim();
   buttonElement.disabled = true;
   promise_test(async t => {
-    const request = new PaymentRequest(validMethods, failDetails, options);
+    const request = new PaymentRequest(validMethods, initialDetails, options);
     const detailsPromise = Promise.resolve(details);
     const acceptPromise = request.show(detailsPromise);
     assert_equals(request.id, "this cannot be changed", "id must never change.");
-    await promise_rejects(
+    await promise_rejects_dom(
       t,
       "AbortError",
       acceptPromise,
@@ -306,6 +314,18 @@ function runUpdateDetailsAlgorithm(
       runUpdateDetailsAlgorithm(this, details, {requestShipping: false});
     ">
     When the payment sheet is shown, there should not be any errors shown.
+    </button>
+  </li>
+  <li>
+    <button onclick="
+      const initialDetails = {total: passTotal, id: 'this cannot be changed'};
+      const updatedDetails = {};
+      runUpdateDetailsAlgorithm(
+            this, updatedDetails, {requestShipping: false}, initialDetails);
+    ">
+    Resolving the show promise with empty details will preserve the details from
+    the constructor. When the payment sheet is shown, the string
+    "✅ TEST HAS PASSED ✅" should be shown.
     </button>
   </li>
   <li>

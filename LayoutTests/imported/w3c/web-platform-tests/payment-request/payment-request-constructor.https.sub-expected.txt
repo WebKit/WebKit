@@ -1,0 +1,32 @@
+
+PASS If details.id is missing, assign an identifier 
+PASS If details.id is missing, assign a unique identifier 
+PASS If the same id is provided, then use it 
+PASS Use ids even if they are strange 
+PASS Use provided request ID 
+PASS If the length of the methodData sequence is zero, then throw a TypeError 
+FAIL If payment method is duplicate, then throw a RangeError assert_throws_js: function "() => new PaymentRequest(duplicateMethods, defaultDetails)" did not throw
+PASS Modifier method data must be JSON-serializable object 
+PASS Rethrow any exceptions of JSON-serializing paymentMethod.data into a string 
+PASS If details.total.amount.value is not a valid decimal monetary value, then throw a TypeError 
+PASS PaymentDetailsBase members can be 0 length 
+PASS If the first character of details.total.amount.value is U+002D HYPHEN-MINUS, then throw a TypeError 
+PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value, then throw a TypeError 
+PASS Negative values are allowed for displayItems.amount.value, irrespective of total amount 
+PASS it handles high precision currency values without throwing 
+PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value, then throw a TypeError 
+PASS If there is no selected shipping option, then PaymentRequest.shippingOption remains null 
+PASS If there is a selected shipping option, and requestShipping is set, then that option becomes synchronously selected 
+PASS If requestShipping is set, and if there is a multiple selected shipping options, only the last is selected. 
+PASS If there are any duplicate shipping option ids, and shipping is requested, then throw a TypeError 
+PASS Throw when there are duplicate shippingOption ids, even if other values are different 
+PASS Throw TypeError if modifier.total.amount.value is not a valid decimal monetary value 
+PASS If amount.value of additionalDisplayItems is not a valid decimal monetary value, then throw a TypeError 
+PASS Modifier data must be JSON-serializable object (an Array in this case) 
+PASS Modifier data must be JSON-serializable object (an Object in this case) 
+PASS Rethrow any exceptions of JSON-serializing modifier.data 
+PASS Shipping type should be valid 
+PASS PaymentRequest.shippingAddress must initially be null 
+PASS If options.requestShipping is not set, then request.shippingType attribute is null. 
+PASS If options.requestShipping is true, request.shippingType will be options.shippingType. 
+
