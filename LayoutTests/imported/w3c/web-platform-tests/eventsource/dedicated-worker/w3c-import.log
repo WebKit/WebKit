@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -15,10 +15,18 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-close.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-close.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-close2.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-close2.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-non-same-origin.htm
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-url-bogus.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-non-same-origin.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-url-bogus.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-eventtarget.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-onmesage.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-onmesage.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-onmessage.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-onopen.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-onopen.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-prototype.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-prototype.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-url.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-url.js

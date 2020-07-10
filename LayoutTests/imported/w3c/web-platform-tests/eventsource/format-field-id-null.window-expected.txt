@@ -1,0 +1,7 @@
+
+PASS EventSource: id field set to %00%00 
+PASS EventSource: id field set to x%00 
+PASS EventSource: id field set to %00x 
+PASS EventSource: id field set to x%00x 
+PASS EventSource: id field set to %20%00 
+

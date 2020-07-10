@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -18,8 +18,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/cache-control.event_stream
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/cors-cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/cors.py
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/eventsource-onmessage-realm.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/init.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/last-event-id.py
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/last-event-id2.py
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/message.py
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/message2.py
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/resources/reconnect-fail.py

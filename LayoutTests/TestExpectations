@@ -231,6 +231,7 @@ imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip 
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
+imported/w3c/web-platform-tests/eventsource/shared-worker [ Skip ]
 
 # This test seems wrong as it call update() for a script that does not change and expected an updatefound event.
 # Per specification, if the scripts are identical, we do not install the new script and return the existing registration.

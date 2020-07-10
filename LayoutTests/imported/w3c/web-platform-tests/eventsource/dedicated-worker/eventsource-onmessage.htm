@@ -1,16 +1,7 @@
-<!--
-try {
-  var source = new EventSource("http://this is invalid/")
-  postMessage([false, 'no exception thrown'])
-  source.close()
-} catch(e) {
-  postMessage([true, e.code])
-}
-/*-->
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <title>dedicated worker - EventSource: constructor (invalid URL)</title>
+    <title>dedicated worker - EventSource: onmessage</title>
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
   </head>
@@ -19,11 +10,11 @@ try {
     <script>
       var test = async_test()
       test.step(function() {
-        var worker = new Worker('#')
+        var worker = new Worker('eventsource-onmesage.js')
         worker.onmessage = function(e) {
           test.step(function() {
             assert_true(e.data[0], e.data[1])
-            assert_equals(e.data[1], DOMException.SYNTAX_ERR, 'e.code')
+            assert_equals(e.data[1], "data", 'e.data')
           })
           test.done()
         }
@@ -31,4 +22,3 @@ try {
     </script>
   </body>
 </html>
-<!--*/ //-->

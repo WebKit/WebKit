@@ -1361,6 +1361,12 @@
     "imported/w3c/web-platform-tests/eventsource/eventsource-constructor-non-same-origin.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/eventsource/format-field-retry-bogus.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/eventsource/format-field-retry.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin.htm": [
         "slow"
     ],

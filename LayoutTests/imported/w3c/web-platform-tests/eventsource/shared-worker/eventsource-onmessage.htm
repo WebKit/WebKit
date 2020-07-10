@@ -1,18 +1,7 @@
-<!--
-try {
-  var source = new EventSource("../resources/message.py")
-  source.onmessage = function(e) {
-    postMessage([true, e.data])
-    this.close()
-  }
-} catch(e) {
-  postMessage([false, String(e)])
-}
-/*-->
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <title>dedicated worker - EventSource: onmessage</title>
+    <title>shared worker - EventSource: onmessage</title>
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
   </head>
@@ -21,8 +10,8 @@ try {
     <script>
       var test = async_test()
       test.step(function() {
-        var worker = new Worker('#')
-        worker.onmessage = function(e) {
+        var worker = new SharedWorker('eventsource-onmesage.js')
+        worker.port.onmessage = function(e) {
           test.step(function() {
             assert_true(e.data[0], e.data[1])
             assert_equals(e.data[1], "data", 'e.data')
@@ -33,4 +22,3 @@ try {
     </script>
   </body>
 </html>
-<!--*/ //-->

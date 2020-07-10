@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,18 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/README.md
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/event-data.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-close.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-document-domain.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-non-same-origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-stringify.htm
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-multi-window.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-cross-origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-eventtarget.htm
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage-realm-support.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage-realm.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage-trusted.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage.htm
@@ -42,7 +41,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-event-empty.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-event.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-2.htm
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-null.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-3.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-null.window.js
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-parsing.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-retry-bogus.htm
@@ -56,7 +56,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-newlines.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-null-character.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-utf-8.htm
-/LayoutTests/imported/w3c/web-platform-tests/eventsource/interfaces.html
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/request-accept.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/request-cache-control.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/request-credentials.htm
