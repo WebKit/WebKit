@@ -8567,6 +8567,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (WebCore::IOSApplication::isEssentialSkeleton())
             return NO;
 
+        // <rdar://problem/64671543> "ESPN Fantasy Sports" does not respond to mouse events, only touch events
+        if (WebCore::IOSApplication::isESPNFantasySports())
+            return NO;
+
         return YES;
     }();
 

@@ -1,3 +1,15 @@
+2020-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        "ESPN Fantasy Sports" does not respond to mouse events, only touch events
+        https://bugs.webkit.org/show_bug.cgi?id=214165
+        <rdar://problem/64671543>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldUseMouseGestureRecognizer]):
+        Add a bundle check.
+
 2020-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Adopt the WebKit-specific PAC key and entitlements

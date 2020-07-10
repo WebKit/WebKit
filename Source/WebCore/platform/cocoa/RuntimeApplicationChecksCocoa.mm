@@ -404,6 +404,12 @@ bool IOSApplication::isLaBanquePostale()
     return isLaBanquePostale;
 }
 
+bool IOSApplication::isESPNFantasySports()
+{
+    static bool isESPNFantasySports = applicationBundleIsEqualTo("com.espn.fantasyFootball"_s);
+    return isESPNFantasySports;
+}
+
 #endif
 
 } // namespace WebCore
