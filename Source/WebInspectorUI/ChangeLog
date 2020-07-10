@@ -1,3 +1,24 @@
+2020-07-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: title bar of undocked inspector should be white in BigSur
+        https://bugs.webkit.org/show_bug.cgi?id=214161
+        <rdar://problem/65289224>
+
+        Reviewed by Brian Burg.
+
+        Make the title bar white when the window is focused.
+
+        When the window is unfocused, the title bar background is
+        the same on Big Sur and Catalina. No changes were needed.
+
+        * UserInterface/Views/Main.css:
+        (#undocked-title-area):
+        (body.big-sur #undocked-title-area):
+        (body:not(.big-sur) #undocked-title-area):
+        (@media (prefers-color-scheme: dark) #undocked-title-area):
+        (@media (prefers-color-scheme: dark) body.big-sur #undocked-title-area):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur) #undocked-title-area):
+
 2020-07-08  Christopher Reid  <chris.reid@sony.com>
 
         Heap Snapshot Object Graph view doesn't get populated in some cases when inspecting a JSContext
