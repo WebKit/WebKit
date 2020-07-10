@@ -1,3 +1,54 @@
+2020-07-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add Slack-aware WebKitBot implementation
+        https://bugs.webkit.org/show_bug.cgi?id=211707
+
+        Reviewed by Devin Rousso and Brian Burg.
+
+        This patch adds Slack-aware WebKitBot implementation which supports "ping", "revert", and the other commands.
+        I decided to implement this feature in chat-bot because of the following reasons.
+
+            1. It is the previous way we are familiar with.
+            2. Creating a revert-patch sometimes takes long time because it involves working-copy clean-up, creating a revert, generating a patch...
+               So asynchronous request-response is better for developers who do not want to watch whether the patch is created until it is done.
+               Chat-bot can tell us when it is ready.
+            3. Requesting a revert-patch in public channel can easily tell the other developers that reverting is going on now.
+
+        We reuse python's `webkit-patch create-revert` command as it was in the old webkitbot. We enhance WKR bot to support webkitbot feature.
+        Once webkitbot app is installed into a channel, it monitors messages in the channel and works when the mention to this bot's user happens.
+
+        We use Real Time Message Slack API instead of Event API, because Event API requires public facing HTTPS server which accepts incoming webhook.
+        Real Time Message Slack API just requires a server app which connects to Slack via WebSocket, so it is easier to deploy for now.
+
+        The implementation of webkitbot is client-server model inside one process. There is one AsyncTaskQueue, and there is one async main loop which
+        takes the task from the queue and replies when it is done. Every time we noticed the request, this request queues the task to this task queue.
+        This design ensures that only one task is using the working-copy WebKit repository at a time, this is required to make a revert-patch without
+        conflict.
+
+        * WKR/ReadMe.md: Removed.
+        * WKR/WKR.mjs: Removed.
+        * WKR/package-lock.json: Removed.
+        * WKR/package.json: Removed.
+        * WebKitBot/.eslintrc: Added.
+        * WebKitBot/.gitignore: Renamed from Tools/WKR/.gitignore.
+        * WebKitBot/ReadMe.md: Added.
+        * WebKitBot/data/.gitignore: Renamed from Tools/WKR/data/.gitignore.
+        * WebKitBot/package-lock.json: Added.
+        * WebKitBot/package.json: Added.
+        * WebKitBot/src/AsyncTaskQueue.mjs: Added.
+        * WebKitBot/src/Commit.mjs: Added.
+        * WebKitBot/src/Contributors.mjs: Added.
+        * WebKitBot/src/Utility.mjs: Added.
+        * WebKitBot/src/WKR.mjs: Added.
+        * WebKitBot/src/WebKitBot.mjs: Added.
+        * WebKitBot/src/index.mjs: Added.
+        * WebKitBot/tests/Commit.test.mjs: Added.
+        * WebKitBot/tests/WebKitBot.test.mjs: Added.
+        * WebKitBot/tests/resources/.gitattributes: Added.
+        * WebKitBot/tests/resources/HaveRadarAndBugzilla.json: Added.
+        * WebKitBot/tests/resources/HavingBugzilla.json: Added.
+        * WebKitBot/tests/resources/NoRadarAndBugzilla.json: Added.
+
 2020-07-09  Andres Gonzalez  <andresg_22@apple.com>
 
         Make accessibility/Mac/selected-visible-position-range.html time-deterministic.
