@@ -1511,7 +1511,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
         return object.roleValue() == AccessibilityRole::DescriptionListTerm;
-    });
+    }) != nullptr;
 }
 
 - (BOOL)accessibilityIsInDescriptionListDefinition
@@ -1521,7 +1521,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
         return object.roleValue() == AccessibilityRole::DescriptionListDetail;
-    });
+    }) != nullptr;
 }
 
 - (NSString *)accessibilityHint
