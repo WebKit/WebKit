@@ -54,14 +54,25 @@ static void fileChooserDialogResponseCallback(GtkFileChooser* dialog, gint respo
 {
     GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
     if (responseID == GTK_RESPONSE_ACCEPT) {
-        GSList* filesList = gtk_file_chooser_get_files(dialog);
         GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new_with_free_func(g_free));
+#if USE(GTK4)
+        GRefPtr<GListModel> filesList = adoptGRef(gtk_file_chooser_get_files(dialog));
+        unsigned itemCount = g_list_model_get_n_items(filesList.get());
+        for (unsigned i = 0; i < itemCount; ++i) {
+            GRefPtr<GFile> file = adoptGRef(G_FILE(g_list_model_get_item(filesList.get(), i)));
+            if (gchar* filename = g_file_get_path(file.get()))
+                g_ptr_array_add(filesArray.get(), filename);
+        }
+#else
+        GSList* filesList = gtk_file_chooser_get_files(dialog);
         for (GSList* file = filesList; file; file = g_slist_next(file)) {
             if (gchar* filename = g_file_get_path(G_FILE(file->data)))
                 g_ptr_array_add(filesArray.get(), filename);
         }
-        g_ptr_array_add(filesArray.get(), nullptr);
         g_slist_free_full(filesList, g_object_unref);
+#endif
+        g_ptr_array_add(filesArray.get(), nullptr);
+
         webkit_file_chooser_request_select_files(adoptedRequest.get(), reinterpret_cast<const gchar* const*>(filesArray->pdata));
     } else
         webkit_file_chooser_request_cancel(adoptedRequest.get());
@@ -88,7 +99,7 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRe
 
     if (const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request)) {
         GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(selectedFiles[0]));
-        gtk_file_chooser_select_file(GTK_FILE_CHOOSER(dialog), file.get(), nullptr);
+        gtk_file_chooser_set_file(GTK_FILE_CHOOSER(dialog), file.get(), nullptr);
     }
 
     g_signal_connect(dialog, "response", G_CALLBACK(fileChooserDialogResponseCallback), g_object_ref(request));

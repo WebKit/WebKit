@@ -1,3 +1,13 @@
+2020-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build
+
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (fileChooserDialogResponseCallback):
+        (webkitWebViewRunFileChooser):
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::snapshot):
+
 2020-07-09  Brady Eidson  <beidson@apple.com>
 
         Multiplex the HID and GameController gamepad providers on Mac.
