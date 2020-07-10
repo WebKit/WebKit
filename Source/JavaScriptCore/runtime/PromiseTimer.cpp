@@ -70,13 +70,8 @@ void PromiseTimer::doWork(VM& vm)
         }
     }
 
-    if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish) {
-#if USE(CF)
-        CFRunLoopStop(vm.runLoop());
-#else
+    if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish)
         RunLoop::current().stop();
-#endif
-    }
 
     m_taskLock.unlock();
 }
@@ -84,17 +79,10 @@ void PromiseTimer::doWork(VM& vm)
 void PromiseTimer::runRunLoop()
 {
     ASSERT(!m_apiLock->vm()->currentThreadIsHoldingAPILock());
-#if USE(CF)
-    ASSERT(CFRunLoopGetCurrent() == m_apiLock->vm()->runLoop());
-#endif
+    ASSERT(&RunLoop::current() == &m_apiLock->vm()->runLoop());
     m_shouldStopRunLoopWhenAllPromisesFinish = true;
-    if (m_pendingPromises.size()) {
-#if USE(CF)
-        CFRunLoopRun();
-#else
+    if (m_pendingPromises.size())
         RunLoop::run();
-#endif
-    }
 }
 
 void PromiseTimer::addPendingPromise(VM& vm, JSPromise* ticket, Vector<Strong<JSCell>>&& dependencies)
