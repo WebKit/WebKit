@@ -106,11 +106,10 @@ template<typename Enumeration> std::enable_if_t<std::is_enum<Enumeration>::value
     add(hasher, static_cast<std::underlying_type_t<Enumeration>>(value));
 }
 
-template<typename> struct TypeCheckHelper { };
-template<typename, typename = void> struct HasBeginFunctionMember : std::false_type { };
-template<typename Container> struct HasBeginFunctionMember<Container, std::conditional_t<false, TypeCheckHelper<decltype(std::declval<Container>().begin())>, void>> : std::true_type { };
+template<typename, typename = void> constexpr bool HasBeginFunctionMember = false;
+template<typename T> constexpr bool HasBeginFunctionMember<T, std::void_t<decltype(std::declval<T>().begin())>> = true;
 
-template<typename Container> std::enable_if_t<HasBeginFunctionMember<Container>::value, void> add(Hasher& hasher, const Container& container)
+template<typename Container> std::enable_if_t<HasBeginFunctionMember<Container> && !IsTypeComplete<std::tuple_size<Container>>, void> add(Hasher& hasher, const Container& container)
 {
     for (const auto& value : container)
         add(hasher, value);
@@ -126,20 +125,22 @@ template<typename Arg, typename ...Args> void addArgs(Hasher& hasher, const Arg&
     addArgs(hasher, args...);
 }
 
-template<typename Tuple, std::size_t ...i> void addTupleHelper(Hasher& hasher, const Tuple& values, std::index_sequence<i...>)
+template<typename, typename = void> constexpr bool HasGetFunctionMember = false;
+template<typename T> constexpr bool HasGetFunctionMember<T, std::void_t<decltype(std::declval<T>().template get<0>())>> = true;
+
+template<typename TupleLike, std::size_t ...I> void addTupleLikeHelper(Hasher& hasher, const TupleLike& tupleLike, std::index_sequence<I...>)
 {
-    addArgs(hasher, std::get<i>(values)...);
+    if constexpr (HasGetFunctionMember<TupleLike>)
+        addArgs(hasher, tupleLike.template get<I>()...);
+    else {
+        using std::get;
+        addArgs(hasher, get<I>(tupleLike)...);
+    }
 }
 
-template<typename... Types> void add(Hasher& hasher, const std::tuple<Types...>& tuple)
+template<typename TupleLike> std::enable_if_t<IsTypeComplete<std::tuple_size<TupleLike>>, void> add(Hasher& hasher, const TupleLike& tuple)
 {
-    addTupleHelper(hasher, tuple, std::make_index_sequence<std::tuple_size<std::tuple<Types...>>::value> { });
-}
-
-template<typename T1, typename T2> void add(Hasher& hasher, const std::pair<T1, T2>& pair)
-{
-    add(hasher, pair.first);
-    add(hasher, pair.second);
+    addTupleLikeHelper(hasher, tuple, std::make_index_sequence<std::tuple_size<TupleLike>::value> { });
 }
 
 template<typename T> void add(Hasher& hasher, const Optional<T>& optional)

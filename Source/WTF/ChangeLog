@@ -1,3 +1,29 @@
+2020-07-11  Sam Weinig  <weinig@apple.com>
+
+        Make hasher work with tuple-like classes
+        https://bugs.webkit.org/show_bug.cgi?id=214224
+
+        Reviewed by Darin Adler.
+
+        * wtf/Hasher.h:
+        (WTF::add):
+        (WTF::addTupleLikeHelper):
+        (WTF::TypeCheckHelper<decltype): Deleted.
+        (WTF::addTupleHelper): Deleted.
+        Add support for tuple-like classes. These are classes that:
+        - Have defined specializations of std::tuple_size<> and std::tuple_element<>.
+        - And have either a member function named get<> or there exists a function get<>()
+          that takes the class as argument that can be looked up via ADL.
+
+        To avoid abiguity when hashing std::array, the add() overload enabled for containers
+        with a begin member functions also now checks that the container is not tuple-like.
+        The std::pair overload is no longer needed as it will use the tuple-like one now.
+
+        * wtf/OptionSet.h:
+        * wtf/StdLibExtras.h:
+        Move is_type_complete_v<> from OptionSet.h to StdLibExtras.h and rename to
+        adhere to WebKit style as IsTypeComplete<>.
+
 2020-07-10  Brady Eidson  <beidson@apple.com>
 
         GameController.framework gamepads should support Home buttons.

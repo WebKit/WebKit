@@ -1,3 +1,14 @@
+2020-07-11  Sam Weinig  <weinig@apple.com>
+
+        Make hasher work with tuple-like classes
+        https://bugs.webkit.org/show_bug.cgi?id=214224
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/Hasher.cpp:
+        Enable and extend tests for using computeHash() with user defined tuple-like classes, supporting
+        both the get function as a member and as a ADL-able free function.
+
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r264242.

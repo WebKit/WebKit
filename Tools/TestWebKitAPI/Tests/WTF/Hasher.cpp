@@ -208,8 +208,6 @@ TEST(WTF, Hasher_custom)
     EXPECT_EQ(1652352321U, computeHash(HasherAddCustom2 { }));
 }
 
-#if 0 // FIXME: Add support for tuple-like classes.
-
 struct HasherAddTupleLikeClass1 {
     std::array<int, 4> array { { 1, 2, 3, 4 } };
     template<size_t i> int get() const { return std::get<i>(array); }
@@ -219,34 +217,46 @@ struct HasherAddTupleLikeClass2 {
     std::array<int, 4> array { { 1, 2, 3, 4 } };
 };
 
+template<size_t i> int get(const HasherAddTupleLikeClass2& object)
+{
+    return object.array[i];
+}
+
+struct HasherAddTupleLikeClass3 {
+    int a = 1;
+    double b = 2;
+    
+    template<size_t i> decltype(auto) get() const
+    {
+        if constexpr (!i)
+            return a;
+        if constexpr (i == 1)
+            return b;
+    }
+};
+
 }
 
 namespace std {
 
-// FIXME: Documentation at cppreference.cpp says std::tuple_size is a struct, but it's a class in current macOS tools.
-// FIXME: It's inelegant to inject this into the std namespace. Is that really how a tuple-like class needs to be defined?
-// FIXME: This is so inconvenient that I am not sure it's something we want to do for lots of classes in WebKit.
-template<> class std::tuple_size<TestWebKitAPI::HasherAddTupleLikeClass1> : public std::integral_constant<size_t, std::tuple_size<decltype(TestWebKitAPI::HasherAddTupleLikeClass1::array)>::value> { };
+template<> class tuple_size<TestWebKitAPI::HasherAddTupleLikeClass1> : public integral_constant<size_t, 4> { };
+template<size_t I> class tuple_element<I, TestWebKitAPI::HasherAddTupleLikeClass1> { public: using type = int; };
 
-template<> class std::tuple_size<TestWebKitAPI::HasherAddTupleLikeClass2> : public std::integral_constant<size_t, std::tuple_size<decltype(TestWebKitAPI::HasherAddTupleLikeClass2::array)>::value> { };
+template<> class tuple_size<TestWebKitAPI::HasherAddTupleLikeClass2> : public integral_constant<size_t, 4> { };
+template<size_t I> class tuple_element<I, TestWebKitAPI::HasherAddTupleLikeClass2> { public: using type = int; };
+
+template<> class tuple_size<TestWebKitAPI::HasherAddTupleLikeClass3> : public integral_constant<size_t, 2> { };
+template<size_t I> class tuple_element<I, TestWebKitAPI::HasherAddTupleLikeClass3> { public: using type = decltype(declval<TestWebKitAPI::HasherAddTupleLikeClass3>().template get<I>()); };
 
 }
 
 namespace TestWebKitAPI {
 
-// FIXME: Is it OK for the get to be in the class's namespace and rely on argument-dependent lookup?
-// Or does this function template need to be moved into the std namespace like the tuple_size specialization?
-template<size_t i> int get(const HasherAddTupleLikeClass2& object)
-{
-    return get<i>(object.array);
-}
-
 TEST(WTF, Hasher_tupleLike)
 {
     EXPECT_EQ(1652352321U, computeHash(HasherAddTupleLikeClass1 { }));
     EXPECT_EQ(1652352321U, computeHash(HasherAddTupleLikeClass2 { }));
+    EXPECT_EQ(3489601216U, computeHash(HasherAddTupleLikeClass3 { }));
 }
-
-#endif
 
 } // namespace TestWebKitAPI
