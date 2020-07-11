@@ -1,3 +1,17 @@
+2020-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Prompt for requestStorageAccess is inverted in WKWebView 
+        https://bugs.webkit.org/show_bug.cgi?id=214198
+        <rdar://problem/65369725>
+
+        Reviewed by Darin Adler.
+
+        The labels for "allow" and "deny" StorageAccess API were inverted in the WKWebView
+        implementation.
+
+        * UIProcess/Cocoa/WKStorageAccessAlert.mm:
+        (WebKit::presentStorageAccessAlert):
+
 2020-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Prevent SPI clients from making the minimum layout height or width negative

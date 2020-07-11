@@ -67,12 +67,12 @@ void presentStorageAccessAlert(WKWebView *webView, const WebCore::RegistrableDom
 #else
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:informativeText preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
-        completionBlock(false);
+    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+        completionBlock(true);
     }];
 
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
-        completionBlock(true);
+    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+        completionBlock(false);
     }];
 
     [alert addAction:doNotAllowAction];
