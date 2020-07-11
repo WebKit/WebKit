@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,31 @@
 #import <GameController/GameController.h>
 
 namespace WebCore {
+
+// Buttons in the "standard" gamepad layout in the Web Gamepad spec
+// https://www.w3.org/TR/gamepad/#dfn-standard-gamepad-layout
+enum class GamepadButtons : uint8_t {
+    RightClusterBottom = 0,
+    RightClusterRight = 1,
+    RightClusterLeft = 2,
+    RightClusterTop = 3,
+    LeftShoulderFront = 4,
+    RightShoulderFront = 5,
+    LeftShoulderBack = 6,
+    RightShoulderBack = 7,
+    CenterClusterLeft = 8,
+    CenterClusterRight = 9,
+    LeftStick = 10,
+    RightStick = 11,
+    LeftClusterTop = 12,
+    LeftClusterBottom = 13,
+    LeftClusterLeft = 14,
+    LeftClusterRight = 15,
+    CenterClusterCenter = 16,
+};
+
+static constexpr auto numGamepadButtonsWithoutHomeButton = static_cast<size_t>(GamepadButtons::CenterClusterCenter);
+static constexpr auto numGamepadButtonsWithHomeButton = static_cast<size_t>(GamepadButtons::CenterClusterCenter) + 1;
 
 GameControllerGamepad::GameControllerGamepad(GCController *controller, unsigned index)
     : PlatformGamepad(index)
@@ -76,7 +101,7 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     m_mapping = String("standard");
 
     auto *homeButton = homeButtonFromExtendedGamepad(m_extendedGamepad.get());
-    m_buttonValues.resize(homeButton ? 17 : 16);
+    m_buttonValues.resize(homeButton ? numGamepadButtonsWithHomeButton : numGamepadButtonsWithoutHomeButton);
 
     m_extendedGamepad.get().valueChangedHandler = ^(GCExtendedGamepad *, GCControllerElement *) {
         m_lastUpdateTime = MonotonicTime::now();
@@ -84,40 +109,40 @@ void GameControllerGamepad::setupAsExtendedGamepad()
         m_hadButtonPresses = false;
     };
 
-    auto bindButton = ^(GCControllerButtonInput *button, size_t idx) {
-        m_buttonValues[idx] = button.value;
+    auto bindButton = ^(GCControllerButtonInput *button, GamepadButtons index) {
+        m_buttonValues[(size_t)index] = button.value;
         button.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-            m_buttonValues[idx] = value;
+            m_buttonValues[(size_t)index] = value;
             if (pressed)
                 m_hadButtonPresses = true;
         };
     };
 
     // Button Pad
-    bindButton(m_extendedGamepad.get().buttonA, 0);
-    bindButton(m_extendedGamepad.get().buttonB, 1);
-    bindButton(m_extendedGamepad.get().buttonX, 2);
-    bindButton(m_extendedGamepad.get().buttonY, 3);
+    bindButton(m_extendedGamepad.get().buttonA, GamepadButtons::RightClusterBottom);
+    bindButton(m_extendedGamepad.get().buttonB, GamepadButtons::RightClusterRight);
+    bindButton(m_extendedGamepad.get().buttonX, GamepadButtons::RightClusterLeft);
+    bindButton(m_extendedGamepad.get().buttonY, GamepadButtons::RightClusterTop);
 
     // Shoulders, Triggers
-    bindButton(m_extendedGamepad.get().leftShoulder, 4);
-    bindButton(m_extendedGamepad.get().rightShoulder, 5);
-    bindButton(m_extendedGamepad.get().leftTrigger, 6);
-    bindButton(m_extendedGamepad.get().rightTrigger, 7);
+    bindButton(m_extendedGamepad.get().leftShoulder, GamepadButtons::LeftShoulderFront);
+    bindButton(m_extendedGamepad.get().rightShoulder, GamepadButtons::RightShoulderFront);
+    bindButton(m_extendedGamepad.get().leftTrigger, GamepadButtons::LeftShoulderBack);
+    bindButton(m_extendedGamepad.get().rightTrigger, GamepadButtons::RightShoulderBack);
 
     // D Pad
-    bindButton(m_extendedGamepad.get().dpad.up, 12);
-    bindButton(m_extendedGamepad.get().dpad.down, 13);
-    bindButton(m_extendedGamepad.get().dpad.left, 14);
-    bindButton(m_extendedGamepad.get().dpad.right, 15);
+    bindButton(m_extendedGamepad.get().dpad.up, GamepadButtons::LeftClusterTop);
+    bindButton(m_extendedGamepad.get().dpad.down, GamepadButtons::LeftClusterBottom);
+    bindButton(m_extendedGamepad.get().dpad.left, GamepadButtons::LeftClusterLeft);
+    bindButton(m_extendedGamepad.get().dpad.right, GamepadButtons::LeftClusterRight);
 
     if (homeButton)
-        bindButton(homeButton, 16);
+        bindButton(homeButton, GamepadButtons::CenterClusterCenter);
 
     // Select, Start
 #if HAVE(GCEXTENDEDGAMEPAD_BUTTONS_OPTIONS_MENU)
-    bindButton(m_extendedGamepad.get().buttonOptions, 8);
-    bindButton(m_extendedGamepad.get().buttonMenu, 9);
+    bindButton(m_extendedGamepad.get().buttonOptions, GamepadButtons::CenterClusterLeft);
+    bindButton(m_extendedGamepad.get().buttonMenu, GamepadButtons::CenterClusterRight);
 #endif
 
     // L3, R3
@@ -126,8 +151,8 @@ void GameControllerGamepad::setupAsExtendedGamepad()
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"
     if ([m_extendedGamepad.get() respondsToSelector:@selector(leftThumbstickButton)]) {
-        bindButton(m_extendedGamepad.get().leftThumbstickButton, 10);
-        bindButton(m_extendedGamepad.get().rightThumbstickButton, 11);
+        bindButton(m_extendedGamepad.get().leftThumbstickButton, GamepadButtons::LeftStick);
+        bindButton(m_extendedGamepad.get().rightThumbstickButton, GamepadButtons::RightStick);
     }
 #pragma clang diagnostic pop
 #endif
