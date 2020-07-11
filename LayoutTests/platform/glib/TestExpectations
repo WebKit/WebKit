@@ -671,6 +671,12 @@ imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/i
 
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
+# These css-writing-modes tests have been passing consistently since r263855
+imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-003.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-005.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-002.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-004.xht [ Pass ]
+
 # Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]
 
@@ -682,6 +688,9 @@ imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitma
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSUPPORTED tests. Things we must skip.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# Payment Request
+imported/w3c/web-platform-tests/payment-request [ Skip ]
 
 # WebArchive
 webarchive [ WontFix ]

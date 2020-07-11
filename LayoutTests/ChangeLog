@@ -1,3 +1,13 @@
+2020-07-10  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Unreviewed, garden failure and new passes
+
+        Payment request is not supported and a single test was being executed
+
+        Also pass 4 css-writing-modes tests that are passing since r263855.
+
+        * platform/glib/TestExpectations:
+
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/user-timing/measure_associated_with_navigation_timing.html as flaky.
