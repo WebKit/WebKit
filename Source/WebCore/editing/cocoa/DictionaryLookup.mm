@@ -533,19 +533,19 @@ WKRevealController DictionaryLookup::animationControllerForPopup(const Dictionar
 
 #endif // PLATFORM(MAC)
 
-#elif PLATFORM(IOS_FAMILY) // ENABLE(REVEAL)
+#elif PLATFORM(IOS_FAMILY) // PLATFORM(IOS_FAMILY) && !ENABLE(REVEAL)
 
-std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection&)
+Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection&)
 {
-    return { nullptr, nil };
+    return WTF::nullopt;
 }
 
-std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult(const HitTestResult&)
+Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult&)
 {
-    return { nullptr, nil };
+    return WTF::nullopt;
 }
 
-#endif // ENABLE(REVEAL)
+#endif
 
 } // namespace WebCore
 
