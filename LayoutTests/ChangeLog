@@ -1,5 +1,14 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed gardening after WPT resync in r264239.
+
+        Mark one payment-request test as flaky and silence console logging for another one
+        to try and address flakiness.
+
+        * TestExpectations:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/eventsource from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214203
 
