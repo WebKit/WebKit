@@ -1,5 +1,11 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark img-aspect-ratio-lazy.tentative.html WPT test as flaky since import in r264117.
+
+        * TestExpectations:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed gardening after WPT resync in r264239.
 
         Mark one payment-request test as flaky and silence console logging for another one
