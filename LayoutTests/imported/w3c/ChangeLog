@@ -1,5 +1,27 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/notifications from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214206
+
+        Reviewed by Geoff Garen.
+
+        Resync web-platform-tests/notifications from upstream 859527a3513029d2.
+
+        * web-platform-tests/notifications/META.yml: Added.
+        * web-platform-tests/notifications/OWNERS: Removed.
+        * web-platform-tests/notifications/constructor-invalid.html:
+        * web-platform-tests/notifications/idlharness.https.any-expected.txt: Added.
+        * web-platform-tests/notifications/idlharness.https.any.html: Added.
+        * web-platform-tests/notifications/idlharness.https.any.js: Added.
+        * web-platform-tests/notifications/idlharness.https.any.worker-expected.txt: Added.
+        * web-platform-tests/notifications/idlharness.https.any.worker.html: Added.
+        * web-platform-tests/notifications/interfaces-expected.txt: Removed.
+        * web-platform-tests/notifications/interfaces.html: Removed.
+        * web-platform-tests/notifications/resources/w3c-import.log:
+        * web-platform-tests/notifications/w3c-import.log:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/user-timing from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214208
 
