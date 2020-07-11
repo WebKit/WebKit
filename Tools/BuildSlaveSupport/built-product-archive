@@ -193,7 +193,7 @@ def minifyDirectory(platform, directory):
 
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
-    assert platform in ('gtk', 'ios', 'jsc', 'mac', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
 
     if platform == 'ios':
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
@@ -266,7 +266,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('gtk', 'ios', 'jsc', 'mac', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
 
     archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
