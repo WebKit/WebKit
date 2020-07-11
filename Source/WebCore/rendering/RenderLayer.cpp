@@ -87,6 +87,7 @@
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "RenderAncestorIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
@@ -100,6 +101,7 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
+#include "RenderSVGForeignObject.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
@@ -324,6 +326,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_hasCompositedScrollableOverflow(false)
     , m_hasTransformedAncestor(false)
     , m_has3DTransformedAncestor(false)
+    , m_insideSVGForeignObject(false)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #if PLATFORM(IOS_FAMILY)
@@ -435,6 +438,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 
     dirtyPaintOrderListsOnChildChange(child);
 
+    child.updateAncestorDependentState();
     child.updateDescendantDependentFlags();
     if (child.m_hasVisibleContent || child.m_hasVisibleDescendant)
         setAncestorChainHasVisibleDescendant();
@@ -1517,6 +1521,16 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
     }
 }
 
+void RenderLayer::updateAncestorDependentState()
+{
+    bool insideSVGForeignObject = renderer().document().mayHaveRenderedSVGForeignObjects() && ancestorsOfType<RenderSVGForeignObject>(renderer()).first();
+    if (insideSVGForeignObject == m_insideSVGForeignObject)
+        return;
+
+    m_insideSVGForeignObject = insideSVGForeignObject;
+    updateSelfPaintingLayer();
+}
+
 void RenderLayer::updateDescendantDependentFlags()
 {
     if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty()) {
@@ -2434,7 +2448,7 @@ bool RenderLayer::canUseCompositedScrolling() const
 {
     bool isVisible = renderer().style().visibility() == Visibility::Visible;
     if (renderer().settings().asyncOverflowScrollingEnabled())
-        return isVisible && scrollsOverflow();
+        return isVisible && scrollsOverflow() && !isInsideSVGForeignObject();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(OVERFLOW_SCROLLING_TOUCH)
     return isVisible && scrollsOverflow() && (renderer().style().useTouchOverflowScrolling() || renderer().settings().alwaysUseAcceleratedOverflowScroll());

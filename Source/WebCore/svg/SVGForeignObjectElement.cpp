@@ -90,6 +90,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+    document().setMayHaveRenderedSVGForeignObjects();
     return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
 }
 

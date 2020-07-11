@@ -939,7 +939,9 @@ private:
     void setParent(RenderLayer*);
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
-    
+
+    void updateAncestorDependentState();
+
     void dirtyPaintOrderListsOnChildChange(RenderLayer&);
 
     bool shouldBeNormalFlowOnly() const;
@@ -1166,6 +1168,8 @@ private:
     void dirty3DTransformedDescendantStatus();
     // Both updates the status, and returns true if descendants of this have 3d.
     bool update3DTransformedDescendantStatus();
+    
+    bool isInsideSVGForeignObject() const { return m_insideSVGForeignObject; }
 
     void createReflection();
     void removeReflection();
@@ -1277,6 +1281,8 @@ private:
 
     bool m_hasTransformedAncestor : 1;
     bool m_has3DTransformedAncestor : 1;
+
+    bool m_insideSVGForeignObject : 1;
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason

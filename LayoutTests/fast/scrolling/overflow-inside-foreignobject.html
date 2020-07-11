@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html lang="en">
+<head>
+  <style>
+    .content-wrapper {
+      position: relative;
+      width: 760px;
+      height: 560px;
+      border: 1px solid black;
+    }
+
+    .content-wrapper svg {
+      width: 100%;
+      height: 100%;
+      background-color: #eee;
+    }
+    
+    textarea {
+      width: 100%;
+      height: 100%;
+      resize: none;
+      background-color: white;
+      box-sizing: border-box;
+      border: 2px solid gray;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+  </style>
+</head>
+<body>
+<div class="content-wrapper">
+    <svg width="375" height="355" viewbox="0 0 375 355" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <foreignobject x="24" y="160" width="327" height="120">
+        <textarea xmlns="http://www.w3.org/1999/xhtml"></textarea>
+    </foreignobject></svg>
+</div>
+</body>
+</html>

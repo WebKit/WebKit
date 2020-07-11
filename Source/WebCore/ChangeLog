@@ -1,3 +1,32 @@
+2020-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r260276): Overflow scrolling layers misplaced inside SVG foreign object
+        https://bugs.webkit.org/show_bug.cgi?id=213788
+        <rdar://problem/65039637>
+
+        Reviewed by Zalan Bujtas.
+        
+        RenderLayers inside SVG <foreignObject> don't display correctly, so don't use
+        accelerated overflow scroll (which requires layers) inside <foreignObject>.
+
+        This reverts behavior to macOS Catalina behavior (i.e. as soon as the overflow
+        becomes scrollable, rendering problems appear), and to pre-iOS 13 behavior.
+
+        Test: fast/scrolling/overflow-inside-foreignobject.html
+
+        * dom/Document.h:
+        (WebCore::Document::mayHaveRenderedSVGForeignObjects const):
+        (WebCore::Document::setMayHaveRenderedSVGForeignObjects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::updateAncestorDependentState):
+        (WebCore::RenderLayer::canUseCompositedScrolling const):
+        * rendering/RenderLayer.h:
+        * rendering/svg/RenderSVGForeignObject.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::createElementRenderer):
+
 2020-07-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Min-Max width] Add support for float avoiders

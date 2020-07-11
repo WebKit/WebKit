@@ -1,3 +1,14 @@
+2020-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r260276): Overflow scrolling layers misplaced inside SVG foreign object
+        https://bugs.webkit.org/show_bug.cgi?id=213788
+        <rdar://problem/65039637>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/scrolling/overflow-inside-foreignobject-expected.html: Added.
+        * fast/scrolling/overflow-inside-foreignobject.html: Added.
+
 2020-07-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html as crashing on iOS WK2 Debug.
