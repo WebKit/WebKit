@@ -3,6 +3,7 @@ Description
 This test validates that the performance.mark() method throws a SYNTAX_ERR exception whenever a navigation timing attribute is provided for the name parameter.
 
 
+PASS window.performance.mark() throws a TypeError exception. 
 PASS window.performance.mark("navigationStart") throws a SyntaxError exception. 
 PASS window.performance.mark("unloadEventStart") throws a SyntaxError exception. 
 PASS window.performance.mark("unloadEventEnd") throws a SyntaxError exception. 

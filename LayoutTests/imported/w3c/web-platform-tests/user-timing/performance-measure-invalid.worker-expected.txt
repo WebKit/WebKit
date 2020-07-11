@@ -1,0 +1,7 @@
+
+FAIL When converting 'navigationStart' to a timestamp, the global object has to be a Window object. assert_throws_js: function "() => {
+    performance.measure('name', 'navigationStart', 'navigationStart');
+  }" threw object "SyntaxError: No mark named 'navigationStart' exists" ("SyntaxError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

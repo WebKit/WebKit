@@ -1,0 +1,15 @@
+
+FAIL The detail property in the mark constructor should be structured-clone. function is not a constructor (evaluating 'new PerformanceMark("A", { detail })')
+FAIL The detail property in the mark method should be structured-clone. undefined is not an object (evaluating 'markEntry.detail')
+FAIL When accessing detail from a mark entry and the detail is not provided, just return a null value. undefined is not an object (evaluating 'markEntry.detail')
+FAIL Mark: Throw an exception when the detail property cannot be structured-serialized. assert_throws_dom: Trying to structured-serialize a Symbol. function "()=>{
+    new PerformanceMark("A", { detail });
+  }" threw object "TypeError: function is not a constructor (evaluating 'new PerformanceMark("A", { detail })')" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
+FAIL The detail property in the measure method should be structured-clone. No mark named '[object Object]' exists
+FAIL The detail property in the measure method should be the same reference. No mark named '[object Object]' exists
+FAIL When accessing detail from a measure entry and the detail is not provided, just return a null value. undefined is not an object (evaluating 'measureEntry.detail')
+FAIL Measure: Throw an exception when the detail property cannot be structured-serialized. assert_throws_dom: Trying to structured-serialize a Symbol. function "()=>{
+    performance.measure("A", { start: 0, detail });
+  }" threw object "SyntaxError: No mark named '[object Object]' exists" that is not a DOMException DataCloneError: property "code" is equal to 12, expected 25
+FAIL The detail object is cloned when passed to mark API. undefined is not an object (evaluating 'mark.detail')
+

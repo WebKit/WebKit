@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
-
-Description
-
-This test validates exception scenarios of invoking mark() and measure() with timing attributes as value.
-
-

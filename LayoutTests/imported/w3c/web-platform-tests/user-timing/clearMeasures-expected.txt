@@ -1,0 +1,63 @@
+Description
+
+This test validates functionality of the interface window.performance.clearMeasures.
+
+
+PASS First loop: checking entries after removing "". There should be 2 entries. 
+PASS First loop: checking entries after removing "". Entries in entrylist should be in order. 
+PASS First loop: checking entries after removing "". Entry_list 0. Entry "aaa" should be one that we have set. 
+PASS First loop: checking entries after removing "". Entry_list 0. entryType should be "measure". 
+PASS First loop: checking entries after removing "". Entry_list 0. startTime should be a number. 
+PASS First loop: checking entries after removing "". Entry_list 0. duration should be a number. 
+PASS First loop: checking entries after removing "". Entry_list 1. Entry "2" should be one that we have set. 
+PASS First loop: checking entries after removing "". Entry_list 1. entryType should be "measure". 
+PASS First loop: checking entries after removing "". Entry_list 1. startTime should be a number. 
+PASS First loop: checking entries after removing "". Entry_list 1. duration should be a number. 
+PASS First loop: measure "" should not exist anymore after we cleared it. 
+PASS First loop: checking entries after removing "2". There should be 1 entries. 
+PASS First loop: checking entries after removing "2". Entries in entrylist should be in order. 
+PASS First loop: checking entries after removing "2". Entry_list 0. Entry "aaa" should be one that we have set. 
+PASS First loop: checking entries after removing "2". Entry_list 0. entryType should be "measure". 
+PASS First loop: checking entries after removing "2". Entry_list 0. startTime should be a number. 
+PASS First loop: checking entries after removing "2". Entry_list 0. duration should be a number. 
+PASS First loop: measure "2" should not exist anymore after we cleared it. 
+PASS First loop: checking entries after removing "aaa". There should be 0 entries. 
+PASS First loop: checking entries after removing "aaa". Entries in entrylist should be in order. 
+PASS First loop: measure "aaa" should not exist anymore after we cleared it. 
+PASS No measures should exist after we clear all (after first loop). 
+PASS Second loop: checking entries after removing "". There should be 4 entries. 
+PASS Second loop: checking entries after removing "". Entries in entrylist should be in order. 
+PASS Second loop: checking entries after removing "". Entry_list 0. Entry "aaa" should be one that we have set. 
+PASS Second loop: checking entries after removing "". Entry_list 0. entryType should be "measure". 
+PASS Second loop: checking entries after removing "". Entry_list 0. startTime should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 0. duration should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 1. Entry "aaa" should be one that we have set. 
+PASS Second loop: checking entries after removing "". Entry_list 1. entryType should be "measure". 
+PASS Second loop: checking entries after removing "". Entry_list 1. startTime should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 1. duration should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 2. Entry "2" should be one that we have set. 
+PASS Second loop: checking entries after removing "". Entry_list 2. entryType should be "measure". 
+PASS Second loop: checking entries after removing "". Entry_list 2. startTime should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 2. duration should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 3. Entry "2" should be one that we have set. 
+PASS Second loop: checking entries after removing "". Entry_list 3. entryType should be "measure". 
+PASS Second loop: checking entries after removing "". Entry_list 3. startTime should be a number. 
+PASS Second loop: checking entries after removing "". Entry_list 3. duration should be a number. 
+PASS Second loop: measure "" should not exist anymore after we cleared it. 
+PASS Second loop: checking entries after removing "2". There should be 2 entries. 
+PASS Second loop: checking entries after removing "2". Entries in entrylist should be in order. 
+PASS Second loop: checking entries after removing "2". Entry_list 0. Entry "aaa" should be one that we have set. 
+PASS Second loop: checking entries after removing "2". Entry_list 0. entryType should be "measure". 
+PASS Second loop: checking entries after removing "2". Entry_list 0. startTime should be a number. 
+PASS Second loop: checking entries after removing "2". Entry_list 0. duration should be a number. 
+PASS Second loop: checking entries after removing "2". Entry_list 1. Entry "aaa" should be one that we have set. 
+PASS Second loop: checking entries after removing "2". Entry_list 1. entryType should be "measure". 
+PASS Second loop: checking entries after removing "2". Entry_list 1. startTime should be a number. 
+PASS Second loop: checking entries after removing "2". Entry_list 1. duration should be a number. 
+PASS Second loop: measure "2" should not exist anymore after we cleared it. 
+PASS Second loop: checking entries after removing "aaa". There should be 0 entries. 
+PASS Second loop: checking entries after removing "aaa". Entries in entrylist should be in order. 
+PASS Second loop: measure "aaa" should not exist anymore after we cleared it. 
+PASS Nothing should happen if we clear a non-exist measure 
+PASS No measures should exist when we clear all (after second loop). 
+

@@ -1,0 +1,8 @@
+
+FAIL measure entries' detail and start/end are customizable The string did not match the expected pattern.
+FAIL measure should throw a TypeError when passed an invalid argument combination assert_throws_js: measure should throw a TypeError when passed an options object and an end time function "function () {
+      self.performance.measure("optionsAndNumberEnd", {'start': 2}, 12);
+    }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

@@ -1,0 +1,8 @@
+
+FAIL measure entries' detail and start/end are customizable No mark named 'null' exists
+FAIL measure should throw a TypeError when passed an invalid argument combination assert_throws_js: measure should throw a TypeError when passed an options object and an end time function "function () {
+      self.performance.measure("optionsAndNumberEnd", {'start': 2}, 12);
+    }" threw object "SyntaxError: No mark named '12' exists" ("SyntaxError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+
