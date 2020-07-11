@@ -52,7 +52,11 @@ template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArra
 // This overload of createNSArray takes a function to map each vector element to an Objective-C object.
 // The map function has the same interface as the makeNSArrayElement function above, but can be any
 // function including a lambda, a function-like object, or Function<>.
-template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&&, const MapFunctionType&);
+template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&&, MapFunctionType&&);
+
+// This overload of makeVector takes a function to map each Objective-C object to a vector element.
+// Currently, the map function needs to return an Optional.
+template<typename MapFunctionType> Vector<typename std::invoke_result_t<MapFunctionType, id>::value_type> makeVector(NSArray *, MapFunctionType&&);
 
 // Implementation details of the function templates above.
 
@@ -70,11 +74,11 @@ template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionTyp
     return array;
 }
 
-template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&& collection, const MapFunctionType& function)
+template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&& collection, MapFunctionType&& function)
 {
     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:std::size(collection)]);
     for (auto&& element : collection)
-        addUnlessNil(array.get(), getPtr(function(std::forward<decltype(element)>(element))));
+        addUnlessNil(array.get(), getPtr(std::invoke(std::forward<MapFunctionType>(function), std::forward<decltype(element)>(element))));
     return array;
 }
 
@@ -85,6 +89,18 @@ template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArra
     for (id element in array) {
         constexpr const VectorElementType* typedNull = nullptr;
         if (auto vectorElement = makeVectorElement(typedNull, element))
+            vector.uncheckedAppend(WTFMove(*vectorElement));
+    }
+    vector.shrinkToFit();
+    return vector;
+}
+
+template<typename MapFunctionType> Vector<typename std::invoke_result_t<MapFunctionType, id>::value_type> makeVector(NSArray *array, MapFunctionType&& function)
+{
+    Vector<typename std::invoke_result_t<MapFunctionType, id>::value_type> vector;
+    vector.reserveInitialCapacity(array.count);
+    for (id element in array) {
+        if (auto vectorElement = std::invoke(std::forward<MapFunctionType>(function), element))
             vector.uncheckedAppend(WTFMove(*vectorElement));
     }
     vector.shrinkToFit();

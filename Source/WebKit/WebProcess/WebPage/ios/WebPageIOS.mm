@@ -4302,11 +4302,11 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         if (auto contextRange = makeRange(contextBeforeStart, contextAfterEnd))
             context.textRects = characterRectsForRange(*contextRange, 0);
     } else if (wantsMarkedTextRects && compositionRange) {
-        auto start = makeBoundaryPoint(contextBeforeStart.deepEquivalent());
-        auto end = makeBoundaryPoint(compositionRange->startPosition());
         unsigned compositionStartOffset = 0;
-        if (start && end)
-            compositionStartOffset = WebCore::plainText(SimpleRange { WTFMove(*start), WTFMove(*end) }).length();
+        if (auto start = makeBoundaryPoint(contextBeforeStart.deepEquivalent())) {
+            if (auto end = makeBoundaryPoint(compositionRange->startPosition()))
+                compositionStartOffset = WebCore::plainText(SimpleRange { WTFMove(*start), WTFMove(*end) }).length();
+        }
         context.textRects = characterRectsForRange(*compositionRange, compositionStartOffset);
     }
 

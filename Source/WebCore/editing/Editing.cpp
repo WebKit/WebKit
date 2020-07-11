@@ -1105,8 +1105,10 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
     }
 
     auto start = makeBoundaryPoint(firstPositionInNode(scope.get()));
+    if (!start)
+        return 0;
     auto end = makeBoundaryPoint(position.parentAnchoredEquivalent());
-    if (!start || !end)
+    if (!end)
         return 0;
 
     return characterCount({ *start, *end }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
@@ -1116,8 +1118,10 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
 int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, bool forSelectionPreservation)
 {
     auto start = makeBoundaryPoint(firstPositionInNode(&node));
+    if (!start)
+        return 0;
     auto end = makeBoundaryPoint(visiblePosition.deepEquivalent().parentAnchoredEquivalent());
-    if (!start || !end)
+    if (!end)
         return 0;
 
     return characterCount({ *start, *end }, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);

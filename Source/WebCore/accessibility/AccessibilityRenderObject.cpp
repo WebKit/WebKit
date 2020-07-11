@@ -913,15 +913,11 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
      may not belong to the link element and thus may not activate the link.
      Hence, return the middle point of the first character in the link if exists.
      */
-    if (RefPtr<Range> range = elementRange()) {
-        VisiblePosition start = range->startPosition();
-        VisiblePosition end = nextVisiblePosition(start);
-        if (start.isNull() || !range->contains(end))
-            return AccessibilityObject::clickPoint();
-
-        RefPtr<Range> charRange = makeRange(start, end);
-        IntRect rect = boundsForRange(charRange);
-        return { rect.x() + rect.width() / 2, rect.y() + rect.height() / 2 };
+    if (auto range = elementRange()) {
+        auto start = VisiblePosition { createLegacyEditingPosition(range->start) };
+        auto end = nextVisiblePosition(start);
+        if (!end.isNull() && createLiveRange(range)->contains(end))
+            return { boundsForRange({ *makeBoundaryPoint(start), *makeBoundaryPoint(end) }).center() };
     }
     return AccessibilityObject::clickPoint();
 }
@@ -941,8 +937,7 @@ IntPoint AccessibilityRenderObject::clickPoint()
     
     VisibleSelection visSelection = selection();
     VisiblePositionRange range = VisiblePositionRange(visSelection.visibleStart(), visSelection.visibleEnd());
-    IntRect bounds = boundsForVisiblePositionRange(range);
-    return { bounds.x() + (bounds.width() / 2), bounds.y() + (bounds.height() / 2) };
+    return boundsForVisiblePositionRange(range).center();
 }
     
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
@@ -1661,17 +1656,15 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         textControl.setSelectionRange(range.start, range.start + range.length);
     } else {
-        auto node = this->node();
-        ASSERT(node);
+        ASSERT(node());
+        auto& node = *this->node();
         auto elementRange = this->elementRange();
-        VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(*node, range.start);
-        if (!elementRange->contains(start))
-            start = VisiblePosition(elementRange->startPosition());
-        
-        VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(*node, range.start + range.length);
-        if (!elementRange->contains(end))
-            end = VisiblePosition(elementRange->endPosition());
-        
+        auto start = visiblePositionForIndexUsingCharacterIterator(node, range.start);
+        if (!createLiveRange(elementRange)->contains(start))
+            start = createLegacyEditingPosition(elementRange->start);
+        auto end = visiblePositionForIndexUsingCharacterIterator(node, range.start + range.length);
+        if (!createLiveRange(elementRange)->contains(end))
+            end = createLegacyEditingPosition(elementRange->start);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
     
@@ -2167,24 +2160,21 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
     return boundsForRects(rect1, rect2, *makeRange(range.start, range.end));
 }
 
-IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) const
+IntRect AccessibilityRenderObject::boundsForRange(const SimpleRange& range) const
 {
-    if (!range)
-        return IntRect();
-    
-    AXObjectCache* cache = this->axObjectCache();
+    auto cache = axObjectCache();
     if (!cache)
-        return IntRect();
-    
-    CharacterOffset start = cache->startOrEndCharacterOffsetForRange(*range, true);
-    CharacterOffset end = cache->startOrEndCharacterOffsetForRange(*range, false);
-    
-    LayoutRect rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
-    LayoutRect rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
-    
-    // readjust for position at the edge of a line. This is to exclude line rect that doesn't need to be accounted in the range bounds.
+        return { };
+
+    auto start = cache->startOrEndCharacterOffsetForRange(range, true);
+    auto end = cache->startOrEndCharacterOffsetForRange(range, false);
+
+    auto rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
+    auto rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
+
+    // Readjust for position at the edge of a line. This is to exclude line rect that doesn't need to be accounted in the range bounds.
     if (rect2.y() != rect1.y()) {
-        CharacterOffset endOfFirstLine = cache->endCharacterOffsetOfLine(start);
+        auto endOfFirstLine = cache->endCharacterOffsetOfLine(start);
         if (start.isEqual(endOfFirstLine)) {
             start = cache->nextCharacterOffset(start, false);
             rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
@@ -2194,8 +2184,8 @@ IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) con
             rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
         }
     }
-    
-    return boundsForRects(rect1, rect2, *range);
+
+    return boundsForRects(rect1, rect2, range);
 }
 
 bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange& range) const
@@ -2230,10 +2220,11 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
     if (range.start == range.end) {
         setTextSelectionIntent(axObjectCache(), AXTextStateChangeTypeSelectionMove);
 
-        auto elementRange = this->elementRange();
         auto start = range.start;
-        if (elementRange && !elementRange->contains(start))
-            start = VisiblePosition(elementRange->startPosition());
+        if (auto elementRange = this->elementRange()) {
+            if (!createLiveRange(elementRange)->contains(start))
+                start = createLegacyEditingPosition(elementRange->start);
+        }
 
         m_renderer->frame().selection().moveTo(start, UserTriggered);
     } else {
@@ -2419,11 +2410,14 @@ IntRect AccessibilityRenderObject::doAXBoundsForRange(const PlainTextRange& rang
     return IntRect();
 }
 
-IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& range) const
+IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& characterRange) const
 {
-    if (allowsTextRanges())
-        return boundsForRange(rangeForPlainTextRange(range));
-    return IntRect();
+    if (!allowsTextRanges())
+        return { };
+    auto range = rangeForPlainTextRange(characterRange);
+    if (!range)
+        return { };
+    return boundsForRange(*range);
 }
 
 AXCoreObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const IntPoint& point) const

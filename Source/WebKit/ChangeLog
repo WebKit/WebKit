@@ -1,3 +1,14 @@
+2020-07-11  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from AccessibilityObject.h, AccessibilityObjectInterface.h, AccessibilityRenderObject.h, AXIsolatedObject.h
+        https://bugs.webkit.org/show_bug.cgi?id=214215
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext): Use nested if for start and end
+        so we don't do the work on end if the test fails on start.
+
 2020-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Prompt for requestStorageAccess is inverted in WKWebView 

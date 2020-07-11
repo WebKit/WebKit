@@ -159,8 +159,10 @@ Ref<Range> TextCheckingParagraph::subrange(CharacterRange range) const
 ExceptionOr<uint64_t> TextCheckingParagraph::offsetTo(const Position& position) const
 {
     auto start = makeBoundaryPoint(paragraphRange().startPosition());
+    if (!start)
+        return Exception { TypeError };
     auto end = makeBoundaryPoint(position);
-    if (!start || !end)
+    if (!end)
         return Exception { TypeError };
     return characterCount({ *start, *end });
 }
@@ -212,8 +214,10 @@ uint64_t TextCheckingParagraph::automaticReplacementStart() const
         return *m_automaticReplacementStart;
 
     auto start = makeBoundaryPoint(paragraphRange().startPosition());
+    if (!start)
+        return 0;
     auto end = makeBoundaryPoint(m_automaticReplacementRange->startPosition());
-    if (!start || !end)
+    if (!end)
         return 0;
 
     m_automaticReplacementStart = characterCount({ *start, *end });

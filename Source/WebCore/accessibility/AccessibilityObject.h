@@ -33,7 +33,6 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Path.h"
-#include "Range.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -232,7 +231,7 @@ public:
     bool hasBoldFont() const override { return false; }
     bool hasItalicFont() const override { return false; }
     bool hasMisspelling() const override;
-    RefPtr<Range> getMisspellingRange(RefPtr<Range> const& start, AccessibilitySearchDirection) const override;
+    Optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const override;
     bool hasPlainText() const override { return false; }
     bool hasSameFont(const AXCoreObject&) const override { return false; }
     bool hasSameFontColor(const AXCoreObject&) const override { return false; }
@@ -356,12 +355,7 @@ public:
     bool isDescendantOfRole(AccessibilityRole) const override;
 
     // Text selection
-private:
-    RefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String> const&) const;
-    Optional<SimpleRange> selectionRange() const;
-    RefPtr<Range> findTextRange(Vector<String> const& searchStrings, RefPtr<Range> const& start, AccessibilitySearchTextDirection) const;
-public:
-    Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override;
+    Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const override;
     Vector<String> performTextOperation(AccessibilityTextOperation const&) override;
 
     AccessibilityObject* observableObject() const override { return nullptr; }
@@ -522,7 +516,7 @@ public:
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
 
-    RefPtr<Range> elementRange() const override;
+    Optional<SimpleRange> elementRange() const override;
     static bool replacedNodeNeedsCharacter(Node* replacedNode);
 
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
@@ -536,12 +530,12 @@ public:
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
 
-    RefPtr<Range> rangeForPlainTextRange(const PlainTextRange&) const override;
+    Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
 
     static String stringForVisiblePositionRange(const VisiblePositionRange&);
-    String stringForRange(RefPtr<Range>) const override;
+    String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
-    IntRect boundsForRange(const RefPtr<Range>) const override { return IntRect(); }
+    IntRect boundsForRange(const SimpleRange&) const override { return IntRect(); }
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
 
@@ -746,7 +740,7 @@ public:
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const override;
     AccessibilityObject* webAreaObject() const override { return nullptr; }
 
-    void clearIsIgnoredFromParentData() override { m_isIgnoredFromParentData = AccessibilityIsIgnoredFromParentData(); }
+    void clearIsIgnoredFromParentData() override { m_isIgnoredFromParentData = { }; }
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;
 
     uint64_t sessionID() const override;
@@ -756,20 +750,11 @@ public:
 
 protected:
     AccessibilityObject() = default;
+
+    // FIXME: Make more of these member functions private.
+
     void detachRemoteParts(AccessibilityDetachmentType) override;
     void detachPlatformWrapper(AccessibilityDetachmentType) override;
-
-    AXID m_id { 0 };
-    AccessibilityChildrenVector m_children;
-    mutable bool m_haveChildren { false };
-    AccessibilityRole m_role { AccessibilityRole::Unknown };
-    AccessibilityObjectInclusion m_lastKnownIsIgnoredValue { AccessibilityObjectInclusion::DefaultBehavior };
-    AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData { };
-    bool m_childrenDirty { false };
-    bool m_subtreeDirty { false };
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    bool m_isolatedTreeNodeInitialized { false };
-#endif
 
     void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData& data) override { m_isIgnoredFromParentData = data; }
 
@@ -792,12 +777,28 @@ protected:
 
     AccessibilityObject* radioGroupAncestor() const;
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
-#else
-    bool allowsTextRanges() const { return isTextControl(); }
-    unsigned getLengthForTextRange() const { return text().length(); }
+
+private:
+    Optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
+    Optional<SimpleRange> selectionRange() const;
+    Optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
+
+    AXID m_id { 0 };
+protected: // FIXME: Make the data members private.
+    AccessibilityChildrenVector m_children;
+    mutable bool m_haveChildren { false };
+    AccessibilityRole m_role { AccessibilityRole::Unknown };
+private:
+    AccessibilityObjectInclusion m_lastKnownIsIgnoredValue { AccessibilityObjectInclusion::DefaultBehavior };
+protected: // FIXME: Make the data members private.
+    AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData;
+    bool m_childrenDirty { false };
+    bool m_subtreeDirty { false };
+private:
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool m_isolatedTreeNodeInitialized { false };
 #endif
 };
 
@@ -807,6 +808,11 @@ inline String AccessibilityObject::actionVerb() const { return emptyString(); }
 inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
 inline void AccessibilityObject::updateBackingStore() { }
 inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType) { }
+#endif
+
+#if !(ENABLE(ACCESSIBILITY) && USE(ATK))
+inline bool AccessibilityObject::allowsTextRanges() const { return isTextControl(); }
+inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
 #endif
 
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible);

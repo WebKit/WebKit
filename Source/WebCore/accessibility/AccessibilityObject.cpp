@@ -274,24 +274,24 @@ bool AccessibilityObject::hasMisspelling() const
     return isMisspelled;
 }
 
-RefPtr<Range> AccessibilityObject::getMisspellingRange(RefPtr<Range> const& start, AccessibilitySearchDirection direction) const
+Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& start, AccessibilitySearchDirection direction) const
 {
     auto node = this->node();
     if (!node)
-        return nullptr;
+        return WTF::nullopt;
 
     Frame* frame = node->document().frame();
     if (!frame)
-        return nullptr;
+        return WTF::nullopt;
 
     if (!unifiedTextCheckerEnabled(frame))
-        return nullptr;
+        return WTF::nullopt;
 
     Editor& editor = frame->editor();
 
     TextCheckerClient* textChecker = editor.textChecker();
     if (!textChecker)
-        return nullptr;
+        return WTF::nullopt;
 
     Vector<TextCheckingResult> misspellings;
     checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
@@ -306,8 +306,8 @@ RefPtr<Range> AccessibilityObject::getMisspellingRange(RefPtr<Range> const& star
             if (!misspellingRange)
                 continue;
 
-            if (misspellingRange->compareBoundaryPoints(Range::END_TO_END, *start).releaseReturnValue() > 0)
-                return misspellingRange;
+            if (misspellingRange->compareBoundaryPoints(Range::END_TO_END, createLiveRange(start)).releaseReturnValue() > 0)
+                return makeSimpleRange(*misspellingRange);
         }
     } else if (direction == AccessibilitySearchDirection::Previous) {
         for (auto rit = misspellings.rbegin(); rit != misspellings.rend(); ++rit) {
@@ -315,12 +315,12 @@ RefPtr<Range> AccessibilityObject::getMisspellingRange(RefPtr<Range> const& star
             if (!misspellingRange)
                 continue;
 
-            if (misspellingRange->compareBoundaryPoints(Range::START_TO_START, *start).releaseReturnValue() < 0)
-                return misspellingRange;
+            if (misspellingRange->compareBoundaryPoints(Range::START_TO_START, createLiveRange(start)).releaseReturnValue() < 0)
+                return makeSimpleRange(*misspellingRange);
         }
     }
 
-    return nullptr;
+    return WTF::nullopt;
 }
 
 unsigned AccessibilityObject::blockquoteLevel() const
@@ -562,67 +562,63 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
 // Returns the range that is fewer positions away from the reference range.
 // NOTE: The after range is expected to ACTUALLY be after the reference range and the before
 // range is expected to ACTUALLY be before. These are not checked for performance reasons.
-static RefPtr<Range> rangeClosestToRange(RefPtr<Range> const& referenceRange, RefPtr<Range>&& afterRange, RefPtr<Range>&& beforeRange)
+static Optional<SimpleRange> rangeClosestToRange(const SimpleRange& referenceRange, Optional<SimpleRange>&& afterRange, Optional<SimpleRange>&& beforeRange)
 {
-    if (!referenceRange)
-        return nullptr;
-
     // The treeScope for shadow nodes may not be the same scope as another element in a document.
     // Comparisons may fail in that case, which are expected behavior and should not assert.
-    if (afterRange && (referenceRange->endPosition().isNull() || ((afterRange->startPosition().anchorNode()->compareDocumentPosition(*referenceRange->endPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED)))
-        return nullptr;
-    ASSERT(!afterRange || afterRange->compareBoundaryPoints(Range::START_TO_START, *referenceRange).releaseReturnValue() >= 0);
 
-    if (beforeRange && (referenceRange->startPosition().isNull() || ((beforeRange->endPosition().anchorNode()->compareDocumentPosition(*referenceRange->startPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED)))
-        return nullptr;
-    ASSERT(!beforeRange || beforeRange->compareBoundaryPoints(Range::START_TO_START, *referenceRange).releaseReturnValue() <= 0);
+    if (afterRange && (afterRange->start.container->compareDocumentPosition(referenceRange.end.container) & Node::DOCUMENT_POSITION_DISCONNECTED))
+        return WTF::nullopt;
+    ASSERT(!afterRange || createLiveRange(afterRange)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(referenceRange)).releaseReturnValue() >= 0);
+
+    if (beforeRange && (beforeRange->end.container->compareDocumentPosition(referenceRange.start.container) & Node::DOCUMENT_POSITION_DISCONNECTED))
+        return WTF::nullopt;
+    ASSERT(!beforeRange || createLiveRange(beforeRange)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(referenceRange)).releaseReturnValue() <= 0);
 
     if (!afterRange && !beforeRange)
-        return nullptr;
-    if (afterRange && !beforeRange)
+        return WTF::nullopt;
+    if (!beforeRange)
         return WTFMove(afterRange);
-    if (!afterRange && beforeRange)
+    if (!afterRange)
         return WTFMove(beforeRange);
-    
-    unsigned positionsToAfterRange = Position::positionCountBetweenPositions(afterRange->startPosition(), referenceRange->endPosition());
-    unsigned positionsToBeforeRange = Position::positionCountBetweenPositions(beforeRange->endPosition(), referenceRange->startPosition());
-    
-    return positionsToAfterRange < positionsToBeforeRange ? afterRange : beforeRange;
+
+    auto positionsToAfterRange = Position::positionCountBetweenPositions(createLegacyEditingPosition(afterRange->start), createLegacyEditingPosition(referenceRange.end));
+    auto positionsToBeforeRange = Position::positionCountBetweenPositions(createLegacyEditingPosition(beforeRange->end), createLegacyEditingPosition(referenceRange.start));
+
+    return WTFMove(positionsToAfterRange < positionsToBeforeRange ? afterRange : beforeRange);
 }
 
-RefPtr<Range> AccessibilityObject::rangeOfStringClosestToRangeInDirection(Range* referenceRange, AccessibilitySearchDirection searchDirection, Vector<String> const& searchStrings) const
+Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
 {
     Frame* frame = this->frame();
     if (!frame)
-        return nullptr;
-    
-    if (!referenceRange)
-        return nullptr;
+        return WTF::nullopt;
     
     bool isBackwardSearch = searchDirection == AccessibilitySearchDirection::Previous;
     FindOptions findOptions { AtWordStarts, AtWordEnds, CaseInsensitive, StartInSelection };
     if (isBackwardSearch)
         findOptions.add(FindOptionFlag::Backwards);
     
-    RefPtr<Range> closestStringRange = nullptr;
-    for (const auto& searchString : searchStrings) {
-        if (RefPtr<Range> searchStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
+    Optional<SimpleRange> closestStringRange;
+    for (auto& searchString : searchStrings) {
+        if (auto searchStringRange = frame->editor().rangeOfString(searchString, createLiveRange(referenceRange).ptr(), findOptions)) {
+            auto foundStringRange = makeSimpleRange(*searchStringRange);
             if (!closestStringRange)
-                closestStringRange = searchStringRange;
+                closestStringRange = foundStringRange;
             else {
                 // If searching backward, use the trailing range edges to correctly determine which
                 // range is closest. Similarly, if searching forward, use the leading range edges.
-                Position closestStringPosition = isBackwardSearch ? closestStringRange->endPosition() : closestStringRange->startPosition();
-                Position searchStringPosition = isBackwardSearch ? searchStringRange->endPosition() : searchStringRange->startPosition();
+                auto& closestStringPosition = isBackwardSearch ? closestStringRange->end : closestStringRange->start;
+                auto& foundStringPosition = isBackwardSearch ? foundStringRange.end : foundStringRange.start;
                 
-                int closestPositionOffset = closestStringPosition.computeOffsetInContainerNode();
-                int searchPositionOffset = searchStringPosition.computeOffsetInContainerNode();
-                Node* closestContainerNode = closestStringPosition.containerNode();
-                Node* searchContainerNode = searchStringPosition.containerNode();
+                auto closestPositionOffset = closestStringPosition.offset;
+                auto searchPositionOffset = foundStringPosition.offset;
+                auto closestContainerNode = closestStringPosition.container.ptr();
+                auto searchContainerNode = foundStringPosition.container.ptr();
                 
-                short result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset).releaseReturnValue();
+                auto result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset).releaseReturnValue();
                 if ((!isBackwardSearch && result > 0) || (isBackwardSearch && result < 0))
-                    closestStringRange = searchStringRange;
+                    closestStringRange = foundStringRange;
             }
         }
     }
@@ -644,83 +640,73 @@ Optional<SimpleRange> AccessibilityObject::selectionRange() const
     return { { { document, 0 }, { document, 0 } } };
 }
 
-RefPtr<Range> AccessibilityObject::elementRange() const
+Optional<SimpleRange> AccessibilityObject::elementRange() const
 {
     auto node = this->node();
     if (!node)
         return { };
-    return createLiveRange(AXObjectCache::rangeForNodeContents(*node));
+    return AXObjectCache::rangeForNodeContents(*node);
 }
 
-RefPtr<Range> AccessibilityObject::findTextRange(Vector<String> const& searchStrings, RefPtr<Range> const& start, AccessibilitySearchTextDirection direction) const
+Optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection direction) const
 {
-    RefPtr<Range> found;
+    Optional<SimpleRange> found;
     if (direction == AccessibilitySearchTextDirection::Forward)
-        found = rangeOfStringClosestToRangeInDirection(start.get(), AccessibilitySearchDirection::Next, searchStrings);
+        found = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Next, searchStrings);
     else if (direction == AccessibilitySearchTextDirection::Backward)
-        found = rangeOfStringClosestToRangeInDirection(start.get(), AccessibilitySearchDirection::Previous, searchStrings);
+        found = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Previous, searchStrings);
     else if (direction == AccessibilitySearchTextDirection::Closest) {
-        auto foundAfter = rangeOfStringClosestToRangeInDirection(start.get(), AccessibilitySearchDirection::Next, searchStrings);
-        auto foundBefore = rangeOfStringClosestToRangeInDirection(start.get(), AccessibilitySearchDirection::Previous, searchStrings);
-        found = rangeClosestToRange(start.get(), WTFMove(foundAfter), WTFMove(foundBefore));
+        auto foundAfter = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Next, searchStrings);
+        auto foundBefore = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Previous, searchStrings);
+        found = rangeClosestToRange(start, WTFMove(foundAfter), WTFMove(foundBefore));
     }
-
     if (found) {
         // If the search started within a text control, ensure that the result is inside that element.
         if (element() && element()->isTextField()) {
             if (!found->startContainer().isDescendantOrShadowDescendantOf(element())
                 || !found->endContainer().isDescendantOrShadowDescendantOf(element()))
-                return nullptr;
+                return WTF::nullopt;
         }
     }
     return found;
 }
 
-Vector<RefPtr<Range>> AccessibilityObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
+Vector<SimpleRange> AccessibilityObject::findTextRanges(const AccessibilitySearchTextCriteria& criteria) const
 {
-    Vector<RefPtr<Range>> result;
-
-    // Determine start range.
-    RefPtr<Range> startRange;
+    Optional<SimpleRange> range;
     if (criteria.start == AccessibilitySearchTextStartFrom::Selection)
-        startRange = createLiveRange(selectionRange());
+        range = selectionRange();
     else
-        startRange = elementRange();
+        range = elementRange();
+    if (!range)
+        return { };
 
-    if (startRange) {
-        // Collapse the range to the start unless searching from the end of the doc or searching backwards.
-        if (criteria.start == AccessibilitySearchTextStartFrom::Begin)
-            startRange->collapse(true);
-        else if (criteria.start == AccessibilitySearchTextStartFrom::End)
-            startRange->collapse(false);
-        else
-            startRange->collapse(criteria.direction != AccessibilitySearchTextDirection::Backward);
-    } else
-        return result;
+    if (criteria.start == AccessibilitySearchTextStartFrom::Begin)
+        range->end = range->start;
+    else if (criteria.start == AccessibilitySearchTextStartFrom::End)
+        range->start = range->end;
+    else if (criteria.direction == AccessibilitySearchTextDirection::Backward)
+        range->start = range->end;
+    else
+        range->end = range->start;
 
-    RefPtr<Range> found;
+    Vector<SimpleRange> result;
     switch (criteria.direction) {
     case AccessibilitySearchTextDirection::Forward:
     case AccessibilitySearchTextDirection::Backward:
     case AccessibilitySearchTextDirection::Closest:
-        found = findTextRange(criteria.searchStrings, startRange, criteria.direction);
-        if (found)
-            result.append(found);
+        if (auto foundRange = findTextRange(criteria.searchStrings, *range, criteria.direction))
+            result.append(*foundRange);
         break;
-    case AccessibilitySearchTextDirection::All: {
-        auto findAll = [&](AccessibilitySearchTextDirection dir) {
-            found = findTextRange(criteria.searchStrings, startRange, dir);
-            while (found) {
-                result.append(found);
-                found = findTextRange(criteria.searchStrings, found, dir);
-            }
+    case AccessibilitySearchTextDirection::All:
+        auto appendFoundRanges = [&](AccessibilitySearchTextDirection direction) {
+            for (auto foundRange = range; (foundRange = findTextRange(criteria.searchStrings, *foundRange, direction)); )
+                result.append(*foundRange);
         };
-        findAll(AccessibilitySearchTextDirection::Forward);
-        findAll(AccessibilitySearchTextDirection::Backward);
+        appendFoundRanges(AccessibilitySearchTextDirection::Forward);
+        appendFoundRanges(AccessibilitySearchTextDirection::Backward);
         break;
     }
-    }
-
     return result;
 }
 
@@ -736,10 +722,10 @@ Vector<String> AccessibilityObject::performTextOperation(AccessibilityTextOperat
         return result;
 
     for (const auto& textRange : operation.textRanges) {
-        if (!frame->selection().setSelectedRange(textRange.get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes))
+        if (!frame->selection().setSelectedRange(createLiveRange(textRange).ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes))
             continue;
 
-        String text = textRange->text();
+        String text = plainText(textRange);
         String replacementString = operation.replacementText;
         bool replaceSelection = false;
         switch (operation.type) {
@@ -843,8 +829,7 @@ bool AccessibilityObject::isMeter() const
 
 IntPoint AccessibilityObject::clickPoint()
 {
-    LayoutRect rect = elementRect();
-    return roundedIntPoint(LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2));
+    return roundedIntPoint(elementRect().center());
 }
 
 IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector<FloatQuad>& quads)
@@ -1180,21 +1165,21 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const Pla
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-RefPtr<Range> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& range) const
+Optional<SimpleRange> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& range) const
 {
     unsigned textLength = getLengthForTextRange();
     if (range.start + range.length > textLength)
-        return nullptr;
+        return WTF::nullopt;
     // Avoid setting selection to uneditable parent node in FrameSelection::setSelectedRange. See webkit.org/b/206093.
     if (range.isNull() && !textLength)
-        return nullptr;
+        return WTF::nullopt;
     
     if (AXObjectCache* cache = axObjectCache()) {
         CharacterOffset start = cache->characterOffsetForIndex(range.start, this);
         CharacterOffset end = cache->characterOffsetForIndex(range.start + range.length, this);
-        return createLiveRange(cache->rangeForUnorderedCharacterOffsets(start, end));
+        return cache->rangeForUnorderedCharacterOffsets(start, end);
     }
-    return nullptr;
+    return WTF::nullopt;
 }
 
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
@@ -1259,12 +1244,9 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     return listMarkerTextForNode(node);
 }
 
-String AccessibilityObject::stringForRange(RefPtr<Range> range) const
+String AccessibilityObject::stringForRange(const SimpleRange& range) const
 {
-    if (!range)
-        return String();
-    
-    TextIterator it(*range);
+    TextIterator it(range);
     if (it.atEnd())
         return String();
     
@@ -1274,8 +1256,10 @@ String AccessibilityObject::stringForRange(RefPtr<Range> range) const
         if (it.text().length()) {
             // Add a textual representation for list marker text.
             // Don't add list marker text for new line character.
-            if (it.text().length() != 1 || !isSpaceOrNewline(it.text()[0]))
-                builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(range->startPosition())));
+            if (it.text().length() != 1 || !isSpaceOrNewline(it.text()[0])) {
+                // FIXME: Seems like the position should be based on it.range(), not range.
+                builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(createLegacyEditingPosition(range.start))));
+            }
             it.appendTextToStringBuilder(builder);
         } else {
             if (replacedNodeNeedsCharacter(it.node()))
@@ -1288,15 +1272,15 @@ String AccessibilityObject::stringForRange(RefPtr<Range> range) const
 
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange)
 {
-    if (visiblePositionRange.isNull())
-        return String();
+    auto start = makeBoundaryPoint(visiblePositionRange.start);
+    if (!start)
+        return { };
+    auto end = makeBoundaryPoint(visiblePositionRange.end);
+    if (!end)
+        return { };
 
     StringBuilder builder;
-    RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
-    if (!range)
-        return String();
-
-    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
+    for (TextIterator it({ *start, *end }); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
@@ -1308,22 +1292,23 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
                 builder.append(objectReplacementCharacter);
         }
     }
-
     return builder.toString();
 }
 
 int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     // FIXME: Multi-byte support
-    if (visiblePositionRange.isNull())
-        return -1;
 
-    RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
-    if (!range)
-        return -1;
+    auto start = makeBoundaryPoint(visiblePositionRange.start);
+    if (!start)
+        return -1; // FIXME: Why not return 0?
+    auto end = makeBoundaryPoint(visiblePositionRange.end);
+    if (!end)
+        return -1; // FIXME: Why not return 0?
 
+    // FIXME: Use characterCount instead of writing our own loop?
     int length = 0;
-    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
+    for (TextIterator it({ *start, *end }); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length())
             length += it.text().length();
@@ -1447,14 +1432,16 @@ VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePositi
 
     // Make sure we move off of a sentence end.
     auto nextPosition = position.next();
-    auto lineRange = makeRange(startOfLine(nextPosition), endOfLine(nextPosition));
-    if (!lineRange)
+    auto start = makeBoundaryPoint(startOfLine(nextPosition));
+    if (!start)
+        return { };
+    auto end = makeBoundaryPoint(endOfLine(nextPosition));
+    if (!end)
         return { };
 
     // An empty line is considered a sentence. If it's skipped, then the sentence parser will not
     // see this empty line. Instead, return the end position of the empty line.
-    // FIXME: It would be more efficient to use hasAnyPlainText instead of plainText.isEmpty.
-    return plainText(*lineRange).isEmpty() ? nextPosition : endOfSentence(nextPosition);
+    return hasAnyPlainText({ *start, *end }) ? endOfSentence(nextPosition) : nextPosition;
 }
 
 VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& position) const
@@ -1464,13 +1451,15 @@ VisiblePosition AccessibilityObject::previousSentenceStartPosition(const Visible
 
     // Make sure we move off of a sentence start.
     auto previousPosition = position.previous();
-    auto lineRange = makeRange(startOfLine(previousPosition), endOfLine(previousPosition));
-    if (!lineRange)
+    auto start = makeBoundaryPoint(startOfLine(previousPosition));
+    if (!start)
+        return { };
+    auto end = makeBoundaryPoint(endOfLine(previousPosition));
+    if (!end)
         return { };
 
     // Treat empty line as a separate sentence.
-    // FIXME: It would be more efficient to use hasAnyPlainText instead of plainText.isEmpty.
-    return plainText(*lineRange).isEmpty() ? previousPosition : startOfSentence(previousPosition);
+    return hasAnyPlainText({ *start, *end }) ? startOfSentence(previousPosition) : previousPosition;
 }
 
 VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& position) const
@@ -2043,7 +2032,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     // Also only do this when the field is in editing mode.
     auto& frame = renderer()->frame();
     if (element.shouldUseInputMethod()) {
-        frame.selection().setSelectedRange(rangeForPlainTextRange(range).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+        frame.selection().setSelectedRange(createLiveRange(rangeForPlainTextRange(range)).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
         frame.editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
         return true;
     }

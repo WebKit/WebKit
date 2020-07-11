@@ -176,6 +176,11 @@ WEBCORE_EXPORT Ref<Range> rangeOfContents(Node&);
 WEBCORE_EXPORT bool areRangesEqual(const Range*, const Range*);
 WEBCORE_EXPORT bool rangesOverlap(const Range*, const Range*);
 
+SimpleRange makeSimpleRange(const Range&);
+SimpleRange makeSimpleRange(const Ref<Range>&);
+Optional<SimpleRange> makeSimpleRange(const Range*);
+Optional<SimpleRange> makeSimpleRange(const RefPtr<Range>&);
+
 WEBCORE_EXPORT Ref<Range> createLiveRange(const SimpleRange&);
 WEBCORE_EXPORT RefPtr<Range> createLiveRange(const Optional<SimpleRange>&);
 

@@ -43,6 +43,7 @@
 #include "HostWindow.h"
 #include "InlineTextBox.h"
 #include "NotImplemented.h"
+#include "Range.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"

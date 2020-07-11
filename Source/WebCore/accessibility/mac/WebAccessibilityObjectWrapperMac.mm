@@ -682,7 +682,7 @@ static AccessibilitySearchTextCriteria accessibilitySearchTextCriteriaForParamet
     return criteria;
 }
 
-static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttribute(WebAccessibilityObjectWrapper *obj, const NSDictionary *parameterizedAttribute)
+static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttribute(WebAccessibilityObjectWrapper *wrapper, const NSDictionary *parameterizedAttribute)
 {
     AccessibilityTextOperation operation;
 
@@ -691,10 +691,9 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
     NSString *replacementString = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString];
 
     if ([markerRanges isKindOfClass:[NSArray class]]) {
-        size_t count = static_cast<size_t>(markerRanges.count);
-        operation.textRanges.reserveInitialCapacity(count);
-        for (id markerRange : markerRanges)
-            operation.textRanges.append([obj rangeForTextMarkerRange:markerRange]);
+        operation.textRanges = makeVector(markerRanges, [wrapper] (id markerRange) {
+            return makeSimpleRange([wrapper rangeForTextMarkerRange:markerRange]);
+        });
     }
 
     if ([operationType isKindOfClass:[NSString class]]) {
@@ -3623,11 +3622,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 // The CFAttributedStringType representation of the text associated with this accessibility
 // object that is specified by the given range.
-- (NSAttributedString*)doAXAttributedStringForRange:(NSRange)range
+- (NSAttributedString *)doAXAttributedStringForRange:(NSRange)range
 {
-    PlainTextRange textRange = PlainTextRange(range.location, range.length);
-    RefPtr<Range> webRange = self.axBackingObject->rangeForPlainTextRange(textRange);
-    return [self doAXAttributedStringForTextMarkerRange:[self textMarkerRangeFromRange:webRange] spellCheck:YES];
+    auto webRange = self.axBackingObject->rangeForPlainTextRange(range);
+    return [self doAXAttributedStringForTextMarkerRange:[self textMarkerRangeFromRange:createLiveRange(webRange)] spellCheck:YES];
 }
 
 - (NSRange)_convertToNSRange:(Range*)range
@@ -3963,7 +3961,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (ranges.isEmpty())
                 return nil;
             return createNSArray(ranges, [&] (auto& range) {
-                return [protectedSelf textMarkerRangeFromRange:range];
+                return [protectedSelf textMarkerRangeFromRange:createLiveRange(range)];
             }).autorelease();
         });
     }
@@ -4038,8 +4036,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!backingObject)
                 return nil;
 
-            if (auto misspellingRange = backingObject->getMisspellingRange(criteria.first, criteria.second))
-                return [protectedSelf textMarkerRangeFromRange:misspellingRange];
+            if (auto misspellingRange = backingObject->misspellingRange(*criteria.first, criteria.second))
+                return [protectedSelf textMarkerRangeFromRange:createLiveRange(*misspellingRange)];
             return nil;
         });
     }
@@ -4079,8 +4077,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:@"AXTextMarkerRangeForUIElement"]) {
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&uiElement, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-            RefPtr<Range> range = uiElement.get()->elementRange();
-            return [protectedSelf textMarkerRangeFromRange:range];
+            return [protectedSelf textMarkerRangeFromRange:createLiveRange(uiElement.get()->elementRange())];
         });
     }
 
@@ -4111,9 +4108,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:@"AXStringForTextMarkerRange"]) {
         return Accessibility::retrieveValueFromMainThread<String>([&textMarkerRange, protectedSelf = retainPtr(self)] () -> String {
-            RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
+            auto range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
             auto* backingObject = protectedSelf.get().axBackingObject;
-            return backingObject ? backingObject->stringForRange(range) : String();
+            return (range && backingObject) ? backingObject->stringForRange(*range) : String();
         });
     }
 
@@ -4141,9 +4138,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return CGRectZero;
-
-            RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
-            auto bounds = FloatRect(backingObject->boundsForRange(range));
+            auto range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
+            if (!range)
+                return CGRectZero;
+            auto bounds = FloatRect(backingObject->boundsForRange(*range));
             return [protectedSelf convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         });
         return [NSValue valueWithRect:rect];
@@ -4154,18 +4152,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return CGRectZero;
-
             auto* cache = backingObject->axObjectCache();
             if (!cache)
                 return CGRectZero;
-
             CharacterOffset start = cache->characterOffsetForIndex(range.location, backingObject);
             CharacterOffset end = cache->characterOffsetForIndex(range.location+range.length, backingObject);
-            if (start.isNull() || end.isNull())
-                return CGRectZero;
-
             auto range = cache->rangeForUnorderedCharacterOffsets(start, end);
-            auto bounds = FloatRect(backingObject->boundsForRange(createLiveRange(range)));
+            if (!range)
+                return CGRectZero;
+            auto bounds = FloatRect(backingObject->boundsForRange(*range));
             return [protectedSelf convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         });
         return [NSValue valueWithRect:rect];
@@ -4181,18 +4176,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return String();
-
             auto* cache = backingObject->axObjectCache();
             if (!cache)
                 return String();
-
-            CharacterOffset start = cache->characterOffsetForIndex(range.location, backingObject);
-            CharacterOffset end = cache->characterOffsetForIndex(range.location + range.length, backingObject);
-            if (start.isNull() || end.isNull())
-                return String();
-
+            auto start = cache->characterOffsetForIndex(range.location, backingObject);
+            auto end = cache->characterOffsetForIndex(range.location + range.length, backingObject);
             auto range = cache->rangeForUnorderedCharacterOffsets(start, end);
-            return backingObject->stringForRange(createLiveRange(range));
+            if (!range)
+                return { };
+            return backingObject->stringForRange(*range);
         });
     }
 

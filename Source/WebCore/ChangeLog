@@ -1,3 +1,75 @@
+2020-07-11  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from AccessibilityObject.h, AccessibilityObjectInterface.h, AccessibilityRenderObject.h, AXIsolatedObject.h
+        https://bugs.webkit.org/show_bug.cgi?id=214215
+
+        Reviewed by Sam Weinig.
+
+        Also use the IntPoint and LayoutPoint center() functions instead of rolling our own.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::misspellingRange const): Return SimpleRange. Also
+        renamed from getMisspellingRange.
+        (WebCore::rangeClosestToRange): Take and return SimpleRange.
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection const): Ditto.
+        (WebCore::AccessibilityObject::elementRange const): Return SimpleRange.
+        (WebCore::AccessibilityObject::findTextRange const): Take and return SimpleRange.
+        (WebCore::AccessibilityObject::findTextRanges const): Ditto.
+        (WebCore::AccessibilityObject::performTextOperation): Use SimpleRange.
+        (WebCore::AccessibilityObject::clickPoint): Use center().
+        (WebCore::AccessibilityObject::rangeForPlainTextRange const): Return SimpleRange.
+        (WebCore::AccessibilityObject::stringForRange const): Take SimpleRange.
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange): Use SimpleRange.
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange const): Ditto.
+        (WebCore::AccessibilityObject::replaceTextInRange): Use SimpleRange.
+        * accessibility/AccessibilityObject.h: Update for above.
+
+        * accessibility/AccessibilityObjectInterface.h: Take and return SimpleRange.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::linkClickPoint): Use SimpleRange.
+        (WebCore::AccessibilityRenderObject::clickPoint): Ditto.
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange): Ditto.
+        (WebCore::AccessibilityRenderObject::boundsForRange const): Take SimpleRange.
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+        Use SimpleRange.
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset const):
+        Use SimpleRange.
+        * accessibility/AccessibilityRenderObject.h: Update for above.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp: Include Range.h.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper stringForTextMarkers:]): Use SimpleRange.
+        (-[WebAccessibilityObjectWrapper textMarkerRange]): Ditto.
+        (-[WebAccessibilityObjectWrapper stringForRange:]): Ditto.
+        (-[WebAccessibilityObjectWrapper misspellingTextMarkerRange:forward:]): Ditto.
+        (-[WebAccessibilityObjectWrapper frameForTextMarkers:]): Ditto.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::stringForRange const): Take SimpleRange.
+        (WebCore::AXIsolatedObject::findTextRanges const): Return SimpleRange.
+        * accessibility/isolatedtree/AXIsolatedObject.h: Update for above.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilityTextOperationForParameterizedAttribute): Use SimpleRange.
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForRange:]): Ditto.
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]): Ditto.
+
+        * dom/Range.cpp:
+        (WebCore::makeSimpleRange): Added.
+        * dom/Range.h: Added makeSimpleRange so we can explicitly convert from
+        live ranges to simple ranges.
+
+        * editing/Editing.cpp:
+        (WebCore::indexForVisiblePosition): Use separate returns for start and end.
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::offsetTo const): Ditto.
+        (WebCore::TextCheckingParagraph::automaticReplacementStart const): Ditto.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfNeeded): Use center().
+
 2020-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r260276): Overflow scrolling layers misplaced inside SVG foreign object

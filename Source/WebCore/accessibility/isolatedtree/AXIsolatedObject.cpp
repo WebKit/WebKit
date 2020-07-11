@@ -898,7 +898,7 @@ void AXIsolatedObject::updateBackingStore()
         tree->applyPendingChanges();
 }
 
-String AXIsolatedObject::stringForRange(RefPtr<Range> range) const
+String AXIsolatedObject::stringForRange(const SimpleRange& range) const
 {
     return Accessibility::retrieveValueFromMainThread<String>([&range, this] () -> String {
         if (auto* object = associatedAXObject())
@@ -907,12 +907,12 @@ String AXIsolatedObject::stringForRange(RefPtr<Range> range) const
     });
 }
 
-Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
+Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTextCriteria& criteria) const
 {
-    return Accessibility::retrieveValueFromMainThread<Vector<RefPtr<Range>>>([&criteria, this] () -> Vector<RefPtr<Range>> {
+    return Accessibility::retrieveValueFromMainThread<Vector<SimpleRange>>([&criteria, this] () -> Vector<SimpleRange> {
         if (auto* object = associatedAXObject())
             return object->findTextRanges(criteria);
-        return Vector<RefPtr<Range>>();
+        return { };
     });
 }
 

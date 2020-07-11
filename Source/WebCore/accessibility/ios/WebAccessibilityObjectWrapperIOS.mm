@@ -2129,12 +2129,10 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
-    RefPtr<Range> range = [self rangeForTextMarkers:markers];
+    auto range = [self rangeForTextMarkers:markers];
     if (!range)
         return nil;
-    
-    return self.axBackingObject->stringForRange(range);
+    return self.axBackingObject->stringForRange(*range);
 }
 
 static int blockquoteLevel(RenderObject* renderer)
@@ -2411,9 +2409,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
-    RefPtr<Range> range = self.axBackingObject->elementRange();
-    return [self textMarkersForRange:range];
+    return [self textMarkersForRange:createLiveRange(self.axBackingObject->elementRange()).get()];
 }
 
 // A method to get the normalized text cursor range of an element. Used in DumpRenderTree.
@@ -2551,8 +2547,10 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-
-    return self.axBackingObject->stringForRange([self _convertToDOMRange:range]);
+    auto webRange = [self _convertToDOMRange:range];
+    if (!webRange)
+        return nil;
+    return self.axBackingObject->stringForRange(*webRange);
 }
 
 - (NSAttributedString *)attributedStringForRange:(NSRange)range
@@ -2685,14 +2683,12 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-
-    RefPtr<Range> startRange = [self rangeForTextMarkers:startTextMarkerRange];
+    auto startRange = [self rangeForTextMarkers:startTextMarkerRange];
     if (!startRange)
         return nil;
-
-    RefPtr<Range> misspellingRange = self.axBackingObject->getMisspellingRange(startRange,
+    auto misspellingRange = self.axBackingObject->misspellingRange(*startRange,
         forward ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous);
-    return [self textMarkersForRange:misspellingRange];
+    return [self textMarkersForRange:createLiveRange(misspellingRange).get()];
 }
 
 - (WebAccessibilityTextMarker *)nextMarkerForMarker:(WebAccessibilityTextMarker *)marker
@@ -2724,15 +2720,13 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (![self _prepareAccessibilityCall])
         return CGRectZero;
-
     AXObjectCache* cache = self.axBackingObject->axObjectCache();
     if (!cache)
         return CGRectZero;
-    RefPtr<Range> range = [self rangeForTextMarkers:array];
+    auto range = [self rangeForTextMarkers:array];
     if (!range)
         return CGRectZero;
-    
-    auto rect = FloatRect(self.axBackingObject->boundsForRange(range));
+    auto rect = self.axBackingObject->boundsForRange(*range);
     return [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen];
 }
 

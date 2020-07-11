@@ -46,7 +46,7 @@ struct SimpleRange {
     WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
 
     // Convenience overloads to help with transition from using a lot of live ranges.
-    // FIXME: Move to the Range class header as either makeSimpleRange or Range::operator SimpleRange.
+    // FIXME: Once transition is over, remove and change callers to use makeSimpleRange instead.
     WEBCORE_EXPORT SimpleRange(const Range&);
     SimpleRange(const Ref<Range>&);
 };

@@ -25,12 +25,12 @@
 
 #pragma once
 
+// FIXME: Should rename this file AXCoreObject.h.
+
 #include "FrameLoaderClient.h"
 #include "HTMLTextFormControlElement.h"
 #include "LayoutRect.h"
-#include "Range.h"
 #include "TextIterator.h"
-#include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include <wtf/RefCounted.h>
 
@@ -42,6 +42,7 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS WebAccessibilityObjectWrapper;
 typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
+typedef struct _NSRange NSRange;
 #elif USE(ATK)
 typedef struct _WebKitAccessible WebKitAccessible;
 typedef struct _WebKitAccessible AccessibilityObjectWrapper;
@@ -55,24 +56,25 @@ class TextStream;
 
 namespace WebCore {
 
-class Node;
-class Element;
-class RenderObject;
-class QualifiedName;
-class Path;
-class Widget;
-class Page;
+class AXCoreObject;
+class AXObjectCache;
+class AccessibilityScrollView;
 class Document;
+class Element;
 class Frame;
 class FrameView;
+class Node;
+class Page;
+class Path;
+class QualifiedName;
+class RenderObject;
 class ScrollView;
-class AXObjectCache;
-class AXCoreObject;
-class AccessibilityScrollView;
+class Widget;
+
 struct AccessibilityText;
 struct ScrollRectToVisibleOptions;
 
-typedef size_t AXID;
+using AXID = size_t;
 extern const AXID InvalidAXID;
 
 enum class AccessibilityRole {
@@ -371,7 +373,7 @@ enum class AccessibilityTextOperationType {
 };
 
 struct AccessibilityTextOperation {
-    Vector<RefPtr<Range>> textRanges; // text on which perform the operation.
+    Vector<SimpleRange> textRanges; // text on which perform the operation.
     AccessibilityTextOperationType type;
     String replacementText; // For type = replace.
 
@@ -404,10 +406,7 @@ struct AccessibilityTextUnderElementMode {
     { }
 };
 
-#if PLATFORM(COCOA)
-typedef struct _NSRange NSRange;
-#endif
-
+// FIXME: Merge this with CharacterRange (by deleting this and using CharacterRange instead).
 struct PlainTextRange {
     unsigned start { 0 };
     unsigned length { 0 };
@@ -663,7 +662,7 @@ public:
     virtual bool hasBoldFont() const = 0;
     virtual bool hasItalicFont() const = 0;
     virtual bool hasMisspelling() const = 0;
-    virtual RefPtr<Range> getMisspellingRange(RefPtr<Range> const& start, AccessibilitySearchDirection) const = 0;
+    virtual Optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const = 0;
     virtual bool hasPlainText() const = 0;
     virtual bool hasSameFont(const AXCoreObject&) const = 0;
     virtual bool hasSameFontColor(const AXCoreObject&) const = 0;
@@ -785,7 +784,7 @@ public:
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
 
     // Text selection
-    virtual Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const = 0;
+    virtual Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const = 0;
     virtual Vector<String> performTextOperation(AccessibilityTextOperation const&) = 0;
 
     virtual AXCoreObject* observableObject() const = 0;
@@ -954,7 +953,7 @@ public:
 
     virtual VisiblePositionRange visiblePositionRange() const = 0;
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const = 0;
-    virtual RefPtr<Range> elementRange() const = 0;
+    virtual Optional<SimpleRange> elementRange() const = 0;
     virtual VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const = 0;
     virtual VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange positionOfRightWord(const VisiblePosition&) const = 0;
@@ -966,11 +965,11 @@ public:
     virtual VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
 
-    virtual RefPtr<Range> rangeForPlainTextRange(const PlainTextRange&) const = 0;
+    virtual Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const = 0;
 
-    virtual String stringForRange(RefPtr<Range>) const = 0;
+    virtual String stringForRange(const SimpleRange&) const = 0;
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const = 0;
-    virtual IntRect boundsForRange(const RefPtr<Range>) const = 0;
+    virtual IntRect boundsForRange(const SimpleRange&) const = 0;
     virtual int lengthForVisiblePositionRange(const VisiblePositionRange&) const = 0;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const = 0;
 

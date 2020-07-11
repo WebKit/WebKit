@@ -1833,6 +1833,28 @@ FloatRect Range::absoluteBoundingRect(OptionSet<BoundingRectBehavior> rectOption
     return boundingRect(CoordinateSpace::Absolute, rectOptions);
 }
 
+SimpleRange makeSimpleRange(const Range& range)
+{
+    return { { range.startContainer(), range.startOffset() }, { range.endContainer(), range.endOffset() } };
+}
+
+SimpleRange makeSimpleRange(const Ref<Range>& range)
+{
+    return makeSimpleRange(range.get());
+}
+
+Optional<SimpleRange> makeSimpleRange(const Range* range)
+{
+    if (!range)
+        return WTF::nullopt;
+    return makeSimpleRange(*range);
+}
+
+Optional<SimpleRange> makeSimpleRange(const RefPtr<Range>& range)
+{
+    return makeSimpleRange(range.get());
+}
+
 Ref<Range> createLiveRange(const SimpleRange& range)
 {
     return Range::create(range.start.document(), range.start.container.ptr(), range.start.offset, range.end.container.ptr(), range.end.offset);
