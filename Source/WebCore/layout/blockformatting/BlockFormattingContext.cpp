@@ -398,7 +398,6 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
 {
     auto& formattingState = this->formattingState();
     ASSERT(!formattingState.intrinsicWidthConstraints());
-
     // Visit the in-flow descendants and compute their min/max intrinsic width if needed.
     // 1. Go all the way down to the leaf node
     // 2. Check if actually need to visit all the boxes as we traverse down (already computed, container's min/max does not depend on descendants etc)
@@ -409,25 +408,45 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
         queue.append(root().firstInFlowOrFloatingChild());
 
     IntrinsicWidthConstraints constraints;
+    auto floatAvoidersMaximumIntrinsicWidth = LayoutUnit { };
     while (!queue.isEmpty()) {
         while (true) {
+            // Check if we have to deal with descendant content.
             auto& layoutBox = *queue.last();
-            auto hasInFlowOrFloatingChild = is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild();
-            auto skipDescendants = formattingState.intrinsicWidthConstraintsForBox(layoutBox) || !hasInFlowOrFloatingChild || layoutBox.establishesFormattingContext() || layoutBox.style().width().isFixed();
-            if (skipDescendants)
+            // Already has computed intrinsic constraints.
+            if (formattingState.intrinsicWidthConstraintsForBox(layoutBox))
+                break;
+            // Box with fixed width defines their descendant content intrinsic width.
+            if (layoutBox.style().width().isFixed())
+                break;
+            // Float avoiders are all establish a new formatting context. No need to look inside them.
+            if (layoutBox.isFloatAvoider())
+                break;
+            // Non-float avoider formatting context roots are opaque to intrinsic width computation.
+            if (layoutBox.establishesFormattingContext())
+                break;
+            // No relevant child content.
+            if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild())
                 break;
             queue.append(downcast<ContainerBox>(layoutBox).firstInFlowOrFloatingChild());
         }
         // Compute min/max intrinsic width bottom up if needed.
         while (!queue.isEmpty()) {
             auto& layoutBox = *queue.takeLast();
-            auto desdendantConstraints = formattingState.intrinsicWidthConstraintsForBox(layoutBox); 
+            auto desdendantConstraints = formattingState.intrinsicWidthConstraintsForBox(layoutBox);
             if (!desdendantConstraints) {
                 desdendantConstraints = geometry().intrinsicWidthConstraints(layoutBox);
                 formattingState.setIntrinsicWidthConstraintsForBox(layoutBox, *desdendantConstraints);
             }
             constraints.minimum = std::max(constraints.minimum, desdendantConstraints->minimum);
-            constraints.maximum = std::max(constraints.maximum, desdendantConstraints->maximum);
+            // FIXME: This works as long as the float avoider is a direct child of the root.
+            // When the containing block of the float avoider is not the root, the containing block itself sets the constraint.
+            if (layoutBox.isFloatAvoider()) {
+                // Floats and formatting context roots that avoid floats form a horizontal stack when the constraint is infinite.
+                // FIXME: Add support for clear property.
+                floatAvoidersMaximumIntrinsicWidth += desdendantConstraints->maximum;
+            } else
+                constraints.maximum = std::max(constraints.maximum, desdendantConstraints->maximum);
             // Move over to the next sibling or take the next box in the queue.
             if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {
                 queue.append(nextSibling);
@@ -435,6 +454,7 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
             }
         }
     }
+    constraints.maximum = std::max(constraints.maximum, floatAvoidersMaximumIntrinsicWidth);
     formattingState.setIntrinsicWidthConstraints(constraints);
     return constraints;
 }

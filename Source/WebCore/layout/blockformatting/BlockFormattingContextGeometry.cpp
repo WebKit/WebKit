@@ -372,7 +372,7 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
         auto& formattingState = layoutState().formattingStateForBox(layoutBox);
         for (auto& child : childrenOfType<Box>(downcast<ContainerBox>(layoutBox))) {
-            if (child.isOutOfFlowPositioned())
+            if (child.isOutOfFlowPositioned() || child.isFloatAvoider())
                 continue;
             auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraintsForBox(child);
             ASSERT(childIntrinsicWidthConstraints);

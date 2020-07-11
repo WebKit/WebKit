@@ -1,3 +1,13 @@
+2020-07-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][Min-Max width] Add support for float avoiders
+        https://bugs.webkit.org/show_bug.cgi?id=214220
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/min-max-content-width-with-floats-simple-expected.html: Added.
+        * fast/layoutformattingcontext/min-max-content-width-with-floats-simple.html: Added.
+
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark a couple of user-timing WPT tests as flaky since their import in r264255.
