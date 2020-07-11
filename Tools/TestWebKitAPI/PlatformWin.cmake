@@ -6,12 +6,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND wrapper_DEFINITIONS WIN_CAIRO)
 endif ()
 
-set(webcore_DEFINITIONS
-    STATICALLY_LINKED_WITH_PAL=1
-    WEBCORE_EXPORT=
-    WEBCORE_TESTSUPPORT_EXPORT=
-)
-
 set(test_main_SOURCES
     win/main.cpp
 )
@@ -38,7 +32,10 @@ list(APPEND TestWebCore_SOURCES
 
     win/TestWebCoreStubs.cpp
 )
-list(APPEND TestWebCore_DEFINITIONS ${webcore_DEFINITIONS})
+list(APPEND TestWebCore_DEFINITIONS
+    STATICALLY_LINKED_WITH_PAL=1
+    STATICALLY_LINKED_WITH_WebCore=1
+)
 
 list(APPEND TestWebCore_LIBRARIES
     $<TARGET_OBJECTS:WebCore>
@@ -105,8 +102,6 @@ if (ENABLE_WEBKIT_LEGACY)
         win/HostWindow.cpp
     )
 
-    list(APPEND TestWebKitLegacy_DEFINITIONS ${webcore_DEFINITIONS})
-
     list(APPEND TestWebKitLegacy_LIBRARIES
         WebKit::WTF
     )
@@ -143,8 +138,6 @@ if (ENABLE_WEBKIT)
             Tests/WebKit/curl/Certificates.cpp
         )
     endif ()
-
-    list(APPEND TestWebKit_DEFINITIONS ${webcore_DEFINITIONS})
 
     WEBKIT_WRAP_EXECUTABLE(TestWebKit
         SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp

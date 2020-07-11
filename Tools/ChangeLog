@@ -1,3 +1,15 @@
+2020-07-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TestWebKitAPI][Win] Remove WEBCORE_EXPORT and WEBCORE_TESTSUPPORT_EXPORT definitions in PlatformWin.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=214212
+
+        Reviewed by Don Olmstead.
+
+        Those macros should be defined only by WebCore/platform/PlatformExportMacros.h.
+
+        * TestWebKitAPI/PlatformWin.cmake: Removed WEBCORE_EXPORT and WEBCORE_TESTSUPPORT_EXPORT.
+        Added STATICALLY_LINKED_WITH_WebCore=1 to TestWebCore_DEFINITIONS.
+
 2020-07-10  Aakash Jain  <aakash_jain@apple.com>
 
         Add tvOS and watchOS support to built-product-archive
