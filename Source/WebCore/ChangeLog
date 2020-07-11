@@ -1,6 +1,12 @@
 2020-07-10  Darin Adler  <darin@apple.com>
 
-        Fix build for PLATFORM(IOS_FAMILY) && !ENABLE(REVEAL), for example tvOS
+        Fix build for PLATFORM(IOS_FAMILY) && !ENABLE(REVEAL), for example, tvOS
+
+        * editing/cocoa/DictionaryLookup.mm: Added include of "SimpleRange.h".
+
+2020-07-10  Darin Adler  <darin@apple.com>
+
+        Fix build for PLATFORM(IOS_FAMILY) && !ENABLE(REVEAL), for example, tvOS
 
         * editing/cocoa/DictionaryLookup.mm:
         (WebCore::DictionaryLookup::rangeForSelection): Update to return SimpleRange.

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DictionaryLookup.h"
 
+#import "SimpleRange.h"
+
 #if PLATFORM(COCOA)
 
 #if ENABLE(REVEAL)
