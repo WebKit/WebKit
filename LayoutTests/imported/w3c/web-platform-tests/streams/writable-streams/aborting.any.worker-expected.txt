@@ -1,0 +1,57 @@
+
+FAIL Aborting a WritableStream before it starts should cause the writer's unsettled ready promise to reject Can't find variable: WritableStream
+FAIL Aborting a WritableStream should cause the writer's fulfilled ready promise to reset to a rejected one Can't find variable: WritableStream
+FAIL abort() on a released writer rejects Can't find variable: WritableStream
+FAIL Aborting a WritableStream immediately prevents future writes Can't find variable: WritableStream
+FAIL Aborting a WritableStream prevents further writes after any that are in progress Can't find variable: WritableStream
+FAIL Fulfillment value of writer.abort() call must be undefined even if the underlying sink returns a non-undefined value Can't find variable: WritableStream
+FAIL WritableStream if sink's abort throws, the promise returned by writer.abort() rejects Can't find variable: WritableStream
+FAIL WritableStream if sink's abort throws, the promise returned by multiple writer.abort()s is the same and rejects Can't find variable: WritableStream
+FAIL WritableStream if sink's abort throws, the promise returned by ws.abort() rejects Can't find variable: WritableStream
+FAIL WritableStream if sink's abort throws, for an abort performed during a write, the promise returned by ws.abort() rejects Can't find variable: WritableStream
+FAIL Aborting a WritableStream passes through the given reason Can't find variable: WritableStream
+FAIL Aborting a WritableStream puts it in an errored state with the error passed to abort() Can't find variable: WritableStream
+FAIL Aborting a WritableStream causes any outstanding write() promises to be rejected with the reason supplied Can't find variable: WritableStream
+FAIL Closing but then immediately aborting a WritableStream causes the stream to error Can't find variable: WritableStream
+FAIL Closing a WritableStream and aborting it while it closes causes the stream to ignore the abort attempt Can't find variable: WritableStream
+FAIL Aborting a WritableStream after it is closed is a no-op Can't find variable: WritableStream
+FAIL WritableStream should NOT call underlying sink's close if no abort is supplied (historical) Can't find variable: WritableStream
+FAIL returning a thenable from abort() should work Can't find variable: WritableStream
+FAIL .closed should not resolve before fulfilled write() Can't find variable: WritableStream
+FAIL .closed should not resolve before rejected write(); write() error should not overwrite abort() error Can't find variable: WritableStream
+FAIL writes should be satisfied in order when aborting Can't find variable: WritableStream
+FAIL writes should be satisfied in order after rejected write when aborting Can't find variable: WritableStream
+FAIL close() should reject with abort reason why abort() is first error Can't find variable: WritableStream
+FAIL underlying abort() should not be called until underlying write() completes Can't find variable: WritableStream
+FAIL underlying abort() should not be called if underlying close() has started Can't find variable: WritableStream
+FAIL if underlying close() has started and then rejects, the abort() and close() promises should reject with the underlying close rejection reason Can't find variable: WritableStream
+FAIL an abort() that happens during a write() should trigger the underlying abort() even with a close() queued Can't find variable: WritableStream
+FAIL if a writer is created for a stream with a pending abort, its ready should be rejected with the abort error Can't find variable: WritableStream
+FAIL writer close() promise should resolve before abort() promise Can't find variable: WritableStream
+FAIL writer.ready should reject on controller error without waiting for underlying write Can't find variable: WritableStream
+FAIL writer.abort() while there is an in-flight write, and then finish the write with rejection Can't find variable: WritableStream
+FAIL writer.abort(), controller.error() while there is an in-flight write, and then finish the write Can't find variable: WritableStream
+FAIL writer.abort(), controller.error() while there is an in-flight close, and then finish the close Can't find variable: WritableStream
+FAIL controller.error(), writer.abort() while there is an in-flight write, and then finish the write Can't find variable: WritableStream
+FAIL controller.error(), writer.abort() while there is an in-flight close, and then finish the close Can't find variable: WritableStream
+FAIL releaseLock() while aborting should reject the original closed promise Can't find variable: WritableStream
+FAIL releaseLock() during delayed async abort() should reject the writer.closed promise Can't find variable: WritableStream
+FAIL sink abort() should not be called until sink start() is done Can't find variable: WritableStream
+FAIL if start attempts to error the controller after abort() has been called, then it should lose Can't find variable: WritableStream
+FAIL stream abort() promise should still resolve if sink start() rejects Can't find variable: WritableStream
+FAIL writer abort() during sink start() should replace the writer.ready promise synchronously Can't find variable: WritableStream
+FAIL promises returned from other writer methods should be rejected when writer abort() happens during sink start() Can't find variable: WritableStream
+FAIL abort() should succeed despite rejection from write Can't find variable: WritableStream
+FAIL abort() should be rejected with the rejection returned from close() Can't find variable: WritableStream
+FAIL a rejecting sink.write() should not prevent sink.abort() from being called Can't find variable: WritableStream
+FAIL when start errors after stream abort(), underlying sink abort() should be called anyway Can't find variable: WritableStream
+FAIL when calling abort() twice on the same stream, both should give the same promise that fulfills with undefined Can't find variable: WritableStream
+FAIL when calling abort() twice on the same stream, but sequentially so so there's no pending abort the second time, both should fulfill with undefined Can't find variable: WritableStream
+FAIL calling abort() on an errored stream should fulfill with undefined Can't find variable: WritableStream
+FAIL sink abort() should not be called if stream was erroring due to controller.error() before abort() was called Can't find variable: WritableStream
+FAIL sink abort() should not be called if stream was erroring due to bad strategy before abort() was called Can't find variable: WritableStream
+FAIL abort with no arguments should set the stored error to undefined Can't find variable: WritableStream
+FAIL abort with an undefined argument should set the stored error to undefined Can't find variable: WritableStream
+FAIL abort with a string argument should set the stored error to that argument Can't find variable: WritableStream
+FAIL abort on a locked stream should reject Can't find variable: WritableStream
+

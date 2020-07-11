@@ -1,0 +1,5 @@
+
+FAIL Can construct a writable stream with a valid CountQueuingStrategy Can't find variable: WritableStream
+FAIL Correctly governs the value of a WritableStream's state property (HWM = 0) Can't find variable: WritableStream
+FAIL Correctly governs the value of a WritableStream's state property (HWM = 4) Can't find variable: WritableStream
+

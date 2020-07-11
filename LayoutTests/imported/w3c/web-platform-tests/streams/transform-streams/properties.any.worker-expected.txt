@@ -1,0 +1,8 @@
+
+FAIL transformer method start should be called with the right number of arguments Can't find variable: TransformStream
+FAIL transformer method start should be called even when it's located on the prototype chain Can't find variable: TransformStream
+FAIL transformer method transform should be called with the right number of arguments Can't find variable: TransformStream
+FAIL transformer method transform should be called even when it's located on the prototype chain Can't find variable: TransformStream
+FAIL transformer method flush should be called with the right number of arguments Can't find variable: TransformStream
+FAIL transformer method flush should be called even when it's located on the prototype chain Can't find variable: TransformStream
+

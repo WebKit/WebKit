@@ -1,0 +1,11 @@
+
+FAIL Piping from an errored readable stream to an erroring writable stream c.error is not a function. (In 'c.error(error2)', 'c.error' is undefined)
+FAIL Piping from an errored readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "TypeError: c.error is not a function. (In 'c.error(error2)', 'c.error' is undefined)"
+FAIL Piping from an errored readable stream to an erroring writable stream; preventAbort = true c.error is not a function. (In 'c.error(error2)', 'c.error' is undefined)
+FAIL Piping from an errored readable stream to an errored writable stream; preventAbort = true promise_test: Unhandled rejection with value: object "TypeError: c.error is not a function. (In 'c.error(error2)', 'c.error' is undefined)"
+FAIL Piping from an errored readable stream to a closing writable stream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Piping from an errored readable stream to a closed writable stream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Piping from a closed readable stream to an erroring writable stream c.error is not a function. (In 'c.error(error1)', 'c.error' is undefined)
+FAIL Piping from a closed readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "TypeError: c.error is not a function. (In 'c.error(error2)', 'c.error' is undefined)"
+FAIL Piping from a closed readable stream to a closed writable stream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+

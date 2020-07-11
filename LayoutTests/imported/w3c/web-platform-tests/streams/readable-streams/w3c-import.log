@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,58 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/async-iterator.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/constructor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/reentrant-strategies.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.any.js

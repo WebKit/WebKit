@@ -1,0 +1,18 @@
+
+PASS CountQueuingStrategy: Can construct a with a valid high water mark 
+FAIL CountQueuingStrategy: Constructor behaves as expected with strange arguments assert_throws_js: construction fails with true function "() => new QueuingStrategy(true)" did not throw
+FAIL CountQueuingStrategy: highWaterMark constructor values are converted per the unrestricted double rules assert_equals: false gets set correctly expected (number) 0 but got (boolean) false
+PASS CountQueuingStrategy: size is the same function across all instances 
+PASS CountQueuingStrategy: size should have the right name 
+FAIL CountQueuingStrategy: subclassing should work correctly assert_equals: constructor.name should be correct expected "SubClass" but got "CountQueuingStrategy"
+PASS ByteLengthQueuingStrategy: Can construct a with a valid high water mark 
+FAIL ByteLengthQueuingStrategy: Constructor behaves as expected with strange arguments assert_throws_js: construction fails with true function "() => new QueuingStrategy(true)" did not throw
+FAIL ByteLengthQueuingStrategy: highWaterMark constructor values are converted per the unrestricted double rules assert_equals: false gets set correctly expected (number) 0 but got (boolean) false
+PASS ByteLengthQueuingStrategy: size is the same function across all instances 
+PASS ByteLengthQueuingStrategy: size should have the right name 
+FAIL ByteLengthQueuingStrategy: subclassing should work correctly assert_equals: constructor.name should be correct expected "SubClass" but got "ByteLengthQueuingStrategy"
+PASS CountQueuingStrategy: size should have the right length 
+PASS ByteLengthQueuingStrategy: size should have the right length 
+PASS CountQueuingStrategy: size behaves as expected with strange arguments 
+PASS ByteLengthQueuingStrategy: size behaves as expected with strange arguments 
+

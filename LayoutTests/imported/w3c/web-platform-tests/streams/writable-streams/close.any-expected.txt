@@ -1,0 +1,27 @@
+
+FAIL fulfillment value of writer.close() call must be undefined even if the underlying sink returns a non-undefined value ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when sink calls error asynchronously while sink close is in-flight, the stream should not become errored ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when sink calls error synchronously while closing, the stream should not become errored ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when the sink throws during close, and the close is requested while a write is still in-flight, the stream should become errored during the close ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL releaseLock on a stream with a pending write in which the stream has been errored ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL releaseLock on a stream with a pending close in which controller.error() was called ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when close is called on a WritableStream in writable state, ready should return a fulfilled promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when close is called on a WritableStream in waiting state, ready promise should be fulfilled ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when close is called on a WritableStream in waiting state, ready should be fulfilled immediately even if close takes a long time ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL returning a thenable from close() should work ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL releaseLock() should not change the result of sync close() ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL releaseLock() should not change the result of async close() ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close() should set state to CLOSED even if writer has detached ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL the promise returned by async abort during close should resolve ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL promises must fulfill/reject in the expected order on closure ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL promises must fulfill/reject in the expected order on aborted closure promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
+FAIL promises must fulfill/reject in the expected order on aborted and errored closure promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
+FAIL close() should not reject until no sink methods are in flight ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL ready promise should be initialised as fulfilled for a writer on a closed stream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close() on a writable stream should work ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close() on a locked stream should reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close() on an erroring stream should reject controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
+FAIL close() on an errored stream should reject controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
+FAIL close() on an closed stream should reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close() on a stream with a pending close should reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+

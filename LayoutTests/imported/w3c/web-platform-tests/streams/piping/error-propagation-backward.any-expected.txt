@@ -1,0 +1,41 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
+
+Harness Error (FAIL), message = Unhandled rejection: error1!
+
+PASS Errors must be propagated backward: starts errored; preventCancel omitted; fulfilled cancel promise 
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; rejected cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = undefined (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = null (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = false (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = 0 (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = -0 (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = NaN (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel =  (falsy); fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = true (truthy) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = a (truthy) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = 1 (truthy) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = Symbol() (truthy) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = [object Object] (truthy) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write, preventCancel = true; preventAbort = true ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = true, preventAbort = true, preventClose = true ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS Errors must be propagated backward: becomes errored during piping due to write; preventCancel omitted; fulfilled cancel promise 
+FAIL Errors must be propagated backward: becomes errored during piping due to write; preventCancel omitted; rejected cancel promise promise_rejects_exactly: pipeTo must reject with the cancel error function "function () { throw e }" threw object "error1: error1!" but we expected it to throw object "error2: error2!"
+TIMEOUT Errors must be propagated backward: becomes errored during piping due to write; preventCancel = true Test timed out
+NOTRUN Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = false; fulfilled cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = false; rejected cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = true 
+NOTRUN Errors must be propagated backward: becomes errored after piping; preventCancel omitted; fulfilled cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored after piping; preventCancel omitted; rejected cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored after piping; preventCancel = true 
+NOTRUN Errors must be propagated backward: becomes errored after piping due to last write; source is closed; preventCancel omitted (but cancel is never called) 
+NOTRUN Errors must be propagated backward: becomes errored after piping due to last write; source is closed; preventCancel = true 
+NOTRUN Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = false; fulfilled cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = false; rejected cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = true 
+NOTRUN Errors must be propagated backward: becomes errored before piping via abort; preventCancel omitted; fulfilled cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored before piping via abort; preventCancel omitted; rejected cancel promise 
+NOTRUN Errors must be propagated backward: becomes errored before piping via abort; preventCancel = true 
+NOTRUN Errors must be propagated backward: erroring via the controller errors once pending write completes 
+

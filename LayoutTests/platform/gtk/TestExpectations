@@ -1608,7 +1608,6 @@ webkit.org/b/186638 editing/execCommand/print.html [ Crash ]
 webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
 webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Crash ]
 webkit.org/b/186638 fast/selectors/unqualified-hover-strict.html [ Failure ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure ]
 webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Timeout Pass ]
 webkit.org/b/186638 printing/print-close-crash.html [ Crash ]
 webkit.org/b/177940 webkit.org/b/186638 workers/wasm-hashset-many.html [ Crash Timeout Pass ]
@@ -3307,7 +3306,6 @@ webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-ke
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Failure ]
 
 webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
-webkit.org/b/184776 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Failure ]
 
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]

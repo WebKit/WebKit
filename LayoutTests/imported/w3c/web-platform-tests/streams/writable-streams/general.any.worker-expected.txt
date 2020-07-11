@@ -1,0 +1,18 @@
+
+FAIL desiredSize on a released writer Can't find variable: WritableStream
+FAIL desiredSize initial value Can't find variable: WritableStream
+FAIL desiredSize on a writer for a closed stream Can't find variable: WritableStream
+FAIL desiredSize on a writer for an errored stream Can't find variable: WritableStream
+FAIL ws.getWriter() on a closing WritableStream Can't find variable: WritableStream
+FAIL ws.getWriter() on a closed WritableStream Can't find variable: WritableStream
+FAIL ws.getWriter() on an aborted WritableStream Can't find variable: WritableStream
+FAIL ws.getWriter() on an errored WritableStream Can't find variable: WritableStream
+FAIL closed and ready on a released writer Can't find variable: WritableStream
+FAIL WritableStream should call underlying sink methods as methods Can't find variable: WritableStream
+FAIL methods should not not have .apply() or .call() called Can't find variable: WritableStream
+FAIL WritableStream's strategy.size should not be called as a method Can't find variable: WritableStream
+FAIL redundant releaseLock() is no-op Can't find variable: WritableStream
+FAIL ready promise should fire before closed on releaseLock Can't find variable: WritableStream
+FAIL Subclassing WritableStream should work Can't find variable: WritableStream
+FAIL the locked getter should return true if the stream has a writer Can't find variable: WritableStream
+

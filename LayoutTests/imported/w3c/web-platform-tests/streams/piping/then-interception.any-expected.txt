@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Attempted to assign to readonly property.
+
+Harness Error (FAIL), message = Unhandled rejection: Attempted to assign to readonly property.
+
+TIMEOUT piping should not be observable Test timed out
+NOTRUN tee should not be observable 
+

@@ -1,0 +1,25 @@
+
+FAIL a signal argument 'null' should cause pipeTo() to reject Can't find variable: WritableStream
+FAIL a signal argument 'AbortSignal' should cause pipeTo() to reject Can't find variable: WritableStream
+FAIL a signal argument 'true' should cause pipeTo() to reject Can't find variable: WritableStream
+FAIL a signal argument '-1' should cause pipeTo() to reject Can't find variable: WritableStream
+FAIL a signal argument '[object AbortSignal]' should cause pipeTo() to reject Can't find variable: WritableStream
+FAIL an aborted signal should cause the writable stream to reject with an AbortError Can't find variable: WritableStream
+FAIL all the AbortError objects should be the same object Can't find variable: WritableStream
+FAIL preventCancel should prevent canceling the readable Can't find variable: WritableStream
+FAIL preventAbort should prevent aborting the readable Can't find variable: WritableStream
+FAIL preventCancel and preventAbort should prevent canceling the readable and aborting the readable Can't find variable: WritableStream
+FAIL abort should prevent further reads Can't find variable: WritableStream
+FAIL all pending writes should complete on abort Can't find variable: WritableStream
+FAIL a rejection from underlyingSource.cancel() should be returned by pipeTo() Can't find variable: WritableStream
+FAIL a rejection from underlyingSink.abort() should be returned by pipeTo() Can't find variable: WritableStream
+FAIL a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel() Can't find variable: WritableStream
+FAIL abort signal takes priority over closed readable Can't find variable: WritableStream
+FAIL abort signal takes priority over errored readable Can't find variable: WritableStream
+FAIL abort signal takes priority over closed writable Can't find variable: WritableStream
+FAIL abort signal takes priority over errored writable Can't find variable: WritableStream
+FAIL abort should do nothing after the readable is closed Can't find variable: WritableStream
+FAIL abort should do nothing after the readable is errored Can't find variable: WritableStream
+FAIL abort should do nothing after the readable is errored, even with pending writes Can't find variable: WritableStream
+FAIL abort should do nothing after the writable is errored Can't find variable: WritableStream
+

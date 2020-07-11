@@ -1,0 +1,18 @@
+
+FAIL desiredSize on a released writer ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL desiredSize initial value ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL desiredSize on a writer for a closed stream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL desiredSize on a writer for an errored stream c.error is not a function. (In 'c.error()', 'c.error' is undefined)
+FAIL ws.getWriter() on a closing WritableStream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL ws.getWriter() on a closed WritableStream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL ws.getWriter() on an aborted WritableStream ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL ws.getWriter() on an errored WritableStream c.error is not a function. (In 'c.error()', 'c.error' is undefined)
+FAIL closed and ready on a released writer ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL WritableStream should call underlying sink methods as methods ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL methods should not not have .apply() or .call() called ws1.getWriter is not a function. (In 'ws1.getWriter()', 'ws1.getWriter' is undefined)
+FAIL WritableStream's strategy.size should not be called as a method highWaterMark value is negative or not a number
+FAIL redundant releaseLock() is no-op ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL ready promise should fire before closed on releaseLock ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Subclassing WritableStream should work assert_true: Subclass object should be an instance of Subclass expected true got false
+FAIL the locked getter should return true if the stream has a writer assert_false: stream should not be locked expected false got undefined
+

@@ -1,0 +1,7 @@
+
+FAIL TransformStream flush is called immediately when the writable is closed, if no writes are queued Can't find variable: TransformStream
+FAIL TransformStream flush is called after all queued writes finish, once the writable is closed Can't find variable: TransformStream
+FAIL TransformStream flush gets a chance to enqueue more into the readable Can't find variable: TransformStream
+FAIL TransformStream flush gets a chance to enqueue more into the readable, and can then async close Can't find variable: TransformStream
+FAIL error() during flush should cause writer.close() to reject Can't find variable: TransformStream
+

@@ -1271,8 +1271,6 @@ webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
 
 webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 
-webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
-
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 media/modern-media-controls/ios-inline-media-controls [ Skip ]

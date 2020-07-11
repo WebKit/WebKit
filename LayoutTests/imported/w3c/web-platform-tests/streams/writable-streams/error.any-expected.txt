@@ -1,0 +1,7 @@
+
+FAIL controller.error() should error the stream controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
+FAIL controller.error() on erroring stream should not throw controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
+FAIL surplus calls to controller.error() should be a no-op controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
+FAIL controller.error() on errored stream should not throw promise_test: Unhandled rejection with value: object "TypeError: controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)"
+FAIL controller.error() on closed stream should not throw ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+

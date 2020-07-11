@@ -1,0 +1,15 @@
+
+FAIL WritableStream should complete asynchronous writes before close resolves ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL WritableStream should complete synchronous writes before close resolves ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL fulfillment value of ws.write() call should be undefined even if the underlying sink returns a non-undefined value ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL WritableStream should transition to waiting until write is acknowledged ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when write returns a rejected promise, queued writes and close should be cleared ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL when sink's write throws an error, the stream should become errored and the promise should reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL writer.write(), ready and closed reject with the error passed to controller.error() made before sink.write rejection ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL a large queue of writes should be processed completely ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL WritableStreamDefaultWriter should work when manually constructed stream.getWriter is not a function. (In 'stream.getWriter()', 'stream.getWriter' is undefined)
+FAIL returning a thenable from write() should work ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL failing DefaultWriter constructor should not release an existing writer stream.getWriter is not a function. (In 'stream.getWriter()', 'stream.getWriter' is undefined)
+FAIL write() on a stream with HWM 0 should not cause the ready Promise to resolve ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL writing to a released writer should reject the returned promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+

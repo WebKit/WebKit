@@ -1165,8 +1165,6 @@ webkit.org/b/171830 [ Debug ] http/tests/websocket/tests/hybi/workers/close.html
 
 webkit.org/b/169637 imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html [ Pass Failure ]
 
-webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
-
 webkit.org/b/171957 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
 webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]

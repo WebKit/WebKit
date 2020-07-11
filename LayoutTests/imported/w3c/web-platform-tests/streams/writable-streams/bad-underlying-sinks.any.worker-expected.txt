@@ -1,0 +1,35 @@
+
+FAIL start: errors in start cause WritableStream constructor to throw assert_throws_exactly: constructor should throw same error as throwing start getter function "() => {
+    new WritableStream({
+      get start() {
+        throw error1;
+      }
+    });
+  }" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error1: error1"
+FAIL close: throwing method should cause writer close() and ready to reject Can't find variable: WritableStream
+FAIL close: returning a rejected promise should cause writer close() and ready to reject Can't find variable: WritableStream
+FAIL close: throwing getter should cause constructor to throw assert_throws_exactly: constructor should throw function "() => new WritableStream({
+    get close() {
+      throw error1;
+    }
+  })" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error1: error1"
+FAIL write: throwing getter should cause write() and closed to reject assert_throws_exactly: constructor should throw function "() => new WritableStream({
+    get write() {
+      throw error1;
+    }
+  })" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error1: error1"
+FAIL write: throwing method should cause write() and closed to reject Can't find variable: WritableStream
+FAIL write: returning a promise that becomes rejected after the writer write() should cause writer write() and ready to reject Can't find variable: WritableStream
+FAIL write: returning a rejected promise (second write) should cause writer write() and ready to reject Can't find variable: WritableStream
+FAIL abort: non-function abort method with .apply assert_throws_js: constructor should throw function "() => new WritableStream({
+    abort: { apply() {} }
+  })" threw object "ReferenceError: Can't find variable: WritableStream" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL abort: throwing getter should cause abort() and closed to reject assert_throws_exactly: constructor should throw function "() => new WritableStream({
+    get abort() {
+      throw error1;
+    }
+  })" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error1: error1"
+FAIL abort: throwing method should cause abort() and closed to reject Can't find variable: WritableStream
+

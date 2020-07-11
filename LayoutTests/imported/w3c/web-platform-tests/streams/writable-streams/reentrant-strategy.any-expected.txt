@@ -1,0 +1,9 @@
+
+FAIL writes should be written in the standard order highWaterMark value is negative or not a number
+FAIL writer.write() promises should resolve in the standard order highWaterMark value is negative or not a number
+FAIL controller.error() should work when called from within strategy.size() highWaterMark value is negative or not a number
+FAIL close() should work when called from within strategy.size() highWaterMark value is negative or not a number
+FAIL abort() should work when called from within strategy.size() highWaterMark value is negative or not a number
+FAIL releaseLock() should abort the write() when called within strategy.size() highWaterMark value is negative or not a number
+FAIL original reader should error when new reader is created within strategy.size() highWaterMark value is negative or not a number
+

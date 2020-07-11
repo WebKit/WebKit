@@ -1,0 +1,11 @@
+
+FAIL Piping from an errored readable stream to an erroring writable stream Can't find variable: WritableStream
+FAIL Piping from an errored readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
+FAIL Piping from an errored readable stream to an erroring writable stream; preventAbort = true Can't find variable: WritableStream
+FAIL Piping from an errored readable stream to an errored writable stream; preventAbort = true promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
+FAIL Piping from an errored readable stream to a closing writable stream Can't find variable: WritableStream
+FAIL Piping from an errored readable stream to a closed writable stream Can't find variable: WritableStream
+FAIL Piping from a closed readable stream to an erroring writable stream Can't find variable: WritableStream
+FAIL Piping from a closed readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
+FAIL Piping from a closed readable stream to a closed writable stream Can't find variable: WritableStream
+

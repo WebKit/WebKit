@@ -1,0 +1,27 @@
+
+PASS start: errors in start cause WritableStream constructor to throw 
+FAIL close: throwing method should cause writer close() and ready to reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close: returning a rejected promise should cause writer close() and ready to reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL close: throwing getter should cause constructor to throw assert_throws_exactly: constructor should throw function "() => new WritableStream({
+    get close() {
+      throw error1;
+    }
+  })" did not throw
+FAIL write: throwing getter should cause write() and closed to reject assert_throws_exactly: constructor should throw function "() => new WritableStream({
+    get write() {
+      throw error1;
+    }
+  })" did not throw
+FAIL write: throwing method should cause write() and closed to reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL write: returning a promise that becomes rejected after the writer write() should cause writer write() and ready to reject promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
+FAIL write: returning a rejected promise (second write) should cause writer write() and ready to reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL abort: non-function abort method with .apply assert_throws_js: constructor should throw function "() => new WritableStream({
+    abort: { apply() {} }
+  })" did not throw
+FAIL abort: throwing getter should cause abort() and closed to reject assert_throws_exactly: constructor should throw function "() => new WritableStream({
+    get abort() {
+      throw error1;
+    }
+  })" did not throw
+FAIL abort: throwing method should cause abort() and closed to reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+

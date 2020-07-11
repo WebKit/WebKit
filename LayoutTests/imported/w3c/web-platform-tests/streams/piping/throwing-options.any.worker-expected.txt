@@ -1,0 +1,18 @@
+
+FAIL pipeTo should stop after getting preventAbort throws Can't find variable: WritableStream
+FAIL pipeThrough should stop after getting preventAbort throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL pipeTo should stop after getting preventCancel throws Can't find variable: WritableStream
+FAIL pipeThrough should stop after getting preventCancel throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL pipeTo should stop after getting preventClose throws Can't find variable: WritableStream
+FAIL pipeThrough should stop after getting preventClose throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL pipeTo should stop after getting signal throws Can't find variable: WritableStream
+FAIL pipeThrough should stop after getting signal throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+

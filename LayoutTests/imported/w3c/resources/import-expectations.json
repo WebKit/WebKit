@@ -371,6 +371,7 @@
     "web-platform-tests/speech-api": "skip", 
     "web-platform-tests/staticrange": "skip", 
     "web-platform-tests/storage": "skip", 
+    "web-platform-tests/streams": "import", 
     "web-platform-tests/streams/writable-streams": "skip", 
     "web-platform-tests/subresource-integrity": "import", 
     "web-platform-tests/svg": "import", 

@@ -1,0 +1,13 @@
+
+FAIL enqueue() inside size() should work Can't find variable: TransformStream
+FAIL terminate() inside size() should work Can't find variable: TransformStream
+FAIL error() inside size() should work Can't find variable: TransformStream
+FAIL desiredSize inside size() should work Can't find variable: TransformStream
+FAIL readable cancel() inside size() should work Can't find variable: TransformStream
+FAIL pipeTo() inside size() should work Can't find variable: WritableStream
+FAIL read() inside of size() should work Can't find variable: TransformStream
+FAIL writer.write() inside size() should work Can't find variable: TransformStream
+FAIL synchronous writer.write() inside size() should work Can't find variable: TransformStream
+FAIL writer.close() inside size() should work Can't find variable: TransformStream
+FAIL writer.abort() inside size() should work Can't find variable: TransformStream
+

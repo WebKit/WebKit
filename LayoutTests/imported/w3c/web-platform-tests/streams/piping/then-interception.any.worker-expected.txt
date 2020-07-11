@@ -1,0 +1,4 @@
+
+FAIL piping should not be observable promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
+FAIL tee should not be observable promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
+

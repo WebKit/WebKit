@@ -1,0 +1,24 @@
+
+PASS Underlying source start: throwing getter 
+PASS Underlying source start: throwing method 
+PASS Underlying source: throwing pull getter (initial pull) 
+PASS Underlying source: throwing pull method (initial pull) 
+PASS Underlying source pull: throwing getter (second pull does not result in a second get) 
+PASS Underlying source pull: throwing method (second pull) 
+PASS Underlying source cancel: throwing getter 
+PASS Underlying source cancel: throwing method 
+PASS Underlying source: calling enqueue on an empty canceled stream should throw 
+PASS Underlying source: calling enqueue on a non-empty canceled stream should throw 
+PASS Underlying source: calling enqueue on a closed stream should throw 
+PASS Underlying source: calling enqueue on an errored stream should throw 
+PASS Underlying source: calling close twice on an empty stream should throw the second time 
+PASS Underlying source: calling close twice on a non-empty stream should throw the second time 
+PASS Underlying source: calling close on an empty canceled stream should throw 
+PASS Underlying source: calling close on a non-empty canceled stream should throw 
+PASS Underlying source: calling close after error should throw 
+PASS Underlying source: calling error twice should not throw 
+PASS Underlying source: calling error after close should not throw 
+PASS Underlying source: calling error and returning a rejected promise from start should cause the stream to error with the first error 
+PASS Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error 
+PASS read should not error if it dequeues and pull() throws 
+
