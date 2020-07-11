@@ -1,5 +1,13 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/web-platform-tests/user-timing/measure_associated_with_navigation_timing.html as flaky.
+
+        This has been flaky since import in r264255.
+
+        * TestExpectations:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark img-aspect-ratio-lazy.tentative.html WPT test as flaky since import in r264117.
 
         * TestExpectations:
