@@ -1,5 +1,11 @@
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark a couple of user-timing WPT tests as flaky since their import in r264255.
+
+        * TestExpectations:
+
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, silence console logging in a couple of payment request WPT tests to address flakiness
 
         * TestExpectations:
