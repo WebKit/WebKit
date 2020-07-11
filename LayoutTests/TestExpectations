@@ -337,8 +337,6 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/writable-streams/write.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/writable-streams/error.any.html [ DumpJSConsoleLogInStdErr ]

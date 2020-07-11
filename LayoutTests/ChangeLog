@@ -1,3 +1,10 @@
+2020-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, silence console logging in a couple of payment request WPT tests to address flakiness
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-10  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Unreviewed, garden failure and new passes

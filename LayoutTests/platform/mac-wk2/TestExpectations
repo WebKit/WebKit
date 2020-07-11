@@ -54,6 +54,8 @@ webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ DumpJSConsoleLogInStdErr ]
 
 # skip in favor of tests in http/tests/paymentrequest
 imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html [ WontFix ]
