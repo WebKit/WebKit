@@ -1,6 +1,0 @@
-
-PASS document.createTouch exists and creates a Touch object with requested properties 
-PASS document.createTouchList exists and correctly creates a TouchList from zero Touch objects 
-FAIL document.createTouchList exists and correctly creates a TouchList from a single Touch assert_true: radiusX attribute in Touch object expected true got false
-FAIL document.createTouchList exists and correctly creates a TouchList from two Touch objects assert_true: radiusX attribute in Touch object expected true got false
-
