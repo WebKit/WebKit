@@ -1,3 +1,26 @@
+2020-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Prevent SPI clients from making the minimum layout height or width negative
+        https://bugs.webkit.org/show_bug.cgi?id=214199
+        <rdar://problem/64109242>
+
+        Reviewed by Tim Horton.
+
+        It's an error in the embedding client to override the minimum layout size with a negative width or height (in
+        this case, Mail on iOS). This happens when double tapping on a contact pill in the "To:" line in Mail compose,
+        which causes the top content inset of the web view's scroll view to increase such that Mail's logic for
+        overriding layout width ends up passing a negative height.
+
+        After a recent change (<https://trac.webkit.org/r261874>), this now results in the web view immediately
+        scrolling to an incorrect content offset when rotating into landscape mode after double tapping a contact. Fix
+        this by clamping the overridden layout size to a minimum of (0, 0), to prevent SPI clients from triggering
+        subtle bugs like this in the future.
+
+        Test: WebKit.OverrideMinimumLayoutSizeWithNegativeHeight
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+
 2020-07-08  Darin Adler  <darin@apple.com>
 
         Remove live ranges from Document.h, AlternativeTextController.h, DictionaryLookup.h, and WebPage.h

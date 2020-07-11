@@ -1,3 +1,13 @@
+2020-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Prevent SPI clients from making the minimum layout height or width negative
+        https://bugs.webkit.org/show_bug.cgi?id=214199
+        <rdar://problem/64109242>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FixedLayoutSize.mm:
+
 2020-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         Add some testing for JSRunLoopTimer

@@ -27,11 +27,22 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
+
+TEST(WebKit, OverrideMinimumLayoutSizeWithNegativeHeight)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(320, -1000) maximumUnobscuredSizeOverride:CGSizeMake(0, 0)];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body>Hello</body>"];
+    EXPECT_GE([webView _fixedLayoutSize].height, 0);
+}
+
+#else
 
 static bool fixedLayoutSizeDone;
 static bool fixedLayoutSizeAfterNavigationDone;
