@@ -107,7 +107,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMaximize(JSGlobalObject* glo
 
     IntlLocale* newLocale = IntlLocale::create(vm, globalObject->localeStructure());
     scope.release();
-    newLocale->initializeLocale(globalObject, jsString(vm, locale->maximal()), jsUndefined());
+    newLocale->initializeLocale(globalObject, locale->maximal(), jsUndefined());
     return JSValue::encode(newLocale);
 }
 
@@ -123,7 +123,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMinimize(JSGlobalObject* glo
 
     IntlLocale* newLocale = IntlLocale::create(vm, globalObject->localeStructure());
     scope.release();
-    newLocale->initializeLocale(globalObject, jsString(vm, locale->minimal()), jsUndefined());
+    newLocale->initializeLocale(globalObject, locale->minimal(), jsUndefined());
     return JSValue::encode(newLocale);
 }
 

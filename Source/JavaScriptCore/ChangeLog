@@ -1,3 +1,20 @@
+2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Avoid JSString creation in Intl.Locale#{minimize,maximize}
+        https://bugs.webkit.org/show_bug.cgi?id=214231
+
+        Reviewed by Darin Adler.
+
+        Add initializeLocale function taking String to avoid unnecessary JSString creation
+        in Intl.Locale#{maximize,minimize}.
+
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::initializeLocale):
+        * runtime/IntlLocale.h:
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::IntlLocalePrototypeFuncMaximize):
+        (JSC::IntlLocalePrototypeFuncMinimize):
+
 2020-07-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Intl.Locale maximize, minimize should return Intl.Locale instead of String

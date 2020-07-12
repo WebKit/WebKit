@@ -51,6 +51,7 @@ public:
 
     DECLARE_INFO;
 
+    void initializeLocale(JSGlobalObject*, const String& tag, JSValue optionsValue);
     void initializeLocale(JSGlobalObject*, JSValue tagValue, JSValue optionsValue);
     const String& maximal();
     const String& minimal();

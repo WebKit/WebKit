@@ -220,6 +220,14 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
 
     String tag = tagValue.inherits<IntlLocale>(vm) ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
+    initializeLocale(globalObject, tag, optionsValue);
+}
+
+// https://tc39.es/ecma402/#sec-Intl.Locale
+void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& tag, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue options = optionsValue;
     if (!optionsValue.isUndefined()) {
