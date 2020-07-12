@@ -1,3 +1,11 @@
+2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, mark wasm/references/multitable.js as memory-exhausting
+
+        Got footprint exceeding crashes in Debug JSC tests in GTK.
+
+        * wasm/references/multitable.js:
+
 2020-07-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Intl.Locale maximize, minimize should return Intl.Locale instead of String

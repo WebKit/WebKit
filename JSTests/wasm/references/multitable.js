@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ runWebAssemblySuite("--useWebAssemblyReferences=true")
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
