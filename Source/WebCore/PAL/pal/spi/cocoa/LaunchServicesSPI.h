@@ -86,11 +86,15 @@ enum LSSessionID {
 #endif // !USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(LSDATABASECONTEXT)
+#if __has_include(<CoreServices/LSDatabaseContext+WebKit.h>)
+#import <CoreServices/LSDatabaseContext+WebKit.h>
+#else
 @interface LSDatabaseContext (WebKitChangeTracking)
 - (id <NSObject>)addDatabaseChangeObserver4WebKit:(void (^)(xpc_object_t change))observer;
 - (void)removeDatabaseChangeObserver4WebKit:(id <NSObject>)token;
 - (void)observeDatabaseChange4WebKit:(xpc_object_t)change;
 @end
+#endif
 #endif
 
 #if PLATFORM(MAC)
