@@ -184,15 +184,11 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     if (files.size() == 1) {
         BOOL isDirectory;
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
             ASSERT(process().connection() && process().connection()->getAuditToken());
             if (process().connection() && process().connection()->getAuditToken())
                 SandboxExtension::createHandleForReadByAuditToken("/", *(process().connection()->getAuditToken()), fileReadHandle);
             else
                 SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, fileReadHandle);
-#else
-            SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, fileReadHandle);
-#endif
             willAcquireUniversalFileReadSandboxExtension(m_process);
         }
     }

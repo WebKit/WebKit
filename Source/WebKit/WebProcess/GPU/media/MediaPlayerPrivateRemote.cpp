@@ -139,16 +139,15 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
 void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
     Optional<SandboxExtension::Handle> sandboxExtensionHandle;
+
+#if ENABLE(SANDBOX_EXTENSIONS)
     if (url.isLocalFile()) {
         SandboxExtension::Handle handle;
         auto fileSystemPath = url.fileSystemPath();
 
         auto createExtension = [&] {
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
             if (auto auditToken = m_manager.gpuProcessConnection().auditToken())
                 return SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value(), handle);
-#endif
-
             return SandboxExtension::createHandle(fileSystemPath, SandboxExtension::Type::ReadOnly, handle);
         };
 
@@ -161,6 +160,7 @@ void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, co
 
         sandboxExtensionHandle = WTFMove(handle);
     }
+#endif
 
     connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
         if (weakThis)

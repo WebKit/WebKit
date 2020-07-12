@@ -1180,23 +1180,28 @@ void WebPageProxy::tryCloseTimedOut()
     closePage();
 }
 
+#if !ENABLE(SANDBOX_EXTENSIONS)
+
+void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL&, SandboxExtension::Handle&, bool)
+{
+}
+
+#else
+
 void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, SandboxExtension::Handle& sandboxExtensionHandle, bool checkAssumedReadAccessToResourceURL)
 {
     if (!url.isLocalFile())
         return;
 
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     // If the process is still launching then it does not have a PID yet. We will take care of creating the sandbox extension
     // once the process has finished launching.
     if (process.isLaunching() || process.wasTerminated())
         return;
-#endif
 
     if (!resourceDirectoryURL.isEmpty()) {
         if (checkAssumedReadAccessToResourceURL && process.hasAssumedReadAccessToURL(resourceDirectoryURL))
             return;
 
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
         ASSERT(process.connection() && process.connection()->getAuditToken());
         bool createdExtension = false;
         if (process.connection() && process.connection()->getAuditToken())
@@ -1208,12 +1213,6 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
             process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string());
             return;
         }
-#else
-        if (SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
-            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string());
-            return;
-        }
-#endif
     }
 
     if (process.hasAssumedReadAccessToURL(url))
@@ -1222,7 +1221,6 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // Inspector resources are in a directory with assumed access.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     ASSERT(process.connection() && process.connection()->getAuditToken());
     bool createdExtension = false;
     if (process.connection() && process.connection()->getAuditToken())
@@ -1234,12 +1232,6 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         willAcquireUniversalFileReadSandboxExtension(process);
         return;
     }
-#else
-    if (SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
-        willAcquireUniversalFileReadSandboxExtension(process);
-        return;
-    }
-#endif
 
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfter(SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
@@ -1251,7 +1243,6 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     auto basePath = baseURL.fileSystemPath();
     if (basePath.isNull())
         return;
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (process.connection() && process.connection()->getAuditToken())
         createdExtension = SandboxExtension::createHandleForReadByAuditToken(basePath, *(process.connection()->getAuditToken()), sandboxExtensionHandle);
     else
@@ -1259,16 +1250,16 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     
     if (createdExtension)
         process.assumeReadAccessToBaseURL(*this, baseURL.string());
-#else
-    if (SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
-        process.assumeReadAccessToBaseURL(*this, baseURL.string());
-#endif
 }
 
+#endif
+
 #if !PLATFORM(COCOA)
+
 void WebPageProxy::addPlatformLoadParameters(WebProcessProxy&, LoadParameters&)
 {
 }
+
 #endif
 
 WebProcessProxy& WebPageProxy::ensureRunningProcess()
@@ -1329,14 +1320,10 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     navigation.setIsLoadedWithNavigationShared(true);
 
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (!process->isLaunching() || !url.isLocalFile())
         process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
     else
         process->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(loadParameters, m_pageLoadState.resourceDirectoryURL(), m_identifier, true), webPageID);
-#else
-    process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
-#endif
     process->startResponsivenessTimer();
 }
 
@@ -1387,14 +1374,10 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     maybeInitializeSandboxExtensionHandle(m_process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
     addPlatformLoadParameters(m_process, loadParameters);
 
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (m_process->isLaunching())
         send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(loadParameters, resourceDirectoryURL, m_identifier, checkAssumedReadAccessToResourceURL));
     else
         send(Messages::WebPage::LoadRequest(loadParameters));
-#else
-    send(Messages::WebPage::LoadRequest(loadParameters));
-#endif
     m_process->startResponsivenessTimer();
 
     return navigation;

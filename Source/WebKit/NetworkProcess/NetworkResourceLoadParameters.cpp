@@ -66,13 +66,11 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
     if (request.url().isLocalFile()) {
         SandboxExtension::Handle requestSandboxExtension;
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
+#if ENABLE(SANDBOX_EXTENSIONS)
         if (networkProcessAuditToken)
             SandboxExtension::createHandleForReadByAuditToken(request.url().fileSystemPath(), *networkProcessAuditToken, requestSandboxExtension);
         else
             SandboxExtension::createHandle(request.url().fileSystemPath(), SandboxExtension::Type::ReadOnly, requestSandboxExtension);
-#else
-        SandboxExtension::createHandle(request.url().fileSystemPath(), SandboxExtension::Type::ReadOnly, requestSandboxExtension);
 #endif
         encoder << requestSandboxExtension;
     }
