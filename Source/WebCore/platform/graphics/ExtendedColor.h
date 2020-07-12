@@ -29,6 +29,7 @@
 #include "ColorConversion.h"
 #include "ColorSpace.h"
 #include "ColorTypes.h"
+#include <functional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
