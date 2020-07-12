@@ -1,3 +1,42 @@
+2020-07-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Intl.Locale maximize, minimize should return Intl.Locale instead of String
+        https://bugs.webkit.org/show_bug.cgi?id=214223
+        <rdar://problem/65413620>
+
+        Reviewed by Ross Kirsling.
+
+        Intl.Locale#{maximize,minimize} should return Intl.Locale object instead of generated locale string.
+
+        We also add some protection and use jsString instead of jsNontrivialString because it would be still
+        possible that ICU's locale recognition and our locale interpretation do not agree each other and ICU
+        failed to produce locale, and then the string becomes empty. Since this is a boundary between third-party
+        library and JSC, and we are not ensuring our invariant inside third-party library, taking safer path makes
+        it better.
+
+        We also change IntlLocale#{maximize,minimize} C++ function names to maximal and minimal to align them
+        to the sepc's definitions.
+
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::maximal):
+        (JSC::IntlLocale::minimal):
+        (JSC::IntlLocale::maximize): Deleted.
+        (JSC::IntlLocale::minimize): Deleted.
+        * runtime/IntlLocale.h:
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::IntlLocalePrototypeFuncMaximize):
+        (JSC::IntlLocalePrototypeFuncMinimize):
+        (JSC::IntlLocalePrototypeFuncToString):
+        (JSC::IntlLocalePrototypeGetterBaseName):
+        (JSC::IntlLocalePrototypeGetterCalendar):
+        (JSC::IntlLocalePrototypeGetterCaseFirst):
+        (JSC::IntlLocalePrototypeGetterCollation):
+        (JSC::IntlLocalePrototypeGetterHourCycle):
+        (JSC::IntlLocalePrototypeGetterNumberingSystem):
+        (JSC::IntlLocalePrototypeGetterLanguage):
+        (JSC::IntlLocalePrototypeGetterScript):
+        (JSC::IntlLocalePrototypeGetterRegion):
+
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r264242.

@@ -1,3 +1,15 @@
+2020-07-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Intl.Locale maximize, minimize should return Intl.Locale instead of String
+        https://bugs.webkit.org/show_bug.cgi?id=214223
+        <rdar://problem/65413620>
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-locale.js:
+        (minimize.toString):
+        (shouldBe):
+
 2020-07-09  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][32-bits] Test gardening July 9th

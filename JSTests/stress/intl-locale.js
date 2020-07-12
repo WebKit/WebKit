@@ -112,21 +112,37 @@ shouldThrow(() => Intl.Locale.prototype.language, TypeError);
 shouldThrow(() => Intl.Locale.prototype.script, TypeError);
 shouldThrow(() => Intl.Locale.prototype.region, TypeError);
 
-shouldBe(new Intl.Locale('en').maximize(), 'en-Latn-US');
-shouldBe(new Intl.Locale('en-Latn-US').maximize(), 'en-Latn-US');
-shouldBe(new Intl.Locale('en-u-nu-thai-x-foo').maximize(), 'en-Latn-US-u-nu-thai-x-foo');
-shouldBe(new Intl.Locale('ja').maximize(), 'ja-Jpan-JP');
-shouldBe(new Intl.Locale('zh').maximize(), 'zh-Hans-CN');
-shouldBe(new Intl.Locale('zh-Hant').maximize(), 'zh-Hant-TW');
-shouldBe(new Intl.Locale('zh', { script: 'Hant' }).maximize(), 'zh-Hant-TW');
+shouldBe(new Intl.Locale('en').maximize().toString(), 'en-Latn-US');
+shouldBe(new Intl.Locale('en-Latn-US').maximize().toString(), 'en-Latn-US');
+shouldBe(new Intl.Locale('en-u-nu-thai-x-foo').maximize().toString(), 'en-Latn-US-u-nu-thai-x-foo');
+shouldBe(new Intl.Locale('ja').maximize().toString(), 'ja-Jpan-JP');
+shouldBe(new Intl.Locale('zh').maximize().toString(), 'zh-Hans-CN');
+shouldBe(new Intl.Locale('zh-Hant').maximize().toString(), 'zh-Hant-TW');
+shouldBe(new Intl.Locale('zh', { script: 'Hant' }).maximize().toString(), 'zh-Hant-TW');
 
-shouldBe(new Intl.Locale('en').minimize(), 'en');
-shouldBe(new Intl.Locale('en-Latn-US').minimize(), 'en');
-shouldBe(new Intl.Locale('en-Latn-US-u-nu-thai-x-foo').minimize(), 'en-u-nu-thai-x-foo');
-shouldBe(new Intl.Locale('ja-Jpan-JP').minimize(), 'ja');
-shouldBe(new Intl.Locale('zh-Hans-CN').minimize(), 'zh');
-shouldBe(new Intl.Locale('zh-Hant-TW').minimize(), 'zh-TW');
-shouldBe(new Intl.Locale('zh', { script: 'Hant', region: 'TW' }).minimize(), 'zh-TW');
+shouldBe(new Intl.Locale('en').minimize().toString(), 'en');
+shouldBe(new Intl.Locale('en-Latn-US').minimize().toString(), 'en');
+shouldBe(new Intl.Locale('en-Latn-US-u-nu-thai-x-foo').minimize().toString(), 'en-u-nu-thai-x-foo');
+shouldBe(new Intl.Locale('ja-Jpan-JP').minimize().toString(), 'ja');
+shouldBe(new Intl.Locale('zh-Hans-CN').minimize().toString(), 'zh');
+shouldBe(new Intl.Locale('zh-Hant-TW').minimize().toString(), 'zh-TW');
+shouldBe(new Intl.Locale('zh', { script: 'Hant', region: 'TW' }).minimize().toString(), 'zh-TW');
+
+{
+    let locale = new Intl.Locale('en')
+    shouldBe(typeof locale.maximize(), 'object');
+    shouldBe(typeof locale.minimize(), 'object');
+    shouldBe(Object.prototype.toString.call(locale.maximize()), '[object Intl.Locale]');
+    shouldBe(Object.prototype.toString.call(locale.minimize()), '[object Intl.Locale]');
+    shouldBe(locale.maximize().baseName, 'en-Latn-US');
+    shouldBe(locale.minimize().baseName, 'en');
+}
+
+{
+    let locale = new Intl.Locale('ja-Jpan-JP-u-ca-japanese-hc-h23-kf-lower-co-emoji-nu-jpan')
+    shouldBe(locale.maximize().toString(), 'ja-Jpan-JP-u-ca-japanese-co-emoji-hc-h23-kf-lower-nu-jpan');
+    shouldBe(locale.maximize().baseName, 'ja-Jpan-JP');
+}
 
 shouldBe(new Intl.Locale('en').toString(), 'en');
 shouldBe(

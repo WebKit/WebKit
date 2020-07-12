@@ -52,8 +52,8 @@ public:
     DECLARE_INFO;
 
     void initializeLocale(JSGlobalObject*, JSValue tagValue, JSValue optionsValue);
-    const String& maximize();
-    const String& minimize();
+    const String& maximal();
+    const String& minimal();
     const String& toString();
     const String& baseName();
     const String& language();
@@ -75,8 +75,8 @@ private:
 
     CString m_localeID;
 
-    String m_maximized;
-    String m_minimized;
+    String m_maximal;
+    String m_minimal;
     String m_fullString;
     String m_baseName;
     String m_language;
