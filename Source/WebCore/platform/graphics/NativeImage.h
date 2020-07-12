@@ -66,6 +66,8 @@ bool nativeImageHasAlpha(const NativeImagePtr&);
 Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
 
 void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, const ImagePaintingOptions&);
+WEBCORE_EXPORT void drawNativeImage(const NativeImagePtr&, GraphicsContext&, float scaleFactor, const IntPoint& destination, const IntRect& source);
+
 void clearNativeImageSubimages(const NativeImagePtr&);
 
 class NativeImageHandle {

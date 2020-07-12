@@ -1,0 +1,16 @@
+OPEN FILE PANEL
+Tests a HEIC image, chosen via the file picker which accepts PNG, will be converted to a PNG image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fileList.length is 1
+PASS file.type is "image/png"
+PASS file.size is non-zero.
+Image was loaded.
+PASS img.width is 400
+PASS img.height is 400
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

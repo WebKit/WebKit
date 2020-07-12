@@ -29,11 +29,11 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/ImageBufferUtilitiesCG.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/PlatformScreen.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/RetainPtr.h>
-#include "CGUtilities.h"
 
 namespace WebKit {
 using namespace WebCore;
@@ -106,12 +106,12 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& destination, const IntRect& source)
 {
-    paintImage(context.platformContext(), makeCGImageCopy().get(), 1, destination, source);
+    drawNativeImage(makeCGImageCopy(), context, 1, destination, source);
 }
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor, const IntPoint& destination, const IntRect& source)
 {
-    paintImage(context.platformContext(), makeCGImageCopy().get(), scaleFactor, destination, source);
+    drawNativeImage(makeCGImageCopy(), context, scaleFactor, destination, source);
 }
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()

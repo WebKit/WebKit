@@ -290,7 +290,7 @@
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA13212191D5924009C1489 /* WKNavigationResponsePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA13211191D5924009C1489 /* WKNavigationResponsePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
+		1AA2E51D12E4C05E00BC4966 /* ImageUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* ImageUtilities.h */; };
 		1AA2E56718D77508003814BD /* WKWebProcessBundleParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E56518D77508003814BD /* WKWebProcessBundleParameters.h */; };
 		1AA3D75C1651B44F008713D0 /* RemoteLayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA3D75A1651B44F008713D0 /* RemoteLayerTreeHost.h */; };
 		1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA417C912C00CCA002BE67B /* TextChecker.h */; };
@@ -2516,8 +2516,8 @@
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDelegatePrivate.h; sourceTree = "<group>"; };
-		1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtilities.h; sourceTree = "<group>"; };
-		1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGUtilities.cpp; sourceTree = "<group>"; };
+		1AA2E51B12E4C05E00BC4966 /* ImageUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageUtilities.h; sourceTree = "<group>"; };
+		1AA2E51C12E4C05E00BC4966 /* ImageUtilitiesCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageUtilitiesCG.cpp; sourceTree = "<group>"; };
 		1AA2E56418D77508003814BD /* WKWebProcessBundleParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessBundleParameters.mm; sourceTree = "<group>"; };
 		1AA2E56518D77508003814BD /* WKWebProcessBundleParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessBundleParameters.h; sourceTree = "<group>"; };
 		1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeHost.mm; sourceTree = "<group>"; };
@@ -5966,8 +5966,7 @@
 		1AA2E51A12E4C05600BC4966 /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */,
-				1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */,
+				1AA2E51C12E4C05E00BC4966 /* ImageUtilitiesCG.cpp */,
 			);
 			path = cg;
 			sourceTree = "<group>";
@@ -9604,6 +9603,7 @@
 				51B15A7D138439B200321AD8 /* unix */,
 				ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */,
 				ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */,
+				1AA2E51B12E4C05E00BC4966 /* ImageUtilities.h */,
 				51A7F2F4125BF8D4008AEB1D /* Logging.cpp */,
 				51A7F2F2125BF820008AEB1D /* Logging.h */,
 				0FDCD7F61D47E92A009F08BC /* LogInitialization.h */,
@@ -10791,7 +10791,6 @@
 				41897ED81F415D8A0016FA42 /* CacheStorageEngine.h in Headers */,
 				41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */,
 				41897EDA1F415D8A0016FA42 /* CacheStorageEngineConnection.h in Headers */,
-				1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */,
 				57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */,
 				F4FE0A3B24632B60002631E1 /* CocoaColor.h in Headers */,
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
@@ -10870,6 +10869,7 @@
 				51C0C9741DDD76000032CAD3 /* IconLoadingDelegate.h in Headers */,
 				51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */,
 				BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */,
+				1AA2E51D12E4C05E00BC4966 /* ImageUtilities.h in Headers */,
 				1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,

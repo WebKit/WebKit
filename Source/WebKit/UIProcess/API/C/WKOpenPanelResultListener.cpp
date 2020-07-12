@@ -63,9 +63,9 @@ void WKOpenPanelResultListenerChooseMediaFiles(WKOpenPanelResultListenerRef list
 }
 #endif
 
-void WKOpenPanelResultListenerChooseFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef)
+void WKOpenPanelResultListenerChooseFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef, WKArrayRef allowedMimeTypesRef)
 {
-    toImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toImpl(fileURLsRef)));
+    toImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toImpl(fileURLsRef)), toImpl(allowedMimeTypesRef)->toStringVector());
 }
 
 void WKOpenPanelResultListenerCancel(WKOpenPanelResultListenerRef listenerRef)

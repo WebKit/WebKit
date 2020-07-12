@@ -442,8 +442,11 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
     return false;
 }
 
-String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)
 {
+    // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
+    ASSERT_UNUSED(suffix, suffix.isEmpty());
+
     char buffer[PATH_MAX];
     const char* tmpDir = getenv("TMPDIR");
 

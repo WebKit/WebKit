@@ -1,3 +1,25 @@
+2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=213347
+        <rdar://problem/57258464>
+
+        Reviewed by Darin Adler.
+
+        Allow a suffix to be included in the temporary file name. The goal is to
+        make it possible to create temporary image files with valid extensions.
+
+        * wtf/FileSystem.h:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+
 2020-07-12  Rob Buis  <rbuis@igalia.com>
 
         Improve IPv6 detection when setting host/hostname

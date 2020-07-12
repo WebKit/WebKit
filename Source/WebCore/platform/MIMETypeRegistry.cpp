@@ -814,13 +814,13 @@ Vector<String> MIMETypeRegistry::allowedMIMETypes(const Vector<String>& mimeType
     Vector<String> allowedMIMETypes;
 
     for (auto& mimeType : mimeTypes)
-        allowedMIMETypes.appendIfNotContains(mimeType);
+        allowedMIMETypes.appendIfNotContains(mimeType.convertToASCIILowercase());
 
     for (auto& extension : extensions) {
         auto mimeType = MIMETypeRegistry::mimeTypeForExtension(trimmedExtension(extension));
         if (mimeType.isEmpty())
             continue;
-        allowedMIMETypes.appendIfNotContains(mimeType);
+        allowedMIMETypes.appendIfNotContains(mimeType.convertToASCIILowercase());
     }
 
     return allowedMIMETypes;

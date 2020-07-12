@@ -404,8 +404,11 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
     return proposedPath;
 }
 
-String openTemporaryFile(const String&, PlatformFileHandle& handle)
+String openTemporaryFile(const String&, PlatformFileHandle& handle, const String& suffix)
 {
+    // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
+    ASSERT_UNUSED(suffix, suffix.isEmpty());
+
     handle = INVALID_HANDLE_VALUE;
 
     String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {

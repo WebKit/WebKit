@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT static String preferredExtensionForMIMEType(const String& type);
     WEBCORE_EXPORT static String mediaMIMETypeForExtension(const String& extension);
 
-    static String mimeTypeForPath(const String& path);
+    WEBCORE_EXPORT static String mimeTypeForPath(const String& path);
 
     static std::unique_ptr<MIMETypeRegistryThreadGlobalData> createMIMETypeRegistryThreadGlobalData();
 

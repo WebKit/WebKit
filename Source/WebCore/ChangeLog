@@ -1,3 +1,23 @@
+2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=213347
+        <rdar://problem/57258464>
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/forms/file/entries-api/image-no-transcode-open-panel.html
+               fast/forms/file/entries-api/image-transcode-open-panel.html
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::allowedMIMETypes):
+        Make sure this function returns lowercase MIME types.
+
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/NativeImage.h:
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::drawNativeImage):
+
 2020-07-12  Sam Weinig  <weinig@apple.com>
 
         Tidy up color usage in accessibility code

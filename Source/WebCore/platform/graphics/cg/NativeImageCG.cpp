@@ -84,6 +84,25 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
     context.drawNativeImage(image, subsampledImageSize, destRect, adjustedSrcRect, options);
 }
 
+void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, float scaleFactor, const IntPoint& destination, const IntRect& source)
+{
+    CGContextRef cgContext = context.platformContext();
+    CGContextSaveGState(cgContext);
+
+    CGContextClipToRect(cgContext, CGRectMake(destination.x(), destination.y(), source.width(), source.height()));
+    CGContextScaleCTM(cgContext, 1, -1);
+
+    CGFloat imageHeight = CGImageGetHeight(image.get()) / scaleFactor;
+    CGFloat imageWidth = CGImageGetWidth(image.get()) / scaleFactor;
+
+    CGFloat destX = destination.x() - source.x();
+    CGFloat destY = -imageHeight - destination.y() + source.y();
+
+    CGContextDrawImage(cgContext, CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
+
+    CGContextRestoreGState(cgContext);
+}
+
 void clearNativeImageSubimages(const NativeImagePtr& image)
 {
 #if CACHE_SUBIMAGES

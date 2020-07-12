@@ -93,7 +93,7 @@ String homeDirectoryPath()
     return NSHomeDirectory();
 }
 
-String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle, const String& suffix)
 {
     platformFileHandle = invalidPlatformFileHandle;
 
@@ -110,12 +110,16 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
         temporaryFilePath.append('/');
 
     // Append the file name.
-    CString prefixUtf8 = prefix.utf8();
-    temporaryFilePath.append(prefixUtf8.data(), prefixUtf8.length());
+    CString prefixUTF8 = prefix.utf8();
+    temporaryFilePath.append(prefixUTF8.data(), prefixUTF8.length());
     temporaryFilePath.append("XXXXXX", 6);
+    
+    // Append the file name suffix.
+    CString suffixUTF8 = suffix.utf8();
+    temporaryFilePath.append(suffixUTF8.data(), suffixUTF8.length());
     temporaryFilePath.append('\0');
 
-    platformFileHandle = mkstemp(temporaryFilePath.data());
+    platformFileHandle = mkstemps(temporaryFilePath.data(), suffixUTF8.length());
     if (platformFileHandle == invalidPlatformFileHandle)
         return String();
 

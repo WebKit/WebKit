@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input type="file" accept="IMAGE/HEIC" onchange="changed(event)"></input>
+    <script>
+        description("Tests a HEIC image, chosen via the file picker which accepts HEIC, will not be converted to any supported MIME type.");
+        jsTestIsAsync = true;
+
+        function runTest()
+        {
+            testRunner.setOpenPanelFiles(['resources/images/green-400x400.heic']);
+
+            inputElement = document.getElementsByTagName('input')[0];
+            UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
+                inputElement.offsetTop + inputElement.offsetHeight / 2);
+        }
+
+        function changed(event)
+        {
+            fileList = event.target.files;
+            shouldBe("fileList.length", "1");
+
+            file = fileList[0];
+            shouldBeEqualToString("file.type", "image/heic");
+            shouldBeNonZero("file.size");
+
+            img = document.createElement("img");
+            document.body.appendChild(img);
+
+            var reader = new FileReader();
+            reader.onload = () => {
+                img.onload = () => {
+                    debug("Image was loaded.");
+                    shouldBe("img.width", "400");
+                    shouldBe("img.height", "400");
+                    finishJSTest();
+                };
+                img.onerror = () => {
+                    debug("Image could not be loaded.");
+                    shouldNotBe("img.width", "400");
+                    shouldNotBe("img.height", "400");
+                    finishJSTest();
+                };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        runTest();
+    </script>
+</body>
+</html>

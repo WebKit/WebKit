@@ -215,6 +215,11 @@
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "ImageUtilities.h"
+#include <WebCore/UTIUtilities.h>
+#endif
+
 #if HAVE(TOUCH_BAR)
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
@@ -487,6 +492,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #if PLATFORM(COCOA)
     , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains())
     , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
+#endif
+#if PLATFORM(MAC)
+    , m_transcodingQueue(WorkQueue::create("com.apple.WebKit.ImageTranscoding"))
 #endif
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");
@@ -6652,17 +6660,58 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
 }
 #endif
 
-void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, const Vector<String>&)
+bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes)
+{
+#if PLATFORM(MAC)
+    auto transcodingMIMEType = WebCore::MIMETypeRegistry::preferredImageMIMETypeForEncoding(allowedMIMETypes, { });
+    if (transcodingMIMEType.isNull())
+        return false;
+
+    auto transcodingURLs = findImagesForTranscoding(fileURLs, allowedMIMETypes);
+    if (transcodingURLs.isEmpty())
+        return false;
+
+    auto transcodingUTI = WebCore::UTIFromMIMEType(transcodingMIMEType);
+    auto transcodingExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(transcodingMIMEType);
+
+    m_transcodingQueue->dispatch([this, protectedThis = makeRef(*this), fileURLs = fileURLs.isolatedCopy(), transcodingURLs = transcodingURLs.isolatedCopy(), transcodingUTI = transcodingUTI.isolatedCopy(), transcodingExtension = transcodingExtension.isolatedCopy()]() mutable {
+        ASSERT(!RunLoop::isMain());
+
+        auto transcodedURLs = transcodeImages(transcodingURLs, transcodingUTI, transcodingExtension);
+        ASSERT(transcodingURLs.size() == transcodedURLs.size());
+
+        RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), fileURLs = fileURLs.isolatedCopy(), transcodedURLs = transcodedURLs.isolatedCopy()]() {
+#if ENABLE(SANDBOX_EXTENSIONS)
+            Vector<String> sandboxExtensionFiles;
+            for (size_t i = 0, size = fileURLs.size(); i < size; ++i)
+                sandboxExtensionFiles.append(!transcodedURLs[i].isNull() ? transcodedURLs[i] : fileURLs[i]);
+            auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, sandboxExtensionFiles);
+            send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
+#endif
+            send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, transcodedURLs));
+        });
+    });
+
+    return true;
+#else
+    UNUSED_PARAM(fileURLs);
+    UNUSED_PARAM(allowedMIMETypes);
+    return false;
+#endif
+}
+
+void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes)
 {
     if (!hasRunningProcess())
         return;
 
+    if (!didChooseFilesForOpenPanelWithImageTranscoding(fileURLs, allowedMIMETypes)) {
 #if ENABLE(SANDBOX_EXTENSIONS)
-    auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
-    send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
+        auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
+        send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
 #endif
-
-    send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }));
+        send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }));
+    }
 
     m_openPanelResultListener->invalidate();
     m_openPanelResultListener = nullptr;

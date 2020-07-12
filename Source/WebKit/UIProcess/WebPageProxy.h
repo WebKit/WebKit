@@ -1924,6 +1924,7 @@ private:
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();
     void runOpenPanel(WebCore::FrameIdentifier, FrameInfoData&&, const WebCore::FileChooserSettings&);
+    bool didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void printFrame(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
     void exceededDatabaseQuota(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuotaDelayedReply&&);
@@ -2841,6 +2842,9 @@ private:
     bool m_userScriptsNotified { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
+#if PLATFORM(MAC)
+    Ref<WorkQueue> m_transcodingQueue;
+#endif
 };
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CGUtilities_h
-#define CGUtilities_h
+#pragma once
 
 namespace WebKit {
 
-void paintImage(CGContextRef, CGImageRef, CGFloat scaleFactor, CGPoint destination, CGRect source);
+// Given a list of files' 'paths' and 'allowedMIMETypes', the function returns a list
+// of strings whose size is the same as the size of 'paths' and its entries are all
+// null strings except the ones whose MIME types are not in 'allowedMIMETypes'.
+Vector<String> findImagesForTranscoding(const Vector<String>& paths, const Vector<String>& allowedMIMETypes);
+
+// Given a list of images' 'paths', this function transcodes these images to a new
+// format whose UTI is destinationUTI. The result of the transcoding will be written
+// to temporary files whose extensions are 'destinationExtension'. It returns a list
+// of paths to the result temporary files. If an entry in 'paths' is null or an error
+// happens while transcoding, a null string will be added to the returned list.
+Vector<String> transcodeImages(const Vector<String>& paths, const String& destinationUTI, const String& destinationExtension);
 
 } // namespace WebKit
-
-#endif // CGUtilities_h

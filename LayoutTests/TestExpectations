@@ -906,6 +906,8 @@ http/wpt/cross-origin-resource-policy/ [ Skip ]
 
 # testRunner.terminateNetworkProcess() only works in WebKit2
 fast/files/blob-network-process-crash.html [ Skip ]
+fast/forms/file/entries-api/image-transcode-open-panel.html [ Skip ]
+fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Skip ]
 
 # This test is currently only relevant on mac-wk2
 fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]

@@ -45,6 +45,8 @@ WK_EXPORT bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParameters
 WK_EXPORT WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParametersRef parameters);
 WK_EXPORT WKArrayRef WKOpenPanelParametersCopyAcceptedFileExtensions(WKOpenPanelParametersRef parameters);
 
+WK_EXPORT WKArrayRef WKOpenPanelParametersCopyAllowedMIMETypes(WKOpenPanelParametersRef parameters);
+
 /* DEPRECATED - Please use WKOpenPanelParametersGetCaptureEnabled() instead. */
 WK_EXPORT WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef parameters);
 

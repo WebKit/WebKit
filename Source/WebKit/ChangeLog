@@ -1,3 +1,52 @@
+2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=213347
+        <rdar://problem/57258464>
+
+        Reviewed by Darin Adler.
+
+        Transcode the images given the list of the selected file and the allowed
+        MIME types. Only selected files whose MIME types do not exist in the allowed
+        MIME types will be transcoded. Right now, this only will apply to the HEIF
+        images on macOS.
+
+        * Platform/ImageUtilities.h: Renamed from Source/WebKit/Platform/cg/CGUtilities.h.
+        * Platform/Logging.h:
+        * Platform/cg/CGUtilities.cpp: Removed.
+        * Platform/cg/ImageUtilitiesCG.cpp: Added.
+        (WebKit::transcodeImage):
+        (WebKit::findImagesForTranscoding):
+        (WebKit::transcodeImages):
+        Implement a function that transcodes images among a set of files given
+        the allowedMIMETypes. The destination MIME type of these images is the
+        first MIME type in the allowedMIMETypes which CG supports encoding to.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::paint):
+        Call drawNativeImage() after renaming paintImage() to drawNativeImage().
+
+        * SourcesCocoa.txt:
+
+        * UIProcess/API/C/WKOpenPanelParametersRef.cpp:
+        (WKOpenPanelParametersCopyAllowedMIMETypes):
+        * UIProcess/API/C/WKOpenPanelParametersRef.h:
+        * UIProcess/API/C/WKOpenPanelResultListener.cpp:
+        (WKOpenPanelResultListenerChooseFiles):
+        * UIProcess/API/C/WKOpenPanelResultListener.h:
+        Transfer the list of the allowed MIME types from the OpenPanel to the
+        file chooser listener.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_transcodingQueue):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding):
+        Transcode the images in a work queue so the UI process is not blocked. 
+        Once the transcoding finishes, the message will be sent to the WebPage.
+
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-07-12  Darin Adler  <darin@apple.com>
 
         REGRESSION (r261152): 9 blocks of critical sandboxing code disabled because they are guarded with HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)

@@ -1,3 +1,26 @@
+2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=213347
+        <rdar://problem/57258464>
+
+        Reviewed by Darin Adler.
+
+        Ensure the HEIF image is converted to an accepted MIME type when it is 
+        selected from the OpenPanel and the 'accept' attribute of the <input>
+        does allow the HEIF MIME type.
+
+        No need to test this functionality on WK1 since the image transcoding 
+        should happen in the UI process.
+
+        * TestExpectations:
+        * fast/forms/file/entries-api/image-no-transcode-open-panel-expected.txt: Added.
+        * fast/forms/file/entries-api/image-no-transcode-open-panel.html: Added.
+        * fast/forms/file/entries-api/image-transcode-open-panel-expected.txt: Added.
+        * fast/forms/file/entries-api/image-transcode-open-panel.html: Added.
+        * fast/forms/file/entries-api/resources/images/green-400x400.heic: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Min-Max width] Regular block level box resets the horizontal stacking
