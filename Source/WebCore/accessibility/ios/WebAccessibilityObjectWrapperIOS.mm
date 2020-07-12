@@ -1422,9 +1422,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
 
     if (self.axBackingObject->isColorWell()) {
-        int r, g, b;
-        self.axBackingObject->colorValue(r, g, b);
-        return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.];
+        auto color = convertToComponentFloats(self.axBackingObject->colorValue());
+        return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue];
     }
 
     return nil;

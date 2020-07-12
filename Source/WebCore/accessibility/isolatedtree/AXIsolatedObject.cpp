@@ -350,10 +350,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         combinedClassList.append(" ");
     }
     setProperty(AXPropertyName::ClassList, combinedClassList);
-    
-    int r, g, b;
-    object.colorValue(r, g, b);
-    setProperty(AXPropertyName::ColorValue, makeSimpleColor(r, g, b));
+
+    setProperty(AXPropertyName::ColorValue, object.colorValue());
     
     if (bool isMathElement = object.isMathElement()) {
         setProperty(AXPropertyName::IsMathElement, isMathElement);
@@ -708,12 +706,9 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
     });
 }
 
-void AXIsolatedObject::colorValue(int& r, int& g, int& b) const
+SRGBA<uint8_t> AXIsolatedObject::colorValue() const
 {
-    auto color = colorAttributeValue(AXPropertyName::ColorValue).toSRGBALossy<uint8_t>();
-    r = color.red;
-    g = color.green;
-    b = color.blue;
+    return colorAttributeValue(AXPropertyName::ColorValue).toSRGBALossy<uint8_t>();
 }
 
 AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const

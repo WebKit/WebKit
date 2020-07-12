@@ -1,3 +1,27 @@
+2020-07-12  Sam Weinig  <weinig@apple.com>
+
+        Tidy up color usage in accessibility code
+        https://bugs.webkit.org/show_bug.cgi?id=214226
+
+        Reviewed by Darin Adler.
+
+        Rather than passing around r, g, b components as out-parameters,
+        use SRGBA<uint8_t> return values.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::colorValue const):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetText):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::colorValue const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2020-07-12  Rob Buis  <rbuis@igalia.com>
 
         Improve IPv6 detection when setting host/hostname

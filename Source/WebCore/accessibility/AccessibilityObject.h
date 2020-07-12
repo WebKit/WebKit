@@ -403,7 +403,7 @@ public:
     void elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const override;
 
     // Only if isColorWell()
-    void colorValue(int& r, int& g, int& b) const override { r = 0; g = 0; b = 0; }
+    SRGBA<uint8_t> colorValue() const override { return Color::transparent; }
 
     AccessibilityRole roleValue() const override { return m_role; }
     String rolePlatformString() const override;

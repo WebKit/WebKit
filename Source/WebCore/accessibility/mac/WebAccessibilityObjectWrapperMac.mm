@@ -2542,9 +2542,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @(backingObject->isSelected());
 
         if (backingObject->isColorWell()) {
-            int r, g, b;
-            backingObject->colorValue(r, g, b);
-            return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.];
+            auto color = convertToComponentFloats(backingObject->colorValue());
+            return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue];
         }
 
         return backingObject->stringValue();

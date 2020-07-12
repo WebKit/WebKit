@@ -840,7 +840,7 @@ public:
     virtual void elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const = 0;
 
     // Only if isColorWell()
-    virtual void colorValue(int& r, int& g, int& b) const = 0;
+    virtual SRGBA<uint8_t> colorValue() const = 0;
 
     virtual AccessibilityRole roleValue() const = 0;
     // Non-localized string associated with the object role.

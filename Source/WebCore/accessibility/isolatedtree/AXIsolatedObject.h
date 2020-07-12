@@ -541,7 +541,7 @@ private:
     const String placeholderValue() const override { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const override { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
     bool supportsExpandedTextValue() const override { return boolAttributeValue(AXPropertyName::SupportsExpandedTextValue); }
-    void colorValue(int&, int&, int&) const override;
+    SRGBA<uint8_t> colorValue() const override;
     AccessibilityRole roleValue() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
     String rolePlatformString() const override { return stringAttributeValue(AXPropertyName::RolePlatformString); }
     String roleDescription() const override { return stringAttributeValue(AXPropertyName::RoleDescription); }

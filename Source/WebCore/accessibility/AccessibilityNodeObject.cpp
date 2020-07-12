@@ -1992,23 +1992,18 @@ String AccessibilityNodeObject::stringValue() const
     return String();
 }
 
-void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
+SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 {
-    r = 0;
-    g = 0;
-    b = 0;
-
-#if ENABLE(INPUT_TYPE_COLOR)
+#if !ENABLE(INPUT_TYPE_COLOR)
+    return Color::transparent;
+#else
     if (!isColorWell())
-        return;
+        return Color::transparent;
 
     if (!is<HTMLInputElement>(node()))
-        return;
+        return Color::transparent;
 
-    auto color = downcast<HTMLInputElement>(*node()).valueAsColor().toSRGBALossy<uint8_t>();
-    r = color.red;
-    g = color.green;
-    b = color.blue;
+    return downcast<HTMLInputElement>(*node()).valueAsColor().toSRGBALossy<uint8_t>();
 #endif
 }
 
