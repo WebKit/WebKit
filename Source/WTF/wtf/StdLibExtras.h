@@ -418,11 +418,6 @@ namespace Detail
 template <template <typename...> class Base, typename Derived>
 struct IsBaseOfTemplate : public std::integral_constant<bool, Detail::IsBaseOfTemplateImpl<Base, Derived>::value> {};
 
-// Based on 'Detecting in C++ whether a type is defined, part 3: SFINAE and incomplete types'
-// <https://devblogs.microsoft.com/oldnewthing/20190710-00/?p=102678>
-template<typename, typename = void> constexpr bool IsTypeComplete = false;
-template<typename T> constexpr bool IsTypeComplete<T, std::void_t<decltype(sizeof(T))>> = true;
-
 template <class T>
 struct RemoveCVAndReference  {
     typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;

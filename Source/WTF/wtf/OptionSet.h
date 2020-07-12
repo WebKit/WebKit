@@ -32,9 +32,17 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Optional.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WTF {
+
+// Detecting in C++ whether a type is defined, part 3: SFINAE and incomplete types
+// <https://devblogs.microsoft.com/oldnewthing/20190710-00/?p=102678>
+template<typename, typename = void>
+constexpr bool is_type_complete_v = false;
+
+template<typename T>
+constexpr bool is_type_complete_v<T, std::void_t<decltype(sizeof(T))>> = true;
+
 
 template<typename E> class OptionSet;
 
@@ -68,13 +76,13 @@ struct OptionSetValueChecker<T, EnumValues<E>> {
 };
 
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && IsTypeComplete<EnumTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr bool isValidOptionSetEnum(E e)
 {
     return OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
 }
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && !IsTypeComplete<EnumTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr bool isValidOptionSetEnum(E e)
 {
     // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
@@ -82,14 +90,14 @@ constexpr bool isValidOptionSetEnum(E e)
 }
 
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && IsTypeComplete<EnumTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
 {
     auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
     return rawValue & allValidBitsValue;
 }
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && !IsTypeComplete<EnumTraits<E>>>* = nullptr>
+template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<EnumTraits<E>>>* = nullptr>
 constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
 {
     // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
