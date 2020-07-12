@@ -1,3 +1,14 @@
+2020-07-12  Rob Buis  <rbuis@igalia.com>
+
+        Improve IPv6 detection when setting host/hostname
+        https://bugs.webkit.org/show_bug.cgi?id=214218
+
+        Reviewed by Darin Adler.
+
+        Update improved test result.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2020-07-10  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/streams from upstream

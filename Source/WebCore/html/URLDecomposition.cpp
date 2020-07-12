@@ -99,16 +99,21 @@ void URLDecomposition::setHost(StringView value)
     if (value.isEmpty() && !fullURL.protocolIs("file"))
         return;
 
-    size_t separator = value.find(':');
+    size_t separator = value.reverseFind(':');
     if (!separator)
         return;
 
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
         return;
 
-    if (separator == notFound)
+    // No port if no colon or rightmost colon is within the IPv6 section.
+    size_t ipv6Separator = value.reverseFind(']');
+    if (separator == notFound || (ipv6Separator != notFound && ipv6Separator > separator))
         fullURL.setHost(value);
     else {
+        // Multiple colons are acceptable only in case of IPv6.
+        if (value.find(':') != separator && ipv6Separator == notFound)
+            return;
         unsigned portLength = countASCIIDigits(value.substring(separator + 1));
         if (!portLength) {
             // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes

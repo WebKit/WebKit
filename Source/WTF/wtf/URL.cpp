@@ -415,7 +415,7 @@ void URL::setHost(StringView newHost)
     if (!m_isValid)
         return;
 
-    if (newHost.contains(':'))
+    if (newHost.contains(':') && !newHost.startsWith('['))
         return;
 
     Vector<UChar, 512> encodedHostName;
@@ -456,10 +456,13 @@ void URL::setHostAndPort(StringView hostAndPort)
 
     auto hostName = hostAndPort;
     StringView portString;
-    auto colonIndex = hostName.find(':');
+    auto colonIndex = hostName.reverseFind(':');
     if (colonIndex != notFound) {
         portString = hostName.substring(colonIndex + 1);
         hostName = hostName.substring(0, colonIndex);
+        // Multiple colons are acceptable only in case of IPv6.
+        if (hostName.contains(':') && !hostName.startsWith('['))
+            return;
         if (!parseUInt16(portString))
             portString = { };
     }

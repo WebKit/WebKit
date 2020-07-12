@@ -1,3 +1,21 @@
+2020-07-12  Rob Buis  <rbuis@igalia.com>
+
+        Improve IPv6 detection when setting host/hostname
+        https://bugs.webkit.org/show_bug.cgi?id=214218
+
+        Reviewed by Darin Adler.
+
+        Improve IPv6 detection when setting host/hostname by checking for '[' and ']' as
+        well as using reverse find for ':' separators, to ensure we are not finding a
+        separator within the IPv6 section of the url.
+
+        Behavior matches Chrome and Firefox.
+
+        Test: imported/w3c/web-platform-tests/url/url-setters.html
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHost):
+
 2020-07-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Min-Max width] Regular block level box resets the horizontal stacking
