@@ -40,6 +40,7 @@
 #include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "Image.h"
@@ -568,9 +569,9 @@ FillSource::FillSource(const GraphicsContextState& state)
         pattern.repeatX = state.fillPattern->repeatX();
         pattern.repeatY = state.fillPattern->repeatY();
     } else if (state.fillGradient) {
-        gradient.base = adoptRef(state.fillGradient->createPlatformGradient(1));
+        gradient.base = state.fillGradient->createPattern(1);
         if (state.alpha != 1)
-            gradient.alphaAdjusted = adoptRef(state.fillGradient->createPlatformGradient(state.alpha));
+            gradient.alphaAdjusted = state.fillGradient->createPattern(state.alpha);
     } else
         color = state.fillColor;
 }
@@ -581,9 +582,9 @@ StrokeSource::StrokeSource(const GraphicsContextState& state)
     if (state.strokePattern)
         pattern = adoptRef(state.strokePattern->createPlatformPattern(AffineTransform()));
     else if (state.strokeGradient) {
-        gradient.base = adoptRef(state.strokeGradient->createPlatformGradient(1));
+        gradient.base = state.strokeGradient->createPattern(1);
         if (state.alpha != 1)
-            gradient.alphaAdjusted = adoptRef(state.strokeGradient->createPlatformGradient(state.alpha));
+            gradient.alphaAdjusted = state.strokeGradient->createPattern(state.alpha);
     } else
         color = state.strokeColor;
 }

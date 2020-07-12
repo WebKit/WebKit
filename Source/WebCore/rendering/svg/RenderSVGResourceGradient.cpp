@@ -234,12 +234,10 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
 
 void RenderSVGResourceGradient::addStops(GradientData* gradientData, const Vector<Gradient::ColorStop>& stops, const RenderStyle& style) const
 {
+    ASSERT(gradientData);
     ASSERT(gradientData->gradient);
-
-    for (Gradient::ColorStop stop : stops) {
-        stop.color = style.colorByApplyingColorFilter(stop.color);
-        gradientData->gradient->addColorStop(stop);
-    }
+    for (auto& stop : stops)
+        gradientData->gradient->addColorStop({ stop.offset, style.colorByApplyingColorFilter(stop.color) });
 }
 
 GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method) const

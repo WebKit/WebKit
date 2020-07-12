@@ -1,3 +1,156 @@
+2020-07-12  Darin Adler  <darin@apple.com>
+
+        Simplify and improve Gradient, some other small color-related removals
+        https://bugs.webkit.org/show_bug.cgi?id=214221
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSGradientValue.cpp: Removed some unneeded includes.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::currentColor): Deleted.
+        (WebCore::ColorInputType::shouldShowSuggestions const): Deleted.
+        * html/ColorInputType.h: Updated for the above.
+
+        * html/HTMLDocument.cpp: Removed unneeded include of HashTools.h.
+
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::create): Moved these functions out of the
+        header since inlining should be the same or better with them here.
+        (WebCore::CanvasGradient::~CanvasGradient): Moved this out of the
+        header so we don't need to include Gradient.h in the header.
+        (WebCore::CanvasGradient::addColorStop): Updated for change to
+        Gradient::addColorStop and move Color rather than copying it.
+
+        * html/canvas/CanvasGradient.h: Removed include of Gradient.h.
+        Moved things out of the header to make that work.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient): Removed
+        use of Gradient::type and instead unify the type string code with
+        the code that interprets the data for the different types.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle): Refactored
+        to eliminate the multiple redundant code paths, otherwising leaving
+        the logic unchanged.
+
+        * platform/ColorChooserClient.h: Remove unneeded includes and unused
+        currentColor and shouldShowSuggestions functions.
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::create): Replaced create functions that take
+        type-specific data structure with one that takes the variant Data.
+        (WebCore::Gradient::Gradient): Ditto. Also removed platformInit.
+        (WebCore::Gradient::~Gradient): Removed platformDestroy.
+        (WebCore::Gradient::type const): Deleted.
+        (WebCore::Gradient::addColorStop): Take an rvalue reference to cut down
+        a little bit on reference count churn. Replaced the platformDestroy
+        function with a new stopsChanged function. Removed an unneeded overload
+        that takes the two parts of a ColorStop separately.
+        (WebCore::Gradient::setSortedColorStops): Use stopsChanged.
+        (WebCore::Gradient::sortStops const): Simplify a bit, using a lambda.
+        Also gave this a shorter name; it still optimizes by not sorting if
+        the vector is already sorted.
+        (WebCore::Gradient::hasAlpha const): Deleted.
+        (WebCore::Gradient::setSpreadMethod): Removed some slightly overzealous
+        code checking this isn't used after creating the platform-specific gradient.
+        Decided not to bother with this for now.
+        (WebCore::Gradient::setGradientSpaceTransform): Tweaked formatting.
+        (WebCore::add): Added overloads to add(Hasher&) so we can use computeHash.
+        (WebCore::Gradient::hash const): Use computeHash instead of hashMemory.
+
+        * platform/graphics/Gradient.h: Use RetainPtr, COMPtr, and RefPtr instead
+        of manually managing the lifetimes of the platform-specific underlying
+        gradient objects. Also removed the unhelpful PlatformGradient type. This
+        pattern, all too common in our platform library, provides no useful
+        abstraction here. Removed unneeded constructors from ColorStop.
+        Updated for changes above. Added platform-specific functions createBrush,
+        createPattern, and createCGGradient. Simplify encoding and decoding by
+        taking advantage of the support for encoding/decoding variants.
+        Remove the enum Gradient::Type entirely. Removed the invalidateHash
+        function because it's only used in a few setters and setting the hash
+        to 0 is a fine way to write it there.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState): Moved here from
+        the header so we don't need to include Gradient.h in the header.
+        (WebCore::GraphicsContextState::~GraphicsContextState): Ditto.
+        (WebCore::GraphicsContextState::operator=): Ditto.
+
+        * platform/graphics/GraphicsContext.h: Removed include of Gradient.h.
+        Moved things out of the header to make that work.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::FillSource::FillSource): Use createPattern instead of
+        createPlatformGradient.
+        (WebCore::Cairo::StrokeSource::StrokeSource): Ditto.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::stopsChanged): Renamed from platformDestroy.
+        (WebCore::interpolateColorStop): Rewrote to use existing blend functions.
+        (WebCore::createConic): Changed return type to RefPtr. Tweaked to match
+        WebKit coding style a bit better, use auto, use Vector::first/last, and
+        updated for removal of the Gradient::ColorStop constructor.
+        (WebCore::Gradient::createPattern): Renamed from createPlatformGradient.
+        Changed to return a RefPtr instead of a raw pointer the caller needs to
+        adopt at each call site. Refactored so it no longer uses Gradient::type.
+        (WebCore::Gradient::fill): Use createPattern.
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::fillRect): Ditto.
+
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::stopsChanged): Renamed from platformDestroy, and
+        simplified implementation now that we use RetainPtr.
+        (WebCore::Gradient::createCGGradient): Renamed from platformGradient,
+        got rid of the return value, and made it caller responsibility to only
+        call this when a gradeitn needs to be allocated.
+        (WebCore::Gradient::paint): Updated to use the above.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: Add include of Gradient.h.
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        Added include of Gradient.h since the function templates in this file
+        encode and decode gradients.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::fillRect): Use createPattern.
+
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::FillSource::FillSource): Use createBrush
+        (WebCore::Direct2D::StrokeSource::StrokeSource): Ditto.
+
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::stopsChanged): Renamed from platformDestroy and
+        simplified implementation now that we use COMPtr.
+        (WebCore::Gradient::platformGradient): Deleted.
+        (WebCore::Gradient::createPlatformGradientIfNecessary): Deleted.
+        (WebCore::Gradient::createBrush): Renamed from generateGradient and
+        added a return value. Simplified now that we use COMPtr, optimized
+        the code a bit, and added some FIXME about mistakes I noticed.
+        (WebCore::Gradient::fill): Use createBrush and m_brush.
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        (WebCore::GraphicsContextImplDirect2D::fillRect): Use createBrush.
+
+        * platform/mac/ScrollAnimatorMac.mm: Added include of Gradient.h.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintProgressBar): Updated for changes to
+        addColorStop. Also remove a lot of unnecessary conversion from float
+        to double and back to float.
+
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::addStops): Update to make
+        and move a new color stop instead of copying it, modifying it in
+        place, and then copying it again.
+        * rendering/svg/RenderSVGResourceGradient.cpp: Removed include of
+        Gradient.h.
+
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops): Use std::clamp to convert
+        the offsets into monotonically increasing ones in a more direct way,
+        using variable names instead of comments to clarify what we are doing.
+
 2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix GTK debian builds

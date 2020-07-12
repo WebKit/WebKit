@@ -29,7 +29,6 @@
 #include "DashArray.h"
 #include "FloatRect.h"
 #include "FontCascade.h"
-#include "Gradient.h"
 #include "GraphicsTypes.h"
 #include "Image.h"
 #include "ImageOrientation.h"
@@ -98,6 +97,10 @@ class Path;
 class TextRun;
 class TransformationMatrix;
 
+namespace DisplayList {
+class Recorder;
+}
+
 enum class TextDrawingMode : uint8_t {
     Fill = 1 << 0,
     Stroke = 1 << 1,
@@ -153,24 +156,15 @@ Optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decod
     return {{ *mode, *shouldUseDarkAppearance }};
 }
 
-namespace DisplayList {
-class Recorder;
-}
-
 struct GraphicsContextState {
-    GraphicsContextState()
-        : shouldAntialias(true)
-        , shouldSmoothFonts(true)
-        , shouldSubpixelQuantizeFonts(true)
-        , shadowsIgnoreTransforms(false)
-#if USE(CG)
-        // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
-        // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
-        , shadowsUseLegacyRadius(false)
-#endif
-        , drawLuminanceMask(false)
-    {
-    }
+    WEBCORE_EXPORT GraphicsContextState();
+    WEBCORE_EXPORT ~GraphicsContextState();
+
+    GraphicsContextState(const GraphicsContextState&);
+    GraphicsContextState(GraphicsContextState&&);
+
+    GraphicsContextState& operator=(const GraphicsContextState&);
+    GraphicsContextState& operator=(GraphicsContextState&&);
 
     enum Change : uint32_t {
         StrokeGradientChange                    = 1 << 0,
@@ -197,7 +191,7 @@ struct GraphicsContextState {
         UseDarkAppearanceChange                 = 1 << 20,
 #endif
     };
-    typedef OptionSet<Change> StateChangeFlags;
+    using StateChangeFlags = OptionSet<Change>;
 
     RefPtr<Gradient> strokeGradient;
     RefPtr<Pattern> strokePattern;
@@ -308,7 +302,7 @@ public:
     Pattern* strokePattern() const { return m_state.strokePattern.get(); }
 
     void setStrokeGradient(Ref<Gradient>&&);
-    RefPtr<Gradient> strokeGradient() const { return m_state.strokeGradient; }
+    Gradient* strokeGradient() const { return m_state.strokeGradient.get(); }
 
     void setFillRule(WindRule);
     WindRule fillRule() const { return m_state.fillRule; }
@@ -320,7 +314,7 @@ public:
     Pattern* fillPattern() const { return m_state.fillPattern.get(); }
 
     WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&);
-    RefPtr<Gradient> fillGradient() const { return m_state.fillGradient; }
+    Gradient* fillGradient() const { return m_state.fillGradient.get(); }
 
     void setShadowsIgnoreTransforms(bool);
     bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms; }

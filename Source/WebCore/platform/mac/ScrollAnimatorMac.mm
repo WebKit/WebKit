@@ -28,7 +28,7 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
-#import "FloatPoint.h"
+#import "Gradient.h"
 #import "GraphicsLayer.h"
 #import "Logging.h"
 #import "NSScrollerImpDetails.h"

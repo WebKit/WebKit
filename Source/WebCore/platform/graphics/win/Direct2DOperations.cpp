@@ -301,7 +301,7 @@ FillSource::FillSource(const GraphicsContextState& state, const GraphicsContext&
         AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
         brush = state.fillPattern->createPlatformPattern(context, state.alpha, userToBaseCTM);
     } else if (state.fillGradient && !state.fillGradient->stops().isEmpty())
-        brush = state.fillGradient->createPlatformGradientIfNecessary(platformContext.renderTarget());
+        brush = state.fillGradient->createBrush(platformContext.renderTarget());
     else
         brush = platformContext.brushWithColor(color);
 }
@@ -318,7 +318,7 @@ StrokeSource::StrokeSource(const GraphicsContextState& state, const GraphicsCont
         AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
         brush = state.strokePattern->createPlatformPattern(context, state.alpha, userToBaseCTM);
     } else if (state.strokeGradient)
-        brush = state.strokeGradient->createPlatformGradientIfNecessary(platformContext.renderTarget());
+        brush = state.strokeGradient->createBrush(platformContext.renderTarget());
     else
         brush = platformContext.brushWithColor(color);
 }

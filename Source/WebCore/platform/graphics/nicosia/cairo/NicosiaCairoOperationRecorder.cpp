@@ -31,6 +31,7 @@
 
 #include "CairoOperations.h"
 #include "FloatRoundedRect.h"
+#include "Gradient.h"
 #include "ImageBuffer.h"
 #include "NicosiaPaintingOperationReplayCairo.h"
 #include <type_traits>
@@ -291,7 +292,7 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
         }
     };
 
-    append(createCommand<FillRect>(rect, adoptRef(gradient.createPlatformGradient(1.0))));
+    append(createCommand<FillRect>(rect, gradient.createPattern(1.0)));
 }
 
 void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)

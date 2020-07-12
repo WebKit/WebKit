@@ -1158,19 +1158,17 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
 
 Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(const CanvasGradient& canvasGradient)
 {
-    const auto& gradient = canvasGradient.gradient();
-    
-    String type = gradient.type() == Gradient::Type::Radial ? "radial-gradient"_s : gradient.type() == Gradient::Type::Linear ? "linear-gradient"_s : "conic-gradient"_s;
-
+    ASCIILiteral type = "linear-gradient"_s;
     auto parameters = JSON::ArrayOf<float>::create();
-    WTF::switchOn(gradient.data(),
-        [&parameters] (const Gradient::LinearData& data) {
+    WTF::switchOn(canvasGradient.gradient().data(),
+        [&] (const Gradient::LinearData& data) {
             parameters->addItem(data.point0.x());
             parameters->addItem(data.point0.y());
             parameters->addItem(data.point1.x());
             parameters->addItem(data.point1.y());
         },
-        [&parameters] (const Gradient::RadialData& data) {
+        [&] (const Gradient::RadialData& data) {
+            type = "radial-gradient"_s;
             parameters->addItem(data.point0.x());
             parameters->addItem(data.point0.y());
             parameters->addItem(data.startRadius);
@@ -1178,7 +1176,8 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
             parameters->addItem(data.point1.y());
             parameters->addItem(data.endRadius);
         },
-        [&parameters] (const Gradient::ConicData& data) {
+        [&] (const Gradient::ConicData& data) {
+            type = "conic-gradient"_s;
             parameters->addItem(data.point0.x());
             parameters->addItem(data.point0.y());
             parameters->addItem(data.angleRadians);
@@ -1186,7 +1185,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
     );
 
     auto stops = JSON::ArrayOf<JSON::Value>::create();
-    for (auto& colorStop : gradient.stops()) {
+    for (auto& colorStop : canvasGradient.gradient().stops()) {
         auto stop = JSON::ArrayOf<JSON::Value>::create();
         stop->addItem(colorStop.offset);
         stop->addItem(indexForData(serializationForCSS(colorStop.color)));

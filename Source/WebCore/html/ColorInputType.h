@@ -48,8 +48,6 @@ private:
     void didChooseColor(const Color&) final;
     void didEndChooser() final;
     IntRect elementRectRelativeToRootView() const final;
-    Color currentColor() final;
-    bool shouldShowSuggestions() const final;
     Vector<Color> suggestedColors() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "Gradient.h"
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGGradientElement.h"

@@ -155,11 +155,11 @@ void GraphicsContextImplDirect2D::fillRect(const FloatRect& rect, const Color& c
 
 void GraphicsContextImplDirect2D::fillRect(const FloatRect& rect, Gradient& gradient)
 {
-    COMPtr<ID2D1Brush> platformGradient = gradient.createPlatformGradientIfNecessary(m_platformContext.renderTarget());
-    if (!platformGradient)
+    auto brush = gradient.createBrush(m_platformContext.renderTarget());
+    if (!brush)
         return;
 
-    Direct2D::fillRectWithGradient(m_platformContext, rect, platformGradient.get());
+    Direct2D::fillRectWithGradient(m_platformContext, rect, brush.get());
 }
 
 void GraphicsContextImplDirect2D::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)

@@ -75,6 +75,26 @@ private:
     if (m_changeFlags.contains(GraphicsContextState::flag) && (m_state.property != state.property)) \
         changeFlags.add(GraphicsContextState::flag);
 
+GraphicsContextState::GraphicsContextState()
+    : shouldAntialias(true)
+    , shouldSmoothFonts(true)
+    , shouldSubpixelQuantizeFonts(true)
+    , shadowsIgnoreTransforms(false)
+#if USE(CG)
+    // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
+    // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
+    , shadowsUseLegacyRadius(false)
+#endif
+    , drawLuminanceMask(false)
+{
+}
+
+GraphicsContextState::~GraphicsContextState() = default;
+GraphicsContextState::GraphicsContextState(const GraphicsContextState&) = default;
+GraphicsContextState::GraphicsContextState(GraphicsContextState&&) = default;
+GraphicsContextState& GraphicsContextState::operator=(const GraphicsContextState&) = default;
+GraphicsContextState& GraphicsContextState::operator=(GraphicsContextState&&) = default;
+
 GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromState(const GraphicsContextState& state) const
 {
     GraphicsContextState::StateChangeFlags changeFlags;

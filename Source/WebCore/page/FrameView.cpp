@@ -350,32 +350,27 @@ void FrameView::detachCustomScrollbars()
 
 void FrameView::recalculateScrollbarOverlayStyle()
 {
-    ScrollbarOverlayStyle oldOverlayStyle = scrollbarOverlayStyle();
-    Optional<ScrollbarOverlayStyle> clientOverlayStyle = frame().page() ? frame().page()->chrome().client().preferredScrollbarOverlayStyle() : WTF::nullopt;
-    if (clientOverlayStyle) {
-        if (clientOverlayStyle.value() != oldOverlayStyle)
-            setScrollbarOverlayStyle(clientOverlayStyle.value());
-        return;
-    }
-
-    ScrollbarOverlayStyle computedOverlayStyle = ScrollbarOverlayStyleDefault;
-
-    Color backgroundColor = documentBackgroundColor();
-    if (backgroundColor.isValid()) {
-        // Reduce the background color from RGB to a lightness value
-        // and determine which scrollbar style to use based on a lightness
-        // heuristic.
-        if (backgroundColor.lightness() <= .5f && backgroundColor.isVisible())
-            computedOverlayStyle = ScrollbarOverlayStyleLight;
-        else if (!backgroundColor.isVisible() && useDarkAppearance())
-            computedOverlayStyle = ScrollbarOverlayStyleLight;
-    }
-
-    if (oldOverlayStyle != computedOverlayStyle)
-        setScrollbarOverlayStyle(computedOverlayStyle);
+    auto style = [this] {
+        if (auto page = frame().page()) {
+            if (auto clientStyle = page->chrome().client().preferredScrollbarOverlayStyle())
+                return *clientStyle;
+        }
+        auto background = documentBackgroundColor();
+        if (background.isVisible()) {
+            if (background.lightness() <= .5f)
+                return ScrollbarOverlayStyleLight;
+        } else {
+            if (useDarkAppearance())
+                return ScrollbarOverlayStyleLight;
+        }
+        return ScrollbarOverlayStyleDefault;
+    }();
+    if (scrollbarOverlayStyle() != style)
+        setScrollbarOverlayStyle(style);
 }
 
 #if ENABLE(DARK_MODE_CSS)
+
 void FrameView::recalculateBaseBackgroundColor()
 {
     bool usingDarkAppearance = useDarkAppearance();
@@ -388,6 +383,7 @@ void FrameView::recalculateBaseBackgroundColor()
         backgroundColor = Color(Color::transparent);
     updateBackgroundRecursively(backgroundColor);
 }
+
 #endif
 
 void FrameView::clear()

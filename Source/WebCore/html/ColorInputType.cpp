@@ -270,21 +270,6 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
     return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
 }
 
-Color ColorInputType::currentColor()
-{
-    return valueAsColor();
-}
-
-bool ColorInputType::shouldShowSuggestions() const
-{
-#if ENABLE(DATALIST_ELEMENT)
-    ASSERT(element());
-    return element()->hasAttributeWithoutSynchronization(listAttr);
-#else
-    return false;
-#endif
-}
-
 Vector<Color> ColorInputType::suggestedColors() const
 {
     Vector<Color> suggestions;

@@ -32,6 +32,7 @@
 #include "AffineTransform.h"
 #include "DisplayListRecorder.h"
 #include "FloatConversion.h"
+#include "Gradient.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"

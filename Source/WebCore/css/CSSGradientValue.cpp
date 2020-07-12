@@ -30,8 +30,6 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
-#include "FloatSize.h"
-#include "Gradient.h"
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"

@@ -27,15 +27,14 @@
 
 #include "AlphaPremultiplication.h"
 #include "DisplayList.h"
-#include "FloatPoint.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
+#include "Gradient.h"
 #include "Image.h"
 #include "ImageData.h"
 #include "Pattern.h"
 #include "SharedBuffer.h"
-#include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
 namespace WTF {

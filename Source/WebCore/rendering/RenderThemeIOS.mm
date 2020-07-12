@@ -900,7 +900,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         return true;
 
     const int progressBarHeight = 9;
-    const float verticalOffset = (rect.height() - progressBarHeight) / 2.0;
+    const float verticalOffset = (rect.height() - progressBarHeight) / 2.0f;
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     if (rect.width() < 10 || rect.height() < 9) {
@@ -912,21 +912,21 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     // 1) Draw the progress bar track.
     // 1.1) Draw the white background with grey gradient border.
     GraphicsContext& context = paintInfo.context();
-    context.setStrokeThickness(0.68);
+    context.setStrokeThickness(0.68f);
     context.setStrokeStyle(SolidStroke);
 
     const float verticalRenderingPosition = rect.y() + verticalOffset;
     auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-    strokeGradient->addColorStop(0.0, makeSimpleColor(141, 141, 141));
-    strokeGradient->addColorStop(0.45, makeSimpleColor(238, 238, 238));
-    strokeGradient->addColorStop(0.55, makeSimpleColor(238, 238, 238));
-    strokeGradient->addColorStop(1.0, makeSimpleColor(141, 141, 141));
+    strokeGradient->addColorStop({ 0.0f, makeSimpleColor(141, 141, 141) });
+    strokeGradient->addColorStop({ 0.45f, makeSimpleColor(238, 238, 238) });
+    strokeGradient->addColorStop({ 0.55f, makeSimpleColor(238, 238, 238) });
+    strokeGradient->addColorStop({ 1.0f, makeSimpleColor(141, 141, 141) });
     context.setStrokeGradient(WTFMove(strokeGradient));
 
     context.setFillColor(Color::black);
 
     Path trackPath;
-    FloatRect trackRect(rect.x() + 0.25, verticalRenderingPosition + 0.25, rect.width() - 0.5, progressBarHeight - 0.5);
+    FloatRect trackRect(rect.x() + 0.25f, verticalRenderingPosition + 0.25f, rect.width() - 0.5f, progressBarHeight - 0.5f);
     FloatSize roundedCornerRadius(5, 4);
     trackPath.addRoundedRect(trackRect, roundedCornerRadius);
     context.drawPath(trackPath);
@@ -936,9 +936,9 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     paintInfo.context().clipRoundedRect(FloatRoundedRect(border, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius));
 
     float upperGradientHeight = progressBarHeight / 2.;
-    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) });
-    upperGradient->addColorStop(0.0, makeSimpleColor(133, 133, 133, 188));
-    upperGradient->addColorStop(1.0, makeSimpleColor(18, 18, 18, 51));
+    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) });
+    upperGradient->addColorStop({ 0.0f, makeSimpleColor(133, 133, 133, 188) });
+    upperGradient->addColorStop({ 1.0f, makeSimpleColor(18, 18, 18, 51) });
     context.setFillGradient(WTFMove(upperGradient));
 
     context.fillRect(FloatRect(rect.x(), verticalRenderingPosition, rect.width(), upperGradientHeight));
@@ -947,27 +947,27 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     if (renderProgress.isDeterminate()) {
         // 2) Draw the progress bar.
         double position = clampTo(renderProgress.position(), 0.0, 1.0);
-        double barWidth = position * rect.width();
-        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-        barGradient->addColorStop(0.0, makeSimpleColor(195, 217, 247));
-        barGradient->addColorStop(0.45, makeSimpleColor(118, 164, 228));
-        barGradient->addColorStop(0.49, makeSimpleColor(118, 164, 228));
-        barGradient->addColorStop(0.51, makeSimpleColor(36, 114, 210));
-        barGradient->addColorStop(0.55, makeSimpleColor(36, 114, 210));
-        barGradient->addColorStop(1.0, makeSimpleColor(57, 142, 244));
+        float barWidth = position * rect.width();
+        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+        barGradient->addColorStop({ 0.0f, makeSimpleColor(195, 217, 247) });
+        barGradient->addColorStop({ 0.45f, makeSimpleColor(118, 164, 228) });
+        barGradient->addColorStop({ 0.49f, makeSimpleColor(118, 164, 228) });
+        barGradient->addColorStop({ 0.51f, makeSimpleColor(36, 114, 210) });
+        barGradient->addColorStop({ 0.55f, makeSimpleColor(36, 114, 210) });
+        barGradient->addColorStop({ 1.0f, makeSimpleColor(57, 142, 244) });
         context.setFillGradient(WTFMove(barGradient));
 
         auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-        barStrokeGradient->addColorStop(0.0, makeSimpleColor(95, 107, 183));
-        barStrokeGradient->addColorStop(0.5, makeSimpleColor(66, 106, 174, 240));
-        barStrokeGradient->addColorStop(1.0, makeSimpleColor(38, 104, 166));
+        barStrokeGradient->addColorStop({ 0.0f, makeSimpleColor(95, 107, 183) });
+        barStrokeGradient->addColorStop({ 0.5f, makeSimpleColor(66, 106, 174, 240) });
+        barStrokeGradient->addColorStop({ 1.0f, makeSimpleColor(38, 104, 166) });
         context.setStrokeGradient(WTFMove(barStrokeGradient));
 
         Path barPath;
         int left = rect.x();
         if (!renderProgress.style().isLeftToRightDirection())
             left = rect.maxX() - barWidth;
-        FloatRect barRect(left + 0.25, verticalRenderingPosition + 0.25, std::max(barWidth - 0.5, 0.0), progressBarHeight - 0.5);
+        FloatRect barRect(left + 0.25f, verticalRenderingPosition + 0.25f, std::max(barWidth - 0.5f, 0.0f), progressBarHeight - 0.5f);
         barPath.addRoundedRect(barRect, roundedCornerRadius);
         context.drawPath(barPath);
     }

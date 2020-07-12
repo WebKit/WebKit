@@ -30,15 +30,17 @@
 
 #if USE(CAIRO)
 
+#include "AnimationUtilities.h"
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
+#include "ColorBlending.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-void Gradient::platformDestroy()
+void Gradient::stopsChanged()
 {
 }
 
@@ -132,66 +134,54 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
     cairo_mesh_pattern_end_patch(gradient);
 }
 
-static Gradient::ColorStop interpolateColorStop(Gradient::ColorStop from, Gradient::ColorStop to)
+static Gradient::ColorStop interpolateColorStop(const Gradient::ColorStop& from, const Gradient::ColorStop& to)
 {
-    auto [r1, g1, b1, a1] = from.color.toSRGBALossy<float>();
-    auto [r2, g2, b2, a2] = to.color.toSRGBALossy<float>();
-
-    float offset = from.offset + (to.offset - from.offset) * 0.5f;
-    float r = r1 + (r2 - r1) * 0.5f;
-    float g = g1 + (g2 - g1) * 0.5f;
-    float b = b1 + (b2 - b1) * 0.5f;
-    float a = a1 + (a2 - a1) * 0.5f;
-
-    return Gradient::ColorStop(offset, makeSimpleColor(SRGBA { r, g, b, a }));
+    return { blend(from.offset, to.offset, 0.5), blend(from.color, to.color, 0.5) };
 }
 
-static cairo_pattern_t* createConic(float xo, float yo, float r, float angleRadians,
+static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float angleRadians,
     Gradient::ColorStopVector stops, float globalAlpha)
 {
-    cairo_pattern_t* gradient = cairo_pattern_create_mesh();
-    Gradient::ColorStop from, to;
-
-    /* It's not possible to paint an entire circle with a single Bezier curve.
-     * To have a good approximation to a circle it's necessary to use at least
-     * four Bezier curves. So three additional stops with interpolated colors
-     * are added to force painting of four Bezier curves. */
+    // It's not possible to paint an entire circle with a single Bezier curve.
+    // To have a good approximation to a circle it's necessary to use at least
+    // four Bezier curves. So three additional stops with interpolated colors
+    // are added to force painting of four Bezier curves.
     if (stops.size() == 2) {
-        Gradient::ColorStop first = stops.at(0);
-        Gradient::ColorStop last = stops.at(1);
-        Gradient::ColorStop third = interpolateColorStop(first, last);
-        Gradient::ColorStop second = interpolateColorStop(first, third);
-        Gradient::ColorStop fourth = interpolateColorStop(third, last);
-        stops.insert(1, fourth);
-        stops.insert(1, third);
-        stops.insert(1, second);
+        auto third = interpolateColorStop(stops.first(), stops.last());
+        auto second = interpolateColorStop(stops.first(), third);
+        auto fourth = interpolateColorStop(third, stops.last());
+        stops.insert(1, WTFMove(fourth));
+        stops.insert(1, WTFMove(third));
+        stops.insert(1, WTFMove(second));
     }
 
-    // Add extra color stop at the beginning if first element offset is not zero.
-    if (stops.at(0).offset > 0)
-        stops.insert(0, Gradient::ColorStop(0, stops.at(0).color));
-    // Add extra color stop at the end if last element offset is not zero.
-    if (stops.at(stops.size() - 1).offset < 1)
-        stops.append(Gradient::ColorStop(1, stops.at(stops.size() - 1).color));
+    if (stops.first().offset > 0.0f)
+        stops.insert(0, Gradient::ColorStop { 0.0f, stops.first().color });
+    if (stops.last().offset < 1.0f)
+        stops.append({ 1.0f, stops.last().color });
 
-    for (size_t i = 0; i < stops.size() - 1; i++) {
-        from = stops.at(i), to = stops.at(i + 1);
-        addConicSector(gradient, xo, yo, r, angleRadians, from, to, globalAlpha);
-    }
-
+    auto gradient = adoptRef(cairo_pattern_create_mesh());
+    for (size_t i = 0; i < stops.size() - 1; i++)
+        addConicSector(gradient.get(), xo, yo, r, angleRadians, stops[i], stops[i + 1], globalAlpha);
     return gradient;
 }
 
-cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
+RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha)
 {
-    cairo_pattern_t* gradient = WTF::switchOn(m_data,
-        [&] (const LinearData& data) -> cairo_pattern_t* {
-            return cairo_pattern_create_linear(data.point0.x(), data.point0.y(), data.point1.x(), data.point1.y());
+    auto gradient = WTF::switchOn(m_data,
+        [&] (const LinearData& data) {
+            auto gradient = adoptRef(cairo_pattern_create_linear(data.point0.x(), data.point0.y(), data.point1.x(), data.point1.y()));
+            for (auto& stop : stops())
+                addColorStopRGBA(gradient.get(), stop, globalAlpha);
+            return gradient;
         },
-        [&] (const RadialData& data) -> cairo_pattern_t* {
-            return cairo_pattern_create_radial(data.point0.x(), data.point0.y(), data.startRadius, data.point1.x(), data.point1.y(), data.endRadius);
+        [&] (const RadialData& data) {
+            auto gradient = adoptRef(cairo_pattern_create_radial(data.point0.x(), data.point0.y(), data.startRadius, data.point1.x(), data.point1.y(), data.endRadius));
+            for (auto& stop : stops())
+                addColorStopRGBA(gradient.get(), stop, globalAlpha);
+            return gradient;
         },
-        [&] (const ConicData& data)  -> cairo_pattern_t* {
+        [&] (const ConicData& data) {
             // FIXME: data passed for a Conic gradient doesn't contain a radius. That's apparently correct because the W3C spec
             // (https://www.w3.org/TR/css-images-4/#conic-gradients) states a conic gradient is only defined by its position and angle.
             // Thus, here I give the radius an extremely large value. The resulting gradient will be later clipped by fillRect.
@@ -201,42 +191,36 @@ cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
         }
     );
 
-    if (type() != Type::Conic) {
-        for (const auto& stop : stops()) {
-            addColorStopRGBA(gradient, stop, globalAlpha);
-        }
-    }
-
     switch (m_spreadMethod) {
     case GradientSpreadMethod::Pad:
-        cairo_pattern_set_extend(gradient, CAIRO_EXTEND_PAD);
+        cairo_pattern_set_extend(gradient.get(), CAIRO_EXTEND_PAD);
         break;
     case GradientSpreadMethod::Reflect:
-        cairo_pattern_set_extend(gradient, CAIRO_EXTEND_REFLECT);
+        cairo_pattern_set_extend(gradient.get(), CAIRO_EXTEND_REFLECT);
         break;
     case GradientSpreadMethod::Repeat:
-        cairo_pattern_set_extend(gradient, CAIRO_EXTEND_REPEAT);
+        cairo_pattern_set_extend(gradient.get(), CAIRO_EXTEND_REPEAT);
         break;
     }
 
     cairo_matrix_t matrix = toCairoMatrix(m_gradientSpaceTransformation);
     cairo_matrix_invert(&matrix);
-    cairo_pattern_set_matrix(gradient, &matrix);
+    cairo_pattern_set_matrix(gradient.get(), &matrix);
 
     return gradient;
 }
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
-    RefPtr<cairo_pattern_t> platformGradient = adoptRef(createPlatformGradient(1.0));
-    if (!platformGradient)
+    auto pattern = createPattern(1.0);
+    if (!pattern)
         return;
 
     ASSERT(context.hasPlatformContext());
     auto& platformContext = *context.platformContext();
 
     Cairo::save(platformContext);
-    Cairo::fillRect(platformContext, rect, platformGradient.get());
+    Cairo::fillRect(platformContext, rect, pattern.get());
     Cairo::restore(platformContext);
 }
 
