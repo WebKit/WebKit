@@ -26,8 +26,8 @@
 namespace WebCore {
 
 Color::Color(const GdkRGBA& color)
+    : Color(convertToComponentBytes(SRGBA { static_cast<float>(color.red), static_cast<float>(color.green), static_cast<float>(color.blue), static_cast<float>(color.alpha) }))
 {
-    setInlineColor(convertToComponentBytes(SRGBA { static_cast<float>(color.red), static_cast<float>(color.green), static_cast<float>(color.blue), static_cast<float>(color.alpha) }));
 }
 
 Color::operator GdkRGBA() const

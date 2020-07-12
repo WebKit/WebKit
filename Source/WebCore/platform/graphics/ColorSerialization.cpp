@@ -100,45 +100,87 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
     return ""_s;
 }
 
-String serializationForCSS(const ExtendedColor& color)
+template<typename ColorType> static String serialization(const ColorType& color)
 {
-    auto [c1, c2, c3, alpha] = color.components();
+    auto [c1, c2, c3, alpha] = color;
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("color(", serialization(color.colorSpace()), ' ', c1, ' ', c2, ' ', c3, ')');
-    return makeString("color(", serialization(color.colorSpace()), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
+        return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, ')');
+    return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
 }
 
-String serializationForHTML(const ExtendedColor& color)
+// SRGBA<float> overloads
+
+String serializationForCSS(const SRGBA<float>& color)
 {
-    return serializationForCSS(color);
+    return serialization(color);
 }
 
-String serializationForRenderTreeAsText(const ExtendedColor& color)
+String serializationForHTML(const SRGBA<float>& color)
 {
-    return serializationForCSS(color);
+    return serialization(color);
 }
+
+String serializationForRenderTreeAsText(const SRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+// LinearSRGBA<float> overloads
+
+String serializationForCSS(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+// DisplayP3<float> overloads
+
+String serializationForCSS(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
 
 // Color overloads
 
 String serializationForCSS(const Color& color)
 {
-    if (color.isExtended())
-        return serializationForCSS(color.asExtended());
-    return serializationForCSS(color.asInline());
+    return color.callOnUnderlyingType([] (auto underlyingColor) {
+        return serializationForCSS(underlyingColor);
+    });
 }
 
 String serializationForHTML(const Color& color)
 {
-    if (color.isExtended())
-        return serializationForHTML(color.asExtended());
-    return serializationForHTML(color.asInline());
+    return color.callOnUnderlyingType([] (auto underlyingColor) {
+        return serializationForHTML(underlyingColor);
+    });
 }
 
 String serializationForRenderTreeAsText(const Color& color)
 {
-    if (color.isExtended())
-        return serializationForRenderTreeAsText(color.asExtended());
-    return serializationForRenderTreeAsText(color.asInline());
+    return color.callOnUnderlyingType([] (auto underlyingColor) {
+        return serializationForRenderTreeAsText(underlyingColor);
+    });
 }
 
 }

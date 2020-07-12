@@ -1,3 +1,82 @@
+2020-07-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce surface area of the ExtendedColor class to a bare minimum
+        https://bugs.webkit.org/show_bug.cgi?id=214204
+
+        Reviewed by Darin Adler.
+
+        - Add helper function to Color to operate on the underlying color type
+          and reimplement a bunch of functionality using it, reducing the need
+          for duplicate implementations in ExtendedColor.
+        - Add constructors to Color that take extended color types, replacing
+          the makeExtendedColor helper function. 
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove ExtenedColor.cpp
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+        Use new Color constructor taking ColorComponents and ColorSpace.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::colorWithAlpha const): Reimpliment using callOnUnderlyingType.
+        (WebCore::Color::invertedColorWithAlpha const): Reimpliment using callOnUnderlyingType.
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):  
+        (WebCore::Color::hash const):
+        (WebCore::Color::callOnUnderlyingType const):
+        (WebCore::Color::toSRGBALossy const):
+        (WebCore::Color::setColor):
+        (WebCore::Color::isBlackColor):
+        (WebCore::Color::isWhiteColor):
+        - Add new constructors taking extended color types: SRGBA<float>, LinearSRGBA<float> and DiplayP3<float>.
+        - Add new function, callOnUnderlyingType, to make working with any underlying type more streamlined.
+
+        * platform/graphics/ColorConversion.h:
+        (WebCore::toSRGBA):
+        (WebCore::toLinearSRGBA):
+        (WebCore::toDisplayP3):
+        (WebCore::toLinearDisplayP3):
+        (WebCore::toHSLA):
+        Add identity conversion functions to make implementing generic functions like Color::toSRGBALossy more
+        straigtforward.
+
+        * platform/graphics/ColorSerialization.cpp:
+        (WebCore::serialization):
+        (WebCore::serializationForCSS):
+        (WebCore::serializationForHTML):
+        (WebCore::serializationForRenderTreeAsText):
+        * platform/graphics/ColorSerialization.h:
+        Replace serialization of the ExtendedColor type itself, with serialization for the underlying color
+        types. Use callOnUnderlyingType to dispatch to the right one.
+
+        * platform/graphics/ColorTypes.h:
+        - Adds ComponentTraits struct to get information like min/max value of the component types.
+        - Adds `using ComponentType = T;` to each color type, to allow easy access to the type in
+          deduced contexts.
+        - Adds static constexpr ColorSpace to each color type that currently has a ColorSpace mapping. 
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::isBlack):
+        (WebCore::isWhite):
+        Add helpers to implement Color::isBlack/Color::isWhiteColor for each color type.
+
+        * platform/graphics/ExtendedColor.cpp: Removed.
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::create):
+        (WebCore::ExtendedColor::ExtendedColor):
+        (WebCore::ExtendedColor::callOnUnderlyingType const):
+        (WebCore::ExtendedColor::toSRGBALossy const): Deleted.
+        Reduce down to just construction, member access and the callOnUnderlyingType helper.
+        In future revisions, ExtendedColor should be converted to an internal class of Color.
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::Color):
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::Color):
+        Update to use constructor delegation.
+
 2020-07-11  Darin Adler  <darin@apple.com>
 
         Remove live ranges from AccessibilityObject.h, AccessibilityObjectInterface.h, AccessibilityRenderObject.h, AXIsolatedObject.h

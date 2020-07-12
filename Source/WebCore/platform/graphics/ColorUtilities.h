@@ -69,6 +69,9 @@ template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType&,
 template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
 template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType&, float overrideAlpha);
 
+template<typename ColorType> constexpr bool isBlack(const ColorType&);
+template<typename ColorType> constexpr bool isWhite(const ColorType&);
+
 constexpr uint16_t fastMultiplyBy255(uint16_t);
 constexpr uint16_t fastDivideBy255(uint16_t);
 
@@ -190,6 +193,23 @@ template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const Col
     });
     copy.alpha = convertComponentFloatTo<decltype(copy.alpha)>(overrideAlpha);
     return copy;
+}
+
+template<typename ColorType> constexpr bool isBlack(const ColorType& color)
+{
+    constexpr auto min = ComponentTraits<typename ColorType::ComponentType>::minValue;
+    constexpr auto max = ComponentTraits<typename ColorType::ComponentType>::maxValue;
+
+    auto [c1, c2, c3, alpha] = color;
+    return c1 == min && c2 == min && c3 == min && alpha == max;
+}
+
+template<typename ColorType> constexpr bool isWhite(const ColorType& color)
+{
+    constexpr auto max = ComponentTraits<typename ColorType::ComponentType>::maxValue;
+
+    auto [c1, c2, c3, alpha] = color;
+    return c1 == max && c2 == max && c3 == max && alpha == max;
 }
 
 constexpr uint16_t fastMultiplyBy255(uint16_t value)

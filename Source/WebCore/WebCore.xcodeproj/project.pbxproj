@@ -7228,7 +7228,6 @@
 		31D26BC51F86D268008FF255 /* JSImageBitmapOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapOptions.h; sourceTree = "<group>"; };
 		31D26BC61F86D269008FF255 /* JSImageBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmap.cpp; sourceTree = "<group>"; };
 		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
-		31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
 		31DCDF421DA1C45400EA5B93 /* ExtendedColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedColor.h; sourceTree = "<group>"; };
 		31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemBackdropLayer.mm; sourceTree = "<group>"; };
 		31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemBackdropLayer.h; sourceTree = "<group>"; };
@@ -19582,8 +19581,8 @@
 			children = (
 				515BE1971D54F6BD00DD7C68 /* HIDGamepad.cpp */,
 				515BE1981D54F6BD00DD7C68 /* HIDGamepad.h */,
-				515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.mm */,
 				515BE19A1D54F6BD00DD7C68 /* HIDGamepadProvider.h */,
+				515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.mm */,
 				517E03F424B6B9630054895A /* MultiGamepadProvider.h */,
 				517E03F524B6B9640054895A /* MultiGamepadProvider.mm */,
 			);
@@ -25556,7 +25555,6 @@
 				2D29ECC2192ECC8300984B78 /* DisplayRefreshMonitorClient.h */,
 				2D29ECC3192ECC8300984B78 /* DisplayRefreshMonitorManager.cpp */,
 				2D29ECC4192ECC8300984B78 /* DisplayRefreshMonitorManager.h */,
-				31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */,
 				31DCDF421DA1C45400EA5B93 /* ExtendedColor.h */,
 				6E67D2A81280E8BD008758F7 /* ExtensionsGL.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
@@ -26880,7 +26878,6 @@
 		CD94A5CB1F71CB4600F525C5 /* encryptedmedia */ = {
 			isa = PBXGroup;
 			children = (
-				CDE3AE1324B4936F00128E7E /* CDMUtilities.cpp */,
 				CD94A5D91F71CB9F00F525C5 /* clearkey */,
 				CDF7569B215C23A400EFCB50 /* CDMEncryptionScheme.h */,
 				CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */,
@@ -26895,12 +26892,13 @@
 				CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */,
 				CD3CE11C240451AF004BA01D /* CDMPrivate.cpp */,
 				CD94A5CF1F71CB6A00F525C5 /* CDMPrivate.h */,
-				CDE3AE1024B4916900128E7E /* CDMUtilities.h */,
 				CD94A5CF1F71CB6100F525D5 /* CDMProxy.cpp */,
 				CD94A5CF1F71CB6100F525C5 /* CDMProxy.h */,
 				CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */,
 				CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */,
 				CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */,
+				CDE3AE1324B4936F00128E7E /* CDMUtilities.cpp */,
+				CDE3AE1024B4916900128E7E /* CDMUtilities.h */,
 			);
 			path = encryptedmedia;
 			sourceTree = "<group>";
@@ -30082,6 +30080,7 @@
 				CD3CE1032401AADA004BA01D /* CDMRestrictions.h in Headers */,
 				CDE595971BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h in Headers */,
 				CD3CE1042401AADA004BA01D /* CDMSessionType.h in Headers */,
+				CDE3AE1224B4916A00128E7E /* CDMUtilities.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
 				91B8F0B521953D65000C2B00 /* CertificateInfoBase.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
@@ -31219,7 +31218,6 @@
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
 				7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */,
-				CDE3AE1224B4916A00128E7E /* CDMUtilities.h in Headers */,
 				A5B81CAE1FAA44620037D1E6 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */,
@@ -32402,6 +32400,7 @@
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
 				FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */,
+				517E03F724B6D9840054895A /* MultiGamepadProvider.h in Headers */,
 				26F756B01B3B65AC0005DD79 /* MutableRange.h in Headers */,
 				26F756B11B3B65AC0005DD79 /* MutableRangeList.h in Headers */,
 				C6F0900A14327B6100685849 /* MutationCallback.h in Headers */,
@@ -33281,7 +33280,6 @@
 				ECA680C71E67724500731D20 /* StringUtilities.h in Headers */,
 				9B6C41531344949000085B62 /* StringWithDirection.h in Headers */,
 				849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */,
-				517E03F724B6D9840054895A /* MultiGamepadProvider.h in Headers */,
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				E45BA6B6237622A3004DFC07 /* StyleAdjuster.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
@@ -34473,6 +34471,7 @@
 				CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */,
 				CDDE02F018B5651300CF7FF1 /* CDMSessionAVStreamSession.mm in Sources */,
 				CDE5959D1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm in Sources */,
+				CDE3AE1424B4937000128E7E /* CDMUtilities.cpp in Sources */,
 				A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */,
 				07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */,
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
@@ -34802,7 +34801,6 @@
 				DECA7DB71F9E67B600E3B661 /* UnifiedSource167.cpp in Sources */,
 				DECA7DB81F9E67B600E3B661 /* UnifiedSource168.cpp in Sources */,
 				DECA7DB91F9E67B600E3B661 /* UnifiedSource169.cpp in Sources */,
-				CDE3AE1424B4937000128E7E /* CDMUtilities.cpp in Sources */,
 				DECA7DBA1F9E67B600E3B661 /* UnifiedSource170.cpp in Sources */,
 				DECA7DFB1F9EB36400E3B661 /* UnifiedSource171.cpp in Sources */,
 				DECA7DFC1F9EB36400E3B661 /* UnifiedSource172.cpp in Sources */,

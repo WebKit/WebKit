@@ -26,51 +26,28 @@
 #pragma once
 
 #include "ColorComponents.h"
+#include "ColorConversion.h"
 #include "ColorSpace.h"
 #include "ColorTypes.h"
-#include "ColorUtilities.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Color;
-template<typename> struct SRGBA;
-
 class ExtendedColor : public RefCounted<ExtendedColor> {
 public:
-    WEBCORE_EXPORT static Ref<ExtendedColor> create(float c1, float c2, float c3, float alpha, ColorSpace);
-
+    template<typename ColorType> static Ref<ExtendedColor> create(const ColorType&);
+    static Ref<ExtendedColor> create(ColorComponents<float>, ColorSpace);
+    
     float alpha() const { return m_components[3]; }
 
     const ColorComponents<float>& components() const { return m_components; }
     ColorSpace colorSpace() const { return m_colorSpace; }
 
-    WEBCORE_EXPORT unsigned hash() const;
-
-    Ref<ExtendedColor> colorWithAlpha(float) const;
-    Ref<ExtendedColor> invertedColorWithAlpha(float) const;
-
-    bool isWhite() const;
-    bool isBlack() const;
-
-    // This will convert non-sRGB colorspace colors into sRGB.
-    template<typename T> constexpr SRGBA<T> toSRGBALossy() const
-    {
-        if constexpr (std::is_same_v<T, float>)
-            return toSRGBAFloatComponentsLossy();
-        else if constexpr (std::is_same_v<T, uint8_t>)
-            return convertToComponentBytes(toSRGBAFloatComponentsLossy());
-    }
+    template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
 private:
-    ExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
-        : m_components(c1, c2, c3, alpha)
-        , m_colorSpace(colorSpace)
-    {
-    }
-
-    WEBCORE_EXPORT SRGBA<float> toSRGBAFloatComponentsLossy() const;
+    ExtendedColor(ColorComponents<float>, ColorSpace);
 
     ColorComponents<float> m_components;
     ColorSpace m_colorSpace;
@@ -86,8 +63,35 @@ inline bool operator!=(const ExtendedColor& a, const ExtendedColor& b)
     return !(a == b);
 }
 
-// FIXME: If the ColorSpace is sRGB and the values can all be
-// converted exactly to integers, we should make a SimpleColor.
-WEBCORE_EXPORT Color makeExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace);
+template<typename ColorType> inline Ref<ExtendedColor> ExtendedColor::create(const ColorType& color)
+{
+    return adoptRef(*new ExtendedColor(asColorComponents(color), color.colorSpace));
+}
+
+inline Ref<ExtendedColor> ExtendedColor::create(ColorComponents<float> components, ColorSpace colorSpace)
+{
+    return adoptRef(*new ExtendedColor(components, colorSpace));
+}
+
+inline ExtendedColor::ExtendedColor(ColorComponents<float> components, ColorSpace colorSpace)
+    : m_components(components)
+    , m_colorSpace(colorSpace)
+{
+}
+
+template<typename Functor> decltype(auto) ExtendedColor::callOnUnderlyingType(Functor&& functor) const
+{
+    switch (m_colorSpace) {
+    case ColorSpace::SRGB:
+        return std::invoke(std::forward<Functor>(functor), asSRGBA(m_components));
+    case ColorSpace::LinearRGB:
+        return std::invoke(std::forward<Functor>(functor), asLinearSRGBA(m_components));
+    case ColorSpace::DisplayP3:
+        return std::invoke(std::forward<Functor>(functor), asDisplayP3(m_components));
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::invoke(std::forward<Functor>(functor), asSRGBA(m_components));
+}
 
 }

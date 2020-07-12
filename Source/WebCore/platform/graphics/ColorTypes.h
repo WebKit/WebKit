@@ -26,14 +26,31 @@
 #pragma once
 
 #include "ColorComponents.h"
+#include "ColorSpace.h"
 
 namespace WebCore {
+
+template<typename> struct ComponentTraits;
+
+template<> struct ComponentTraits<uint8_t> {
+    static constexpr uint8_t minValue = 0;
+    static constexpr uint8_t maxValue = 255;
+};
+
+template<> struct ComponentTraits<float> {
+    static constexpr float minValue = 0.0f;
+    static constexpr float maxValue = 1.0f;
+};
+
 
 template<typename T> struct SRGBA {
     T red;
     T green;
     T blue;
     T alpha;
+
+    using ComponentType = T;
+    static constexpr auto colorSpace = ColorSpace::SRGB;
 };
 
 template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
@@ -64,6 +81,9 @@ template<typename T> struct LinearSRGBA {
     T green;
     T blue;
     T alpha;
+
+    using ComponentType = T;
+    static constexpr auto colorSpace = ColorSpace::LinearRGB;
 };
 
 template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
@@ -94,6 +114,9 @@ template<typename T> struct DisplayP3 {
     T green;
     T blue;
     T alpha;
+
+    using ComponentType = T;
+    static constexpr auto colorSpace = ColorSpace::DisplayP3;
 };
 
 template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
@@ -124,6 +147,8 @@ template<typename T> struct LinearDisplayP3 {
     T green;
     T blue;
     T alpha;
+
+    using ComponentType = T;
 };
 
 template<typename T> LinearDisplayP3(T, T, T, T) -> LinearDisplayP3<T>;
@@ -154,6 +179,8 @@ template<typename T> struct HSLA {
     T saturation;
     T lightness;
     T alpha;
+
+    using ComponentType = T;
 };
 
 template<typename T> HSLA(T, T, T, T) -> HSLA<T>;
@@ -186,6 +213,8 @@ template<typename T> struct CMYKA {
     T yellow;
     T black;
     T alpha;
+
+    using ComponentType = T;
 };
 
 template<typename T> CMYKA(T, T, T, T, T) -> CMYKA<T>;
@@ -206,6 +235,8 @@ template<typename T> struct XYZA {
     T y;
     T z;
     T alpha;
+
+    using ComponentType = T;
 };
 
 template<typename T> XYZA(T, T, T, T) -> XYZA<T>;

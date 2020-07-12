@@ -26,12 +26,9 @@
 #include "config.h"
 #include "Color.h"
 
-#include "AnimationUtilities.h"
 #include "ColorSerialization.h"
 #include "ColorUtilities.h"
 #include <wtf/Assertions.h>
-#include <wtf/MathExtras.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -126,22 +123,26 @@ float Color::luminance() const
 
 Color Color::colorWithAlpha(float alpha) const
 {
-    if (isExtended())
-        return asExtended().colorWithAlpha(alpha);
+    return callOnUnderlyingType(WTF::makeVisitor(
+        [&] (const SRGBA<uint8_t>& underlyingColor) -> Color {
+            Color result = colorWithOverridenAlpha(underlyingColor, alpha);
 
-    Color result = colorWithOverridenAlpha(asInline(), alpha);
-
-    // FIXME: Why is preserving the semantic bit desired and/or correct here?
-    if (isSemantic())
-        result.tagAsSemantic();
-    return result;
+            // FIXME: Why is preserving the semantic bit desired and/or correct here?
+            if (isSemantic())
+                result.tagAsSemantic();
+            return result;
+        },
+        [&] (const auto& underlyingColor) -> Color {
+            return colorWithOverridenAlpha(underlyingColor, alpha);
+        }
+    ));
 }
 
 Color Color::invertedColorWithAlpha(float alpha) const
 {
-    if (isExtended())
-        return asExtended().invertedColorWithAlpha(alpha);
-    return invertedColorWithOverridenAlpha(asInline(), alpha);
+    return callOnUnderlyingType([&] (const auto& underlyingColor) -> Color {
+        return invertedColorWithOverridenAlpha(underlyingColor, alpha);
+    });
 }
 
 Color Color::semanticColor() const

@@ -28,8 +28,9 @@
 namespace WebCore {
 
 class Color;
-class ExtendedColor;
 
+template<typename> struct DisplayP3;
+template<typename> struct LinearSRGBA;
 template<typename> struct SRGBA;
 
 // serializationForHTML returns the color serialized according to HTML5 <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
@@ -40,9 +41,17 @@ WEBCORE_EXPORT String serializationForCSS(SRGBA<uint8_t>);
 WEBCORE_EXPORT String serializationForHTML(SRGBA<uint8_t>);
 WEBCORE_EXPORT String serializationForRenderTreeAsText(SRGBA<uint8_t>);
 
-WEBCORE_EXPORT String serializationForCSS(const ExtendedColor&);
-WEBCORE_EXPORT String serializationForHTML(const ExtendedColor&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const ExtendedColor&);
+WEBCORE_EXPORT String serializationForCSS(const SRGBA<float>&);
+WEBCORE_EXPORT String serializationForHTML(const SRGBA<float>&);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const SRGBA<float>&);
+
+WEBCORE_EXPORT String serializationForCSS(const LinearSRGBA<float>&);
+WEBCORE_EXPORT String serializationForHTML(const LinearSRGBA<float>&);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const LinearSRGBA<float>&);
+
+WEBCORE_EXPORT String serializationForCSS(const DisplayP3<float>&);
+WEBCORE_EXPORT String serializationForHTML(const DisplayP3<float>&);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const DisplayP3<float>&);
 
 WEBCORE_EXPORT String serializationForCSS(const Color&);
 WEBCORE_EXPORT String serializationForHTML(const Color&);

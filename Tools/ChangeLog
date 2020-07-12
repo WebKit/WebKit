@@ -1,5 +1,17 @@
 2020-07-11  Sam Weinig  <weinig@apple.com>
 
+        Reduce surface area of the ExtendedColor class to a bare minimum
+        https://bugs.webkit.org/show_bug.cgi?id=214204
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::makeColor):
+        Update using new Color constructor for extended colors.
+
+2020-07-11  Sam Weinig  <weinig@apple.com>
+
         Make hasher work with tuple-like classes
         https://bugs.webkit.org/show_bug.cgi?id=214224
 

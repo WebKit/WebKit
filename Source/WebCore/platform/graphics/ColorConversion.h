@@ -25,31 +25,35 @@
 
 #pragma once
 
-namespace WebCore {
+#include "ColorTypes.h"
 
-template<typename> struct CMYKA;
-template<typename> struct DisplayP3;
-template<typename> struct HSLA;
-template<typename> struct LinearDisplayP3;
-template<typename> struct LinearSRGBA;
-template<typename> struct SRGBA;
+namespace WebCore {
 
 // These are the standard sRGB <-> LinearRGB / DisplayP3 <-> LinearDisplayP3 conversion functions (https://en.wikipedia.org/wiki/SRGB).
 float linearToRGBColorComponent(float);
 float rgbToLinearColorComponent(float);
 
-LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
-SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
+WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
 
-LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
-DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
+WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
+WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
 
-SRGBA<float> toSRGBA(const DisplayP3<float>&);
-DisplayP3<float> toDisplayP3(const SRGBA<float>&);
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const DisplayP3<float>&);
+WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const SRGBA<float>&);
 
 WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
 SRGBA<float> toSRGBA(const CMYKA<float>&);
+
+
+// Identity conversions (useful for generic contexts)
+
+constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
+constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
+constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
+constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
+constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
 
 } // namespace WebCore
