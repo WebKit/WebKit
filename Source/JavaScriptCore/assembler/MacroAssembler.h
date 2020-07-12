@@ -711,7 +711,9 @@ public:
 
     void loadPtr(BaseIndex address, RegisterID dest)
     {
+#if CPU(NEEDS_ALIGNED_ACCESS)
         ASSERT(address.scale == ScalePtr || address.scale == TimesOne);
+#endif
         load32(address, dest);
     }
 
@@ -1057,7 +1059,9 @@ public:
 
     void loadPtr(BaseIndex address, RegisterID dest)
     {
+#if CPU(NEEDS_ALIGNED_ACCESS)
         ASSERT(address.scale == ScalePtr || address.scale == TimesOne);
+#endif
         load64(address, dest);
     }
 

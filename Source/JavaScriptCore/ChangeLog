@@ -1,5 +1,20 @@
 2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] We should keep unaligned access feature in certain architectures in macro-assembler
+        https://bugs.webkit.org/show_bug.cgi?id=214243
+
+        Reviewed by Darin Adler.
+
+        We introduced the assertion in r263049, but this assertion crashes in testb3 Debug build.
+        testb3 actually tests unaligned access feature since ARM64 and x64 allow it. And unaligned access is useful
+        for Yarr etc., so we want to keep unaligned access feature if architecture allows it. We should make this
+        assertion effective only if CPU(NEEDS_ALIGNED_ACCESS) is true.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::loadPtr):
+
+2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Avoid JSString creation in Intl.Locale#{minimize,maximize}
         https://bugs.webkit.org/show_bug.cgi?id=214231
 
