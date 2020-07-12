@@ -34,6 +34,7 @@
 #include "CairoUtilities.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -46,8 +47,6 @@ static void addColorStopRGBA(cairo_pattern_t *gradient, Gradient::ColorStop stop
     auto [r, g, b, a] = stop.color.toSRGBALossy<float>();
     cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
 }
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
 
 typedef struct point_t {
     double x, y;
@@ -66,8 +65,8 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
 
     // Substract 90 degrees so angles start from top left.
     // Convert to radians and add angleRadians offset.
-    double angleStart = ((from.offset - angOffset) * 2 * M_PI) + angleRadians;
-    double angleEnd = ((to.offset - angOffset) * 2 * M_PI) + angleRadians;
+    double angleStart = ((from.offset - angOffset) * 2 * piDouble) + angleRadians;
+    double angleEnd = ((to.offset - angOffset) * 2 * piDouble) + angleRadians;
 
     // Calculate center offset depending on quadrant.
     //
@@ -105,20 +104,20 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
     // Calculate starting point, ending point and control points of Bezier curve.
     double f = 4 * tan((angleEnd - angleStart) / 4) / 3;
     point_t p0 = {
-        .x = cx + (r * cos(angleStart)),
-        .y = cy + (r * sin(angleStart)),
+        cx + (r * cos(angleStart)),
+        cy + (r * sin(angleStart)),
     };
     point_t p1 = {
-        .x = cx + (r * cos(angleStart)) - f * (r * sin(angleStart)),
-        .y = cy + (r * sin(angleStart)) + f * (r * cos(angleStart)),
+        cx + (r * cos(angleStart)) - f * (r * sin(angleStart)),
+        cy + (r * sin(angleStart)) + f * (r * cos(angleStart)),
     };
     point_t p2 = {
-        .x = cx + (r * cos(angleEnd)) + f * (r * sin(angleEnd)),
-        .y = cy + (r * sin(angleEnd)) - f * (r * cos(angleEnd)),
+        cx + (r * cos(angleEnd)) + f * (r * sin(angleEnd)),
+        cy + (r * sin(angleEnd)) - f * (r * cos(angleEnd)),
     };
     point_t p3 = {
-        .x = cx + (r * cos(angleEnd)),
-        .y = cy + (r * sin(angleEnd)),
+        cx + (r * cos(angleEnd)),
+        cy + (r * sin(angleEnd)),
     };
 
     // Add patch with shape of the sector and gradient colors.
@@ -183,8 +182,6 @@ static cairo_pattern_t* createConic(float xo, float yo, float r, float angleRadi
     return gradient;
 }
 
-#endif
-
 cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
 {
     cairo_pattern_t* gradient = WTF::switchOn(m_data,
@@ -194,7 +191,6 @@ cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
         [&] (const RadialData& data) -> cairo_pattern_t* {
             return cairo_pattern_create_radial(data.point0.x(), data.point0.y(), data.startRadius, data.point1.x(), data.point1.y(), data.endRadius);
         },
-#if PLATFORM(GTK) || PLATFORM(WPE)
         [&] (const ConicData& data)  -> cairo_pattern_t* {
             // FIXME: data passed for a Conic gradient doesn't contain a radius. That's apparently correct because the W3C spec
             // (https://www.w3.org/TR/css-images-4/#conic-gradients) states a conic gradient is only defined by its position and angle.
@@ -202,11 +198,6 @@ cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
             // An alternative solution could be to change the API and pass a rect's width and height to optimize the computation of the radius.
             const float radius = 4096;
             return createConic(data.point0.x(), data.point0.y(), radius, data.angleRadians, stops(), globalAlpha);
-#else
-        [&] (const ConicData&)  -> cairo_pattern_t* {
-            // FIXME: implement conic gradient rendering.
-            return nullptr;
-#endif
         }
     );
 

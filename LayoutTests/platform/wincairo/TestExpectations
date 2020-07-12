@@ -758,6 +758,15 @@ fast/fixed-layout/fixed-layout.html [ Timeout ]
 fast/images/animated-gif-window-resizing.html [ Timeout ]
 fast/picture/viewport-resize.html [ Timeout ]
 
+http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
+fast/gradients/conic-repeating.html [ Pass ]
+fast/gradients/conic.html [ Pass ]
+fast/gradients/conic-off-center.html [ Pass ]
+fast/gradients/conic-center-outside-box.html [ Pass ]
+fast/gradients/conic-extended-stops.html [ Pass ]
+fast/gradients/conic-from-angle.html [ Pass ]
+fast/gradients/conic-two-hints.html [ Pass ]
+
 [ Debug ] animations/CSSKeyframesRule-name-null.html [ Pass Timeout ]
 
 [ Debug ] css3/filters/filter-property-computed-style.html [ Pass Timeout ]

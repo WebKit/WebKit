@@ -1,3 +1,12 @@
+2020-07-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Conic gradients support
+        https://bugs.webkit.org/show_bug.cgi?id=214216
+
+        Reviewed by Sam Weinig.
+
+        * platform/wincairo/TestExpectations: Marked some conic-gradient tests Pass.
+
 2020-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r260276): Overflow scrolling layers misplaced inside SVG foreign object
