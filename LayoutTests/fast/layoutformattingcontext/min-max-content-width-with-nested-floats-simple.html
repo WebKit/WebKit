@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container { 
+  float: left;
+  background-color: black;
+}
+
+.child_floating {
+  float: left;
+  width: 100px;
+  height: 20px;
+  background-color: green;
+}
+
+.divider {
+  clear: both;
+}
+</style>
+<div class=container>
+  <div class=child_floating></div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div class=child_floating></div>
+  <div class=child_floating></div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div class=child_floating></div>
+  <div></div>
+  <div class=child_floating></div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div class=child_floating></div>
+  <div>
+    <div class=child_floating></div>
+  </div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div>
+    <div class=child_floating></div>
+    <div class=child_floating></div>
+  </div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div></div>
+  <div class=child_floating></div>
+  <div class=child_floating></div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div class=child_floating></div>
+  <div>
+    <div class=child_floating></div>
+    <div class=child_floating></div>
+  </div>
+</div>
+
+<div class=divider></div>
+
+<div class=container>
+  <div class=child_floating></div>
+  <div>
+    <div>
+      <div class=child_floating></div>
+    <div>
+    <div class=child_floating></div>
+  </div>
+</div>

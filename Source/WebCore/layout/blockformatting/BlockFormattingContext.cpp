@@ -408,19 +408,30 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
         queue.append(root().firstInFlowOrFloatingChild());
 
     IntrinsicWidthConstraints constraints;
-    auto floatAvoidersMaximumIntrinsicWidth = LayoutUnit { };
+    auto maximumHorizontalStackingWidth = LayoutUnit { };
+    auto currentHorizontalStackingWidth = LayoutUnit { };
     while (!queue.isEmpty()) {
         while (true) {
             // Check if we have to deal with descendant content.
             auto& layoutBox = *queue.last();
+            // Float avoiders are all establish a new formatting context. No need to look inside them.
+            if (layoutBox.isFloatAvoider() && !layoutBox.hasFloatClear())
+                break;
+            // Non-floating block level boxes reset the current horizontal float stacking.
+            // SPEC: This is a bit odd as floating positioning is a formatting context level concept:
+            // e.g.
+            // <div style="float: left; width: 10px;"></div>
+            // <div></div>
+            // <div style="float: left; width: 40px;"></div>
+            // ...will produce a max width of 40px which makes the floats vertically stacked.
+            // Vertically stacked floats makes me think we haven't managed to provide the maximum preferred width for the content.
+            maximumHorizontalStackingWidth = std::max(currentHorizontalStackingWidth, maximumHorizontalStackingWidth);
+            currentHorizontalStackingWidth = { };
             // Already has computed intrinsic constraints.
             if (formattingState.intrinsicWidthConstraintsForBox(layoutBox))
                 break;
             // Box with fixed width defines their descendant content intrinsic width.
             if (layoutBox.style().width().isFixed())
-                break;
-            // Float avoiders are all establish a new formatting context. No need to look inside them.
-            if (layoutBox.isFloatAvoider())
                 break;
             // Non-float avoider formatting context roots are opaque to intrinsic width computation.
             if (layoutBox.establishesFormattingContext())
@@ -439,13 +450,10 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
                 formattingState.setIntrinsicWidthConstraintsForBox(layoutBox, *desdendantConstraints);
             }
             constraints.minimum = std::max(constraints.minimum, desdendantConstraints->minimum);
-            // FIXME: This works as long as the float avoider is a direct child of the root.
-            // When the containing block of the float avoider is not the root, the containing block itself sets the constraint.
-            if (layoutBox.isFloatAvoider()) {
-                // Floats and formatting context roots that avoid floats form a horizontal stack when the constraint is infinite.
-                // FIXME: Add support for clear property.
-                floatAvoidersMaximumIntrinsicWidth += desdendantConstraints->maximum;
-            } else
+            auto willStackHorizontally = layoutBox.isFloatAvoider() && !layoutBox.hasFloatClear();
+            if (willStackHorizontally)
+                currentHorizontalStackingWidth += desdendantConstraints->maximum;
+            else
                 constraints.maximum = std::max(constraints.maximum, desdendantConstraints->maximum);
             // Move over to the next sibling or take the next box in the queue.
             if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {
@@ -454,7 +462,8 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
             }
         }
     }
-    constraints.maximum = std::max(constraints.maximum, floatAvoidersMaximumIntrinsicWidth);
+    maximumHorizontalStackingWidth = std::max(currentHorizontalStackingWidth, maximumHorizontalStackingWidth);
+    constraints.maximum = std::max(constraints.maximum, maximumHorizontalStackingWidth);
     formattingState.setIntrinsicWidthConstraints(constraints);
     return constraints;
 }

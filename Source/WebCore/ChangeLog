@@ -1,3 +1,24 @@
+2020-07-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][Min-Max width] Regular block level box resets the horizontal stacking
+        https://bugs.webkit.org/show_bug.cgi?id=214225
+
+        Reviewed by Antti Koivisto.
+
+        Non-floating block level boxes reset the current horizontal float stacking.
+        e.g. with a shrink-to-fit width container:
+        <div style="float: left; width: 10px;"></div>
+        <div></div>
+        <div style="float: left; width: 40px;"></div>
+        will produce a max width of 40px which makes the floats vertically stacked.
+
+        Test: fast/layoutformattingcontext/min-max-content-width-with-nested-floats-simple.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+
 2020-07-12  Darin Adler  <darin@apple.com>
 
         Simplify and improve Gradient, some other small color-related removals
