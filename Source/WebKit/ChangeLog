@@ -1,3 +1,17 @@
+2020-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup to bug 213143: Add artificial delay to WebSocket connections to mitigate port scanning attacks
+        https://bugs.webkit.org/show_bug.cgi?id=213143
+
+        Reviewed by Darin Adler.
+
+        Convert min and max millisecond values from double/int to Seconds.
+
+        No new tests, behavior should not change.
+
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::randomDelay):
+
 2020-07-13  Eric Carlson  <eric.carlson@apple.com>
 
         Impossible to pause playback of MediaStream video track

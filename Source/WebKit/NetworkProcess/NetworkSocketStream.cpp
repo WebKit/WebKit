@@ -102,13 +102,13 @@ void NetworkSocketStream::didUpdateBufferedAmount(SocketStreamHandle& handle, si
     send(Messages::WebSocketStream::DidUpdateBufferedAmount(amount));
 }
 
-static const auto delayMaxMilliseconds = 100;
-static const double delayMinMilliseconds = 10;
-static const auto closedPortErrorCode = 61;
+static constexpr auto delayMax = 100_ms;
+static constexpr auto delayMin = 10_ms;
+static constexpr auto closedPortErrorCode = 61;
 
 static Seconds randomDelay()
 {
-    return Seconds::fromMilliseconds(delayMinMilliseconds + static_cast<double>(cryptographicallyRandomNumber() % delayMaxMilliseconds));
+    return delayMin + Seconds::fromMilliseconds(static_cast<double>(cryptographicallyRandomNumber())) % delayMax;
 }
 
 void NetworkSocketStream::sendDelayedFailMessage()
