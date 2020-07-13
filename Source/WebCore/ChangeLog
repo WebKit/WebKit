@@ -1,3 +1,29 @@
+2020-07-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Impossible to pause playback of MediaStream video track
+        https://bugs.webkit.org/show_bug.cgi?id=214262
+        <rdar://problem/65483729>
+
+        Reviewed by Jer Noble.
+
+        These changes were tested manually because they don't change the behavior when
+        snapshotting or rendering to canvas.
+
+        * platform/graphics/avfoundation/SampleBufferDisplayLayer.h: Add pure virtual play
+        and pause methods.
+
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        (WebCore::LocalSampleBufferDisplayLayer::play): New, toggle m_paused.
+        (WebCore::LocalSampleBufferDisplayLayer::pause): Ditto.
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample): Return early if paused.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers): Pause the display
+        layer if necessary.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play): Start display layer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::pause): Pause display layer.
+
 2020-07-13  Sam Weinig  <weinig@apple.com>
 
         Replace single argument makeSimpleColor uses with their implementation

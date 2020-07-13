@@ -72,6 +72,9 @@ public:
     void flush() final;
     void flushAndRemoveImage() final;
 
+    void play() final;
+    void pause() final;
+
     void enqueueSample(MediaSample&) final;
     void clearEnqueuedSamples() final;
     void setRenderPolicy(RenderPolicy) final;
@@ -97,6 +100,8 @@ private:
     // Only accessed through m_processingQueue or if m_processingQueue is null.
     using PendingSampleQueue = Deque<Ref<MediaSample>>;
     PendingSampleQueue m_pendingVideoSampleQueue;
+    
+    bool m_paused { false };
 
 #if !RELEASE_LOG_DISABLED
     FrameRateMonitor m_frameRateMonitor;
@@ -107,6 +112,17 @@ inline void LocalSampleBufferDisplayLayer::setRenderPolicy(RenderPolicy renderPo
 {
     m_renderPolicy = renderPolicy;
 }
+
+inline void LocalSampleBufferDisplayLayer::play()
+{
+    m_paused = false;
+}
+
+inline void LocalSampleBufferDisplayLayer::pause()
+{
+    m_paused = true;
+}
+
 
 }
 

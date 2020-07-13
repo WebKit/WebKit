@@ -96,6 +96,16 @@ void RemoteSampleBufferDisplayLayer::flushAndRemoveImage()
     m_sampleBufferDisplayLayer->flushAndRemoveImage();
 }
 
+void RemoteSampleBufferDisplayLayer::play()
+{
+    m_sampleBufferDisplayLayer->play();
+}
+
+void RemoteSampleBufferDisplayLayer::pause()
+{
+    m_sampleBufferDisplayLayer->pause();
+}
+
 void RemoteSampleBufferDisplayLayer::enqueueSample(WebCore::RemoteVideoSample&& remoteSample)
 {
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())

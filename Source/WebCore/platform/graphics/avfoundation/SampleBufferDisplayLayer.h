@@ -63,6 +63,9 @@ public:
     virtual void flush() = 0;
     virtual void flushAndRemoveImage() = 0;
 
+    virtual void play() = 0;
+    virtual void pause() = 0;
+
     virtual void enqueueSample(MediaSample&) = 0;
     virtual void clearEnqueuedSamples() = 0;
 

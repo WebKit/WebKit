@@ -351,6 +351,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!m_sampleBufferDisplayLayer)
         return;
 
+    if (!playing())
+        m_sampleBufferDisplayLayer->pause();
+
     if (activeVideoTrack->source().isCaptureSource())
         m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
 
@@ -511,6 +514,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
     for (const auto& track : m_audioTrackMap.values())
         track->play();
 
+    if (m_sampleBufferDisplayLayer)
+        m_sampleBufferDisplayLayer->play();
     updateDisplayMode();
 
     scheduleDeferredTask([this] {
@@ -533,6 +538,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     for (const auto& track : m_audioTrackMap.values())
         track->pause();
 
+    if (m_sampleBufferDisplayLayer)
+        m_sampleBufferDisplayLayer->pause();
     updateDisplayMode();
     flushRenderers();
 

@@ -103,6 +103,16 @@ void SampleBufferDisplayLayer::flushAndRemoveImage()
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::FlushAndRemoveImage { }, m_identifier);
 }
 
+void SampleBufferDisplayLayer::play()
+{
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Play { }, m_identifier);
+}
+
+void SampleBufferDisplayLayer::pause()
+{
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, m_identifier);
+}
+
 void SampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
     if (auto remoteSample = RemoteVideoSample::create(sample))

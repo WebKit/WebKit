@@ -64,6 +64,8 @@ private:
     void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation);
     void flush();
     void flushAndRemoveImage();
+    void play();
+    void pause();
     void enqueueSample(WebCore::RemoteVideoSample&&);
     void clearEnqueuedSamples();
 

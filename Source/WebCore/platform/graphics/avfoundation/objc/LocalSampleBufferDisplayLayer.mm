@@ -301,6 +301,13 @@ static const double rendererLatency = 0.02;
 
 void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
+    if (m_paused) {
+#if !RELEASE_LOG_DISABLED
+        m_frameRateMonitor.update();
+#endif
+        return;
+    }
+
     m_processingQueue->dispatch([this, sample = makeRef(sample)] {
         if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
             WTFLogAlways("LocalSampleBufferDisplayLayer::enqueueSample not ready for more media data");

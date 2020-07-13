@@ -31,6 +31,8 @@ messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
     FlushAndRemoveImage()
     EnqueueSample(WebCore::RemoteVideoSample sample)
     ClearEnqueuedSamples()
+    Play()
+    Pause()
 }
 
 #endif
