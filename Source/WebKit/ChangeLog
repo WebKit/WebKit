@@ -1,3 +1,14 @@
+2020-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Add more logging for navigation policy decisions on UIProcess side
+        https://bugs.webkit.org/show_bug.cgi?id=214277
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2020-07-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove live ranges from Document.h, AlternativeTextController.h, DictionaryLookup.h, and WebPage.h
