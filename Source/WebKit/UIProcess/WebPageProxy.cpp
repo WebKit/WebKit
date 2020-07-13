@@ -1188,33 +1188,29 @@ void WebPageProxy::tryCloseTimedOut()
     closePage();
 }
 
-#if !ENABLE(SANDBOX_EXTENSIONS)
-
-void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL&, SandboxExtension::Handle&, bool)
-{
-}
-
-#else
-
 void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, SandboxExtension::Handle& sandboxExtensionHandle, bool checkAssumedReadAccessToResourceURL)
 {
     if (!url.isLocalFile())
         return;
 
+#if HAVE(AUDIT_TOKEN)
     // If the process is still launching then it does not have a PID yet. We will take care of creating the sandbox extension
     // once the process has finished launching.
     if (process.isLaunching() || process.wasTerminated())
         return;
+#endif
 
     if (!resourceDirectoryURL.isEmpty()) {
         if (checkAssumedReadAccessToResourceURL && process.hasAssumedReadAccessToURL(resourceDirectoryURL))
             return;
 
-        ASSERT(process.connection() && process.connection()->getAuditToken());
         bool createdExtension = false;
+#if HAVE(AUDIT_TOKEN)
+        ASSERT(process.connection() && process.connection()->getAuditToken());
         if (process.connection() && process.connection()->getAuditToken())
             createdExtension = SandboxExtension::createHandleForReadByAuditToken(resourceDirectoryURL.fileSystemPath(), *(process.connection()->getAuditToken()), sandboxExtensionHandle);
         else
+#endif
             createdExtension = SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
 
         if (createdExtension) {
@@ -1229,11 +1225,13 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // Inspector resources are in a directory with assumed access.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
-    ASSERT(process.connection() && process.connection()->getAuditToken());
     bool createdExtension = false;
+#if HAVE(AUDIT_TOKEN)
+    ASSERT(process.connection() && process.connection()->getAuditToken());
     if (process.connection() && process.connection()->getAuditToken())
         createdExtension = SandboxExtension::createHandleForReadByAuditToken("/", *(process.connection()->getAuditToken()), sandboxExtensionHandle);
     else
+#endif
         createdExtension = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
 
     if (createdExtension) {
@@ -1251,16 +1249,16 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     auto basePath = baseURL.fileSystemPath();
     if (basePath.isNull())
         return;
+#if HAVE(AUDIT_TOKEN)
     if (process.connection() && process.connection()->getAuditToken())
         createdExtension = SandboxExtension::createHandleForReadByAuditToken(basePath, *(process.connection()->getAuditToken()), sandboxExtensionHandle);
     else
+#endif
         createdExtension = SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
-    
+
     if (createdExtension)
         process.assumeReadAccessToBaseURL(*this, baseURL.string());
 }
-
-#endif
 
 #if !PLATFORM(COCOA)
 

@@ -1,3 +1,28 @@
+2020-07-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] WTR and API-tests timing out after r264283
+        https://bugs.webkit.org/show_bug.cgi?id=214244
+
+        Reviewed by Carlos Garcia Campos.
+
+        r264283 broke local file loads at least for GTK and WPE ports due to
+        additionally-introduced ENABLE(SANDBOX_EXTENSIONS) build guards.
+
+        This patch reverts to using the sandboxing code without these guards,
+        relying instead on no-op SandboxExtension implementations for ports not
+        yet providing the system-specific sandboxing functionality. Uses of the
+        audit token functionality (only available on Cocoa platforms) gain
+        HAVE(AUDIT_TOKEN) guards. Overall the changes keep the r264283-enabled
+        code running where viable while unbreaking local file loading for other
+        ports.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+
 2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type
