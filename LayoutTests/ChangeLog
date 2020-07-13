@@ -1,3 +1,15 @@
+2020-07-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Remove child expectations last commit.
+
+        They were overrinding the glib one. Also added a note to remember to
+        set the expectation to Pass instead of removing the line as the
+        testcase is Skipped in the root expectation file.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-07-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Add artificial delay to WebSocket connections to mitigate port scanning attacks

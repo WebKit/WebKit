@@ -126,7 +126,10 @@ webkit.org/b/212300 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ ImageOnlyFailure ]
 
+# fast/gradients are Skip in the top level Expectation. When fixing, change this to
+# Pass instead of removing this line.
 webkit.org/b/214259 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
+
 webkit.org/b/214260 css3/color/composited-solid-backgrounds.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
