@@ -54,7 +54,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
         return Color();
 
     unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(image.get()));
-    return makeSimpleColor(unpremultiplied(asSRGBA(Packed::ARGB { *pixel })));
+    return unpremultiplied(asSRGBA(Packed::ARGB { *pixel }));
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, const ImagePaintingOptions& options)

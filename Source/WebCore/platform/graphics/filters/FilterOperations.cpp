@@ -117,7 +117,7 @@ bool FilterOperations::transformColor(Color& color) const
             return false;
     }
 
-    color = makeSimpleColor(sRGBAColor);
+    color = convertToComponentBytes(sRGBAColor);
     return true;
 }
 
@@ -136,7 +136,7 @@ bool FilterOperations::inverseTransformColor(Color& color) const
             return false;
     }
 
-    color = makeSimpleColor(sRGBAColor);
+    color = convertToComponentBytes(sRGBAColor);
     return true;
 }
 

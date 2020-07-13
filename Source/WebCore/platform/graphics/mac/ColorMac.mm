@@ -62,11 +62,12 @@ bool usesTestModeFocusRingColor()
     return useOldAquaFocusRingColor;
 }
 
-static SRGBA<uint8_t> makeSimpleColorFromNSColor(NSColor *color)
+static Optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 
-    ASSERT_ARG(color, color);
+    if (!color)
+        return WTF::nullopt;
 
     CGFloat redComponent;
     CGFloat greenComponent;
@@ -97,26 +98,16 @@ static SRGBA<uint8_t> makeSimpleColorFromNSColor(NSColor *color)
     [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
     END_BLOCK_OBJC_EXCEPTIONS
 
-    return makeSimpleColor(SRGBA { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
+    return convertToComponentBytes(SRGBA { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }
 
 Color colorFromNSColor(NSColor *color)
 {
-    if (!color)
-        return { };
-
-    // FIXME: ExtendedColor - needs to handle color spaces.
-
     return makeSimpleColorFromNSColor(color);
 }
 
 Color semanticColorFromNSColor(NSColor *color)
 {
-    if (!color)
-        return { };
-
-    // FIXME: ExtendedColor - needs to handle color spaces.
-
     return Color(makeSimpleColorFromNSColor(color), Color::Semantic);
 }
 

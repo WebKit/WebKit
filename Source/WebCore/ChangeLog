@@ -1,3 +1,43 @@
+2020-07-13  Sam Weinig  <weinig@apple.com>
+
+        Replace single argument makeSimpleColor uses with their implementation
+        https://bugs.webkit.org/show_bug.cgi?id=214240
+
+        Reviewed by Darin Adler.
+
+        Remove makeSimpleColor overloads that took SRGBA<uint8_t> and SRGBA<float>:
+        - makeSimpleColor(SRGBA<uint8_t>) was a no-op, so is replaced with nothing.
+        - makeSimpleColor(SRGBA<float>) is replaced by the function it called, convertToComponentBytes().
+
+        * css/StyleColor.cpp:
+        (WebCore::StyleColor::colorFromKeyword):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::CanvasStyle::isEquivalent const):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightened const):
+        (WebCore::Color::darkened const):
+        * platform/graphics/SimpleColor.h:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::makeSimpleColorFromARGBCFArray):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        (WebCore::colorFromNSColor):
+        (WebCore::semanticColorFromNSColor):
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::brushWithColor):
+        * platform/ios/ColorIOS.mm:
+        (WebCore::colorFromUIColor):
+
 2020-07-13  Sihui Liu  <sihui_liu@appe.com>
 
         Text manipulation does not observe manipulated text after update

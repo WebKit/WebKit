@@ -94,12 +94,12 @@ CanvasStyle::CanvasStyle(Color color)
 }
 
 CanvasStyle::CanvasStyle(const SRGBA<float>& colorComponents)
-    : m_style(makeSimpleColor(colorComponents))
+    : m_style(convertToComponentBytes(colorComponents))
 {
 }
 
 CanvasStyle::CanvasStyle(const CMYKA<float>& colorComponents)
-    : m_style(CMYKAColor { makeSimpleColor(toSRGBA(colorComponents)), colorComponents })
+    : m_style(CMYKAColor { convertToComponentBytes(toSRGBA(colorComponents)), colorComponents })
 {
 }
 
@@ -155,7 +155,7 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
 
 bool CanvasStyle::isEquivalent(const SRGBA<float>& components) const
 {
-    return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == makeSimpleColor(components);
+    return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == convertToComponentBytes(components);
 }
 
 bool CanvasStyle::isEquivalent(const CMYKA<float>& components) const

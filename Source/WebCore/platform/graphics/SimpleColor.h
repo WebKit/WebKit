@@ -41,14 +41,4 @@ constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(int r, int g, int b, int 
     return clampToComponentBytes<SRGBA>(r, g, b, a);
 }
 
-constexpr ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(SRGBA<uint8_t> sRGBA)
-{
-    return sRGBA;
-}
-
-inline ColorBuilder<SRGBA<uint8_t>> makeSimpleColor(const SRGBA<float>& sRGBA)
-{
-    return convertToComponentBytes(sRGBA);
-}
-
 } // namespace WebCore

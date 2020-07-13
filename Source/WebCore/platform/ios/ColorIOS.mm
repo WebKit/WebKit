@@ -47,7 +47,7 @@ Color colorFromUIColor(UIColor *color)
 
     [color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
 
-    return makeSimpleColor(SRGBA { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
+    return convertToComponentBytes(SRGBA { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }
 
 } // namespace WebCore

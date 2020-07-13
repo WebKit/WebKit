@@ -41,7 +41,7 @@ Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<Options> option
 {
     if (const char* valueName = getValueName(keyword)) {
         if (const NamedColor* namedColor = findColor(valueName, strlen(valueName)))
-            return makeSimpleColor(asSRGBA(Packed::ARGB { namedColor->ARGBValue }));
+            return asSRGBA(Packed::ARGB { namedColor->ARGBValue });
     }
 
     return RenderTheme::singleton().systemColor(keyword, options);

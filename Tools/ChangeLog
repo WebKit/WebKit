@@ -1,3 +1,14 @@
+2020-07-13  Sam Weinig  <weinig@apple.com>
+
+        Replace single argument makeSimpleColor uses with their implementation
+        https://bugs.webkit.org/show_bug.cgi?id=214240
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Replace makeSimpleColor with convertToComponentBytes.
+
 2020-07-13  Sihui Liu  <sihui_liu@appe.com>
 
         Text manipulation does not observe manipulated text after update
