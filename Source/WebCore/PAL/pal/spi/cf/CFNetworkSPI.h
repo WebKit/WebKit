@@ -243,7 +243,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #endif
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
 @property (nullable, retain) _NSHTTPAlternativeServicesStorage *_alternativeServicesStorage;
-@property (readonly, assign) BOOL _allowsHTTP3;
+@property (readwrite, assign) BOOL _allowsHTTP3;
 #endif
 @end
 

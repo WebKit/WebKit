@@ -1,3 +1,16 @@
+2020-07-12  Rob Buis  <rbuis@igalia.com>
+
+        Building NetworkSessionCocoa.mm with the macOS Big Sur public SDK fails
+        https://bugs.webkit.org/show_bug.cgi?id=214242
+
+        Reviewed by Darin Adler.
+
+        Building NetworkSessionCocoa.mm with the macOS Big Sur public SDK fails
+        because _allowsHTTP3 is readonly yet it is being written to in
+        NetworkSessionCocoa.mm, mark it as readwrite instead.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative build fix for internal build
