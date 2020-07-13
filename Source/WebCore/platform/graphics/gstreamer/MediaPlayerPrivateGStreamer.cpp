@@ -1596,15 +1596,6 @@ void MediaPlayerPrivateGStreamer::setPipeline(GstElement* pipeline)
 
 bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
 {
-    if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_ERROR && !g_strcmp0(g_getenv("WEBKIT_CRASH_ON_GSTREAMER_ERROR"), "sync")) {
-        GUniqueOutPtr<GError> err;
-        GUniqueOutPtr<gchar> debug;
-        gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
-        GST_ERROR("Error %d from %s: %s (url=%s)", err->code, GST_MESSAGE_SRC_NAME(message), err->message, m_url.string().utf8().data());
-        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video-sync-error");
-        ASSERT_NOT_REACHED();
-    }
-
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION && !m_isLegacyPlaybin) {
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_stream_collection(message, &collection.outPtr());
@@ -1878,9 +1869,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         GST_ERROR("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
 
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video.error");
-
-        if (!g_strcmp0(g_getenv("WEBKIT_CRASH_ON_GSTREAMER_ERROR"), "async"))
-            CRASH();
 
         error = MediaPlayer::NetworkState::Empty;
         if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_CODEC_NOT_FOUND)

@@ -1,3 +1,14 @@
+2020-07-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Unreviewed, remove private debug code
+
+        When I landed the OpenCDM code I accidentally landed a couple of
+        things that were internal debug that is not useful upstream.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2020-07-12  Darin Adler  <darin@apple.com>
 
         Some further streamlining of Gradient handling code
