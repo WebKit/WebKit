@@ -1753,3 +1753,5 @@ webkit.org/b/213553 http/tests/resourceLoadStatistics/grandfathering-database.ht
 webkit.org/b/21365 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
 
 webkit.org/b/214084 [ Release ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
+
+webkit.org/b/214133 [ Release ] fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html [ Pass Failure ]
