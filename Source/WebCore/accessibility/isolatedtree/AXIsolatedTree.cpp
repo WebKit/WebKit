@@ -290,6 +290,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     const auto& axChildren = axAncestor->children();
     auto axChildrenIDs = axAncestor->childrenIDs();
 
+    bool updatedChild = false; // Set to true if at least one child's subtree is updated.
     for (size_t i = 0; i < axChildren.size() && i < axChildrenIDs.size(); ++i) {
         size_t index = removals.find(axChildrenIDs[i]);
         if (index != notFound)
@@ -300,6 +301,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
             AXLOG("Adding a new child for:");
             AXLOG(axChildren[i]);
             generateSubtree(*axChildren[i], axAncestor, true);
+            updatedChild = true;
         }
     }
 
@@ -308,9 +310,14 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     for (const AXID& childID : removals)
         removeSubtree(childID);
 
-    // Lastly, make the children IDs of the isolated object to be the same as the AXObject's.
-    LockHolder locker { m_changeLogLock };
-    updateChildrenIDs(axAncestor->objectID(), WTFMove(axChildrenIDs));
+    if (updatedChild || removals.size()) {
+        // Make the children IDs of the isolated object to be the same as the AXObject's.
+        LockHolder locker { m_changeLogLock };
+        updateChildrenIDs(axAncestor->objectID(), WTFMove(axChildrenIDs));
+    } else {
+        // Nothing was updated. As a last resort, update the subtree.
+        updateSubtree(*axAncestor);
+    }
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()

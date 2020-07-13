@@ -1,3 +1,20 @@
+2020-07-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        REGRESSION: (r257915?) [ Mac ] accessibility/accessibility-node-memory-management.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208930
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/accessibility-node-memory-management.html
+
+        In some cases, such as the empty canvas in this test, the algorithm in
+        AXIsolatedTree::updateChildren to only update the children that are
+        added or removed does not work. In those cases, fallback to updating
+        the entire subtree.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateChildren):
+
 2020-07-13  Keith Miller  <keith_miller@apple.com>
 
         ScriptController needs to SetForScope m_sourceURL after Refing its Frame

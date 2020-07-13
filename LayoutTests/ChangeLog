@@ -1,3 +1,18 @@
+2020-07-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        REGRESSION: (r257915?) [ Mac ] accessibility/accessibility-node-memory-management.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208930
+        <rdar://problem/60173203>
+
+        Reviewed by Chris Fleizach.
+
+        Using setTimeout and waitFor/Promises to make this test work in both
+        isolated tree mode on and off.
+
+        * accessibility/accessibility-node-memory-management-expected.txt:
+        * accessibility/accessibility-node-memory-management.html:
+        * platform/mac/TestExpectations:
+
 2020-07-13  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. Update baseline after r264304 with new message.
