@@ -10655,7 +10655,7 @@ private:
                 
                 m_out.appendTo(isNotInt, isDouble);
                 m_out.branch(
-                    isCellOrMisc(boxedValue, provenType(m_node->child1())),
+                    isCellOrMiscOrBigInt32(boxedValue, provenType(m_node->child1())),
                     usually(lowBlock(data->fallThrough.block)), rarely(isDouble));
                 
                 m_out.appendTo(isDouble, innerLastNext);
@@ -13318,13 +13318,12 @@ private:
         
         if (edge.useKind() == NumberUse) {
             m_out.appendTo(notIntCase, continuation);
-            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBytecodeNumber, isCellOrMisc(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBytecodeNumber, isCellOrMiscOrBigInt32(value));
             results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
             m_out.jump(continuation);
         } else {
             m_out.appendTo(notIntCase, doubleCase);
-            m_out.branch(
-                isCellOrMisc(value, provenType(edge)), unsure(notNumberCase), unsure(doubleCase));
+            m_out.branch(isCellOrMiscOrBigInt32(value, provenType(edge)), unsure(notNumberCase), unsure(doubleCase));
             
             m_out.appendTo(doubleCase, notNumberCase);
             results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
@@ -17453,15 +17452,23 @@ private:
     }
 #endif // USE(BIGINT32)
 
-    LValue isCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
+    LValue isCellOrMiscOrBigInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, SpecCellCheck | SpecMisc))
+        SpeculatedType filter = SpecCellCheck | SpecMisc;
+#if USE(BIGINT32)
+        filter |= SpecBigInt32;
+#endif // USE(BIGINT32)
+        if (LValue proven = isProvenValue(type, filter))
             return proven;
         return m_out.testIsZero64(jsValue, m_numberTag);
     }
-    LValue isNotCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
+    LValue isNotCellOrMiscOrBigInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, ~(SpecCellCheck | SpecMisc)))
+        SpeculatedType filter = SpecCellCheck | SpecMisc;
+#if USE(BIGINT32)
+        filter |= SpecBigInt32;
+#endif // USE(BIGINT32)
+        if (LValue proven = isProvenValue(type, ~filter))
             return proven;
         return m_out.testNonZero64(jsValue, m_numberTag);
     }
@@ -17570,13 +17577,13 @@ private:
     {
         if (LValue proven = isProvenValue(type, SpecFullNumber))
             return proven;
-        return isNotCellOrMisc(jsValue);
+        return isNotCellOrMiscOrBigInt32(jsValue);
     }
     LValue isNotNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, ~SpecFullNumber))
             return proven;
-        return isCellOrMisc(jsValue);
+        return isCellOrMiscOrBigInt32(jsValue);
     }
     
     LValue isNotCell(LValue jsValue, SpeculatedType type = SpecFullTop)

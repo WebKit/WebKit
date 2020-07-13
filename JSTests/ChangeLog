@@ -1,3 +1,14 @@
+2020-07-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL isCellOrMisc should be isCellOrMiscOrBigInt32
+        https://bugs.webkit.org/show_bug.cgi?id=214269
+        <rdar://problem/65475129>
+
+        Reviewed by Mark Lam.
+
+        * stress/ftl-bigint32-and-cell-or-misc.js: Added.
+        (foo):
+
 2020-07-13  Keith Miller  <keith_miller@apple.com>
 
         Clean up SourceProvider and add caller relative load script to jsc.cpp
