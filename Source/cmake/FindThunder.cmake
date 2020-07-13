@@ -7,13 +7,13 @@
 # This will define the following variables:
 #
 # ``THUNDER_FOUND``
-#     True if the requested version of gcrypt was found
+#     True if the requested version of Thunder was found
 # ``THUNDER_VERSION``
-#     The version of gcrypt that was found
+#     The version of Thunder that was found
 # ``THUNDER_INCLUDE_DIRS``
-#     The gcrypt include directories
+#     The Thunder include directories
 # ``THUNDER_LIBRARIES``
-#     The linker libraries needed to use the gcrypt library
+#     The linker libraries needed to use the Thunder library
 #
 # Copyright (C) 2020 Metrological
 # Copyright (C) 2020 Igalia S.L

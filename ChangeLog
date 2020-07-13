@@ -1,3 +1,9 @@
+2020-07-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. Fixed copy&paste typos of gcrypt -> Thunder
+
+        * Source/cmake/FindThunder.cmake:
+
 2020-07-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Conic gradients support
