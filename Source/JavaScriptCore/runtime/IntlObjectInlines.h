@@ -32,6 +32,29 @@
 
 namespace JSC {
 
+template<typename Predicate> String bestAvailableLocale(const String& locale, Predicate predicate)
+{
+    // BestAvailableLocale (availableLocales, locale)
+    // https://tc39.github.io/ecma402/#sec-bestavailablelocale
+
+    String candidate = locale;
+    while (!candidate.isEmpty()) {
+        if (predicate(candidate))
+            return candidate;
+
+        size_t pos = candidate.reverseFind('-');
+        if (pos == notFound)
+            return String();
+
+        if (pos >= 2 && candidate[pos - 2] == '-')
+            pos -= 2;
+
+        candidate = candidate.substring(0, pos);
+    }
+
+    return String();
+}
+
 template<typename IntlInstance, typename Constructor, typename Factory>
 JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObject* globalObject, JSValue thisValue, Constructor* callee, Factory factory)
 {

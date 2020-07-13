@@ -1,5 +1,25 @@
 2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] String.protoytpe.toLocaleLowerCase's availableLocales HashSet is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=213158
+
+        Reviewed by Darin Adler.
+
+        Currently, we are always creating the same HashSet every time String.protoytpe.toLocaleLowerCase is called.
+        We changed bestAvailableLocale to take predicate function. And we pass a predicate which returns true for
+        case-sensitive locales.
+
+        * runtime/IntlObject.cpp:
+        (JSC::bestAvailableLocale):
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::bestAvailableLocale):
+        * runtime/StringPrototype.cpp:
+        (JSC::computeTwoCharacters16Code):
+        (JSC::toLocaleCase):
+
+2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] We should keep unaligned access feature in certain architectures in macro-assembler
         https://bugs.webkit.org/show_bug.cgi?id=214243
 

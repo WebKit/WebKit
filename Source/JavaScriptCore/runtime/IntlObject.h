@@ -75,6 +75,7 @@ HashMap<String, String> resolveLocale(JSGlobalObject*, const HashSet<String>& av
 JSValue supportedLocales(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
 String removeUnicodeLocaleExtension(const String& locale);
 String bestAvailableLocale(const HashSet<String>& availableLocales, const String& requestedLocale);
+template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
 Vector<String> numberingSystemsForLocale(const String& locale);
 
 bool isUnicodeLocaleIdentifierType(StringView);

@@ -30,7 +30,7 @@
 #include "IntegrityInlines.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JITCodeInlines.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
@@ -1541,6 +1541,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(JSGlobalObject* global
     RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(globalObject, string, that)));
 }
 
+template<typename StringType>
+static constexpr uint32_t computeTwoCharacters16Code(const StringType& string)
+{
+    return static_cast<uint16_t>(string.characterAt(0)) | (static_cast<uint32_t>(static_cast<uint16_t>(string.characterAt(1))) << 16);
+}
+
 enum class CaseConversionMode {
     Upper,
     Lower,
@@ -1588,12 +1594,20 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
 
     // 10. Let availableLocales be a List with the language tags of the languages for which the Unicode character database contains language sensitive case mappings.
     // Note 1: As of Unicode 5.1, the availableLocales list contains the elements "az", "el", "lt", and "tr".
-    // FIXME: Creating HashSet for these 4 locales every time is inefficient.
-    // https://bugs.webkit.org/show_bug.cgi?id=213158
-    const HashSet<String> availableLocales({ "az"_s, "el"_s, "lt"_s, "tr"_s });
-
     // 11. Let locale be BestAvailableLocale(availableLocales, noExtensionsLocale).
-    String locale = bestAvailableLocale(availableLocales, noExtensionsLocale);
+    String locale = bestAvailableLocale(noExtensionsLocale, [](const String& candidate) {
+        if (candidate.length() != 2)
+            return false;
+        switch (computeTwoCharacters16Code(candidate)) {
+        case computeTwoCharacters16Code("az"_s):
+        case computeTwoCharacters16Code("el"_s):
+        case computeTwoCharacters16Code("lt"_s):
+        case computeTwoCharacters16Code("tr"_s):
+            return true;
+        default:
+            return false;
+        }
+    });
 
     // 12. If locale is undefined, let locale be "und".
     if (locale.isNull())
