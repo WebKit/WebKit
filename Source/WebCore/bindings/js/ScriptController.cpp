@@ -125,7 +125,7 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     JSLockHolder lock(world.vm());
 
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
-    String sourceURL = jsSourceCode.provider()->url().string();
+    const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
 
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occurred or the type couldn't be converted.
@@ -136,12 +136,11 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     // See smart window.open policy for where this is used.
     auto& proxy = jsWindowProxy(world);
     auto& globalObject = *proxy.window();
-    const String* savedSourceURL = m_sourceURL;
-    m_sourceURL = &sourceURL;
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     Ref<Frame> protector(m_frame);
 
-    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine(), sourceCode.startColumn());
+    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
     NakedPtr<JSC::Exception> evaluationException;
     JSValue returnValue = JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, jsSourceCode, &proxy, evaluationException);
@@ -155,7 +154,6 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
         optionalDetails = WTFMove(details);
     }
 
-    m_sourceURL = savedSourceURL;
     if (optionalDetails)
         return makeUnexpected(*optionalDetails);
 
@@ -235,7 +233,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
-    SetForScope<const String*> sourceURLScope(m_sourceURL, &sourceURL.string());
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     Ref<Frame> protector(m_frame);
 
@@ -649,13 +647,12 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), WTFMove(parameters.sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
     const auto& jsSourceCode = sourceCode.jsSourceCode();
 
-    String sourceURL = jsSourceCode.provider()->url().string();
-    const String* savedSourceURL = m_sourceURL;
-    m_sourceURL = &sourceURL;
+    const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     Ref<Frame> protector(m_frame);
 
-    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine(), sourceCode.startColumn());
+    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
     NakedPtr<JSC::Exception> evaluationException;
     Optional<ExceptionDetails> optionalDetails;
@@ -689,8 +686,6 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
         optionalDetails = WTFMove(details);
     }
-
-    m_sourceURL = savedSourceURL;
 
     if (optionalDetails)
         return makeUnexpected(*optionalDetails);

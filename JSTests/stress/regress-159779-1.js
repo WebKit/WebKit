@@ -1290,7 +1290,7 @@ function makeUseRegressionTest(d, b)
         break;
       default:
         
-        s += "/* regression-test-load */ " + "load(" + simpleSource(file) + ");";
+        s += "/* regression-test-load */ " + "load(" + simpleSource(file) + ", "caller relative");";
         break;
       
     }

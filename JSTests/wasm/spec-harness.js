@@ -2,9 +2,9 @@
 
 // This is our nifty way to make modules synchronous.
 let assert;
-import('assert.js').then((module) => {
+import('./assert.js').then((module) => {
     assert = module;
-});
+}, $vm.crash);
 drainMicrotasks();
 
 function test(func, description) {
@@ -33,7 +33,6 @@ let console = {
     }
 };
 
-// This is run from the spec-tests directory
-load("../spec-harness/sync_index.js");
-load("../spec-harness/wasm-constants.js");
-load("../spec-harness/wasm-module-builder.js");
+load("./spec-harness/sync_index.js", "caller relative");
+load("./spec-harness/wasm-constants.js", "caller relative");
+load("./spec-harness/wasm-module-builder.js", "caller relative");

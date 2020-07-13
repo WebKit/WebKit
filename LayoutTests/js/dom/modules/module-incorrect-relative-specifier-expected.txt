@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
-CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
-CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Module specifier, 'incorrect' does not start with "/", "./", or "../". Referenced from module-incorrect-relative-specifier.html
+CONSOLE MESSAGE: TypeError: Module specifier, '$hello' does not start with "/", "./", or "../". Referenced from module-incorrect-relative-specifier.html
+CONSOLE MESSAGE: TypeError: Module specifier, '.../test' does not start with "/", "./", or "../". Referenced from module-incorrect-relative-specifier.html
 Test script.onerror will be fired when the incorrect relative specifier is specified.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

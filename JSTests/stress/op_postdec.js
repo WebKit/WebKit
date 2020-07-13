@@ -3,7 +3,7 @@
 // If all goes well, this test module will terminate silently. If not, it will print
 // errors. See unary-op-test.js for debugging options if needed.
 
-load("./resources/unary-op-test.js");
+load("./resources/unary-op-test.js", "caller relative");
 
 //============================================================================
 // Test configuration data:

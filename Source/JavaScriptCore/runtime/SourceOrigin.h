@@ -26,32 +26,33 @@
 #pragma once
 
 #include "ScriptFetcher.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/URL.h>
 
 namespace JSC {
 
 class SourceOrigin {
 public:
-    explicit SourceOrigin(const String& string)
-        : m_string(string)
+    explicit SourceOrigin(const URL& url)
+        : m_url(url)
     {
     }
 
-    explicit SourceOrigin(const String& string, Ref<ScriptFetcher>&& fetcher)
-        : m_string(string)
+    explicit SourceOrigin(const URL& url, Ref<ScriptFetcher>&& fetcher)
+        : m_url(url)
         , m_fetcher(WTFMove(fetcher))
     {
     }
 
     SourceOrigin() = default;
 
-    const String& string() const { return m_string; }
-    bool isNull() const { return m_string.isNull(); }
+    const URL& url() const { return m_url; }
+    const String& string() const { return m_url.string(); }
+    bool isNull() const { return url().isNull(); }
 
     ScriptFetcher* fetcher() const { return m_fetcher.get(); }
 
 private:
-    String m_string;
+    URL m_url;
     RefPtr<ScriptFetcher> m_fetcher;
 };
 

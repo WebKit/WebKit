@@ -138,7 +138,7 @@ public:
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }
 
-    const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
+    const URL* sourceURL() const { return m_sourceURL; } // nullptr if we are not evaluating any script
 
     void updateDocument();
 
@@ -188,7 +188,7 @@ private:
     WEBCORE_EXPORT JSWindowProxy& jsWindowProxy(DOMWrapperWorld&);
 
     Frame& m_frame;
-    const String* m_sourceURL;
+    const URL* m_sourceURL { nullptr };
 
     bool m_paused;
     bool m_willReplaceWithResultOfExecutingJavascriptURL { false };

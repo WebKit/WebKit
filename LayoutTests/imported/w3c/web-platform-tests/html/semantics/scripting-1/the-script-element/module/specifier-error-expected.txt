@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Module specifier, 'string-without-dot-slash-prefix' does not start with "/", "./", or "../". Referenced from http://localhost:8800/html/semantics/scripting-1/the-script-element/module/bad-module-specifier.js
 
 FAIL Test that invalid module specifier leads to TypeError on window. assert_equals: expected function "function TypeError() {
     [native code]

@@ -1,4 +1,4 @@
-load("./resources/typedarray-constructor-helper-functions.js");
+load("./resources/typedarray-constructor-helper-functions.js", "caller relative");
 description(
 "This test checks the behavior of the TypedArray.from function"
 );

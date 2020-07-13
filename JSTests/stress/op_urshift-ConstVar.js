@@ -3,7 +3,7 @@
 // If all goes well, this test module will terminate silently. If not, it will print
 // errors. See binary-op-test.js for debugging options if needed.
 
-load("./resources/binary-op-test.js");
+load("./resources/binary-op-test.js", "caller relative");
 
 //============================================================================
 // Test configuration data:
@@ -11,7 +11,7 @@ load("./resources/binary-op-test.js");
 var opName = "urshift";
 var op = ">>>";
 
-load("./resources/binary-op-values.js");
+load("./resources/binary-op-values.js", "caller relative");
 
 tests = [];
 generateBinaryTests(tests, opName, op, "ConstVar", values, values);

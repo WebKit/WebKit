@@ -1,3 +1,120 @@
+2020-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Clean up SourceProvider and add caller relative load script to jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214205
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch originally was just to add an optional parameter to our
+        load function so that any relative path is computed with respect
+        to calling script.  Rather than computing the path relative to the
+        current working directory. The main advantage of this is now you
+        can run all the JSTests/stress scripts from anywhere rather than
+        only from the stress directory. This also matches jsc.cpp's module
+        loader implementation.
+
+        To make this possible a surprising number of changes were
+        needed. Specifically, it was much easier to get this to work if we
+        converted SourceOrigin's url to a WTF::URL rather than just a
+        WTF::String. At the same time it became clear that
+        SourceProvider's m_sourceURL is really not a URL but more of a
+        file name, which can sometimes be a URL. It's possible that we
+        don't need m_sourceURL at all but we should do that in a different
+        patch.
+
+        Additionally, jsc.cpp now uses WTF::URL for handling file
+        paths. This is cleaner than managing trying to do it ourselves and
+        should work across all the ports.
+
+        Lastly, the JSC CLI no longer accepts "bare-name"
+        specifiers. i.e. all specifiers must start with "/", "./", or
+        "../". This matches what we do in our Obj-C API and in
+        WebCore. While fixing tests I also noticed that the error message
+        was almost useless since it didn't tell you what the specifier or
+        referrer in question so that information is now part of the user
+        visible error.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::computeValidImportSpecifier):
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * API/JSScript.mm:
+        (-[JSScript sourceCode]):
+        * API/JSScriptRef.cpp:
+        * API/glib/JSCContext.cpp:
+        (jsc_context_check_syntax):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        * debugger/DebuggerLocation.cpp:
+        (JSC::DebuggerLocation::DebuggerLocation):
+        * debugger/DebuggerLocation.h:
+        (JSC::DebuggerLocation::DebuggerLocation):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::sourceParsed):
+        * jsc.cpp:
+        (currentWorkingDirectory):
+        (absolutePath):
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderResolve):
+        (jscSource):
+        (fetchModuleFromLocalFileSystem):
+        (GlobalObject::moduleLoaderFetch):
+        (functionLoad):
+        (functionCallerSourceOrigin):
+        (functionDollarAgentStart):
+        (functionCheckModuleSyntax):
+        (runWithOptions):
+        (runInteractive):
+        (ModuleName::startsWithRoot const): Deleted.
+        (ModuleName::ModuleName): Deleted.
+        (extractDirectoryName): Deleted.
+        (resolvePath): Deleted.
+        * parser/Nodes.h:
+        (JSC::ScopeNode::source const):
+        (JSC::ScopeNode::sourceURL const): Deleted.
+        * parser/SourceCode.h:
+        (JSC::makeSource):
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::host const):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::SourceProvider):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::sourceURL const):
+        (JSC::StringSourceProvider::create):
+        (JSC::StringSourceProvider::StringSourceProvider):
+        (JSC::SourceProvider::url const): Deleted.
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedSourceOrigin::encode):
+        (JSC::CachedSourceOrigin::decode const):
+        (JSC::CachedSourceProviderShape::encode):
+        (JSC::CachedStringSourceProvider::decode const):
+        (JSC::CachedWebAssemblySourceProvider::decode const):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::sourceURL const):
+        * runtime/SourceOrigin.h:
+        (JSC::SourceOrigin::SourceOrigin):
+        (JSC::SourceOrigin::url const):
+        (JSC::SourceOrigin::string const):
+        (JSC::SourceOrigin::isNull const):
+        * runtime/ThrowScope.cpp:
+        (JSC::ThrowScope::throwException):
+        * runtime/ThrowScope.h:
+        (JSC::ThrowScope::throwException):
+        (JSC::throwVMException):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        * tools/JSDollarVM.cpp:
+        (JSC::doPrint):
+        (JSC::functionCrash):
+
 2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] String.protoytpe.toLocaleLowerCase's availableLocales HashSet is inefficient

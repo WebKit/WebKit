@@ -1,3 +1,14 @@
+2020-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Clean up SourceProvider and add caller relative load script to jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214205
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebaseline module loader error messages against the new string.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/specifier-error-expected.txt:
+
 2020-07-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop a couple of payment-requests WPT tests

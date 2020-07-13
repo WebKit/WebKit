@@ -230,7 +230,7 @@ void addErrorInfo(JSGlobalObject* globalObject, JSObject* obj, bool useCurrentFr
 
 JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& source)
 {
-    const String& sourceURL = source.provider()->url().string();
+    const String& sourceURL = source.provider()->sourceURL();
     
     // The putDirect() calls below should really be put() so that they trigger materialization of
     // the line/sourceURL properties. Otherwise, what we set here will just be overwritten later.

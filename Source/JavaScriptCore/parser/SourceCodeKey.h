@@ -106,7 +106,7 @@ public:
     // providers cache their strings to make this efficient.
     StringView string() const { return m_sourceCode.view(); }
 
-    StringView host() const { return m_sourceCode.provider().url().host(); }
+    StringView host() const { return m_sourceCode.provider().sourceOrigin().url().host(); }
 
     bool operator==(const SourceCodeKey& other) const
     {

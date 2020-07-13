@@ -30,35 +30,35 @@ function assertProperError(e) {
 assertExpectations();
 
 try {
-    load("./multiple-files-tests/global-lexical-redeclare-variable/first.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/first.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }
 assertExpectations();
 
 try {
-    load("./multiple-files-tests/global-lexical-redeclare-variable/second.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/second.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }
 assertExpectations();
 
 try {
-    load("./multiple-files-tests/global-lexical-redeclare-variable/third.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/third.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }
 assertExpectations();
 
 try {
-    load("./multiple-files-tests/global-lexical-redeclare-variable/fourth.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/fourth.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }
 assertExpectations();
 
 try {
-    load("./multiple-files-tests/global-lexical-redeclare-variable/fifth.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/fifth.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }
@@ -70,7 +70,7 @@ assertExpectations();
 try {
     sentinel = "bad";
     assert(Object.getOwnPropertyDescriptor(this, "globalProperty").configurable);
-    load("./multiple-files-tests/global-lexical-redeclare-variable/sixth.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/sixth.js", "caller relative");
 } catch(e) {
     assert(false);
 }
@@ -79,7 +79,7 @@ assertExpectations();
 try {
     sentinel = "bad";
     assert(Object.getOwnPropertyDescriptor(this, "Array").configurable);
-    load("./multiple-files-tests/global-lexical-redeclare-variable/seventh.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/seventh.js", "caller relative");
 } catch(e) {
     assert(false);
 }
@@ -88,7 +88,7 @@ assertExpectations();
 try {
     sentinel = "bad";
     Object.defineProperty(this, 'foo', {value: 5, configurable: true, writable: true});
-    load("./multiple-files-tests/global-lexical-redeclare-variable/eighth.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/eighth.js", "caller relative");
 } catch(e) {
     assert(false);
 }
@@ -96,7 +96,7 @@ assertExpectations();
 
 try {
     Object.defineProperty(this, 'bar', {value: 5, configurable: false, writable: true});
-    load("./multiple-files-tests/global-lexical-redeclare-variable/ninth.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/ninth.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }
@@ -106,7 +106,7 @@ assert(errorCount === 6);
 
 try {
     Object.defineProperty(this, 'zoo', {value: undefined, configurable: false, writable: true});
-    load("./multiple-files-tests/global-lexical-redeclare-variable/tenth.js");
+    load("./multiple-files-tests/global-lexical-redeclare-variable/tenth.js", "caller relative");
 } catch(e) {
     assertProperError(e);
 }

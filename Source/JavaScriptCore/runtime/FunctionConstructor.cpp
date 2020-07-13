@@ -148,7 +148,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         program = builder.toString();
     }
 
-    SourceCode source = makeSource(program, sourceOrigin, URL({ }, sourceURL), position);
+    SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
     JSObject* exception = nullptr;
     FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, globalObject, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
     if (UNLIKELY(!function)) {

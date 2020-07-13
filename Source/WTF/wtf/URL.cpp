@@ -213,7 +213,11 @@ String URL::fileSystemPath() const
     if (!isLocalFile())
         return { };
 
-    return decodeEscapeSequencesFromParsedURL(path());
+    auto result = decodeEscapeSequencesFromParsedURL(path());
+#if PLATFORM(WIN)
+    result = fileSystemRepresentation(result);
+#endif
+    return result;
 }
 
 #endif

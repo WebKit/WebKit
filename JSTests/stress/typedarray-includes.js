@@ -1,4 +1,4 @@
-load("resources/typedarray-test-helper-functions.js");
+load("resources/typedarray-test-helper-functions.js", "caller relative");
 
 for (constructor of typedArrays) {
     let a = new constructor(10);

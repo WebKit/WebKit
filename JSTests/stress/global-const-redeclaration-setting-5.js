@@ -7,11 +7,11 @@ function assert(b) {
 
 setGlobalConstRedeclarationShouldNotThrow(); // Allow duplicate const declarations at the global level.
 
-load("./global-const-redeclaration-setting/let.js");
+load("./global-const-redeclaration-setting/let.js", "caller relative");
 assert(foo === 50);
 let threw = false;
 try {
-    load("./global-const-redeclaration-setting/first.js"); // Redeclaration of a 'let' to 'const' should always throw because it isn't breaking backwards compat.
+    load("./global-const-redeclaration-setting/first.js", "caller relative"); // Redeclaration of a 'let' to 'const' should always throw because it isn't breaking backwards compat.
 } catch(e) {
     threw = true;
 }

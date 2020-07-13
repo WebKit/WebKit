@@ -79,7 +79,7 @@ void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, J
     m_callingDelegate = true;
 
     NSString *nsSource = toNSString(sourceProvider);
-    NSURL *nsURL = sourceProvider->url();
+    NSURL *nsURL = sourceProvider->sourceOrigin().url();
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     JSC::VM& vm = lexicalGlobalObject->vm();

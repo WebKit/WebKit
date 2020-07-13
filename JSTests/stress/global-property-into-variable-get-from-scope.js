@@ -6,7 +6,7 @@
 // noInline as the current global object would not have noInline as a property
 // at that point and we would attempt to access the value at an invalid offset.
 
-load("resources/standalone-pre.js");
+load("resources/standalone-pre.js", "caller relative");
 
 noInline();
 

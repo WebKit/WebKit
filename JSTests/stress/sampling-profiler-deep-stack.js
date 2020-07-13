@@ -1,5 +1,5 @@
 if (platformSupportsSamplingProfiler()) {
-    load("./sampling-profiler/samplingProfiler.js");
+    load("./sampling-profiler/samplingProfiler.js", "caller relative");
 
     function foo(x) { 
         let o = {};

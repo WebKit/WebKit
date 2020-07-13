@@ -65,7 +65,7 @@ if (platformSupportsSamplingProfiler() && $vm.isWasmSupported()) {
     const instance = compile(wasmFile, importObject);
     const result = instance.exports._parrot(1);
 
-    load("./sampling-profiler/samplingProfiler.js");
+    load("./sampling-profiler/samplingProfiler.js", "caller relative");
     var wasmEntry = function() {
         return instance.exports._parrot(1);
     };

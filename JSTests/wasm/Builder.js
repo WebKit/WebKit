@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as assert from 'assert.js';
-import * as BuildWebAssembly from 'Builder_WebAssemblyBinary.js';
-import * as LLB from 'LowLevelBinary.js';
-import * as WASM from 'WASM.js';
-import * as util from 'utilities.js';
+import * as assert from './assert.js';
+import * as BuildWebAssembly from './Builder_WebAssemblyBinary.js';
+import * as LLB from './LowLevelBinary.js';
+import * as WASM from './WASM.js';
+import * as util from './utilities.js';
 
 const _isValidValue = (value, type) => {
     switch (type) {

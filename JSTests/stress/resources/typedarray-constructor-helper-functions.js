@@ -1,4 +1,4 @@
-load("./resources/standalone-pre.js");
+load("./standalone-pre.js", "caller relative");
 
 "use strict";
 

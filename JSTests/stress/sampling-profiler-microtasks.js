@@ -1,7 +1,7 @@
 var abort = $vm.abort;
 
 if (platformSupportsSamplingProfiler()) {
-    load("./sampling-profiler/samplingProfiler.js");
+    load("./sampling-profiler/samplingProfiler.js", "caller relative");
 
     let tree = null;
     function testResults() {

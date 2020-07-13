@@ -1,3 +1,30 @@
+2020-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Clean up SourceProvider and add caller relative load script to jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214205
+
+        Reviewed by Yusuke Suzuki.
+
+        js-test-pre needs to strip the parts of file urls between file:///
+        and LayoutTests because that is dependent on the system running
+        the tests. Tests using these harnesses may not be using a server
+        to host the test files.
+
+        Rebaseline module loader error messages against the new string.
+
+        * http/tests/resources/js-test-pre.js:
+        (escapeHTMLAndStripFileURLs):
+        (testFailed):
+        (escapeHTML): Deleted.
+        (testPassed): Deleted.
+        * js/dom/modules/import-incorrect-relative-specifier-expected.txt:
+        * js/dom/modules/module-incorrect-relative-specifier-expected.txt:
+        * resources/js-test-pre.js:
+        (escapeHTMLAndStripFileURLs):
+        (testFailed):
+        (escapeHTML): Deleted.
+        (testPassed): Deleted.
+
 2020-07-13  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Garden two color/gradient failures.

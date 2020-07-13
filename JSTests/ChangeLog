@@ -1,3 +1,120 @@
+2020-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Clean up SourceProvider and add caller relative load script to jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214205
+
+        Reviewed by Yusuke Suzuki.
+
+        There are two main changes here. The first is converting most
+        invocations of load to also pass "caller relative" as the second
+        parameter. This lets those tests be run from any working directory
+        rather than only the same directory as the test script.
+
+        The second change is to prohibit "bare-name" specifiers in our
+        CLI's module loader. This matches pretty much all other module
+        loaders, including WebCore and our Obj-C API.
+
+        * modules/aliased-names.js:
+        * modules/aliasing/drink.js:
+        * modules/caching-should-not-make-ambiguous.js:
+        * modules/default-error/main.js:
+        * modules/execution-order-cyclic/5.js:
+        * modules/execution-order-dag/5.js:
+        * modules/execution-order-tree/5.js:
+        * modules/indirect-export-error/indirect-export-default-2.js:
+        * modules/namespace-ambiguous/ambiguous-2.js:
+        * modules/namespace-ambiguous/ambiguous.js:
+        * modules/namespace-re-export.js:
+        * modules/uncacheable-when-see-star.js:
+        * stress/global-const-redeclaration-setting-2.js:
+        * stress/global-const-redeclaration-setting-3.js:
+        * stress/global-const-redeclaration-setting-4.js:
+        * stress/global-const-redeclaration-setting-5.js:
+        * stress/global-const-redeclaration-setting.js:
+        * stress/global-lexical-redeclare-variable.js:
+        * stress/global-lexical-redefine-const.js:
+        * stress/global-lexical-variable-tdz.js:
+        * stress/global-lexical-variable-unresolved-property.js:
+        * stress/global-property-into-variable-get-from-scope.js:
+        * stress/import-with-empty-string.js:
+        * stress/jsonp-literal-parser-semicolon-is-not-assignment.js:
+        * stress/op_add.js:
+        * stress/op_bitand.js:
+        * stress/op_bitor.js:
+        * stress/op_bitxor.js:
+        * stress/op_div-ConstVar.js:
+        * stress/op_div-VarConst.js:
+        * stress/op_div-VarVar.js:
+        * stress/op_lshift-ConstVar.js:
+        * stress/op_lshift-VarConst.js:
+        * stress/op_lshift-VarVar.js:
+        * stress/op_mod-ConstVar.js:
+        * stress/op_mod-VarConst.js:
+        * stress/op_mod-VarVar.js:
+        * stress/op_mul-ConstVar.js:
+        * stress/op_mul-VarConst.js:
+        * stress/op_mul-VarVar.js:
+        * stress/op_negate.js:
+        * stress/op_postdec.js:
+        * stress/op_postinc.js:
+        * stress/op_predec.js:
+        * stress/op_preinc.js:
+        * stress/op_rshift-ConstVar.js:
+        * stress/op_rshift-VarConst.js:
+        * stress/op_rshift-VarVar.js:
+        * stress/op_sub-ConstVar.js:
+        * stress/op_sub-VarConst.js:
+        * stress/op_sub-VarVar.js:
+        * stress/op_urshift-ConstVar.js:
+        * stress/op_urshift-VarConst.js:
+        * stress/op_urshift-VarVar.js:
+        * stress/regress-159779-1.js:
+        (makeUseRegressionTest):
+        * stress/regress-159779-2.js:
+        (makeUseRegressionTest):
+        * stress/resources/typedarray-constructor-helper-functions.js:
+        * stress/resources/typedarray-test-helper-functions.js:
+        * stress/sampling-profiler-anonymous-function.js:
+        * stress/sampling-profiler-basic.js:
+        * stress/sampling-profiler-bound-function-name.js:
+        * stress/sampling-profiler-deep-stack.js:
+        * stress/sampling-profiler-display-name.js:
+        * stress/sampling-profiler-internal-function-name.js:
+        * stress/sampling-profiler-microtasks.js:
+        * stress/sampling-profiler-wasm-name-section.js:
+        * stress/sampling-profiler-wasm.js:
+        * stress/shadow-chicken-disabled.js:
+        * stress/shadow-chicken-enabled.js:
+        * stress/typedarray-constructor.js:
+        * stress/typedarray-copyWithin.js:
+        * stress/typedarray-every.js:
+        * stress/typedarray-fill.js:
+        * stress/typedarray-filter.js:
+        * stress/typedarray-find.js:
+        * stress/typedarray-findIndex.js:
+        * stress/typedarray-forEach.js:
+        * stress/typedarray-from.js:
+        * stress/typedarray-includes.js:
+        * stress/typedarray-indexOf.js:
+        * stress/typedarray-lastIndexOf.js:
+        * stress/typedarray-map.js:
+        * stress/typedarray-of.js:
+        * stress/typedarray-reduce.js:
+        * stress/typedarray-reduceRight.js:
+        * stress/typedarray-set.js:
+        * stress/typedarray-slice.js:
+        * stress/typedarray-some.js:
+        * stress/typedarray-sort.js:
+        * stress/typedarray-subarray.js:
+        * wasm/Builder.js:
+        * wasm/Builder_WebAssemblyBinary.js:
+        * wasm/LowLevelBinary.js:
+        * wasm/README.md:
+        * wasm/WASM.js:
+        * wasm/regress/selectf64.js:
+        * wasm/spec-harness.js:
+        (import.string_appeared_here.then):
+
 2020-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, mark wasm/references/multitable.js as memory-exhausting

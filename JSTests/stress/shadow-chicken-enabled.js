@@ -6,7 +6,7 @@ var shadowChickenFunctionsOnStack = $vm.shadowChickenFunctionsOnStack;
 
 var verbose = false;
 
-load("resources/shadow-chicken-support.js");
+load("resources/shadow-chicken-support.js", "caller relative");
 initialize();
 
 (function test1() {

@@ -1,3 +1,44 @@
+2020-07-13  Keith Miller  <keith_miller@apple.com>
+
+        Clean up SourceProvider and add caller relative load script to jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214205
+
+        Reviewed by Yusuke Suzuki.
+
+        Refactor WebCore <-> JSC binding layer now that JSC uses WTF::URLs
+        for SourceOrigins.
+
+        Also, improve module loading error messages to include the
+        specifier and referrer when producing errors around bare-name
+        specifiers.
+
+        New error message behavior is already tested so existing tests
+        have been updated.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::sourceURL const):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::initializeJSFunction const):
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/JSLazyEventListener.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluateModule):
+        (WebCore::ScriptController::callInWorld):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::sourceURL const):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::resolveModuleSpecifier):
+        (WebCore::rejectPromise):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::url const):
+
 2020-07-13  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Discard PTS-less samples

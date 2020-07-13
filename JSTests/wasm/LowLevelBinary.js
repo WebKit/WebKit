@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as assert from 'assert.js';
-import * as WASM from 'WASM.js';
+import * as assert from './assert.js';
+import * as WASM from './WASM.js';
 
 const _initialAllocationSize = 1024;
 const _growAllocationSize = allocated => allocated * 2;

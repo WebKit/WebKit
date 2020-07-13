@@ -956,9 +956,9 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
 
-    String sourceURLString = uri ? String::fromUTF8(uri) : String();
-    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURLString },
-        URL({ }, sourceURLString), TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
+    URL sourceURL = uri ? URL({ }, uri) : URL();
+    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURL },
+        sourceURL.string() , TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
     bool success = false;
     JSC::ParserError error;
     switch (mode) {

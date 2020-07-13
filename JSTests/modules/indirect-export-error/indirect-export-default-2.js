@@ -1,1 +1,1 @@
-export * from "indirect-export-default-3.js"
+export * from "./indirect-export-default-3.js"

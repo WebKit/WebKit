@@ -76,7 +76,7 @@ static Expected<URL, String> computeValidImportSpecifier(const URL& base, const 
         return absoluteURL;
 
     if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
-        return makeUnexpected(makeString("Module specifier: "_s, specifier, " does not start with \"/\", \"./\", or \"../\"."_s));
+        return makeUnexpected(makeString("Module specifier: "_s, specifier, " does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, base.string()));
 
     if (specifier.startsWith('/')) {
         absoluteURL = URL(URL({ }, "file://"), specifier);
@@ -150,9 +150,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
         return reject(exception->value());
     }
 
-    String referrer = !sourceOrigin.isNull() ? sourceOrigin.string() : String();
-    URL baseURL(URL(), referrer);
-    auto result = computeValidImportSpecifier(baseURL, specifier);
+    auto result = computeValidImportSpecifier(sourceOrigin.url(), specifier);
     if (result)
         return import(result.value());
     return reject(createError(globalObject, result.error()));

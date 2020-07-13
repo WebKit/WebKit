@@ -29,7 +29,7 @@ create a scope can be nested using a lambda.
 A simple example:
 
 ```javascript
-import Builder from 'Builder.js';
+import Builder from './Builder.js';
 
 const builder = new Builder();
 

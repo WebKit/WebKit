@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as utilities from 'utilities.js';
+import * as utilities from './utilities.js';
 
 const _mapValues = from => {
     let values = {};

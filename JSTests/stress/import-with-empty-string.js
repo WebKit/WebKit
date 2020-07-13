@@ -1,2 +1,2 @@
-import("").then($vm.abort, function () {
+import("").then($vm.abort, function (e) {
 });

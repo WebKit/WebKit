@@ -267,9 +267,11 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     JSC::JSLockHolder locker(vm);
 
     TextPosition startPosition { };
-    String url = String { [[self sourceURL] absoluteString] };
+    String filename = String { [[self sourceURL] absoluteString] };
+    URL url = URL({ }, filename);
     auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
-    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, JSC::SourceOrigin(url), URL({ }, url), startPosition, type);
+    JSC::SourceOrigin origin(url);
+    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, origin, WTFMove(filename), startPosition, type);
     JSC::SourceCode sourceCode(WTFMove(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
     return sourceCode;
 }

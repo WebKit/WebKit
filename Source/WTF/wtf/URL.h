@@ -77,6 +77,10 @@ public:
     bool isEmpty() const;
     bool isValid() const;
 
+    // Since we overload operator NSURL* we have this to prevent accidentally using that operator
+    // when placing a URL in an if statment.
+    operator bool() const = delete;
+
     // Returns true if you can set the host and port for the URL.
     // Non-hierarchical URLs don't have a host and port.
     bool canSetHostOrPort() const { return isHierarchical(); }

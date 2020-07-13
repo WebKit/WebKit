@@ -1,1 +1,1 @@
-import "A";
+import "./A";

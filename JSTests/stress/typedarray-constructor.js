@@ -1,4 +1,4 @@
-load("./resources/typedarray-constructor-helper-functions.js");
+load("./resources/typedarray-constructor-helper-functions.js", "caller relative");
 
 let TypedArray = Object.getPrototypeOf(Int32Array);
 

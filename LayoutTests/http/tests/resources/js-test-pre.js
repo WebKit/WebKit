@@ -109,18 +109,23 @@ function escapeHTML(text)
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\0/g, "\\0");
 }
 
+function escapeHTMLAndStripFileURLs(text)
+{
+    return escapeHTML(text).replace(/file:\/\/.*LayoutTests/g, "file:///LayoutTests");
+}
+
 function testPassed(msg)
 {
     if (silentTestPass)
         didPassSomeTestsSilently = true;
     else
-        debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
+        debug('<span><span class="pass">PASS</span> ' + escapeHTMLAndStripFileURLs(msg) + '</span>');
 }
 
 function testFailed(msg)
 {
     didFailSomeTests = true;
-    debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
+    debug('<span><span class="fail">FAIL</span> ' + escapeHTMLAndStripFileURLs(msg) + '</span>');
 }
 
 function areNumbersEqual(_actual, _expected)
@@ -220,7 +225,7 @@ function evalAndLogResult(_a)
         testFailed(_a + " threw exception " + e);
     }
 
-    debug('<span>' + _a + " is " + escapeHTML(_av) + '</span>');
+    debug('<span>' + _a + " is " + escapeHTMLAndStripFileURLs(_av) + '</span>');
 }
 
 function shouldBe(_a, _b, _quiet)

@@ -45,7 +45,7 @@ namespace WebCore {
 class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
-        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url.string() }, WTFMove(url), startPosition, sourceType))
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }
@@ -58,7 +58,7 @@ public:
     }
 
     ScriptSourceCode(const String& source, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher)
-        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url.string(), WTFMove(scriptFetcher) }, WTFMove(url), startPosition, sourceType))
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }
@@ -74,7 +74,7 @@ public:
 
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
 
-    const URL& url() const { return m_provider->url(); }
+    const URL& url() const { return m_provider->sourceOrigin().url(); }
     
 private:
     Ref<JSC::SourceProvider> m_provider;

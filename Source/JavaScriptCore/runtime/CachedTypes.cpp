@@ -1510,12 +1510,12 @@ class CachedSourceOrigin : public CachedObject<SourceOrigin> {
 public:
     void encode(Encoder& encoder, const SourceOrigin& sourceOrigin)
     {
-        m_string.encode(encoder, sourceOrigin.string());
+        m_string.encode(encoder, sourceOrigin.url().string());
     }
 
     SourceOrigin decode(Decoder& decoder) const
     {
-        return SourceOrigin { m_string.decode(decoder) };
+        return SourceOrigin { URL({ }, m_string.decode(decoder)) };
     }
 
 private:
@@ -1546,7 +1546,7 @@ public:
     void encode(Encoder& encoder, const SourceProvider& sourceProvider)
     {
         m_sourceOrigin.encode(encoder, sourceProvider.sourceOrigin());
-        m_url.encode(encoder, sourceProvider.url().string());
+        m_sourceURL.encode(encoder, sourceProvider.sourceURL());
         m_sourceURLDirective.encode(encoder, sourceProvider.sourceURLDirective());
         m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURLDirective());
         m_startPosition.encode(encoder, sourceProvider.startPosition());
@@ -1560,7 +1560,7 @@ public:
 
 protected:
     CachedSourceOrigin m_sourceOrigin;
-    CachedString m_url;
+    CachedString m_sourceURL;
     CachedString m_sourceURLDirective;
     CachedString m_sourceMappingURLDirective;
     CachedTextPosition m_startPosition;
@@ -1580,10 +1580,10 @@ public:
     {
         String decodedSource = m_source.decode(decoder);
         SourceOrigin decodedSourceOrigin = m_sourceOrigin.decode(decoder);
-        String decodedURL = m_url.decode(decoder);
+        String decodedSourceURL = m_sourceURL.decode(decoder);
         TextPosition decodedStartPosition = m_startPosition.decode(decoder);
 
-        Ref<StringSourceProvider> sourceProvider = StringSourceProvider::create(decodedSource, decodedSourceOrigin, URL(URL(), decodedURL), decodedStartPosition, sourceType);
+        Ref<StringSourceProvider> sourceProvider = StringSourceProvider::create(decodedSource, decodedSourceOrigin, decodedSourceURL, decodedStartPosition, sourceType);
         Base::decode(decoder, sourceProvider.get());
         return &sourceProvider.leakRef();
     }
@@ -1607,11 +1607,11 @@ public:
     {
         Vector<uint8_t> decodedData;
         SourceOrigin decodedSourceOrigin = m_sourceOrigin.decode(decoder);
-        String decodedURL = m_url.decode(decoder);
+        String decodedSourceURL = m_sourceURL.decode(decoder);
 
         m_data.decode(decoder, decodedData);
 
-        Ref<WebAssemblySourceProvider> sourceProvider = WebAssemblySourceProvider::create(WTFMove(decodedData), decodedSourceOrigin, URL(URL(), decodedURL));
+        Ref<WebAssemblySourceProvider> sourceProvider = WebAssemblySourceProvider::create(WTFMove(decodedData), decodedSourceOrigin, decodedSourceURL);
         Base::decode(decoder, sourceProvider.get());
 
         return &sourceProvider.leakRef();

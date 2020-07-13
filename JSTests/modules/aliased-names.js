@@ -1,4 +1,4 @@
-import { a, b, change } from 'aliased-names/main.js'
+import { a, b, change } from './aliased-names/main.js'
 import { shouldBe, shouldThrow } from "./resources/assert.js";
 
 shouldBe(a, 42);

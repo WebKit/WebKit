@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as assert from 'assert.js';
-import LowLevelBinary from 'LowLevelBinary.js';
-import * as WASM from 'WASM.js';
+import * as assert from './assert.js';
+import LowLevelBinary from './LowLevelBinary.js';
+import * as WASM from './WASM.js';
 
 const put = (bin, type, value) => bin[type](value);
 

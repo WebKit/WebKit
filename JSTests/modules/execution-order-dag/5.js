@@ -1,5 +1,5 @@
-import "4.js"
-import "1.js"
+import "./4.js"
+import "./1.js"
 
 var global = (Function("return this"))();
 if (global.count !== 4)

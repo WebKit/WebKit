@@ -55,7 +55,7 @@ public:
     JSC::JSObject* jsFunction() const final { return m_jsFunction.get(); }
     JSC::JSObject* wrapper() const final { return m_wrapper.get(); }
 
-    virtual String sourceURL() const { return String(); }
+    virtual URL sourceURL() const { return { }; }
     virtual TextPosition sourcePosition() const { return TextPosition(); }
 
     String functionName() const;
