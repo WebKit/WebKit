@@ -1,3 +1,24 @@
+2020-07-13  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Discard PTS-less samples
+        https://bugs.webkit.org/show_bug.cgi?id=214252
+
+        Reviewed by Philippe Normand.
+
+        In some cases GStreamer demuxers emit PTS-less samples with metadata
+        at the beginning of the container. These are fortunately not necessary
+        for playback, and in fact incompatible with the way MSE works, where
+        you should be able to start playing a stream from the middle.
+
+        This patch skips these frames in the AppendPipeline so they don't
+        pollute other parts of the MSE codebase.
+
+        Since these frames were not necessary and were later overwritten,
+        this patch is just a cleanup introducing no notable behavior changes.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkNewSample):
+
 2020-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK4] Form controls are not painted when using threaded rendering
