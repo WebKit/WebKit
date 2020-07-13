@@ -1,3 +1,24 @@
+2020-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK4] Form controls are not painted when using threaded rendering
+        https://bugs.webkit.org/show_bug.cgi?id=214178
+
+        Reviewed by Žan Doberšek.
+
+        Which is the default for GTK4 since r263888. The problem is that RenderTheme::paint() returns early if the given
+        GraphicsContext doesn't have a platform context, assuming all RenderTheme implementations paint directly to the
+        platform context. This patch adds a pure virtual canPaint() to RenderTheme to be used as the early return.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeAdwaita.h:
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::canPaint const):
+        * rendering/RenderThemePlayStation.h:
+        * rendering/RenderThemeWin.h:
+
 2020-07-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Unreviewed, remove private debug code

@@ -34,6 +34,8 @@ public:
     virtual ~RenderThemeAdwaita() = default;
 
 private:
+    bool canPaint(const PaintInfo&) const final { return true; }
+
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
     String extraMediaControlsStyleSheet() final;

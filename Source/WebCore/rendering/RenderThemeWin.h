@@ -141,6 +141,8 @@ private:
     RenderThemeWin();
     virtual ~RenderThemeWin();
 
+    bool canPaint(const PaintInfo&) const final { return true; }
+
     // System fonts.
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 

@@ -276,6 +276,7 @@ public:
 #endif
 
 protected:
+    virtual bool canPaint(const PaintInfo&) const = 0;
     virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
     virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
 

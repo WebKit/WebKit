@@ -295,7 +295,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     if (paintInfo.context().paintingDisabled())
         return false;
 
-    if (UNLIKELY(!paintInfo.context().hasPlatformContext()))
+    if (UNLIKELY(!canPaint(paintInfo)))
         return false;
 
     ControlPart part = box.style().appearance();
