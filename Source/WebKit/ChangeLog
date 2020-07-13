@@ -1,3 +1,31 @@
+2020-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add artificial delay to WebSocket connections to mitigate port scanning attacks
+        https://bugs.webkit.org/show_bug.cgi?id=213143
+        <rdar://problem/64308927>
+
+        Reviewed by Alex Christensen.
+
+        When establishing web socket connections, closed ports typically
+        return an error more quickly than open ports due to the additional
+        time it takes open ports to perform a TLS handshake. This patch
+        adds a delay to the closed-port case to prevent distinguishing these
+        cases.
+
+        Test: http/tests/websocket/tests/hybi/closed-port-delay.html
+
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::NetworkSocketStream):
+        (WebKit::randomDelay):
+        Add a random delay between 10 and 100ms before sending IPC.
+
+        (WebKit::NetworkSocketStream::sendDelayedFailMessage):
+        (WebKit::NetworkSocketStream::didFailSocketStream):
+        Only delay for the proper error code indicating the connection
+        was refused for a closed port.
+
+        * NetworkProcess/NetworkSocketStream.h:
+
 2020-07-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] WTR and API-tests timing out after r264283

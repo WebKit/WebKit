@@ -4367,3 +4367,5 @@ webkit.org/b/212267 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 # Only Cocoa ports support the -apple-system font keywords
 fast/text/text-styles/-apple-system [ ImageOnlyFailure ]
 
+# Artificial web socket delays are only supported on wk2. 
+http/tests/websocket/tests/hybi/closed-port-delay.html [ Skip ]

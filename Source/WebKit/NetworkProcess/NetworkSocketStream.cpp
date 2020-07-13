@@ -44,6 +44,7 @@ NetworkSocketStream::NetworkSocketStream(NetworkProcess& networkProcess, URL&& u
     : m_identifier(identifier)
     , m_connection(connection)
     , m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData), NetworkStorageSessionProvider::create(networkProcess, sessionID).ptr()))
+    , m_delayFailTimer(*this, &NetworkSocketStream::sendDelayedFailMessage)
 {
 }
 
@@ -101,10 +102,29 @@ void NetworkSocketStream::didUpdateBufferedAmount(SocketStreamHandle& handle, si
     send(Messages::WebSocketStream::DidUpdateBufferedAmount(amount));
 }
 
+static const auto delayMaxMilliseconds = 100;
+static const double delayMinMilliseconds = 10;
+static const auto closedPortErrorCode = 61;
+
+static Seconds randomDelay()
+{
+    return Seconds::fromMilliseconds(delayMinMilliseconds + static_cast<double>(cryptographicallyRandomNumber() % delayMaxMilliseconds));
+}
+
+void NetworkSocketStream::sendDelayedFailMessage()
+{
+    send(Messages::WebSocketStream::DidFailSocketStream(m_closedPortError));
+}
+
 void NetworkSocketStream::didFailSocketStream(SocketStreamHandle& handle, const SocketStreamError& error)
 {
     ASSERT_UNUSED(handle, &handle == m_impl.ptr());
-    send(Messages::WebSocketStream::DidFailSocketStream(error));
+    
+    if (error.errorCode() == closedPortErrorCode) {
+        m_closedPortError = error;
+        m_delayFailTimer.startOneShot(randomDelay());
+    } else
+        send(Messages::WebSocketStream::DidFailSocketStream(error));
 }
 
 IPC::Connection* NetworkSocketStream::messageSenderConnection() const

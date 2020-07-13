@@ -28,8 +28,10 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebSocketIdentifier.h"
+#include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
 #include <WebCore/SocketStreamHandleImpl.h>
+#include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 
 namespace IPC {
@@ -62,6 +64,7 @@ public:
     void didFailSocketStream(WebCore::SocketStreamHandle&, const WebCore::SocketStreamError&) final;
 
 private:
+    void sendDelayedFailMessage();
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
@@ -70,6 +73,8 @@ private:
     WebSocketIdentifier m_identifier;
     IPC::Connection& m_connection;
     Ref<WebCore::SocketStreamHandleImpl> m_impl;
+    WebCore::Timer m_delayFailTimer;
+    WebCore::SocketStreamError m_closedPortError;
 };
 
 } // namespace WebKit

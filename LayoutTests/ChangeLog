@@ -1,3 +1,27 @@
+2020-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add artificial delay to WebSocket connections to mitigate port scanning attacks
+        https://bugs.webkit.org/show_bug.cgi?id=213143
+        <rdar://problem/64308927>
+
+        Reviewed by Alex Christensen.
+
+        Added layout test coverage, making sure closed ports always experience
+        a delay of at least 10ms.
+
+        * TestExpectations:
+        The added delay code is only present in WebKit, not WebKitLegacy.
+        Additionally, web sockets behave differently on Windows, so this test
+        should be skipped on all platforms and only enabled for mac and ios wk2.
+
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt:
+        With the added delay, this test will only receive one console message.
+        To confirm there will be no flakiness, I ran this test for 500
+        iterations and ensured they passed.
+        * http/tests/websocket/tests/hybi/closed-port-delay-expected.txt: 
+        * http/tests/websocket/tests/hybi/closed-port-delay.html: Added.
+        * platform/wk2/TestExpectations:
+
 2020-07-13  Keith Miller  <keith_miller@apple.com>
 
         Clean up SourceProvider and add caller relative load script to jsc.cpp

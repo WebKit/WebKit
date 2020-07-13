@@ -802,3 +802,5 @@ webkit.org/b/187766 http/wpt/service-workers/update-service-worker.https.html [ 
 # Newly imported test that is flaky on WebKit2 only.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html [ Pass Failure ]
 
+# Closed port web socket delays are only supported on wk2.
+http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]

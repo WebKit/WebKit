@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that WebSocket close report is delayed to mitigate port scanning attacks.");
+
+jsTestIsAsync = true;
+
+var countReceivedMessage = 0;
+
+async function scan_ports()
+{
+    // Scan multiple closed ports.
+    var result1 = await scan_port(8181);
+    var result2 = await scan_port(1234);
+    var result3 = await scan_port(3001);
+    if (result3 == "testPassed" && result2 == "testPassed" && result1 == "testPassed") {
+        testPassed("Successfully delayed reporting of closed WebSocket connection")
+        finishJSTest();
+    } else {
+        testFailed("Failed to delay closed WebSocket connection");
+        finishJSTest();
+    }
+}
+
+// Test based off of BeEF port scanning attack technique (https://github.com/beefproject/beef/blob/master/modules/network/port_scanner/command.js)
+function scan_port(port)
+{
+    return new Promise(function(resolve, reject) {
+        var url = "ws://localhost:" + port;
+        var ws = new WebSocket(url);
+        var startTime = (new Date).getTime();
+        var timeout = 3000;
+
+        clearIntervalID = setInterval(
+        function ()
+        {
+            var interval = (new Date).getTime() - startTime;
+
+            if (ws.readyState === WebSocket.CONNECTING)
+            {
+            }
+
+            if (ws.readyState === WebSocket.OPEN)
+            {
+            }
+
+            if (ws.readyState === WebSocket.CLOSING)
+            {
+            }
+
+            if (ws.readyState === WebSocket.CLOSED)
+            {
+                clearInterval(clearIntervalID);
+                ws.close();
+                countReceivedMessage++;
+                if (interval < 10) {
+                    debug("Timer failed to delay report of closed state");
+                    resolve("testFailed");
+                } else
+                    resolve("testPassed");
+            }
+
+            if (interval >= timeout)
+            {
+                clearInterval(clearIntervalID);
+                debug("Connection timeout");
+                ws.close();
+                resolve("testFailed");
+            }
+        }
+        , 1);
+    });
+}
+
+scan_ports();
+
+</script>
+</body>
+</html>
