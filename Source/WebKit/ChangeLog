@@ -1,3 +1,17 @@
+2020-07-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash under WebKit::LaunchServicesDatabaseManager::didConnect()
+        https://bugs.webkit.org/show_bug.cgi?id=214263
+
+        Reviewed by Darin Adler.
+
+        There is a crash under WebKit::LaunchServicesDatabaseManager::didConnect() when trying to send a message to an invalid connection.
+
+        No new tests, since I have not been able to reproduce.
+
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
+        (WebKit::LaunchServicesDatabaseManager::didConnect):
+
 2020-07-13  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r262538): Nullptr Deref in WTF::Detail::CallableWrapper<WebKit::WebResourceLoadStatisticsStore::performDailyTasks()::$_66, void>::call
