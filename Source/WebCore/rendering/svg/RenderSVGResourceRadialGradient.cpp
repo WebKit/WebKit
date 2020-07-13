@@ -61,12 +61,12 @@ float RenderSVGResourceRadialGradient::focalRadius(const RadialGradientAttribute
     return SVGLengthContext::resolveLength(&radialGradientElement(), attributes.gradientUnits(), attributes.fr());
 }
 
-void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData, const RenderStyle& style) const
+Ref<Gradient> RenderSVGResourceRadialGradient::buildGradient(const RenderStyle& style) const
 {
-    gradientData->gradient = Gradient::create(Gradient::RadialData { this->focalPoint(m_attributes), this->centerPoint(m_attributes), this->focalRadius(m_attributes), this->radius(m_attributes), 1 });
-    gradientData->gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
-
-    addStops(gradientData, m_attributes.stops(), style);
+    auto gradient = Gradient::create(Gradient::RadialData { focalPoint(m_attributes), centerPoint(m_attributes), focalRadius(m_attributes), radius(m_attributes), 1 });
+    gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
+    addStops(gradient, m_attributes.stops(), style);
+    return gradient;
 }
 
 }

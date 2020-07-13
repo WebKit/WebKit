@@ -98,9 +98,9 @@ void SVGGradientElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-Vector<Gradient::ColorStop> SVGGradientElement::buildStops()
+Gradient::ColorStopVector SVGGradientElement::buildStops()
 {
-    Vector<Gradient::ColorStop> stops;
+    Gradient::ColorStopVector stops;
     float previousOffset = 0.0f;
     for (auto& stop : childrenOfType<SVGStopElement>(*this)) {
         auto monotonicallyIncreasingOffset = std::clamp(stop.offset(), previousOffset, 1.0f);

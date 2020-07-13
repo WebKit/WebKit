@@ -34,20 +34,20 @@ public:
 
     SVGLinearGradientElement& linearGradientElement() const { return downcast<SVGLinearGradientElement>(RenderSVGResourceGradient::gradientElement()); }
 
-    RenderSVGResourceType resourceType() const override { return LinearGradientResourceType; }
-
-    SVGUnitTypes::SVGUnitType gradientUnits() const override { return m_attributes.gradientUnits(); }
-    void calculateGradientTransform(AffineTransform& transform) override { transform = m_attributes.gradientTransform(); }
-    bool collectGradientAttributes() override;
-    void buildGradient(GradientData*, const RenderStyle&) const override;
-
     FloatPoint startPoint(const LinearGradientAttributes&) const;
     FloatPoint endPoint(const LinearGradientAttributes&) const;
 
 private:
+    RenderSVGResourceType resourceType() const final { return LinearGradientResourceType; }
+
+    SVGUnitTypes::SVGUnitType gradientUnits() const final { return m_attributes.gradientUnits(); }
+    AffineTransform gradientTransform() const final { return m_attributes.gradientTransform(); }
+    bool collectGradientAttributes() final;
+    Ref<Gradient> buildGradient(const RenderStyle&) const final;
+
     void gradientElement() const = delete;
 
-    const char* renderName() const override { return "RenderSVGResourceLinearGradient"; }
+    const char* renderName() const final { return "RenderSVGResourceLinearGradient"; }
 
     LinearGradientAttributes m_attributes;
 };

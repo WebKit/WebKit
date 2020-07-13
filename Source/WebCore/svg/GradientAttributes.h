@@ -31,14 +31,13 @@ struct GradientAttributes {
         , m_spreadMethodSet(false)
         , m_gradientUnitsSet(false)
         , m_gradientTransformSet(false)
-        , m_stopsSet(false)
     {
     }
 
     SVGSpreadMethodType spreadMethod() const { return static_cast<SVGSpreadMethodType>(m_spreadMethod); }
     SVGUnitTypes::SVGUnitType gradientUnits() const { return static_cast<SVGUnitTypes::SVGUnitType>(m_gradientUnits); }
     AffineTransform gradientTransform() const { return m_gradientTransform; }
-    const Vector<Gradient::ColorStop>& stops() const { return m_stops; }
+    const Gradient::ColorStopVector& stops() const { return m_stops; }
 
     void setSpreadMethod(SVGSpreadMethodType value)
     {
@@ -58,21 +57,20 @@ struct GradientAttributes {
         m_gradientTransformSet = true;
     }
 
-    void setStops(const Vector<Gradient::ColorStop>& value)
+    void setStops(Gradient::ColorStopVector&& value)
     {
-        m_stops = value;
-        m_stopsSet = true;
-    } 
+        m_stops = WTFMove(value);
+    }
 
     bool hasSpreadMethod() const { return m_spreadMethodSet; }
     bool hasGradientUnits() const { return m_gradientUnitsSet; }
     bool hasGradientTransform() const { return m_gradientTransformSet; }
-    bool hasStops() const { return m_stopsSet; }
+    bool hasStops() const { return !m_stops.isEmpty(); }
 
 private:
     // Properties
     AffineTransform m_gradientTransform;
-    Vector<Gradient::ColorStop> m_stops;
+    Gradient::ColorStopVector m_stops;
 
     unsigned m_spreadMethod : 2;
     unsigned m_gradientUnits : 2;
@@ -81,13 +79,12 @@ private:
     unsigned m_spreadMethodSet : 1;
     unsigned m_gradientUnitsSet : 1;
     unsigned m_gradientTransformSet : 1;
-    unsigned m_stopsSet : 1;
 };
 
 struct SameSizeAsGradientAttributes {
     AffineTransform a;
-    Vector<Gradient::ColorStop> b;
-    unsigned c : 8;
+    Gradient::ColorStopVector b;
+    unsigned c : 7;
 };
 
 COMPILE_ASSERT(sizeof(GradientAttributes) == sizeof(SameSizeAsGradientAttributes), GradientAttributes_size_guard);

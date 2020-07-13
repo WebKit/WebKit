@@ -50,11 +50,12 @@ FloatPoint RenderSVGResourceLinearGradient::endPoint(const LinearGradientAttribu
     return SVGLengthContext::resolvePoint(&linearGradientElement(), attributes.gradientUnits(), attributes.x2(), attributes.y2());
 }
 
-void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData, const RenderStyle& style) const
+Ref<Gradient> RenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
 {
-    gradientData->gradient = Gradient::create(Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) });
-    gradientData->gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
-    addStops(gradientData, m_attributes.stops(), style);
+    auto gradient = Gradient::create(Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) });
+    gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
+    addStops(gradient, m_attributes.stops(), style);
+    return gradient;
 }
 
 }

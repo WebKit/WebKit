@@ -1,3 +1,74 @@
+2020-07-12  Darin Adler  <darin@apple.com>
+
+        Some further streamlining of Gradient handling code
+        https://bugs.webkit.org/show_bug.cgi?id=214239
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::interpolateColorStop): Deleted.
+        (WebCore::createConic): Rewrite the interpolation code to create a new
+        vector rather than edit the existing one and to use a more straightforward
+        idiom, and a lambda rather than a helper function. Also removed an explicit
+        conversion to Gradient::ColorStop, no longer needed because of the overload
+        added to Vector::insert.
+
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource): Use ensure rather
+        than add to initialize gradient data in the gradient map. Change the #if
+        for USE(CG) so it doesn't confuse brace matching from the syntax handling
+        of text editors like the one in Xcode. Update for the changes to the
+        buildGradient and gradientTransform functions. Use auto a bit more.
+        (WebCore::RenderSVGResourceGradient::postApplyResource): Update since the
+        map now contains GradientData rather than unique_ptr<GradientData>. Use
+        std::exchange when fetching m_savedContext and a local variable to make
+        the gradient-related code a bit less wordy.
+        (WebCore::RenderSVGResourceGradient::addStops): Updated to take Gradient&
+        rather than GradientData* and made this a static member function.
+        (WebCore::RenderSVGResourceGradient::platformSpreadMethodFromSVGType):
+        Made this a static member function.
+
+        * rendering/svg/RenderSVGResourceGradient.h: Made more functions private.
+        Converted addStops and platformSpreadMethodFromSVGType to static member
+        functions. Made GradientData a member class, and put directly into the
+        HashMap rather than putting unique_ptr into the map. Changed
+        calculateGradientTransform to gradientTransform, which uses a return
+        value rather than an out argument. Changed buildGradient to return
+        Ref<Gradient> rather than taking a GradientData* to store it in.
+
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        (WebCore::RenderSVGResourceLinearGradient::buildGradient const):
+        Changed to return the gradient instead of modifying an argument and
+        updated for the change to addStops.
+
+        * rendering/svg/RenderSVGResourceLinearGradient.h: Made more functions
+        private and updated for changes to gradientTransform and buildGradient.
+
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        (WebCore::RenderSVGResourceRadialGradient::buildGradient const):
+        Changed to return the gradient instead of modifying an argument and
+        updated for the change to addStops.
+
+        * rendering/svg/RenderSVGResourceRadialGradient.h: Made more functions
+        private and updated for changes to gradientTransform and buildGradient.
+
+        * svg/GradientAttributes.h: Removed the stopsSet boolean since
+        the stops vector is empty if and only if it's not set. Made the setStops
+        function take an rvalue reference so it doesn't always copy a vector.
+        Also use the ColorStopVector type, sharing the same inline capacity
+        policy with the Gradient class; both are optimizing the same thing.
+
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops): Use the ColorStopVector type.
+        * svg/SVGGradientElement.h: Update for the above.
+
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::setGradientAttributes): Update for changes to buildStops and
+        removed an unnecessary check for an empty vector now that an empty
+        vector has the same semantics as "no stops".
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::setGradientAttributes): Ditto.
+
 2020-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][Clang] Unreviewed build fix for r264272

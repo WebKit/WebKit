@@ -1,3 +1,13 @@
+2020-07-12  Darin Adler  <darin@apple.com>
+
+        Some further streamlining of Gradient handling code
+        https://bugs.webkit.org/show_bug.cgi?id=214239
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Vector.h: Added an overload for insert analogous to the ones we already have
+        for append and uncheckedAppend, helpful for type deduction.
+
 2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type

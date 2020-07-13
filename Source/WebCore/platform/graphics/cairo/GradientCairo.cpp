@@ -134,29 +134,21 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
     cairo_mesh_pattern_end_patch(gradient);
 }
 
-static Gradient::ColorStop interpolateColorStop(const Gradient::ColorStop& from, const Gradient::ColorStop& to)
-{
-    return { blend(from.offset, to.offset, 0.5), blend(from.color, to.color, 0.5) };
-}
-
 static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float angleRadians,
     Gradient::ColorStopVector stops, float globalAlpha)
 {
     // It's not possible to paint an entire circle with a single Bezier curve.
-    // To have a good approximation to a circle it's necessary to use at least
-    // four Bezier curves. So three additional stops with interpolated colors
-    // are added to force painting of four Bezier curves.
+    // To have a good approximation to a circle it's necessary to use at least four Bezier curves.
+    // So add three additional interpolated stops, allowing for four Bezier curves.
     if (stops.size() == 2) {
-        auto third = interpolateColorStop(stops.first(), stops.last());
-        auto second = interpolateColorStop(stops.first(), third);
-        auto fourth = interpolateColorStop(third, stops.last());
-        stops.insert(1, WTFMove(fourth));
-        stops.insert(1, WTFMove(third));
-        stops.insert(1, WTFMove(second));
+        auto interpolatedStop = [&] (double fraction) -> Gradient::ColorStop {
+            return { blend(stops.first().offset, stops.last().offset, fraction), blend(stops.first().color, stops.last().color, fraction) };
+        };
+        stops = { stops.first(), interpolatedStop(0.25), interpolatedStop(0.5), interpolatedStop(0.75), stops.last() };
     }
 
     if (stops.first().offset > 0.0f)
-        stops.insert(0, Gradient::ColorStop { 0.0f, stops.first().color });
+        stops.insert(0, { 0.0f, stops.first().color });
     if (stops.last().offset < 1.0f)
         stops.append({ 1.0f, stops.last().color });
 

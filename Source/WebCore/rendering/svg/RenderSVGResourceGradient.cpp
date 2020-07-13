@@ -117,44 +117,38 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    auto& gradientData = m_gradientMap.add(&renderer, nullptr).iterator->value;
-    if (!gradientData)
-        gradientData = makeUnique<GradientData>();
-
     bool isPaintingText = resourceMode.contains(RenderSVGResourceMode::ApplyToText);
 
-    // Create gradient object
-    if (!gradientData->gradient) {
-        buildGradient(gradientData.get(), style);
+    auto& gradientData = m_gradientMap.ensure(&renderer, [&]() -> GradientData {
+        auto gradient = buildGradient(style);
+
+        AffineTransform userspaceTransform;
 
         // CG platforms will handle the gradient space transform for text after applying the
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding
         // box applied to the gradient space transform now, so the gradient shader can use it.
+        if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty()
 #if USE(CG)
-        if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty() && !isPaintingText) {
-#else
-        if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty()) {
+            && !isPaintingText
 #endif
-            gradientData->userspaceTransform.translate(objectBoundingBox.location());
-            gradientData->userspaceTransform.scale(objectBoundingBox.size());
+        ) {
+            userspaceTransform.translate(objectBoundingBox.location());
+            userspaceTransform.scale(objectBoundingBox.size());
         }
 
-        AffineTransform gradientTransform;
-        calculateGradientTransform(gradientTransform);
-
-        gradientData->userspaceTransform *= gradientTransform;
+        userspaceTransform *= gradientTransform();
         if (isPaintingText) {
             // Depending on font scaling factor, we may need to rescale the gradient here since
             // text painting removes the scale factor from the context.
             AffineTransform additionalTextTransform;
             if (shouldTransformOnTextPainting(renderer, additionalTextTransform))
-                gradientData->userspaceTransform *= additionalTextTransform;
+                userspaceTransform *= additionalTextTransform;
         }
-        gradientData->gradient->setGradientSpaceTransform(gradientData->userspaceTransform);
-    }
 
-    if (!gradientData->gradient)
-        return false;
+        gradient->setGradientSpaceTransform(userspaceTransform);
+
+        return { WTFMove(gradient), userspaceTransform };
+    }).iterator->value;
 
     // Draw gradient
     context->save();
@@ -166,21 +160,20 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
             return false;
         }
 #endif
-
         context->setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
     }
 
-    const SVGRenderStyle& svgStyle = style.svgStyle();
+    auto& svgStyle = style.svgStyle();
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
         context->setAlpha(svgStyle.fillOpacity());
-        context->setFillGradient(*gradientData->gradient);
+        context->setFillGradient(*gradientData.gradient);
         context->setFillRule(svgStyle.fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
         if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke)
-            gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData->userspaceTransform));
+            gradientData.gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData.userspaceTransform));
         context->setAlpha(svgStyle.strokeOpacity());
-        context->setStrokeGradient(*gradientData->gradient);
+        context->setStrokeGradient(*gradientData.gradient);
         SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
     }
 
@@ -195,21 +188,22 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
 #if USE(CG)
         // CG requires special handling for gradient on text
-        GradientData* gradientData = nullptr;
-        if (m_savedContext && (gradientData = m_gradientMap.get(&renderer))) {
-            // Restore on-screen drawing context
-            context = m_savedContext;
-            m_savedContext = nullptr;
+        if (m_savedContext) {
+            auto gradientData = m_gradientMap.find(&renderer);
+            if (gradientData != m_gradientMap.end()) {
+                auto& gradient = *gradientData->value.gradient;
 
-            AffineTransform gradientTransform;
-            calculateGradientTransform(gradientTransform);
+                // Restore on-screen drawing context
+                context = std::exchange(m_savedContext, nullptr);
 
-            FloatRect targetRect;
-            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(*context, m_imageBuffer, targetRect, &renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform));
-            context->setFillGradient(*gradientData->gradient);
+                FloatRect targetRect;
+                gradient.setGradientSpaceTransform(clipToTextMask(*context, m_imageBuffer, targetRect, &renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform()));
 
-            context->fillRect(targetRect);
-            m_imageBuffer.reset();
+                context->setFillGradient(gradient);
+                context->fillRect(targetRect);
+
+                m_imageBuffer.reset();
+            }
         }
 #else
         UNUSED_PARAM(renderer);
@@ -232,15 +226,13 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     context->restore();
 }
 
-void RenderSVGResourceGradient::addStops(GradientData* gradientData, const Vector<Gradient::ColorStop>& stops, const RenderStyle& style) const
+void RenderSVGResourceGradient::addStops(Gradient& gradient, const Gradient::ColorStopVector& stops, const RenderStyle& style)
 {
-    ASSERT(gradientData);
-    ASSERT(gradientData->gradient);
     for (auto& stop : stops)
-        gradientData->gradient->addColorStop({ stop.offset, style.colorByApplyingColorFilter(stop.color) });
+        gradient.addColorStop({ stop.offset, style.colorByApplyingColorFilter(stop.color) });
 }
 
-GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method) const
+GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)
 {
     switch (method) {
     case SVGSpreadMethodUnknown:
