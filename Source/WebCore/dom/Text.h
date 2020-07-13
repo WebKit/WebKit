@@ -57,6 +57,8 @@ public:
 
     String debugDescription() const final;
 
+    void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength) final;
+
 protected:
     Text(Document& document, const String& data, ConstructionType type)
         : CharacterData(document, data, type)

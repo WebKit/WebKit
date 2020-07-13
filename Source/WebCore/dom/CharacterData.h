@@ -33,6 +33,7 @@ public:
     static ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(CharacterData, m_data); }
 
     WEBCORE_EXPORT void setData(const String&);
+    virtual void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     unsigned length() const { return m_data.length(); }
     WEBCORE_EXPORT ExceptionOr<String> substringData(unsigned offset, unsigned count);
     WEBCORE_EXPORT void appendData(const String&);
@@ -63,7 +64,6 @@ private:
     String nodeValue() const final;
     ExceptionOr<void> setNodeValue(const String&) final;
     bool virtualIsCharacterData() const final { return true; }
-    void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 
     String m_data;

@@ -1,3 +1,26 @@
+2020-07-13  Sihui Liu  <sihui_liu@appe.com>
+
+        Text manipulation does not observe manipulated text after update
+        https://bugs.webkit.org/show_bug.cgi?id=213318
+        <rdar://problem/63766703>
+
+        Reviewed by Geoffrey Garen.
+
+        Make TextManipulationController be aware of content replacement on Text and extract the new content.
+
+        Test: TextManipulation.CompleteTextManipulationForManipulatedTextWithNewContent
+
+        * dom/CharacterData.h:
+        * dom/Text.cpp:
+        (WebCore::Text::setDataAndUpdate):
+        * dom/Text.h:
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::didCreateRendererForElement):
+        (WebCore::TextManipulationController::didUpdateContentForText):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        * editing/TextManipulationController.h:
+        * editing/markup.cpp:
+
 2020-07-13  Keith Miller  <keith_miller@apple.com>
 
         Clean up SourceProvider and add caller relative load script to jsc.cpp

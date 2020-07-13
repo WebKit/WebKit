@@ -33,6 +33,7 @@
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "StyleUpdate.h"
+#include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
@@ -251,5 +252,17 @@ void Text::formatForDebugger(char* buffer, unsigned length) const
     buffer[length - 1] = '\0';
 }
 #endif
+
+void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength)
+{
+    auto oldData = data();
+    CharacterData::setDataAndUpdate(newData, offsetOfReplacedData, oldLength, newLength);
+
+    if (!offsetOfReplacedData) {
+        auto* textManipulationController = document().textManipulationControllerIfExists();
+        if (UNLIKELY(textManipulationController && oldData != newData))
+            textManipulationController->didUpdateContentForText(*this);
+    }
+}
 
 } // namespace WebCore

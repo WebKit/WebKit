@@ -508,8 +508,7 @@ void TextManipulationController::didCreateRendererForElement(Element& element)
     if (m_manipulatedNodes.contains(&element))
         return;
 
-    if (m_elementsWithNewRenderer.computesEmpty())
-        scheduleObservationUpdate();
+    scheduleObservationUpdate();
 
     if (is<PseudoElement>(element)) {
         if (auto* host = downcast<PseudoElement>(element).hostElement())
@@ -518,8 +517,22 @@ void TextManipulationController::didCreateRendererForElement(Element& element)
         m_elementsWithNewRenderer.add(element);
 }
 
+void TextManipulationController::didUpdateContentForText(Text& text)
+{
+    if (!m_manipulatedNodes.contains(&text))
+        return;
+
+    scheduleObservationUpdate();
+
+    m_manipulatedTextsWithNewContent.add(&text);
+}
+
 void TextManipulationController::scheduleObservationUpdate()
 {
+    // An update is already scheduled.
+    if (!m_manipulatedTextsWithNewContent.isEmpty() || !m_elementsWithNewRenderer.computesEmpty())
+        return;
+
     if (!m_document)
         return;
 
@@ -528,23 +541,30 @@ void TextManipulationController::scheduleObservationUpdate()
         if (!controller)
             return;
 
-        HashSet<Ref<Element>> elementsToObserve;
+        HashSet<Ref<Node>> nodesToObserve;
         for (auto& weakElement : controller->m_elementsWithNewRenderer)
-            elementsToObserve.add(weakElement);
+            nodesToObserve.add(weakElement);
         controller->m_elementsWithNewRenderer.clear();
 
-        if (elementsToObserve.isEmpty())
+        for (auto* text : controller->m_manipulatedTextsWithNewContent) {
+            if (!controller->m_manipulatedNodes.contains(text))
+                continue;
+            controller->m_manipulatedNodes.remove(text);
+            nodesToObserve.add(*text);
+        }
+        controller->m_manipulatedTextsWithNewContent.clear();
+
+        if (nodesToObserve.isEmpty())
             return;
 
         RefPtr<Node> commonAncestor;
-        for (auto& element : elementsToObserve) {
+        for (auto& node : nodesToObserve) {
             if (!commonAncestor)
-                commonAncestor = makeRefPtr(element.get());
-            else if (!element->isDescendantOf(commonAncestor.get())) {
-                commonAncestor = commonInclusiveAncestor(*commonAncestor, element.get());
-                ASSERT(commonAncestor);
-            }
+                commonAncestor = is<ContainerNode>(node.get()) ? node.ptr() : node->parentNode();
+            else if (!node->isDescendantOf(commonAncestor.get()))
+                commonAncestor = commonInclusiveAncestor(*commonAncestor, node.get());
         }
+
         auto start = firstPositionInOrBeforeNode(commonAncestor.get());
         auto end = lastPositionInOrAfterNode(commonAncestor.get());
         controller->observeParagraphs(start, end);
