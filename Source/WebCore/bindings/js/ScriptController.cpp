@@ -136,9 +136,9 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     // See smart window.open policy for where this is used.
     auto& proxy = jsWindowProxy(world);
     auto& globalObject = *proxy.window();
-    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     Ref<Frame> protector(m_frame);
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -233,9 +233,9 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
-    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     Ref<Frame> protector(m_frame);
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     auto returnValue = moduleRecord.evaluate(&lexicalGlobalObject);
@@ -648,9 +648,9 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     const auto& jsSourceCode = sourceCode.jsSourceCode();
 
     const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
-    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     Ref<Frame> protector(m_frame);
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
