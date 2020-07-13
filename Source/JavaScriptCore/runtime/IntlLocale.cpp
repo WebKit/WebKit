@@ -220,6 +220,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
 
     String tag = tagValue.inherits<IntlLocale>(vm) ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
     initializeLocale(globalObject, tag, optionsValue);
 }
 

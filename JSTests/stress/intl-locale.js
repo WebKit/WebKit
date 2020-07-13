@@ -44,6 +44,7 @@ shouldThrow(() => new Intl.Locale('en--US'), RangeError);
 shouldThrow(() => new Intl.Locale(['en', 'ja']), RangeError);
 shouldThrow(() => new Intl.Locale({}), RangeError);
 shouldThrow(() => new Intl.Locale({ toString() { throw new Error(); } }), Error);
+shouldThrow(() => new Intl.Locale([]), RangeError);
 shouldNotThrow(() => new Intl.Locale({ toString() { return 'en'; } }));
 
 shouldThrow(() => new Intl.Locale('en', null), TypeError);

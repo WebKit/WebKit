@@ -1,5 +1,15 @@
 2020-07-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] IntlLocale::initializeLocale should have scope.release
+        https://bugs.webkit.org/show_bug.cgi?id=214271
+        <rdar://problem/65467314>
+
+        Reviewed by Darin Adler.
+
+        * stress/intl-locale.js:
+
+2020-07-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] FTL isCellOrMisc should be isCellOrMiscOrBigInt32
         https://bugs.webkit.org/show_bug.cgi?id=214269
         <rdar://problem/65475129>
