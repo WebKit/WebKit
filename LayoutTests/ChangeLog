@@ -1,3 +1,31 @@
+2020-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        Windows WebKit1 doesn't check lines with "EDITING DELEGATE:" (Bug 64471).
+        Rebasedlined with WinCairo WebKit2's results.
+
+        * platform/wincairo/editing/execCommand/findString-2-expected.txt:
+        * platform/wincairo/editing/selection/6476-expected.txt:
+        * platform/wincairo/editing/selection/click-start-of-line-expected.txt:
+        * platform/wincairo/editing/selection/contenteditable-click-inside-expected.txt:
+        * platform/wincairo/editing/selection/doubleclick-crash-expected.txt:
+        * platform/wincairo/editing/selection/editable-html-element-expected.txt:
+        * platform/wincairo/editing/selection/editable-links-expected.txt:
+        * platform/wincairo/editing/selection/expanding-selections-expected.txt:
+        * platform/wincairo/editing/selection/expanding-selections2-expected.txt:
+        * platform/wincairo/editing/selection/fake-doubleclick-expected.txt:
+        * platform/wincairo/editing/selection/focus-body-expected.txt:
+        * platform/wincairo/editing/selection/focus_editable_html-expected.txt:
+        * platform/wincairo/editing/selection/mixed-editability-1-expected.txt:
+        * platform/wincairo/editing/selection/paragraph-granularity-expected.txt:
+        * platform/wincairo/editing/selection/select-all-006-expected.txt:
+        * platform/wincairo/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/wincairo/editing/selection/selection-actions-expected.txt:
+        * platform/wincairo/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/wincairo/editing/selection/word-granularity-expected.txt:
+        * platform/wincairo/editing/style/apple-style-editable-mix-expected.txt:
+
 2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type
