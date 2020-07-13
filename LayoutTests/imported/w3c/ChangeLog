@@ -1,3 +1,16 @@
+2020-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop a couple of payment-requests WPT tests
+
+        Those tests should have been dropped during the recent resync in r264239 since they no longer
+        exist upstream.
+
+        * web-platform-tests/payment-request/PaymentItem/type_member.https-expected.txt: Removed.
+        * web-platform-tests/payment-request/PaymentItem/type_member.https.html: Removed.
+        * web-platform-tests/payment-request/PaymentItem/w3c-import.log: Removed.
+        * web-platform-tests/payment-request/payment-request-update-event-updatewith-method.https-expected.txt: Removed.
+        * web-platform-tests/payment-request/payment-request-update-event-updatewith-method.https.html: Removed.
+
 2020-07-12  Rob Buis  <rbuis@igalia.com>
 
         Improve IPv6 detection when setting host/hostname
