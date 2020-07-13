@@ -262,12 +262,10 @@ inline unsigned VM::nextID()
 
 static bool vmCreationShouldCrash = false;
 
-VM::VM(VMType vmType, HeapType heapType)
+VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop)
     : m_id(nextID())
     , m_apiLock(adoptRef(new JSLock(this)))
-#if USE(CF)
-    , m_runLoop(CFRunLoopGetCurrent())
-#endif // USE(CF)
+    , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
     , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber())
     , m_integrityRandom(*this)
     , heap(*this, heapType)
@@ -671,9 +669,9 @@ Ref<VM> VM::createContextGroup(HeapType heapType)
     return adoptRef(*new VM(APIContextGroup, heapType));
 }
 
-Ref<VM> VM::create(HeapType heapType)
+Ref<VM> VM::create(HeapType heapType, WTF::RunLoop* runLoop)
 {
-    return adoptRef(*new VM(Default, heapType));
+    return adoptRef(*new VM(Default, heapType, runLoop));
 }
 
 bool VM::sharedInstanceExists()
@@ -1354,15 +1352,6 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
     }
 }
 #endif
-
-#if USE(CF)
-void VM::setRunLoop(CFRunLoopRef runLoop)
-{
-    ASSERT(runLoop);
-    m_runLoop = runLoop;
-    JSRunLoopTimer::Manager::shared().didChangeRunLoop(*this, runLoop);
-}
-#endif // USE(CF)
 
 ScratchBuffer* VM::scratchBufferForSize(size_t size)
 {

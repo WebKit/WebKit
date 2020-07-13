@@ -55,7 +55,13 @@ JSC::VM& commonVMSlow()
     // Also, initializeMainThread() does nothing on iOS.
     ScriptController::initializeMainThread();
 
-    auto& vm = JSC::VM::create(JSC::LargeHeap).leakRef();
+    RunLoop* runLoop = nullptr;
+#if PLATFORM(IOS_FAMILY)
+    if (RunLoop* web = RunLoop::webIfExists())
+        runLoop = web;
+#endif
+
+    auto& vm = JSC::VM::create(JSC::LargeHeap, runLoop).leakRef();
 
     g_commonVMOrNull = &vm;
 
@@ -64,7 +70,6 @@ JSC::VM& commonVMSlow()
 #if PLATFORM(IOS_FAMILY)
     if (WebThreadIsEnabled())
         vm.apiLock().makeWebThreadAware();
-    vm.setRunLoop(WebThreadRunLoop());
     vm.heap.machineThreads().addCurrentThread();
 #endif
 

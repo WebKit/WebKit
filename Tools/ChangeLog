@@ -1,3 +1,19 @@
+2020-07-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, re-landing r264242 with crash fixed.
+
+        Re-landed changeset:
+
+        "JSRunLoopTimer should use WTF::RunLoop rather than custom CF
+        code"
+        https://bugs.webkit.org/show_bug.cgi?id=214102
+        https://trac.webkit.org/changeset/264242
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/JavaScriptCore/JSRunLoopTimer.mm: Added.
+        (-[TestObject dealloc]):
+        (TestWebKitAPI::TEST):
+
 2020-07-13  Sam Weinig  <weinig@apple.com>
 
         Replace single argument makeSimpleColor uses with their implementation

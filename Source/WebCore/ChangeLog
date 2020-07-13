@@ -1,3 +1,17 @@
+2020-07-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, re-landing r264242 with crash fixed.
+
+        Re-landed changeset:
+
+        "JSRunLoopTimer should use WTF::RunLoop rather than custom CF
+        code"
+        https://bugs.webkit.org/show_bug.cgi?id=214102
+        https://trac.webkit.org/changeset/264242
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+
 2020-07-13  Eric Carlson  <eric.carlson@apple.com>
 
         Impossible to pause playback of MediaStream video track
