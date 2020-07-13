@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Module specifier, '' does not start with "/", "./", or "../". Referenced from runtime-controller-import.html
 CONSOLE MESSAGE: TypeError: Importing a module script failed.
 CONSOLE MESSAGE: Cocoa is Sweet.
 CONSOLE MESSAGE: %o

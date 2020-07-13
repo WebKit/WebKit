@@ -1,5 +1,11 @@
 2020-07-13  Lauro Moura  <lmoura@igalia.com>
 
+        Unreviewed. Update baseline after r264304 with new message.
+
+        * inspector/controller/runtime-controller-import-expected.txt:
+
+2020-07-13  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Remove child expectations last commit.
 
         They were overrinding the glib one. Also added a note to remember to
