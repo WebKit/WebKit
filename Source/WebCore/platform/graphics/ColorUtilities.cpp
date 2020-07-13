@@ -27,7 +27,6 @@
 #include "ColorUtilities.h"
 
 #include "ColorConversion.h"
-#include "ColorTypes.h"
 
 namespace WebCore {
 
