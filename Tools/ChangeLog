@@ -1,3 +1,20 @@
+2020-07-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Stick to default Glib source priorities in HeadlessViewBackend, WindowViewBackend
+        https://bugs.webkit.org/show_bug.cgi?id=214249
+
+        Reviewed by Carlos Garcia Campos.
+
+        The -70 GLib source priority was a magic baseline used to align other
+        GLib source priorities throughout the WPE stack. We moved to the
+        G_PRIORITY_DEFAULT value since then, so that's the value that should
+        be used in the two in-tree view backend implementations as well.
+
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+
 2020-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS]: A HEIF image, selected from the OpenPanel, should be converted to an accepted MIME type

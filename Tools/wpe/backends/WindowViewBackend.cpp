@@ -550,7 +550,7 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
         source.pfd.revents = 0;
         g_source_add_poll(&source.source, &source.pfd);
 
-        g_source_set_priority(&source.source, G_PRIORITY_HIGH + 30);
+        g_source_set_priority(&source.source, G_PRIORITY_DEFAULT);
         g_source_set_can_recurse(&source.source, TRUE);
         g_source_attach(&source.source, g_main_context_get_thread_default());
     }

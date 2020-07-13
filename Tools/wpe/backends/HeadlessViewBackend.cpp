@@ -55,9 +55,6 @@ struct HeadlessInstance {
 
 static cairo_user_data_key_t s_bufferKey;
 
-// Keep this in sync with wtf/glib/RunLoopSourcePriority.h.
-static int kRunLoopSourcePriorityDispatcher = -70;
-
 HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
 {
@@ -108,7 +105,7 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
         static_cast<HeadlessViewBackend*>(data)->vsync();
         return TRUE;
     }, this, nullptr);
-    g_source_set_priority(m_update.source, kRunLoopSourcePriorityDispatcher);
+    g_source_set_priority(m_update.source, G_PRIORITY_DEFAULT);
     g_source_attach(m_update.source, g_main_context_default());
 }
 
