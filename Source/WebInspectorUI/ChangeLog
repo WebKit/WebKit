@@ -1,3 +1,13 @@
+2020-07-13  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: wrong bundle version being used for WebInspectorUI.framework in macOS Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=214274
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Version.xcconfig: Make this match other Version.xcconfig after
+        the changes in <https://trac.webkit.org/changeset/263364>.
+
 2020-07-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: title bar of undocked inspector should be white in BigSur
