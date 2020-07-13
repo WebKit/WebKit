@@ -1,3 +1,11 @@
+2020-07-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Garden two color/gradient failures.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-07-13  Karl Rackler  <rackler@apple.com>
 
         [ iOS WK2 Release ] fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html is flaky failing. 
