@@ -1,3 +1,17 @@
+2020-07-13  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r262538): Nullptr Deref in WTF::Detail::CallableWrapper<WebKit::WebResourceLoadStatisticsStore::performDailyTasks()::$_66, void>::call
+        https://bugs.webkit.org/show_bug.cgi?id=214264
+        <rdar://problem/65093949>
+
+        Reviewed by Darin Adler.
+
+        A new type check was added outside of the protecting nullptr check. This introduced
+        a new nullptr dereference bug.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+
 2020-07-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Add artificial delay to WebSocket connections to mitigate port scanning attacks

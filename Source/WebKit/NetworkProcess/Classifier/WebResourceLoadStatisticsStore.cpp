@@ -755,9 +755,9 @@ void WebResourceLoadStatisticsStore::performDailyTasks()
         if (m_statisticsStore) {
             m_statisticsStore->includeTodayAsOperatingDateIfNecessary();
             m_statisticsStore->calculateAndSubmitTelemetry();
+            if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore))
+                downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).runIncrementalVacuumCommand();
         }
-        if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore))
-            downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).runIncrementalVacuumCommand();
     });
 }
 
