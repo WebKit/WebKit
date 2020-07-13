@@ -1,3 +1,13 @@
+2020-07-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove live ranges from Document.h, AlternativeTextController.h, DictionaryLookup.h, and WebPage.h
+        https://bugs.webkit.org/show_bug.cgi?id=214109
+
+        Unreviewed Catalyst build fix.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+
 2020-07-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup to bug 213143: Add artificial delay to WebSocket connections to mitigate port scanning attacks

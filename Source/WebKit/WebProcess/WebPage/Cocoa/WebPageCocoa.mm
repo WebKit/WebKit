@@ -204,7 +204,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
 #if PLATFORM(MAC)
     dictionaryPopupInfo.attributedString = scaledAttributedString;
 #elif PLATFORM(MACCATALYST)
-    dictionaryPopupInfo.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:range.text()]);
+    dictionaryPopupInfo.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:plainText(range)]);
 #endif
 
     editor.setIsGettingDictionaryPopupInfo(false);
