@@ -1,3 +1,20 @@
+2020-07-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] fixup LLInt fast path in op_get_private_name
+        https://bugs.webkit.org/show_bug.cgi?id=214311
+
+        Reviewed by Tadeu Zagallo.
+
+        The LLInt slow path would previously always be taken in op_get_private_name,
+        due to not comparing the operand field name's JSValue payload with the cached
+        field name, but the register index itself.
+
+        This fixup can't really be verified by tests, as it is primarily a
+        minor performance improvement.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2020-07-14  Xan Lopez  <xan@igalia.com>
 
         [JSC] Remove compiler warning in JSBigInt

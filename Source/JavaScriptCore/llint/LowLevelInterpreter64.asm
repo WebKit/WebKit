@@ -1699,7 +1699,8 @@ llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dis
     metadata(t2, t0)
 
     # Slow path if the private field is stale
-    get(m_property, t0)
+    get(m_property, t1)
+    loadConstantOrVariable(size, t1, t0)
     loadp OpGetPrivateName::Metadata::m_property[t2], t1
     bpneq t1, t0, .opGetPrivateNameSlow
 
