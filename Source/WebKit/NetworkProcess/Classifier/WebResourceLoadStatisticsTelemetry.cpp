@@ -45,7 +45,6 @@ using namespace WebCore;
 
 const unsigned minimumPrevalentResourcesForTelemetry = 3;
 const unsigned significantFiguresForLoggedValues = 3;
-static bool notifyPagesWhenTelemetryWasCaptured = false;
 
 struct PrevalentResourceTelemetry {
     unsigned numberOfTimesDataRecordsRemoved;
@@ -216,12 +215,12 @@ void static notifyPages(const Vector<PrevalentResourceTelemetry>& sortedPrevalen
     notifyPages(sortedPrevalentResources.size(), totalNumberOfPrevalentResourcesWithUserInteraction, 0, 0, 0, 0, median(sortedPrevalentResourcesWithoutUserInteraction, 0, 2, subframeUnderTopFrameOriginsGetter), 0, 0, 0,  store);
 }
     
-void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadStatisticsMemoryStore& resourceLoadStatisticsStore)
+void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadStatisticsMemoryStore& resourceLoadStatisticsStore, NotifyPagesForTesting notifyPagesWhenTelemetryWasCaptured)
 {
     ASSERT(!RunLoop::isMain());
     
     auto sortedPrevalentResources = sortedPrevalentResourceTelemetry(resourceLoadStatisticsStore);
-    if (notifyPagesWhenTelemetryWasCaptured && sortedPrevalentResources.isEmpty()) {
+    if (notifyPagesWhenTelemetryWasCaptured == NotifyPagesForTesting::Yes && sortedPrevalentResources.isEmpty()) {
         notifyPages(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, resourceLoadStatisticsStore.store());
         return;
     }
@@ -238,15 +237,15 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
     }
     
     // Dispatch on the main thread to make sure the WebPageProxy we're using doesn't go away.
-    RunLoop::main().dispatch([sortedPrevalentResources = WTFMove(sortedPrevalentResources), sortedPrevalentResourcesWithoutUserInteraction = WTFMove(sortedPrevalentResourcesWithoutUserInteraction), prevalentResourcesDaysSinceUserInteraction = WTFMove(prevalentResourcesDaysSinceUserInteraction), store = makeRef(resourceLoadStatisticsStore.store())] () {
+    RunLoop::main().dispatch([notifyPagesWhenTelemetryWasCaptured, sortedPrevalentResources = WTFMove(sortedPrevalentResources), sortedPrevalentResourcesWithoutUserInteraction = WTFMove(sortedPrevalentResourcesWithoutUserInteraction), prevalentResourcesDaysSinceUserInteraction = WTFMove(prevalentResourcesDaysSinceUserInteraction), store = makeRef(resourceLoadStatisticsStore.store())] () {
         auto webPageProxy = WebPageProxy::nonEphemeralWebPageProxy();
         if (!webPageProxy) {
-            if (notifyPagesWhenTelemetryWasCaptured)
+            if (notifyPagesWhenTelemetryWasCaptured == NotifyPagesForTesting::Yes)
                 notifyPages(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, store);
             return;
         }
         
-        if (notifyPagesWhenTelemetryWasCaptured) {
+        if (notifyPagesWhenTelemetryWasCaptured == NotifyPagesForTesting::Yes) {
             notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size(), store);
             // The notify pages function is for testing so we don't need to do an actual submission.
             return;
@@ -303,20 +302,20 @@ static void databaseSubmitTopLists(const PrevalentResourceDatabaseTelemetry& tel
     }
 }
 
-void WebResourceLoadStatisticsTelemetry::submitTelemetry(const ResourceLoadStatisticsDatabaseStore& resourceLoadStatisticsStore, PrevalentResourceDatabaseTelemetry& prevalentResourceDatabaseTelemetry)
+void WebResourceLoadStatisticsTelemetry::submitTelemetry(const ResourceLoadStatisticsDatabaseStore& resourceLoadStatisticsStore, PrevalentResourceDatabaseTelemetry& prevalentResourceDatabaseTelemetry, NotifyPagesForTesting notifyPagesWhenTelemetryWasCaptured)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (notifyPagesWhenTelemetryWasCaptured && !prevalentResourceDatabaseTelemetry.numberOfPrevalentResources) {
+    if (notifyPagesWhenTelemetryWasCaptured == NotifyPagesForTesting::Yes && !prevalentResourceDatabaseTelemetry.numberOfPrevalentResources) {
         notifyPages(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, resourceLoadStatisticsStore.store());
         return;
     }
 
     // Dispatch on the main thread to make sure the WebPageProxy we're using doesn't go away.
-    RunLoop::main().dispatch([telemetry = WTFMove(prevalentResourceDatabaseTelemetry), store = makeRef(resourceLoadStatisticsStore.store())] () {
+    RunLoop::main().dispatch([notifyPagesWhenTelemetryWasCaptured, telemetry = WTFMove(prevalentResourceDatabaseTelemetry), store = makeRef(resourceLoadStatisticsStore.store())] () {
 
         // The notify pages function is for testing so we don't need to do an actual submission.
-        if (notifyPagesWhenTelemetryWasCaptured) {
+        if (notifyPagesWhenTelemetryWasCaptured == NotifyPagesForTesting::Yes) {
             if (telemetry.numberOfPrevalentResourcesWithoutUserInteraction < 3) {
                 notifyPages(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, store);
                 return;
@@ -349,12 +348,6 @@ void WebResourceLoadStatisticsTelemetry::submitTelemetry(const ResourceLoadStati
         databaseSubmitTopLists(telemetry, store);
     });
 }
-    
-void WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(bool always)
-{
-    notifyPagesWhenTelemetryWasCaptured = always;
-}
-    
 }
 
 #endif

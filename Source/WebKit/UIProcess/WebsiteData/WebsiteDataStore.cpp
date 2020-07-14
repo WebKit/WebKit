@@ -1687,14 +1687,6 @@ void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, Comple
         processPool->ensureNetworkProcess().setIsRunningResourceLoadStatisticsTest(m_sessionID, value, [processPool, callbackAggregator] { });
 }
 
-void WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured(bool value, CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    
-    for (auto& processPool : processPools())
-        processPool->ensureNetworkProcess().setNotifyPagesWhenTelemetryWasCaptured(m_sessionID, value, [processPool, callbackAggregator] { });
-}
-
 void WebsiteDataStore::getAllStorageAccessEntries(WebPageProxyIdentifier pageID, CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
 {
     auto* webPage = WebProcessProxy::webPage(pageID);

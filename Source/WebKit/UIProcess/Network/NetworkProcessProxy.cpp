@@ -725,16 +725,6 @@ void NetworkProcessProxy::setTimeToLiveUserInteraction(PAL::SessionID sessionID,
     sendWithAsyncReply(Messages::NetworkProcess::SetTimeToLiveUserInteraction(sessionID, seconds), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::setNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler();
-        return;
-    }
-    
-    sendWithAsyncReply(Messages::NetworkProcess::SetNotifyPagesWhenTelemetryWasCaptured(sessionID, value), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

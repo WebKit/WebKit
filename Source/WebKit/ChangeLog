@@ -1,3 +1,59 @@
+2020-07-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ macOS iOS ] http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html is a rare flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=212165
+        <rdar://problem/63462045>
+
+        Reviewed by Brent Fulgham.
+
+        Test was flaking because of multiple async calls to submit telemetry,
+        which happen when a new ITP store is created and again when the test
+        makes an SPI call. If the first telemetry call is reported after the test
+        sets notifyPagesWhenTelemetryWasCaptured but before the SPI call to capture
+        telemetry is submitted, the test will receive the wrong data.
+        To fix this, we should simplify by removing the separate function to
+        tell ITP to report telemetry, and instead always report when the testing
+        SPI call is made. 
+
+        No new tests, will fix flaky tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry):
+        Pass in new enum value to indicate when the telemetry call is coming
+        from the testing SPI.
+
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        (WebKit::WebResourceLoadStatisticsTelemetry::submitTelemetry):
+        (WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.h:
+        Remove static bool variable notifyPagesWhenTelemetryWasCaptured and
+        rely on the submitTelemetry function call to let us know when to report telemetry.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Remove setNotifyPagesWhenTelemetryWasCaptured function.
+
 2020-07-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Sometimes unable to type Japanese on docs.google.com

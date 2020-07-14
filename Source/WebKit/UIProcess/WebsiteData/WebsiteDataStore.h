@@ -185,7 +185,6 @@ public:
     void setTopFrameUniqueRedirectFrom(const URL& topFrameHostName, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&&);
     void setMaxStatisticsEntries(size_t, CompletionHandler<void()>&&);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds, CompletionHandler<void()>&&);
-    void setNotifyPagesWhenTelemetryWasCaptured(bool, CompletionHandler<void()>&&);
     void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setPrevalentResourceForDebugMode(const URL&, CompletionHandler<void()>&&);
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);

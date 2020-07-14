@@ -127,7 +127,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::SessionID sessionID, bool value) -> () Async
     SetNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value) -> () Async
     SetIsRunningResourceLoadStatisticsTest(PAL::SessionID sessionID, bool value) -> () Async
-    SetNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value) -> () Async
     SetResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode) -> () Async
     SetVeryPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
     SetSubframeUnderTopFrameDomain(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async

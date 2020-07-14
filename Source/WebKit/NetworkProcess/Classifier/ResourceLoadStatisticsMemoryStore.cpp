@@ -98,12 +98,12 @@ void ResourceLoadStatisticsMemoryStore::setPersistentStorage(ResourceLoadStatist
     m_persistentStorage = makeWeakPtr(persistentStorage);
 }
 
-void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry() const
+void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry(NotifyPagesForTesting shouldNotifyPagesForTesting) const
 {
     ASSERT(!RunLoop::isMain());
 
     if (parameters().shouldSubmitTelemetry)
-        WebResourceLoadStatisticsTelemetry::calculateAndSubmit(*this);
+        WebResourceLoadStatisticsTelemetry::calculateAndSubmit(*this, shouldNotifyPagesForTesting);
 }
 
 static void ensureThirdPartyDataForSpecificFirstPartyDomain(Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty>& thirdPartyDataForSpecificFirstPartyDomain, const RegistrableDomain& firstPartyDomain, bool thirdPartyHasStorageAccess)

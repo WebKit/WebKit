@@ -29,6 +29,7 @@
 
 #include "ResourceLoadStatisticsClassifier.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include "WebResourceLoadStatisticsTelemetry.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
@@ -156,7 +157,7 @@ public:
     void setPruneEntriesDownTo(size_t pruneTargetCount);
     void resetParametersToDefaultValues();
 
-    virtual void calculateAndSubmitTelemetry() const = 0;
+    virtual void calculateAndSubmitTelemetry(NotifyPagesForTesting = NotifyPagesForTesting::No) const = 0;
 
     void setNotifyPagesWhenDataRecordsWereScanned(bool);
     void setIsRunningTest(bool);

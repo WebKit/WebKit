@@ -332,7 +332,6 @@ interface TestRunner {
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
     void setStatisticsIsRunningTest(boolean value);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
-    void setStatisticsNotifyPagesWhenTelemetryWasCaptured(boolean value);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds);
     void setStatisticsGrandfatheringTime(double seconds);
     void setStatisticsMaxStatisticsEntries(unsigned long entries);

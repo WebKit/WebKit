@@ -159,14 +159,6 @@ void WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
     });
 }
 
-void WebResourceLoadStatisticsStore::setNotifyPagesWhenTelemetryWasCaptured(bool value, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
-    completionHandler();
-}
-
 static Ref<WorkQueue> sharedStatisticsQueue()
 {
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility));
@@ -768,11 +760,7 @@ void WebResourceLoadStatisticsStore::submitTelemetry(CompletionHandler<void()>&&
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable  {
         if (!m_statisticsStore)
             return;
-        
-        if (is<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore))
-            WebResourceLoadStatisticsTelemetry::calculateAndSubmit(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore));
-        else
-            m_statisticsStore->calculateAndSubmitTelemetry();
+        m_statisticsStore->calculateAndSubmitTelemetry(NotifyPagesForTesting::Yes);
         postTaskReply(WTFMove(completionHandler));
     });
 }

@@ -475,13 +475,6 @@ void WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemo
 #endif
 }
 
-void WKWebsiteDataStoreSetStatisticsNotifyPagesWhenTelemetryWasCaptured(WKWebsiteDataStoreRef dataStoreRef, bool value)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->setNotifyPagesWhenTelemetryWasCaptured(value, []() { });
-#endif
-}
-
 void WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval(WKWebsiteDataStoreRef dataStoreRef, double seconds)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

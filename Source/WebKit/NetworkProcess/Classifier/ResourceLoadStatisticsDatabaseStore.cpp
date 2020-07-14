@@ -1252,14 +1252,14 @@ void ResourceLoadStatisticsDatabaseStore::calculateTelemetryData(PrevalentResour
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry() const
+void ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry(NotifyPagesForTesting shouldNotifyPagesForTesting) const
 {
     ASSERT(!RunLoop::isMain());
 
     if (parameters().shouldSubmitTelemetry) {
         PrevalentResourceDatabaseTelemetry prevalentResourceDatabaseTelemetry;
         calculateTelemetryData(prevalentResourceDatabaseTelemetry);
-        WebResourceLoadStatisticsTelemetry::submitTelemetry(*this, prevalentResourceDatabaseTelemetry);
+        WebResourceLoadStatisticsTelemetry::submitTelemetry(*this, prevalentResourceDatabaseTelemetry, shouldNotifyPagesForTesting);
     }
 }
 

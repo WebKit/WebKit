@@ -3755,11 +3755,6 @@ void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemova
     WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(websiteDataStore(), value);
 }
 
-void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
-{
-    WKWebsiteDataStoreSetStatisticsNotifyPagesWhenTelemetryWasCaptured(websiteDataStore(), value);
-}
-
 void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds)
 {
     WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval(websiteDataStore(), seconds);
