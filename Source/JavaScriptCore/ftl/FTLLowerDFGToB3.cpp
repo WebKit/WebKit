@@ -14712,13 +14712,14 @@ private:
 
         BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
         const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
-        uint64_t* ptr = vm().getLoopHintExecutionCounter(instruction);
+        VM* vm = &this->vm();
+        uint64_t* ptr = vm->getLoopHintExecutionCounter(instruction);
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->effects = Effects::none();
         patchpoint->effects.exitsSideways = true;
         patchpoint->effects.writesLocalState = true;
-        patchpoint->setGenerator([ptr] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             auto restore = [&] {
                 jit.popToRestore(GPRInfo::regT2);
                 jit.popToRestore(GPRInfo::regT1);
@@ -14734,6 +14735,13 @@ private:
             jit.load64(CCallHelpers::Address(GPRInfo::regT0), GPRInfo::regT1);
             auto skipEarlyReturn = jit.branch64(CCallHelpers::Below, GPRInfo::regT1, GPRInfo::regT2);
 
+            if constexpr (validateDFGDoesGC) {
+                if (Options::validateDoesGC()) {
+                    // We need to mock what a Return does: claims to GC.
+                    jit.move(CCallHelpers::TrustedImmPtr(vm->heap.addressOfDoesGC()), GPRInfo::regT0);
+                    jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), CCallHelpers::Address(GPRInfo::regT0));
+                }
+            }
             restore();
             jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
             params.code().emitEpilogue(jit); 
