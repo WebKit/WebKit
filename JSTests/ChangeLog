@@ -1,3 +1,13 @@
+2020-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Handle out of memory error while creating an error message in the literal parser.
+        https://bugs.webkit.org/show_bug.cgi?id=214313
+        <rdar://problem/65031745>
+
+        Reviewed by Saam Barati.
+
+        * stress/out-of-memory-making-error-string-in-literal-parser.js: Added.
+
 2020-07-14  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip intermittently failing type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value on mips

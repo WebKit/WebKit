@@ -993,10 +993,23 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         return JSValue();
                     case TokIdentifier: {
                         typename Lexer::LiteralParserTokenPtr token = m_lexer.currentToken();
-                        if (token->stringIs8Bit)
-                            m_parseErrorMessage = makeString("Unexpected identifier \"", StringView { token->stringToken8, token->stringLength }, '"');
-                        else
-                            m_parseErrorMessage = makeString("Unexpected identifier \"", StringView { token->stringToken16, token->stringLength }, '"');
+
+                        auto tryMakeErrorString = [=] (typename Lexer::LiteralParserTokenPtr token, unsigned length, bool addEllipsis) -> String {
+                            if (token->stringIs8Bit)
+                                return tryMakeString("Unexpected identifier \"", StringView { token->stringToken8, length }, addEllipsis ? "..." : "", '"');
+                            return tryMakeString("Unexpected identifier \"", StringView { token->stringToken16, length }, addEllipsis ? "..." : "", '"');
+                        };
+
+                        String errorString = tryMakeErrorString(token, token->stringLength, false);
+                        if (!errorString) {
+                            constexpr unsigned shortLength = 10;
+                            if (token->stringLength > shortLength)
+                                errorString = tryMakeErrorString(token, shortLength, true);
+                            if (!errorString)
+                                errorString = "Unexpected identifier";
+                        }
+
+                        m_parseErrorMessage = errorString;
                         return JSValue();
                     }
                     case TokColon:

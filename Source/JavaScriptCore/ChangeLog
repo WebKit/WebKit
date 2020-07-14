@@ -1,3 +1,14 @@
+2020-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Handle out of memory error while creating an error message in the literal parser.
+        https://bugs.webkit.org/show_bug.cgi?id=214313
+        <rdar://problem/65031745>
+
+        Reviewed by Saam Barati.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+
 2020-07-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fixup LLInt fast path in op_get_private_name
