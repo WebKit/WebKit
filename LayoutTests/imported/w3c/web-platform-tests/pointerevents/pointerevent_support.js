@@ -272,7 +272,7 @@ function touchScrollInTarget(target, direction) {
         throw("scroll direction '" + direction + "' is not expected, direction should be 'down', 'up', 'left' or 'right'");
     }
     return new test_driver.Actions()
-                   .addPointer("pointer1", "touch")
+                   .addPointer("touchPointer1", "touch")
                    .pointerMove(0, 0, {origin: target})
                    .pointerDown()
                    .pointerMove(x_delta, y_delta, {origin: target})
@@ -284,4 +284,121 @@ function touchScrollInTarget(target, direction) {
                    .pause(100)
                    .pointerUp()
                    .send();
+}
+
+function clickInTarget(pointerType, target) {
+    var pointerId = pointerType + "Pointer1";
+    return new test_driver.Actions()
+                   .addPointer(pointerId, pointerType)
+                   .pointerMove(0, 0, {origin: target})
+                   .pointerDown()
+                   .pointerUp()
+                   .send();
+}
+
+function twoFingerDrag(target) {
+  return new test_driver.Actions()
+      .addPointer("touchPointer1", "touch")
+      .addPointer("touchPointer2", "touch")
+      .pointerMove(0, 0, {origin: target, sourceName: "touchPointer1"})
+      .pointerMove(10, 0, {origin: target, sourceName: "touchPointer2"})
+      .pointerDown({sourceName: "touchPointer1"})
+      .pointerDown({sourceName: "touchPointer2"})
+      .pointerMove(0, 10, {origin: target, sourceName: "touchPointer1"})
+      .pointerMove(10, 10, {origin: target, sourceName: "touchPointer2"})
+      .pointerMove(0, 20, {origin: target, sourceName: "touchPointer1"})
+      .pointerMove(10, 20, {origin: target, sourceName: "touchPointer2"})
+      .pause(100)
+      .pointerUp({sourceName: "touchPointer1"})
+      .pointerUp({sourceName: "touchPointer2"})
+      .send();
+}
+
+function pointerDragInTarget(pointerType, target, direction) {
+    var x_delta = 0;
+    var y_delta = 0;
+    if (direction == "down") {
+        x_delta = 0;
+        y_delta = 10;
+    } else if (direction == "up") {
+        x_delta = 0;
+        y_delta = -10;
+    } else if (direction == "right") {
+        x_delta = 10;
+        y_delta = 0;
+    } else if (direction == "left") {
+        x_delta = -10;
+        y_delta = 0;
+    } else {
+        throw("drag direction '" + direction + "' is not expected, direction should be 'down', 'up', 'left' or 'right'");
+    }
+    var pointerId = pointerType + "Pointer1";
+    return new test_driver.Actions()
+                   .addPointer(pointerId, pointerType)
+                   .pointerMove(0, 0, {origin: target})
+                   .pointerDown()
+                   .pointerMove(x_delta, y_delta, {origin: target})
+                   .pointerMove(2 * x_delta, 2 * y_delta, {origin: target})
+                   .pointerMove(3 * x_delta, 3 * y_delta, {origin: target})
+                   .pointerUp()
+                   .send();
+}
+
+function pointerHoverInTarget(pointerType, target, direction) {
+    var x_delta = 0;
+    var y_delta = 0;
+    if (direction == "down") {
+        x_delta = 0;
+        y_delta = 10;
+    } else if (direction == "up") {
+        x_delta = 0;
+        y_delta = -10;
+    } else if (direction == "right") {
+        x_delta = 10;
+        y_delta = 0;
+    } else if (direction == "left") {
+        x_delta = -10;
+        y_delta = 0;
+    } else {
+        throw("drag direction '" + direction + "' is not expected, direction should be 'down', 'up', 'left' or 'right'");
+    }
+    var pointerId = pointerType + "Pointer1";
+    return new test_driver.Actions()
+                   .addPointer(pointerId, pointerType)
+                   .pointerMove(0, 0, {origin: target})
+                   .pointerMove(x_delta, y_delta, {origin: target})
+                   .pointerMove(2 * x_delta, 2 * y_delta, {origin: target})
+                   .pointerMove(3 * x_delta, 3 * y_delta, {origin: target})
+                   .send();
+}
+
+function moveToDocument(pointerType) {
+    var pointerId = pointerType + "Pointer1";
+    return new test_driver.Actions()
+                   .addPointer(pointerId, pointerType)
+                   .pointerMove(0, 0)
+                   .send();
+}
+
+// Returns a promise that only gets resolved when the condition is met.
+function resolveWhen(condition) {
+  return new Promise((resolve, reject) => {
+    function tick() {
+      if (condition())
+        resolve();
+      else
+        requestAnimationFrame(tick.bind(this));
+    }
+    tick();
+  });
+}
+
+// Returns a promise that only gets resolved after n animation frames
+function waitForAnimationFrames(n){
+  let p = 0;
+  function next(){
+    p++;
+    return p === n;
+  }
+  return resolveWhen(next);
 }

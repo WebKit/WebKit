@@ -1,0 +1,16 @@
+Pointer Events - lostpointercapture when capturing element in shadow dom is removed
+
+Test Description: This test checks if lostpointercapture is fired at the document when the capturing node that is in shadow dom is removed from the shadow dom. Complete the following actions:
+Press left mouse button over "Set Capture" button. Pointer should be captured by the gray rectangle which is in shadow dom.
+Gray rectangle will be removed from shadow dom.
+"lostpointercapture" should be received on the document not on the gray rectangle.
+
+
+
+Pointer will be captured by the shadow dom gray rectangle.
+Gray rectangle received pointercapture.
+Removing gray rectangle from shadow dom.
+Test Passed! Document received lostpointercapture.
+
+PASS lostpointercapture is dispatched on the document when shadow dom capturing element is removed 
+

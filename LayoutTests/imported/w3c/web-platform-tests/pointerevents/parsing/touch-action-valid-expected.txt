@@ -1,0 +1,8 @@
+
+PASS e.style['touch-action'] = "auto" should set the property value 
+PASS e.style['touch-action'] = "none" should set the property value 
+PASS e.style['touch-action'] = "manipulation" should set the property value 
+PASS e.style['touch-action'] = "pan-x" should set the property value 
+PASS e.style['touch-action'] = "pan-y" should set the property value 
+FAIL e.style['touch-action'] = "pan-y pan-x" should set the property value assert_equals: serialization should be canonical expected "pan-x pan-y" but got "pan-y pan-x"
+

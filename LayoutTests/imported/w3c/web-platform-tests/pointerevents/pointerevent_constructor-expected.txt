@@ -1,34 +1,7 @@
 PointerEvent: Dispatch custom event
 
-Test Description: This test checks if PointerEvent constructor works properly using synthetic pointerover and pointerout events. For valid results, this test must be run without generating real (trusted) pointerover or pointerout events on the black rectangle below.
-
-The following pointer types were detected: pen.
+Test Description: This test checks if PointerEvent constructor works properly.
 
 
-PASS PointerEvent: Constructor test 
-PASS custom bubbles 
-PASS custom cancelable 
-PASS custom pointerId 
-PASS custom pointerType 
-PASS custom button 
-PASS custom buttons 
-PASS custom width 
-PASS custom height 
-PASS custom clientX 
-PASS custom clientY 
-PASS custom tiltX 
-PASS custom tiltY 
-PASS custom twist 
-PASS custom isPrimary 
-PASS custom pressure:  
-PASS default pointerId 
-PASS default pointerType 
-PASS default width 
-PASS default height 
-PASS default tiltX 
-PASS default tiltY 
-PASS default pressure 
-PASS default tangentialPressure 
-PASS default twist 
-PASS default isPrimary 
+FAIL PointerEvent: Constructor test event.getCoalescedEvents is not a function. (In 'event.getCoalescedEvents()', 'event.getCoalescedEvents' is undefined)
 

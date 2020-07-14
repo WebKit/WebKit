@@ -1,0 +1,17 @@
+Pointer Events Capture Test - capture should not be lost early
+
+Test Description: This test checks if setCapture/pointerup functions works properly. Complete the following actions:
+Put your mouse over the red box
+Press and hold left mouse button. Box will call setPointerCapture
+Press right button and release
+Pointer capture should not be lost
+Press right button again and release
+Pointer capture should not be lost
+Release left mouse button. lostpointercapture is called
+
+Test passes if the proper behavior of the events is observed.
+Test Passed!
+
+PASS Pointer Events Capture Test - capture not lost due to chorded buttons interaction 
+PASS Pointer Events Capture Test - capture not lost due to combination of left and right chorded buttons interaction. 
+Test Passed!

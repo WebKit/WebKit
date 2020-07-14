@@ -1,0 +1,12 @@
+PointerMove getCoalescedEvent in locked state test
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+Test Description: This test checks if pointerevent.getCoalescedEvent work correctly when pointer is locked.
+Press left button down on the green rectangle to lock pointer.
+Move the mouse
+Test passes if the proper behavior of the events is observed.
+
+
+FAIL mouse pointermove getCoalescedEvents when lock test event.getCoalescedEvents is not a function. (In 'event.getCoalescedEvents()', 'event.getCoalescedEvents' is undefined)
+

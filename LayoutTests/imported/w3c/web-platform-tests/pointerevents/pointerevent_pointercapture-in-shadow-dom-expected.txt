@@ -1,0 +1,13 @@
+PointerCapture by Shadow DOM element
+
+The light gray box below is part of Shadow DOM.
+Click left mouse button inside the box and keep mouse button depressed
+Move the mouse
+There should be a message stating Pointer was captured by Shadow DOM!
+Release left mouse button
+There should be a message stating Pointer was released by Shadow DOM!
+Pointer was captured by Shadow DOM!
+Pointer was released by Shadow DOM!
+
+PASS PointerCapture works for Shadow DOM element. 
+

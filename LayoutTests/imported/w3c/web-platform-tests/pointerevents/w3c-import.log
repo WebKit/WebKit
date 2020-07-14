@@ -1,0 +1,95 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+user-select
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/README.md
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/mouse-pointer-boundary-events-for-shadowdom.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_nohover_pointers.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_click_during_capture.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_coalesced_events_attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_element_haspointercapture.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node_in_shadow_dom.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_shadow_host.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_on_event_handlers.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-custom-element.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-not-lost-in-chorded-buttons.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerenter_does_not_bubble.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_descendant_over.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_descendants.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_does_not_bubble.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointermove.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointermove_isprimary_same_as_pointerdown.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointermove_on_chorded_mouse_button.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_received_once.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerrawupdate.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_invalid_pointerid.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointerup_mouse.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_root_computed_style.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_root_hit_test.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_drag.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_disconnected.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_inactive_button_mouse.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_invalid_pointerid.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_relatedtarget.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_styles.css
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_support.js
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_click.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-button-none-test_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-illegal.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-auto-child-none_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-none_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-x_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-y_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_parent-none_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-keyboard.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-on-body-when-style-propagates-to-viewport_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-down-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-left-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-right-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-up-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y-pan-y_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-css_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-span-none-test_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none-test_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-verification.html

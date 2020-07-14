@@ -1,0 +1,16 @@
+Pointer Events - lostpointercapture when capturing element in shadow dom is removed by removing the shadow host
+
+Test Description: This test checks if lostpointercapture is fired at the document when the capturing node is removed from the document by removing the shadow host. The shadow host is colored magenta and the shadow dom element is colored gray. Complete the following actions:
+Press left mouse button over "Set Capture" button. Pointer should be captured by the gray rectangle.
+Shadow host magenta rectangle including the gray rectangle will be removed from shadow dom.
+"lostpointercapture" should be received on the document not on the gray rectangle.
+
+
+
+Pointer will be captured by the shadow dom gray rectangle.
+Gray rectangle received pointercapture.
+Removing magenta rectangle (which includes gray rectangle) from shadow dom.
+Test Passed! Document received lostpointercapture.
+
+PASS lostpointercapture is dispatched on the document when shadow host is removed 
+

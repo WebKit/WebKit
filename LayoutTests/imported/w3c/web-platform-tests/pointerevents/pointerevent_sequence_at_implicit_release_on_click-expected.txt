@@ -1,0 +1,11 @@
+Pointer Event: Event sequence at implicit release on click
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+When a captured pointer is implicitly released after a click, the boundary events should follow the lostpointercapture event.
+
+Click or tap on Black.
+Click or tap on Green.
+
+FAIL mouse Event sequence at implicit release on click assert_equals: expected "pointerup, lostpointercapture, pointerout, pointerleave" but got "pointerup, lostpointercapture, pointerout, pointerleave, pointerover, pointerenter, pointerout, pointerleave"
+

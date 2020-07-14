@@ -2483,6 +2483,30 @@
     "imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_received_once.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_invalid_pointerid.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-keyboard.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-css_touch.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-span-none-test_touch.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none-test_touch.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
         "slow"
     ],

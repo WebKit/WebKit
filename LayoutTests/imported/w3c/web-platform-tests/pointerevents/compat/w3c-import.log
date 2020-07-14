@@ -1,0 +1,23 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-events-when-removing-nodes.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-on-object.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-on-scrollbar.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-updown-events.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key_pressed.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action-verification.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html

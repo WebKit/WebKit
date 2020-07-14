@@ -1,5 +1,6 @@
 // META: script=/resources/WebIDLParser.js
 // META: script=/resources/idlharness.js
+// META: timeout=long
 
 'use strict';
 
@@ -7,9 +8,10 @@
 
 idl_test(
   ['pointerevents'],
-  ['uievents', 'dom', 'html'],
+  ['uievents', 'html', 'dom'],
   idl_array => {
     idl_array.add_objects({
+      Document: ['document'],
       Element: ['document'],
       Window: ['window'],
       Navigator: ['navigator'],

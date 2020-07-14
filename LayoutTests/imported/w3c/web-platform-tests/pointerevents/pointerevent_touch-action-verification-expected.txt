@@ -9,9 +9,21 @@ PASS default
 PASS stylesheet-none 
 PASS explicit-auto 
 PASS explicit-pan-x 
+FAIL explicit-pan-left assert_equals: expected "auto" but got "pan-left"
+FAIL explicit-pan-right assert_equals: expected "auto" but got "pan-right"
 PASS explicit-pan-y 
+FAIL explicit-pan-up assert_equals: expected "auto" but got "pan-up"
+FAIL explicit-pan-down assert_equals: expected "auto" but got "pan-down"
 PASS explicit-pan-x-pan-y 
 PASS explicit-pan-y-pan-x 
+FAIL explicit-pan-left-pan-up assert_equals: expected "auto" but got "pan-left pan-up"
+FAIL explicit-pan-left-pan-down assert_equals: expected "auto" but got "pan-left pan-down"
+FAIL explicit-pan-right-pan-up assert_equals: expected "auto" but got "pan-right pan-up"
+FAIL explicit-pan-right-pan-down assert_equals: expected "auto" but got "pan-right pan-down"
+FAIL explicit-pan-up-pan-left assert_equals: expected "auto" but got "pan-left pan-up"
+FAIL explicit-pan-up-pan-right assert_equals: expected "auto" but got "pan-right pan-up"
+FAIL explicit-pan-down-pan-left assert_equals: expected "auto" but got "pan-left pan-down"
+FAIL explicit-pan-down-pan-right assert_equals: expected "auto" but got "pan-right pan-down"
 PASS explicit-manipulation 
 PASS explicit-none 
 PASS explicit-invalid-1 

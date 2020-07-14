@@ -1,0 +1,4 @@
+
+PASS Property touch-action has initial value auto 
+PASS Property touch-action does not inherit 
+

@@ -1,3 +1,14 @@
+2020-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/pointerevents from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214283
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/pointerevents from upstream 149ce86ecb40.
+
+        * web-platform-tests/pointerevents/*: Updated.
+
 2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for css-fonts and css-font-loading

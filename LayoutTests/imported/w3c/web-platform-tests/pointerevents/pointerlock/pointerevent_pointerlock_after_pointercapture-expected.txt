@@ -1,0 +1,12 @@
+Pointer Events pointer lock test
+
+Test Description: This test checks that we release the exsiting pointer capture when any element in the page gets a pointer lock.
+Press left button down on the green rectangle and hold it.
+Move the mouse inside the green rectangle.
+Click right button while keeping left button down
+Keep moving the mouse inside the green rectangle.
+Test passes if the pointer capture is released on the yellow rectangle when the green rectangle gets the pointer lock.
+
+
+PASS mouse no pointercapture while pointerlock 
+

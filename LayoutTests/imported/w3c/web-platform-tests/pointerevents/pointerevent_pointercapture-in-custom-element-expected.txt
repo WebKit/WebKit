@@ -1,0 +1,13 @@
+PointerCapture by Custom Element's Shadow DOM
+
+The magenta box below is part of a custom element's Shadow DOM.
+Click left mouse button inside the box and keep mouse button depressed
+Move the mouse
+There should be a message stating Pointer was captured by custom element's Shadow DOM!
+Release left mouse button
+There should be a message stating Pointer was released by custom element's Shadow DOM!
+Pointer was captured by custom element's Shadow DOM!
+Pointer was released by custom element's Shadow DOM!
+
+PASS PointerCapture works for custom element Shadow DOM. 
+

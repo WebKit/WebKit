@@ -1,0 +1,12 @@
+Pointer Events touch-action attribute support
+
+Test Description: Test will automatically check parsing behaviour of various touch-action combinations.
+
+touch-action: basic verification
+
+
+PASS explicit-pinch-zoom 
+FAIL explicit-pinch-zoom-pan-x-pan-up assert_equals: expected "auto" but got "pan-x pan-up pinch-zoom"
+FAIL explicit-pinch-zoom-pan-x-pan-y assert_equals: expected "pan-x pan-y pinch-zoom" but got "manipulation"
+PASS explicit-invalid-14 
+

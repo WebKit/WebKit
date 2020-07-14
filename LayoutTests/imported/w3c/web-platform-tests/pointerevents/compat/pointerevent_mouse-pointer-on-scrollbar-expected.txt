@@ -1,0 +1,6 @@
+Verifies that pointerup/down are fired correctly for corresponding mouse events on the scollbar.
+
+
+PASS Test point (103,136.875) is on the scrollbar 
+PASS Verifies that pointerup/down are fired correctly for corresponding mouse events on the scollbar. 
+

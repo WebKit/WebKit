@@ -29,6 +29,7 @@
             var pointerupGot = false;
             var count=0;
             var event_log = [];
+            var actions_promise;
 
             var detected_pointertypes = {};
             add_completion_callback(end_of_test);
@@ -58,7 +59,7 @@
 
                 // If the setPointerCapture method has been invoked on the pointer specified by pointerId,
                 // and the releasePointerCapture method has not been invoked,a lostpointercapture event must be
-                // dispatched to the element on which the setPointerCapture method was invoked. Furthermore, 
+                // dispatched to the element on which the setPointerCapture method was invoked. Furthermore,
                 // subsequent events for the specified pointer must follow normal hit testing mechanisms for
                 // determining the event target.
                 // TA: 3.7
@@ -68,7 +69,10 @@
                     }, "pointerup was received before lostpointercapture");
                     event_log.push('lostpointercapture@target0');
                     isPointerCapture = false;
-                    done();
+                    // Make sure the test finishes after all the input actions are completed.
+                    actions_promise.then( () => {
+                        done();
+                    });
                 });
 
                 on_event(target0, 'pointerup', function(e) {
@@ -77,7 +81,7 @@
                 });
 
                 // Inject mouse inputs.
-                new test_driver.Actions()
+                actions_promise = new test_driver.Actions()
                     .pointerMove(0, 0, {origin: captureButton})
                     .pointerDown()
                     .pointerMove(10, 0, {origin: target0})

@@ -1,0 +1,13 @@
+Element.hasPointerCapture test
+
+Test Description: This test checks if Element.hasPointerCapture returns value correctly
+Press black rectangle and do not release
+Move your pointer to purple rectangle
+Release the pointer
+Click purple rectangle
+
+The following pointer types were detected: mouse.
+
+
+PASS hasPointerCapture 
+
