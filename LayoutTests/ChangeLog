@@ -1,3 +1,11 @@
+2020-07-13  Lauro Moura  <lmoura@igalia.com>
+
+        [SOUP] Garden failure on delay after connect to closed port.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-07-13  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeNeedsLayoutChecker] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html asserts
