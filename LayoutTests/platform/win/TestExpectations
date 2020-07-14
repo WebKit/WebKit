@@ -1163,6 +1163,7 @@ media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
 
 # Currently enabled on Mac only
 media/media-usage-state.html [ Skip ]
+media/media-usage-state-private-browsing.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
 
 ################################################################################

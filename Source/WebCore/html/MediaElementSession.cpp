@@ -1031,7 +1031,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
 {
     auto& document = m_element.document();
     auto* page = document.page();
-    if (!page)
+    if (!page || page->sessionID().isEphemeral())
         return;
 
     bool isOutsideOfFullscreen = false;

@@ -1,3 +1,17 @@
+2020-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Do not update ScreenTime when in private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=214288
+        <rdar://problem/63735067>
+
+        Reviewed by Jer Noble.
+
+        * media/media-usage-state-private-browsing-expected.txt: Added.
+        * media/media-usage-state-private-browsing.html: Added.
+        * platform/gtk/TestExpectations: Skip new test.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wpe/TestExpectations: Ditto.
+
 2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Gardening after r264345
