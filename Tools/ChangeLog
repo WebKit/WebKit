@@ -1,3 +1,14 @@
+2020-07-13  Aakash Jain  <aakash_jain@apple.com>
+
+        Add EWS queues for tvOS and watchOS builders (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214147
+        <rdar://problem/65290635>
+
+        Unreviewed follow-up fix.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.start): Added tvos and watchos.
+
 2020-07-13  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, re-landing r264242 with crash fixed.
