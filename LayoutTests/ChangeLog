@@ -1,3 +1,14 @@
+2020-07-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When invalidating the clients of an SVG resource we should not go beyond the RenderSVGRoot
+        https://bugs.webkit.org/show_bug.cgi?id=211804
+        <rdar://problem/60308199>
+
+        Reviewed by Zalan Bujtas.
+
+        * svg/in-html/inline-svg-resource-dynamic-update-expected.txt: Added.
+        * svg/in-html/inline-svg-resource-dynamic-update.html: Added.
+
 2020-07-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ WK1 Mac ] http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html is a flaky failure

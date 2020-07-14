@@ -1,3 +1,68 @@
+2020-07-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When invalidating the clients of an SVG resource we should not go beyond the RenderSVGRoot
+        https://bugs.webkit.org/show_bug.cgi?id=211804
+        <rdar://problem/60308199>
+
+        Reviewed by Zalan Bujtas.
+
+        ComplexLineLayout::layoutLineBoxes() walks through the renderers of a line.
+        The order of this walk may include a node and its children. For example 
+        the layout of a RenderInline may be run first, then it is followed by the
+        layout for a RenderSVGRoot which happens to be a child of the RenderInline.
+
+        If the RenderSVGRoot has a dirty RenderSVGResource, e.g. RenderSVGResourceClipper,
+        this resource will call RenderSVGResource::markForLayoutAndParentResourceInvalidation() 
+        which will invalidate its ancestors including RenderSVGRoot and RenderInline
+        by setting the normalChildNeedsLayoutBit() for each of them.
+
+        The layout of SVG is hierarchical which means RenderSVGRoot will finish
+        its layout after finishing the layout of all its descendants including
+        this RenderSVGResource. So dirtying the RenderSVGRoot is this scenario
+        is okay since RenderSVGRoot will do another SVGRenderSupport::layoutChildren()
+        and will clear its needsLayout bits before it returns.
+
+        The problem happens because we set normalChildNeedsLayoutBit for the containing
+        RenderInline and this leaves the render tree dirty. Later Document::resolveStyle()
+        may called to invalidate an SVG element e.g. RenderSVGPath. So setNeedsLayout()
+        is called for this object. Because the normalChildNeedsLayoutBit() is set
+        for the RenderInline, RenderObject::markContainingBlocksForLayout() stops
+        in the middle and do not mark the containing RenderBlock. So we end up 
+        with a render tree like this:
+
+            +  RenderView
+            +    HTML RenderBlock
+            +      BODY RenderBody
+            -        RenderBlock
+            +          ANY-ELEMENT RenderInline
+            +           svg RenderSVGRoot
+            -              clipPath RenderSVGResourceClipper
+            +              polygon RenderSVGPath
+
+        where the '+' means needsLayout() is true and '-' means needsLayout() is
+        false.
+
+        So the layout will not run for RenderBlock with '-' sign. And we end up
+        with dirty RenderSVGPath or even worse RenderSVGPath with uninitialized 
+        m_path. So a null pointer deref may happen.
+
+        The fix is to prevent mutating the render tree while running the layout
+        of the SVG resource. This can be done by making the RenderSVGResource not
+        dirtying any renderer beyond the RenderSVGRoot when it finishes its layout.
+        The SVG resource layout should not affect the intrinsic size of the SVG
+        if it is embedded in an HTML document.
+
+        In RenderObject::markContainingBlocksForLayout(), we do something similar
+        when we break if the ancestor is objectIsRelayoutBoundary().
+
+        Test: svg/in-html/inline-svg-resource-dynamic-update.html
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/svg/RenderSVGRoot.h:
+
 2020-07-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Avoid loading media libraries in Document::visibilityStateChanged() if not needed

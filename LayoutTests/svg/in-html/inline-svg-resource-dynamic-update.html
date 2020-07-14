@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function jsfuzzer() {
+        container.getBoundingClientRect();
+        clipPath.setAttribute("text-decoration", "underline");
+        // dirty layout
+        container.prepend(' it does not crash.');
+        container.getBoundingClientRect();
+        polygon.style.setProperty("column-span", "all");
+        // dirty layout
+        container.prepend('Test PASSES if');
+        return polygon.isPointInStroke(undefined);
+    }
+</script>
+<body onload=jsfuzzer()>
+    <any-element id="container">
+        <div></div>
+        <svg clip-path="url(#clipPath)" font-size="0px" stroke="url(#)">
+            <clipPath id="clipPath" />
+            <polygon id="polygon" y2="0" />
+        </svg>
+    </any-element>
+</body>
