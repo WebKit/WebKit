@@ -1,3 +1,16 @@
+2020-07-14  Zalan Bujtas  <zalan@apple.com>
+
+        Use "font-family: Ahem" to improve coverage.
+
+        Unreviewed.
+
+        * fast/layoutformattingcontext/table-min-max-flex-distribution-simple-expected.html:
+        * fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html:
+        * fast/layoutformattingcontext/table-with-margin-content-simple-expected.html:
+        * fast/layoutformattingcontext/table-with-margin-content-simple.html:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-07-14  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/media-source from upstream

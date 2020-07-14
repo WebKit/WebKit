@@ -4517,9 +4517,6 @@ webkit.org/b/211860 fast/text/multiple-codeunit-vertical-upright-2.html [ Pass I
 webkit.org/b/212172 fast/text/font-collection.html [ ImageOnlyFailure ]
 webkit.org/b/212172 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 
-fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/table-with-margin-content-simple.html [ ImageOnlyFailure ]
-
 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
 webkit.org/b/214088 webanimations/accelerated-animation-single-keyframe.html [ Skip ]

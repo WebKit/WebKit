@@ -2198,8 +2198,6 @@ webkit.org/b/213507 fast/text/text-styles/status-bar.html [ ImageOnlyFailure ]
 
 webkit.org/b/213508 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Failure ]
 
-webkit.org/b/213718 fast/layoutformattingcontext/table-min-max-flex-distribution-simple.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations
