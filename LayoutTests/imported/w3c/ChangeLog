@@ -1,5 +1,17 @@
 2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        WPT test css/css-grid/grid-definition/grid-auto-fit-columns-001.html broken after r264335
+        https://bugs.webkit.org/show_bug.cgi?id=214301
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import commit 4b5101fabe from WPT.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001.html:
+
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         Update WPT tests for css-text
         https://bugs.webkit.org/show_bug.cgi?id=214275
 
