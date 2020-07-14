@@ -1,3 +1,12 @@
+2020-07-14  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=214322
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, add Catalina specific baseline for css/css-fonts/generic-family-keywords-001.html after r264343.
