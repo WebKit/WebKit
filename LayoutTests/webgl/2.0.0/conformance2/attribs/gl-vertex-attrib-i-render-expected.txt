@@ -1,10 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/attribs/gl-vertex-attrib-i-render.html
-[ 1: FAIL ] Attribute of vertexAttribI4i was not set correctly
-[ 2: FAIL ] Attribute of vertexAttribI4ui was not set correctly
-[ 3: FAIL ] Attribute of vertexAttribI4iv was not set correctly
-[ 4: FAIL ] Attribute of vertexAttribI4uiv was not set correctly
-[ 5: PASS ] successfullyParsed is true
-[ FAIL ] 4 failures reported
+[ PASS ] All tests passed
 

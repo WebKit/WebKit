@@ -1588,24 +1588,80 @@ void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation* location, 
     m_context->uniformMatrix4x3fv(location->location(), transpose, v.data(), srcOffset, srcLength ? srcLength : (v.length() - srcOffset) / 12);
 }
 
-void WebGL2RenderingContext::vertexAttribI4i(GCGLuint, GCGLint, GCGLint, GCGLint, GCGLint)
+void WebGL2RenderingContext::vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint y, GCGLint z, GCGLint w)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4i()");
+    if (isContextLostOrPending())
+        return;
+    m_context->vertexAttribI4i(index, x, y, z, w);
+    if (index < m_maxVertexAttribs) {
+        m_vertexAttribValue[index].type = GraphicsContextGL::INT;
+        m_vertexAttribValue[index].iValue[0] = x;
+        m_vertexAttribValue[index].iValue[1] = y;
+        m_vertexAttribValue[index].iValue[2] = z;
+        m_vertexAttribValue[index].iValue[3] = w;
+    }
 }
 
-void WebGL2RenderingContext::vertexAttribI4iv(GCGLuint, Int32List&&)
+void WebGL2RenderingContext::vertexAttribI4iv(GCGLuint index, Int32List&& list)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4iv()");
+    if (isContextLostOrPending())
+        return;
+    auto data = list.data();
+    if (!data) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "no array");
+        return;
+    }
+    
+    int size = list.length();
+    if (size < 4) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "array too small");
+        return;
+    }
+    if (index >= m_maxVertexAttribs) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "index out of range");
+        return;
+    }
+    m_context->vertexAttribI4iv(index, data);
+    m_vertexAttribValue[index].type = GraphicsContextGL::INT;
+    memcpy(m_vertexAttribValue[index].iValue, data, sizeof(m_vertexAttribValue[index].iValue));
 }
 
-void WebGL2RenderingContext::vertexAttribI4ui(GCGLuint, GCGLuint, GCGLuint, GCGLuint, GCGLuint)
+void WebGL2RenderingContext::vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLuint y, GCGLuint z, GCGLuint w)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4ui()");
+    if (isContextLostOrPending())
+        return;
+    m_context->vertexAttribI4ui(index, x, y, z, w);
+    if (index < m_maxVertexAttribs) {
+        m_vertexAttribValue[index].type = GraphicsContextGL::UNSIGNED_INT;
+        m_vertexAttribValue[index].uiValue[0] = x;
+        m_vertexAttribValue[index].uiValue[1] = y;
+        m_vertexAttribValue[index].uiValue[2] = z;
+        m_vertexAttribValue[index].uiValue[3] = w;
+    }
 }
 
-void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint, Uint32List&&)
+void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint index, Uint32List&& list)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4uiv()");
+    if (isContextLostOrPending())
+        return;
+    auto data = list.data();
+    if (!data) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "no array");
+        return;
+    }
+    
+    int size = list.length();
+    if (size < 4) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "array too small");
+        return;
+    }
+    if (index >= m_maxVertexAttribs) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "index out of range");
+        return;
+    }
+    m_context->vertexAttribI4uiv(index, data);
+    m_vertexAttribValue[index].type = GraphicsContextGL::UNSIGNED_INT;
+    memcpy(m_vertexAttribValue[index].uiValue, data, sizeof(m_vertexAttribValue[index].uiValue));
 }
 
 void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLsizei stride, GCGLint64 offset)

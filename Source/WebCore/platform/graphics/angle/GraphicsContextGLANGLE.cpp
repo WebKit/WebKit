@@ -2326,32 +2326,26 @@ void GraphicsContextGLOpenGL::uniformMatrix4x3fv(GCGLint location, GCGLboolean t
 
 void GraphicsContextGLOpenGL::vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint y, GCGLint z, GCGLint w)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
-    UNUSED_PARAM(w);
+    makeContextCurrent();
+    gl::VertexAttribI4i(index, x, y, z, w);
 }
 
 void GraphicsContextGLOpenGL::vertexAttribI4iv(GCGLuint index, const GCGLint* values)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(values);
+    makeContextCurrent();
+    gl::VertexAttribI4iv(index, values);
 }
 
 void GraphicsContextGLOpenGL::vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLuint y, GCGLuint z, GCGLuint w)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
-    UNUSED_PARAM(w);
+    makeContextCurrent();
+    gl::VertexAttribI4ui(index, x, y, z, w);
 }
 
 void GraphicsContextGLOpenGL::vertexAttribI4uiv(GCGLuint index, const GCGLuint* values)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(values);
+    makeContextCurrent();
+    gl::VertexAttribI4uiv(index, values);
 }
 
 void GraphicsContextGLOpenGL::drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset)

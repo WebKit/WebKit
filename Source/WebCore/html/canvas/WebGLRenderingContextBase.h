@@ -516,13 +516,19 @@ protected:
         
         void initValue()
         {
-            value[0] = 0.0f;
-            value[1] = 0.0f;
-            value[2] = 0.0f;
-            value[3] = 1.0f;
+            type = GraphicsContextGL::FLOAT;
+            fValue[0] = 0.0f;
+            fValue[1] = 0.0f;
+            fValue[2] = 0.0f;
+            fValue[3] = 1.0f;
         }
         
-        GCGLfloat value[4];
+        GCGLenum type;
+        union {
+            GCGLfloat fValue[4];
+            GCGLint iValue[4];
+            GCGLuint uiValue[4];
+        };
     };
     Vector<VertexAttribValue> m_vertexAttribValue;
     unsigned m_maxVertexAttribs;

@@ -3602,7 +3602,14 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_TYPE:
         return state.type;
     case GraphicsContextGL::CURRENT_VERTEX_ATTRIB:
-        return Float32Array::tryCreate(m_vertexAttribValue[index].value, 4);
+        switch (m_vertexAttribValue[index].type) {
+        case GraphicsContextGL::FLOAT:
+            return Float32Array::tryCreate(m_vertexAttribValue[index].fValue, 4);
+        case GraphicsContextGL::INT:
+            return Int32Array::tryCreate(m_vertexAttribValue[index].iValue, 4);
+        case GraphicsContextGL::UNSIGNED_INT:
+            return Uint32Array::tryCreate(m_vertexAttribValue[index].uiValue, 4);
+        }
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getVertexAttrib", "invalid parameter name");
         return nullptr;
@@ -6983,10 +6990,11 @@ void WebGLRenderingContextBase::vertexAttribfImpl(const char* functionName, GCGL
         }
     }
     VertexAttribValue& attribValue = m_vertexAttribValue[index];
-    attribValue.value[0] = v0;
-    attribValue.value[1] = v1;
-    attribValue.value[2] = v2;
-    attribValue.value[3] = v3;
+    attribValue.type = GraphicsContextGL::FLOAT;
+    attribValue.fValue[0] = v0;
+    attribValue.fValue[1] = v1;
+    attribValue.fValue[2] = v2;
+    attribValue.fValue[3] = v3;
 }
 
 void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCGLuint index, Float32List&& list, GCGLsizei expectedSize)
@@ -7032,7 +7040,7 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
     VertexAttribValue& attribValue = m_vertexAttribValue[index];
     attribValue.initValue();
     for (int ii = 0; ii < expectedSize; ++ii)
-        attribValue.value[ii] = data[ii];
+        attribValue.fValue[ii] = data[ii];
 }
 
 #if !USE(ANGLE)
@@ -7113,25 +7121,27 @@ Optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GCGLuint numVert
     }
 
     auto& attribValue = m_vertexAttribValue[0];
+    // This code shouldn't be called with WebGL2 where the type can be non-float.
+    ASSERT(attribValue.type == GraphicsContextGL::FLOAT);
 
     if (usingVertexAttrib0
         && (m_forceAttrib0BufferRefill
-            || attribValue.value[0] != m_vertexAttrib0BufferValue[0]
-            || attribValue.value[1] != m_vertexAttrib0BufferValue[1]
-            || attribValue.value[2] != m_vertexAttrib0BufferValue[2]
-            || attribValue.value[3] != m_vertexAttrib0BufferValue[3])) {
+            || attribValue.fValue[0] != m_vertexAttrib0BufferValue[0]
+            || attribValue.fValue[1] != m_vertexAttrib0BufferValue[1]
+            || attribValue.fValue[2] != m_vertexAttrib0BufferValue[2]
+            || attribValue.fValue[3] != m_vertexAttrib0BufferValue[3])) {
 
         auto bufferData = makeUniqueArray<GCGLfloat>(bufferSize);
         for (GCGLuint ii = 0; ii < numVertex + 1; ++ii) {
-            bufferData[ii * 4] = attribValue.value[0];
-            bufferData[ii * 4 + 1] = attribValue.value[1];
-            bufferData[ii * 4 + 2] = attribValue.value[2];
-            bufferData[ii * 4 + 3] = attribValue.value[3];
+            bufferData[ii * 4] = attribValue.fValue[0];
+            bufferData[ii * 4 + 1] = attribValue.fValue[1];
+            bufferData[ii * 4 + 2] = attribValue.fValue[2];
+            bufferData[ii * 4 + 3] = attribValue.fValue[3];
         }
-        m_vertexAttrib0BufferValue[0] = attribValue.value[0];
-        m_vertexAttrib0BufferValue[1] = attribValue.value[1];
-        m_vertexAttrib0BufferValue[2] = attribValue.value[2];
-        m_vertexAttrib0BufferValue[3] = attribValue.value[3];
+        m_vertexAttrib0BufferValue[0] = attribValue.fValue[0];
+        m_vertexAttrib0BufferValue[1] = attribValue.fValue[1];
+        m_vertexAttrib0BufferValue[2] = attribValue.fValue[2];
+        m_vertexAttrib0BufferValue[3] = attribValue.fValue[3];
         m_forceAttrib0BufferRefill = false;
         m_context->bufferSubData(GraphicsContextGL::ARRAY_BUFFER, 0, bufferDataSize, bufferData.get());
     }

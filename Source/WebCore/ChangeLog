@@ -1,3 +1,32 @@
+2020-07-14  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] vertexAttribI* and getFragDataLocation
+        https://bugs.webkit.org/show_bug.cgi?id=214211
+
+        Reviewed by Dean Jackson.
+
+        Passes all relevant WebGL 2 conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFragDataLocation):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4i):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4iv):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4ui):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4uiv):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib):
+        (WebCore::WebGLRenderingContextBase::vertexAttribfImpl):
+        (WebCore::WebGLRenderingContextBase::vertexAttribfvImpl):
+        (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::VertexAttribValue::initValue):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getFragDataLocation):
+        (WebCore::GraphicsContextGLOpenGL::vertexAttribI4i):
+        (WebCore::GraphicsContextGLOpenGL::vertexAttribI4iv):
+        (WebCore::GraphicsContextGLOpenGL::vertexAttribI4ui):
+        (WebCore::GraphicsContextGLOpenGL::vertexAttribI4uiv):
+
 2020-07-14  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Implement compressedTex{Sub}Image*, copyTexSubImage3D
