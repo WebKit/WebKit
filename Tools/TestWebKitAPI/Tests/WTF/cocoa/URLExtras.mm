@@ -218,13 +218,13 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
     WTF::URL url4(URL(), String(latin1.data()));
     EXPECT_FALSE(url4.isValid());
     EXPECT_TRUE(url4.string().is8Bit());
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500
-    // CFURLCreateAbsoluteURLWithBytes has incorrect behavior on Mojave
-    // See https://bugs.webkit.org/show_bug.cgi?id=212486#c6
-    EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C2%B6");
-#else
     EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C3%82%C2%B6");
-#endif
+
+    char buffer[100];
+    memset(buffer, 0, sizeof(buffer));
+    WTF::URL url5(URL(), "file:///A%C3%A7%C3%A3o.html"_s);
+    CFURLGetFileSystemRepresentation(url5.createCFURL().get(), false, reinterpret_cast<UInt8*>(buffer), sizeof(buffer));
+    EXPECT_STREQ(buffer, "/Ação.html");
 }
 
 TEST(WTF_URLExtras, URLExtras_Nil)

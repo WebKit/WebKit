@@ -1,3 +1,23 @@
+2020-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r262341) URL::createCFURL should produce a CFURL that uses UTF-8 to decode its percent-encoded sequences
+        https://bugs.webkit.org/show_bug.cgi?id=214314
+        <rdar://problem/65079249>
+
+        Reviewed by Darin Adler.
+
+        r262341 made it so we usually pass kCFStringEncodingISOLatin1 into CFURLCreateAbsoluteURLWithBytes when creating a CFURLRef from a WTF::URL.
+        This is correct for the interpretation of the bytes to create a CFStringRef, and that is a change we want to make.
+        The encoding, however, is also stored with the CFURL and used later when interpreting percent-encoded sequences.
+        We want to use kCFStringEncodingUTF8 to make the interpretation of percent-encoded sequences the same as it used to be.
+        To avoid making a separate CString most of the time, use characters8() only for ASCII-only URLs, where UTF-8 and Latin1 are the same.
+        For all other URLs, we have to make a CString containing the UTF-8 representation of the string to get the percent-encoded sequences interpreted the same.
+
+        * wtf/cf/URLCF.cpp:
+        (WTF::URL::createCFURL const):
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::URL::createCFURL const):
+
 2020-07-14  Jer Noble  <jer.noble@apple.com>
 
         Add support for parsing VP-style codec strings.

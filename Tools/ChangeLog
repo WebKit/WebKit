@@ -1,3 +1,17 @@
+2020-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r262341) URL::createCFURL should produce a CFURL that uses UTF-8 to decode its percent-encoded sequences
+        https://bugs.webkit.org/show_bug.cgi?id=214314
+        <rdar://problem/65079249>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        Add a direct test and update the Mojave test expectations for the test introduced in r262341 with the change that introduced this regression.
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadInvalidURLRequest.mm:
+        Update a test from r263475 which fixed another regression from r262341.
+        The test verified that nothing crashed or timed out, and that is still the case even with this intentional change in behavior.
+
 2020-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] The completion handler in -handleKeyWebEvent:withCompletionHandler: is sometimes never called
