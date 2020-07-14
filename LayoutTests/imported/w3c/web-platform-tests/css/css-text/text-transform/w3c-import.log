@@ -74,6 +74,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-002-expected.xht
@@ -182,6 +190,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-042.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-043-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-043.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-044-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-044.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-101-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-101.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-102-expected.html

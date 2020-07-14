@@ -14,6 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-strict.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-normal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-strict.html
@@ -29,3 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-strict.html

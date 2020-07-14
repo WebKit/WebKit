@@ -12,12 +12,12 @@ and the character before or after the segment break is punctuation or a symbol (
 and has an East Asian Width property of A or is Emoji,
 and the character on the other side of the segment break is F, W, or H, and not Hangul or Emoji,
 then the segment break is removed.">
-<!-- 
+<!--
 In this case, checking with “ and ” which are punctuation with East Asian Width of A,
 next to Katakana letters (which are W),
 while the writing system is Katakana, which is classified as Japanese,
 despite a non Japanese content language (Ainu).
- -->
+-->
 
 <p>The test passes if the both lines are identical, including the spacing of the characters.
 

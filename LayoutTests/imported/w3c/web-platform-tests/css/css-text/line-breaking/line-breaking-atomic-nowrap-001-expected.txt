@@ -1,0 +1,10 @@
+000 111
+000 111
+000 111
+000 111
+
+PASS CSS Text Test: Check atomic inline+NBSP quirk does not apply if nowrap 
+PASS CSS Text Test: Check atomic inline+NBSP quirk does not apply if nowrap 1 
+PASS CSS Text Test: Check atomic inline+NBSP quirk does not apply if nowrap 2 
+PASS CSS Text Test: Check atomic inline+NBSP quirk does not apply if nowrap 3 
+

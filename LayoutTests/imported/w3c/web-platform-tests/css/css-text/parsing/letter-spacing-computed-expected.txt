@@ -1,0 +1,7 @@
+
+PASS Property letter-spacing value 'normal' computes to 'normal' 
+PASS Property letter-spacing value '0px' computes to 'normal' 
+PASS Property letter-spacing value '10px' computes to '10px' 
+PASS Property letter-spacing value '-20px' computes to '-20px' 
+PASS Property letter-spacing value 'calc(10px - 0.5em)' computes to '-10px' 
+

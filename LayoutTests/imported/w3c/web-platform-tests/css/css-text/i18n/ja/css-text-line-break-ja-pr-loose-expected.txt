@@ -1,0 +1,10 @@
+
+PASS 00B1  PLUS-MINUS SIGN may appear at line start if ja and loose 
+PASS 20AC  EURO SIGN may appear at line start if ja and loose 
+PASS 2116  NUMERO SIGN may appear at line start if ja and loose 
+PASS FE69  SMALL DOLLAR SIGN may appear at line start if ja and loose 
+PASS FF04  FULLWIDTH DOLLAR SIGN may appear at line start if ja and loose 
+PASS FFE1  FULLWIDTH POUND SIGN may appear at line start if ja and loose 
+PASS FFE5  FULLWIDTH YEN SIGN may appear at line start if ja and loose 
+PASS FFE6  FULLWIDTH WON SIGN may appear at line start if ja and loose 
+

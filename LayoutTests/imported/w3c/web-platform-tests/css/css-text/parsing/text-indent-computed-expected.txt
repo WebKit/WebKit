@@ -1,0 +1,12 @@
+
+PASS Property text-indent value '10px' computes to '10px' 
+PASS Property text-indent value '20%' computes to '20%' 
+PASS Property text-indent value 'calc(50% + 60px)' computes to 'calc(50% + 60px)' 
+PASS Property text-indent value '-30px' computes to '-30px' 
+PASS Property text-indent value '-40%' computes to '-40%' 
+PASS Property text-indent value 'calc(10px - 0.5em)' computes to '-10px' 
+FAIL Property text-indent value '10px hanging' computes to '10px hanging' assert_equals: expected "10px hanging" but got "10px"
+FAIL Property text-indent value '20% each-line' computes to '20% each-line' assert_true: '20% each-line' is a supported value for text-indent. expected true got false
+FAIL Property text-indent value 'calc(50% + 60px) hanging each-line' computes to 'calc(50% + 60px) hanging each-line' assert_true: 'calc(50% + 60px) hanging each-line' is a supported value for text-indent. expected true got false
+FAIL Property text-indent value 'each-line hanging calc(10px + 0.5em)' computes to '30px hanging each-line' assert_true: 'each-line hanging calc(10px + 0.5em)' is a supported value for text-indent. expected true got false
+

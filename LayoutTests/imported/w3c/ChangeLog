@@ -1,3 +1,1922 @@
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-text
+        https://bugs.webkit.org/show_bug.cgi?id=214275
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This updates the WPT import of css/css-text to e3698c7bb3.
+
+        * web-platform-tests/css/css-text/animations/letter-spacing-composition-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/letter-spacing-composition.html: Added.
+        * web-platform-tests/css/css-text/animations/letter-spacing-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/letter-spacing-interpolation.html: Added.
+        * web-platform-tests/css/css-text/animations/text-indent-composition-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/text-indent-composition.html: Added.
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation.html: Added.
+        * web-platform-tests/css/css-text/animations/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/animations/word-spacing-composition-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/word-spacing-composition.html: Added.
+        * web-platform-tests/css/css-text/animations/word-spacing-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/word-spacing-interpolation.html: Added.
+        * web-platform-tests/css/css-text/astral-bidi/adlam-anti-ref-expected.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/adlam-anti-ref.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/adlam-expected.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/adlam.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/cypriot-anti-ref-expected.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/cypriot-anti-ref.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/cypriot-expected.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/cypriot.html: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/support/adlam.css: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/support/cypriot.css: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/support/w3c-import.log: Removed.
+        * web-platform-tests/css/css-text/astral-bidi/w3c-import.log: Removed.
+        * web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-001-expected.html: Added.
+        * web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-001.html: Added.
+        * web-platform-tests/css/css-text/hanging-punctuation/hanging-scrollable-001.html:
+        * web-platform-tests/css/css-text/hanging-punctuation/w3c-import.log:
+        * web-platform-tests/css/css-text/hyphens/hyphens-auto-010-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-auto-010.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-auto-inline-010-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-auto-inline-010.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-010-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-010.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-011-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-011.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-012-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-012.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-013-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-013.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-inline-010-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-inline-010.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-inline-011-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-inline-011.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-inline-012-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-manual-inline-012.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-none-011-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-none-011.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-none-012-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-none-012.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-none-013-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-none-013.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-001-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-001.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-overflow-001-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-overflow-001.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-shaping-001-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-shaping-001.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-shaping-002-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-shaping-002.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-span-001-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-span-001.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-span-002-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/hyphens-span-002.html: Added.
+        * web-platform-tests/css/css-text/hyphens/shy-styling-001-expected.html: Added.
+        * web-platform-tests/css/css-text/hyphens/shy-styling-001.html: Added.
+        * web-platform-tests/css/css-text/hyphens/w3c-import.log:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-001-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-001.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-002-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-002.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-003-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-003.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-004-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-004.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-005-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-005.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-006-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-006.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-007-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-007.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-008-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-008.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-009-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-009.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-010-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-010.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-011-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-011.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-012-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-012.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-014-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-014.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-015-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-015.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-016-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-016.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-017-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-017.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-018-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-018.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-019-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-019.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-020-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-020.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-021-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-021.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-022-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-022.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-023-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-023.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-024-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-024.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-025-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-025.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-026-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-026.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-030-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-030.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-031-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-031.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-032-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-032.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-033-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-033.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-034-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-034.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-035-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-035.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-036-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-036.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-037-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-037.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-038-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-038.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-039-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-039.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-040-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-040.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-041-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-041.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-042-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-042.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-043-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-043.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-044-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-044.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-045-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-045.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-046-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-046.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-047-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-047.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-048-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-048.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-049-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-049.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-050-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-050.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-051-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-051.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-052-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-052.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-060-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-060.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-061-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-061.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-062-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-062.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-063-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-063.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-064-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-064.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-065-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-065.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-066-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-066.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-067-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-067.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-068-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-068.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-069-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-069.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-070-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-070.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-071-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-071.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-072-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-072.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-073-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-073.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-074-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-074.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-075-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-075.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-076-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-076.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-077-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-077.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-078-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-078.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-080-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-080.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-081-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-081.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-082-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-082.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-083-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-083.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-084-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-084.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-085-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-085.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-086-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-086.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-090-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-090.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-091-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-091.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-092-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-092.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-093-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-093.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-094-expected.txt: Removed.
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-094.html: Removed.
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-095-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-095.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-096-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-096.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-097-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-097.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-098-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-098.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-099-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-099.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-100-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-100.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-101-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-101.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-102-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-102.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-103-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-103.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-104-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-104.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-105-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-105.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-106-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-106.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-107-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-107.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-108-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-108.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-109-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-109.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-110-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-110.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-111-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-111.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-112-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-112.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-113-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-113.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-114-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-114.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-115-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-115.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-116-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-116.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-117-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-117.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-118-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-118.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-120-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-120.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-121-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-121.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-122-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-122.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-123-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-123.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-124-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-124.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-125-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-125.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-126-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-126.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-127-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-127.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-128-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-128.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-130-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-130.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-131-expected.txt:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-131.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-001.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-002.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-003.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-004.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-005.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-006.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-007.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-008.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-009.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-010.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-011.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-012.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-014.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-015.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-016.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-017.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-018.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-019.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-020.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-021.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-022.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-023.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-024.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-025.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-026.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-027.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-028.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-029.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-030.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-031.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-032.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-033.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-034.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-035.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-036.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-037.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-038.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-039.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-040.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-041.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-042.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-043.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-044.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-045.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-046.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-047.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-049.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-050.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-051.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-052.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-053.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-054.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-055.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-056.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-057.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-058.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-059.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-060.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-061.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-062.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-063.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-064.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-065.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-100.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-101.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-102.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-103.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-104.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-105.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-106.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-107.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-108.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-109.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-110.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-111.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-112.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-113.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-114.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-115.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-116.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-117.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-119.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-120.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-121.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-122.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-123.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-124.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-125.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-126.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-127.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-128.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-129.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-130.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-131.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-132.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-133.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-134.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-135.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-136.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-137.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-138.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-139.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-140.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-141.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-142.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-143.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-144.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-145.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-146.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-147.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-148.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-149.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-150.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-151.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-152.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-153.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-155.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-156.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-157.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-158.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-159.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-160.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-161.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-162.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-163.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-164.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-165.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-166.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-167.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-168.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-169.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-170.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-171.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-200.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-201.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-202.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-203.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-204.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-205.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-206.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-207.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-208.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-209.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-210.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-211.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-212.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-213.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-214.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-215.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-217.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-218.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-219.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-220.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-221.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-222.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-223.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-225.html:
+        * web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-226.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-normal.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-strict.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-loose.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-normal.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-strict.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-loose-expected.txt:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-loose.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-normal-expected.txt:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-normal.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-strict-expected.txt:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-strict.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-loose.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-normal.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-strict.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-loose.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-normal.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-strict.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-loose.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-normal.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-strict.html:
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-loose.html.
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-normal.html.
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-strict.html.
+        * web-platform-tests/css/css-text/i18n/ja/w3c-import.log:
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-loose.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-normal.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-strict.html.
+        * web-platform-tests/css/css-text/i18n/other-lang/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-in-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-in-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-in-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-in-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-in-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-in-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-pr-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-pr-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-loose.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-pr-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-pr-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-pr-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-pr-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-strict.html.
+        * web-platform-tests/css/css-text/i18n/unknown-lang/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/i18n/w3c-import.log:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-normal.html.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-strict.html.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-normal.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-strict.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-loose-expected.txt:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-loose.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal-expected.txt:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-strict-expected.txt:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-strict.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-loose.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-normal.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-strict.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-normal.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-strict.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-strict.html:
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-loose-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-loose.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-normal-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-normal.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-strict-expected.txt: Added.
+        * web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-strict.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-strict.html.
+        * web-platform-tests/css/css-text/i18n/zh/w3c-import.log:
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-003-expected.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-003.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-004-expected.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-004.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-005-expected.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-005.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-003-expected.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-003.xht: Added.
+        * web-platform-tests/css/css-text/letter-spacing/w3c-import.log:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-002-expected.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-002.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-004.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-005.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-006.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-007.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-008.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-009.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-010.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-011.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-012.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-013.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-014.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-015.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-016.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-017-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-017.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-006.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-001.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-009.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-002.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-008.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-003.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-009.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-004.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-010.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-010.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-006-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-006.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-008.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-007-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-007.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-008.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-008-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-008.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-009.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-009.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-001.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-002.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-003.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-006.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-004.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-005.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-006-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-006.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-007-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-007.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-008-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-008.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-012-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-012.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-013-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-013.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-014-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-014.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-015-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-015.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-016-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-016.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-loose-011-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-011.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-012-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-012.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-013-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-013.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-014-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-014.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-015-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-015.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-016a-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-016a.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-016b-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-016b.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-017a-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-017a.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-017b-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-017b.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-018-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-018.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-001-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-001.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-002-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-002.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-003-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-003.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-011-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-011.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-012-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-012.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-013-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-013.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-014-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-014.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-015a-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015-expected.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-015a.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-015b-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015-expected.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-015b.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-016a-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-016a.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-016b-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-016b.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-017a-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-017a.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-017b-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-017b.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-018-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-018.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-001-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-001.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-002-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-002.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-003-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-003.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-shaping-001-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-shaping-001.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-011-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-011.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-012-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-012.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-013-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-013.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-014-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-014.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-015a-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015-expected.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-015a.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-015b-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015-expected.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-015b.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015.xht.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-016a-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-016a.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-016b-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-016b.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-017a-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-017a.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-017b-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-017b.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-018-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-018.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-001-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-001.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-002-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-002.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-003-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-003.html: Added.
+        * web-platform-tests/css/css-text/line-break/w3c-import.log:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-001-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-001.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-002-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-002.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-003-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-003.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-004-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-004.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-005-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-005.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-006-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-006.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-007-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-007.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-008-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-008.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-009-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-009.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-010-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-010.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-011-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-011.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-012-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-012.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-013-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-013.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-014-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-014.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-015-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-015.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-016-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-016.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-017-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-017.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-018-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-018.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-019-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-019.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-020-expected.txt: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-020.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-021-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-021.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-001-expected.xht: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-001.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-002-expected.xht: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-002.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-003-expected.xht: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-003.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-004-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-004.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-005-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-005.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-006-expected.xht: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-006.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-007-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-007.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-008-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-008.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-009-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-009.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-nowrap-001-expected.txt: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-nowrap-001.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-ic-001-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-ic-001.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-ic-002-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-ic-002.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-ic-003-expected.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-ic-003.html:
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-001-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-001.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-002-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-002.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-003-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-003.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-004-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-004.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-005-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-005.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-006-expected.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-006.html: Added.
+        * web-platform-tests/css/css-text/line-breaking/w3c-import.log:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-001-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-001.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-002-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-002.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-004-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-004.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-001.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-002.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-004.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-005.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-006-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-006.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-005.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-007-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-007.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-008-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-002-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-008.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-002.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-004.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-010-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-010.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-004.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-001.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-002.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-003.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-004.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-001.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-002.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-004.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-005.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-008.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-010-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-010.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001-expected.txt: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-long-crash-expected.txt: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-long-crash.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-white-space-crash-002-expected.txt: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-white-space-crash-002.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-white-space-crash-expected.txt: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-white-space-crash.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-001-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-001.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-002-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-002.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-005.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-006-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-006.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-007-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-007.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-008-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-008.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-001-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-001.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-002-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-002.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/w3c-import.log:
+        * web-platform-tests/css/css-text/overflow-wrap/word-wrap-001-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/word-wrap-001.html:
+        * web-platform-tests/css/css-text/overflow-wrap/word-wrap-002-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/word-wrap-002.html:
+        * web-platform-tests/css/css-text/overflow-wrap/word-wrap-004-expected.html:
+        * web-platform-tests/css/css-text/overflow-wrap/word-wrap-004.html:
+        * web-platform-tests/css/css-text/parsing/hyphens-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/hyphens-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/letter-spacing-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/letter-spacing-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/line-break-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/line-break-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/overflow-wrap-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/overflow-wrap-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/tab-size-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/tab-size-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/text-align-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/text-align-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/text-align-last-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/text-align-last-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/text-indent-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/text-indent-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/text-justify-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/text-justify-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/text-transform-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/text-transform-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/w3c-import.log:
+        * web-platform-tests/css/css-text/parsing/white-space-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/white-space-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-invalid.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-valid.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-invalid.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-valid.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-break-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-break-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-spacing-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-spacing-computed.html: Added.
+        * web-platform-tests/css/css-text/parsing/word-wrap-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text/parsing/word-wrap-computed.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-000-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-000-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-001-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-001-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-002-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-002-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-003-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-003-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-008-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-008-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-009-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-009-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-010-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-010-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-011-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-011-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-012-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-012-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-014-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-014-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-016-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-016-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-020-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-020-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-021-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-021-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-022-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-022-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-023-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-023-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-024-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-024-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-025-ref-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/shaping-025-ref.html: Added.
+        * web-platform-tests/css/css-text/shaping/reference/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-000-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-000.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-001-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-001.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-002-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-002.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-003-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-003.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-004-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-004.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-005-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-005.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-006-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-006.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-007-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-007.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-008-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-008.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-009-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-009.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-010-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-010.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-011-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-011.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-012-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-012.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-013-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-013.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-014-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-014.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-016-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-016.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-017-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-017.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-018-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-018.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-020-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-020.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-021-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-021.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-022-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-022.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-023-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-023.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-024-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-024.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-025-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-025.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-001-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-001.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-002-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-002.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping_lig-000-expected.html: Added.
+        * web-platform-tests/css/css-text/shaping/shaping_lig-000.html: Added.
+        * web-platform-tests/css/css-text/shaping/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/support/w3c-import.log:
+        * web-platform-tests/css/css-text/tab-size/tab-size-length-001-expected.html:
+        * web-platform-tests/css/css-text/tab-size/tab-size-length-001.html:
+        * web-platform-tests/css/css-text/tab-size/tab-size-length-002-expected.html:
+        * web-platform-tests/css/css-text/tab-size/tab-size-length-002.html:
+        * web-platform-tests/css/css-text/tab-size/tab-size-percent-001-expected.html:
+        * web-platform-tests/css/css-text/tab-size/tab-size-percent-001.html:
+        * web-platform-tests/css/css-text/tab-size/tab-size.html:
+        * web-platform-tests/css/css-text/tab-size/w3c-import.log:
+        * web-platform-tests/css/css-text/text-align/text-align-end-001-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-001.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-002-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-002.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-003-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-003.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-004-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-004.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-005-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-005.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-006-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-006.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-007-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-007.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-008-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-008.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-009-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-009.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-010-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-010.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-014-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-014.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-015-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-015.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-016-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-016.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-017-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-017.html:
+        * web-platform-tests/css/css-text/text-align/text-align-end-021.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-001-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-001.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-002-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-002.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-003-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-003.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-004-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-004.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-005-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-005.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-006-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justify-006.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-001-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-001.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-002-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-002.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-003-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-003.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-004-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-004.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-005-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-005.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-006-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-justifyall-006.html:
+        * web-platform-tests/css/css-text/text-align/text-align-last-empty-inline-expected.txt: Added.
+        * web-platform-tests/css/css-text/text-align/text-align-last-empty-inline.html: Added.
+        * web-platform-tests/css/css-text/text-align/text-align-last-wins-001-expected.html: Added.
+        * web-platform-tests/css/css-text/text-align/text-align-last-wins-001.html: Added.
+        * web-platform-tests/css/css-text/text-align/text-align-start-001-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-001.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-002-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-002.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-003-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-003.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-004-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-004.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-005-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-005.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-006-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-006.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-007-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-007.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-008-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-008.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-009-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-009.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-010-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-010.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-014-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-014.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-015-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-015.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-016-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-016.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-017-expected.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-017.html:
+        * web-platform-tests/css/css-text/text-align/text-align-start-021.html:
+        * web-platform-tests/css/css-text/text-align/w3c-import.log:
+        * web-platform-tests/css/css-text/text-encoding/shaping-join-001-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-join-001.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-join-002-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-join-002.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-join-003-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-join-003.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-no-join-001-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-no-join-001.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-no-join-002-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-no-join-002.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-no-join-003-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-no-join-003.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-tatweel-001-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-tatweel-001.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-tatweel-002-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-tatweel-002.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-tatweel-003-expected.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/shaping-tatweel-003.html: Added.
+        * web-platform-tests/css/css-text/text-encoding/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/text-indent/text-indent-long-line-crash-expected.txt: Added.
+        * web-platform-tests/css/css-text/text-indent/text-indent-long-line-crash.html: Added.
+        * web-platform-tests/css/css-text/text-indent/text-indent-percentage-001-expected.xht:
+        * web-platform-tests/css/css-text/text-indent/text-indent-percentage-001.xht:
+        * web-platform-tests/css/css-text/text-indent/text-indent-percentage-004.html:
+        * web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001-expected.html: Added.
+        * web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html: Added.
+        * web-platform-tests/css/css-text/text-indent/w3c-import.log:
+        * web-platform-tests/css/css-text/text-justify/text-justify-001-expected.html:
+        * web-platform-tests/css/css-text/text-justify/text-justify-001.html:
+        * web-platform-tests/css/css-text/text-justify/text-justify-002.html:
+        * web-platform-tests/css/css-text/text-justify/text-justify-003.html:
+        * web-platform-tests/css/css-text/text-justify/text-justify-006-expected.html: Added.
+        * web-platform-tests/css/css-text/text-justify/text-justify-006.html: Added.
+        * web-platform-tests/css/css-text/text-justify/w3c-import.log:
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-fraktur-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-fraktur-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-italic-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-italic-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-sans-serif-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-sans-serif-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-script-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-script-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-double-struck-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-double-struck-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-fraktur-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-fraktur-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-initial-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-initial-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-italic-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-italic-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-looped-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-looped-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-monospace-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-monospace-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-bold-italic-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-bold-italic-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-italic-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-italic-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-script-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-script-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-stretched-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-stretched-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-tailed-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/text-transform-math-tailed-001.tentative.html: Added.
+        * web-platform-tests/css/css-text/text-transform/math/w3c-import.log: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-001-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-001.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-003-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-003.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-005-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-005.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-007-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-007.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-009-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-009.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-010-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-010.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-011-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-011.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-014-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-014.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-016-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-016.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-020-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-020.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-022-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-022.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-024-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-024.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-028-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-028.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-030-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-030.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-033-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-capitalize-033.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001-expected.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002-expected.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004-expected.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005-expected.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht:
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-006-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-006.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-007-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-007.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-multiple-001-expected.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html: Added.
+        * web-platform-tests/css/css-text/text-transform/text-transform-tailoring-004-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-tailoring-004.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-001-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-001.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-002-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-002.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-003-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-003.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-004-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-004.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-005-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-005.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-006-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-006.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-007-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-007.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-008-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-008.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-009-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-009.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-010-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-010.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-011-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-011.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-012-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-012.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-014-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-014.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-015-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-015.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-017-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-017.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-018-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-018.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-019-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-019.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-020-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-020.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-021-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-021.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-022-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-022.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-023-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-023.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-024-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-024.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-025-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-025.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-026-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-026.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-027-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-027.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-028-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-028.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-029-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-029.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-030-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-030.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-031-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-031.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-032-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-032.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-033-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-033.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-034-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-034.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-035-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-035.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-040-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-040.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-041-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-041.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-042-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-042.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-043-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-043.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-044-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039-expected.html.
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-044.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039.html.
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-101-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-101.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-102-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-102.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-103-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-103.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-104-expected.html:
+        * web-platform-tests/css/css-text/text-transform/text-transform-upperlower-104.html:
+        * web-platform-tests/css/css-text/text-transform/w3c-import.log:
+        * web-platform-tests/css/css-text/white-space/append-whitespace-only-node-crash-001-expected.txt: Added.
+        * web-platform-tests/css/css-text/white-space/append-whitespace-only-node-crash-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-001.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-002.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-003.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-004-expected.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-004.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-005.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-006.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-007.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-008.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-009.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-010.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-051-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-051.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-052-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-052.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-001.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-002.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-003.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-004.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-005.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-006.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-007.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-008.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-009.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-010.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-011.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-013.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-014-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-014.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-003.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-015-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-015.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-006.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-016-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-016.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-009.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-017-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-017.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-011.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-018-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-018.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-013.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-011-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-012-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-012.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-013-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-013.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-014-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-014.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-015-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-015.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-016-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-newline-016.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-004-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-tab-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-001.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-003.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-002.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-003.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-003.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-004.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-004.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-004.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-006.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-007-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-007.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-008.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-013.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-008.html.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-010.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-009.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-00C-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/control-chars-00C.html: Added.
+        * web-platform-tests/css/css-text/white-space/eol-spaces-bidi-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/eol-spaces-bidi-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/nowrap-wbr-and-space-crash-expected.txt: Added.
+        * web-platform-tests/css/css-text/white-space/nowrap-wbr-and-space-crash.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-float-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-float-001.html:
+        * web-platform-tests/css/css-text/white-space/pre-line-051-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/pre-line-051.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-line-052-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/pre-line-052.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-line-br-with-whitespace-child-crash-expected.txt: Added.
+        * web-platform-tests/css/css-text/white-space/pre-line-br-with-whitespace-child-crash.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-with-whitespace-crash-expected.txt: Added.
+        * web-platform-tests/css/css-text/white-space/pre-with-whitespace-crash.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-001.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-002.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-003-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-003.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-004-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-004.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-005-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-005.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-006-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-006.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-007-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-007.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-008.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-008.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-010-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-010.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-016.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-011-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-011.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-012-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-012.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-013-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-013.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-014-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-014.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-015-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-015.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-016-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-016.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-017-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-017.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-018-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-018.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-019-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-019.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-020-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-020.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-051-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-051.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-052-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-052.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-float-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-float-001.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-004-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-007-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-007.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-008.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-009.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-010.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-012-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-012.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-013-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-013.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-014-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-014.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-006-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-tab-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-000.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-001.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-002.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-003.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-004.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-005.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-006.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-007.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-008.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-009.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-010.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-011.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-012.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-014.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-015.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-016.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-017.html:
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-018-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-018.html: Added.
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-019-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/seg-break-transformation-019.html: Added.
+        * web-platform-tests/css/css-text/white-space/textarea-break-spaces-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-break-spaces-001.html:
+        * web-platform-tests/css/css-text/white-space/textarea-break-spaces-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-break-spaces-002.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014-expected.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html:
+        * web-platform-tests/css/css-text/white-space/trailing-ideographic-space-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/trailing-ideographic-space-001.html:
+        * web-platform-tests/css/css-text/white-space/trailing-ideographic-space-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/trailing-ideographic-space-002.html:
+        * web-platform-tests/css/css-text/white-space/trailing-ideographic-space-003.html:
+        * web-platform-tests/css/css-text/white-space/trailing-ideographic-space-004.html:
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-004-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-004-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-007-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-007.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-008.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-009.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-010.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-012-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-012.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-013-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-013.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-014-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-014.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-015-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-other-space-separators-break-spaces-015.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-space-align-start.tentative-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-space-align-start.tentative.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt:
+        * web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html:
+        * web-platform-tests/css/css-text/white-space/trailing-space-position-001-expected.txt: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-space-position-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-space-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/trailing-space-rtl-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/w3c-import.log:
+        * web-platform-tests/css/css-text/white-space/white-space-collapse-000.html:
+        * web-platform-tests/css/css-text/white-space/white-space-collapse-001.html:
+        * web-platform-tests/css/css-text/white-space/white-space-collapse-002.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-002.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-003-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-003.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-013-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-013.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-014-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-014.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-015-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-015.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-016-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-016.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-017-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-017.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-018-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-018.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-019-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-019.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-020-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-020.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-letter-spacing-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-letter-spacing-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-normal-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-normal-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-nowrap-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-nowrap-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-031-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-031.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-032-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-032.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-034-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-034.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-035-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-035.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-051-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-051.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-052-expected.xht: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-052.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-001.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-002.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-003-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-003.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-004-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-007-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-007.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-008.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-010.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-007-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-007.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-008.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-009.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-010.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-012-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-012.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-013-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-013.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-014-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-014.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-015-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/ws-break-spaces-applies-to-015.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/w3c-import.log.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-001-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-001.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-002-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-002.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-003-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-003.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-004-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-004.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-005-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-005.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-006-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-006.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-007-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-007.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-008-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-008.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-009-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-009.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-010-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-010.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-011-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-011.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-012-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-012.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-013-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-013.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-014-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-014.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-101-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-101.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-102-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-102.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-103-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-103.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-104-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-104.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-105-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-105.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-106-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-106.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-107-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-107.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-108-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-108.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-109-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-109.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-110-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-110.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-111-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-111.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-112-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-112.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-113-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-113.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-114-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-114.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-115-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-115.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-116-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-116.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-117-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-117.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-118-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-118.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-119-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-119.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-120-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-120.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-121-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-121.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-122-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-122.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-123-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-123.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-124-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-124.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-125-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-125.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-126-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-126.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-127-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-127.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-128-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-128.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-129-expected.html: Added.
+        * web-platform-tests/css/css-text/word-boundary/word-boundary-129.html: Added.
+        * web-platform-tests/css/css-text/word-break/w3c-import.log:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-006.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-007.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-008.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-010.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-011.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-012.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-013.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-015.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-016.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-017.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-018.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-019.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-020.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-021.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-022.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-023.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-024.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-025.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-026.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-027.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-028.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-029-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-029.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-025.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-030-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-030.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-028.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-001-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-001.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-002-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-002.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-003-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-003.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-004-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-004.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-005-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-005.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-006-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-006.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-008-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-008.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-009.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-010-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-010.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-word-crash-001-expected.txt: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-word-crash-001.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-keep-all-005.html:
+        * web-platform-tests/css/css-text/word-break/word-break-keep-all-006.html:
+        * web-platform-tests/css/css-text/word-break/word-break-keep-all-007-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-keep-all-007.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-005.html.
+        * web-platform-tests/css/css-text/word-break/word-break-keep-all-008-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-keep-all-008.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-005.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-001.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-002.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-003.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-004.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003-expected.html.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-005.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-006-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-min-content-006.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-normal-ko-000.html:
+        * web-platform-tests/css/css-text/writing-system/writing-system-line-break-001-expected.html:
+        * web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html:
+        * web-platform-tests/css/css-text/writing-system/writing-system-segment-break-001.html:
+
 2020-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for css-writing-modes

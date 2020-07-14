@@ -1,6 +1,4 @@
 
-PASS 2010 HYPHEN may NOT appear at line start if ja and strict 
-PASS 2013 EN DASH may NOT appear at line start if ja and strict 
 PASS 301C WAVE DASH may NOT appear at line start if ja and strict 
 PASS 30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN may NOT appear at line start if ja and strict 
 

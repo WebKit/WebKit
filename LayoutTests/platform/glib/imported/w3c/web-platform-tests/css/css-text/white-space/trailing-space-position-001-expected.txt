@@ -1,0 +1,12 @@
+1234 567
+1234 567
+1234567 567
+1234567 567
+1234 567
+
+FAIL CSS Test: Positions of trailing collapsible spaces assert_equals: expected 0 but got -0
+PASS CSS Test: Positions of trailing collapsible spaces 1 
+FAIL CSS Test: Positions of trailing collapsible spaces 2 assert_equals: expected 0 but got -0
+PASS CSS Test: Positions of trailing collapsible spaces 3 
+FAIL CSS Test: Positions of trailing collapsible spaces 4 assert_equals: expected 0 but got -0
+

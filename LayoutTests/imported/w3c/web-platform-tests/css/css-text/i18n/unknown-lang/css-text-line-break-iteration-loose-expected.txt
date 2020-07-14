@@ -1,0 +1,31 @@
+
+FAIL 3005  IDEOGRAPHIC ITERATION MARK may appear at line start if lang unknown and loose assert_true: expected true got false
+FAIL 303B  VERTICAL IDEOGRAPHIC ITERATION MARK may appear at line start if lang unknown and loose assert_true: expected true got false
+FAIL 309D  HIRAGANA ITERATION MARK may appear at line start if lang unknown and loose assert_true: expected true got false
+FAIL 309E  HIRAGANA VOICED ITERATION MARK may appear at line start if lang unknown and loose assert_true: expected true got false
+FAIL 30FD  KATAKANA ITERATION MARK may appear at line start if lang unknown and loose assert_true: expected true got false
+FAIL 30FE  KATAKANA VOICED ITERATION MARK may appear at line start if lang unknown and loose assert_true: expected true got false
+3005
+文文文文文文々字字
+文文文文文文
+々字字
+303B
+文文文文文文〻字字
+文文文文文文
+〻字字
+309D
+文文文文文文ゝ字字
+文文文文文文
+ゝ字字
+309E
+文文文文文文ゞ字字
+文文文文文文
+ゞ字字
+30FD
+文文文文文文ヽ字字
+文文文文文文
+ヽ字字
+30FE
+文文文文文文ヾ字字
+文文文文文文
+ヾ字字

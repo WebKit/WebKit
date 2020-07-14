@@ -1,0 +1,54 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-fraktur-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-fraktur-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-italic-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-italic-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-sans-serif-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-sans-serif-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-script-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-bold-script-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-double-struck-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-double-struck-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-fraktur-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-fraktur-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-initial-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-initial-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-italic-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-italic-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-looped-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-looped-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-monospace-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-monospace-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-bold-italic-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-bold-italic-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-italic-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-sans-serif-italic-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-script-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-script-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-stretched-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-stretched-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-tailed-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-tailed-001.tentative.html

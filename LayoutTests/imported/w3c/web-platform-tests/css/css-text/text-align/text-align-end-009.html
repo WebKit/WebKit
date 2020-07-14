@@ -7,6 +7,7 @@
 <link rel='help' href='https://drafts.csswg.org/css-text-3/#text-align-property'>
 <link rel='match' href='reference/text-align-end-ref-009.html'>
 <meta name="assert" content="text-align:end aligns inline-level content to the end edge of the line box – ie. left when direction is auto and first strong character is rtl.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style type='text/css'>
 .test { text-align: end; }
 /* the CSS below is not part of the test */
@@ -21,8 +22,8 @@
 <div id='instructions'>Test passes if shading in both orange boxes is identical.</div>
 <div class="test" dir="auto">&rlm;XXX XXX XXX XXX XXX XXX XXX XXX</div>
 <div class="ref"><div id="rb1"></div><div id="rb2"></div><div id="rb3"></div></div>
-<!--  Notes:
+<!-- Notes:
 The &rlm isn't in the Ahem font, so it may cause a spurious effect, such as a thin white line in the middle of a block in IE. This should be ignored. The test needs a RTL character in the Ahem font, so that the &RLM can be removed.
- -->
+-->
 </body>
 </html>

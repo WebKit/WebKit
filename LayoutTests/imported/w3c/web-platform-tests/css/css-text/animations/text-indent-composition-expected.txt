@@ -1,0 +1,33 @@
+
+FAIL Compositing: property <text-indent> underlying [100%] from add [50px] to add [150px] at (-0.3) should be [calc(100% + 20px)] assert_equals: expected "calc ( 100 % + 20px ) " but got "20px "
+FAIL Compositing: property <text-indent> underlying [100%] from add [50px] to add [150px] at (0) should be [calc(100% + 50px)] assert_equals: expected "calc ( 100 % + 50px ) " but got "50px "
+FAIL Compositing: property <text-indent> underlying [100%] from add [50px] to add [150px] at (0.3) should be [calc(100% + 80px)] assert_equals: expected "calc ( 100 % + 80px ) " but got "80px "
+FAIL Compositing: property <text-indent> underlying [100%] from add [50px] to add [150px] at (0.6) should be [calc(100% + 110px)] assert_equals: expected "calc ( 100 % + 110px ) " but got "110px "
+FAIL Compositing: property <text-indent> underlying [100%] from add [50px] to add [150px] at (1) should be [calc(100% + 150px)] assert_equals: expected "calc ( 100 % + 150px ) " but got "150px "
+FAIL Compositing: property <text-indent> underlying [100%] from add [50px] to add [150px] at (1.5) should be [calc(100% + 200px)] assert_equals: expected "calc ( 100 % + 200px ) " but got "200px "
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (-0.3) should be [360px] assert_equals: expected "360px " but got "35px "
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (0) should be [300px] assert_equals: expected "300px " but got "50px "
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (0.3) should be [240px] assert_equals: expected "240px " but got "65px "
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (0.6) should be [180px] assert_equals: expected "180px " but got "80px "
+PASS Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (1) should be [100px] 
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (1.5) should be [0px] assert_equals: expected "0px " but got "125px "
+FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (-0.3) should be [-160%] assert_equals: expected "- 160 % " but got "- 145 % "
+PASS Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0) should be [-100%] 
+FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.3) should be [-40%] assert_equals: expected "- 40 % " but got "- 55 % "
+FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.5) should be [0%] assert_equals: expected "0 % " but got "- 25 % "
+FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.6) should be [20%] assert_equals: expected "20 % " but got "- 10 % "
+FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (1) should be [100%] assert_equals: expected "100 % " but got "50 % "
+FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (1.5) should be [200%] assert_equals: expected "200 % " but got "125 % "
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (-0.3) should be [20px hanging each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0) should be [50px hanging each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0.3) should be [80px hanging each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0.6) should be [110px hanging each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (1) should be [150px hanging each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (1.5) should be [200px hanging each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (-0.3) should be [300px each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0) should be [300px each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0.3) should be [300px each-line] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0.6) should be [150px hanging] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (1) should be [150px hanging] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (1.5) should be [150px hanging] assert_true: 'from' value should be supported expected true got false
+

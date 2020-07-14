@@ -17,10 +17,10 @@ span { background: blue; } /* If the space is removed instead of hanging, there 
 <p>Test passes if the characters below are arranged in a square and if there is a blue rectangle at the end of the first line.
 <div>ああ<span>&#x3000;</span>ああ</div>
 
-<!-- 
+<!--
 We're using a 2.5em width and two references, instead of 2em and just the first one,
 because in addition to requiring the spaces to hang,
 the spec allows, but does not require, browsers to visually collapse the advance widths of characters that overflow.
 In browsers that don't do that, the whole sequence of preserved spaces will be visible, and the first ref will be matched.
 In browsers that do, only the first 0.5em worth of space will be preserved, and the second ref will match.
- -->
+-->

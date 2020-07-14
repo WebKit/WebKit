@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cj-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-in-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-iteration-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-pr-strict.html

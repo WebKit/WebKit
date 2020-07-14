@@ -1,3 +1,23 @@
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-text
+        https://bugs.webkit.org/show_bug.cgi?id=214275
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update expectations for new failures and new passes.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-position-001-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt.
+
 2020-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for css-writing-modes

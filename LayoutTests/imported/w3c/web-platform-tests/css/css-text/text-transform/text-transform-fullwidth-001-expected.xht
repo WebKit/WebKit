@@ -6,42 +6,26 @@
 		<link rel="author" title="Satoshi Umehara" href="mailto:umehara@est.co.jp" />
 		<style type="text/css">
 			<![CDATA[
+			        @font-face {
+					font-family: 'mplus-1p-regular';
+					src: url('/fonts/mplus-1p-regular.woff') format('woff');
+			        }
 				span {
+					font-family: 'mplus-1p-regular';
 					background-color: cyan;
 				}
 				.test {
 					color: Blue;
-					font-size: 200%;
-					line-height: 1.2em;
+					line-height: 1.1em;
 				}
 				.test div {
 					display: inline-block;
-					margin-bottom: 1em;
-					margin-top: 1em;
+					margin-bottom: .5em;
 					text-align: center;
 					white-space: nowrap;
-					width: 5em;
 				}
 			]]>
 		</style>
-		<script type="text/javascript">
-			//	<![CDATA[
-					// Set Font Family to 'IPAMincho'
-					function setFontFamily () {
-						var fontName = 'IPAMincho';
-						var divs = document.getElementsByTagName('div');
-						var i = 0;
-						var div;
-						while (i < divs.length) {
-							div = divs.item(i);
-							if (div.className == 'test') {
-								div.style.fontFamily = fontName;
-							}
-							i++;
-						}
-					}
-			//	]]>
-		</script>
 	</head>
 	<body>
 		<p>
@@ -49,15 +33,15 @@
 		</p>
 		<div class="test">
 
-		<!--  FULLWIDTH LATIN  -->
+		<!-- FULLWIDTH LATIN -->
 			<div>[<span>　</span>]<br />[<span>　</span>]</div>
 			<div><span>！</span><br /><span>！</span></div>
-			<div><span>”</span><br /><span>”</span></div>
+			<div><span>＂</span><br /><span>＂</span></div>
 			<div><span>＃</span><br /><span>＃</span></div>
 			<div><span>＄</span><br /><span>＄</span></div>
 			<div><span>％</span><br /><span>％</span></div>
 			<div><span>＆</span><br /><span>＆</span></div>
-			<div><span>’</span><br /><span>’</span></div>
+			<div><span>＇</span><br /><span>＇</span></div>
 			<div><span>（</span><br /><span>（</span></div>
 			<div><span>）</span><br /><span>）</span></div>
 			<div><span>＊</span><br /><span>＊</span></div>
@@ -66,7 +50,7 @@
 			<div><span>－</span><br /><span>－</span></div>
 			<div><span>．</span><br /><span>．</span></div>
 			<div><span>／</span><br /><span>／</span></div>
-			<br />
+
 			<div><span>０</span><br /><span>０</span></div>
 			<div><span>１</span><br /><span>１</span></div>
 			<div><span>２</span><br /><span>２</span></div>
@@ -77,7 +61,7 @@
 			<div><span>７</span><br /><span>７</span></div>
 			<div><span>８</span><br /><span>８</span></div>
 			<div><span>９</span><br /><span>９</span></div>
-			<br />
+
 			<div><span>：</span><br /><span>：</span></div>
 			<div><span>；</span><br /><span>；</span></div>
 			<div><span>＜</span><br /><span>＜</span></div>
@@ -85,7 +69,7 @@
 			<div><span>＞</span><br /><span>＞</span></div>
 			<div><span>？</span><br /><span>？</span></div>
 			<div><span>＠</span><br /><span>＠</span></div>
-			<br />
+
 			<div><span>Ａ</span><br /><span>Ａ</span></div>
 			<div><span>Ｂ</span><br /><span>Ｂ</span></div>
 			<div><span>Ｃ</span><br /><span>Ｃ</span></div>
@@ -112,14 +96,14 @@
 			<div><span>Ｘ</span><br /><span>Ｘ</span></div>
 			<div><span>Ｙ</span><br /><span>Ｙ</span></div>
 			<div><span>Ｚ</span><br /><span>Ｚ</span></div>
-			<br />
+
 			<div><span>［</span><br /><span>［</span></div>
 			<div><span>＼</span><br /><span>＼</span></div>
 			<div><span>］</span><br /><span>］</span></div>
 			<div><span>＾</span><br /><span>＾</span></div>
 			<div><span>＿</span><br /><span>＿</span></div>
 			<div><span>｀</span><br /><span>｀</span></div>
-			<br />
+
 			<div><span>ａ</span><br /><span>ａ</span></div>
 			<div><span>ｂ</span><br /><span>ｂ</span></div>
 			<div><span>ｃ</span><br /><span>ｃ</span></div>
@@ -146,23 +130,22 @@
 			<div><span>ｘ</span><br /><span>ｘ</span></div>
 			<div><span>ｙ</span><br /><span>ｙ</span></div>
 			<div><span>ｚ</span><br /><span>ｚ</span></div>
-			<br />
+
 			<div><span>｛</span><br /><span>｛</span></div>
 			<div><span>｜</span><br /><span>｜</span></div>
 			<div><span>｝</span><br /><span>｝</span></div>
 			<div><span>～</span><br /><span>～</span></div>
 
-			<div><span>｟</span><br /><span>｟</span></div>				<!--  LEFT WHITE PARENTHESIS  -->
-			<div><span>｠</span><br /><span>｠</span></div>				<!--  RIGHT WHITE PARENTHESIS  -->
+			<div><span>｟</span><br /><span>｟</span></div>				<!-- LEFT WHITE PARENTHESIS -->
+			<div><span>｠</span><br /><span>｠</span></div>				<!-- RIGHT WHITE PARENTHESIS -->
 
-		<!--  HALFWIDTH KATAKANA  -->
-			<br />
+		<!-- HALFWIDTH KATAKANA -->
 			<div><span>。</span><br /><span>。</span></div>
 			<div><span>「</span><br /><span>「</span></div>
 			<div><span>」</span><br /><span>」</span></div>
 			<div><span>、</span><br /><span>、</span></div>
 			<div><span>・</span><br /><span>・</span></div>
-			<br />
+
 			<div><span>ヲ</span><br /><span>ヲ</span></div>
 			<div><span>ァ</span><br /><span>ァ</span></div>
 			<div><span>ィ</span><br /><span>ィ</span></div>
@@ -174,7 +157,7 @@
 			<div><span>ョ</span><br /><span>ョ</span></div>
 			<div><span>ッ</span><br /><span>ッ</span></div>
 			<div><span>ー</span><br /><span>ー</span></div>
-			<br />
+
 			<div><span>ア</span><br /><span>ア</span></div>
 			<div><span>イ</span><br /><span>イ</span></div>
 			<div><span>ウ</span><br /><span>ウ</span></div>
@@ -220,123 +203,106 @@
 			<div><span>ロ</span><br /><span>ロ</span></div>
 			<div><span>ワ</span><br /><span>ワ</span></div>
 			<div><span>ン</span><br /><span>ン</span></div>
-			<br />
-			<div><span>゛</span><br /><span>゛</span></div>
-			<div><span>゜</span><br /><span>゜</span></div>
 
-		<!--  HALFWIDTH HANGUL  -->
-			<br />
-			<div>[<span>&#x115F;</span>]<br />[<span>&#x115F;</span>]</div>	<!--  HANGUL FILLER  -->
-			<div><span>ᆨ</span><br /><span>ᆨ</span></div>				<!--  HANGUL LETTER KIYEOK  -->
-			<div><span>ᆩ</span><br /><span>ᆩ</span></div>				<!--  HANGUL LETTER SSANGKIYEOK  -->
-			<div><span>ᆪ</span><br /><span>ᆪ</span></div>				<!--  HANGUL LETTER KIYEOK-SIOS  -->
-			<div><span>ᆫ</span><br /><span>ᆫ</span></div>				<!--  HANGUL LETTER NIEUN  -->
-			<div><span>ᆬ</span><br /><span>ᆬ</span></div>				<!--  HANGUL LETTER NIEUN-CIEUC  -->
-			<div><span>ᆭ</span><br /><span>ᆭ</span></div>				<!--  HANGUL LETTER NIEUN-HIEUH  -->
-			<div><span>ᆮ</span><br /><span>ᆮ</span></div>				<!--  HANGUL LETTER TIKEUT  -->
-			<div><span>ᄄ</span><br /><span>ᄄ</span></div>				<!--  HANGUL LETTER SSANGTIKEUT  -->
-			<div><span>ᆯ</span><br /><span>ᆯ</span></div>				<!--  HANGUL LETTER RIEUL  -->
-			<div><span>ᆰ</span><br /><span>ᆰ</span></div>				<!--  HANGUL LETTER RIEUL-KIYEOK  -->
-			<div><span>ᆱ</span><br /><span>ᆱ</span></div>				<!--  HANGUL LETTER RIEUL-MIEUM  -->
-			<div><span>ᆲ</span><br /><span>ᆲ</span></div>				<!--  HANGUL LETTER RIEUL-PIEUP  -->
-			<div><span>ᆳ</span><br /><span>ᆳ</span></div>				<!--  HANGUL LETTER RIEUL-SIOS  -->
-			<div><span>ᆴ</span><br /><span>ᆴ</span></div>				<!--  HANGUL LETTER RIEUL-THIEUTH  -->
-			<div><span>ᆵ</span><br /><span>ᆵ</span></div>				<!--  HANGUL LETTER RIEUL-PHIEUPH  -->
-			<div><span>&#x111A;</span><br /><span>&#x111A;</span></div>	<!--  HANGUL LETTER RIEUL-HIEUH  -->
-			<div><span>ᄆ</span><br /><span>ᄆ</span></div>				<!--  HANGUL LETTER MIEUM  -->
-			<div><span>ᄇ</span><br /><span>ᄇ</span></div>				<!--  HANGUL LETTER PIEUP  -->
-			<div><span>ᄈ</span><br /><span>ᄈ</span></div>				<!--  HANGUL LETTER SSANGPIEUP  -->
-			<div><span>ᆹ</span><br /><span>ᆹ</span></div>				<!--  HANGUL LETTER PIEUP-SIOS  -->
-			<div><span>ᄉ</span><br /><span>ᄉ</span></div>				<!--  HANGUL LETTER SIOS  -->
-			<div><span>ᆻ</span><br /><span>ᆻ</span></div>				<!--  HANGUL LETTER SSANGSIOS  -->
-			<div><span>ᄋ</span><br /><span>ᄋ</span></div>				<!--  HANGUL LETTER IEUNG  -->
-			<div><span>ᆽ</span><br /><span>ᆽ</span></div>				<!--  HANGUL LETTER CIEUC  -->
-			<div><span>ᄍ</span><br /><span>ᄍ</span></div>				<!--  HANGUL LETTER SSANGCIEUC  -->
-			<div><span>ᆾ</span><br /><span>ᆾ</span></div>				<!--  HANGUL LETTER CHIEUCH  -->
-			<div><span>ᄏ</span><br /><span>ᄏ</span></div>				<!--  HANGUL LETTER KHIEUKH  -->
-			<div><span>ᇀ</span><br /><span>ᇀ</span></div>				<!--  HANGUL LETTER THIEUTH  -->
-			<div><span>ᄑ</span><br /><span>ᄑ</span></div>				<!--  HANGUL LETTER PHIEUPH  -->
-			<div><span>ᇂ</span><br /><span>ᇂ</span></div>				<!--  HANGUL LETTER HIEUH  -->
-			<br />
-			<div><span>ᅡ</span><br /><span>ᅡ</span></div>				<!--  HANGUL LETTER A  -->
-			<div><span>ᅢ</span><br /><span>ᅢ</span></div>				<!--  HANGUL LETTER AE  -->
-			<div><span>ᅣ</span><br /><span>ᅣ</span></div>				<!--  HANGUL LETTER YA  -->
-			<div><span>ᅤ</span><br /><span>ᅤ</span></div>				<!--  HANGUL LETTER YAE  -->
-			<div><span>ᅥ</span><br /><span>ᅥ</span></div>				<!--  HANGUL LETTER EO  -->
-			<div><span>ᅦ</span><br /><span>ᅦ</span></div>				<!--  HANGUL LETTER E  -->
+			<div><span>&nbsp;&#x3099;</span><br /><span>&nbsp;&#x3099;</span></div>
+			<div><span>&nbsp;&#x309A;</span><br /><span>&nbsp;&#x309A;</span></div>
 
-			<div><span>ᅧ</span><br /><span>ᅧ</span></div>				<!--  HANGUL LETTER YEO  -->
-			<div><span>ᅨ</span><br /><span>ᅨ</span></div>				<!--  HANGUL LETTER YE  -->
-			<div><span>ᅩ</span><br /><span>ᅩ</span></div>				<!--  HANGUL LETTER O  -->
-			<div><span>ᅪ</span><br /><span>ᅪ</span></div>				<!--  HANGUL LETTER WA  -->
-			<div><span>ᅫ</span><br /><span>ᅫ</span></div>				<!--  HANGUL LETTER WAE  -->
-			<div><span>ᅬ</span><br /><span>ᅬ</span></div>				<!--  HANGUL LETTER OE  -->
+		<!-- HALFWIDTH HANGUL -->
+			<div>[<span>&#x115F;</span>]<br />[<span>&#x115F;</span>]</div>	<!-- HANGUL FILLER -->
+			<div><span>ᆨ</span><br /><span>ᆨ</span></div>				<!-- HANGUL LETTER KIYEOK -->
+			<div><span>ㄲ</span><br /><span>ㄲ</span></div>				<!-- HANGUL LETTER SSANGKIYEOK -->
+			<div><span>ᆪ</span><br /><span>ᆪ</span></div>				<!-- HANGUL LETTER KIYEOK-SIOS -->
+			<div><span>ᆫ</span><br /><span>ᆫ</span></div>				<!-- HANGUL LETTER NIEUN -->
+			<div><span>ᆬ</span><br /><span>ᆬ</span></div>				<!-- HANGUL LETTER NIEUN-CIEUC -->
+			<div><span>ᆭ</span><br /><span>ᆭ</span></div>				<!-- HANGUL LETTER NIEUN-HIEUH -->
+			<div><span>ᆮ</span><br /><span>ᆮ</span></div>				<!-- HANGUL LETTER TIKEUT -->
+			<div><span>ᄄ</span><br /><span>ᄄ</span></div>				<!-- HANGUL LETTER SSANGTIKEUT -->
+			<div><span>ᆯ</span><br /><span>ᆯ</span></div>				<!-- HANGUL LETTER RIEUL -->
+			<div><span>ᆰ</span><br /><span>ᆰ</span></div>				<!-- HANGUL LETTER RIEUL-KIYEOK -->
+			<div><span>ᆱ</span><br /><span>ᆱ</span></div>				<!-- HANGUL LETTER RIEUL-MIEUM -->
+			<div><span>ᆲ</span><br /><span>ᆲ</span></div>				<!-- HANGUL LETTER RIEUL-PIEUP -->
+			<div><span>ᆳ</span><br /><span>ᆳ</span></div>				<!-- HANGUL LETTER RIEUL-SIOS -->
+			<div><span>ᆴ</span><br /><span>ᆴ</span></div>				<!-- HANGUL LETTER RIEUL-THIEUTH -->
+			<div><span>ᆵ</span><br /><span>ᆵ</span></div>				<!-- HANGUL LETTER RIEUL-PHIEUPH -->
+			<div><span>ㅀ</span><br /><span>ㅀ</span></div>				<!-- HANGUL LETTER RIEUL-HIEUH -->
+			<div><span>ᄆ</span><br /><span>ᄆ</span></div>				<!-- HANGUL LETTER MIEUM -->
+			<div><span>ᄇ</span><br /><span>ᄇ</span></div>				<!-- HANGUL LETTER PIEUP -->
+			<div><span>ᄈ</span><br /><span>ᄈ</span></div>				<!-- HANGUL LETTER SSANGPIEUP -->
+			<div><span>ᆹ</span><br /><span>ᆹ</span></div>				<!-- HANGUL LETTER PIEUP-SIOS -->
+			<div><span>ᄉ</span><br /><span>ᄉ</span></div>				<!-- HANGUL LETTER SIOS -->
+			<div><span>ᆻ</span><br /><span>ᆻ</span></div>				<!-- HANGUL LETTER SSANGSIOS -->
+			<div><span>ᄋ</span><br /><span>ᄋ</span></div>				<!-- HANGUL LETTER IEUNG -->
+			<div><span>ᆽ</span><br /><span>ᆽ</span></div>				<!-- HANGUL LETTER CIEUC -->
+			<div><span>ᄍ</span><br /><span>ᄍ</span></div>				<!-- HANGUL LETTER SSANGCIEUC -->
+			<div><span>ᆾ</span><br /><span>ᆾ</span></div>				<!-- HANGUL LETTER CHIEUCH -->
+			<div><span>ᄏ</span><br /><span>ᄏ</span></div>				<!-- HANGUL LETTER KHIEUKH -->
+			<div><span>ᇀ</span><br /><span>ᇀ</span></div>				<!-- HANGUL LETTER THIEUTH -->
+			<div><span>ᄑ</span><br /><span>ᄑ</span></div>				<!-- HANGUL LETTER PHIEUPH -->
+			<div><span>ᇂ</span><br /><span>ᇂ</span></div>				<!-- HANGUL LETTER HIEUH -->
+			<div><span>ᅡ</span><br /><span>ᅡ</span></div>				<!-- HANGUL LETTER A -->
+			<div><span>ᅢ</span><br /><span>ᅢ</span></div>				<!-- HANGUL LETTER AE -->
+			<div><span>ᅣ</span><br /><span>ᅣ</span></div>				<!-- HANGUL LETTER YA -->
+			<div><span>ᅤ</span><br /><span>ᅤ</span></div>				<!-- HANGUL LETTER YAE -->
+			<div><span>ᅥ</span><br /><span>ᅥ</span></div>				<!-- HANGUL LETTER EO -->
+			<div><span>ᅦ</span><br /><span>ᅦ</span></div>				<!-- HANGUL LETTER E -->
 
-			<div><span>ᅭ</span><br /><span>ᅭ</span></div>				<!--  HANGUL LETTER YO  -->
-			<div><span>ᅮ</span><br /><span>ᅮ</span></div>				<!--  HANGUL LETTER U  -->
-			<div><span>ᅯ</span><br /><span>ᅯ</span></div>				<!--  HANGUL LETTER WEO  -->
-			<div><span>ᅰ</span><br /><span>ᅰ</span></div>				<!--  HANGUL LETTER WE  -->
-			<div><span>ᅱ</span><br /><span>ᅱ</span></div>				<!--  HANGUL LETTER WI  -->
-			<div><span>ᅲ</span><br /><span>ᅲ</span></div>				<!--  HANGUL LETTER YU  -->
+			<div><span>ᅧ</span><br /><span>ᅧ</span></div>				<!-- HANGUL LETTER YEO -->
+			<div><span>ᅨ</span><br /><span>ᅨ</span></div>				<!-- HANGUL LETTER YE -->
+			<div><span>ᅩ</span><br /><span>ᅩ</span></div>				<!-- HANGUL LETTER O -->
+			<div><span>ᅪ</span><br /><span>ᅪ</span></div>				<!-- HANGUL LETTER WA -->
+			<div><span>ᅫ</span><br /><span>ᅫ</span></div>				<!-- HANGUL LETTER WAE -->
+			<div><span>ᅬ</span><br /><span>ᅬ</span></div>				<!-- HANGUL LETTER OE -->
 
-			<div><span>ᅳ</span><br /><span>ᅳ</span></div>				<!--  HANGUL LETTER EU  -->
-			<div><span>ᅴ</span><br /><span>ᅴ</span></div>				<!--  HANGUL LETTER YI  -->
-			<div><span>ᅵ</span><br /><span>ᅵ</span></div>				<!--  HANGUL LETTER I  -->
+			<div><span>ᅭ</span><br /><span>ᅭ</span></div>				<!-- HANGUL LETTER YO -->
+			<div><span>ᅮ</span><br /><span>ᅮ</span></div>				<!-- HANGUL LETTER U -->
+			<div><span>ᅯ</span><br /><span>ᅯ</span></div>				<!-- HANGUL LETTER WEO -->
+			<div><span>ᅰ</span><br /><span>ᅰ</span></div>				<!-- HANGUL LETTER WE -->
+			<div><span>ᅱ</span><br /><span>ᅱ</span></div>				<!-- HANGUL LETTER WI -->
+			<div><span>ᅲ</span><br /><span>ᅲ</span></div>				<!-- HANGUL LETTER YU -->
 
-		<!--  FULLWIDTH SIGN  -->
-			<br />
-			<div><span>￠</span><br /><span>￠</span></div>				<!--  CENT SIGN  -->
-			<div><span>￡</span><br /><span>￡</span></div>				<!--  POUND SIGN  -->
-			<div><span>￢</span><br /><span>￢</span></div>				<!--  NOT SIGN  -->
-			<div><span>￣</span><br /><span>￣</span></div>				<!--  MACRON  -->
-			<div><span>￤</span><br /><span>￤</span></div>				<!--  BROKEN BAR  -->
-			<div><span>￥</span><br /><span>￥</span></div>				<!--  YEN SIGN  -->
-			<div><span>￦</span><br /><span>￦</span></div>				<!--  WON SIGN  -->
+			<div><span>ᅳ</span><br /><span>ᅳ</span></div>				<!-- HANGUL LETTER EU -->
+			<div><span>ᅴ</span><br /><span>ᅴ</span></div>				<!-- HANGUL LETTER YI -->
+			<div><span>ᅵ</span><br /><span>ᅵ</span></div>				<!-- HANGUL LETTER I -->
 
-		<!--  HALFWIDTH SIGN  -->
-			<br />
-			<div><span>｜</span><br /><span>｜</span></div>				<!--  FORMS LIGHT VERTICAL  -->
-			<div><span>←</span><br /><span>←</span></div>				<!--  LEFTWARDS ARROW  -->
-			<div><span>↑</span><br /><span>↑</span></div>				<!--  UPWARDS ARROW  -->
-			<div><span>→</span><br /><span>→</span></div>				<!--  RIGHTWARDS ARROW  -->
-			<div><span>↓</span><br /><span>↓</span></div>				<!--  DOWNWARDS ARROW  -->
-			<div><span>■</span><br /><span>■</span></div>					<!--  BLACK SQUARE  -->
-			<div><span>○</span><br /><span>○</span></div>				<!--  WHITE CIRCLE  -->
+		<!-- FULLWIDTH SIGN -->
+			<div><span>￠</span><br /><span>￠</span></div>				<!-- CENT SIGN -->
+			<div><span>￡</span><br /><span>￡</span></div>				<!-- POUND SIGN -->
+			<div><span>￢</span><br /><span>￢</span></div>				<!-- NOT SIGN -->
+			<div><span>￣</span><br /><span>￣</span></div>				<!-- MACRON -->
+			<div><span>￤</span><br /><span>￤</span></div>				<!-- BROKEN BAR -->
+			<div><span>￥</span><br /><span>￥</span></div>				<!-- YEN SIGN -->
+			<div><span>￦</span><br /><span>￦</span></div>				<!-- WON SIGN -->
 
-		<!--  HALFWIDTH LATIN  -->
-			<br />
+		<!-- HALFWIDTH SIGN -->
+			<div><span>│</span><br /><span>│</span></div>				<!-- FORMS LIGHT VERTICAL -->
+			<div><span>←</span><br /><span>←</span></div>				<!-- LEFTWARDS ARROW -->
+			<div><span>↑</span><br /><span>↑</span></div>				<!-- UPWARDS ARROW -->
+			<div><span>→</span><br /><span>→</span></div>				<!-- RIGHTWARDS ARROW -->
+			<div><span>↓</span><br /><span>↓</span></div>				<!-- DOWNWARDS ARROW -->
+			<div><span>■</span><br /><span>■</span></div>					<!-- BLACK SQUARE -->
+			<div><span>○</span><br /><span>○</span></div>				<!-- WHITE CIRCLE -->
+
+		<!-- HALFWIDTH LATIN -->
 			<div><span>Ａ</span><br /><span>Ａ</span></div>
 			<div><span>Ｂ</span><br /><span>Ｂ</span></div>
 			<div><span>Ｃ</span><br /><span>Ｃ</span></div>
-			<br />
+
 			<div><span>ａ</span><br /><span>ａ</span></div>
 			<div><span>ｂ</span><br /><span>ｂ</span></div>
 			<div><span>ｃ</span><br /><span>ｃ</span></div>
 
-		<!--  FULLWIDTH KANA  -->
-			<br />
+		<!-- FULLWIDTH KANA -->
 			<div><span>あ</span><br /><span>あ</span></div>
 			<div><span>い</span><br /><span>い</span></div>
 			<div><span>う</span><br /><span>う</span></div>
 			<div><span>え</span><br /><span>え</span></div>
 			<div><span>お</span><br /><span>お</span></div>
-			<br />
+
 			<div><span>ア</span><br /><span>ア</span></div>
 			<div><span>イ</span><br /><span>イ</span></div>
 			<div><span>ウ</span><br /><span>ウ</span></div>
 			<div><span>エ</span><br /><span>エ</span></div>
 			<div><span>オ</span><br /><span>オ</span></div>
 		</div>
-		<p id="fontChange" style="display: none;">
-			If you are unable to see font glyphs for certain characters using the browsers default font, install the <a href="http://ossipedia.ipa.go.jp/ipafont/">IPA Font(http://ossipedia.ipa.go.jp/ipafont/)</a> and apply it.
-			<button type="button" onclick="setFontFamily()">
-				Apply
-			</button>
-		</p>
-		<script type="text/javascript">
-			if (document.getElementById) {
-				document.getElementById('fontChange').style.display = 'block'
-			}
-		</script>
 	</body>
 </html>

@@ -32,3 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-loose.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-normal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-strict.html

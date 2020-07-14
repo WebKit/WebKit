@@ -1,0 +1,4 @@
+
+PASS 301C WAVE DASH may NOT appear at line start if de and strict 
+PASS 30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN may NOT appear at line start if de and strict 
+

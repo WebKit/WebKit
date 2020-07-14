@@ -1,0 +1,8 @@
+
+PASS Property white-space value 'normal' computes to 'normal' 
+PASS Property white-space value 'pre' computes to 'pre' 
+PASS Property white-space value 'nowrap' computes to 'nowrap' 
+PASS Property white-space value 'pre-wrap' computes to 'pre-wrap' 
+PASS Property white-space value 'break-spaces' computes to 'break-spaces' 
+PASS Property white-space value 'pre-line' computes to 'pre-line' 
+

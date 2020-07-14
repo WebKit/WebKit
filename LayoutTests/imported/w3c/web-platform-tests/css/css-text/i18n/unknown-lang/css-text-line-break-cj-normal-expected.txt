@@ -1,0 +1,256 @@
+
+FAIL 3041  HIRAGANA LETTER SMALL A may appear at line start if normal assert_true: expected true got false
+FAIL 3043  HIRAGANA LETTER SMALL I may appear at line start if normal assert_true: expected true got false
+FAIL 3045  HIRAGANA LETTER SMALL U may appear at line start if normal assert_true: expected true got false
+FAIL 3047  HIRAGANA LETTER SMALL E may appear at line start if normal assert_true: expected true got false
+FAIL 3049  HIRAGANA LETTER SMALL O may appear at line start if normal assert_true: expected true got false
+FAIL 3063  HIRAGANA LETTER SMALL TU may appear at line start if normal assert_true: expected true got false
+FAIL 3083  HIRAGANA LETTER SMALL YA may appear at line start if normal assert_true: expected true got false
+FAIL 3085  HIRAGANA LETTER SMALL YU may appear at line start if normal assert_true: expected true got false
+FAIL 3087  HIRAGANA LETTER SMALL YO may appear at line start if normal assert_true: expected true got false
+FAIL 308E  HIRAGANA LETTER SMALL WA may appear at line start if normal assert_true: expected true got false
+FAIL 3095  HIRAGANA LETTER SMALL KA may appear at line start if normal assert_true: expected true got false
+FAIL 3096  HIRAGANA LETTER SMALL KE may appear at line start if normal assert_true: expected true got false
+FAIL 30A1  KATAKANA LETTER SMALL A may appear at line start if normal assert_true: expected true got false
+FAIL 30A3  KATAKANA LETTER SMALL I may appear at line start if normal assert_true: expected true got false
+FAIL 30A5  KATAKANA LETTER SMALL U may appear at line start if normal assert_true: expected true got false
+FAIL 30A7  KATAKANA LETTER SMALL E may appear at line start if normal assert_true: expected true got false
+FAIL 30A9  KATAKANA LETTER SMALL O may appear at line start if normal assert_true: expected true got false
+FAIL 30C3  KATAKANA LETTER SMALL TU may appear at line start if normal assert_true: expected true got false
+FAIL 30E3  KATAKANA LETTER SMALL YA may appear at line start if normal assert_true: expected true got false
+FAIL 30E5  KATAKANA LETTER SMALL YU may appear at line start if normal assert_true: expected true got false
+FAIL 30E7  KATAKANA LETTER SMALL YO may appear at line start if normal assert_true: expected true got false
+FAIL 30EE  KATAKANA LETTER SMALL WA may appear at line start if normal assert_true: expected true got false
+FAIL 30F5  KATAKANA LETTER SMALL KA may appear at line start if normal assert_true: expected true got false
+FAIL 30F6  KATAKANA LETTER SMALL KE may appear at line start if normal assert_true: expected true got false
+FAIL 30FC  KATAKANA-HIRAGANA PROLONGED SOUND MARK may appear at line start if normal assert_true: expected true got false
+FAIL 31F0  KATAKANA LETTER SMALL KU may appear at line start if normal assert_true: expected true got false
+FAIL 31F1  KATAKANA LETTER SMALL SI may appear at line start if normal assert_true: expected true got false
+FAIL 31F2  KATAKANA LETTER SMALL SU may appear at line start if normal assert_true: expected true got false
+FAIL 31F3  KATAKANA LETTER SMALL TO may appear at line start if normal assert_true: expected true got false
+FAIL 31F4  KATAKANA LETTER SMALL NU may appear at line start if normal assert_true: expected true got false
+FAIL 31F5  KATAKANA LETTER SMALL HA may appear at line start if normal assert_true: expected true got false
+FAIL 31F6  KATAKANA LETTER SMALL HI may appear at line start if normal assert_true: expected true got false
+FAIL 31F7  KATAKANA LETTER SMALL HU may appear at line start if normal assert_true: expected true got false
+FAIL 31F8  KATAKANA LETTER SMALL HE may appear at line start if normal assert_true: expected true got false
+FAIL 31F9  KATAKANA LETTER SMALL HO may appear at line start if normal assert_true: expected true got false
+FAIL 31FA  KATAKANA LETTER SMALL MU may appear at line start if normal assert_true: expected true got false
+FAIL 31FB  KATAKANA LETTER SMALL RA may appear at line start if normal assert_true: expected true got false
+FAIL 31FC  KATAKANA LETTER SMALL RI may appear at line start if normal assert_true: expected true got false
+FAIL 31FD  KATAKANA LETTER SMALL RU may appear at line start if normal assert_true: expected true got false
+FAIL 31FE  KATAKANA LETTER SMALL RE may appear at line start if normal assert_true: expected true got false
+FAIL 31FF  KATAKANA LETTER SMALL RO may appear at line start if normal assert_true: expected true got false
+FAIL FF67  HALFWIDTH KATAKANA LETTER SMALL A may appear at line start if normal assert_true: expected true got false
+FAIL FF68  HALFWIDTH KATAKANA LETTER SMALL I may appear at line start if normal assert_true: expected true got false
+FAIL FF69  HALFWIDTH KATAKANA LETTER SMALL U may appear at line start if normal assert_true: expected true got false
+FAIL FF6A  HALFWIDTH KATAKANA LETTER SMALL E may appear at line start if normal assert_true: expected true got false
+FAIL FF6B  HALFWIDTH KATAKANA LETTER SMALL O may appear at line start if normal assert_true: expected true got false
+FAIL FF6C  HALFWIDTH KATAKANA LETTER SMALL YA may appear at line start if normal assert_true: expected true got false
+FAIL FF6D  HALFWIDTH KATAKANA LETTER SMALL YU may appear at line start if normal assert_true: expected true got false
+FAIL FF6E  HALFWIDTH KATAKANA LETTER SMALL YO may appear at line start if normal assert_true: expected true got false
+FAIL FF6F  HALFWIDTH KATAKANA LETTER SMALL TU may appear at line start if normal assert_true: expected true got false
+FAIL FF70  HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK may appear at line start if normal assert_true: expected true got false
+3041
+文文文文文文ぁ字字
+文文文文文文
+ぁ字字
+3043
+文文文文文文ぃ字字
+文文文文文文
+ぃ字字
+3045
+文文文文文文ぅ字字
+文文文文文文
+ぅ字字
+3047
+文文文文文文ぇ字字
+文文文文文文
+ぇ字字
+3049
+文文文文文文ぉ字字
+文文文文文文
+ぉ字字
+3063
+文文文文文文っ字字
+文文文文文文
+っ字字
+3083
+文文文文文文ゃ字字
+文文文文文文
+ゃ字字
+3085
+文文文文文文ゅ字字
+文文文文文文
+ゅ字字
+3087
+文文文文文文ょ字字
+文文文文文文
+ょ字字
+308E
+文文文文文文ゎ字字
+文文文文文文
+ゎ字字
+3095
+文文文文文文ゕ字字
+文文文文文文
+ゕ字字
+3096
+文文文文文文ゖ字字
+文文文文文文
+ゖ字字
+30A1
+文文文文文文ァ字字
+文文文文文文
+ァ字字
+30A3
+文文文文文文ィ字字
+文文文文文文
+ィ字字
+30A5
+文文文文文文ゥ字字
+文文文文文文
+ゥ字字
+30A7
+文文文文文文ェ字字
+文文文文文文
+ェ字字
+30A9
+文文文文文文ォ字字
+文文文文文文
+ォ字字
+30C3
+文文文文文文ッ字字
+文文文文文文
+ッ字字
+30E3
+文文文文文文ャ字字
+文文文文文文
+ャ字字
+30E5
+文文文文文文ュ字字
+文文文文文文
+ュ字字
+30E7
+文文文文文文ョ字字
+文文文文文文
+ョ字字
+30EE
+文文文文文文ヮ字字
+文文文文文文
+ヮ字字
+30F5
+文文文文文文ヵ字字
+文文文文文文
+ヵ字字
+30F6
+文文文文文文ヶ字字
+文文文文文文
+ヶ字字
+30FC
+文文文文文文ー字字
+文文文文文文
+ー字字
+31F0
+文文文文文文ㇰ字字
+文文文文文文
+ㇰ字字
+31F1
+文文文文文文ㇱ字字
+文文文文文文
+ㇱ字字
+31F2
+文文文文文文ㇲ字字
+文文文文文文
+ㇲ字字
+31F3
+文文文文文文ㇳ字字
+文文文文文文
+ㇳ字字
+31F4
+文文文文文文ㇴ字字
+文文文文文文
+ㇴ字字
+31F5
+文文文文文文ㇵ字字
+文文文文文文
+ㇵ字字
+31F6
+文文文文文文ㇶ字字
+文文文文文文
+ㇶ字字
+31F7
+文文文文文文ㇷ字字
+文文文文文文
+ㇷ字字
+31F8
+文文文文文文ㇸ字字
+文文文文文文
+ㇸ字字
+31F9
+文文文文文文ㇹ字字
+文文文文文文
+ㇹ字字
+31FA
+文文文文文文ㇺ字字
+文文文文文文
+ㇺ字字
+31FB
+文文文文文文ㇻ字字
+文文文文文文
+ㇻ字字
+31FC
+文文文文文文ㇼ字字
+文文文文文文
+ㇼ字字
+31FD
+文文文文文文ㇽ字字
+文文文文文文
+ㇽ字字
+31FE
+文文文文文文ㇾ字字
+文文文文文文
+ㇾ字字
+31FF
+文文文文文文ㇿ字字
+文文文文文文
+ㇿ字字
+FF67
+文文文文文文ｧ字字
+文文文文文文
+ｧ字字
+FF68
+文文文文文文ｨ字字
+文文文文文文
+ｨ字字
+FF69
+文文文文文文ｩ字字
+文文文文文文
+ｩ字字
+FF6A
+文文文文文文ｪ字字
+文文文文文文
+ｪ字字
+FF6B
+文文文文文文ｫ字字
+文文文文文文
+ｫ字字
+FF6C
+文文文文文文ｬ字字
+文文文文文文
+ｬ字字
+FF6D
+文文文文文文ｭ字字
+文文文文文文
+ｭ字字
+FF6E
+文文文文文文ｮ字字
+文文文文文文
+ｮ字字
+FF6F
+文文文文文文ｯ字字
+文文文文文文
+ｯ字字
+FF70
+文文文文文文ｰ字字
+文文文文文文
+ｰ字字

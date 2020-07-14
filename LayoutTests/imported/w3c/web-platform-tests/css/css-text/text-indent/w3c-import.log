@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/percentage-value-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-long-line-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-002-expected.html
@@ -23,3 +24,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html

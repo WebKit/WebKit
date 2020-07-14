@@ -7,6 +7,7 @@
 <meta name="flags" content="">
 <link rel="match" href="reference/white-space-intrinsic-size-001-ref.html">
 <meta name="assert" content="When white-space is break-spaces, preserved spaces at the end of the line do affect the intrinsic min-content size. Overflow-wrap makes no difference.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 aside {
   float: left;
@@ -35,7 +36,7 @@ div {
   <aside>X  </aside>
   <aside>X  </aside>
 </div>
-<!--  Note: the space immediately following the X does not get wrapped,
+<!-- Note: the space immediately following the X does not get wrapped,
 even under break-spaces+break-word:
 The parent of the flow is 0-width,
 so the float is min-content sized,
@@ -43,4 +44,4 @@ which should leave enough room for both the X and one space.
 break-space+break-word would allow for an emergency wrap before the space
 if the float itself was sized too small,
 but it isn't.
- -->
+-->

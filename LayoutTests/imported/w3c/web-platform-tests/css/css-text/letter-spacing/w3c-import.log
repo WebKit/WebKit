@@ -9,7 +9,8 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+text-align-last
+text-justify
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -18,6 +19,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-bidi-005.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-end-of-line-001-expected.html
@@ -26,3 +33,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-003.xht

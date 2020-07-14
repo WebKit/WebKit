@@ -1,0 +1,7 @@
+
+PASS Property line-break value 'auto' computes to 'auto' 
+PASS Property line-break value 'loose' computes to 'loose' 
+PASS Property line-break value 'normal' computes to 'normal' 
+PASS Property line-break value 'strict' computes to 'strict' 
+PASS Property line-break value 'anywhere' computes to 'anywhere' 
+

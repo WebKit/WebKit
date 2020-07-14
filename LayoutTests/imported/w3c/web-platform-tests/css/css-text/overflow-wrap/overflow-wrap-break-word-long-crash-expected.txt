@@ -1,0 +1,4 @@
+x
+
+PASS CSS Text Test: very long line with `overflow-wrap: break-word` should not crash 
+

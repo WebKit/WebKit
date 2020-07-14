@@ -1,0 +1,6 @@
+
+PASS e.style['word-boundary-detection'] = "auto" should not set the property value 
+PASS e.style['word-boundary-detection'] = "auto()" should not set the property value 
+PASS e.style['word-boundary-detection'] = "none" should not set the property value 
+PASS e.style['word-boundary-detection'] = "normal manual" should not set the property value 
+
