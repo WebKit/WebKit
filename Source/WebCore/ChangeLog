@@ -1,3 +1,17 @@
+2020-07-13  Peng Liu  <peng.liu6@apple.com>
+
+        Keyboard remains on full screen video view after back from PiP
+        https://bugs.webkit.org/show_bug.cgi?id=214287
+
+        Reviewed by Daniel Bates.
+
+        Make the window for video fullscreen and picture-in-picture support the key window
+        after the video returns to fullscreen from the picture-in-picture mode. Otherwise,
+        the WebAVPlayerViewController cannot become the first responder.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::didStopPictureInPicture):
+
 2020-07-13  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeNeedsLayoutChecker] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html asserts

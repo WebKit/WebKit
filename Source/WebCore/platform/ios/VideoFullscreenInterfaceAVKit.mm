@@ -1145,6 +1145,7 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 
     if (m_currentMode.hasFullscreen() || m_restoringFullscreenForPictureInPictureStop) {
         clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+        [m_window makeKeyWindow];
         [m_playerViewController setShowsPlaybackControls:YES];
 
         if (m_exitFullscreenNeedsExitPictureInPicture)
