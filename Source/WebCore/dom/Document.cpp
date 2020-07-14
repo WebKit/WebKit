@@ -1758,8 +1758,8 @@ void Document::visibilityStateChanged()
         client->visibilityStateChanged();
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
-    if (PlatformMediaSessionManager::sharedManagerIfExists()) {
-        if (!PlatformMediaSessionManager::sharedManager().isInterrupted())
+    if (auto mediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists()) {
+        if (!mediaSessionManager->isInterrupted())
             MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
     }
 #endif
