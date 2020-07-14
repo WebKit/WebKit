@@ -1,5 +1,14 @@
 2020-07-14  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] watchos should build both arm64_32 and armv7k architectures
+        https://bugs.webkit.org/show_bug.cgi?id=214310
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2020-07-14  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] watchos should build both arm64_32 and armv7k architectures
         https://bugs.webkit.org/show_bug.cgi?id=214279
 
