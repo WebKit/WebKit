@@ -1,11 +1,11 @@
 --- !tapi-tbd-v3
-archs:           [ i386, x86_64, arm64, arm64e, arm64_32 ]
+archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
 install-name:     '/System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing'
 objc-constraint: none
 platform: watchos
 exports:
   -
-    archs:           [ i386, x86_64, arm64, arm64e, arm64_32 ]
+    archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
     symbols:         [ _SSBProviderTencent, _ZN12SafeBrowsing7Service4mainEv ]
     objc-classes:    [ SSBLookupContext, SSBLookupResult, SSBServiceLookupResult ]
 ...

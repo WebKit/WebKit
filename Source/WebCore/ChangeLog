@@ -1,3 +1,15 @@
+2020-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [watchOS] Support armv7k build
+        https://bugs.webkit.org/show_bug.cgi?id=214306
+        <rdar://problem/65549901>
+
+        Reviewed by Aakash Jain.
+
+        No new tests, build fix.
+
+        * Configurations/Base.xcconfig: Disable 64 to 32 bit conversion warning for armv7k.
+
 2020-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Do not update ScreenTime when in private browsing mode

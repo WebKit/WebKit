@@ -1,3 +1,19 @@
+2020-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [watchOS] Support armv7k build
+        https://bugs.webkit.org/show_bug.cgi?id=214306
+        <rdar://problem/65549901>
+
+        Reviewed by Aakash Jain.
+
+        * WebKitPrivateFrameworkStubs/watchos/6/FileProvider.framework/FileProvider.tbd: Add armv7k to supported architectures.
+        * WebKitPrivateFrameworkStubs/watchos/6/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Ditto.
+        * WebKitPrivateFrameworkStubs/watchos/6/LocalAuthentication.framework/LocalAuthentication.tbd: Ditto.
+        * WebKitPrivateFrameworkStubs/watchos/6/PepperUICore.framework/PepperUICore.tbd: Ditto.
+        * WebKitPrivateFrameworkStubs/watchos/6/RunningBoardServices.framework/RunningBoardServices.tbd: Ditto.
+        * WebKitPrivateFrameworkStubs/watchos/6/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Ditto.
+        * WebKitPrivateFrameworkStubs/watchos/6/URLFormatting.framework/URLFormatting.tbd: Ditto.
+
 2020-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         watchOS/tvOS: Remote unneeded FileProvider symbols
