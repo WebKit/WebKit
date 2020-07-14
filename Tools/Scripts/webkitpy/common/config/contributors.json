@@ -3251,6 +3251,12 @@
          "kareng"
       ]
    },
+   "Karl Rackler" : {
+      "emails" : [
+         "rackler@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Katherine Cheney" : {
       "emails" : [
          "katherine_cheney@apple.com"
