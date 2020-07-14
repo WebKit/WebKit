@@ -1,0 +1,17 @@
+
+PASS Check if browser supports enough test media types and pairs of audio-only or video-only media with same bytestream format 
+PASS Test audio-only implicit changeType for audio/webm; codecs="vorbis" <-> audio/webm; codecs="vorbis" 
+PASS Test audio-only implicit changeType for audio/webm; codecs="vorbis" <-> audio/webm; codecs="vorbis" (using types without codecs parameters for addSourceBuffer) 
+PASS Test audio-only implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" 
+PASS Test audio-only implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters for addSourceBuffer) 
+PASS Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp8" 
+PASS Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp8" (using types without codecs parameters for addSourceBuffer) 
+FAIL Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp9" assert_unreached: Unexpected event 'error' Reached unreachable code
+FAIL Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp9" (using types without codecs parameters for addSourceBuffer) assert_unreached: Unexpected event 'error' Reached unreachable code
+FAIL Test video-only implicit changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp8" assert_unreached: Unexpected event 'error' Reached unreachable code
+FAIL Test video-only implicit changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp8" (using types without codecs parameters for addSourceBuffer) assert_unreached: Unexpected event 'error' Reached unreachable code
+PASS Test video-only implicit changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp9" 
+PASS Test video-only implicit changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp9" (using types without codecs parameters for addSourceBuffer) 
+PASS Test video-only implicit changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" 
+PASS Test video-only implicit changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters for addSourceBuffer) 
+

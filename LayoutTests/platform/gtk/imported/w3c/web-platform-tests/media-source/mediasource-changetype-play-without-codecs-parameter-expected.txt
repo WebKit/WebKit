@@ -1,0 +1,16 @@
+
+PASS Check if browser supports enough test media types 
+FAIL Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) The operation is not supported.
+FAIL Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) The operation is not supported.
+FAIL Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) The operation is not supported.
+FAIL Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp8" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp9" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/webm; codecs="vp8" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp8" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp9" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/webm; codecs="vp9" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/webm; codecs="vp8" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/webm; codecs="vp9" (using types without codecs parameters) The operation is not supported.
+FAIL Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters) The operation is not supported.
+

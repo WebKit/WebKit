@@ -1,3 +1,18 @@
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening after r264345
+
+        Unreviewed gardening.
+
+        Add GTK baselines for new tests added.
+
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-expected.txt: Added.
+
 2020-07-14  Zalan Bujtas  <zalan@apple.com>
 
         Use "font-family: Ahem" to improve coverage.
