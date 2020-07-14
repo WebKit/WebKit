@@ -1,3 +1,17 @@
+2020-07-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Add tvOS and watchOS support to built-product-archive
+        https://bugs.webkit.org/show_bug.cgi?id=214214
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/built-product-archive:
+        (webkitBuildDirectoryForConfigurationAndPlatform):
+        (determineWebKitBuildDirectories):
+        (minifyDirectory):
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+
 2020-07-13  Aakash Jain  <aakash_jain@apple.com>
 
         Add EWS queues for tvOS and watchOS builders (follow-up fix)
