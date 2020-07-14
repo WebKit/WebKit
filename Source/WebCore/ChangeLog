@@ -1,3 +1,41 @@
+2020-07-14  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Implement compressedTex{Sub}Image*, copyTexSubImage3D
+        https://bugs.webkit.org/show_bug.cgi?id=126449
+
+        Reviewed by Dean Jackson.
+
+        Implement WebGL 2.0 entry points compressedTex{Sub}Image[23]D and
+        copyTexSubImage3D.
+
+        These require and use the ANGLE_robust_client_memory extension for
+        size checking. Remove the associated entry points from
+        GraphicsContextGL and subclasses, since they will never be used.
+
+        Add needed pixel buffer object validation to the WebGL 1.0
+        versions of these APIs as well as to texImage2D and texSubImage2D.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texImage2D):
+        (WebCore::WebGL2RenderingContext::texSubImage2D):
+        (WebCore::WebGL2RenderingContext::copyTexSubImage3D):
+        (WebCore::WebGL2RenderingContext::compressedTexImage2D):
+        (WebCore::WebGL2RenderingContext::compressedTexImage3D):
+        (WebCore::WebGL2RenderingContext::compressedTexSubImage2D):
+        (WebCore::WebGL2RenderingContext::compressedTexSubImage3D):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::copyTexSubImage3D):
+        (WebCore::GraphicsContextGLOpenGL::compressedTexImage3D): Deleted.
+        (WebCore::GraphicsContextGLOpenGL::compressedTexSubImage3D): Deleted.
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::compressedTexImage3D): Deleted.
+        (WebCore::GraphicsContextGLOpenGL::compressedTexSubImage3D): Deleted.
+
 2020-07-14  Chris Dumez  <cdumez@apple.com>
 
         Drop cache of subframe count on the Page

@@ -36,6 +36,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBitmap.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
@@ -1046,6 +1047,28 @@ void WebGL2RenderingContext::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
     m_context->texStorage3D(target, levels, internalFormat, width, height, depth);
 }
 
+void WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& data)
+{
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texImage2D", "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    WebGLRenderingContextBase::texImage2D(target, level, internalformat, width, height, border, format, type, WTFMove(data));
+}
+
+ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, Optional<TexImageSource> data)
+{
+    if (isContextLostOrPending())
+        return { };
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texImage2D", "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return { };
+    }
+    return WebGLRenderingContextBase::texImage2D(target, level, internalformat, format, type, data);
+}
+
 void WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset)
 {
     if (isContextLostOrPending())
@@ -1154,6 +1177,28 @@ void WebGL2RenderingContext::texImage3D(GCGLenum target, GCGLint level, GCGLint 
     texImageArrayBufferViewHelper(TexImageFunctionID::TexImage3D, target, level, internalformat, width, height, depth, border, format, type, 0, 0, 0, WTFMove(srcData), NullNotReachable, srcOffset);
 }
 
+void WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData)
+{
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texSubImage2D", "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    WebGLRenderingContextBase::texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, WTFMove(srcData));
+}
+
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, Optional<TexImageSource>&& data)
+{
+    if (isContextLostOrPending())
+        return { };
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texSubImage2D", "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return { };
+    }
+    return WebGLRenderingContextBase::texSubImage2D(target, level, xoffset, yoffset, format, type, WTFMove(data));
+}
+
 void WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format , GCGLenum type, GCGLintptr offset)
 {
     if (isContextLostOrPending())
@@ -1246,29 +1291,196 @@ ExceptionOr<void> WebGL2RenderingContext::texSubImage3D(GCGLenum target, GCGLint
     return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexSubImage3D, target, level, 0, 0, format, type, xoffset, yoffset, zoffset, getTextureSourceSubRectangle(width, height), depth, m_unpackImageHeight, WTFMove(source));
 }
 
-void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei)
+void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] copyTexSubImage3D()");
+    if (isContextLostOrPending())
+        return;
+    if (!validateTexture3DBinding("copyTexSubImage3D", target))
+        return;
+    clearIfComposited();
+    m_context->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
-void WebGL2RenderingContext::compressedTexImage3D(GCGLenum, GCGLint, GCGLenum, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLsizei, GCGLint64)
+void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, ArrayBufferView& srcData)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D(PIXEL_UNPACK_BUFFER)");
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexImage2D",
+            "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    WebGLRenderingContextBase::compressedTexImage2D(target, level, internalformat, width, height, border, srcData);
 }
 
-void WebGL2RenderingContext::compressedTexImage3D(GCGLenum, GCGLint, GCGLenum, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, ArrayBufferView&, GCGLuint, GCGLuint)
+void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLint64 offset)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D(ArrayBufferView)");
+    if (isContextLostOrPending())
+        return;
+    if (!m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexImage2D",
+            "no bound PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture2DBinding("compressedTexImage2D", target))
+        return;
+    m_context->getExtensions().compressedTexImage2DRobustANGLE(
+        target, level, internalformat, width,
+        height, border, imageSize,
+        0, reinterpret_cast<uint8_t*>(offset));
 }
 
-void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLsizei, GCGLint64)
+void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, ArrayBufferView& srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D(PIXEL_UNPACK_BUFFER)");
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexImage2D",
+            "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture2DBinding("compressedTexImage2D", target))
+        return;
+    auto slice = sliceArrayBufferView("compressedTexImage2D", srcData, srcOffset, srcLengthOverride);
+    if (!slice)
+        return;
+    m_context->getExtensions().compressedTexImage2DRobustANGLE(
+        target, level, internalformat, width, height,
+        border, slice->byteLength(),
+        slice->byteLength(), slice->baseAddress());
 }
 
-void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, ArrayBufferView&, GCGLuint, GCGLuint)
+void WebGL2RenderingContext::compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLint64 offset)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D(ArrayBufferView)");
+    if (isContextLostOrPending())
+        return;
+    if (!m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexImage3D",
+            "no bound PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture3DBinding("compressedTexImage3D", target))
+        return;
+    m_context->getExtensions().compressedTexImage3DRobustANGLE(
+        target, level, internalformat, width,
+        height, depth, border, imageSize,
+        0, reinterpret_cast<uint8_t*>(offset));
+}
+
+void WebGL2RenderingContext::compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, ArrayBufferView& srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride)
+{
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexImage3D",
+            "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture3DBinding("compressedTexImage3D", target))
+        return;
+    auto slice = sliceArrayBufferView("compressedTexImage3D", srcData, srcOffset, srcLengthOverride);
+    if (!slice)
+        return;
+    m_context->getExtensions().compressedTexImage3DRobustANGLE(
+        target, level, internalformat, width, height,
+        depth, border, slice->byteLength(),
+        slice->byteLength(), slice->baseAddress());
+}
+
+void WebGL2RenderingContext::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& srcData)
+{
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexSubImage2D",
+            "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    WebGLRenderingContextBase::compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, srcData);
+}
+
+void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset)
+{
+    if (isContextLostOrPending())
+        return;
+    if (!m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexSubImage2D",
+            "no bound PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture2DBinding("compressedTexImage2D", target))
+        return;
+    m_context->getExtensions().compressedTexSubImage2DRobustANGLE(
+        target, level, xoffset, yoffset,
+        width, height, format, imageSize,
+        0, reinterpret_cast<uint8_t*>(offset));
+}
+
+void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView& srcData, GLuint srcOffset, GLuint srcLengthOverride)
+{
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexSubImage2D",
+            "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture2DBinding("compressedTexSubImage2D", target))
+        return;
+    auto slice = sliceArrayBufferView("compressedTexSubImage2D", srcData, srcOffset, srcLengthOverride);
+    if (!slice)
+        return;
+    m_context->getExtensions().compressedTexSubImage2DRobustANGLE(
+        target, level, xoffset, yoffset,
+        width, height, format, slice->byteLength(),
+        slice->byteLength(), slice->baseAddress());
+}
+
+void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLint64 offset)
+{
+    if (isContextLostOrPending())
+        return;
+    if (!m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexSubImage3D",
+            "no bound PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture3DBinding("compressedTexSubImage3D", target))
+        return;
+    m_context->getExtensions().compressedTexSubImage3DRobustANGLE(
+        target, level, xoffset, yoffset, zoffset,
+        width, height, depth, format, imageSize,
+        0, reinterpret_cast<uint8_t*>(offset));
+}
+
+void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, ArrayBufferView& srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride)
+{
+    if (isContextLostOrPending())
+        return;
+    if (m_boundPixelUnpackBuffer) {
+        synthesizeGLError(
+            GraphicsContextGL::INVALID_OPERATION, "compressedTexSubImage3D",
+            "a buffer is bound to PIXEL_UNPACK_BUFFER");
+        return;
+    }
+    if (!validateTexture3DBinding("compressedTexSubImage3D", target))
+        return;
+    auto slice = sliceArrayBufferView("compressedTexSubImage3D", srcData, srcOffset, srcLengthOverride);
+    if (!slice)
+        return;
+    m_context->getExtensions().compressedTexSubImage3DRobustANGLE(
+        target, level, xoffset, yoffset, zoffset,
+        width, height, depth, format, slice->byteLength(),
+        slice->byteLength(), slice->baseAddress());
 }
 
 GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const String& name)
@@ -2945,67 +3157,6 @@ bool WebGL2RenderingContext::validateCapability(const char* functionName, GCGLen
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid capability");
         return false;
     }
-}
-
-void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLint64 offset)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(imageSize);
-    UNUSED_PARAM(offset);
-
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D(PIXEL_UNPACK_BUFFER)");
-}
-
-void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, ArrayBufferView& srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(srcData);
-    UNUSED_PARAM(srcOffset);
-    UNUSED_PARAM(srcLengthOverride);
-
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D(ArrayBufferView)");
-}
-
-void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(imageSize);
-    UNUSED_PARAM(offset);
-
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D(PIXEL_UNPACK_BUFFER)");
-}
-
-void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView& srcData, GLuint srcOffset, GLuint srcLengthOverride)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(srcData);
-    UNUSED_PARAM(srcOffset);
-    UNUSED_PARAM(srcLengthOverride);
-
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D(ArrayBufferView)");
-
 }
 
 void WebGL2RenderingContext::uniform1fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength)

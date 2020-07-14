@@ -185,11 +185,51 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 182: FAIL ] Should be 2047, was 0.
 [ 183: PASS ] getError was expected value: INVALID_OPERATION :
 [ 184: PASS ] getError was expected value: INVALID_OPERATION :
-[ 185: FAIL ] Does not support compressedTexImage2D with offsets into views.
-[ 186: FAIL ] Does not support compressedTexSubImage2D with offsets into views.
-[ 187: FAIL ] Does not support compressedTexImage3D with offsets into views.
-[ 188: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
-[ 189: FAIL ] Does not support doReadPixels with offsets into views.
-[ 190: PASS ] successfullyParsed is true
-[ FAIL ] 31 failures reported
+[ 185: PASS ] getError was expected value: NO_ERROR :
+[ 186: PASS ] getError was expected value: NO_ERROR :
+[ 187: PASS ] getError was expected value: INVALID_VALUE :
+[ 188: PASS ] getError was expected value: INVALID_VALUE :
+[ 189: PASS ] getError was expected value: INVALID_VALUE :
+[ 190: PASS ] getError was expected value: INVALID_VALUE :
+[ 191: PASS ] getError was expected value: INVALID_VALUE :
+[ 192: PASS ] getError was expected value: INVALID_VALUE :
+[ 193: PASS ] getError was expected value: INVALID_VALUE :
+[ 194: PASS ] getError was expected value: INVALID_VALUE :
+[ 195: PASS ] getError was expected value: INVALID_VALUE :
+[ 196: PASS ] getError was expected value: NO_ERROR :
+[ 197: PASS ] getError was expected value: NO_ERROR :
+[ 198: PASS ] getError was expected value: INVALID_VALUE :
+[ 199: PASS ] getError was expected value: INVALID_VALUE :
+[ 200: PASS ] getError was expected value: INVALID_VALUE :
+[ 201: PASS ] getError was expected value: INVALID_VALUE :
+[ 202: PASS ] getError was expected value: INVALID_VALUE :
+[ 203: PASS ] getError was expected value: INVALID_VALUE :
+[ 204: PASS ] getError was expected value: INVALID_VALUE :
+[ 205: PASS ] getError was expected value: INVALID_VALUE :
+[ 206: PASS ] getError was expected value: INVALID_VALUE :
+[ 207: PASS ] getError was expected value: NO_ERROR :
+[ 208: PASS ] getError was expected value: NO_ERROR :
+[ 209: PASS ] getError was expected value: INVALID_VALUE :
+[ 210: PASS ] getError was expected value: INVALID_VALUE :
+[ 211: PASS ] getError was expected value: INVALID_VALUE :
+[ 212: PASS ] getError was expected value: INVALID_VALUE :
+[ 213: PASS ] getError was expected value: INVALID_VALUE :
+[ 214: PASS ] getError was expected value: INVALID_VALUE :
+[ 215: PASS ] getError was expected value: INVALID_VALUE :
+[ 216: PASS ] getError was expected value: INVALID_VALUE :
+[ 217: PASS ] getError was expected value: INVALID_VALUE :
+[ 218: PASS ] getError was expected value: NO_ERROR :
+[ 219: PASS ] getError was expected value: NO_ERROR :
+[ 220: PASS ] getError was expected value: INVALID_VALUE :
+[ 221: PASS ] getError was expected value: INVALID_VALUE :
+[ 222: PASS ] getError was expected value: INVALID_VALUE :
+[ 223: PASS ] getError was expected value: INVALID_VALUE :
+[ 224: PASS ] getError was expected value: INVALID_VALUE :
+[ 225: PASS ] getError was expected value: INVALID_VALUE :
+[ 226: PASS ] getError was expected value: INVALID_VALUE :
+[ 227: PASS ] getError was expected value: INVALID_VALUE :
+[ 228: PASS ] getError was expected value: INVALID_VALUE :
+[ 229: FAIL ] Does not support doReadPixels with offsets into views.
+[ 230: PASS ] successfullyParsed is true
+[ FAIL ] 27 failures reported
 

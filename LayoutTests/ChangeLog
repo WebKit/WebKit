@@ -1,3 +1,15 @@
+2020-07-14  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Implement compressedTex{Sub}Image*, copyTexSubImage3D
+        https://bugs.webkit.org/show_bug.cgi?id=126449
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline layout tests that have progressed, or fully pass.
+
+        * webgl/2.0.0/conformance2/misc/views-with-offsets-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format-expected.txt:
+
 2020-07-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html is flakey crashing
