@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace API {
 class Array;

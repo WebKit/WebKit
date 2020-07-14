@@ -31,6 +31,7 @@
 #include "ShouldGrandfatherStatistics.h"
 #include "WKAPICast.h"
 #include "WKDictionary.h"
+#include "WKMutableArray.h"
 #include "WKNumber.h"
 #include "WKRetainPtr.h"
 #include "WKSecurityOriginRef.h"
@@ -828,7 +829,7 @@ void WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(WKWebsiteDataStoreR
 void WKWebsiteDataStoreGetAllStorageAccessEntries(WKWebsiteDataStoreRef dataStoreRef, WKPageRef pageRef, void* context, WKWebsiteDataStoreGetAllStorageAccessEntriesFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->getAllStorageAccessEntries(toImpl(pageRef)->identifier(), [context, callback] (Vector<String>&& domains) {
+    WebKit::toImpl(dataStoreRef)->getAllStorageAccessEntries(WebKit::toImpl(pageRef)->identifier(), [context, callback] (Vector<String>&& domains) {
         auto domainArrayRef = WKMutableArrayCreate();
         for (auto domain : domains)
             WKArrayAppendItem(domainArrayRef, adoptWK(WKStringCreateWithUTF8CString(domain.utf8().data())).get());

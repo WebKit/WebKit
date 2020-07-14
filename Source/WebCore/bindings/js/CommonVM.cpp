@@ -35,6 +35,7 @@
 #include <JavaScriptCore/MachineStackMarker.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/AtomString.h>
 
 #if PLATFORM(IOS_FAMILY)

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RenderSVGPath.h"
 
+#include "Gradient.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>

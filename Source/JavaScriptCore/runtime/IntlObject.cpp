@@ -40,6 +40,7 @@
 #include "IntlLocalePrototype.h"
 #include "IntlNumberFormatConstructor.h"
 #include "IntlNumberFormatPrototype.h"
+#include "IntlObjectInlines.h"
 #include "IntlPluralRulesConstructor.h"
 #include "IntlPluralRulesPrototype.h"
 #include "IntlRelativeTimeFormatConstructor.h"

@@ -30,6 +30,8 @@
 
 #include "APIContextMenuClient.h"
 #include "WebPageMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 

@@ -31,6 +31,7 @@
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebKit {
 using namespace WebCore;

@@ -1,3 +1,9 @@
+2020-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed non-unified build fixes
+
+        * runtime/IntlObject.cpp:
+
 2020-07-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed non-unified build fixes
