@@ -1757,3 +1757,5 @@ webkit.org/b/214084 [ Release ] webrtc/libwebrtc/descriptionGetters.html [ Pass 
 webkit.org/b/214133 [ Release ] fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html [ Pass Failure ]
 
 webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Crash ]
+
+webkit.org/b/214327 webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]

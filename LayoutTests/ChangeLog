@@ -1,3 +1,12 @@
+2020-07-14  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION: (r263761) [ iOS ] webanimations/accelerated-animation-with-easing.html is still flaky
+        https://bugs.webkit.org/show_bug.cgi?id=214327
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-14  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Implement compressedTex{Sub}Image*, copyTexSubImage3D
