@@ -1,3 +1,92 @@
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-grid and css-flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=214284
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update expectations for new failures and new passes.
+
+        * TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/align-self-006-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/align-self-010-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-001-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-reverse-001-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-reverse-002-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-001-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-002-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-reverse-001-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-reverse-002-visual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-shrink-large-value-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-order-from-lowest-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-with-updating-text-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_center-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_flex-end-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_flex-start-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_space-around-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_space-between-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-margins-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-rounding-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-002-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/order-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-with-scrollable-with-abspos-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/align-self-006-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/align-self-010-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-001-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-reverse-001-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-reverse-002-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-001-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-002-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-reverse-001-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-reverse-002-visual-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flex-shrink-large-value-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-order-from-lowest-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-with-updating-text-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_center-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_flex-end-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_flex-start-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_space-around-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_space-between-001-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-margins-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-rounding-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-002-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/order-001-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-013-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-with-scrollable-with-abspos-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/remove-out-of-flow-child-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/align-self-006-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/align-self-010-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-001-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-reverse-001-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-reverse-002-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-001-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-002-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-reverse-001-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-row-reverse-002-visual-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flex-shrink-large-value-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-order-from-lowest-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-with-updating-text-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_center-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_flex-end-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_flex-start-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_space-around-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/justify-content_space-between-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-margins-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-rounding-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-002-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/order-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-with-scrollable-with-abspos-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001-expected.txt: Added.
+
 2020-07-13  Lauro Moura  <lmoura@igalia.com>
 
         [SOUP] Garden failure on delay after connect to closed port.

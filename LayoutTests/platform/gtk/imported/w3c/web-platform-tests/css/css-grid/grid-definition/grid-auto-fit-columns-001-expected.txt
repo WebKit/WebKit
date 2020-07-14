@@ -1,0 +1,118 @@
+Blocked access to external URL https://wpt.live/css/support/grid.css
+Blocked access to external URL https://wpt.live/resources/testharness.js
+Blocked access to external URL https://wpt.live/resources/testharnessreport.js
+Blocked access to external URL https://wpt.live/resources/check-layout-th.js
+CONSOLE MESSAGE: ReferenceError: Can't find variable: checkLayout
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x194
+  RenderBlock {HTML} at (0,0) size 800x194
+    RenderBody {BODY} at (8,16) size 784x170
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 401x17
+          text run at (0,0) width 401: "This test checks that repeat(auto-fit, ) syntax works as expected."
+layer at (8,50) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,34) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,54) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,38) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,58) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,42) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,62) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,46) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,66) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,50) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,70) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,54) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,74) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,58) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,78) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,62) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,82) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,66) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,86) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,70) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,90) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,74) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,94) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,78) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,98) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,82) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,102) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,86) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,106) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,90) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,110) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,94) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,114) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,98) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,118) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,102) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,122) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,106) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,126) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,110) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,130) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,114) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,134) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,118) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,138) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,122) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,142) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,126) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,146) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,130) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,150) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,134) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,154) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,138) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,158) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,142) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,162) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,146) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,166) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,150) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,170) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,154) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#008000]
+layer at (8,174) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,158) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,178) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,162) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+layer at (8,182) size 204x4
+  RenderBlock (relative positioned) {DIV} at (0,166) size 204x4 [border: (2px solid #FF00FF)]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#00FFFF]
+    RenderBlock {DIV} at (2,2) size 200x0 [bgcolor=#008000]

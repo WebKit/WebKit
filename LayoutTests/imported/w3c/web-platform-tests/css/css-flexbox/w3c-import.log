@@ -75,6 +75,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-007-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-008-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-baseline-overflow-non-visible-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-items-baseline-overflow-non-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-self-001-expected.xht
@@ -236,6 +240,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-base-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-base.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-001-expected.xht
@@ -386,6 +391,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-022-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-024.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-size-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-001-expected.xht
@@ -974,6 +983,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/hittest-anonymous-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/hittest-before-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/hittest-overlapping-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/hittest-overlapping-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/hittest-overlapping-relative.html
@@ -1024,6 +1035,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-shrink-to-fit.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-margins-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-rounding-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-margins-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-margins-001.html
@@ -1034,6 +1046,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order-painting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order-painting.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order_value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/orthogonal-writing-modes-and-intrinsic-sizing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/overflow-area-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/overflow-area-001.html
@@ -1108,6 +1121,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-011-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-013.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-fixed-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-fixed-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-percentage-top-001.html
@@ -1116,6 +1130,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/radiobutton-min-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/relayout-align-items.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/relayout-image-load.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/relayout-input.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/remove-out-of-flow-child-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-auto-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-auto.html
@@ -1151,6 +1166,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-narrow-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-wide-content-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-wide-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-with-float-paint-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-with-float-paint.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-with-infinite-max-intrinsic-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/table-with-infinite-max-intrinsic-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/text-overflow-on-flexbox-001-expected.html

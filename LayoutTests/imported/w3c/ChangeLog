@@ -1,3 +1,130 @@
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-grid and css-flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=214284
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This updates the WPT import of css/css-grid and css/css-flexbox to e3698c7bb3.
+
+        * web-platform-tests/css/css-flexbox/align-items-008-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-001-expected.xht.
+        * web-platform-tests/css/css-flexbox/align-items-008.html: Added.
+        * web-platform-tests/css/css-flexbox/align-items-009-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-items-009.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-006-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-self-006.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-010-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-self-010.html: Added.
+        * web-platform-tests/css/css-flexbox/fixedpos-video-in-abspos-quirk-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/fixedpos-video-in-abspos-quirk-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-005-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-001-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-001-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-reverse-001-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-reverse-001-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-reverse-002-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-reverse-002-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-001-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-001-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-002-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-002-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-reverse-001-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-reverse-001-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-reverse-002-visual-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-reverse-002-visual.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-024-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-024.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-large-value-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-large-value-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-order-from-lowest-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-order-from-lowest.html: Added.
+        * web-platform-tests/css/css-flexbox/hittest-anonymous-box-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/hittest-anonymous-box.html: Added.
+        * web-platform-tests/css/css-flexbox/hittest-before-pseudo-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/hittest-before-pseudo.html: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-editing-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-editing-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-editing-with-updating-text-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-editing-with-updating-text-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-frameset-main-axis-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-frameset-main-axis-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_center-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_center.html: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_flex-end-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_flex-end.html: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_flex-start-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_flex-start.html: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_space-around-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_space-around.html: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_space-between-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_space-between-001.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-flex-margins-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/negative-flex-margins-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-flex-rounding-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/negative-flex-rounding-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-item-margins-002-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/negative-item-margins-002-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-item-margins-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/negative-item-margins-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/order-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/order-001.htm: Added.
+        * web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-013-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-013.html: Added.
+        * web-platform-tests/css/css-flexbox/position-relative-with-scrollable-with-abspos-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/position-relative-with-scrollable-with-abspos-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/relayout-input-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/relayout-input.html: Added.
+        * web-platform-tests/css/css-flexbox/remove-out-of-flow-child-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/remove-out-of-flow-child-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/table-with-float-paint-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-with-float-paint.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+        * web-platform-tests/css/css-flexbox/zero-content-size-with-scrollbar-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/zero-content-size-with-scrollbar-crash.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-013-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004.html:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-grid-template-areas-001.html:
+        * web-platform-tests/css/css-grid/grid-model/support/w3c-import.log: Removed.
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-001-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-002-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-003-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-004-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-005-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-006-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-007-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-008-expected.xht:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-003.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track.html: Added.
+        * web-platform-tests/css/css-grid/parsing/w3c-import.log:
+
 2020-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for WOFF2

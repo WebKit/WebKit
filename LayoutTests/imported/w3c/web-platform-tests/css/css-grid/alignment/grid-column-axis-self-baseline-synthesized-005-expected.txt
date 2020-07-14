@@ -1,0 +1,10 @@
+verticalLR grid and parallel items
+É É ÉÉ
+É
+verticalRL grid and parallel items
+É É ÉÉ
+É
+
+PASS .grid 1 
+PASS .grid 2 
+

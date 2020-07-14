@@ -2,6 +2,7 @@ XXX XXX
 XXX XXX
 XXX XXX
 XXX XXX
+XXX XXX
 XXX XXXX XX X XX XXX
 XXX XXXX XX X XX XXX
 XXXX
@@ -11,9 +12,16 @@ XXXX XXX XXXX XXX XXXX
 
 PASS .grid 1 
 PASS .grid 2 
-PASS .grid 3 
+FAIL .grid 3 assert_equals: 
+<div class="container">
+  <div class="grid min-content" data-expected-width="30" data-expected-height="20" style="grid-template-columns:minmax(0, 1fr);">
+    <div>XXX XXX</div>
+  </div>
+</div>
+width expected 30 but got 0
 PASS .grid 4 
 PASS .grid 5 
 PASS .grid 6 
 PASS .grid 7 
+PASS .grid 8 
 

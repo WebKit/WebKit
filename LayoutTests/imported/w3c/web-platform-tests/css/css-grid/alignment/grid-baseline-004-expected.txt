@@ -5,42 +5,132 @@ PASS .grid, container 3
 PASS .grid, container 4 
 PASS .grid, container 5 
 PASS .grid, container 6 
-PASS .grid, container 7 
+FAIL .grid, container 7 assert_equals: 
+<div class="container" data-expected-width="480" data-expected-height="165">
+    <div class="grid twoRows" data-offset-x="0" data-offset-y="40">
+        <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+        <div class="bothRowFirstColumn style2" style="align-self: last baseline" data-offset-x="0"></div>
+    </div>
+    <div class="grid twoRows" data-offset-x="160" data-offset-y="0">
+        <div class="bothRowFirstColumn target" data-offset-x="0" data-offset-y="10"></div>
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+    </div>
+    <div class="grid twoRows" data-offset-x="320" data-offset-y="55">
+        <div class="firstRowBothColumn target" data-offset-x="0" data-offset-y="15"></div>
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
+        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
+    </div>
+</div>
+offsetTop expected 40 but got 50
 PASS .grid, container 8 
 PASS .grid, container 9 
 PASS .grid, container 10 
-PASS .grid, container 11 
+FAIL .grid, container 11 assert_equals: 
+<div class="container" data-expected-width="480" data-expected-height="165">
+    <div class="grid twoRows" data-offset-x="0" data-offset-y="55">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn alignSelfBaseline target" style="width: 100px; height: 20px;" data-offset-x="0" data-offset-y="15"></div>
+        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
+    </div>
+    <div class="grid twoRows" data-offset-x="160" data-offset-y="40">
+        <div class="bothRowFirstColumn style2" style="align-self: last baseline" data-offset-x="0"></div>
+        <div class="firstRowFirstColumn alignSelfBaseline target" style="width: 50px; height: 50px;" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+    </div>
+    <div class="grid twoRows" data-offset-x="320" data-offset-y="0">
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
+        <div class="bothRowFirstColumn alignSelfBaseline target" style="width: 40px; height: 80px;" data-offset-x="0" data-offset-y="10"></div>
+    </div>
+</div>
+offsetTop expected 40 but got 50
 PASS .grid, container 12 
 PASS .grid, container 13 
 PASS .grid, container 14 
 PASS .grid, container 15 
-PASS .grid, container 16 
-PASS .grid, container 17 
-PASS .grid, container 18 
+FAIL .grid, container 16 assert_equals: 
+<div class="container" data-expected-width="480" data-expected-height="250">
+    <div id="first" class="grid twoRows" data-offset-x="0" data-offset-y="80">
+        <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
+    </div>
+    <div id="second" class="grid threeRows" data-offset-x="160" data-offset-y="55">
+        <div class="thirdRowFirstColumn" data-offset-x="0" data-offset-y="100"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="65"></div>
+        <div class="secondRowSecondColumn style3 alignSelfBaseline target" id="first" data-offset-x="0" data-offset-y="80"></div>
+    </div>
+    <div class="grid empty threeRows" data-offset-x="320" data-offset-y="15">
+        <div class="thirdRowSecondColumn" data-offset-x="50" data-offset-y="110"></div>
+        <div class="secondRowFirstColumn target" data-offset-x="0" data-offset-y="60"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="75"></div>
+    </div>
+</div>
+height expected 250 but got 300
+FAIL .grid, container 17 assert_equals: 
+<div class="container" data-expected-width="480" data-expected-height="250">
+    <div id="first" class="grid twoRows" data-offset-x="0" data-offset-y="80">
+        <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
+    </div>
+    <div id="second" class="grid threeRows" data-offset-x="160" data-offset-y="55">
+        <div class="thirdRowFirstColumn" data-offset-x="0" data-offset-y="100"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="65"></div>
+        <div class="secondRowSecondColumn style3 alignSelfBaseline target" id="first" data-offset-x="0" data-offset-y="80"></div>
+    </div>
+    <div class="grid empty threeRows" data-offset-x="320" data-offset-y="15">
+        <div class="thirdRowSecondColumn" data-offset-x="50" data-offset-y="110"></div>
+        <div class="secondRowFirstColumn target" data-offset-x="0" data-offset-y="60"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="75"></div>
+    </div>
+</div>
+height expected 250 but got 300
+FAIL .grid, container 18 assert_equals: 
+<div class="container" data-expected-width="480" data-expected-height="250">
+    <div id="first" class="grid twoRows" data-offset-x="0" data-offset-y="80">
+        <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
+        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
+        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
+    </div>
+    <div id="second" class="grid threeRows" data-offset-x="160" data-offset-y="55">
+        <div class="thirdRowFirstColumn" data-offset-x="0" data-offset-y="100"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="65"></div>
+        <div class="secondRowSecondColumn style3 alignSelfBaseline target" id="first" data-offset-x="0" data-offset-y="80"></div>
+    </div>
+    <div class="grid empty threeRows" data-offset-x="320" data-offset-y="15">
+        <div class="thirdRowSecondColumn" data-offset-x="50" data-offset-y="110"></div>
+        <div class="secondRowFirstColumn target" data-offset-x="0" data-offset-y="60"></div>
+        <div class="secondRowBothColumn" data-offset-x="0" data-offset-y="75"></div>
+    </div>
+</div>
+height expected 250 but got 300
 The test shows 3 grids each of them with 3 items sorted differently in the DOM.
 Each grid container must use its first (grid order) item to compute its baseline, and using document-oder in case of element with same grid-order. Hence they might be baseline aligned each other accordingly.
 
-This case shows 3 items located along the first row and in different columns, so grid baseline is computed using the one located at first column (blue item).
+This case shows 3 items located along the first row and in different columns. The grid baseline is computed using the one located at first column (blue item) regardless of source order.
 
  
  
-This case shows 3 items located along the first row and in different columns, so such item is used to determine the grid's baseline instead of using the grid order.
+This case shows 3 items located along the first row and in different columns. The baseline-aligned item (blue) always determines the grid baseline.
 
  
  
-This case shows 3 items' areas intersecting the first row and first column, so the dom order must be used to determine each grid's baseline.
+This case shows 3 items' areas intersecting the first row and first column, but none of them participate in baseline alignment in the first row, so the dom order must be used to determine each grid's baseline.
 
  
  
-This case shows 3 items' areas intersecting the first row and first column, but one of the items participates in baseline alignment, so such item is used to determine the grid's baseline instead of using the dom order.
+This case shows 3 items' areas intersecting the first row and first column, but one of the items participates in baseline alignment in the first row, so such item is used to determine the grid's baseline instead of using the dom order.
 
  
  
-This case shows one of the grids with no items, hence its baseline must be synthesized.
+This case shows one of the grids with no items, hence its baseline must be synthesized from its margin box.
 
  
  
-This case shows one of the grids with no items in the first row, hence its baseline must be synthesized.
+This case shows two of the grids with no items in their first row, hence the items in the second row are evaluated.
 
  
  

@@ -1,8 +1,16 @@
 
 PASS .grid 1 
 PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
+FAIL .grid 3 assert_equals: 
+<div class="grid gridMaxMinAutoRepeat">
+    <div class="item" style="grid-column: 1 / -1" data-offset-x="0" data-offset-y="0" data-expected-width="180" data-expected-height="25"></div>
+</div>
+width expected 180 but got 450
+FAIL .grid 4 assert_equals: 
+<div class="grid gridMaxMinPercentAutoRepeat">
+    <div class="item" style="grid-column: 1 / -1" data-offset-x="0" data-offset-y="0" data-expected-width="180" data-expected-height="25"></div>
+</div>
+width expected 180 but got 450
 PASS .grid 5 
 PASS .grid 6 
 PASS .grid 7 
@@ -28,6 +36,9 @@ PASS .grid 26
 PASS .grid 27 
 PASS .grid 28 
 PASS .grid 29 
+PASS .grid 30 
+PASS .grid 31 
+PASS .grid 32 
 This test checks that repeat(auto-fill, ) syntax works as expected.
 
 

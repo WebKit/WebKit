@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x330
+  RenderBlock {HTML} at (0,0) size 800x330
+    RenderBody {BODY} at (8,16) size 784x306
+      RenderBlock {P} at (0,0) size 784x90
+        RenderText {#text} at (0,0) size 87x17
+          text run at (0,0) width 87: "Test passes if:"
+        RenderBR {BR} at (86,0) size 1x17
+        RenderText {#text} at (0,18) size 370x17
+          text run at (0,18) width 370: "1. the rectangle 1, 2, 3 show up in a row in a red rectangle."
+        RenderBR {BR} at (370,18) size 0x17
+        RenderText {#text} at (0,36) size 754x35
+          text run at (0,36) width 754: "2. the rectangle 1, 2, 3 are distributed such that the empty space between any two adjacent rectangle is the same, and the"
+          text run at (0,54) width 680: "empty space of the row before the first and after the last rectangle are half the size of the other empty spaces."
+        RenderBR {BR} at (680,54) size 0x17
+        RenderText {#text} at (0,72) size 447x17
+          text run at (0,72) width 447: "3. the height of the 1, 2, 3 is the same as the height of the red rectangle."
+      RenderFlexibleBox {DIV} at (0,106) size 200x200 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (18,0) size 31x200 [bgcolor=#7FFF00]
+          RenderText {#text} at (10,0) size 10x22
+            text run at (10,0) width 10: "1"
+        RenderBlock {DIV} at (84,0) size 31x200 [bgcolor=#00FFFF]
+          RenderText {#text} at (10,0) size 10x22
+            text run at (10,0) width 10: "2"
+        RenderBlock {DIV} at (151,0) size 31x200 [bgcolor=#4169E1]
+          RenderText {#text} at (10,0) size 10x22
+            text run at (10,0) width 10: "3"

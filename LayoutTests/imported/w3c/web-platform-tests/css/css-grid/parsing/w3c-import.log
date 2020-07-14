@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed.html
@@ -40,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-repeat-auto-computed-withcontent-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-repeat-auto-computed-withcontent-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed.html

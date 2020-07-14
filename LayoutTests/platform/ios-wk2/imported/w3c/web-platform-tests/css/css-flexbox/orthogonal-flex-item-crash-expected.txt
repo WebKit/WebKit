@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,8) size 100x100
+      RenderFlexibleBox {DIV} at (0,0) size 48x100
+        RenderBlock (anonymous) at (0,0) size 48x90
+          RenderText {#text} at (-1,0) size 25x48
+            text run at (-1,0) width 48: "text"
+            text run at (11,0) width 48: "text"
+        RenderBlock {DIV} at (0,90) size 48x10
+          RenderText {#text} at (0,-1) size 48x13
+            text run at (0,-1) width 48: "text"
+          RenderInline {SPAN} at (0,0) size 0x0
