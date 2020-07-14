@@ -11,6 +11,10 @@ PASS text/html ;charset=gbk
 PASS text/html; charset=gbk 
 PASS text/html;charset= gbk 
 FAIL text/html;charset= "gbk" assert_equals: expected "UTF-8" but got "GBK"
+PASS text/html;charset=gbk 
+PASS text/html;charset=gbk 
+FAIL text/html;charset=gbk assert_equals: expected "UTF-8" but got "GBK"
+FAIL text/html;charset=gbk assert_equals: expected "UTF-8" but got "GBK"
 PASS text/html;charset='gbk' 
 PASS text/html;charset='gbk 
 PASS text/html;charset=gbk' 

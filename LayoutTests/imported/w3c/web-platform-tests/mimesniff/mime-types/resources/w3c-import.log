@@ -17,4 +17,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mimesniff/mime-types/resources/generated-mime-types.json
 /LayoutTests/imported/w3c/web-platform-tests/mimesniff/mime-types/resources/generated-mime-types.py
 /LayoutTests/imported/w3c/web-platform-tests/mimesniff/mime-types/resources/mime-charset.py
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/mime-types/resources/mime-groups.json
 /LayoutTests/imported/w3c/web-platform-tests/mimesniff/mime-types/resources/mime-types.json

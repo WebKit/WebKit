@@ -1,5 +1,29 @@
 2020-07-14  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/mimesniff from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214317
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/mimesniff from upstream b2a666d93581a71e9338b2.
+
+        * web-platform-tests/mimesniff/mime-types/README.md:
+        * web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt:
+        * web-platform-tests/mimesniff/mime-types/charset-parameter.window.js:
+        (isByteCompatible):
+        * web-platform-tests/mimesniff/mime-types/parsing.any-expected.txt:
+        * web-platform-tests/mimesniff/mime-types/parsing.any.js:
+        (isByteCompatible):
+        (runTests):
+        * web-platform-tests/mimesniff/mime-types/parsing.any.worker-expected.txt:
+        * web-platform-tests/mimesniff/mime-types/resources/mime-charset.py:
+        (main):
+        * web-platform-tests/mimesniff/mime-types/resources/mime-groups.json: Added.
+        * web-platform-tests/mimesniff/mime-types/resources/mime-types.json:
+        * web-platform-tests/mimesniff/mime-types/resources/w3c-import.log:
+
+2020-07-14  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/media-source from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214164
 

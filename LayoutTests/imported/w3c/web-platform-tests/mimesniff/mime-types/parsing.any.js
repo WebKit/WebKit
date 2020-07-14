@@ -10,14 +10,11 @@ promise_test(() => {
 function isByteCompatible(str) {
   for(let i = 0; i < str.length; i++) {
     const charCode = str.charCodeAt(i);
-    // See https://github.com/web-platform-tests/wpt/issues/8372 for 0x0B and 0x0C
-    // See https://fetch.spec.whatwg.org/#concept-header-value for the remainder
+    // See https://fetch.spec.whatwg.org/#concept-header-value
     if(charCode > 0xFF) {
       return "incompatible";
     } else if(charCode === 0x00 || charCode === 0x0A || charCode === 0x0D) {
       return "header-value-incompatible";
-    } else if(charCode === 0x0B || charCode === 0x0C) {
-      return "wptserve-incompatible";
     }
   }
   return "compatible";
@@ -37,8 +34,8 @@ function runTests(tests) {
     promise_test(() => {
       const compatibleNess = isByteCompatible(val.input);
       if(compatibleNess === "incompatible" || compatibleNess === "header-value-incompatible") {
-        assert_throws(new TypeError(), () => new Request("about:blank", { headers: [["Content-Type", val.input]] }));
-        assert_throws(new TypeError(), () => new Response(null, { headers: [["Content-Type", val.input]] }));
+        assert_throws_js(TypeError, () => new Request("about:blank", { headers: [["Content-Type", val.input]] }));
+        assert_throws_js(TypeError, () => new Response(null, { headers: [["Content-Type", val.input]] }));
         return Promise.resolve();
       } else {
         return Promise.all([

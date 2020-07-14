@@ -22,6 +22,14 @@ FAIL text/html;charset= gbk (Blob/File) assert_equals: Blob expected "text/html;
 FAIL text/html;charset= gbk (Request/Response) assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
 FAIL text/html;charset= "gbk" (Blob/File) assert_equals: Blob expected "text/html;charset=\" \\\"gbk\\\"\"" but got "text/html;charset= \"gbk\""
 FAIL text/html;charset= "gbk" (Request/Response) assert_equals: expected "text/html;charset=\" \\\"gbk\\\"\"" but got "text/html"
+FAIL text/html;charset=gbk (Blob/File) assert_equals: Blob expected "text/html" but got ""
+PASS text/html;charset=gbk (Request/Response) 
+FAIL text/html;charset=gbk (Blob/File) assert_equals: Blob expected "text/html" but got ""
+PASS text/html;charset=gbk (Request/Response) 
+FAIL text/html;charset=gbk (Blob/File) assert_equals: Blob expected "text/html" but got ""
+PASS text/html;charset=gbk (Request/Response) 
+FAIL text/html;charset=gbk (Blob/File) assert_equals: Blob expected "text/html" but got ""
+PASS text/html;charset=gbk (Request/Response) 
 PASS text/html;charset='gbk' (Blob/File) 
 FAIL text/html;charset='gbk' (Request/Response) assert_equals: expected "text/html;charset='gbk'" but got "text/html"
 PASS text/html;charset='gbk (Blob/File) 
@@ -84,10 +92,34 @@ FAIL x/x;x=  (Blob/File) assert_equals: Blob expected "x/x" but got "x/x;x= "
 PASS x/x;x=  (Request/Response) 
 FAIL x/x;x=	 (Blob/File) assert_equals: Blob expected "x/x" but got ""
 PASS x/x;x=	 (Request/Response) 
+FAIL x/x
+\r	 ;x=x (Blob/File) assert_equals: Blob expected "x/x;x=x" but got ""
+PASS x/x
+\r	 ;x=x (Request/Response) 
+FAIL 
+\r	 x/x;x=x
+\r	  (Blob/File) assert_equals: Blob expected "x/x;x=x" but got ""
+FAIL 
+\r	 x/x;x=x
+\r	  (Request/Response) assert_throws_js: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL x/x;
+\r	 x=x
+\r	 ;x=y (Blob/File) assert_equals: Blob expected "x/x;x=x" but got ""
+PASS x/x;
+\r	 x=x
+\r	 ;x=y (Request/Response) 
 FAIL text/html;test=ÿ;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;test=\"ÿ\";charset=gbk" but got ""
 FAIL text/html;test=ÿ;charset=gbk (Request/Response) assert_equals: expected "text/html;test=\"ÿ\";charset=gbk" but got "text/html"
 FAIL x/x;test=�;x=x (Blob/File) assert_equals: Blob expected "x/x;x=x" but got ""
 PASS x/x;test=�;x=x (Request/Response) 
+PASS x/x (Blob/File) 
+PASS x/x (Request/Response) 
+PASS x/x (Blob/File) 
+PASS x/x (Request/Response) 
+PASS x/x (Blob/File) 
+PASS x/x (Request/Response) 
+PASS x/x (Blob/File) 
+PASS x/x (Request/Response) 
 PASS  (Blob/File) 
 PASS  (Request/Response) 
 PASS 	 (Blob/File) 
@@ -114,6 +146,12 @@ FAIL {/} (Blob/File) assert_equals: Blob expected "" but got "{/}"
 FAIL {/} (Request/Response) assert_equals: expected "" but got "{/}"
 PASS Ā/Ā (Blob/File) 
 PASS Ā/Ā (Request/Response) 
+FAIL text /html (Blob/File) assert_equals: Blob expected "" but got "text /html"
+FAIL text /html (Request/Response) assert_equals: expected "" but got "text"
+FAIL text/ html (Blob/File) assert_equals: Blob expected "" but got "text/ html"
+FAIL text/ html (Request/Response) assert_equals: expected "" but got "text/"
+FAIL "text/html" (Blob/File) assert_equals: Blob expected "" but got "\"text/html\""
+FAIL "text/html" (Request/Response) assert_equals: expected "" but got "\"text/html\""
 PASS \0/x (Blob/File) 
 PASS \0/x (Request/Response) 
 PASS x/\0 (Blob/File) 
@@ -213,11 +251,11 @@ FAIL x/x;	=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" bu
 PASS 
 /x (Blob/File) 
 FAIL 
-/x (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+/x (Request/Response) assert_throws_js: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
 PASS x/
  (Blob/File) 
 FAIL x/
- (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+ (Request/Response) assert_throws_js: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
 FAIL x/x;
 =x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
 PASS x/x;
@@ -251,9 +289,9 @@ FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" bu
 FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
 FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
 PASS \r/x (Blob/File) 
-FAIL \r/x (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL \r/x (Request/Response) assert_throws_js: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
 PASS x/\r (Blob/File) 
-FAIL x/\r (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL x/\r (Request/Response) assert_throws_js: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
 FAIL x/x;\r=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
 PASS x/x;\r=x;bonus=x (Request/Response) 
 FAIL x/x;x=\r;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
