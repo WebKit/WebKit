@@ -442,7 +442,7 @@
       "factory": "watchOSBuildFactory",
       "platform": "watchos-6",
       "configuration": "release",
-      "architectures": ["arm64_32"],
+      "architectures": ["arm64_32", "armv7k"],
       "workernames": ["ews163", "ews164", "ews165"]
     },
     {

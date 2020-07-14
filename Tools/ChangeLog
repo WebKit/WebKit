@@ -1,3 +1,12 @@
+2020-07-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] watchos should build both arm64_32 and armv7k architectures
+        https://bugs.webkit.org/show_bug.cgi?id=214279
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-07-14  Kate Cheney  <katherine_cheney@apple.com>
 
         [ macOS iOS ] http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html is a rare flaky failure
