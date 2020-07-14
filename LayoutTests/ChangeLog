@@ -1,3 +1,10 @@
+2020-07-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, add Catalina specific baseline for css/css-fonts/generic-family-keywords-001.html after r264343.
+
+        * platform/mac-mojave/imported/w3c/web-platform-tests/css-fonts/generic-family-keywords-001-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/css-fonts/generic-family-keywords-001-expected.txt: Added.
+
 2020-07-14  Simon Fraser  <simon.fraser@apple.com>
 
         Flashes of incorrect scroll position when zooming on quip
