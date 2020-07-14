@@ -1,0 +1,8 @@
+
+PASS Property unicode-bidi value 'normal' computes to 'normal' 
+PASS Property unicode-bidi value 'embed' computes to 'embed' 
+PASS Property unicode-bidi value 'isolate' computes to 'isolate' 
+PASS Property unicode-bidi value 'bidi-override' computes to 'bidi-override' 
+PASS Property unicode-bidi value 'isolate-override' computes to 'isolate-override' 
+PASS Property unicode-bidi value 'plaintext' computes to 'plaintext' 
+

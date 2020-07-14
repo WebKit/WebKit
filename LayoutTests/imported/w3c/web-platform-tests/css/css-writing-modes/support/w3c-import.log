@@ -31,6 +31,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/bg-red-upp-rght-corn-320x320.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/block-flow-direction-025-exp-res.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/block-flow-direction-066-exp-res.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/blue-200x100.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/blue-horiz-line-220x1.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/blue-horiz-line-320x1.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/blue-vert-line-1x220.png
@@ -80,6 +81,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/left-side-filled-square-40x160.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/left-top-200x300.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/margin-collapse-2em-space-wm-vert.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/mn+arabic.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/mn+latin.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/mn-orientation.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/mn_ar_wrap.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/mn_en_wrap.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/opaque-square-40x160.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/ortho-htb-alongside-vrl-floats-002-exp-res.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/page-flow-direction-002p1.png
@@ -146,8 +152,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/vertical-form.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-003-exp-res.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-035-exp-res.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/world.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/yellow-square-59x59.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/yellow-square-horiz-redline-bottom-59x59.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/yellow-square-vert-redline-center-59x59.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/yellow-square-vert-redline-left-59x59.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/yellow-square-vert-redline-right-59x59.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/zh+arabic.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/zh+latin.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/zh-orientation.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/zh_ar_wrap.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/zh_en_wrap.png

@@ -18,7 +18,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/gulpfile.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/orthogonal-parent-shrink-to-fit.ejs
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/package.json
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/text-orientation-generator.js
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/text-orientation-ref.ejs
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/text-orientation-script.ejs
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/unicode-data.js

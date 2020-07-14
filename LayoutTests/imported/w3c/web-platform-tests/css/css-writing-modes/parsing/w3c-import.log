@@ -14,13 +14,18 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/direction-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/direction-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/direction-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-orientation-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-orientation-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-orientation-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/writing-mode-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/writing-mode-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/writing-mode-valid.html

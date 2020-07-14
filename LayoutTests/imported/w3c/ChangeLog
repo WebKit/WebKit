@@ -1,3 +1,1009 @@
+2020-07-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-writing-modes
+        https://bugs.webkit.org/show_bug.cgi?id=214278
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This updates the WPT import of css/css-writing-modes to e3698c7bb3.
+
+        * web-platform-tests/css/css-writing-modes/META.yml:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-015.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-017.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-019.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-021.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-023.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-025.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-027.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-029.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-031.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-033.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-035.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-037.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-039.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-041.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-043.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-045.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-047.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-049.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-051.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-053.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-055.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-057.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-059.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-061.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-063.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-065.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-067.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-069.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-071.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-073.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-075.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-077.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-079.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-081.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-083.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-085.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-087.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-089.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-091.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-093.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-095.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-097.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-103.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-105.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-107.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-109.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-111.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-113.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-115.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-117.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-119.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-121.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-123.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-125.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-127.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-129.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-131.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-133.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-135.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-137.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-139.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-141.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-143.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-145.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-147.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-149.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-151.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-153.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-155.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-157.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-159.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-161.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-163.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-165.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-167.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-169.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-171.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-173.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-175.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-177.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-179.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-181.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-183.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-185.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-187.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-189.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-191.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-193.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-195.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-197.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-199.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-201.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-203.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-205.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-207.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-209.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-211.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-213.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-215.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-217.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-219.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-221.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-223.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-225.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-227.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-229.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-014.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-016.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-018.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-020.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-022.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-024.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-026.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-028.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-030.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-032.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-034.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-036.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-038.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-040.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-042.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-044.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-046.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-048.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-050.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-052.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-054.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-056.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-058.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-060.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-062.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-064.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-066.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-068.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-070.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-072.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-074.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-076.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-078.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-080.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-082.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-084.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-086.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-088.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-090.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-092.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-094.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-096.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-102.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-104.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-106.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-108.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-110.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-112.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-114.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-116.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-118.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-120.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-122.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-124.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-126.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-128.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-130.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-132.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-134.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-136.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-138.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-140.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-142.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-144.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-146.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-148.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-150.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-152.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-154.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-156.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-158.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-160.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-162.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-164.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-166.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-168.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-170.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-172.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-174.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-176.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-178.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-180.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-182.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-184.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-186.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-188.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-190.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-192.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-194.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-196.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-198.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-200.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-202.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-204.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-206.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-208.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-210.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-212.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-214.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-216.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-218.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-220.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-222.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-224.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-226.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-228.xht:
+        * web-platform-tests/css/css-writing-modes/abs-pos-with-replaced-child-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/abs-pos-with-replaced-child.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/adlam-anti-ref-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/adlam-anti-ref.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/adlam-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/adlam.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-anti-ref-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-anti-ref.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/cypriot.html: Added.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/support/adlam.css: Added.
+        (@font-face):
+        (p):
+        * web-platform-tests/css/css-writing-modes/astral-bidi/support/cypriot.css: Added.
+        (@font-face):
+        (p):
+        * web-platform-tests/css/css-writing-modes/astral-bidi/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/support/w3c-import.log.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/tools/generators/ucd/w3c-import.log.
+        * web-platform-tests/css/css-writing-modes/available-size-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-003.html:
+        * web-platform-tests/css/css-writing-modes/available-size-004-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-005-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-005.html:
+        * web-platform-tests/css/css-writing-modes/available-size-006-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-006.html:
+        * web-platform-tests/css/css-writing-modes/available-size-007-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-007.html:
+        * web-platform-tests/css/css-writing-modes/available-size-008-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-008.html:
+        * web-platform-tests/css/css-writing-modes/available-size-009-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-009.html:
+        * web-platform-tests/css/css-writing-modes/available-size-010-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-010.html:
+        * web-platform-tests/css/css-writing-modes/available-size-012-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-013-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-013.html:
+        * web-platform-tests/css/css-writing-modes/available-size-014-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-014.html:
+        * web-platform-tests/css/css-writing-modes/available-size-015-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-015.html:
+        * web-platform-tests/css/css-writing-modes/available-size-016-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-016.html:
+        * web-platform-tests/css/css-writing-modes/available-size-017-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-018-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-019-expected.html:
+        * web-platform-tests/css/css-writing-modes/available-size-019.html:
+        * web-platform-tests/css/css-writing-modes/baseline-inline-non-replaced-002.xht:
+        * web-platform-tests/css/css-writing-modes/baseline-inline-non-replaced-003.xht:
+        * web-platform-tests/css/css-writing-modes/baseline-inline-non-replaced-004.xht:
+        * web-platform-tests/css/css-writing-modes/baseline-inline-non-replaced-005.xht:
+        * web-platform-tests/css/css-writing-modes/baseline-inline-replaced-002.xht:
+        * web-platform-tests/css/css-writing-modes/baseline-inline-replaced-003.xht:
+        * web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-inline-fragment-crash-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-inline-fragment-crash.html: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-line-break-001-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-line-break-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-004-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-004.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-htb-001-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-htb-001.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-043-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-043.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-047-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-047.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-048-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-048.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-050-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-050.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-054-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-054.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-055-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-055.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-056-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-056.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-058-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-058.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-060-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-060.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-062-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-062.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-063-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-063.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-042-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-042.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-045-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-045.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-046-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-046.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-049-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-049.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-051-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-051.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-052-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-052.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-053-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-053.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-057-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-057.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-059-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-059.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-061-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-061.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-064-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-064.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-003-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-007-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-008-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-008.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-010-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-010.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-014-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-014.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-015-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-015.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-016-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-016.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-018-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-018.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-020-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-020.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-022-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-022.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-023-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-023.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-005-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-005.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-006-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-009-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-009.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-011-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-011.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-012-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-013-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-013.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-017-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-017.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-019-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-019.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-021-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-021.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-024-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-024.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-026-expected.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-026.xht:
+        * web-platform-tests/css/css-writing-modes/border-spacing-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/border-spacing-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/border-spacing-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/border-spacing-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/caption-side-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/caption-side-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/caption-side-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/caption-side-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht:
+        * web-platform-tests/css/css-writing-modes/central-baseline-alignment-003.xht:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-001.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-002.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-003.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-004-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-004.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-005-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-005.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-006-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-006.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-007-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-008-expected.html:
+        * web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html:
+        * web-platform-tests/css/css-writing-modes/clearance-calculations-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/clearance-calculations-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/clearance-calculations-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/direction-upright-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/direction-upright-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/direction-upright-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/direction-upright-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/direction-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/direction-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/direction-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/direction-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/float-clear-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/float-clear-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/float-clear-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/float-clear-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/float-contiguous-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/float-contiguous-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/float-contiguous-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/float-contiguous-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/float-shrink-to-fit-vrl-vlr-016.xht:
+        * web-platform-tests/css/css-writing-modes/float-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/float-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/float-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/float-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/float-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/float-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/float-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/float-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/float-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/float-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/float-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/float-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/height-width-inline-non-replaced-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/height-width-inline-non-replaced-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/img-intrinsic-size-contribution-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/img-intrinsic-size-contribution-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/img-intrinsic-size-contribution-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/img-intrinsic-size-contribution-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/inheritance.html: Added.
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-002.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-003.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-005.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-006.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-007-expected.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-007.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-slr-009.xht:
+        * web-platform-tests/css/css-writing-modes/inline-block-alignment-srl-008.xht:
+        * web-platform-tests/css/css-writing-modes/inline-box-border-vlr-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/inline-box-border-vlr-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/inline-replaced-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/inline-replaced-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/inline-table-alignment-002.xht:
+        * web-platform-tests/css/css-writing-modes/inline-table-alignment-003.xht:
+        * web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht:
+        * web-platform-tests/css/css-writing-modes/inline-table-alignment-005.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-htb-001-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-htb-001.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-043-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-043.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-047-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-047.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-048-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-048.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-050-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-050.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-053-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-053.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-054-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-054.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-056-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-056.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-058-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-058.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-060-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-slr-060.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-042-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-042.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-045-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-045.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-046-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-046.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-049-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-049.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-051-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-051.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-052-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-052.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-055-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-055.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-057-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-057.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-059-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-srl-059.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-003-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-007-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-008-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-008.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-010-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-010.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-013-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-014-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-014.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-016-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-016.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-018-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-018.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-020-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vlr-020.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-005-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-005.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-006-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-009-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-009.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-011-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-011.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-012-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-015-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-015.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-017-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-017.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-019-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-direction-vrl-019.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-003-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-005-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-007-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-009-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-011-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-013-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-004-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-006-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-008-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-010-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-012-expected.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/logical-props-001.html:
+        * web-platform-tests/css/css-writing-modes/logical-props-002.html:
+        * web-platform-tests/css/css-writing-modes/logical-props-003.html:
+        * web-platform-tests/css/css-writing-modes/logical-props-004.html:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-015.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-017.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-023.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-025.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-031.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-035.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vlr-037.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-014.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-016.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-022.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-024.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-030.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-034.xht:
+        * web-platform-tests/css/css-writing-modes/margin-collapse-vrl-036.xht:
+        * web-platform-tests/css/css-writing-modes/mongolian-orientation-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html:
+        * web-platform-tests/css/css-writing-modes/mongolian-orientation-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html:
+        * web-platform-tests/css/css-writing-modes/mongolian-span-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/mongolian-span-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001a.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001b.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001c.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001d.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001e.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001f.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001g.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001h.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001i.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001j.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001k.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001l.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001m.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001n.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001o.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001p.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001q.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001r.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001s.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001t.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001u.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001v.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001w.html:
+        * web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001x.html:
+        * web-platform-tests/css/css-writing-modes/outline-inline-block-vrl-006-expected.html:
+        * web-platform-tests/css/css-writing-modes/outline-inline-block-vrl-006.html:
+        * web-platform-tests/css/css-writing-modes/outline-inline-vlr-006-expected.html:
+        * web-platform-tests/css/css-writing-modes/outline-inline-vlr-006.html:
+        * web-platform-tests/css/css-writing-modes/outline-inline-vrl-006-expected.html:
+        * web-platform-tests/css/css-writing-modes/outline-inline-vrl-006.html:
+        * web-platform-tests/css/css-writing-modes/parsing/direction-computed-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/direction-computed.html: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/direction-invalid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/direction-valid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/support/parsing-testcommon.js: Removed.
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-computed-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-computed.html: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-invalid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-valid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/text-orientation-computed-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/text-orientation-computed.html: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/text-orientation-invalid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/text-orientation-valid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-computed-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-computed.html: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-invalid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-valid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/parsing/writing-mode-computed-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/writing-mode-computed.html: Added.
+        * web-platform-tests/css/css-writing-modes/parsing/writing-mode-invalid.html:
+        * web-platform-tests/css/css-writing-modes/parsing/writing-mode-valid.html:
+        * web-platform-tests/css/css-writing-modes/percentage-padding-in-shrink-to-fit-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/percentage-padding-in-shrink-to-fit.html: Added.
+        * web-platform-tests/css/css-writing-modes/relpos-inline-overflowing-block-vrl.html:
+        * web-platform-tests/css/css-writing-modes/row-progression-slr-023-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-slr-023.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-slr-029-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-slr-029.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-srl-022-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-srl-022.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-srl-028-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-srl-028.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-003-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-005-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-007-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-009-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-004-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-006-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-008-expected.xht:
+        * web-platform-tests/css/css-writing-modes/row-progression-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vlr-004-expected.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vlr-004.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-001-expected.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-004-expected.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013-expected.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-001.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-002.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-003.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-004-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-004.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-005-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-005.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-006-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-006.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-007-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-007.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-008-expected.html:
+        * web-platform-tests/css/css-writing-modes/sizing-orthogonal-percentage-margin-008.html:
+        * web-platform-tests/css/css-writing-modes/slr-alongside-vlr-floats-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/slr-alongside-vlr-floats.html: Added.
+        * web-platform-tests/css/css-writing-modes/srl-alongside-vrl-floats-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/srl-alongside-vrl-floats.html: Added.
+        * web-platform-tests/css/css-writing-modes/support/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/svg-aliasing-001.html:
+        * web-platform-tests/css/css-writing-modes/table-cell-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/table-cell-001.html:
+        * web-platform-tests/css/css-writing-modes/table-cell-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/table-cell-002.html:
+        * web-platform-tests/css/css-writing-modes/table-column-order-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-002.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-003-expected.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-003.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-004-expected.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-004.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-005-expected.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-005.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-slr-007-expected.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-slr-007.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-srl-006-expected.xht:
+        * web-platform-tests/css/css-writing-modes/table-column-order-srl-006.xht:
+        * web-platform-tests/css/css-writing-modes/table-progression-vlr-003.html:
+        * web-platform-tests/css/css-writing-modes/table-progression-vlr-004.html:
+        * web-platform-tests/css/css-writing-modes/table-progression-vrl-003.html:
+        * web-platform-tests/css/css-writing-modes/table-progression-vrl-004.html:
+        * web-platform-tests/css/css-writing-modes/tcy-white-space-processing-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/tcy-white-space-processing-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/tcy-white-space-processing-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/tcy-white-space-processing-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/tcy-white-space-processing-003-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/tcy-white-space-processing-003.html: Added.
+        * web-platform-tests/css/css-writing-modes/test-plan/req-tcu-font.html:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-015.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-017.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vlr-019.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-014.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-016.xht:
+        * web-platform-tests/css/css-writing-modes/text-align-vrl-018.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-slr-009.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-srl-008.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/text-baseline-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-decorations-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-decorations-001.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-002.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-003.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits2-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits2-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits2-002.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits2-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits2-003.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits3-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits3-001.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits3-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits3-002.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits3-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits3-003.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-001.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-002.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-003-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-003.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-none-001-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-value-none-001.html:
+        * web-platform-tests/css/css-writing-modes/text-decoration-sideways-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-sideways-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-sideways-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-sideways-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-sideways-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-sideways-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-upright-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-upright-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-upright-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-upright-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-upright-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/text-decoration-upright-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-015.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vlr-017.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-014.xht:
+        * web-platform-tests/css/css-writing-modes/text-indent-vrl-016.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-010.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-011.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-012.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-016.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-initial-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-orientation-initial.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-slr-015.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-srl-016-expected.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-srl-016.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-vlr-100-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-vlr-100.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-vrl-100-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-mixed-vrl-100.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-parsing-001-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-orientation-parsing-001.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-parsing-sideways-right-001-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-orientation-parsing-sideways-right-001.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-sideways-001.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-sideways-slr-019.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-sideways-vlr-100-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-sideways-vlr-100.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-sideways-vrl-100-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-sideways-vrl-100.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-slr-017.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-srl-018-expected.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-srl-018.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-vlr-100-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-vlr-100.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-vrl-100-expected.html:
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-vrl-100.html:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-alphabetic-001.xht:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-auto-001.xht:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-left-001.xht:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-left-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-right-001.xht:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-right-002.xht:
+        * web-platform-tests/css/css-writing-modes/text-underline-position-under-001.xht:
+        * web-platform-tests/css/css-writing-modes/tools/generators/README.md:
+        * web-platform-tests/css/css-writing-modes/tools/generators/gulpfile.js:
+        * web-platform-tests/css/css-writing-modes/tools/generators/orthogonal-parent-shrink-to-fit.ejs:
+        * web-platform-tests/css/css-writing-modes/tools/generators/text-orientation-generator.js: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/text-orientation-ref.ejs: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/text-orientation-script.ejs: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/ucd/Blocks.txt: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/ucd/DerivedGeneralCategory.txt: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/ucd/VerticalOrientation-16.txt: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/unicode-data.js: Removed.
+        * web-platform-tests/css/css-writing-modes/tools/generators/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-002.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-003.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-004.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-005.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-006.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-007.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-008.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-009.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-029.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-031.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-033.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-035.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-037.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-039.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-slr-041.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-028.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-030.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-032.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-034.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-036.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-038.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-srl-040.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-015.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-017.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-019.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-021.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-025.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-027.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-014.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-016.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-018.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-020.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-024.xht:
+        * web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-026.xht:
+        * web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats.html: Added.
+        * web-platform-tests/css/css-writing-modes/vrl-text-orientation-sideways-alongside-vrl-floats-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/vrl-text-orientation-sideways-alongside-vrl-floats.html: Added.
+        * web-platform-tests/css/css-writing-modes/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-006.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-008.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-010-expected.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-010.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-011-expected.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-011.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-015.xht: Removed.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-032-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-032.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-033-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-033.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-034-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-008-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-034.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-035-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-035.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-036-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-015-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-036.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-037-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-037.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-038-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-038.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-039-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-039.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-040-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-040.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-041-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-041.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-042-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-042.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-043-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-043.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-044-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-044.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-045-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-045.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-046-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-046.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-047-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-047.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-048-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-048.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-049-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-049.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-050-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-050.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-051-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-051.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-052-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-052.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-053-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-053.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-054-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-054.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-055-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-055.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-001-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-006-expected.xht.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-scroll-offset-vertical-lr.html:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-scroll-offset-vertical-rl.html:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-svg-root-scrollbar-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-svg-root-scrollbar.svg: Added.
+        * web-platform-tests/css/css-writing-modes/writing-mode-initial-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/writing-mode-initial.html: Added.
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-lr-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-lr-002.xht:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-rl-001-expected.xht:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-rl-001.xht:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-rl-002-expected.xht:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-rl-002.xht:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-rl-003-expected.htm:
+        * web-platform-tests/css/css-writing-modes/writing-mode-vertical-rl-003.htm:
+
 2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for css-grid and css-flexbox

@@ -1,0 +1,12 @@
+
+PASS Property direction has initial value ltr 
+PASS Property direction inherits 
+FAIL Property text-combine-upright has initial value none assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-combine-upright inherits assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
+PASS Property text-orientation has initial value mixed 
+PASS Property text-orientation inherits 
+PASS Property unicode-bidi has initial value normal 
+PASS Property unicode-bidi does not inherit 
+PASS Property writing-mode has initial value horizontal-tb 
+PASS Property writing-mode inherits 
+

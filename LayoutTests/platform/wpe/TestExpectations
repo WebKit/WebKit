@@ -916,6 +916,8 @@ imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 # Passing since r261992.
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////

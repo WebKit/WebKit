@@ -2,8 +2,10 @@
 <meta charset="utf-8">
 <title>upright vertical writing mode and ch unit on table row groups</title>
 <link rel="author" title="Florian Rivoal" href="http://florian.rivoal.net/">
+<link rel="help" href="https://www.w3.org/TR/css-values-3/#font-relative-lengths">
 <link rel="help" href="https://www.w3.org/TR/css-writing-modes-3/#placement">
-<link rel="match" href="reference/ch-units-vrl-001-ref.html"
+<link rel="help" href="https://www.w3.org/TR/css-writing-modes-3/#text-orientation">
+<link rel="match" href="reference/ch-units-vrl-001-ref.html">
 <meta name="assert" content="The font-metric dependent ch unit on table row groups takes the writing mode (with upright text-orientatino) into account,
                             even though these properties do not apply to that element.">
 <style>
@@ -19,7 +21,7 @@ td {
 }
 tbody {
   writing-mode: vertical-rl;
-  -webkit-text-orientation: upright;
+  text-orientation: upright;
   line-height: 5ch; /* using the inherited line-height (which the affects the content of the td)
                        instead of directly using the height property,
                        because sizing on table cells is complicated and out of scope for this. */
@@ -38,7 +40,7 @@ div {
 div:nth-of-type(1) {
   background: blue;
   writing-mode: vertical-rl;
-  -webkit-text-orientation: upright;
+  text-orientation: upright;
   width: 5ch;
 }
 div:nth-of-type(2) {

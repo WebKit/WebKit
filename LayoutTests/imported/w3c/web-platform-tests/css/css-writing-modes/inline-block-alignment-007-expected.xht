@@ -2,28 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>CSS Reftest Reference</title>
-  <link rel="author" title="Hajime Shiozawa" href="mailto:hajime.shiozawa@gmail.com" />
-  <link rel="reviewer" title="Gerard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!-- 2015-07-21 -->
+  <link rel="author" title="Elika J. Etemad" href="http://fantasai.inkedblade.net/contact" />
   <meta name="flags" content="image" />
   <style type="text/css"><![CDATA[
 
   img
   {
-    padding-left: 84px; /* 60px (padding-left) + 24px (the left edge position of box) */
     vertical-align: top;
   }
+
+  .ignore {
+    float: left;
+    height: 120px;
+    width: 120px;
+    background: silver;
+    margin: 60px 24px 30px 60px;
   ]]></style>
 
   </head>
 
   <body>
 
-  <p>Test passes if the <strong>left edge</strong> of an irregular polygon is straight and unbroken.</p>
+  <p>Test passes if the <strong>left edge</strong> of a <strong>single blue irregular polygon</strong> is straight and unbroken.</p>
 
   <div>
-    <img src="support/swatch-fuchsia.png" width="48" height="60" alt="Image download support must be enabled" /><br /><!--
- --><img src="support/swatch-fuchsia.png" width="216" height="120" alt="Image download support must be enabled" /><br /><!--
- --><img src="support/swatch-fuchsia.png" width="24" height="30" alt="Image download support must be enabled" />
+    <div class="ignore"></div>
+    <img src="support/swatch-blue.png" width="48" height="60" alt="Image download support must be enabled" /><br /><!--
+ --><img src="support/swatch-blue.png" width="96px" height="120" alt="Image download support must be enabled" /><br /><!--
+ --><img src="support/swatch-blue.png" width="24" height="30" alt="Image download support must be enabled" />
   </div>
   </body>
 </html>

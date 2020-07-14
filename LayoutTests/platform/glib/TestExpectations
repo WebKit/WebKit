@@ -502,6 +502,20 @@ webkit.org/b/178583 imported/w3c/web-platform-tests/html/interaction/focus/proce
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 webkit.org/b/214173 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative.html [ Failure Pass ]
 
+
+# Passes for GTK/WPE (but not for Mac/iOS) after WPT update of css-writing-modes tests
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-004.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-006.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-008.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-009.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-013.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-015.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-016.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-018.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-019.html [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/inline-box-border-vlr-001.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -687,12 +701,6 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
-
-# These css-writing-modes tests have been passing consistently since r263855
-imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-003.xht [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-005.xht [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-002.xht [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-004.xht [ Pass ]
 
 # Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]

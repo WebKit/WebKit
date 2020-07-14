@@ -1,0 +1,4 @@
+
+PASS Property direction value 'ltr' computes to 'ltr' 
+PASS Property direction value 'rtl' computes to 'rtl' 
+

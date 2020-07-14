@@ -1,0 +1,5 @@
+
+PASS Property writing-mode value 'horizontal-tb' computes to 'horizontal-tb' 
+PASS Property writing-mode value 'vertical-rl' computes to 'vertical-rl' 
+PASS Property writing-mode value 'vertical-lr' computes to 'vertical-lr' 
+
