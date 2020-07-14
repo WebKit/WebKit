@@ -42,9 +42,9 @@ const unsigned EnabledInputChannels = 2;
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
-    
-DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& context)
-    : AudioDestinationNode(context, AudioDestination::hardwareSampleRate())
+
+DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& context, Optional<float> sampleRate)
+    : AudioDestinationNode(context, sampleRate.valueOr(AudioDestination::hardwareSampleRate()))
 {
     // Node-specific default mixing rules.
     m_channelCount = 2;

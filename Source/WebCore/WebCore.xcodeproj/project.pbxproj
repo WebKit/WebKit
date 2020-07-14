@@ -5046,6 +5046,8 @@
 		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
 		E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D91124B4D1B10014DB21 /* ChannelCountMode.h */; };
 		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
+		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
+		E785D96224B7F7350014DB21 /* AudioContextLatencyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -15794,6 +15796,10 @@
 		E785D91324B4D1B10014DB21 /* ChannelCountMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelCountMode.idl; sourceTree = "<group>"; };
 		E785D93124B636FF0014DB21 /* ChannelInterpretation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelInterpretation.h; sourceTree = "<group>"; };
 		E785D93324B636FF0014DB21 /* ChannelInterpretation.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelInterpretation.idl; sourceTree = "<group>"; };
+		E785D95C24B7F7260014DB21 /* AudioContextOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioContextOptions.idl; sourceTree = "<group>"; };
+		E785D95E24B7F7270014DB21 /* AudioContextLatencyCategory.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioContextLatencyCategory.idl; sourceTree = "<group>"; };
+		E785D95F24B7F7340014DB21 /* AudioContextOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextOptions.h; sourceTree = "<group>"; };
+		E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextLatencyCategory.h; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29334,6 +29340,10 @@
 				FD315FBA12B0267500C1A359 /* AudioContext.cpp */,
 				FD315FBB12B0267500C1A359 /* AudioContext.h */,
 				FD315FBC12B0267500C1A359 /* AudioContext.idl */,
+				E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */,
+				E785D95E24B7F7270014DB21 /* AudioContextLatencyCategory.idl */,
+				E785D95F24B7F7340014DB21 /* AudioContextOptions.h */,
+				E785D95C24B7F7260014DB21 /* AudioContextOptions.idl */,
 				83BD3CED24998DF600BA3E67 /* AudioContextState.h */,
 				83BD3CEB24998CC500BA3E67 /* AudioContextState.idl */,
 				FD315FBD12B0267500C1A359 /* AudioDestinationNode.cpp */,
@@ -29854,6 +29864,8 @@
 				FD31607C12B026F700C1A359 /* AudioBus.h in Headers */,
 				FD31607E12B026F700C1A359 /* AudioChannel.h in Headers */,
 				FD31600512B0267600C1A359 /* AudioContext.h in Headers */,
+				E785D96224B7F7350014DB21 /* AudioContextLatencyCategory.h in Headers */,
+				E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */,
 				83BD3CEE24998E0100BA3E67 /* AudioContextState.h in Headers */,
 				FD31607F12B026F700C1A359 /* AudioDestination.h in Headers */,
 				9B1229C423FE4BD2008CA751 /* AudioDestinationCocoa.h in Headers */,

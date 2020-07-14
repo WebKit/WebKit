@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AudioContextOptions.h"
 #include "BaseAudioContext.h"
 
 namespace WebCore {
@@ -33,7 +34,7 @@ class AudioContext : public BaseAudioContext {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<AudioContext>> create(Document&);
+    static ExceptionOr<Ref<AudioContext>> create(Document&, const AudioContextOptions& = { });
 
     void close(DOMPromiseDeferred<void>&&);
 
@@ -46,7 +47,7 @@ public:
 #endif
 
 private:
-    explicit AudioContext(Document&);
+    AudioContext(Document&, const AudioContextOptions&);
     AudioContext(Document&, AudioBuffer* renderTarget);
 };
 

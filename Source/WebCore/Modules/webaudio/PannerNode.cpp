@@ -147,8 +147,6 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 2));
     
-    // FIXME: Set PannerNode specific channelCount, channelCountMode, channelInterpretation here.
-    
     initialize();
 }
 

@@ -51,23 +51,31 @@ constexpr unsigned maxHardwareContexts = 4;
 #endif
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
-    
-ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document)
+
+ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, const AudioContextOptions& contextOptions)
 {
     ASSERT(isMainThread());
 #if OS(WINDOWS)
     if (s_hardwareContextCount >= maxHardwareContexts)
         return Exception { QuotaExceededError };
 #endif
+    
+    if (!document.isFullyActive())
+        return Exception { InvalidStateError, "Document is not fully active"_s };
+    
+    // FIXME: Figure out where latencyHint should go.
 
-    auto audioContext = adoptRef(*new AudioContext(document));
+    if (contextOptions.sampleRate.hasValue() && !isSampleRateRangeGood(contextOptions.sampleRate.value()))
+        return Exception { SyntaxError, "sampleRate is not in range"_s };
+    
+    auto audioContext = adoptRef(*new AudioContext(document, contextOptions));
     audioContext->suspendIfNeeded();
     return audioContext;
 }
 
 // Constructor for rendering to the audio hardware.
-AudioContext::AudioContext(Document& document)
-    : BaseAudioContext(document)
+AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
+    : BaseAudioContext(document, contextOptions)
 {
 }
 

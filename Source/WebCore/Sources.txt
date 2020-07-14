@@ -2627,6 +2627,8 @@ JSAudioBufferCallback.cpp
 JSAudioBufferSourceNode.cpp
 JSAudioConfiguration.cpp
 JSAudioContext.cpp
+JSAudioContextLatencyCategory.cpp
+JSAudioContextOptions.cpp
 JSAudioContextState.cpp
 JSAudioDestinationNode.cpp
 JSAudioListener.cpp

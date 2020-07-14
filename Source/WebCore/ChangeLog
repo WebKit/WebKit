@@ -1,3 +1,40 @@
+2020-07-14  Clark Wang  <clark_wang@apple.com>
+
+        Updated AudioContext constructor according to spec
+        https://bugs.webkit.org/show_bug.cgi?id=214267
+
+        Reviewed by Chris Dumez.
+
+        Updated AudioContext constructor according to spec: https://www.w3.org/TR/webaudio/#AudioContext-constructors.
+        Added in files accordingly to support AudioContextOptions.
+
+        Re-baselined existing tests. One new test case passes, and one fails due to current accepted range for sampleRate.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        (WebCore::AudioContext::AudioContext):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::create):
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioContextLatencyCategory.h: Added.
+        * Modules/webaudio/AudioContextLatencyCategory.idl: Added.
+        * Modules/webaudio/AudioContextOptions.h: Added.
+        * Modules/webaudio/AudioContextOptions.idl: Added.
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::PannerNode):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-07-14  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] REGRESSION (r262366): Google search photos do not render, black images

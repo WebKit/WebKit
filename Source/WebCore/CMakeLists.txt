@@ -450,6 +450,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioBufferCallback.idl
     Modules/webaudio/AudioBufferSourceNode.idl
     Modules/webaudio/AudioContext.idl
+    Modules/webaudio/AudioContextLatencyCategory.idl
+    Modules/webaudio/AudioContextOptions.idl
     Modules/webaudio/AudioContextState.idl
     Modules/webaudio/AudioDestinationNode.idl
     Modules/webaudio/AudioListener.idl

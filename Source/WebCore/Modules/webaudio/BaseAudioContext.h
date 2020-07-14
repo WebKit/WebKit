@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBus.h"
+#include "AudioContextOptions.h"
 #include "AudioContextState.h"
 #include "AudioDestinationNode.h"
 #include "EventTarget.h"
@@ -284,7 +285,7 @@ public:
     };
 
 protected:
-    explicit BaseAudioContext(Document&);
+    explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
     BaseAudioContext(Document&, AudioBuffer* renderTarget);
     
     static bool isSampleRateRangeGood(float sampleRate);

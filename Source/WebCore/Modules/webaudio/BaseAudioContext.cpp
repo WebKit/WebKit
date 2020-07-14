@@ -109,7 +109,7 @@ bool BaseAudioContext::isSampleRateRangeGood(float sampleRate)
 unsigned BaseAudioContext::s_hardwareContextCount = 0;
 
 // Constructor for rendering to the audio hardware.
-BaseAudioContext::BaseAudioContext(Document& document)
+BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions& contextOptions)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -124,7 +124,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
 
     constructCommon();
 
-    m_destinationNode = DefaultAudioDestinationNode::create(*this);
+    m_destinationNode = DefaultAudioDestinationNode::create(*this, contextOptions.sampleRate);
 
     // Initialize the destination node's muted state to match the page's current muted state.
     pageMutedStateDidChange();

@@ -29,7 +29,7 @@
     EnabledBySetting=WebAudio&ModernUnprefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
 ] interface AudioContext : BaseAudioContext {
-    [CallWith=Document, MayThrowException] constructor();
+    [CallWith=Document, MayThrowException] constructor(optional AudioContextOptions contextOptions);
 
     // FIXME: Add support.
     // readonly attribute double baseLatency;
