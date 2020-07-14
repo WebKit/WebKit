@@ -1,3 +1,13 @@
+2020-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Add support for parsing VP-style codec strings.
+        https://bugs.webkit.org/show_bug.cgi?id=214270
+
+        Reviewed by Eric Carlson.
+
+        * media/vp-codec-parameters-expected.txt: Added.
+        * media/vp-codec-parameters.html: Added.
+
 2020-07-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         When invalidating the clients of an SVG resource we should not go beyond the RenderSVGRoot

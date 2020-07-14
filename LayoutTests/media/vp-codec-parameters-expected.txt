@@ -1,0 +1,130 @@
+EXPECTED (internals.parseVPCodecParameters("bad-parameter") == 'null') OK
+
+Test invalid number of required parameters:
+EXPECTED (internals.parseVPCodecParameters("vp09") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41") == 'null') OK
+
+Test valid default optional parameters:
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.08") === '{ vp09, 0, 41, 8, 1, 1, 1, 1, 0}') OK
+
+Test invalid number of optional parameters:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01.00") == 'null') OK
+
+Test valid required and optional parameters:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 9, 1}') OK
+
+Test invalid codec type
+EXPECTED (internals.parseVPCodecParameters("vp10.00.41.08") == 'null') OK
+
+Test invalid combination of matrixCoefficients and chromaSubsampling
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.08.01.01.01.00.00") == 'null') OK
+
+Test valid profiles:
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.08") === '{ vp09, 0, 41, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.01.41.08") === '{ vp09, 1, 41, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.41.08") === '{ vp09, 2, 41, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.03.41.08") === '{ vp09, 3, 41, 8, 1, 1, 1, 1, 0}') OK
+
+Test invalid profile:
+EXPECTED (internals.parseVPCodecParameters("vp09.04.41.08") == 'null') OK
+
+Test valid levels:
+EXPECTED (internals.parseVPCodecParameters("vp09.00.10.08") === '{ vp09, 0, 10, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.11.08") === '{ vp09, 0, 11, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.20.08") === '{ vp09, 0, 20, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.21.08") === '{ vp09, 0, 21, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.30.08") === '{ vp09, 0, 30, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.31.08") === '{ vp09, 0, 31, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.40.08") === '{ vp09, 0, 40, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.08") === '{ vp09, 0, 41, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.50.08") === '{ vp09, 0, 50, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.51.08") === '{ vp09, 0, 51, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.52.08") === '{ vp09, 0, 52, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.60.08") === '{ vp09, 0, 60, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.61.08") === '{ vp09, 0, 61, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.62.08") === '{ vp09, 0, 62, 8, 1, 1, 1, 1, 0}') OK
+
+Test invalid level:
+EXPECTED (internals.parseVPCodecParameters("vp09.00.12.08") == 'null') OK
+
+Test valid bitDepths:
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.08") === '{ vp09, 0, 41, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.10") === '{ vp09, 0, 41, 10, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.12") === '{ vp09, 0, 41, 12, 1, 1, 1, 1, 0}') OK
+
+Test invalid bitDepth:
+EXPECTED (internals.parseVPCodecParameters("vp09.00.41.09") == 'null') OK
+
+Test valid chromaSubsampling:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.00.09.16.09.01") === '{ vp09, 2, 10, 10, 0, 9, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.02.09.16.09.01") === '{ vp09, 2, 10, 10, 2, 9, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.03.09.16.09.01") === '{ vp09, 2, 10, 10, 3, 9, 16, 9, 1}') OK
+
+Test invalid chromaSubsampling:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.04.09.16.09.01") == 'null') OK
+
+Test valid colorPrimaries:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.01.16.09.01") === '{ vp09, 2, 10, 10, 1, 1, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.04.16.09.01") === '{ vp09, 2, 10, 10, 1, 4, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.05.16.09.01") === '{ vp09, 2, 10, 10, 1, 5, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.06.16.09.01") === '{ vp09, 2, 10, 10, 1, 6, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.07.16.09.01") === '{ vp09, 2, 10, 10, 1, 7, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.08.16.09.01") === '{ vp09, 2, 10, 10, 1, 8, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.10.16.09.01") === '{ vp09, 2, 10, 10, 1, 10, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.11.16.09.01") === '{ vp09, 2, 10, 10, 1, 11, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.12.16.09.01") === '{ vp09, 2, 10, 10, 1, 12, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.22.16.09.01") === '{ vp09, 2, 10, 10, 1, 22, 16, 9, 1}') OK
+
+Test invalid colorPrimaries:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.02.16.09.01") == 'null') OK
+
+Test valid transferCharacteristics:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.01.09.01") === '{ vp09, 2, 10, 10, 1, 9, 1, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.04.09.01") === '{ vp09, 2, 10, 10, 1, 9, 4, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.05.09.01") === '{ vp09, 2, 10, 10, 1, 9, 5, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.06.09.01") === '{ vp09, 2, 10, 10, 1, 9, 6, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.07.09.01") === '{ vp09, 2, 10, 10, 1, 9, 7, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.08.09.01") === '{ vp09, 2, 10, 10, 1, 9, 8, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.09.09.01") === '{ vp09, 2, 10, 10, 1, 9, 9, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.10.09.01") === '{ vp09, 2, 10, 10, 1, 9, 10, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.11.09.01") === '{ vp09, 2, 10, 10, 1, 9, 11, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.12.09.01") === '{ vp09, 2, 10, 10, 1, 9, 12, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.13.09.01") === '{ vp09, 2, 10, 10, 1, 9, 13, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.14.09.01") === '{ vp09, 2, 10, 10, 1, 9, 14, 9, 1}') OK
+
+Test invalid transferCharacteristics:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.03.09.01") == 'null') OK
+
+Test valid matrixCoefficients:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.03.09.16.00.01") === '{ vp09, 2, 10, 10, 3, 9, 16, 0, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 1, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.04.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 4, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.05.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 5, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.06.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 6, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.07.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 7, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.08.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 8, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 9, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.10.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 10, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.11.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 11, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.12.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 12, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.13.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 13, 1}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.14.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 14, 1}') OK
+
+Test invalid matrixCoefficients:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.03") == 'null') OK
+
+Test valid videoFullRangeFlag:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.00") === '{ vp09, 2, 10, 10, 1, 9, 16, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 1, 1}') OK
+
+Test invalid videoFullRangeFlag:
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.02") == 'null') OK
+END OF TEST
+

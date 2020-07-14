@@ -37,6 +37,7 @@
 #include "RealtimeMediaSource.h"
 #include "SleepDisabler.h"
 #include "TextIndicator.h"
+#include "VP9Utilities.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/Optional.h>
 
@@ -914,6 +915,9 @@ public:
 
     using DoViParameterSet = WebCore::DoViParameterSet;
     Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString);
+
+    using VPCodecConfigurationRecord = WebCore::VPCodecConfigurationRecord;
+    Optional<VPCodecConfigurationRecord> parseVPCodecParameters(const String& codecString);
 
     struct CookieData {
         String name;

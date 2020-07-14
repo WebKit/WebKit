@@ -14107,6 +14107,8 @@
 		CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourcePrivate.h; sourceTree = "<group>"; };
 		CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivate.h; sourceTree = "<group>"; };
 		CD641EC7181ED60100EE4C41 /* MediaSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSample.h; sourceTree = "<group>"; };
+		CD6FE5BA24BCE7B6009FCDA4 /* VP9Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VP9Utilities.h; sourceTree = "<group>"; };
+		CD6FE5BB24BCE7B6009FCDA4 /* VP9Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VP9Utilities.cpp; sourceTree = "<group>"; };
 		CD720B4722682C7E00047FDE /* ISOFairPlayStreamingPsshBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ISOFairPlayStreamingPsshBox.cpp; sourceTree = "<group>"; };
 		CD720B4922682C7F00047FDE /* ISOFairPlayStreamingPsshBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISOFairPlayStreamingPsshBox.h; sourceTree = "<group>"; };
 		CD78A2EC1F75648600DE371B /* CDMInstanceFairPlayStreamingAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CDMInstanceFairPlayStreamingAVFObjC.mm; sourceTree = "<group>"; };
@@ -25742,6 +25744,8 @@
 				076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */,
 				BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
+				CD6FE5BA24BCE7B6009FCDA4 /* VP9Utilities.h */,
+				CD6FE5BB24BCE7B6009FCDA4 /* VP9Utilities.cpp */,
 				0F5A57CA229B18AE0025EDA9 /* VelocityData.cpp */,
 				0F1A0C36229A481800D37ADB /* VelocityData.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,

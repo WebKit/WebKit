@@ -1,3 +1,18 @@
+2020-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Add support for parsing VP-style codec strings.
+        https://bugs.webkit.org/show_bug.cgi?id=214270
+        <rdar://problem/65500048>
+
+        Reviewed by Eric Carlson.
+
+        Add a variant of toIntegralType<> which returns an Optional. Since no existing callers of the
+        original toIntegralType fail to pass in the optional bool* parameter, make that parameter
+        non-optional, as it causes a conflict with the new Optional-returning version.
+
+        * wtf/text/StringToIntegerConversion.h:
+        (WTF::toIntegralType):
+
 2020-07-13  Keith Miller  <keith_miller@apple.com>
 
         Clean up SourceProvider and add caller relative load script to jsc.cpp

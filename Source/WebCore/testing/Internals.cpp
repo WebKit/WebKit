@@ -5600,6 +5600,11 @@ Optional<DoViParameterSet> Internals::parseDoViCodecParameters(const String& cod
     return WebCore::parseDoViCodecParameters(codecString);
 }
 
+Optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(const String& codecString)
+{
+    return WebCore::parseVPCodecParameters(codecString);
+}
+
 auto Internals::getCookies() const -> Vector<CookieData>
 {
     auto* document = contextDocument();

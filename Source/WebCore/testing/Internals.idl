@@ -192,6 +192,21 @@ enum ContentSizeCategory {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+] dictionary VPCodecConfigurationRecord {
+    DOMString codecName;
+    octet profile;
+    octet level;
+    octet bitDepth;
+    octet chromaSubsampling;
+    octet videoFullRangeFlag;
+    octet colorPrimaries;
+    octet transferCharacteristics;
+    octet matrixCoefficients;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary AcceleratedAnimation {
     DOMString property;
     double speed;
@@ -881,6 +896,7 @@ enum ContentSizeCategory {
 
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
     DoViParameterSet? parseDoViCodecParameters(DOMString codecParameters);
+    VPCodecConfigurationRecord? parseVPCodecParameters(DOMString codecParameters);
 
     sequence<CookieData> getCookies();
 

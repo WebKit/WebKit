@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script>
+    function VPCodecConfigurationRecordToString(set) {
+        try {
+            return `{ ${set.codecName}, ${set.profile}, ${set.level}, ${set.bitDepth}, ${set.chromaSubsampling}, ${set.colorPrimaries}, ${set.transferCharacteristics}, ${set.matrixCoefficients}, ${set.videoFullRangeFlag}}`;
+        } catch(e) {
+            return `{ ${set} }`;
+        }
+    }
+    function isEqualVPCodecConfigurationRecord(setA, setB) {
+        try {
+            return setA.profile == setB.profile &&
+                setA.level == setB.level &&
+                setA.bitDepth == setB.bitDepth &&
+                setA.chromaSubsampling == setB.chromaSubsampling &&
+                setA.videoFullRangeFlag == setB.videoFullRangeFlag &&
+                setA.colorPrimaries == setB.colorPrimaries &&
+                setA.transferCharacteristics == setB.transferCharacteristics &&
+                setA.matrixCoefficients == setB.matrixCoefficients;
+        } catch(e) {
+            return false;
+        }
+    }
+    function makeVPCodecConfigurationRecord(codecName, profile, level, bitDepth, chromaSubsampling, colorPrimaries, transferCharacteristics, matrixCoefficients, videoFullRangeFlag)
+    {
+        return {
+            codecName: codecName,
+            profile: profile,
+            level: level,
+            bitDepth: bitDepth,
+            chromaSubsampling: chromaSubsampling,
+            videoFullRangeFlag: videoFullRangeFlag,
+            colorPrimaries: colorPrimaries,
+            transferCharacteristics: transferCharacteristics,
+            matrixCoefficients: matrixCoefficients
+        };
+    }
+    function testExpectedVPCodecConfigurationRecord(testFuncString, expected)
+    {
+        let observed = eval(testFuncString);
+        let success = isEqualVPCodecConfigurationRecord(observed, expected);
+        reportExpected(success, testFuncString, '===', VPCodecConfigurationRecordToString(expected), VPCodecConfigurationRecordToString(observed));
+    }
+    window.addEventListener('load', event => {
+        testExpected('internals.parseVPCodecParameters("bad-parameter")', null);
+        consoleWrite('');
+        consoleWrite('Test invalid number of required parameters:')
+        testExpected('internals.parseVPCodecParameters("vp09")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.00")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.00.41")', null);
+        consoleWrite('');
+        consoleWrite('Test valid default optional parameters:')
+        testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp09.00.41.08")', makeVPCodecConfigurationRecord('vp09', 0, 41, 8, 1, 1, 1, 1, 0));
+        consoleWrite('');
+        consoleWrite('Test invalid number of optional parameters:')
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01.00")', null);
+        consoleWrite('');
+        consoleWrite('Test valid required and optional parameters:')
+        testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01")', makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, 9, 16, 9, 1));
+        consoleWrite('');
+        consoleWrite('Test invalid codec type');
+        testExpected('internals.parseVPCodecParameters("vp10.00.41.08")', null);
+        consoleWrite('');
+        consoleWrite('Test invalid combination of matrixCoefficients and chromaSubsampling');
+        testExpected('internals.parseVPCodecParameters("vp09.00.41.08.01.01.01.00.00")', null);
+        consoleWrite('');
+        consoleWrite('Test valid profiles:');
+        for (let profile of [0, 1, 2, 3])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.${profile.toString().padStart(2, '0')}.41.08")`, makeVPCodecConfigurationRecord('vp09', profile, 41, 8, 1, 1, 1, 1, 0));
+        consoleWrite('');
+        consoleWrite('Test invalid profile:');
+        testExpected('internals.parseVPCodecParameters("vp09.04.41.08")', null);
+        consoleWrite('');
+        consoleWrite('Test valid levels:');
+        for (let level of [10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 52, 60, 61, 62])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.00.${level.toString().padStart(2, '0')}.08")`, makeVPCodecConfigurationRecord('vp09', 0, level, 8, 1, 1, 1, 1, 0));
+        consoleWrite('');
+        consoleWrite('Test invalid level:');
+        testExpected('internals.parseVPCodecParameters("vp09.00.12.08")', null);
+        consoleWrite('');
+        consoleWrite('Test valid bitDepths:');
+        for (let bitDepth of [8, 10, 12])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.00.41.${bitDepth.toString().padStart(2, '0')}")`, makeVPCodecConfigurationRecord('vp09', 0, 41, bitDepth, 1, 1, 1, 1, 0));
+        consoleWrite('');
+        consoleWrite('Test invalid bitDepth:');
+        testExpected('internals.parseVPCodecParameters("vp09.00.41.09")', null);
+        consoleWrite('');
+        consoleWrite('Test valid chromaSubsampling:');
+        for (let chromaSubsampling of [0, 1, 2, 3])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.${chromaSubsampling.toString().padStart(2, '0')}.09.16.09.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, chromaSubsampling, 9, 16, 9, 1));
+        consoleWrite('');
+        consoleWrite('Test invalid chromaSubsampling:');
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.04.09.16.09.01")', null);
+        consoleWrite('');
+        consoleWrite('Test valid colorPrimaries:');
+        for (let colorPrimaries of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.01.${colorPrimaries.toString().padStart(2, '0')}.16.09.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, colorPrimaries, 16, 9, 1));
+        consoleWrite('');
+        consoleWrite('Test invalid colorPrimaries:');
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.02.16.09.01")', null);
+        consoleWrite('');
+        consoleWrite('Test valid transferCharacteristics:');
+        for (let transferCharacteristics of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.01.09.${transferCharacteristics.toString().padStart(2, '0')}.09.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, 9, transferCharacteristics, 9, 1));
+        consoleWrite('');
+        consoleWrite('Test invalid transferCharacteristics:');
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09.03.09.01")', null);
+        consoleWrite('');
+        consoleWrite('Test valid matrixCoefficients:');
+        testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.03.09.16.00.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 3, 9, 16, 0, 1));
+        for (let matrixCoefficients of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.${matrixCoefficients.toString().padStart(2, '0')}.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, 9, 16, matrixCoefficients, 1));
+        consoleWrite('');
+        consoleWrite('Test invalid matrixCoefficients:');
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.03")', null);
+        consoleWrite('');
+        consoleWrite('Test valid videoFullRangeFlag:');
+        testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.00")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, 9, 16, 1, 0));
+        testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, 9, 16, 1, 1));
+        consoleWrite('');
+        consoleWrite('Test invalid videoFullRangeFlag:');
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.01.02")', null);
+        endTest();
+    }, { once: true });
+    </script>
+</head>
+<body>
+</body>
+</html>

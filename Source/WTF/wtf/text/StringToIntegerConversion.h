@@ -46,7 +46,7 @@ inline bool isCharacterAllowedInBase(UChar c, int base)
 }
 
 template<typename IntegralType, typename CharacterType>
-inline IntegralType toIntegralType(const CharacterType* data, size_t length, bool* ok = nullptr, int base = 10)
+inline IntegralType toIntegralType(const CharacterType* data, size_t length, bool* ok, int base = 10)
 {
     static constexpr IntegralType integralMax = std::numeric_limits<IntegralType>::max();
     static constexpr bool isSigned = std::numeric_limits<IntegralType>::is_signed;
@@ -122,11 +122,31 @@ bye:
 }
 
 template<typename IntegralType, typename StringOrStringView>
-inline IntegralType toIntegralType(const StringOrStringView& stringView, bool* ok = nullptr, int base = 10)
+inline IntegralType toIntegralType(const StringOrStringView& stringView, bool* ok, int base = 10)
 {
     if (stringView.is8Bit())
         return toIntegralType<IntegralType, LChar>(stringView.characters8(), stringView.length(), ok, base);
     return toIntegralType<IntegralType, UChar>(stringView.characters16(), stringView.length(), ok, base);
+}
+
+template<typename IntegralType, typename CharacterType>
+inline Optional<IntegralType> toIntegralType(const CharacterType* data, size_t length, int base = 10)
+{
+    bool ok = false;
+    IntegralType value = toIntegralType<IntegralType>(data, length, &ok, base);
+    if (!ok)
+        return WTF::nullopt;
+    return value;
+}
+
+template<typename IntegralType, typename StringOrStringView>
+inline Optional<IntegralType> toIntegralType(const StringOrStringView& stringView, int base = 10)
+{
+    bool ok = false;
+    IntegralType value = toIntegralType<IntegralType>(stringView, &ok, base);
+    if (!ok)
+        return WTF::nullopt;
+    return value;
 }
 
 }

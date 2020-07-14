@@ -1890,6 +1890,7 @@ platform/graphics/SurrogatePairAwareTextIterator.cpp
 platform/graphics/TextRun.cpp
 platform/graphics/TextTrackRepresentation.cpp
 platform/graphics/TrackPrivateBase.cpp
+platform/graphics/VP9Utilities.cpp
 platform/graphics/VelocityData.cpp
 platform/graphics/WOFFFileFormat.cpp
 platform/graphics/WidthIterator.cpp
