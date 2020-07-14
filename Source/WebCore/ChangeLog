@@ -1,3 +1,88 @@
+2020-07-14  James Darpinian  <jdarpinian@chromium.org>
+
+        Implement uniform* and getUniform for WebGL 2 types
+        https://bugs.webkit.org/show_bug.cgi?id=214116
+
+        Reviewed by Dean Jackson.
+
+        Passes all relevant WebGL conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFragDataLocation):
+        (WebCore::WebGL2RenderingContext::uniform1ui):
+        (WebCore::WebGL2RenderingContext::uniform2ui):
+        (WebCore::WebGL2RenderingContext::uniform3ui):
+        (WebCore::WebGL2RenderingContext::uniform4ui):
+        (WebCore::WebGL2RenderingContext::uniform1uiv):
+        (WebCore::WebGL2RenderingContext::uniform2uiv):
+        (WebCore::WebGL2RenderingContext::uniform3uiv):
+        (WebCore::WebGL2RenderingContext::uniform4uiv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x3fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x3fv):
+        (WebCore::WebGL2RenderingContext::uniform1fv):
+        (WebCore::WebGL2RenderingContext::uniform2fv):
+        (WebCore::WebGL2RenderingContext::uniform3fv):
+        (WebCore::WebGL2RenderingContext::uniform4fv):
+        (WebCore::WebGL2RenderingContext::uniform1iv):
+        (WebCore::WebGL2RenderingContext::uniform2iv):
+        (WebCore::WebGL2RenderingContext::uniform3iv):
+        (WebCore::WebGL2RenderingContext::uniform4iv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4fv):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getUniform):
+        (WebCore::WebGLRenderingContextBase::uniform1fv):
+        (WebCore::WebGLRenderingContextBase::uniform2fv):
+        (WebCore::WebGLRenderingContextBase::uniform3fv):
+        (WebCore::WebGLRenderingContextBase::uniform4fv):
+        (WebCore::WebGLRenderingContextBase::uniform1iv):
+        (WebCore::WebGLRenderingContextBase::uniform2iv):
+        (WebCore::WebGLRenderingContextBase::uniform3iv):
+        (WebCore::WebGLRenderingContextBase::uniform4iv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContextBase::validateUniformParameters):
+        (WebCore::WebGLRenderingContextBase::validateUniformMatrixParameters):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getUniformuiv):
+        (WebCore::GraphicsContextGLOpenGL::getFragDataLocation):
+        (WebCore::GraphicsContextGLOpenGL::uniform1ui):
+        (WebCore::GraphicsContextGLOpenGL::uniform2ui):
+        (WebCore::GraphicsContextGLOpenGL::uniform3ui):
+        (WebCore::GraphicsContextGLOpenGL::uniform4ui):
+        (WebCore::GraphicsContextGLOpenGL::uniform1uiv):
+        (WebCore::GraphicsContextGLOpenGL::uniform2uiv):
+        (WebCore::GraphicsContextGLOpenGL::uniform3uiv):
+        (WebCore::GraphicsContextGLOpenGL::uniform4uiv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix2x3fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix3x2fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix2x4fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix4x2fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix3x4fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix4x3fv):
+        (WebCore::GraphicsContextGLOpenGL::uniform1fv):
+        (WebCore::GraphicsContextGLOpenGL::uniform2fv):
+        (WebCore::GraphicsContextGLOpenGL::uniform3fv):
+        (WebCore::GraphicsContextGLOpenGL::uniform4fv):
+        (WebCore::GraphicsContextGLOpenGL::uniform1iv):
+        (WebCore::GraphicsContextGLOpenGL::uniform2iv):
+        (WebCore::GraphicsContextGLOpenGL::uniform3iv):
+        (WebCore::GraphicsContextGLOpenGL::uniform4iv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix2fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix3fv):
+        (WebCore::GraphicsContextGLOpenGL::uniformMatrix4fv):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getUniformuiv):
+
 2020-07-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Avoid loading media libraries in Document::visibilityStateChanged() if not needed

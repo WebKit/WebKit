@@ -1023,6 +1023,7 @@ public:
     // getUniform
     virtual void getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value) = 0;
     virtual void getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value) = 0;
+    virtual void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value) = 0;
 
     virtual GCGLint getUniformLocation(PlatformGLObject, const String& name) = 0;
 

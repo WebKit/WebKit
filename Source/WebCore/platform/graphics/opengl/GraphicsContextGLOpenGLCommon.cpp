@@ -1822,6 +1822,13 @@ void GraphicsContextGLOpenGL::getUniformiv(PlatformGLObject program, GCGLint loc
     ::glGetUniformiv(program, location, value);
 }
 
+void GraphicsContextGLOpenGL::getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value)
+{
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(value);
+}
+
 GCGLint GraphicsContextGLOpenGL::getUniformLocation(PlatformGLObject program, const String& name)
 {
     ASSERT(program);

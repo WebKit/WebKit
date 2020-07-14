@@ -1,12 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/unary-minus-operator-in-dynamic-loop.html
-[ 1: PASS ] square should be green
-[ 2: FAIL ] square should be green at (138, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 3: PASS ] square should be green
-[ 4: FAIL ] square should be green at (414, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 5: PASS ] square should be green
-[ 6: FAIL ] square should be green at (690, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 7: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ PASS ] All tests passed
 

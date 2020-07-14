@@ -294,6 +294,7 @@ public:
     void getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) final;
     void getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value) final;
     void getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value) final;
+    void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value) final;
     GCGLint getUniformLocation(PlatformGLObject, const String& name) final;
     void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value) final;
     void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value) final;

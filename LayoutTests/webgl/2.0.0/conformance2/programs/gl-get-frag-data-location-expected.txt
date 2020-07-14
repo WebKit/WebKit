@@ -1,11 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/programs/gl-get-frag-data-location.html
-[ 1: PASS ] WebGL context exists
-[ 2: PASS ] getError was expected value: NO_ERROR : No GL error from set up
-[ 3: FAIL ] Fail to query scalar output variable locations, expected: fragColor0->2, fragColor1->0, got: fragColor0->0, fragColor1->0
-[ 4: FAIL ] Fail to query scalar output variable locations, expected: fragColor->0, fragColor[0]->0, fragColor[1]->1, got: fragColor->0, fragColor[0]->0, fragColor[1]->0
-[ 5: PASS ] getError was expected value: NO_ERROR : No GL error from testing
-[ 6: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ PASS ] All tests passed
 

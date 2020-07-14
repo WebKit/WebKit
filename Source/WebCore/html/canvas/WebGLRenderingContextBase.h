@@ -301,6 +301,7 @@ public:
 
     using Float32List = TypedList<Float32Array, float>;
     using Int32List = TypedList<Int32Array, int>;
+    using Uint32List = TypedList<Uint32Array, uint32_t>;
 
     void uniform1f(const WebGLUniformLocation*, GCGLfloat x);
     void uniform2f(const WebGLUniformLocation*, GCGLfloat x, GCGLfloat y);
@@ -949,11 +950,13 @@ protected:
     virtual bool validateCapability(const char* functionName, GCGLenum) = 0;
 
     // Helper function to validate input parameters for uniform functions.
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Float32List&, GCGLsizei mod);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Int32List&, GCGLsizei mod);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, void*, GCGLsizei, GCGLsizei mod);
-    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const Float32List&, GCGLsizei mod);
-    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const void*, GCGLsizei, GCGLsizei mod);
+    bool validateUniformLocation(const char* functionName, const WebGLUniformLocation*);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Float32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Int32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Uint32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, void*, GCGLsizei, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const Float32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const void*, GCGLsizei, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.
