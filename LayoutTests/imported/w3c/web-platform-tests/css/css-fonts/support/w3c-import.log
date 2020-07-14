@@ -24,7 +24,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-white.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/60x60-gg-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/60x60-green.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/60x60-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/README
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/bar_with_corner_dot.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/black15x15.png
@@ -34,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/blue96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/cat.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-family-keywords.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-bolder-001-ref.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-lighter-001-ref.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-normal-001-ref.png

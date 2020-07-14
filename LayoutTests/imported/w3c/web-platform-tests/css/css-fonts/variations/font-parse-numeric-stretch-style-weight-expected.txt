@@ -74,7 +74,7 @@ PASS Value 50% 0 must not be accepted as stretch in @font-face.
 PASS Value oblique 100deg must not be accepted as style in @font-face. 
 PASS Value oblique italic must not be accepted as style in @font-face. 
 PASS Value oblique -91deg must not be accepted as style in @font-face. 
-FAIL Value oblique 0 must not be accepted as style in @font-face. assert_throws: Value must not be accepted as weight value. function "() => {
+FAIL Value oblique 0 must not be accepted as style in @font-face. assert_throws_dom: Value must not be accepted as weight value. function "() => {
               fontFace[theProperty] = faceTest;
             }" did not throw
 PASS Value oblique 10 must not be accepted as style in @font-face. 

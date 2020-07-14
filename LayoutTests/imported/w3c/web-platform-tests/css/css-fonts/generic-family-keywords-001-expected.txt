@@ -1,4 +1,17 @@
 00000
+00000
 
-PASS CSS Test: Test generic family keywords do not match @font-face 
+PASS @font-face matching for quoted and unquoted serif 
+PASS @font-face matching for quoted and unquoted sans-serif 
+PASS @font-face matching for quoted and unquoted cursive 
+PASS @font-face matching for quoted and unquoted fantasy 
+PASS @font-face matching for quoted and unquoted monospace 
+FAIL @font-face matching for quoted and unquoted system assert_equals: unquoted system does not match @font-face rule expected 25 but got 50
+FAIL @font-face matching for quoted and unquoted emoji assert_equals: unquoted emoji does not match @font-face rule expected 25 but got 50
+FAIL @font-face matching for quoted and unquoted math assert_equals: unquoted math does not match @font-face rule expected 25 but got 50
+FAIL @font-face matching for quoted and unquoted fangsong assert_equals: unquoted fangsong does not match @font-face rule expected 25 but got 50
+FAIL @font-face matching for quoted and unquoted ui-serif assert_equals: unquoted ui-serif does not match @font-face rule expected 25 but got 50
+FAIL @font-face matching for quoted and unquoted ui-sans-serif assert_equals: quoted ui-sans-serif matches  @font-face rule expected 50 but got 33
+FAIL @font-face matching for quoted and unquoted ui-monospace assert_equals: unquoted ui-monospace does not match @font-face rule expected 25 but got 50
+FAIL @font-face matching for quoted and unquoted ui-rounded assert_equals: unquoted ui-rounded does not match @font-face rule expected 25 but got 50
 

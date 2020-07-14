@@ -677,6 +677,9 @@ webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.htm
 webkit.org/b/213235 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure Pass ]
 webkit.org/b/213235 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure Pass ]
 
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ Pass ]
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-03.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

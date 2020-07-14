@@ -19,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/font-face-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/fontface-descriptor-updates-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/fontface-descriptor-updates.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/fontface-load-in-modal-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-load-css-wide-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-no-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/fontfacesetloadevent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html

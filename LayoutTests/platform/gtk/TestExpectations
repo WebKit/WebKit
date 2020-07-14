@@ -3823,6 +3823,8 @@ fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////

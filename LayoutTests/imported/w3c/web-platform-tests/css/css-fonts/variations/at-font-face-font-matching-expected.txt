@@ -2,7 +2,7 @@ A A A A A A A1 A2 A2 A3 A3 A3A1 A2 A2 A3 A3 A3
 
 PASS Descriptor matching priority: Stretch has higher priority than style 
 PASS Descriptor matching priority: Stretch has higher priority than weight 
-PASS Descriptor matching priority: Style has higher priority than weight 
+FAIL Descriptor matching priority: Style has higher priority than weight assert_true: Unexpected font on test element expected true got false
 PASS Matching font-weight: '400' should prefer '400' over '450 460' 
 PASS Matching font-weight: '400' should prefer '450 460' over '500' 
 PASS Matching font-weight: '400' should prefer '500' over '350 399' 
@@ -45,49 +45,49 @@ PASS Matching font-stretch: '90%' should prefer '90% 100%' over '50% 80%'
 PASS Matching font-stretch: '90%' should prefer '50% 80%' over '60% 70%' 
 PASS Matching font-stretch: '90%' should prefer '60% 70%' over '110% 140%' 
 PASS Matching font-stretch: '90%' should prefer '110% 140%' over '120% 130%' 
-PASS Matching font-style: 'normal' should prefer 'normal' over 'oblique 0deg' 
+FAIL Matching font-style: 'normal' should prefer 'normal' over 'oblique 0deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'normal' should prefer 'oblique 0deg' over 'oblique 10deg 40deg' 
 PASS Matching font-style: 'normal' should prefer 'oblique 10deg 40deg' over 'oblique 20deg 30deg' 
-PASS Matching font-style: 'normal' should prefer 'oblique 20deg 30deg' over 'oblique -50deg -20deg' 
+FAIL Matching font-style: 'normal' should prefer 'oblique 20deg 30deg' over 'oblique -50deg -20deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'normal' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' 
-PASS Matching font-style: 'italic' should prefer 'italic' over 'oblique 20deg' 
+FAIL Matching font-style: 'italic' should prefer 'italic' over 'oblique 20deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'italic' should prefer 'oblique 20deg' over 'oblique 30deg 60deg' 
 PASS Matching font-style: 'italic' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
 PASS Matching font-style: 'italic' should prefer 'oblique 40deg 50deg' over 'oblique 5deg 10deg' 
 PASS Matching font-style: 'italic' should prefer 'oblique 5deg 10deg' over 'oblique 5deg' 
 PASS Matching font-style: 'italic' should prefer 'oblique 5deg' over 'normal' 
-PASS Matching font-style: 'italic' should prefer 'normal' over 'oblique 0deg' 
+FAIL Matching font-style: 'italic' should prefer 'normal' over 'oblique 0deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'italic' should prefer 'oblique 0deg' over 'oblique -60deg -30deg' 
 PASS Matching font-style: 'italic' should prefer 'oblique -60deg -30deg' over 'oblique -50deg -40deg' 
 PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 20deg' over 'oblique 30deg 60deg' 
 PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
 PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 40deg 50deg' over 'oblique 10deg' 
-PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 10deg' over 'italic' 
+FAIL Matching font-style: 'oblique 20deg' should prefer 'oblique 10deg' over 'italic' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique 20deg' should prefer 'italic' over 'oblique 0deg' 
 PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 0deg' over 'oblique -50deg -20deg' 
-PASS Matching font-style: 'oblique 20deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' 
+FAIL Matching font-style: 'oblique 20deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 21deg' over 'oblique 30deg 60deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 40deg 50deg' over 'oblique 20deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 20deg' over 'oblique 10deg' 
-PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 10deg' over 'italic' 
+FAIL Matching font-style: 'oblique 21deg' should prefer 'oblique 10deg' over 'italic' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique 21deg' should prefer 'italic' over 'oblique 0deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 0deg' over 'oblique -50deg -20deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' 
 PASS Matching font-style: 'oblique 10deg' should prefer 'oblique 10deg' over 'oblique 5deg' 
 PASS Matching font-style: 'oblique 10deg' should prefer 'oblique 5deg' over 'oblique 15deg 20deg' 
 PASS Matching font-style: 'oblique 10deg' should prefer 'oblique 15deg 20deg' over 'oblique 30deg 60deg' 
-PASS Matching font-style: 'oblique 10deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
-PASS Matching font-style: 'oblique 10deg' should prefer 'oblique 40deg 50deg' over 'italic' 
-PASS Matching font-style: 'oblique 10deg' should prefer 'italic' over 'oblique 0deg' 
+FAIL Matching font-style: 'oblique 10deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_true: Unexpected font on test element expected true got false
+FAIL Matching font-style: 'oblique 10deg' should prefer 'oblique 40deg 50deg' over 'italic' assert_true: Unexpected font on test element expected true got false
+FAIL Matching font-style: 'oblique 10deg' should prefer 'italic' over 'oblique 0deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique 10deg' should prefer 'oblique 0deg' over 'oblique -50deg -20deg' 
 PASS Matching font-style: 'oblique 10deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' 
 PASS Matching font-style: 'oblique 0deg' should prefer 'oblique 0deg' over 'oblique 5deg' 
 PASS Matching font-style: 'oblique 0deg' should prefer 'oblique 5deg' over 'oblique 15deg 20deg' 
 PASS Matching font-style: 'oblique 0deg' should prefer 'oblique 15deg 20deg' over 'oblique 30deg 60deg' 
-PASS Matching font-style: 'oblique 0deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
-PASS Matching font-style: 'oblique 0deg' should prefer 'oblique 40deg 50deg' over 'italic' 
-PASS Matching font-style: 'oblique 0deg' should prefer 'italic' over 'oblique -50deg -20deg' 
+FAIL Matching font-style: 'oblique 0deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_true: Unexpected font on test element expected true got false
+FAIL Matching font-style: 'oblique 0deg' should prefer 'oblique 40deg 50deg' over 'italic' assert_true: Unexpected font on test element expected true got false
+FAIL Matching font-style: 'oblique 0deg' should prefer 'italic' over 'oblique -50deg -20deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique 0deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' 
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -10deg' over 'oblique -5deg' 
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -5deg' over 'oblique -1deg 0deg' 
@@ -95,18 +95,18 @@ PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -1deg 0deg' ov
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -20deg -15deg' over 'oblique -60deg -30deg' 
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -60deg -30deg' over 'oblique -50deg -40deg' 
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -50deg -40deg' over 'italic' 
-PASS Matching font-style: 'oblique -10deg' should prefer 'italic' over 'oblique 0deg 10deg' 
+FAIL Matching font-style: 'oblique -10deg' should prefer 'italic' over 'oblique 0deg 10deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique 0deg 10deg' over 'oblique 40deg 50deg' 
-PASS Matching font-style: 'oblique -20deg' should prefer 'oblique -20deg' over 'oblique -60deg -40deg' 
+FAIL Matching font-style: 'oblique -20deg' should prefer 'oblique -20deg' over 'oblique -60deg -40deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique -20deg' should prefer 'oblique -60deg -40deg' over 'oblique -10deg' 
 PASS Matching font-style: 'oblique -20deg' should prefer 'oblique -10deg' over 'italic' 
-PASS Matching font-style: 'oblique -20deg' should prefer 'italic' over 'oblique 0deg' 
+FAIL Matching font-style: 'oblique -20deg' should prefer 'italic' over 'oblique 0deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique -20deg' should prefer 'oblique 0deg' over 'oblique 30deg 60deg' 
-PASS Matching font-style: 'oblique -20deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
+FAIL Matching font-style: 'oblique -20deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique -21deg' over 'oblique -60deg -40deg' 
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique -60deg -40deg' over 'oblique -10deg' 
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique -10deg' over 'italic' 
-PASS Matching font-style: 'oblique -21deg' should prefer 'italic' over 'oblique 0deg' 
+FAIL Matching font-style: 'oblique -21deg' should prefer 'italic' over 'oblique 0deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique 0deg' over 'oblique 30deg 60deg' 
-PASS Matching font-style: 'oblique -21deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
+FAIL Matching font-style: 'oblique -21deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_true: Unexpected font on test element expected true got false
 

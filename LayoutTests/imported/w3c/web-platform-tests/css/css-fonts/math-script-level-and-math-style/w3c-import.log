@@ -14,13 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-002.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-004.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-005.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-005.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative-expected.html

@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/Inter.var.subset.ttf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/ahem.ttc
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-100-kerned.ttf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-1479-w1-kerned.ttf

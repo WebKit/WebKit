@@ -19,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-matching.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/range-descriptor-reversed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/range-descriptor-reversed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/stretch-distance-over-weight-distance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/stretch-distance-over-weight-distance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/style-ranges-over-weight-direction-expected.html

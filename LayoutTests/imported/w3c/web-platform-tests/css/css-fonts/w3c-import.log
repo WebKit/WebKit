@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-text-orientation
+None
 Property values requiring vendor prefixes:
 xxx-large
 ------------------------------------------------------------------------
@@ -42,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-default-03.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-default-04-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-face-range-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-face-unicode-range-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-face-unicode-range-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-face-unicode-range.html
@@ -100,6 +101,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-descriptor-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-descriptor-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-serialization-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-features-across-space-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-features-across-space-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-features-across-space-2-expected.html
@@ -116,6 +119,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-kerning-04.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-03-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-language-override-03.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-shorthand-serialization-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-shorthand-serialization-font-stretch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-001-expected.html
@@ -129,6 +139,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-007.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-008-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-008.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-monospace-adjust-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-monospace-adjust.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-size-relative-across-calc-ff-bug-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-stretch-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-stretch-01.html
@@ -330,6 +342,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-weight-xxx-large.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/format-specifiers-variations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/generic-family-keywords-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/generic-family-keywords-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/language-specific-01.html
@@ -391,6 +404,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-9.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test_datafont_same_origin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test_font_family_parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/test_font_feature_values_parsing.html

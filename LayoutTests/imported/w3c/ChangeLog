@@ -1,3 +1,130 @@
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-fonts and css-font-loading
+        https://bugs.webkit.org/show_bug.cgi?id=214285
+
+        Reviewed by Chris Dumez.
+
+        This updates the WPT import of css/css-fonts and css/css-font-loading to e3698c7bb3.
+
+        * web-platform-tests/css/css-font-loading/font-face-reject.html:
+        * web-platform-tests/css/css-font-loading/fontface-load-in-modal-dialog-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontface-load-in-modal-dialog.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-css-wide-keywords-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-css-wide-keywords.html: Added.
+        * web-platform-tests/css/css-font-loading/idlharness.https.html:
+        * web-platform-tests/css/css-font-loading/w3c-import.log:
+        * web-platform-tests/css/css-fonts/META.yml:
+        * web-platform-tests/css/css-fonts/alternates-order.html:
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation.html: Added.
+        * web-platform-tests/css/css-fonts/animations/w3c-import.log:
+        * web-platform-tests/css/css-fonts/font-default-04-expected.html:
+        * web-platform-tests/css/css-fonts/font-default-04.html:
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-01.tentative-expected.html: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-01.tentative.html: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-01.tentative.html.headers: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-report-only.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-report-only.tentative.html: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-report-only.tentative.html.headers: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-reporting.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-reporting.tentative.html: Removed.
+        * web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-reporting.tentative.html.headers: Removed.
+        * web-platform-tests/css/css-fonts/font-display/w3c-import.log:
+        * web-platform-tests/css/css-fonts/font-face-range-order-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/font-face-range-order.html: Added.
+        * web-platform-tests/css/css-fonts/font-face-unicode-range-2-expected.html:
+        * web-platform-tests/css/css-fonts/font-face-unicode-range-2.html:
+        * web-platform-tests/css/css-fonts/font-feature-settings-tibetan-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html: Added.
+        * web-platform-tests/css/css-fonts/font-kerning-03-expected.html:
+        * web-platform-tests/css/css-fonts/font-kerning-03.html:
+        * web-platform-tests/css/css-fonts/font-kerning-05-expected.html:
+        * web-platform-tests/css/css-fonts/font-kerning-05.html:
+        * web-platform-tests/css/css-fonts/font-language-override-01-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-language-override-01.html: Added.
+        * web-platform-tests/css/css-fonts/font-language-override-02-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-language-override-02-notref.html: Added.
+        * web-platform-tests/css/css-fonts/font-language-override-02.html: Added.
+        * web-platform-tests/css/css-fonts/font-language-override-03-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-language-override-03.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-monospace-adjust-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-monospace-adjust.html: Added.
+        * web-platform-tests/css/css-fonts/font-stretch-01.html:
+        * web-platform-tests/css/css-fonts/font-stretch-02.html:
+        * web-platform-tests/css/css-fonts/font-stretch-03.html:
+        * web-platform-tests/css/css-fonts/font-stretch-04.html:
+        * web-platform-tests/css/css-fonts/font-stretch-05.html:
+        * web-platform-tests/css/css-fonts/font-stretch-06.html:
+        * web-platform-tests/css/css-fonts/font-stretch-07.html:
+        * web-platform-tests/css/css-fonts/font-stretch-11.html:
+        * web-platform-tests/css/css-fonts/font-stretch-12.html:
+        * web-platform-tests/css/css-fonts/font-stretch-13.html:
+        * web-platform-tests/css/css-fonts/font-stretch-14.html:
+        * web-platform-tests/css/css-fonts/font-stretch-15.html:
+        * web-platform-tests/css/css-fonts/font-stretch-16.html:
+        * web-platform-tests/css/css-fonts/font-stretch-17.html:
+        * web-platform-tests/css/css-fonts/font-stretch-18.html:
+        * web-platform-tests/css/css-fonts/font-synthesis-05-expected.html:
+        * web-platform-tests/css/css-fonts/font-synthesis-05.html:
+        * web-platform-tests/css/css-fonts/font-variant-position-01.html:
+        * web-platform-tests/css/css-fonts/format-specifiers-variations.html:
+        * web-platform-tests/css/css-fonts/generic-family-keywords-001-expected.txt:
+        * web-platform-tests/css/css-fonts/generic-family-keywords-001.html:
+        * web-platform-tests/css/css-fonts/generic-family-keywords-002-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/generic-family-keywords-002.html: Added.
+        * web-platform-tests/css/css-fonts/language-specific-01.html:
+        * web-platform-tests/css/css-fonts/matching/README.md:
+        * web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight-expected.html:
+        * web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight.html:
+        * web-platform-tests/css/css-fonts/matching/font-matching.css:
+        (body):
+        * web-platform-tests/css/css-fonts/matching/range-descriptor-reversed-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight-expected.html.
+        * web-platform-tests/css/css-fonts/matching/range-descriptor-reversed.html: Added.
+        * web-platform-tests/css/css-fonts/matching/resources/variabletest_matching.ttf:
+        * web-platform-tests/css/css-fonts/matching/stretch-distance-over-weight-distance-expected.html:
+        * web-platform-tests/css/css-fonts/matching/stretch-distance-over-weight-distance.html:
+        * web-platform-tests/css/css-fonts/matching/style-ranges-over-weight-direction-expected.html:
+        * web-platform-tests/css/css-fonts/matching/style-ranges-over-weight-direction.html:
+        * web-platform-tests/css/css-fonts/matching/w3c-import.log:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative.html: Removed.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-002.tentative-expected.txt:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-002.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative-expected.html: Removed.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative.html: Removed.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-004.tentative-expected.txt:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-004.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-005.tentative-expected.html: Removed.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-005.tentative.html: Removed.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-001.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-003.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-004.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-005.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-font-size-clamping-001.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/w3c-import.log:
+        * web-platform-tests/css/css-fonts/support/font-family-keywords.js: Added.
+        * web-platform-tests/css/css-fonts/support/w3c-import.log:
+        * web-platform-tests/css/css-fonts/test-synthetic-italic-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/test-synthetic-italic-2.html: Added.
+        * web-platform-tests/css/css-fonts/test-synthetic-italic-3-expected.html: Added.
+        * web-platform-tests/css/css-fonts/test-synthetic-italic-3.html: Added.
+        * web-platform-tests/css/css-fonts/variations/at-font-face-descriptors.html:
+        * web-platform-tests/css/css-fonts/variations/at-font-face-font-matching-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight.html:
+        * web-platform-tests/css/css-fonts/variations/font-slant-1-expected.html: Added.
+        * web-platform-tests/css/css-fonts/variations/font-slant-1.html: Added.
+        * web-platform-tests/css/css-fonts/variations/font-slant-2a-expected.html: Added.
+        * web-platform-tests/css/css-fonts/variations/font-slant-2a.html: Added.
+        * web-platform-tests/css/css-fonts/variations/font-slant-2b-expected.html: Added.
+        * web-platform-tests/css/css-fonts/variations/font-slant-2b.html: Added.
+        * web-platform-tests/css/css-fonts/variations/resources/Inter.var.subset.ttf: Added.
+        * web-platform-tests/css/css-fonts/variations/resources/w3c-import.log:
+        * web-platform-tests/css/css-fonts/variations/w3c-import.log:
+        * web-platform-tests/css/css-fonts/w3c-import.log:
+
 2020-07-14  Clark Wang  <clark_wang@apple.com>
 
         Updated AudioContext constructor according to spec

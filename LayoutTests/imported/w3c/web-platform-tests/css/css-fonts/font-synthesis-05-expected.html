@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>CSS Test:  font-synthesis: none disables fake italic/oblique</title>
+<title>CSS Test:  font-synthesis: initial value</title>
 <link rel="author" title="Chris Lilley" href="chris@w3.org">
 <style>
     @font-face {
@@ -11,11 +11,13 @@
     .test {
 				font-family: "test";
 				font-size: 3em;
+                font-synthesis: weight style;
+                color: green;
 			}
 </style>
 
-<p>Test passes if the two lines below are identical (the second line is <em>not obliqued</em>), and there is no red.</p>
+<p>Test passes if the text below is green, not red.</p>
 <section class="test">
     <p>Filler text</p>
-    <p class="nosynth">Filler text</p>
+    <!-- Synthesis is allowed, but not required -->
 </section>

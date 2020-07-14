@@ -22,6 +22,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-opentype-collections.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2b.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-stretch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-parsing.html

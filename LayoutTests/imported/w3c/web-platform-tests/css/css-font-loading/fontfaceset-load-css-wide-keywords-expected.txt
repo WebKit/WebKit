@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'self.fonts.load')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'self.fonts.load')
+
+PASS Loading CSS-wide keyword "initial" causes SyntaxError (document) 
+PASS Loading CSS-wide keyword "inherit" causes SyntaxError (document) 
+PASS Loading CSS-wide keyword "unset" causes SyntaxError (document) 
+PASS Loading CSS-wide keyword "revert" causes SyntaxError (document) 
+TIMEOUT Loading CSS-wide keyword "initial" causes SyntaxError (worker) Test timed out
+NOTRUN Loading CSS-wide keyword "inherit" causes SyntaxError (worker) 
+NOTRUN Loading CSS-wide keyword "unset" causes SyntaxError (worker) 
+NOTRUN Loading CSS-wide keyword "revert" causes SyntaxError (worker) 
+
