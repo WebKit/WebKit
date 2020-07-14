@@ -1,5 +1,261 @@
 2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        Update WPT tests for css-ui
+        https://bugs.webkit.org/show_bug.cgi?id=214280
+
+        Reviewed by Chris Dumez.
+
+        This updates the WPT import of css/css-ui to e3698c7bb3.
+
+        * web-platform-tests/css/css-ui/META.yml: Added.
+        * web-platform-tests/css/css-ui/OWNERS: Removed.
+        * web-platform-tests/css/css-ui/animation/caret-color-composition-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/caret-color-composition.html: Added.
+        * web-platform-tests/css/css-ui/animation/caret-color-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/caret-color-interpolation.html: Added.
+        * web-platform-tests/css/css-ui/animation/outline-color-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/outline-color-interpolation.html: Added.
+        * web-platform-tests/css/css-ui/animation/outline-offset-composition-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/outline-offset-composition.html: Added.
+        * web-platform-tests/css/css-ui/animation/outline-offset-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/outline-offset-interpolation.html: Added.
+        * web-platform-tests/css/css-ui/animation/outline-width-composition-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/outline-width-composition.html: Added.
+        * web-platform-tests/css/css-ui/animation/outline-width-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/outline-width-interpolation.html: Added.
+        * web-platform-tests/css/css-ui/animation/w3c-import.log: Added.
+        * web-platform-tests/css/css-ui/appearance-auto-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-auto-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-checkbox-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-checkbox-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt: Added.
+        * web-platform-tests/css/css-ui/appearance-cssom-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-initial-value-001-expected.txt: Added.
+        * web-platform-tests/css/css-ui/appearance-initial-value-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-listbox-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-listbox-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-menulist-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-menulist-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-menulist-button-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-menulist-button-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-menulist-button-002-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-menulist-button-002.html: Added.
+        * web-platform-tests/css/css-ui/appearance-meter-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-meter-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-ui/appearance-parsing.html: Added.
+        * web-platform-tests/css/css-ui/appearance-progress-bar-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-progress-bar-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-progress-bar-002-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-progress-bar-002.html: Added.
+        * web-platform-tests/css/css-ui/appearance-property-expected.txt: Added.
+        * web-platform-tests/css/css-ui/appearance-property.html: Added.
+        * web-platform-tests/css/css-ui/appearance-push-button-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-push-button-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-radio-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-radio-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-revert-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-revert-001.tentative.html: Added.
+        * web-platform-tests/css/css-ui/appearance-searchfield-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-searchfield-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-serialization-expected.txt: Added.
+        * web-platform-tests/css/css-ui/appearance-serialization.html: Added.
+        * web-platform-tests/css/css-ui/appearance-slider-horizontal-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-slider-horizontal-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-square-button-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-square-button-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-textarea-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-textarea-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-textfield-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-textfield-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-transition.tentative-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-transition.tentative.html: Added.
+        * web-platform-tests/css/css-ui/caret-color-021.html:
+        * web-platform-tests/css/css-ui/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-ui/inheritance.html: Added.
+        * web-platform-tests/css/css-ui/outline-004.html:
+        * web-platform-tests/css/css-ui/outline-016.html:
+        * web-platform-tests/css/css-ui/outline-018.html:
+        * web-platform-tests/css/css-ui/outline-019.html:
+        * web-platform-tests/css/css-ui/outline-021-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-021.html: Added.
+        * web-platform-tests/css/css-ui/outline-022-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-022.html: Added.
+        * web-platform-tests/css/css-ui/outline-023-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-023.html: Added.
+        * web-platform-tests/css/css-ui/outline-024-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-024.html: Added.
+        * web-platform-tests/css/css-ui/outline-025-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-025.html: Added.
+        * web-platform-tests/css/css-ui/outline-026-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-026.html: Added.
+        * web-platform-tests/css/css-ui/outline-027-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-027.html: Added.
+        * web-platform-tests/css/css-ui/outline-028-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-028.html: Added.
+        * web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll-expected.xht: Added.
+        * web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html: Added.
+        * web-platform-tests/css/css-ui/outline-offset-table-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-offset-table-001-notref.html: Added.
+        * web-platform-tests/css/css-ui/outline-offset-table-001.html: Added.
+        * web-platform-tests/css/css-ui/outline-with-001-crash-expected.txt: Added.
+        * web-platform-tests/css/css-ui/outline-with-001-crash.html: Added.
+        * web-platform-tests/css/css-ui/outline-with-padding-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/outline-with-padding-001.html: Added.
+        * web-platform-tests/css/css-ui/parsing/box-sizing-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/box-sizing-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/box-sizing-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/box-sizing-valid.html:
+        * web-platform-tests/css/css-ui/parsing/caret-color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/caret-color-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/caret-color-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/caret-color-valid.html:
+        * web-platform-tests/css/css-ui/parsing/cursor-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/cursor-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/cursor-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/cursor-valid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-color-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-color-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-color-valid-mandatory.html:
+        * web-platform-tests/css/css-ui/parsing/outline-color-valid-optional.html:
+        * web-platform-tests/css/css-ui/parsing/outline-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-offset-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/outline-offset-computed.html:
+        * web-platform-tests/css/css-ui/parsing/outline-offset-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-offset-valid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-shorthand.html: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-style-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-style-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-style-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-style-valid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-valid-mandatory.html:
+        * web-platform-tests/css/css-ui/parsing/outline-valid-optional.html:
+        * web-platform-tests/css/css-ui/parsing/outline-width-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-width-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/outline-width-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/outline-width-valid.html:
+        * web-platform-tests/css/css-ui/parsing/resize-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/resize-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/resize-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/resize-valid.html:
+        * web-platform-tests/css/css-ui/parsing/resources/parsing-testcommon.js: Removed.
+        * web-platform-tests/css/css-ui/parsing/text-overflow-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/text-overflow-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/text-overflow-invalid.html:
+        * web-platform-tests/css/css-ui/parsing/text-overflow-valid.html:
+        * web-platform-tests/css/css-ui/parsing/user-select-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/user-select-computed.html: Added.
+        * web-platform-tests/css/css-ui/parsing/user-select-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/user-select-invalid.html: Added.
+        * web-platform-tests/css/css-ui/parsing/user-select-valid-expected.txt: Added.
+        * web-platform-tests/css/css-ui/parsing/user-select-valid.html: Added.
+        * web-platform-tests/css/css-ui/parsing/w3c-import.log:
+        * web-platform-tests/css/css-ui/resize-change-margin-expected.html: Added.
+        * web-platform-tests/css/css-ui/resize-change-margin.html: Added.
+        * web-platform-tests/css/css-ui/support/PTS/w3c-import.log:
+        * web-platform-tests/css/css-ui/support/cursors/w3c-import.log:
+        * web-platform-tests/css/css-ui/support/cursors/woolly-64.svg:
+        * web-platform-tests/css/css-ui/support/cursors/woolly-64.svgz:
+        * web-platform-tests/css/css-ui/support/cursors/woolly.svg:
+        * web-platform-tests/css/css-ui/support/nav-dir-target-001-frame.html:
+        * web-platform-tests/css/css-ui/support/nav-dir-target-002-frame.html:
+        * web-platform-tests/css/css-ui/support/nav-dir-target-003-frame.html:
+        * web-platform-tests/css/css-ui/support/nav-dir-target-004-frame.html:
+        * web-platform-tests/css/css-ui/support/nav-dir-target-005-frame.html:
+        * web-platform-tests/css/css-ui/support/w3c-import.log:
+        * web-platform-tests/css/css-ui/text-overflow-001-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-001.html:
+        * web-platform-tests/css/css-ui/text-overflow-002-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-002.html:
+        * web-platform-tests/css/css-ui/text-overflow-003-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-003.html:
+        * web-platform-tests/css/css-ui/text-overflow-004-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-004.html:
+        * web-platform-tests/css/css-ui/text-overflow-005-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-005.html:
+        * web-platform-tests/css/css-ui/text-overflow-007.html:
+        * web-platform-tests/css/css-ui/text-overflow-008-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-008.html:
+        * web-platform-tests/css/css-ui/text-overflow-010.html:
+        * web-platform-tests/css/css-ui/text-overflow-011.html:
+        * web-platform-tests/css/css-ui/text-overflow-012.html:
+        * web-platform-tests/css/css-ui/text-overflow-013-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-013.html:
+        * web-platform-tests/css/css-ui/text-overflow-014.html:
+        * web-platform-tests/css/css-ui/text-overflow-015.html:
+        * web-platform-tests/css/css-ui/text-overflow-016.html:
+        * web-platform-tests/css/css-ui/text-overflow-017.html:
+        * web-platform-tests/css/css-ui/text-overflow-020.html:
+        * web-platform-tests/css/css-ui/text-overflow-022.html:
+        * web-platform-tests/css/css-ui/text-overflow-023.html:
+        * web-platform-tests/css/css-ui/text-overflow-024-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-024.html:
+        * web-platform-tests/css/css-ui/text-overflow-025-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-025.html:
+        * web-platform-tests/css/css-ui/text-overflow-026-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-026.html:
+        * web-platform-tests/css/css-ui/text-overflow-030-expected.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-030.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-change-color-expected.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-change-color.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-abspos-in-inline-block-crash-001-expected.txt: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-abspos-in-inline-block-crash-001.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-hyphen-expected.txt: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-hyphen.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-indent-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-indent-001.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-self-painting-expected.txt: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-self-painting.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-width-001-expected.txt: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ellipsis-width-001.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-ruby-expected.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-ruby.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow.html:
+        * web-platform-tests/css/css-ui/tools/appearance-build-webkit-reftests.py: Added.
+        * web-platform-tests/css/css-ui/tools/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resources/w3c-import.log.
+        * web-platform-tests/css/css-ui/w3c-import.log:
+        * web-platform-tests/css/css-ui/webkit-appearance-auto-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-auto-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-checkbox-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-checkbox-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-listbox-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-listbox-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-meter-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-meter-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-parsing.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-progress-bar-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-progress-bar-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-property-expected.txt: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-property.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-push-button-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-push-button-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-radio-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-radio-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-searchfield-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-searchfield-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-serialization-expected.txt: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-serialization.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-slider-horizontal-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-slider-horizontal-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-square-button-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-square-button-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-textarea-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-textarea-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-textfield-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html: Added.
+
+2020-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         WPT test css/css-grid/grid-definition/grid-auto-fit-columns-001.html broken after r264335
         https://bugs.webkit.org/show_bug.cgi?id=214301
 

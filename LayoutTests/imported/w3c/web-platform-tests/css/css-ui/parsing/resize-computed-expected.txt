@@ -1,0 +1,6 @@
+
+PASS Property resize value 'none' computes to 'none' 
+PASS Property resize value 'both' computes to 'both' 
+PASS Property resize value 'horizontal' computes to 'horizontal' 
+PASS Property resize value 'vertical' computes to 'vertical' 
+

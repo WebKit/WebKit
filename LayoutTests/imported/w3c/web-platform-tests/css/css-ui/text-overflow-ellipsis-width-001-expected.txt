@@ -1,0 +1,5 @@
+This is a test text.
+This is a test text.
+
+PASS Ellipsizing should not affect `offsetWidth` of inline boxes. 
+

@@ -1,0 +1,4 @@
+
+PASS e.style['user-select'] = "visible" should not set the property value 
+PASS e.style['user-select'] = "text contain" should not set the property value 
+

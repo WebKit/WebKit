@@ -3476,3 +3476,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-tatweel-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html [ ImageOnlyFailure ]
+
+webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-022.html [ ImageOnlyFailure ]
+webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padding-001.html [ ImageOnlyFailure ]

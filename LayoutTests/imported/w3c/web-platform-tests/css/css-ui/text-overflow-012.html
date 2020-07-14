@@ -6,12 +6,12 @@
 <link rel="help" href="http://www.w3.org/TR/css3-ui/#text-overflow">
 <link rel="match" href="reference/text-overflow-012-ref.html">
 <meta name="flags" content="should">
-<!--  This is SHOULD because although CSS-UI defines "character" as "grapheme cluster" in a non optional manner
+<!-- This is SHOULD because although CSS-UI defines "character" as "grapheme cluster" in a non optional manner
   UAX29 itself defines grapheme cluster as either legacy or extended grapheme clusters,
   and says (emphasis mine):
       The extended grapheme clusters **should** be used
       in implementations in preference to legacy grapheme clusters
-   -->
+  -->
 <meta name="assert" content="Implementations must hide characters, i.e. entire garpheme clusters, not part of them, to make room for the ellipsis">
 <style>
 #sizer {
@@ -37,11 +37,11 @@ span {
 
 <p>Test passes if there are three green dots below and <strong>no red</strong>.</p>
 
-<!-- Starting the line with an space because the first character on the line is clipped rather than ellided, so we need the tested grapheme cluster to be non-first -->
-<!-- 
+<!--Starting the line with an space because the first character on the line is clipped rather than ellided, so we need the tested grapheme cluster to be non-first-->
+<!--
 sizer shrinkwraps to the size of a space, plus the grapheme cluster, plus the ellipsis.
 test is 2px shorter than that, so it can only fit part of the grapheme cluster.
 The whole grapheme cluster should be removed, not just its second character.
- -->
+-->
 
 <div id=sizer> &#x0E01;&#x0E33;…<div id=test> <span>&#x0E01;&#x0E33;filler text to make things overflow</span></div><div>

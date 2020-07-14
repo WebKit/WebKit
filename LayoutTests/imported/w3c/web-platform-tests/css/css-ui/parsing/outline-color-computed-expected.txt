@@ -1,0 +1,5 @@
+
+PASS Property outline-color value 'currentColor' computes to 'rgb(0, 0, 255)' 
+PASS Property outline-color value 'red' computes to 'rgb(255, 0, 0)' 
+PASS invert, if supported, computes to invert 
+

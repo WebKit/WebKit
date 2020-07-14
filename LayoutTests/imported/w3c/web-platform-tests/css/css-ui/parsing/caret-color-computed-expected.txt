@@ -1,0 +1,5 @@
+
+PASS Property caret-color value 'auto' computes to 'rgb(0, 0, 255)' 
+PASS Property caret-color value 'currentColor' computes to 'rgb(0, 0, 255)' 
+PASS Property caret-color value 'red' computes to 'rgb(255, 0, 0)' 
+

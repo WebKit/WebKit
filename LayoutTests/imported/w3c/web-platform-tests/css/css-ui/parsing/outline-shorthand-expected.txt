@@ -1,0 +1,6 @@
+
+PASS e.style['outline'] = "3px ridge blue" should set outline-color 
+PASS e.style['outline'] = "3px ridge blue" should set outline-style 
+PASS e.style['outline'] = "3px ridge blue" should set outline-width 
+PASS e.style['outline'] = "3px ridge blue" should not set unrelated longhands 
+

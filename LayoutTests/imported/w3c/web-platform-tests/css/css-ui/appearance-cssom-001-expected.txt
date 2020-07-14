@@ -1,0 +1,345 @@
+Test
+
+PASS -webkit-appearance: none 
+FAIL -webkit-appearance: auto assert_equals: style.WebkitAppearance (uppercase W) expected "auto" but got ""
+PASS -webkit-appearance: button 
+PASS -webkit-appearance: checkbox 
+PASS -webkit-appearance: listbox 
+PASS -webkit-appearance: menulist 
+PASS -webkit-appearance: menulist-button 
+PASS -webkit-appearance: meter 
+PASS -webkit-appearance: progress-bar 
+PASS -webkit-appearance: push-button 
+PASS -webkit-appearance: radio 
+PASS -webkit-appearance: searchfield 
+PASS -webkit-appearance: slider-horizontal 
+PASS -webkit-appearance: square-button 
+PASS -webkit-appearance: textarea 
+PASS -webkit-appearance: textfield 
+PASS -webkit-appearance: bogus-button (invalid) 
+FAIL -webkit-appearance: attachment (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "attachment"
+FAIL -webkit-appearance: button-bevel (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "button-bevel"
+FAIL -webkit-appearance: borderless-attachment (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "borderless-attachment"
+PASS -webkit-appearance: button-arrow-down (invalid) 
+PASS -webkit-appearance: button-arrow-next (invalid) 
+PASS -webkit-appearance: button-arrow-previous (invalid) 
+PASS -webkit-appearance: button-arrow-up (invalid) 
+PASS -webkit-appearance: button-focus (invalid) 
+FAIL -webkit-appearance: caps-lock-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caps-lock-indicator"
+FAIL -webkit-appearance: caret (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caret"
+PASS -webkit-appearance: checkbox-container (invalid) 
+PASS -webkit-appearance: checkbox-label (invalid) 
+PASS -webkit-appearance: checkmenuitem (invalid) 
+FAIL -webkit-appearance: color-well (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "color-well"
+FAIL -webkit-appearance: continuous-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "continuous-capacity-level-indicator"
+FAIL -webkit-appearance: default-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "default-button"
+FAIL -webkit-appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "discrete-capacity-level-indicator"
+PASS -webkit-appearance: dualbutton (invalid) 
+PASS -webkit-appearance: groupbox (invalid) 
+FAIL -webkit-appearance: image-controls-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "image-controls-button"
+FAIL -webkit-appearance: inner-spin-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "inner-spin-button"
+FAIL -webkit-appearance: list-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "list-button"
+FAIL -webkit-appearance: listitem (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "listitem"
+FAIL -webkit-appearance: media-controls-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-background"
+FAIL -webkit-appearance: media-controls-dark-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-dark-bar-background"
+FAIL -webkit-appearance: media-controls-fullscreen-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-fullscreen-background"
+FAIL -webkit-appearance: media-controls-light-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-light-bar-background"
+FAIL -webkit-appearance: media-current-time-display (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-current-time-display"
+FAIL -webkit-appearance: media-enter-fullscreen-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-enter-fullscreen-button"
+FAIL -webkit-appearance: media-exit-fullscreen-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-exit-fullscreen-button"
+FAIL -webkit-appearance: media-fullscreen-volume-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-fullscreen-volume-slider"
+FAIL -webkit-appearance: media-fullscreen-volume-slider-thumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-fullscreen-volume-slider-thumb"
+FAIL -webkit-appearance: media-mute-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-mute-button"
+FAIL -webkit-appearance: media-overlay-play-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-overlay-play-button"
+FAIL -webkit-appearance: media-play-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-play-button"
+FAIL -webkit-appearance: media-return-to-realtime-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-return-to-realtime-button"
+FAIL -webkit-appearance: media-rewind-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-rewind-button"
+FAIL -webkit-appearance: media-seek-back-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-seek-back-button"
+FAIL -webkit-appearance: media-seek-forward-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-seek-forward-button"
+FAIL -webkit-appearance: media-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-slider"
+FAIL -webkit-appearance: media-sliderthumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-sliderthumb"
+FAIL -webkit-appearance: media-time-remaining-display (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-time-remaining-display"
+FAIL -webkit-appearance: media-toggle-closed-captions-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-toggle-closed-captions-button"
+FAIL -webkit-appearance: media-volume-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider"
+FAIL -webkit-appearance: media-volume-slider-container (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider-container"
+FAIL -webkit-appearance: media-volume-slider-mute-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider-mute-button"
+FAIL -webkit-appearance: media-volume-sliderthumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-sliderthumb"
+PASS -webkit-appearance: menuarrow (invalid) 
+PASS -webkit-appearance: menubar (invalid) 
+PASS -webkit-appearance: menucheckbox (invalid) 
+PASS -webkit-appearance: menuimage (invalid) 
+PASS -webkit-appearance: menuitem (invalid) 
+PASS -webkit-appearance: menuitemtext (invalid) 
+FAIL -webkit-appearance: menulist-text (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "menulist-text"
+FAIL -webkit-appearance: menulist-textfield (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "menulist-textfield"
+PASS -webkit-appearance: menupopup (invalid) 
+PASS -webkit-appearance: menuradio (invalid) 
+PASS -webkit-appearance: menuseparator (invalid) 
+PASS -webkit-appearance: meterbar (invalid) 
+PASS -webkit-appearance: meterchunk (invalid) 
+PASS -webkit-appearance: number-input (invalid) 
+FAIL -webkit-appearance: progress-bar-value (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "progress-bar-value"
+PASS -webkit-appearance: progressbar (invalid) 
+PASS -webkit-appearance: progressbar-vertical (invalid) 
+PASS -webkit-appearance: progresschunk (invalid) 
+PASS -webkit-appearance: progresschunk-vertical (invalid) 
+PASS -webkit-appearance: radio-container (invalid) 
+PASS -webkit-appearance: radio-label (invalid) 
+PASS -webkit-appearance: radiomenuitem (invalid) 
+PASS -webkit-appearance: range (invalid) 
+PASS -webkit-appearance: range-thumb (invalid) 
+FAIL -webkit-appearance: rating-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "rating-level-indicator"
+FAIL -webkit-appearance: relevancy-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "relevancy-level-indicator"
+PASS -webkit-appearance: resizer (invalid) 
+PASS -webkit-appearance: resizerpanel (invalid) 
+PASS -webkit-appearance: scale-horizontal (invalid) 
+PASS -webkit-appearance: scale-vertical (invalid) 
+PASS -webkit-appearance: scalethumb-horizontal (invalid) 
+PASS -webkit-appearance: scalethumb-vertical (invalid) 
+PASS -webkit-appearance: scalethumbend (invalid) 
+PASS -webkit-appearance: scalethumbstart (invalid) 
+PASS -webkit-appearance: scalethumbtick (invalid) 
+PASS -webkit-appearance: scrollbarbutton-down (invalid) 
+PASS -webkit-appearance: scrollbarbutton-left (invalid) 
+PASS -webkit-appearance: scrollbarbutton-right (invalid) 
+PASS -webkit-appearance: scrollbarbutton-up (invalid) 
+PASS -webkit-appearance: scrollbarthumb-horizontal (invalid) 
+PASS -webkit-appearance: scrollbarthumb-vertical (invalid) 
+PASS -webkit-appearance: scrollbartrack-horizontal (invalid) 
+PASS -webkit-appearance: scrollbartrack-vertical (invalid) 
+FAIL -webkit-appearance: searchfield-cancel-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-cancel-button"
+FAIL -webkit-appearance: searchfield-decoration (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-decoration"
+FAIL -webkit-appearance: searchfield-results-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-results-button"
+FAIL -webkit-appearance: searchfield-results-decoration (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-results-decoration"
+PASS -webkit-appearance: separator (invalid) 
+PASS -webkit-appearance: sheet (invalid) 
+FAIL -webkit-appearance: slider-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "slider-vertical"
+FAIL -webkit-appearance: sliderthumb-horizontal (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "sliderthumb-horizontal"
+FAIL -webkit-appearance: sliderthumb-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "sliderthumb-vertical"
+FAIL -webkit-appearance: snapshotted-plugin-overlay (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "snapshotted-plugin-overlay"
+PASS -webkit-appearance: spinner (invalid) 
+PASS -webkit-appearance: spinner-downbutton (invalid) 
+PASS -webkit-appearance: spinner-textfield (invalid) 
+PASS -webkit-appearance: spinner-upbutton (invalid) 
+PASS -webkit-appearance: splitter (invalid) 
+PASS -webkit-appearance: statusbar (invalid) 
+PASS -webkit-appearance: statusbarpanel (invalid) 
+PASS -webkit-appearance: tab (invalid) 
+PASS -webkit-appearance: tab-scroll-arrow-back (invalid) 
+PASS -webkit-appearance: tab-scroll-arrow-forward (invalid) 
+PASS -webkit-appearance: tabpanel (invalid) 
+PASS -webkit-appearance: tabpanels (invalid) 
+PASS -webkit-appearance: textfield-multiline (invalid) 
+PASS -webkit-appearance: toolbar (invalid) 
+PASS -webkit-appearance: toolbarbutton (invalid) 
+PASS -webkit-appearance: toolbarbutton-dropdown (invalid) 
+PASS -webkit-appearance: toolbargripper (invalid) 
+PASS -webkit-appearance: toolbox (invalid) 
+PASS -webkit-appearance: tooltip (invalid) 
+PASS -webkit-appearance: treeheader (invalid) 
+PASS -webkit-appearance: treeheadercell (invalid) 
+PASS -webkit-appearance: treeheadersortarrow (invalid) 
+PASS -webkit-appearance: treeitem (invalid) 
+PASS -webkit-appearance: treeline (invalid) 
+PASS -webkit-appearance: treetwisty (invalid) 
+PASS -webkit-appearance: treetwistyopen (invalid) 
+PASS -webkit-appearance: treeview (invalid) 
+FAIL -webkit-appearance: -apple-pay-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "-apple-pay-button"
+PASS -webkit-appearance: -moz-win-borderless-glass (invalid) 
+PASS -webkit-appearance: -moz-win-browsertabbar-toolbox (invalid) 
+PASS -webkit-appearance: -moz-win-communications-toolbox (invalid) 
+PASS -webkit-appearance: -moz-win-communicationstext (invalid) 
+PASS -webkit-appearance: -moz-win-exclude-glass (invalid) 
+PASS -webkit-appearance: -moz-win-glass (invalid) 
+PASS -webkit-appearance: -moz-win-media-toolbox (invalid) 
+PASS -webkit-appearance: -moz-window-button-box (invalid) 
+PASS -webkit-appearance: -moz-window-button-box-maximized (invalid) 
+PASS -webkit-appearance: -moz-window-button-close (invalid) 
+PASS -webkit-appearance: -moz-window-button-maximize (invalid) 
+PASS -webkit-appearance: -moz-window-button-minimize (invalid) 
+PASS -webkit-appearance: -moz-window-button-restore (invalid) 
+PASS -webkit-appearance: -moz-window-frame-bottom (invalid) 
+PASS -webkit-appearance: -moz-window-frame-left (invalid) 
+PASS -webkit-appearance: -moz-window-frame-right (invalid) 
+PASS -webkit-appearance: -moz-window-titlebar (invalid) 
+PASS -webkit-appearance: -moz-window-titlebar-maximized (invalid) 
+FAIL appearance: none assert_equals: style.appearance expected (string) "none" but got (undefined) undefined
+FAIL appearance: auto assert_equals: style.appearance expected (string) "auto" but got (undefined) undefined
+FAIL appearance: button assert_equals: style.appearance expected (string) "button" but got (undefined) undefined
+FAIL appearance: checkbox assert_equals: style.appearance expected (string) "checkbox" but got (undefined) undefined
+FAIL appearance: listbox assert_equals: style.appearance expected (string) "listbox" but got (undefined) undefined
+FAIL appearance: menulist assert_equals: style.appearance expected (string) "menulist" but got (undefined) undefined
+FAIL appearance: menulist-button assert_equals: style.appearance expected (string) "menulist-button" but got (undefined) undefined
+FAIL appearance: meter assert_equals: style.appearance expected (string) "meter" but got (undefined) undefined
+FAIL appearance: progress-bar assert_equals: style.appearance expected (string) "progress-bar" but got (undefined) undefined
+FAIL appearance: push-button assert_equals: style.appearance expected (string) "push-button" but got (undefined) undefined
+FAIL appearance: radio assert_equals: style.appearance expected (string) "radio" but got (undefined) undefined
+FAIL appearance: searchfield assert_equals: style.appearance expected (string) "searchfield" but got (undefined) undefined
+FAIL appearance: slider-horizontal assert_equals: style.appearance expected (string) "slider-horizontal" but got (undefined) undefined
+FAIL appearance: square-button assert_equals: style.appearance expected (string) "square-button" but got (undefined) undefined
+FAIL appearance: textarea assert_equals: style.appearance expected (string) "textarea" but got (undefined) undefined
+FAIL appearance: textfield assert_equals: style.appearance expected (string) "textfield" but got (undefined) undefined
+FAIL appearance: bogus-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: attachment (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: button-bevel (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: borderless-attachment (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: button-arrow-down (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: button-arrow-next (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: button-arrow-previous (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: button-arrow-up (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: button-focus (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: caps-lock-indicator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: caret (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: checkbox-container (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: checkbox-label (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: checkmenuitem (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: color-well (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: continuous-capacity-level-indicator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: default-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: dualbutton (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: groupbox (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: image-controls-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: inner-spin-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: list-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: listitem (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-controls-background (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-controls-dark-bar-background (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-controls-fullscreen-background (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-controls-light-bar-background (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-current-time-display (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-enter-fullscreen-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-exit-fullscreen-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-fullscreen-volume-slider (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-fullscreen-volume-slider-thumb (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-mute-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-overlay-play-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-play-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-return-to-realtime-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-rewind-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-seek-back-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-seek-forward-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-slider (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-sliderthumb (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-time-remaining-display (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-toggle-closed-captions-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-volume-slider (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-volume-slider-container (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-volume-slider-mute-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: media-volume-sliderthumb (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menuarrow (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menubar (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menucheckbox (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menuimage (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menuitem (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menuitemtext (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menulist-text (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menulist-textfield (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menupopup (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menuradio (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: menuseparator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: meterbar (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: meterchunk (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: number-input (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: progress-bar-value (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: progressbar (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: progressbar-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: progresschunk (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: progresschunk-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: radio-container (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: radio-label (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: radiomenuitem (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: range (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: range-thumb (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: rating-level-indicator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: relevancy-level-indicator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: resizer (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: resizerpanel (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scale-horizontal (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scale-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scalethumb-horizontal (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scalethumb-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scalethumbend (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scalethumbstart (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scalethumbtick (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbarbutton-down (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbarbutton-left (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbarbutton-right (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbarbutton-up (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbarthumb-horizontal (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbarthumb-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbartrack-horizontal (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: scrollbartrack-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: searchfield-cancel-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: searchfield-decoration (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: searchfield-results-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: searchfield-results-decoration (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: separator (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: sheet (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: slider-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: sliderthumb-horizontal (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: sliderthumb-vertical (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: snapshotted-plugin-overlay (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: spinner (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: spinner-downbutton (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: spinner-textfield (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: spinner-upbutton (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: splitter (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: statusbar (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: statusbarpanel (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: tab (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: tab-scroll-arrow-back (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: tab-scroll-arrow-forward (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: tabpanel (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: tabpanels (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: textfield-multiline (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: toolbar (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: toolbarbutton (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: toolbarbutton-dropdown (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: toolbargripper (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: toolbox (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: tooltip (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treeheader (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treeheadercell (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treeheadersortarrow (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treeitem (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treeline (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treetwisty (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treetwistyopen (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: treeview (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -apple-pay-button (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-borderless-glass (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-browsertabbar-toolbox (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-communications-toolbox (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-communicationstext (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-exclude-glass (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-glass (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-win-media-toolbox (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-button-box (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-button-box-maximized (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-button-close (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-button-maximize (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-button-minimize (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-button-restore (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-frame-bottom (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-frame-left (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-frame-right (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-titlebar (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+FAIL appearance: -moz-window-titlebar-maximized (invalid) assert_equals: style.appearance expected (string) "" but got (undefined) undefined
+PASS -ms-appearance (should not be supported) 
+PASS mso-appearance (should not be supported) 
+PASS -moz-appearance (should not be supported) 
+PASS -o-appearance (should not be supported) 
+PASS -xv-appearance (should not be supported) 
+PASS -atsc-appearance (should not be supported) 
+PASS -wap-appearance (should not be supported) 
+PASS -khtml-appearance (should not be supported) 
+PASS -konq-appearance (should not be supported) 
+PASS -apple-appearance (should not be supported) 
+PASS prince-appearance (should not be supported) 
+PASS -ah-appearance (should not be supported) 
+PASS -hp-appearance (should not be supported) 
+PASS -ro-appearance (should not be supported) 
+PASS -rim-appearance (should not be supported) 
+PASS -tc-appearance (should not be supported) 
+

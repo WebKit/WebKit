@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,12 +14,16 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/caret-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/caret-color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/caret-color-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-mandatory.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-optional.html
@@ -27,13 +31,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-valid-mandatory.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-valid-optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resize-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resize-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resize-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-valid.html
