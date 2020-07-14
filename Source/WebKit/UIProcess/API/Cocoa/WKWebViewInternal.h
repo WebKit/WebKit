@@ -217,6 +217,7 @@ class ViewGestureController;
     BOOL _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback;
     BOOL _didDeferUpdateVisibleContentRectsForAnyReason;
     BOOL _didDeferUpdateVisibleContentRectsForUnstableScrollView;
+    BOOL _alwaysSendNextVisibleContentRectUpdate;
 
     BOOL _waitingForEndAnimatedResize;
     BOOL _waitingForCommitAfterAnimatedResize;

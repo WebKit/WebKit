@@ -88,6 +88,7 @@ public:
     bool propagatesMainFrameScrolls() const { return m_propagatesMainFrameScrolls; }
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
     bool hasScrollableMainFrame() const;
+    bool hasScrollableOrZoomedMainFrame() const;
 
 #if PLATFORM(IOS_FAMILY)
     UIScrollView *scrollViewForScrollingNodeID(WebCore::ScrollingNodeID) const;

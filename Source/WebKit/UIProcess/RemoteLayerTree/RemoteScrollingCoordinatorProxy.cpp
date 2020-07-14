@@ -258,6 +258,12 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
 bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
 {
     auto* rootNode = m_scrollingTree->rootNode();
+    return rootNode && rootNode->canHaveScrollbars();
+}
+
+bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
+{
+    auto* rootNode = m_scrollingTree->rootNode();
     if (!rootNode)
         return false;
 

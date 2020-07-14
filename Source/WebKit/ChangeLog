@@ -1,3 +1,41 @@
+2020-07-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Flashes of incorrect scroll position when zooming on quip
+        https://bugs.webkit.org/show_bug.cgi?id=214273
+        <rdar://problem/59385421>
+
+        Reviewed by Tim Horton.
+        
+        Quip uses a non-scrollable "body { overflow:hidden }")" page, but aggressively scrolls to 0,0 if it
+        gets a scroll event and top/left are non-zero. Panning is necessarily allowed on overflow:hidden pages,
+        so to avoid programmatic scrolls yanking the content to 0,0 during interaction, ignore them if
+        the page is non-scrollable yet zoomed.
+        
+        When refusing such a scroll, we have to inform the web process to avoid mismatched ui/web process state,
+        and work around the fact that WebPageProxy::updateVisibleContentRects() would bail if the update
+        appeared to be the same as the last one.
+
+        Test: fast/scrolling/ios/programmatic-scroll-while-zoomed.html
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _updateScrollViewForTransaction:]):
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]):
+        (-[WKWebView _scheduleForcedVisibleContentRectUpdate]):
+        (-[WKWebView _updateVisibleContentRects]):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame const):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:sendEvenIfUnchanged:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+
 2020-07-14  Kate Cheney  <katherine_cheney@apple.com>
 
         [ macOS iOS ] http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html is a rare flaky failure

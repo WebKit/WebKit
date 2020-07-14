@@ -819,7 +819,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         scrollingNeededToRevealUI = maxUnobscuredSize.width() == unobscuredContentRect.width() && maxUnobscuredSize.height() == unobscuredContentRect.height();
     }
 
-    bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
+    bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableOrZoomedMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
     [_scrollView _setScrollEnabledInternal:scrollingEnabled];
 
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && [_scrollView zoomScale] != layerTreeTransaction.pageScaleFactor()) {
@@ -1097,6 +1097,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     if (_commitDidRestoreScrollPosition || _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
         return;
+
+    // Don't allow content to do programmatic scrolls for non-scrollable pages when zoomed.
+    if (!_page->scrollingCoordinatorProxy()->hasScrollableMainFrame() && ([_scrollView zoomScale] > [_scrollView minimumZoomScale] || [_scrollView zoomScale] < [_scrollView minimumZoomScale])) {
+        [self _scheduleForcedVisibleContentRectUpdate];
+        return;
+    }
 
     WebCore::FloatPoint contentOffset = WebCore::ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollOrigin));
 
@@ -1806,6 +1812,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:_scrollView.get()];
 }
 
+- (void)_scheduleForcedVisibleContentRectUpdate
+{
+    _alwaysSendNextVisibleContentRectUpdate = YES;
+    [self _scheduleVisibleContentRectUpdate];
+}
+
 - (BOOL)_scrollViewIsInStableState:(UIScrollView *)scrollView
 {
     BOOL isStableState = !([scrollView isDragging] || [scrollView isDecelerating] || [scrollView isZooming] || [scrollView _isAnimatingZoom] || [scrollView _isScrollingToTop]);
@@ -2022,7 +2034,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
         inStableState:inStableState
         isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
-        enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])];
+        enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])
+        sendEvenIfUnchanged:_alwaysSendNextVisibleContentRectUpdate];
 
     while (!_visibleContentRectUpdateCallbacks.isEmpty()) {
         auto callback = _visibleContentRectUpdateCallbacks.takeLast();
@@ -2032,6 +2045,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     if ((timeNow - _timeOfRequestForVisibleContentRectUpdate) > delayBeforeNoVisibleContentsRectsLogging)
         RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] finally ran %.2fs after being scheduled", self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value());
 
+    _alwaysSendNextVisibleContentRectUpdate = NO;
     _timeOfLastVisibleContentRectUpdate = timeNow;
     if (!_timeOfFirstVisibleContentRectUpdateWithPendingCommit)
         _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;

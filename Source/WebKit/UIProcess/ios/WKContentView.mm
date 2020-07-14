@@ -436,6 +436,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     inStableState:(BOOL)isStableState
     isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
     enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
+    sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged
 {
     auto drawingArea = _page->drawingArea();
     if (!drawingArea)
@@ -475,7 +476,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
     bool wasStableState = _page->inStableState();
 
-    _page->updateVisibleContentRects(visibleContentRectUpdateInfo);
+    _page->updateVisibleContentRects(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
 
     auto layoutViewport = _page->unconstrainedLayoutViewportRect();
     _page->adjustLayersForLayoutViewport(layoutViewport);

@@ -34,7 +34,7 @@
         var secondXOffset = window.pageXOffset;
         var secondYOffset = window.pageYOffset;
 
-        // Scrolling is not immedate, wait until the viewport has time to adjust
+        // Scrolling is not immediate, wait until the viewport has time to adjust
         await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
         await UIHelper.enterText("a");
 
@@ -84,7 +84,7 @@ when needed to make the input visible again. On iPhone, the page should scroll o
 the first text input so that the input element in is visible again, but should not
 scroll more than once, as it should be visible after the first scroll. On iPad, the
 input should not scroll at all, as the iPad is larger and should not need to scroll
-for the input element to be visible. The test results should refelct these expectaitions.
+for the input element to be visible. The test results should reflect these expectations.
 <div id="testArea"><input id="editable" type="text" value="Test text"></input></div>
 </body>
 </html>

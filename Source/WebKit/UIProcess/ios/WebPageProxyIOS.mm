@@ -210,9 +210,9 @@ void WebPageProxy::requestFocusedElementInformation(Function<void(const FocusedE
     m_process->send(Messages::WebPage::RequestFocusedElementInformation(callbackID), m_webPageID);
 }
 
-void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate)
+void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
 {
-    if (visibleContentRectUpdate == m_lastVisibleContentRectUpdate)
+    if (visibleContentRectUpdate == m_lastVisibleContentRectUpdate && !sendEvenIfUnchanged)
         return;
 
     m_lastVisibleContentRectUpdate = visibleContentRectUpdate;

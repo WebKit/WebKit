@@ -80,6 +80,7 @@
 - (void)_didInvokeUIScrollViewDelegateCallback;
 
 - (void)_scheduleVisibleContentRectUpdate;
+- (void)_scheduleForcedVisibleContentRectUpdate;
 
 - (void)_didCompleteAnimatedResize;
 

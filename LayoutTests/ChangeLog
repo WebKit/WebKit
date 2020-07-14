@@ -1,3 +1,16 @@
+2020-07-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Flashes of incorrect scroll position when zooming on quip
+        https://bugs.webkit.org/show_bug.cgi?id=214273
+        <rdar://problem/59385421>
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/ios/autoscroll-input-when-very-zoomed-expected.txt: Typo fixes.
+        * fast/scrolling/ios/autoscroll-input-when-very-zoomed.html: Typo fixes.
+        * fast/scrolling/ios/programmatic-scroll-while-zoomed-expected.txt: Added.
+        * fast/scrolling/ios/programmatic-scroll-while-zoomed.html: Added.
+
 2020-07-14  Jer Noble  <jer.noble@apple.com>
 
         Add support for parsing VP-style codec strings.
