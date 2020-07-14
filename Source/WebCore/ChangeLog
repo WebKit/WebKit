@@ -1,3 +1,26 @@
+2020-07-13  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeNeedsLayoutChecker] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=214281
+        <rdar://problem/56740133>
+
+        Reviewed by Simon Fraser.
+
+        While percentage height descendant computation runs on the containing block chain, when
+        we mark the ancestors for layout, we need to traverse the parent (container) chain rather than the containing block chain.
+        Containing block traversal skips certain non-block renderers which leaves gap between dirty renderers.
+
+        Renderer[A] + dirty
+          Renderer[B] - not dirty
+            Renderer[C] + dirty
+
+        During layout this gap (Renderer[B]) makes us exit early, resulting dirty leftover renderers (Renderer[C]).
+
+        This is similar to what we do in RenderObject::markContainingBlocksForLayout.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dirtyForLayoutFromPercentageHeightDescendants):
+
 2020-07-13  Andres Gonzalez  <andresg_22@apple.com>
 
         REGRESSION: (r257915?) [ Mac ] accessibility/accessibility-node-memory-management.html is flaky failing.

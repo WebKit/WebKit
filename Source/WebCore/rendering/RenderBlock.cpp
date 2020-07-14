@@ -817,10 +817,10 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
         return;
 
     for (auto it = descendants->begin(), end = descendants->end(); it != end; ++it) {
-        auto* box = *it;
+        RenderElement* renderer = *it;
         // Let's not dirty the height perecentage descendant when it has an absolutely positioned containing block ancestor. We should be able to dirty such boxes through the regular invalidation logic.
         bool descendantNeedsLayout = true;
-        for (auto* ancestor = box->containingBlock(); ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
+        for (auto* ancestor = renderer->containingBlock(); ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
             if (ancestor->isOutOfFlowPositioned()) {
                 descendantNeedsLayout = false;
                 break;
@@ -829,22 +829,22 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
         if (!descendantNeedsLayout)
             continue;
 
-        while (box != this) {
-            if (box->normalChildNeedsLayout())
+        while (renderer != this) {
+            if (renderer->normalChildNeedsLayout())
                 break;
-            box->setChildNeedsLayout(MarkOnlyThis);
+            renderer->setChildNeedsLayout(MarkOnlyThis);
             
             // If the width of an image is affected by the height of a child (e.g., an image with an aspect ratio),
             // then we have to dirty preferred widths, since even enclosing blocks can become dirty as a result.
             // (A horizontal flexbox that contains an inline image wrapped in an anonymous block for example.)
-            if (box->hasAspectRatio()) 
-                box->setPreferredLogicalWidthsDirty(true);
-            auto* containingBlock = box->containingBlock();
-            // Mark the svg ancestor chain dirty as we walk to the containing block. containingBlock() just skips them. See webkit.org/b/183874.
-            if (is<SVGElement>(box->element()) && containingBlock != box->parent()) {
-                auto* ancestor = box->parent();
-                ASSERT(ancestor->isDescendantOf(containingBlock));
-                while (ancestor != containingBlock) {
+            if (renderer->hasAspectRatio())
+                renderer->setPreferredLogicalWidthsDirty(true);
+            auto* container = renderer->container();
+            // Mark the svg ancestor chain dirty as we walk to the container.
+            if (is<SVGElement>(renderer->element()) && container != renderer->parent()) {
+                auto* ancestor = renderer->parent();
+                ASSERT(ancestor->isDescendantOf(container));
+                while (ancestor != container) {
                     ancestor->setChildNeedsLayout(MarkOnlyThis);
                     // This is the topmost SVG root, no need to go any further.
                     if (is<SVGSVGElement>(ancestor->element()) && !downcast<SVGSVGElement>(*ancestor->element()).ownerSVGElement())
@@ -852,9 +852,9 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
                     ancestor = ancestor->parent();
                 }
             }
-            box = containingBlock;
-            ASSERT(box);
-            if (!box)
+            renderer = container;
+            ASSERT(renderer);
+            if (!renderer)
                 break;
         }
     }
