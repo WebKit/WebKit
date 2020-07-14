@@ -1008,6 +1008,14 @@ void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& ne
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
+Node::InsertedIntoAncestorResult HTMLCanvasElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    if (insertionType.connectedToDocument)
+        addObserver(parentOfInsertedTree.document());
+
+    return HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+}
+
 void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument) {

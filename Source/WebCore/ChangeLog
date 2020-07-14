@@ -1,3 +1,22 @@
+2020-07-14  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] REGRESSION (r262366): Google search photos do not render, black images
+        https://bugs.webkit.org/show_bug.cgi?id=214156
+        <rdar://problem/64964922>
+
+        Reviewed by Dean Jackson.
+
+        http://trac.webkit.org/changeset/262366 separated WebGL canvas contents swapping and presentation
+        into two steps. This Google search page was only running the presentation code without the swapping
+        step, as it removes canvases from the observer Document before the Document is able to swap its canvas'
+        contents. Ensure that re-inserted canvas elements properly register their new Documents as observers.
+
+        Covered by existing tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::insertedIntoAncestor): 
+        * html/HTMLCanvasElement.h:
+
 2020-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed non-unified build fixes
