@@ -1062,6 +1062,20 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     [self _resetPanningPreventionFlags];
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+    [self _cancelPendingKeyEventHandler];
+}
+
+- (void)_cancelPendingKeyEventHandler
+{
+    if (!_page)
+        return;
+
+    ASSERT_IMPLIES(_keyWebEventHandler, _page->hasQueuedKeyEvent());
+    if (!_page->hasQueuedKeyEvent())
+        return;
+
+    if (auto keyEventHandler = std::exchange(_keyWebEventHandler, nil))
+        keyEventHandler(_page->firstQueuedKeyEvent().nativeEvent(), NO);
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -5346,8 +5360,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return;
     }
 #endif
-    _keyWebEventHandler = makeBlockPtr(completionHandler);
-    _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::No));
+    if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::No)))
+        _keyWebEventHandler = makeBlockPtr(completionHandler);
+    else
+        completionHandler(theEvent, NO);
 }
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled

@@ -30,10 +30,14 @@
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestInputDelegate.h"
+#import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import "UserInterfaceSwizzler.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
 
@@ -366,6 +370,69 @@ TEST(KeyboardInputTests, WaitForKeyEventHandlerInFirstResponder)
     }];
 
     TestWebKitAPI::Util::run(&doneWaiting);
+}
+
+TEST(KeyboardInputTests, HandleKeyEventsInCrashedOrUninitializedWebProcess)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto contentView = [webView textInputContentView];
+    {
+        auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:65 isTabKey:NO]);
+        bool doneWaiting = false;
+        [webView synchronouslyLoadHTMLString:@"<body></body>"];
+        [webView evaluateJavaScript:@"while (1);" completionHandler:nil];
+        [contentView handleKeyWebEvent:keyDownEvent.get() withCompletionHandler:[&](WebEvent *event, BOOL handled) {
+            EXPECT_TRUE([event isEqual:keyDownEvent.get()]);
+            EXPECT_FALSE(handled);
+            doneWaiting = true;
+        }];
+        [webView _killWebContentProcessAndResetState];
+        TestWebKitAPI::Util::run(&doneWaiting);
+    }
+    {
+        auto keyUpEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:65 isTabKey:NO]);
+        bool doneWaiting = false;
+        [webView _close];
+        [contentView handleKeyWebEvent:keyUpEvent.get() withCompletionHandler:[&](WebEvent *event, BOOL handled) {
+            EXPECT_TRUE([event isEqual:keyUpEvent.get()]);
+            EXPECT_FALSE(handled);
+            doneWaiting = true;
+        }];
+        TestWebKitAPI::Util::run(&doneWaiting);
+    }
+}
+
+TEST(KeyboardInputTests, HandleKeyEventsWhileSwappingWebProcess)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool.get()];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadHTMLString:@"<body>webkit.org</body>" baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadHTMLString:@"<body>apple.com</body>" baseURL:[NSURL URLWithString:@"https://apple.com"]];
+    [navigationDelegate waitForDidStartProvisionalNavigation];
+
+    bool done = false;
+    auto keyEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:65 isTabKey:NO]);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), [keyEvent, webView, &done] {
+        [[webView textInputContentView] handleKeyWebEvent:keyEvent.get() withCompletionHandler:[keyEvent, &done](WebEvent *event, BOOL handled) {
+            EXPECT_TRUE([event isEqual:keyEvent.get()]);
+            EXPECT_FALSE(handled);
+            done = true;
+        }];
+    });
+
+    [navigationDelegate waitForDidFinishNavigation];
+    TestWebKitAPI::Util::run(&done);
 }
 
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)

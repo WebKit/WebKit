@@ -2748,10 +2748,10 @@ const NativeWebKeyboardEvent& WebPageProxy::firstQueuedKeyEvent() const
     return m_keyEventQueue.first();
 }
 
-void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
+bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!hasRunningProcess())
-        return;
+        return false;
     
     LOG(KeyHandling, "WebPageProxy::handleKeyboardEvent: %s", webKeyboardEventTypeString(event.type()));
 
@@ -2763,6 +2763,8 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         send(Messages::WebPage::KeyEvent(event));
     }
+
+    return true;
 }
 
 WebPreferencesStore WebPageProxy::preferencesStore() const
