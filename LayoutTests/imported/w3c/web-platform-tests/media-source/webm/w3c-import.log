@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/media-source/webm/invalid-codec.webm
 /LayoutTests/imported/w3c/web-platform-tests/media-source/webm/test-a-128k-44100Hz-1ch-manifest.json
 /LayoutTests/imported/w3c/web-platform-tests/media-source/webm/test-a-128k-44100Hz-1ch.webm
 /LayoutTests/imported/w3c/web-platform-tests/media-source/webm/test-a-192k-44100Hz-1ch-manifest.json

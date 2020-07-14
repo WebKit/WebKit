@@ -1,4 +1,6 @@
 
+PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface URL: original interface defined 
 PASS Partial interface URL: valid exposure set 
 PASS Partial interface URL: member names are unique 
@@ -8,10 +10,6 @@ PASS Partial interface VideoTrack: original interface defined
 PASS Partial interface VideoTrack: member names are unique 
 PASS Partial interface TextTrack: original interface defined 
 PASS Partial interface TextTrack: member names are unique 
-PASS URL interface: operation createObjectURL(MediaSource) 
-PASS AudioTrack interface: attribute sourceBuffer 
-PASS VideoTrack interface: attribute sourceBuffer 
-PASS TextTrack interface: attribute sourceBuffer 
 PASS MediaSource interface: existence and properties of interface object 
 PASS MediaSource interface object length 
 PASS MediaSource interface object name 
@@ -109,4 +107,8 @@ PASS Stringification of mediaSource.sourceBuffers
 PASS SourceBufferList interface: mediaSource.sourceBuffers must inherit property "length" with the proper type 
 PASS SourceBufferList interface: mediaSource.sourceBuffers must inherit property "onaddsourcebuffer" with the proper type 
 PASS SourceBufferList interface: mediaSource.sourceBuffers must inherit property "onremovesourcebuffer" with the proper type 
+PASS AudioTrack interface: attribute sourceBuffer 
+PASS VideoTrack interface: attribute sourceBuffer 
+PASS TextTrack interface: attribute sourceBuffer 
+PASS URL interface: operation createObjectURL(MediaSource) 
 

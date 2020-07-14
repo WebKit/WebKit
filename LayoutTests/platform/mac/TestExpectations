@@ -860,9 +860,7 @@ webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-see
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Skip ]
-
-# Passes, but will need rebaselining once <https://github.com/w3c/web-platform-tests/pull/3758> is merged
-imported/w3c/web-platform-tests/media-source/interfaces.html [ Pass ]
+webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
 # Requires WebM
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Skip ]

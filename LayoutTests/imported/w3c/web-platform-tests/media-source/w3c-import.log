@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/media-source/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/media-source/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html
@@ -22,8 +22,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/URL-createObjectURL.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/generate-config-change-tests.py
+/LayoutTests/imported/w3c/web-platform-tests/media-source/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/media-source/import_tests.sh
-/LayoutTests/imported/w3c/web-platform-tests/media-source/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/manifest.txt
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html
@@ -34,6 +35,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-attach-stops-delaying-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-buffered.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-util.js
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype.html
@@ -53,6 +57,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-config-changes.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-detach.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-duration.html
@@ -60,6 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-liveseekable.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-multiple-attach.html
@@ -69,6 +76,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-replay.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-seekable.html

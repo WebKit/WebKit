@@ -2450,10 +2450,67 @@
     "imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/media-source/mediasource-appendbuffer-quota-exceeded.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-play.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/media-source/mediasource-replay.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html": [

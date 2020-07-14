@@ -1,0 +1,8 @@
+
+FAIL Check if browser supports enough test media types and pairs of audio-only or video-only media with same bytestream format assert_true: Browser doesn't support at least 2 audio-only or 2 video-only test media with same bytestream format expected true got false
+PASS Test audio-only implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" 
+PASS Test audio-only implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters for addSourceBuffer) 
+PASS Test audio-only implicit changeType for audio/mpeg <-> audio/mpeg 
+PASS Test video-only implicit changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" 
+PASS Test video-only implicit changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters for addSourceBuffer) 
+

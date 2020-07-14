@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/invalid-codec.mp4
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-a-128k-44100Hz-1ch-manifest.json
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-a-128k-44100Hz-1ch.mp4
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-a-192k-44100Hz-1ch-manifest.json
@@ -26,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.mp4
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.mp4
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-boxes-audio.mp4
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-boxes-video.mp4
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-v-128k-320x240-24fps-8kfr-manifest.json
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-v-128k-320x240-24fps-8kfr.mp4
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mp4/test-v-128k-320x240-30fps-10kfr-manifest.json
