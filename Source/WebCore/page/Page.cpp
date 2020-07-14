@@ -2028,20 +2028,10 @@ void Page::setVolumeOfMediaElement(double volume, uint64_t elementID)
 
 #endif
 
-#if ASSERT_ENABLED
-
-void Page::checkSubframeCountConsistency() const
+unsigned Page::subframeCount() const
 {
-    ASSERT(m_subframeCount >= 0);
-
-    int subframeCount = 0;
-    for (const Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
-        ++subframeCount;
-
-    ASSERT(m_subframeCount + 1 == subframeCount);
+    return mainFrame().tree().descendantCount();
 }
-
-#endif // ASSERT_ENABLED
 
 void Page::resumeAnimatingImages()
 {

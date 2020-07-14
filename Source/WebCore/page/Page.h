@@ -224,9 +224,7 @@ public:
 
     WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
 
-    void incrementSubframeCount() { ++m_subframeCount; }
-    void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
-    int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
+    unsigned subframeCount() const;
 
     void incrementNestedRunLoopCount();
     void decrementNestedRunLoopCount();
@@ -782,8 +780,6 @@ private:
     void setIsVisibleInternal(bool);
     void setIsVisuallyIdleInternal(bool);
 
-    void checkSubframeCountConsistency() const;
-
     enum ShouldHighlightMatches { DoNotHighlightMatches, HighlightMatches };
     enum ShouldMarkMatches { DoNotMarkMatches, MarkMatches };
 
@@ -860,7 +856,6 @@ private:
     int m_nestedRunLoopCount { 0 };
     WTF::Function<void()> m_unnestCallback;
 
-    int m_subframeCount { 0 };
     String m_groupName;
     bool m_openedByDOM { false };
     bool m_openedByDOMWithOpener { false };
@@ -1071,13 +1066,5 @@ inline PageGroup& Page::group()
         initGroup();
     return *m_group;
 }
-
-#if !ASSERT_ENABLED
-
-inline void Page::checkSubframeCountConsistency() const
-{
-}
-
-#endif // !ASSERT_ENABLED
 
 } // namespace WebCore

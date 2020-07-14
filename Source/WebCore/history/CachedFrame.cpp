@@ -194,9 +194,6 @@ CachedFrame::CachedFrame(Frame& frame)
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
         frame.tree().removeChild(m_childFrames[i]->view()->frame());
 
-    if (!m_isMainFrame)
-        frame.page()->decrementSubframeCount();
-
 #ifndef NDEBUG
     if (m_isMainFrame)
         LOG(BackForwardCache, "Finished creating CachedFrame for main frame url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
@@ -223,8 +220,6 @@ void CachedFrame::open()
 {
     ASSERT(m_view);
     ASSERT(m_document);
-    if (!m_isMainFrame)
-        m_view->frame().page()->incrementSubframeCount();
 
     m_view->frame().loader().open(*this);
 }

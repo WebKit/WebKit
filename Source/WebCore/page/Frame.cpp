@@ -165,7 +165,6 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
 
     if (ownerElement) {
         m_mainFrame.selfOnlyRef();
-        page.incrementSubframeCount();
         ownerElement->setContentFrame(this);
     }
 
@@ -774,10 +773,8 @@ void Frame::disconnectOwnerElement()
 {
     if (m_ownerElement) {
         m_ownerElement->clearContentFrame();
-        if (m_page)
-            m_page->decrementSubframeCount();
+        m_ownerElement = nullptr;
     }
-    m_ownerElement = nullptr;
 
     if (auto* document = this->document())
         document->frameWasDisconnectedFromOwner();

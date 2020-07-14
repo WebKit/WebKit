@@ -1,3 +1,33 @@
+2020-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop cache of subframe count on the Page
+        https://bugs.webkit.org/show_bug.cgi?id=214312
+        <rdar://problem/65433615>
+
+        Reviewed by Geoffrey Garen.
+
+        Drop cache of subframe count on the Page as it is error-prone to keep it up to date and it is
+        not performance sensitive. We only need the subframe count when trying to load a new iframe
+        to see if we reached the maximum number of subframes (1000). Calculating this count is also
+        not very expensive since we merely need to iterate the frame tree, which is composed of at
+        most 1000 frames.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::open):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeAndRemoveChild):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::disconnectOwnerElement):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::childCount const):
+        (WebCore::FrameTree::descendantCount const):
+        * page/FrameTree.h:
+        * page/Page.cpp:
+        (WebCore::Page::subframeCount const):
+        * page/Page.h:
+
 2020-07-14  James Darpinian  <jdarpinian@chromium.org>
 
         Implement uniform* and getUniform for WebGL 2 types

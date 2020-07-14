@@ -2713,8 +2713,6 @@ void FrameLoader::closeAndRemoveChild(Frame& child)
     child.tree().detachFromParent();
 
     child.setView(nullptr);
-    if (child.ownerElement() && child.page())
-        child.page()->decrementSubframeCount();
     child.willDetachPage();
     child.detachFromPage();
 

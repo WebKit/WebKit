@@ -77,6 +77,7 @@ public:
     Frame* child(const AtomString& name) const;
     WEBCORE_EXPORT Frame* find(const AtomString& name, Frame& activeFrame) const;
     WEBCORE_EXPORT unsigned childCount() const;
+    unsigned descendantCount() const;
     WEBCORE_EXPORT Frame& top() const;
 
     WEBCORE_EXPORT Frame* scopedChild(unsigned index) const;
