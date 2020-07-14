@@ -167,7 +167,7 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSpecificRevision),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.KillOldProcesses),
-            _BuildStepFactory(steps.CompileWebKit),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
         ])
 
     def test_ios_build_factory(self):
@@ -180,11 +180,11 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSpecificRevision),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.KillOldProcesses),
-            _BuildStepFactory(steps.CompileWebKit),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
         ])
 
     def test_watchos_build_factory(self):
-        factory = factories.iOSBuildFactory(platform='watchos-6', configuration='release', architectures=["arm64_32"])
+        factory = factories.watchOSBuildFactory(platform='watchos-6', configuration='release', architectures=["arm64_32"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='watchos-6', configuration='release', architectures=["arm64_32"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
@@ -193,11 +193,11 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSpecificRevision),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.KillOldProcesses),
-            _BuildStepFactory(steps.CompileWebKit),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
         ])
 
     def test_tvos_build_factory(self):
-        factory = factories.iOSBuildFactory(platform='tvos-13', configuration='release', architectures=["arm64"])
+        factory = factories.tvOSBuildFactory(platform='tvos-13', configuration='release', architectures=["arm64"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='tvos-13', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
@@ -206,7 +206,7 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSpecificRevision),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.KillOldProcesses),
-            _BuildStepFactory(steps.CompileWebKit),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
         ])
 
     def test_jsc_mipsel_factory(self):

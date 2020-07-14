@@ -95,12 +95,14 @@ class WebKitPyFactory(Factory):
 
 
 class BuildFactory(Factory):
+    skipUpload = False
+
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments)
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
-        self.addStep(CompileWebKit())
+        self.addStep(CompileWebKit(skipUpload=self.skipUpload))
 
 
 class TestFactory(Factory):
@@ -164,11 +166,11 @@ class macOSBuildFactory(BuildFactory):
 
 
 class watchOSBuildFactory(BuildFactory):
-    pass
+    skipUpload = True
 
 
 class tvOSBuildFactory(BuildFactory):
-    pass
+    skipUpload = True
 
 
 class macOSWK1Factory(TestFactory):

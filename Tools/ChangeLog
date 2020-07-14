@@ -1,3 +1,16 @@
+2020-07-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Do not upload archives for tvOS and watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=214305
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BuildFactory):
+        (BuildFactory.__init__):
+        (watchOSBuildFactory):
+        (tvOSBuildFactory):
+
 2020-07-14  Karl Rackler  <rackler@apple.com>
 
         Add myself to contributors.json.
