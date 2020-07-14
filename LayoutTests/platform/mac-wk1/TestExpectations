@@ -982,3 +982,5 @@ fast/forms/week
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013.xht [ ImageOnlyFailure ]
 
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-change-margin.html [ ImageOnlyFailure ]
+
+webkit.org/b/214308 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html [ Pass Failure ]
