@@ -712,9 +712,6 @@
 /* Title for Share context menu item. */
 "Share" = "Share";
 
-/* Default name for the file created for a shared image with no explicit name. */
-"Shared Image" = "Shared Image";
-
 /* Title for Share action button */
 "Share…" = "Share…";
 
