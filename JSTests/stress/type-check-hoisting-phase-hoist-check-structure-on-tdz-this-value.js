@@ -1,4 +1,4 @@
-//@ skip if not $jitTests
+//@ skip if not $jitTests or ["mips"].include?($architecture)
 
 function __isPropertyOfType(obj, name, type) {
     desc = Object.getOwnPropertyDescriptor(obj, name)

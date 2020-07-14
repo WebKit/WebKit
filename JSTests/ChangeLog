@@ -1,3 +1,12 @@
+2020-07-14  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip intermittently failing type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value on mips
+        https://bugs.webkit.org/show_bug.cgi?id=214254
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * stress/type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value.js:
+
 2020-07-13  Saam Barati  <sbarati@apple.com>
 
         returnEarlyFromInfiniteLoopsForFuzzing and validateDoesGC may fail when used together in the FTL
