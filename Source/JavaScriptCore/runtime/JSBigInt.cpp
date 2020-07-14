@@ -2419,7 +2419,6 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsign
 template <typename CharType>
 JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
 {
-    ASSERT(length >= 0);
     unsigned p = startIndex;
 
     if (parseMode != ParseIntMode::AllowEmptyString && startIndex == length) {
