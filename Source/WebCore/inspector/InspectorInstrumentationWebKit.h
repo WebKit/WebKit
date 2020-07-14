@@ -26,12 +26,14 @@
 #pragma once
 
 #include "InspectorInstrumentationPublic.h"
+#include "ResourceLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
 
 class Frame;
+class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 

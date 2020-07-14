@@ -27,6 +27,9 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CallFrame.h"
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace JSC { namespace DFG {
 
 class CodeOriginPool : public ThreadSafeRefCounted<CodeOriginPool> {

@@ -27,6 +27,7 @@
 #include "CSSTransition.h"
 
 #include "Animation.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"

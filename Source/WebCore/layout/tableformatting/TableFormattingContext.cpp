@@ -31,6 +31,7 @@
 #include "BlockFormattingState.h"
 #include "DisplayBox.h"
 #include "FloatingState.h"
+#include "InlineFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"

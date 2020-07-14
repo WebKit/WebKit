@@ -1,3 +1,24 @@
+2020-07-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed non-unified build fixes
+
+        * animation/CSSTransition.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/ImageData.cpp:
+        * inspector/InspectorInstrumentationWebKit.h:
+        * layout/FormattingContextGeometry.cpp:
+        * layout/floats/FloatingContext.cpp:
+        * layout/floats/FloatingState.cpp:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        * loader/MediaResourceLoader.cpp:
+        * platform/FrameRateMonitor.h:
+        * platform/graphics/ColorSerialization.cpp:
+        * platform/graphics/ColorSerialization.h:
+        * svg/SVGNumber.h:
+        * svg/SVGParserUtilities.h:
+        * svg/SVGTransformList.cpp:
+        * svg/SVGZoomAndPan.cpp:
+
 2020-07-13  Peng Liu  <peng.liu6@apple.com>
 
         Keyboard remains on full screen video view after back from PiP

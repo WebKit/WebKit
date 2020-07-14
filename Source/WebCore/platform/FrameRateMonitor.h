@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {

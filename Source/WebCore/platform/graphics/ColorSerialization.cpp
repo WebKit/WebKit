@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ColorSerialization.h"
 
+#include "Color.h"
+#include "ExtendedColor.h"
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>

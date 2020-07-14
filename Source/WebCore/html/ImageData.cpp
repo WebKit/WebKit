@@ -32,6 +32,7 @@
 
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

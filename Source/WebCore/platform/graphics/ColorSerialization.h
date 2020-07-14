@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 class Color;

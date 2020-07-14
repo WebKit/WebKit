@@ -22,6 +22,9 @@
 #include "config.h"
 #include "SVGZoomAndPan.h"
 
+#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringParsingBuffer.h>
+
 namespace WebCore {
 
 template<typename CharacterType> static constexpr CharacterType disable[] = { 'd', 'i', 's', 'a', 'b', 'l', 'e' };

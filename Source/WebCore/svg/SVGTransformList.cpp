@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGTransformList.h"
 
+#include "SVGParserUtilities.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 

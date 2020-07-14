@@ -34,6 +34,7 @@
 #include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "FrameLoaderClient.h"
 #include "HTMLMediaElement.h"
 #include "InspectorInstrumentation.h"
 #include "SecurityOrigin.h"

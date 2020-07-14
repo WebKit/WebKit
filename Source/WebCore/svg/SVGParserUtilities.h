@@ -24,6 +24,7 @@
 #include "ParsingUtilities.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 typedef std::pair<UChar32, UChar32> UnicodeRange;
 typedef Vector<UnicodeRange> UnicodeRanges;
