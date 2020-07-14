@@ -935,6 +935,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _textInteractionDidChangeFocusedElement = NO;
     _textInteractionIsHappening = NO;
 
+    _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform"];
         [_interactionViewsContainerView removeFromSuperview];
@@ -4301,6 +4303,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
     _textInteractionDidChangeFocusedElement = NO;
     _textInteractionIsHappening = NO;
+    _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     _hasValidPositionInformation = NO;
     _positionInformation = { };
 }
@@ -5337,7 +5340,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     auto* keyboard = [UIKeyboardImpl sharedInstance];
-    if (_page->editorState().isContentEditable && [keyboard respondsToSelector:@selector(handleKeyInputMethodCommandForCurrentEvent)] && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
+    if ((_page->editorState().isContentEditable || _treatAsContentEditableUntilNextEditorStateUpdate) && [keyboard respondsToSelector:@selector(handleKeyInputMethodCommandForCurrentEvent)] && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
         completionHandler(theEvent, YES);
         _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::Yes));
         return;
@@ -5978,6 +5981,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
+    if (!_suppressSelectionAssistantReasons && isSelectable && activityStateChanges.contains(WebCore::ActivityState::IsFocused)) {
+        _treatAsContentEditableUntilNextEditorStateUpdate = YES;
+        [_textInteractionAssistant activateSelection];
+        _page->restoreSelectionInFocusedEditableElement();
+        _page->scheduleFullEditorStateUpdate();
+    }
+
     _inputPeripheral = createInputPeripheralWithView(_focusedElementInformation.elementType, self);
 
 #if PLATFORM(WATCHOS)
@@ -6184,6 +6194,8 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     // before zooming to reveal the selection rect.
     if (mayContainSelectableText(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
+
+    _treatAsContentEditableUntilNextEditorStateUpdate = NO;
 }
 
 - (void)_updateInitialWritingDirectionIfNecessary

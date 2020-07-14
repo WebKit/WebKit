@@ -1,3 +1,51 @@
+2020-07-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Sometimes unable to type Japanese on docs.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=214272
+        <rdar://problem/59449972>
+
+        Reviewed by Wenson Hsieh.
+
+        Tell the web process to restore the selection of the focused element when re-focusing it
+        on page activation.
+
+        When resigning first responder the text interaction assistant is deactivated and calls
+        back into WKContentView's -clearSelection, which clears the focused element and tells
+        the web process to clear the selection. Keep in mind that the focused element in the web
+        process is not changed. When the WKContentView subsequently becomes first responder the
+        web process messages the UI process to tell it to start assistance (aka focus) for focused
+        element. However the selection is not restored and thus the editor state the UI process
+        has, and is even sent up until there is a selection change, mismatches with the focused
+        element information it also has. To match Mac, key events are only passed to the input
+        manager if an editable element is focused (see <https://bugs.webkit.org/show_bug.cgi?id=199122>).
+        So, key events are not passed to the input manager when in this state. To prevent this,
+        restore the selection of the focused element when the element is re-focused because the
+        page became active again.
+
+        Selection restoration is driven by the UI process (not the web process) because element re-
+        focusing may be denied by the embedding client. In this case, selection should not be restored
+        because UI assistance was not started. For the same reason, I do not restore it in -becomeFirstResponderForWebView.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        Clear out the flag. See below for more details.
+
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]): Pass the key to the input manager
+        if the _treatAsContentEditableUntilNextEditorStateUpdate is YES.
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        If this request is a result of the page activating (aka focus activity change) into an editable field
+        (i.e. mayContainSelectableText() resturns YES) and assistance is not being suppressed then tell the web
+        process to restore the selection. As part of this I tell the text interaction assistant to activate even
+        though -becomeFirstResponderForWebView was called beforehand because -becomeFirstResponderForWebView only
+        activates it if there is a non-empty selection. (Note the page having an empty selection could have been
+        a result of -clearSelection having been called though the page could have done it programmatically as well).
+        I also set a new flag to YES and schedule a full editor state update to ensure this flag is cleared.
+        The flag is so that key events that come in between now and the next editor state update are passed to the
+        input manager.
+        (-[WKContentView _didUpdateEditorState]): Clear out the flag. See above for more details.
+
 2020-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed non-unified build fixes
