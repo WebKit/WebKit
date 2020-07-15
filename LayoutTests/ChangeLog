@@ -1,3 +1,17 @@
+2020-07-15  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Unreviewed micro gardening: imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html
+        https://bugs.webkit.org/show_bug.cgi?id=214349
+
+        New test
+        imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html
+        crashes on an assertion.
+
+        This is not surprising since changetype is not implemented in our port and we
+        already had a similar crash with that feature. Marking it as [ Failure Crash ].
+
+        * platform/gtk/TestExpectations:
+
 2020-07-14  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Depuplicate some accessibility expectations
