@@ -1,3 +1,12 @@
+2020-07-15  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS Debug ] fast/text-indicator/text-indicator-empty-link.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=214363
+
+        Unreview test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-15  Lauro Moura  <lmoura@igalia.com>
 
         [SOUP] Artificial delay to WebSocket connection to mitigate port scanning attacks
