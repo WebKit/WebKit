@@ -1,3 +1,12 @@
+2020-07-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, revert part of r264385.
+
+        The change set r264385 speculatively added two messages to the mach-kernel-endpoint filter on iOS.
+        These messages are not needed, and should be removed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-07-15  Darin Adler  <darin@apple.com>
 
         Remove a few more uses of the terms black/white list

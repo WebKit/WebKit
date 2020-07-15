@@ -1282,8 +1282,6 @@
                 host_get_special_port
                 host_info
                 host_request_notification
-                host_security_create_task_token
-                host_security_set_task_token
                 io_connect_add_client
                 io_connect_async_method
                 io_connect_map_memory_into_task
