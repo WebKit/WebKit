@@ -9,7 +9,7 @@
   Features:
   - can queue multiple notification steps in a test
   - handles timeouts
-  - returns Promise that is fullfilled when test completes.
+  - returns Promise that is fulfilled when test completes.
     Use to chain tests (since parallel async ResizeObserver tests
     would conflict if reusing same DOM elements).
 
@@ -52,7 +52,7 @@ function ResizeTestHelper(name, steps)
     this._nextStepBind = this._nextStep.bind(this);
 }
 
-ResizeTestHelper.TIMEOUT = 1000;
+ResizeTestHelper.TIMEOUT = 100;
 
 ResizeTestHelper.prototype = {
   get _currentStep() {
@@ -80,11 +80,20 @@ ResizeTestHelper.prototype = {
       delete this._timeoutId;
     }
     this._harnessTest.step(() => {
-      let rafDelay = this._currentStep.notify(entries, this._observer);
-      if (rafDelay)
-        window.requestAnimationFrame(this._nextStepBind);
-      else
-        this._nextStep();
+      try {
+        let rafDelay = this._currentStep.notify(entries, this._observer);
+        if (rafDelay)
+          window.requestAnimationFrame(this._nextStepBind);
+        else
+          this._nextStep();
+      }
+      catch(err) {
+        this._harnessTest.step(() => {
+          throw err;
+        });
+        // Force to _done() the current test.
+        this._done();
+      }
     });
   },
 
@@ -95,7 +104,9 @@ ResizeTestHelper.prototype = {
         this._currentStep.timeout();
       }
       else {
-        assert_unreached("Timed out waiting for notification. (" + ResizeTestHelper.TIMEOUT + "ms)");
+        this._harnessTest.step(() => {
+          assert_unreached("Timed out waiting for notification. (" + ResizeTestHelper.TIMEOUT + "ms)");
+        });
       }
       this._nextStep();
     });
@@ -112,8 +123,13 @@ ResizeTestHelper.prototype = {
     window.requestAnimationFrame(() => { this._resolvePromise(); });
   },
 
-  start: function() {
+  start: function(cleanup) {
     this._harnessTest = async_test(this._name);
+
+    if (cleanup) {
+      this._harnessTest.add_cleanup(cleanup);
+    }
+
     this._harnessTest.step(() => {
       assert_equals(this._stepIdx, -1, "start can only be called once");
       this._nextStep();
@@ -128,6 +144,13 @@ ResizeTestHelper.prototype = {
     if (!this._rafCountRequest)
       throw "rAF count is not active";
     return this._rafCount;
+  },
+
+  get test() {
+    if (!this._harnessTest) {
+      throw "_harnessTest is not initialized";
+    }
+    return this._harnessTest;
   },
 
   _incrementRaf: function() {
@@ -145,4 +168,13 @@ ResizeTestHelper.prototype = {
     this._rafCount = 0;
     this._rafCountRequest = window.requestAnimationFrame(this._incrementRafBind);
   }
+}
+
+function createAndAppendElement(tagName, parent) {
+  if (!parent) {
+    parent = document.body;
+  }
+  const element = document.createElement(tagName);
+  parent.appendChild(element);
+  return element;
 }

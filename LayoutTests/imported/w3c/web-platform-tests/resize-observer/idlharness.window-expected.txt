@@ -12,28 +12,42 @@ PASS ResizeObserver interface object name
 PASS ResizeObserver interface: existence and properties of interface prototype object 
 PASS ResizeObserver interface: existence and properties of interface prototype object's "constructor" property 
 PASS ResizeObserver interface: existence and properties of interface prototype object's @@unscopables property 
-PASS ResizeObserver interface: operation observe(Element) 
+PASS ResizeObserver interface: operation observe(Element, optional ResizeObserverOptions) 
 PASS ResizeObserver interface: operation unobserve(Element) 
 PASS ResizeObserver interface: operation disconnect() 
 PASS ResizeObserver must be primary interface of observer 
 PASS Stringification of observer 
-PASS ResizeObserver interface: observer must inherit property "observe(Element)" with the proper type 
-PASS ResizeObserver interface: calling observe(Element) on observer with too few arguments must throw TypeError 
+PASS ResizeObserver interface: observer must inherit property "observe(Element, optional ResizeObserverOptions)" with the proper type 
+PASS ResizeObserver interface: calling observe(Element, optional ResizeObserverOptions) on observer with too few arguments must throw TypeError 
 PASS ResizeObserver interface: observer must inherit property "unobserve(Element)" with the proper type 
 PASS ResizeObserver interface: calling unobserve(Element) on observer with too few arguments must throw TypeError 
 PASS ResizeObserver interface: observer must inherit property "disconnect()" with the proper type 
 PASS ResizeObserverEntry interface: existence and properties of interface object 
-FAIL ResizeObserverEntry interface object length assert_equals: wrong value for ResizeObserverEntry.length expected 1 but got 0
+PASS ResizeObserverEntry interface object length 
 PASS ResizeObserverEntry interface object name 
 PASS ResizeObserverEntry interface: existence and properties of interface prototype object 
 PASS ResizeObserverEntry interface: existence and properties of interface prototype object's "constructor" property 
 PASS ResizeObserverEntry interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ResizeObserverEntry interface: attribute target 
 PASS ResizeObserverEntry interface: attribute contentRect 
+FAIL ResizeObserverEntry interface: attribute borderBoxSize assert_true: The prototype object must have a property "borderBoxSize" expected true got false
+FAIL ResizeObserverEntry interface: attribute contentBoxSize assert_true: The prototype object must have a property "contentBoxSize" expected true got false
+FAIL ResizeObserverEntry interface: attribute devicePixelContentBoxSize assert_true: The prototype object must have a property "devicePixelContentBoxSize" expected true got false
 PASS ResizeObserverEntry must be primary interface of entry 
 PASS Stringification of entry 
 PASS ResizeObserverEntry interface: entry must inherit property "target" with the proper type 
 PASS ResizeObserverEntry interface: entry must inherit property "contentRect" with the proper type 
+FAIL ResizeObserverEntry interface: entry must inherit property "borderBoxSize" with the proper type assert_inherits: property "borderBoxSize" not found in prototype chain
+FAIL ResizeObserverEntry interface: entry must inherit property "contentBoxSize" with the proper type assert_inherits: property "contentBoxSize" not found in prototype chain
+FAIL ResizeObserverEntry interface: entry must inherit property "devicePixelContentBoxSize" with the proper type assert_inherits: property "devicePixelContentBoxSize" not found in prototype chain
+FAIL ResizeObserverSize interface: existence and properties of interface object assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface object length assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface object name assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface: attribute inlineSize assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
+FAIL ResizeObserverSize interface: attribute blockSize assert_own_property: self does not have own property "ResizeObserverSize" expected property "ResizeObserverSize" missing
 FAIL ResizeObservation interface: existence and properties of interface object assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
 FAIL ResizeObservation interface object length assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
 FAIL ResizeObservation interface object name assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
@@ -41,7 +55,6 @@ FAIL ResizeObservation interface: existence and properties of interface prototyp
 FAIL ResizeObservation interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
 FAIL ResizeObservation interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
 FAIL ResizeObservation interface: attribute target assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: attribute broadcastWidth assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: attribute broadcastHeight assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
-FAIL ResizeObservation interface: operation isActive() assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
+FAIL ResizeObservation interface: attribute observedBox assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
+FAIL ResizeObservation interface: attribute lastReportedSizes assert_own_property: self does not have own property "ResizeObservation" expected property "ResizeObservation" missing
 

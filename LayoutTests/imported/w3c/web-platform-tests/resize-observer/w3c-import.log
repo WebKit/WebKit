@@ -15,6 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/change-layout-in-error.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/eventloop.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/notify.html

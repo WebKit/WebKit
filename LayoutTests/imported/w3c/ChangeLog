@@ -1,5 +1,38 @@
 2020-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/resize-observer from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214375
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/resize-observer from upstream b2a666d93581a71e9338b2.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/resize-observer/META.yml:
+        * web-platform-tests/resize-observer/change-layout-in-error-expected.txt: Added.
+        * web-platform-tests/resize-observer/change-layout-in-error.html: Added.
+        * web-platform-tests/resize-observer/devicepixel-expected.html: Added.
+        * web-platform-tests/resize-observer/devicepixel.html: Added.
+        * web-platform-tests/resize-observer/eventloop.html:
+        * web-platform-tests/resize-observer/idlharness.window-expected.txt:
+        * web-platform-tests/resize-observer/idlharness.window.html:
+        * web-platform-tests/resize-observer/idlharness.window.js:
+        * web-platform-tests/resize-observer/observe-expected.txt:
+        * web-platform-tests/resize-observer/observe.html:
+        * web-platform-tests/resize-observer/resources/image.png: Added.
+        * web-platform-tests/resize-observer/resources/resizeTestHelper.js:
+        (ResizeTestHelper.prototype._handleNotification):
+        (ResizeTestHelper.prototype._handleTimeout):
+        (ResizeTestHelper.prototype.start):
+        (ResizeTestHelper.prototype.get test):
+        (createAndAppendElement):
+        * web-platform-tests/resize-observer/resources/w3c-import.log:
+        * web-platform-tests/resize-observer/svg-expected.txt:
+        * web-platform-tests/resize-observer/svg.html:
+        * web-platform-tests/resize-observer/w3c-import.log:
+
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop WPT test which no longer exists upstream and should have been dropped during resync in r263928.
 
         * web-platform-tests/mediacapture-record/MediaRecorder-constructor-expected.txt: Removed.

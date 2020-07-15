@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/resources/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/resources/image.png
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/resources/resizeTestHelper.js

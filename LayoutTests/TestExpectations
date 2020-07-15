@@ -3010,6 +3010,7 @@ webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-uploa
 
 # If requestAnimationFrame is invoked before ResizeObserver timer fired, it would pass, otherwise it would fail same as eventloop-expected.txt
 webkit.org/b/157743 imported/w3c/web-platform-tests/resize-observer/eventloop.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resize-observer/devicepixel.html [ ImageOnlyFailure ]
 
 webkit.org/b/198103 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime.html [ Pass Failure ]
 

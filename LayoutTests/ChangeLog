@@ -1,3 +1,12 @@
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/resize-observer from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214375
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
 2020-07-15  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 ] http/tests/media/reload-after-dialog.html is a flaky failure
