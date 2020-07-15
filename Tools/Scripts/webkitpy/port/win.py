@@ -35,11 +35,11 @@ import re
 import sys
 import time
 
+from webkitcorepy import Version
+
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.path import abspath_to_uri, cygpath
-from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.apple import ApplePort
 from webkitpy.port.config import apple_additions

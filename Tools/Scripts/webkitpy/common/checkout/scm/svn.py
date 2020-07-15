@@ -36,12 +36,13 @@ import string
 import sys
 import tempfile
 
+from webkitcorepy import Version
+
 from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
 from webkitpy.common.config.urls import svn_server_host, svn_server_realm
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.version import Version
 from webkitpy.common.unicode_compatibility import encode_if_necessary
 
 

@@ -22,9 +22,10 @@
 
 import time
 
+from webkitcorepy import Version
+
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
-from webkitpy.common.version import Version
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.ios_device import IOSDevicePort
 from webkitpy.port import ios_testcase

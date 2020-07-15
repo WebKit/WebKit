@@ -45,6 +45,8 @@ import shutil
 import unittest
 
 from datetime import date
+from webkitcorepy import Version
+
 from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment  # FIXME: This should not be needed
@@ -52,7 +54,6 @@ from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.version import Version
 from webkitpy.common.checkout.scm.git import Git, AmbiguousCommitError
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.checkout.scm.scm import SCM, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError

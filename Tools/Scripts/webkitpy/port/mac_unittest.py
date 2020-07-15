@@ -27,13 +27,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitcorepy import Version
+
 from webkitpy.port.mac import MacPort
 from webkitpy.port import darwin_testcase
 from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
-from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import VersionNameMap
 
 

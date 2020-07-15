@@ -22,8 +22,9 @@
 
 import re
 
+from webkitcorepy import Version
+
 from webkitpy.common.memoized import memoized
-from webkitpy.common.version import Version
 
 
 PUBLIC_TABLE = 'public'

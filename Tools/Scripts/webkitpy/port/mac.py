@@ -31,9 +31,10 @@ import logging
 import os
 import re
 
+from webkitcorepy import Version
+
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.config import apple_additions, Config

@@ -20,6 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
+import unittest
+
+from webkitcorepy import Version
+
+from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.unicode_compatibility import encode_if_necessary
+from webkitpy.xcode.device_type import DeviceType
+from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
+
 simctl_json_output = """{
  "devicetypes" : [
    {
@@ -494,18 +506,6 @@ simctl_json_output = """{
    "com.apple.carousel.sessionservice"
  ]
 }"""
-
-import json
-import unittest
-
-from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.common.version import Version
-from webkitpy.common.unicode_compatibility import encode_if_necessary
-from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
-
 
 class SimulatedDeviceTest(unittest.TestCase):
 

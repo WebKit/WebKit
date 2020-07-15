@@ -11,3 +11,9 @@
 # code in this file so that callers can opt-in as they want.  This also
 # allows different callers to choose different initialization code,
 # as necessary.
+
+import os
+import sys
+
+libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'libraries')
+sys.path.insert(0, os.path.join(libraries, 'webkitcorepy'))

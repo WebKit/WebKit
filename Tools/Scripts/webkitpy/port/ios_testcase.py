@@ -20,7 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.version import Version
+from webkitcorepy import Version
+
 from webkitpy.port import darwin_testcase
 
 

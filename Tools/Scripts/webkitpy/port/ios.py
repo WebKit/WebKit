@@ -21,12 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import traceback
 
-from webkitpy.common.memoized import memoized
-from webkitpy.common.version import Version
+from webkitcorepy import Version
+
 from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device_port import DevicePort
 from webkitpy.port.simulator_process import SimulatorProcess

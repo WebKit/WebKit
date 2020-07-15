@@ -22,8 +22,9 @@
 
 import unittest
 
+from webkitcorepy import Version
+
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import VersionNameMap
 
 

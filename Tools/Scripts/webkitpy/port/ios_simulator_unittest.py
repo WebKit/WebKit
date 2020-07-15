@@ -20,11 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitcorepy import Version
+
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.version import Version
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError

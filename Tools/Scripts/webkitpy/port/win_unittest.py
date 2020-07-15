@@ -26,10 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitcorepy import Version
+
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 from webkitpy.port import port_testcase
 from webkitpy.port.win import WinPort

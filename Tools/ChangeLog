@@ -1,3 +1,56 @@
+2020-07-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Spin off general webkitpy tools into a pip module
+        https://bugs.webkit.org/show_bug.cgi?id=214309
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries: Added.
+        * Scripts/libraries/webkitcorepy: Added.
+        * Scripts/libraries/webkitcorepy/MANIFEST.in: Added.
+        * Scripts/libraries/webkitcorepy/README.md: Added.
+        * Scripts/libraries/webkitcorepy/setup.py: Added.
+        (readme):
+        * Scripts/libraries/webkitcorepy/webkitcorepy: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/__init__.py: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/version_unittest.py: Moved from
+        webkitpy/common/version_unittest.py.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/version.py: Added.
+        (Version): Moved from webkitpy/common/version.py.
+        * Scripts/webkitpy/__init__.py: Include webkitcorepy on import path.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Use Version from webkitcorepy.
+        * Scripts/webkitpy/common/checkout/scm/svn.py: Ditto.
+        * Scripts/webkitpy/common/system/platforminfo.py: Ditto.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py: Ditto.
+        * Scripts/webkitpy/common/version.py: Ditto.
+        (Version): Moved to webkitcorepy.
+        * Scripts/webkitpy/common/version_name_map.py: Use Version from webkitcorepy.
+        * Scripts/webkitpy/common/version_name_map_unittest.py: Ditto.
+        * Scripts/webkitpy/common/version_unittest.py: Moved to webkitcorepy.
+        * Scripts/webkitpy/port/factory_unittest.py: Use Version from webkitcorepy.
+        * Scripts/webkitpy/port/ios.py: Use Version from webkitcorepy, remove unneeded imports.
+        * Scripts/webkitpy/port/ios_device.py: se Version from webkitcorepy.
+        * Scripts/webkitpy/port/ios_device_unittest.py: Ditto.
+        * Scripts/webkitpy/port/ios_simulator.py: Ditto.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py: Ditto.
+        * Scripts/webkitpy/port/ios_testcase.py: Ditto.
+        * Scripts/webkitpy/port/mac.py: Ditto.
+        * Scripts/webkitpy/port/mac_unittest.py: Ditto.
+        * Scripts/webkitpy/port/watch.py: Use Version from webkitcorepy, remove unneeded imports.
+        * Scripts/webkitpy/port/watch_device.py: Use Version from webkitcorepy.
+        * Scripts/webkitpy/port/watch_simulator.py: Ditto.
+        * Scripts/webkitpy/port/watch_simulator_unittest.py: Ditto.
+        * Scripts/webkitpy/port/watch_testcase.py: Ditto.
+        * Scripts/webkitpy/port/win.py: Use Version from webkitcorepy, remove unneeded imports.
+        * Scripts/webkitpy/port/win_unittest.py: Use Version from webkitcorepy.
+        * Scripts/webkitpy/test/main.py:
+        (main): Include webkitcorepy tests.
+        * Scripts/webkitpy/xcode/device_type_unittest.py: Use Version from webkitcorepy.
+        * Scripts/webkitpy/xcode/simulated_device.py: Ditto.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py: Use Version from webkitcorepy, fix style for imports.
+
 2020-07-15  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] clicking submit for EWS analysis button for patches on closed bug should display error

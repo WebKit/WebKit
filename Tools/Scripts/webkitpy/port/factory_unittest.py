@@ -29,9 +29,10 @@
 
 import unittest
 
+from webkitcorepy import Version
+
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.common.version import Version
 
 from webkitpy.port import factory
 from webkitpy.port import gtk

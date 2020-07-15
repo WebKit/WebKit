@@ -33,8 +33,9 @@ import re
 import sys
 import platform
 
+from webkitcorepy import Version
+
 from webkitpy.common.memoized import memoized
-from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.system.executive import Executive, ScriptError
 

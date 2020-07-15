@@ -22,7 +22,8 @@
 
 import unittest
 
-from webkitpy.common.version import Version
+from webkitcorepy import Version
+
 from webkitpy.xcode.device_type import DeviceType
 
 

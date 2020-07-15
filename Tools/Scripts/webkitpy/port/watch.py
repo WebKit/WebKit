@@ -22,8 +22,8 @@
 
 import logging
 
-from webkitpy.common.memoized import memoized
-from webkitpy.common.version import Version
+from webkitcorepy import Version
+
 from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device_port import DevicePort

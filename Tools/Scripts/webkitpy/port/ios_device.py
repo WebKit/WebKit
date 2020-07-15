@@ -22,9 +22,10 @@
 
 import logging
 
+from webkitcorepy import Version
+
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
-from webkitpy.common.version import Version
 from webkitpy.port.config import apple_additions
 from webkitpy.port.ios import IOSPort
 
