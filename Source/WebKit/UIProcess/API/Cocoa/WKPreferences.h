@@ -69,6 +69,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) BOOL plugInsEnabled WK_API_DEPRECATED("Plug-ins are no longer supported", macos(10.10, 10.15));
 #endif
 
-@property (nonatomic) BOOL javaScriptEnabled WK_API_DEPRECATED("Use WKWebPagePreferences.allowsJavaScriptMarkup to disable JavaScript markup on a per-navigation basis", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+@property (nonatomic) BOOL javaScriptEnabled WK_API_DEPRECATED("Use WKWebPagePreferences.allowsContentJavaScript to disable content JavaScript on a per-navigation basis", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @end
