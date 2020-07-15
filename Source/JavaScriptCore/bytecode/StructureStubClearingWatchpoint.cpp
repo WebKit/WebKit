@@ -44,7 +44,7 @@ void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, co
         // That works, because deleting a watchpoint removes it from the set's list, and
         // the set's list traversal for firing is robust against the set changing.
         ConcurrentJSLocker locker(m_holder->codeBlock()->m_lock);
-        m_holder->stubInfo()->reset(m_holder->codeBlock());
+        m_holder->stubInfo()->reset(locker, m_holder->codeBlock());
         return;
     }
 
@@ -115,7 +115,7 @@ void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM&, const FireDet
     // That works, because deleting a watchpoint removes it from the set's list, and
     // the set's list traversal for firing is robust against the set changing.
     ConcurrentJSLocker locker(m_holder->codeBlock()->m_lock);
-    m_holder->stubInfo()->reset(m_holder->codeBlock());
+    m_holder->stubInfo()->reset(locker, m_holder->codeBlock());
 }
 
 } // namespace JSC

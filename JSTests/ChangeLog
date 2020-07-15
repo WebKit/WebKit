@@ -1,3 +1,16 @@
+2020-07-14  Saam Barati  <sbarati@apple.com>
+
+        We must hold the CodeBlock lock when calling StructureStubInfo::reset
+        https://bugs.webkit.org/show_bug.cgi?id=214332
+        <rdar://problem/64940787>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/hold-lock-when-resetting-structure-stub-info.js: Added.
+        (foo.bar.C):
+        (foo.bar):
+        (foo):
+
 2020-07-14  Mark Lam  <mark.lam@apple.com>
 
         Handle out of memory error while creating an error message in the literal parser.

@@ -1,3 +1,41 @@
+2020-07-14  Saam Barati  <sbarati@apple.com>
+
+        We must hold the CodeBlock lock when calling StructureStubInfo::reset
+        https://bugs.webkit.org/show_bug.cgi?id=214332
+        <rdar://problem/64940787>
+
+        Reviewed by Yusuke Suzuki.
+
+        There was a race between resetting the StructureStubInfo, and reading from
+        it from the compiler thread. There was one place inside Repatch where we
+        didn't hold the CodeBlock's lock when calling StructureStubInfo::reset.
+        
+        To make it clear which functions require the CodeBlock's lock to be
+        held when called, I've changed all such functions to take the
+        LockHolder as a parameter.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeBaselineJITInlineCaches):
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureTransitionStructureStubClearingWatchpoint::fireInternal):
+        (JSC::AdaptiveValueStructureStubClearingWatchpoint::handleFire):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initArrayLength):
+        (JSC::StructureStubInfo::initStringLength):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::setCacheType):
+        * bytecode/StructureStubInfo.h:
+        * jit/Repatch.cpp:
+        (JSC::fireWatchpointsAndClearStubIfNeeded):
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+
 2020-07-14  Mark Lam  <mark.lam@apple.com>
 
         Handle out of memory error while creating an error message in the literal parser.

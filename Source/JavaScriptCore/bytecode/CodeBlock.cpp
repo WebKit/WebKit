@@ -1427,8 +1427,10 @@ void CodeBlock::finalizeBaselineJITInlineCaches()
         for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
             callLinkInfo->visitWeak(vm());
 
-        for (StructureStubInfo* stubInfo : jitData->m_stubInfos)
-            stubInfo->visitWeakReferences(this);
+        for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
+            ConcurrentJSLockerBase locker(NoLockingNecessary);
+            stubInfo->visitWeakReferences(locker, this);
+        }
     }
 }
 #endif

@@ -77,15 +77,15 @@ public:
     StructureStubInfo(AccessType);
     ~StructureStubInfo();
 
-    void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
-    void initArrayLength();
-    void initStringLength();
-    void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
-    void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
+    void initGetByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
+    void initArrayLength(const ConcurrentJSLockerBase&);
+    void initStringLength(const ConcurrentJSLockerBase&);
+    void initPutByIdReplace(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
+    void initInByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
 
     AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, JSGlobalObject*, CodeBlock*, ECMAMode, CacheableIdentifier, std::unique_ptr<AccessCase>);
 
-    void reset(CodeBlock*);
+    void reset(const ConcurrentJSLockerBase&, CodeBlock*);
 
     void deref();
     void aboutToDie();
@@ -94,7 +94,7 @@ public:
 
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
-    void visitWeakReferences(CodeBlock*);
+    void visitWeakReferences(const ConcurrentJSLockerBase&, CodeBlock*);
     
     // This returns true if it has marked everything that it will ever mark.
     bool propagateTransitions(SlotVisitor&);
@@ -257,7 +257,7 @@ private:
         return false;
     }
 
-    void setCacheType(CacheType);
+    void setCacheType(const ConcurrentJSLockerBase&, CacheType);
 
     void clearBufferedStructures()
     {

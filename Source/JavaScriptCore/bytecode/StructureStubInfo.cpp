@@ -57,10 +57,10 @@ StructureStubInfo::~StructureStubInfo()
 {
 }
 
-void StructureStubInfo::initGetByIdSelf(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
+void StructureStubInfo::initGetByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
 {
     ASSERT(hasConstantIdentifier);
-    setCacheType(CacheType::GetByIdSelf);
+    setCacheType(locker, CacheType::GetByIdSelf);
     m_identifier = identifier;
     codeBlock->vm().heap.writeBarrier(codeBlock);
     
@@ -69,19 +69,19 @@ void StructureStubInfo::initGetByIdSelf(CodeBlock* codeBlock, Structure* baseObj
     u.byIdSelf.offset = offset;
 }
 
-void StructureStubInfo::initArrayLength()
+void StructureStubInfo::initArrayLength(const ConcurrentJSLockerBase& locker)
 {
-    setCacheType(CacheType::ArrayLength);
+    setCacheType(locker, CacheType::ArrayLength);
 }
 
-void StructureStubInfo::initStringLength()
+void StructureStubInfo::initStringLength(const ConcurrentJSLockerBase& locker)
 {
-    setCacheType(CacheType::StringLength);
+    setCacheType(locker, CacheType::StringLength);
 }
 
-void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
+void StructureStubInfo::initPutByIdReplace(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
 {
-    setCacheType(CacheType::PutByIdReplace);
+    setCacheType(locker, CacheType::PutByIdReplace);
     m_identifier = identifier;
     codeBlock->vm().heap.writeBarrier(codeBlock);
 
@@ -90,9 +90,9 @@ void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* base
     u.byIdSelf.offset = offset;
 }
 
-void StructureStubInfo::initInByIdSelf(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
+void StructureStubInfo::initInByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
 {
-    setCacheType(CacheType::InByIdSelf);
+    setCacheType(locker, CacheType::InByIdSelf);
     m_identifier = identifier;
     codeBlock->vm().heap.writeBarrier(codeBlock);
 
@@ -190,7 +190,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
                 return result;
             }
             
-            setCacheType(CacheType::Stub);
+            setCacheType(locker, CacheType::Stub);
             u.stub = access.release();
         }
         
@@ -236,7 +236,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     return result;
 }
 
-void StructureStubInfo::reset(CodeBlock* codeBlock)
+void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
 {
     clearBufferedStructures();
 
@@ -283,7 +283,7 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
     }
     
     deref();
-    setCacheType(CacheType::Unset);
+    setCacheType(locker, CacheType::Unset);
 }
 
 void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
@@ -312,7 +312,7 @@ void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
     return;
 }
 
-void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
+void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
 {
     VM& vm = codeBlock->vm();
     {
@@ -338,7 +338,7 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
         return;
     }
 
-    reset(codeBlock);
+    reset(locker, codeBlock);
     resetByGC = true;
 }
 
@@ -401,7 +401,7 @@ bool StructureStubInfo::containsPC(void* pc) const
     return u.stub->containsPC(pc);
 }
 
-void StructureStubInfo::setCacheType(CacheType newCacheType)
+void StructureStubInfo::setCacheType(const ConcurrentJSLockerBase&, CacheType newCacheType)
 {
     switch (m_cacheType) {
     case CacheType::Unset:
