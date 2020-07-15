@@ -1,3 +1,13 @@
+2020-07-15  Aakash Jain  <aakash_jain@apple.com>
+
+        Make ews django app robust against network issues
+        https://bugs.webkit.org/show_bug.cgi?id=214351
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.fetch_pending_and_inprogress_builds): Re-fetch builder_name_to_id_mapping if required.
+
 2020-07-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Support Rosetta testing

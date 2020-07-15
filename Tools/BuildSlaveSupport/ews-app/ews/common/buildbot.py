@@ -117,8 +117,12 @@ class Buildbot():
     @classmethod
     def fetch_pending_and_inprogress_builds(cls, builder_full_name):
         builderid = Buildbot.builder_name_to_id_mapping.get(builder_full_name)
+        if not Buildbot.builder_name_to_id_mapping:
+            _log.warn('Missing builder_name_to_id_mapping, refetching it from {}'.format(config.BUILDBOT_SERVER_HOST))
+            cls.update_builder_name_to_id_mapping()
+
         if not builderid:
-            _log.error('Invalid builder: {}'.format(builder_full_name))
+            _log.error('Invalid builder: {}. Number of builders: {}'.format(builder_full_name, len(cls.builder_name_to_id_mapping)))
             return {}
         url = 'https://{}/api/v2/builders/{}/buildrequests?complete=false&property=*'.format(config.BUILDBOT_SERVER_HOST, builderid)
         builders_data = util.fetch_data_from_url(url)
