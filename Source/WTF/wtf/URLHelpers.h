@@ -37,9 +37,9 @@ namespace URLHelpers {
 using URLDecodeFunction = String(*)(const String&);
 
 WTF_EXPORT_PRIVATE String userVisibleURL(const CString& URL);
-void loadIDNScriptWhiteList();
-void whiteListIDNScript(const char* scriptName);
-void initializeDefaultIDNScriptWhiteList();
+void loadIDNAllowedScriptList();
+void addScriptToIDNAllowedScriptList(const char* scriptName);
+void initializeDefaultIDNAllowedScriptList();
 Optional<String> mapHostName(const String&, URLDecodeFunction);
 String mapHostNames(const String&, URLDecodeFunction);
 

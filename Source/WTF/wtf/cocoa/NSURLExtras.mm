@@ -42,7 +42,7 @@ using namespace URLHelpers;
 
 constexpr unsigned urlBytesBufferLength = 2048;
 
-static BOOL readIDNScriptWhiteListFile(NSString *filename)
+static BOOL readIDNAllowedScriptListFile(NSString *filename)
 {
     if (!filename)
         return NO;
@@ -66,7 +66,7 @@ static BOOL readIDNScriptWhiteListFile(NSString *filename)
         
         if (result == 1) {
             // Got a word, map to script code and put it into the array.
-            whiteListIDNScript(word);
+            addScriptToIDNAllowedScriptList(word);
         }
     }
     fclose(file);
@@ -75,18 +75,15 @@ static BOOL readIDNScriptWhiteListFile(NSString *filename)
 
 namespace URLHelpers {
 
-void loadIDNScriptWhiteList()
+void loadIDNAllowedScriptList()
 {
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
-        // Read white list from library.
-        NSArray *dirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
-        int numDirs = [dirs count];
-        for (int i = 0; i < numDirs; i++) {
-            if (readIDNScriptWhiteListFile([[dirs objectAtIndex:i] stringByAppendingPathComponent:@"IDNScriptWhiteList.txt"]))
+        for (NSString *directory in NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES)) {
+            if (readIDNAllowedScriptListFile([directory stringByAppendingPathComponent:@"IDNScriptWhiteList.txt"]))
                 return;
         }
-        initializeDefaultIDNScriptWhiteList();
+        initializeDefaultIDNAllowedScriptList();
     });
 }
 

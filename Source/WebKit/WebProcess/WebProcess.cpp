@@ -921,7 +921,7 @@ bool WebProcess::shouldPlugInAutoStartFromOrigin(WebPage& webPage, const String&
         return true;
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    // The plugin wasn't in the general whitelist, so check if it similar to the primary plugin for the page (if we've found one).
+    // The plugin wasn't in the general list, so check if it similar to the primary plugin for the page (if we've found one).
     if (webPage.matchesPrimaryPlugIn(pageOrigin, pluginOrigin, mimeType))
         return true;
 #else

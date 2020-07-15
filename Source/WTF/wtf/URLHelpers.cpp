@@ -45,24 +45,24 @@ namespace URLHelpers {
 constexpr unsigned hostNameBufferLength = 2048;
 constexpr unsigned urlBytesBufferLength = 2048;
 
-// This needs to be higher than the UScriptCode for any of the scripts on the IDN whitelist.
+// This needs to be higher than the UScriptCode for any of the scripts on the IDN allowed list.
 // At one point we used USCRIPT_CODE_LIMIT from ICU, but there are two reasons not to use it.
 // 1) ICU considers it deprecated, so by setting U_HIDE_DEPRECATED we can't see it.
 // 2) No good reason to limit ourselves to scripts that existed in the ICU headers when
 //    WebKit was compiled.
-// This is only really important for platforms that load an external ICU whitelist.
+// This is only really important for platforms that load an external IDN allowed script list.
 // Not important for the compiled-in one.
 constexpr auto scriptCodeLimit = static_cast<UScriptCode>(256);
 
-static uint32_t IDNScriptWhiteList[(scriptCodeLimit + 31) / 32];
+static uint32_t allowedIDNScriptBits[(scriptCodeLimit + 31) / 32];
 
 #if !PLATFORM(COCOA)
 
-// Cocoa has an implementation that uses a whitelist in /Library or ~/Library, if it exists.
-void loadIDNScriptWhiteList()
+// Cocoa has an implementation that reads this from a file in /Library or ~/Library.
+void loadIDNAllowedScriptList()
 {
     static std::once_flag flag;
-    std::call_once(flag, initializeDefaultIDNScriptWhiteList);
+    std::call_once(flag, initializeDefaultIDNAllowedScriptList);
 }
 
 #endif // !PLATFORM(COCOA)
@@ -112,7 +112,7 @@ static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UCh
     // any non-printable character, any character considered as whitespace,
     // any ignorable character, and emoji characters related to locks.
     
-    // We also considered the characters in Mozilla's blacklist <http://kb.mozillazine.org/Network.IDN.blacklist_chars>.
+    // We also considered the characters in Mozilla's list of characters <http://kb.mozillazine.org/Network.IDN.blacklist_chars>.
 
     // Some of the characters here will never appear once ICU has encoded.
     // For example, ICU transforms most spaces into an ASCII space and most
@@ -264,28 +264,28 @@ static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UCh
     }
 }
 
-static void whiteListIDNScript(int32_t script)
+static void addScriptToIDNAllowedScriptList(int32_t script)
 {
     if (script >= 0 && script < scriptCodeLimit) {
         size_t index = script / 32;
         uint32_t mask = 1 << (script % 32);
-        IDNScriptWhiteList[index] |= mask;
+        allowedIDNScriptBits[index] |= mask;
     }
 }
 
-static void whiteListIDNScript(UScriptCode script)
+static void addScriptToIDNAllowedScriptList(UScriptCode script)
 {
-    whiteListIDNScript(static_cast<int32_t>(script));
+    addScriptToIDNAllowedScriptList(static_cast<int32_t>(script));
 }
 
-void whiteListIDNScript(const char* scriptName)
+void addScriptToIDNAllowedScriptList(const char* scriptName)
 {
-    whiteListIDNScript(u_getPropertyValueEnum(UCHAR_SCRIPT, scriptName));
+    addScriptToIDNAllowedScriptList(u_getPropertyValueEnum(UCHAR_SCRIPT, scriptName));
 }
 
-void initializeDefaultIDNScriptWhiteList()
+void initializeDefaultIDNAllowedScriptList()
 {
-    constexpr UScriptCode defaultIDNScriptWhiteList[] = {
+    constexpr UScriptCode scripts[] = {
         USCRIPT_COMMON,
         USCRIPT_INHERITED,
         USCRIPT_ARABIC,
@@ -307,13 +307,13 @@ void initializeDefaultIDNScriptWhiteList()
         USCRIPT_THAI,
         USCRIPT_YI,
     };
-    for (auto script : defaultIDNScriptWhiteList)
-        whiteListIDNScript(script);
+    for (auto script : scripts)
+        addScriptToIDNAllowedScriptList(script);
 }
 
-static bool allCharactersInIDNScriptWhiteList(const UChar* buffer, int32_t length)
+static bool allCharactersInAllowedIDNScriptList(const UChar* buffer, int32_t length)
 {
-    loadIDNScriptWhiteList();
+    loadIDNAllowedScriptList();
     int32_t i = 0;
     Optional<UChar32> previousCodePoint;
     while (i < length) {
@@ -334,7 +334,7 @@ static bool allCharactersInIDNScriptWhiteList(const UChar* buffer, int32_t lengt
 
         size_t index = script / 32;
         uint32_t mask = 1 << (script % 32);
-        if (!(IDNScriptWhiteList[index] & mask))
+        if (!(allowedIDNScriptBits[index] & mask))
             return false;
         
         if (isLookalikeCharacter(previousCodePoint, c))
@@ -572,7 +572,7 @@ Optional<String> mapHostName(const String& hostName, URLDecodeFunction decodeFun
     if (numCharactersConverted == static_cast<int32_t>(length) && !memcmp(sourceBuffer.data(), destinationBuffer, length * sizeof(UChar)))
         return String();
 
-    if (!decodeFunction && !allCharactersInIDNScriptWhiteList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))
+    if (!decodeFunction && !allCharactersInAllowedIDNScriptList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))
         return String();
 
     return String(destinationBuffer, numCharactersConverted);
