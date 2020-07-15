@@ -1,3 +1,23 @@
+2020-07-15  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Caret should be before text placeholder instead of after it
+        https://bugs.webkit.org/show_bug.cgi?id=214319
+        <rdar://problem/65295523>
+
+        Reviewed by Wenson Hsieh.
+
+        Move the caret to before the text placeholder to match UIKit.
+
+        Tests: editing/text-placeholder/caret-before-zero-width-placeholder-in-content-editable-end-of-word.html
+               editing/text-placeholder/caret-before-zero-width-placeholder-in-content-editable-start-of-word.html
+               editing/text-placeholder/insert-into-content-editable-and-remove-via-mutation-event.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextPlaceholder): Compute the position before the placeholder in its parent.
+        This computation can only be done if the placeholder still has a parent. It may not after insertion
+        because arbitrary JavaScript code can run. If this happens then bail out and return nullptr. Otherwise,
+        set the new selection.
+
 2020-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         itsnicethat.com page is sometimes non-scrollable

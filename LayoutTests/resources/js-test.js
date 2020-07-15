@@ -620,6 +620,27 @@ function shouldBeGreaterThanOrEqual(_a, _b) {
         testPassed(_a + " is >= " + _b);
 }
 
+function shouldBeLessThanOrEqual(_a, _b) {
+    if (typeof _a != "string" || typeof _b != "string")
+        debug("WARN: shouldBeLessThanOrEqual expects string arguments");
+
+    var _exception;
+    var _av;
+    try {
+        _av = eval(_a);
+    } catch (e) {
+        _exception = e;
+    }
+    var _bv = eval(_b);
+
+    if (_exception)
+        testFailed(_a + " should be <= " + _b + ". Threw exception " + _exception);
+    else if (typeof _av == "undefined" || _av > _bv)
+        testFailed(_a + " should be <= " + _b + ". Was " + _av + " (of type " + typeof _av + ").");
+    else
+        testPassed(_a + " is <= " + _b);
+}
+
 function expectTrue(v, msg) {
   if (v) {
     testPassed(msg);

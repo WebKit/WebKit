@@ -3323,8 +3323,11 @@ RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size
     auto placeholder = TextPlaceholderElement::create(document, size);
     createLiveRange(*range)->insertNode(placeholder.copyRef());
 
-    VisibleSelection newSelection { positionBeforeNode(placeholder.ptr()), positionAfterNode(placeholder.ptr()) };
-    m_document.selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+    // Inserting the placeholder can run arbitrary JavaScript. Check that it still has a parent.
+    if (!placeholder->parentNode())
+        return nullptr;
+
+    m_document.selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder.ptr()), SEL_DEFAULT_AFFINITY }, FrameSelection::defaultSetSelectionOptions(UserTriggered));
 
     return placeholder;
 }
