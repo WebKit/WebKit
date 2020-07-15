@@ -1705,8 +1705,6 @@ http/tests/quicklook/secure-document-with-subresources.html [ Skip ]
 # Newly imported canvas web-platform-tests that are failing on iOS only.
 imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]
 
-webkit.org/b/209352 http/tests/security/stylesheet-href-redirect.html [ Pass Timeout ]
-
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
 
 webkit.org/b/209450 [ Debug ] fast/text/control-characters/visible-control-characters-1.html [ Pass ImageOnlyFailure Crash ]
