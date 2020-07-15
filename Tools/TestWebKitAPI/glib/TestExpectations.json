@@ -86,12 +86,7 @@
         }
     },
     "TestInspectorServer": {
-        "expected": {"all": {"slow": true}},
-        "subtests": {
-            "/webkit/WebKitWebInspectorServer/test-page-list": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188115"}}
-            }
-        }
+        "expected": {"all": {"slow": true}}
     },
     "TestWebKitFaviconDatabase": {
         "subtests": {

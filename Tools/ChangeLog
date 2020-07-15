@@ -1,3 +1,16 @@
+2020-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] API test /webkit/WebKitWebInspectorServer/test-page-list is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=188115
+
+        Reviewed by Michael Catanzaro.
+
+        Stop using DBus to connect to the remote inspector and reload the page until we see the inspectable target.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspectorServer.cpp:
+        (connectToInspectorServer):
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264101): Sharing a link attaches an image instead of the URL

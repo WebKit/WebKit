@@ -51,25 +51,25 @@ static void sigAbortHandler(int sigNum)
 
 static void connectToInspectorServer(GMainLoop* mainLoop)
 {
-    g_dbus_connection_new_for_address("tcp:host=127.0.0.1,port=2999", G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, nullptr,
-        [](GObject* , GAsyncResult* result, gpointer userData) {
-            auto* mainLoop = static_cast<GMainLoop*>(userData);
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GDBusConnection> connection = adoptGRef(g_dbus_connection_new_for_address_finish(result, &error.outPtr()));
-            if (!connection) {
-                if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
-                    g_timeout_add(100, [](gpointer userData) {
-                        connectToInspectorServer(static_cast<GMainLoop*>(userData));
-                        return G_SOURCE_REMOVE;
-                    }, userData);
-                    return;
-                }
-
-                g_printerr("Failed to connect to inspector server");
-                g_assert_not_reached();
+    GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+    g_socket_client_connect_to_host_async(socketClient.get(),"127.0.0.1:2999", 0, nullptr, [](GObject* client, GAsyncResult* result, gpointer userData) {
+        auto* mainLoop = static_cast<GMainLoop*>(userData);
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr()));
+        if (!connection) {
+            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
+                g_timeout_add(100, [](gpointer userData) {
+                    connectToInspectorServer(static_cast<GMainLoop*>(userData));
+                    return G_SOURCE_REMOVE;
+                }, userData);
+                return;
             }
-            gServerIsReady = true;
-            g_main_loop_quit(mainLoop);
+
+            g_printerr("Failed to connect to inspector server");
+            g_assert_not_reached();
+        }
+        gServerIsReady = true;
+        g_main_loop_quit(mainLoop);
     }, mainLoop);
 }
 
@@ -118,9 +118,13 @@ public:
             size_t mainResourceDataSize = 0;
             const char* mainResourceData = this->mainResourceData(mainResourceDataSize);
             g_assert_nonnull(mainResourceData);
-            if (g_strrstr_len(mainResourceData, mainResourceDataSize, "No targets found"))
-                wait(0.1);
-            else if (g_strrstr_len(mainResourceData, mainResourceDataSize, "Inspectable targets"))
+            if (g_strrstr_len(mainResourceData, mainResourceDataSize, "No targets found")) {
+                webkit_web_view_reload(m_webView);
+                waitUntilLoadFinished();
+                continue;
+            }
+
+            if (g_strrstr_len(mainResourceData, mainResourceDataSize, "Inspectable targets"))
                 return true;
         }
 
