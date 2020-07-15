@@ -1,3 +1,22 @@
+2020-07-15  Devin Rousso  <drousso@apple.com>
+
+        should represent `TextPlaceholderElement` as an `NSTextAttachmentCharacter` instead of a `\n`
+        https://bugs.webkit.org/show_bug.cgi?id=214331
+        <rdar://problem/64779558>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+        Add missing SPI declarations.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (-[TestWKWebView synchronouslyInsertTextPlaceholderWithSize:]): Added.
+        (-[TestWKWebView synchronouslyRemoveTextPlaceholder:willInsertText:]): Added.
+        (TEST.DocumentEditingContext.RequestBeforeInlinePlaceholder): Added.
+        (TEST.DocumentEditingContext.RequestAfterInlinePlaceholder): Added.
+        (TEST.DocumentEditingContext.RequestBeforeBlockPlaceholder): Added.
+        (TEST.DocumentEditingContext.RequestAfterBlockPlaceholder): Added.
+
 2020-07-15  Jonathan Bedard  <jbedard@apple.com>
 
         [run-javascriptcore-tests] nativeArchitecture should never be arm64e

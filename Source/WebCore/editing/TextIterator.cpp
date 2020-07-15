@@ -58,6 +58,7 @@
 #include "SimpleLineLayoutResolver.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
+#include "TextPlaceholderElement.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
 #include <unicode/unorm2.h>
@@ -803,6 +804,13 @@ static bool hasHeaderTag(HTMLElement& element)
         || element.hasTagName(h6Tag);
 }
 
+static bool shouldEmitReplacementInsteadOfNode(const Node& node)
+{
+    // Placeholders should eventually disappear, so treating them as a line break doesn't make sense
+    // as when they are removed the text after it is combined with the text before it.
+    return is<TextPlaceholderElement>(node);
+}
+
 static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
 {
     // Block flow (versus inline flow) is represented by having
@@ -840,7 +848,10 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
         if (table && !table->isInline())
             return true;
     }
-    
+
+    if (shouldEmitReplacementInsteadOfNode(node))
+        return false;
+
     return !renderer->isInline()
         && is<RenderBlock>(*renderer)
         && !renderer->isFloatingOrOutOfFlowPositioned()
@@ -998,6 +1009,9 @@ void TextIterator::representNodeOffsetZero()
     } else if (shouldEmitSpaceBeforeAndAfterNode(*m_node)) {
         if (shouldRepresentNodeOffsetZero())
             emitCharacter(' ', *m_node->parentNode(), m_node, 0, 0);
+    } else if (shouldEmitReplacementInsteadOfNode(*m_node)) {
+        if (shouldRepresentNodeOffsetZero())
+            emitCharacter(0xFFFC, *m_node->parentNode(), m_node, 0, 0);
     }
 }
 

@@ -151,6 +151,27 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
     return result.autorelease();
 }
 
+- (UITextPlaceholder *)synchronouslyInsertTextPlaceholderWithSize:(CGSize)size
+{
+    __block bool finished = false;
+    __block RetainPtr<UITextPlaceholder> result;
+    [self.textInputContentView insertTextPlaceholderWithSize:size completionHandler:^(UITextPlaceholder *placeholder) {
+        result = placeholder;
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    return result.autorelease();
+}
+
+- (void)synchronouslyRemoveTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText
+{
+    __block bool finished = false;
+    [self.textInputContentView removeTextPlaceholder:placeholder willInsertText:willInsertText completionHandler:^(void) {
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+}
+
 @end
 
 static NSString *applyStyle(NSString *htmlString)
@@ -831,6 +852,74 @@ TEST(DocumentEditingContext, RequestThreeWordsAroundSelection)
     EXPECT_NSSTRING_EQ("quick brown fox ", context.contextBefore);
     EXPECT_NSSTRING_EQ("jumps", context.selectedText);
     EXPECT_NSSTRING_EQ(" over the lazy", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, RequestBeforeInlinePlaceholder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 5)"]; // Place cursor after "hello".
+
+    auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(5, 5)];
+    EXPECT_NOT_NULL(placeholder);
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 200)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("hello", context.contextBefore);
+    EXPECT_NSSTRING_EQ("\uFFFC world", context.contextAfter);
+
+    [webView synchronouslyRemoveTextPlaceholder:placeholder willInsertText:NO];
+}
+
+TEST(DocumentEditingContext, RequestAfterInlinePlaceholder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 6)"]; // Place cursor before "world".
+
+    auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(5, 5)];
+    EXPECT_NOT_NULL(placeholder);
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 200)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("hello ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("\uFFFCworld", context.contextAfter);
+
+    [webView synchronouslyRemoveTextPlaceholder:placeholder willInsertText:NO];
+}
+
+TEST(DocumentEditingContext, RequestBeforeBlockPlaceholder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 5)"]; // Place cursor after "hello".
+
+    auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(0, 5)];
+    EXPECT_NOT_NULL(placeholder);
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 200)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("hello", context.contextBefore);
+    EXPECT_NSSTRING_EQ("\uFFFC world", context.contextAfter);
+
+    [webView synchronouslyRemoveTextPlaceholder:placeholder willInsertText:NO];
+}
+
+TEST(DocumentEditingContext, RequestAfterBlockPlaceholder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='wrapper' contenteditable>hello world</span>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(wrapper.firstChild, 6)"]; // Place cursor before "world".
+
+    auto *placeholder = [webView synchronouslyInsertTextPlaceholderWithSize:CGSizeMake(0, 5)];
+    EXPECT_NOT_NULL(placeholder);
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityCharacter, 200)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("hello", context.contextBefore);
+    EXPECT_NSSTRING_EQ("\uFFFCworld", context.contextAfter);
+
+    [webView synchronouslyRemoveTextPlaceholder:placeholder willInsertText:NO];
 }
 
 // MARK: Tests using sentence granularity
