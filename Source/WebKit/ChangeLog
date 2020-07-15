@@ -1,3 +1,32 @@
+2020-07-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r264385. rdar://problem/65617478
+
+    [iOS] Add missing messages to message filter in WebContent sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=214334
+    <rdar://problem/65529952>
+    
+    Reviewed by Brent Fulgham.
+    
+    Allow some messages which are required in the message filter in the WebContent process on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@264385 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-07-14  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Add missing messages to message filter in WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=214334
+            <rdar://problem/65529952>
+
+            Reviewed by Brent Fulgham.
+
+            Allow some messages which are required in the message filter in the WebContent process on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-07-09  Tim Horton  <timothy_horton@apple.com>
 
         "ESPN Fantasy Sports" does not respond to mouse events, only touch events
