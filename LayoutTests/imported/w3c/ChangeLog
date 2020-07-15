@@ -1,5 +1,12 @@
 2020-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop WPT test which no longer exists upstream and should have been dropped during resync in r263928.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-constructor-expected.txt: Removed.
+        * web-platform-tests/mediacapture-record/MediaRecorder-constructor.html: Removed.
+
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/mediacapture-streams from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214374
 
