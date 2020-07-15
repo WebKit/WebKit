@@ -2777,6 +2777,13 @@ void NetworkProcess::resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<
     completionHandler();
 }
 
+static constexpr auto delayMax = 100_ms;
+static constexpr auto delayMin = 10_ms;
+Seconds NetworkProcess::randomClosedPortDelay()
+{
+    return delayMin + Seconds::fromMilliseconds(static_cast<double>(cryptographicallyRandomNumber())) % delayMax;
+}
+
 void NetworkProcess::hasAppBoundSession(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler) const
 {
     bool result = false;

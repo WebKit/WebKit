@@ -32,6 +32,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/WebSocketChannel.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -41,6 +42,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, SoupSession* session
     : m_channel(channel)
     , m_handshakeMessage(msg)
     , m_cancellable(adoptGRef(g_cancellable_new()))
+    , m_delayFailTimer(RunLoop::main(), this, &WebSocketTask::delayFailTimerFired)
 {
     auto protocolList = protocol.split(',');
     GUniquePtr<char*> protocols;
@@ -63,6 +65,14 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, SoupSession* session
             if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
                 return;
             auto* task = static_cast<WebSocketTask*>(userData);
+            if (g_error_matches(error.get(), SOUP_WEBSOCKET_ERROR, SOUP_WEBSOCKET_ERROR_NOT_WEBSOCKET)
+                && task->m_handshakeMessage
+                && (task->m_handshakeMessage->status_code == SOUP_STATUS_CANT_CONNECT
+                    || task->m_handshakeMessage->status_code == SOUP_STATUS_CANT_CONNECT_PROXY)) {
+                task->m_delayErrorMessage = String::fromUTF8(error->message);
+                task->m_delayFailTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
+                return;
+            }
             if (connection)
                 task->didConnect(WTFMove(connection));
             else
@@ -238,6 +248,11 @@ void WebSocketTask::cancel()
 
 void WebSocketTask::resume()
 {
+}
+
+void WebSocketTask::delayFailTimerFired()
+{
+    didFail(m_delayErrorMessage);
 }
 
 } // namespace WebKit

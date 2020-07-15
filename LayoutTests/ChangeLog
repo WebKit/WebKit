@@ -1,3 +1,15 @@
+2020-07-15  Lauro Moura  <lmoura@igalia.com>
+
+        [SOUP] Artificial delay to WebSocket connection to mitigate port scanning attacks
+        https://bugs.webkit.org/show_bug.cgi?id=214293
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add glib-specific baseline due to SOUP messages.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/http/tests/websocket/tests/hybi/closed-port-delay-expected.txt: Added.
+
 2020-07-15  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Unreviewed micro gardening: imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html

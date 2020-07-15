@@ -103,14 +103,7 @@ void NetworkSocketStream::didUpdateBufferedAmount(SocketStreamHandle& handle, si
     send(Messages::WebSocketStream::DidUpdateBufferedAmount(amount));
 }
 
-static constexpr auto delayMax = 100_ms;
-static constexpr auto delayMin = 10_ms;
 static constexpr auto closedPortErrorCode = 61;
-
-static Seconds randomDelay()
-{
-    return delayMin + Seconds::fromMilliseconds(static_cast<double>(cryptographicallyRandomNumber())) % delayMax;
-}
 
 void NetworkSocketStream::sendDelayedFailMessage()
 {
@@ -123,7 +116,7 @@ void NetworkSocketStream::didFailSocketStream(SocketStreamHandle& handle, const 
     
     if (error.errorCode() == closedPortErrorCode) {
         m_closedPortError = error;
-        m_delayFailTimer.startOneShot(randomDelay());
+        m_delayFailTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
     } else
         send(Messages::WebSocketStream::DidFailSocketStream(error));
 }

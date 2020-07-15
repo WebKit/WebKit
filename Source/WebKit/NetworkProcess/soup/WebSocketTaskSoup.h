@@ -26,6 +26,7 @@
 #pragma once
 
 #include <libsoup/soup.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace IPC {
@@ -52,6 +53,7 @@ private:
     void didConnect(GRefPtr<SoupWebsocketConnection>&&);
     void didFail(const String&);
     void didClose(unsigned short code, const String& reason);
+    void delayFailTimerFired();
 
     String acceptedExtensions() const;
 
@@ -65,6 +67,8 @@ private:
     GRefPtr<GCancellable> m_cancellable;
     bool m_receivedDidFail { false };
     bool m_receivedDidClose { false };
+    String m_delayErrorMessage;
+    RunLoop::Timer<WebSocketTask> m_delayFailTimer;
 };
 
 } // namespace WebKit
