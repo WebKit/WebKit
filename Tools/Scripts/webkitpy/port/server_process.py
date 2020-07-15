@@ -64,11 +64,16 @@ class ServerProcess(object):
     def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None, crash_message=None):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
-        self._cmd = cmd
+
+        platform = self._port.host.platform
+        if platform.is_mac() and platform.architecture() != self._port.architecture():
+            self._cmd = ['/usr/bin/arch', '-{}'.format(self._port.architecture())] + cmd
+        else:
+            self._cmd = cmd
         self._crash_message = crash_message or 'This test marked as a crash'
 
         # Windows does not allow unicode values in the environment
-        if env and self._port.host.platform.is_native_win():
+        if env and platform.is_native_win():
             self._env = {key: env[key].encode('utf-8') for key in env}
         else:
             self._env = env

@@ -1,3 +1,16 @@
+2020-07-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Support Rosetta testing
+        https://bugs.webkit.org/show_bug.cgi?id=214016
+        <rdar://problem/65153804>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__): Emulate architecture if native and specified architectures do not match.
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TrivialMockPort.architecture):
+
 2020-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSCTEST_hardTimeout

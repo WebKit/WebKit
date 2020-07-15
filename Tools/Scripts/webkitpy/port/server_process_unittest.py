@@ -44,6 +44,9 @@ class TrivialMockPort(object):
         self.host.executive.kill_process = lambda x: None
         self.host.executive.kill_process = lambda x: None
 
+    def architecture(self):
+        return self.host.platform.architecture()
+
     def results_directory(self):
         return "/mock-results"
 
