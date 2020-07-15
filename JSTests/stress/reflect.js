@@ -7,3 +7,4 @@ shouldBe(typeof Reflect, "object");
 shouldBe(Reflect, Reflect);
 shouldBe(Object.getPrototypeOf(Reflect), Object.getPrototypeOf({}));
 shouldBe(Reflect.toString(), "[object Object]");
+shouldBe(Reflect.hasOwnProperty, Object.prototype.hasOwnProperty);

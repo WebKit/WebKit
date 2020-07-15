@@ -1,3 +1,20 @@
+2020-07-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Emit HasOwnPropertyFunctionCallDotNode for "Reflect" identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=214325
+
+        Reviewed by Darin Adler and Saam Barati.
+
+        Currently, HasOwnPropertyFunctionCallDotNode is emitted for all ResolveNodes
+        except ones with "Reflect" identifier. This exception doesn't seem necessary
+        as ReflectObject inherits ordinary `Object.prototype.hasOwnProperty` method.
+
+        This patch removes the exception, advancing provided "Reflect" microbenchmark
+        by 20%. No behavior change.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+
 2020-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSCTEST_hardTimeout

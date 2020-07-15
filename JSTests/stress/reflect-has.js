@@ -16,6 +16,7 @@ function shouldThrow(func, message) {
         throw new Error("bad error: " + String(error));
 }
 
+shouldBe(Reflect.hasOwnProperty("has"), true);
 shouldBe(Reflect.has.length, 2);
 
 shouldThrow(() => {

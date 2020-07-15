@@ -1455,7 +1455,7 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
         && args->m_listNode->m_expr
         && args->m_listNode->m_expr->isResolveNode()
         && !args->m_listNode->m_next
-        && ((dot->base()->isResolveNode() && static_cast<ResolveNode*>(dot->base())->identifier() != m_vm.propertyNames->Reflect) || dot->base()->isThisNode())) {
+        && (dot->base()->isResolveNode() || dot->base()->isThisNode())) {
         // We match the AST pattern:
         // <resolveNode|thisNode>.hasOwnProperty(<resolveNode>)
         // i.e:
