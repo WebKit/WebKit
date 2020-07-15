@@ -37,6 +37,9 @@ swipe [ Pass ]
 # ask for triaging.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# Accessibility
+webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
+
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 
@@ -118,16 +121,6 @@ Bug(GTK) fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 # This port doesn't support detecting slow unload handlers.
 Bug(GTK) fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
 Bug(GTK) fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]
-
-# Accessibility tests that should never be run for GTK due to be
-# written in a platform-specific way. They should either be moved to
-# the right platform or re-written in a more platform-agnostic way.
-webkit.org/b/98348 accessibility/internal-link-anchors2.html [ Skip ]
-# Things specific to AX API (at least at the moment)
-webkit.org/b/98348 accessibility/radio-button-group-members.html [ Skip ]
-webkit.org/b/141074 accessibility/auto-filled-value.html [ Skip ]
-webkit.org/b/156045 accessibility/attachment-element.html [ Skip ]
-webkit.org/b/193623 accessibility/set-selected-editable.html [ Skip ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
@@ -752,10 +745,6 @@ webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 
 # This tests fail since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
 webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure Timeout ]
-
-# Text marker tests are not supported
-webkit.org/b/153292 accessibility/text-marker [ Skip ]
-webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ]
 
 # WebKitGTK+ doesn't have killring support.
 webkit.org/b/152379 editing/pasteboard/emacs-killring-alternating-append-prepend.html [ Failure ]
@@ -2322,8 +2311,6 @@ webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
-webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
-
 webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
 
 webkit.org/b/135086 media/video-seek-with-negative-playback.html [ Timeout Pass ]
@@ -2390,8 +2377,6 @@ webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout 
 webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
-
-webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
 webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 
@@ -2685,12 +2670,6 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure P
 # Need platform specific update to test to make it run.
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
-webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
-webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
-webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
-webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
-
 # Blur and focus events are not received for the following tests.
 Bug(GTK) fast/events/frame-tab-focus.html [ Failure ]
 
@@ -2975,8 +2954,6 @@ webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
 webkit.org/b/135529 svg/css/parse-length.html [ Failure ]
 webkit.org/b/135529 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 
-webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
-
 webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
 
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
@@ -2991,8 +2968,6 @@ webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFai
 
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 
-webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
-
 webkit.org/b/137695 webkit.org/b/198830 media/video-controls-audiotracks-trackmenu.html [ Failure Crash ]
 
 # Smooth scrolling causes failure of scrolling tests
@@ -3004,8 +2979,6 @@ webkit.org/b/159143 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
 
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
-
-webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 
 webkit.org/b/139354 fast/repaint/selection-ruby-rl.html [ Failure ]
 
@@ -3030,8 +3003,6 @@ webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
 
 webkit.org/b/143230 imported/mozilla/svg/filters/feImage-1.svg [ ImageOnlyFailure Pass ]
-
-webkit.org/b/143468 accessibility/plugin.html [ Failure ]
 
 webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
 
@@ -3551,8 +3522,6 @@ webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFa
 
 webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
-webkit.org/b/199860 accessibility/datalist.html [ Failure ]
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]

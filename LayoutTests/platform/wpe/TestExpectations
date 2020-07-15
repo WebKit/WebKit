@@ -259,20 +259,6 @@ fast/events/ios [ Skip ]
 fast/events/touch/ios [ Skip ]
 fast/events/touch/gesture [ Skip ]
 
-# Accessibility tests that should never be run for WPE due to be
-# written in a platform-specific way. They should either be moved to
-# the right platform or re-written in a more platform-agnostic way.
-webkit.org/b/98348 accessibility/internal-link-anchors2.html [ Skip ]
-# Things specific to AX API (at least at the moment)
-webkit.org/b/98348 accessibility/radio-button-group-members.html [ Skip ]
-webkit.org/b/141074 accessibility/auto-filled-value.html [ Skip ]
-webkit.org/b/156045 accessibility/attachment-element.html [ Skip ]
-webkit.org/b/193623 accessibility/set-selected-editable.html [ Skip ]
-
-# Text marker tests are not supported
-webkit.org/b/153292 accessibility/text-marker [ Skip ]
-webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ]
-
 # These are failures that will be enabled once the relevant parts of implementation land.
 webkit.org/b/133122 crypto/workers/subtle/aes-indexeddb.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/ec-postMessage-worker.html [ Skip ]
@@ -1199,9 +1185,6 @@ webkit.org/b/174459 fast/images/sprite-sheet-image-draw.html [ Timeout ]
 
 webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 
-webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
-webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
-
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
 
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
@@ -1364,17 +1347,8 @@ Bug(WPE) security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src
 Bug(WPE) security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
 
 # accessibility/
-webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
-webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
-webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
-webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
-webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
-webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
-webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
-webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
-webkit.org/b/143468 accessibility/plugin.html [ Failure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 webkit.org/b/161583 accessibility/auto-fill-types.html [ Failure ]
 webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
@@ -1914,8 +1888,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
 webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
-webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
-webkit.org/b/199860 accessibility/datalist.html [ Failure ]
 webkit.org/b/200302 accessibility/media-with-aria-label.html [ Failure ]
 
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
