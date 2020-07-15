@@ -1,3 +1,19 @@
+2020-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        build-webkit script tries to execute command xcodebuild on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=214353
+
+        Reviewed by Jonathan Bedard.
+
+        Recently, when running the script build-webkit on Linux the following warning is printed:
+        Can't exec "xcodebuild": No such file or directory at Tools/Scripts/webkitdirs.pm line 602
+
+        To fix this, change the code to only call the function determineXcodeSDK() when
+        building for an Apple/Cocoa platform.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+
 2020-07-15  Jim Mason  <jmason@ibinx.com>
 
         [WTF] Fix PackedAlignedPtr for X86_64 canonical addresses

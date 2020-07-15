@@ -388,10 +388,10 @@ sub determineArchitecture
     return if defined $architecture;
 
     determineBaseProductDir();
-    determineXcodeSDK();
     $architecture = nativeArchitecture();
 
     if (isAppleCocoaWebKit()) {
+        determineXcodeSDK();
         if (open ARCHITECTURE, "$baseProductDir/Architecture") {
             $architecture = <ARCHITECTURE>;
             close ARCHITECTURE;
