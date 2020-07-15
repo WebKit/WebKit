@@ -1,3 +1,14 @@
+2020-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [ iOS ] fast/scrolling/ios/programm atic-scroll-while-zoomed.ht ml and fast/scrolling/ios/autoscro ll-input-when-very-zoomed.h tml are failing on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=214358
+        <rdar://problem/65609413>
+
+        Unreviewed test gardening. These tests need iPad results.
+
+        * platform/ipad/fast/scrolling/ios/autoscroll-input-when-very-zoomed-expected.txt:
+        * platform/ipad/fast/scrolling/ios/programmatic-scroll-while-zoomed-expected.txt: Added.
+
 2020-07-15  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/svg from upstream
