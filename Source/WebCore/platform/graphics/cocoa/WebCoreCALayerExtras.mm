@@ -88,4 +88,32 @@
     return layerHost;
 }
 
+- (BOOL)_web_maskContainsPoint:(CGPoint)point
+{
+    if (!self.mask)
+        return NO;
+
+    CGPoint pointInMask = [self.mask convertPoint:point fromLayer:self];
+    if (auto *shapeMask = dynamic_objc_cast<CAShapeLayer>(self.mask)) {
+        bool isEvenOddFill = [shapeMask.fillRule isEqualToString:kCAFillRuleEvenOdd];
+        return CGPathContainsPoint(shapeMask.path, nullptr, pointInMask, isEvenOddFill);
+    }
+
+    return [self.mask containsPoint:pointInMask];
+}
+
+- (BOOL)_web_maskMayIntersectRect:(CGRect)rect
+{
+    if (!self.mask)
+        return NO;
+
+    CGRect rectInMask = [self.mask convertRect:rect fromLayer:self];
+    if (auto *shapeMask = dynamic_objc_cast<CAShapeLayer>(self.mask)) {
+        CGRect pathBounds = CGPathGetPathBoundingBox(shapeMask.path);
+        return CGRectIntersectsRect(pathBounds, rectInMask);
+    }
+
+    return CGRectIntersectsRect(self.mask.bounds, rectInMask);
+}
+
 @end

@@ -230,10 +230,10 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         CAShapeLayer *shapeLayer = (CAShapeLayer *)layer;
         switch (properties.windRule) {
         case WindRule::NonZero:
-            shapeLayer.fillRule = @"non-zero";
+            shapeLayer.fillRule = kCAFillRuleNonZero;
             break;
         case WindRule::EvenOdd:
-            shapeLayer.fillRule = @"even-odd";
+            shapeLayer.fillRule = kCAFillRuleEvenOdd;
             break;
         }
     }

@@ -966,7 +966,7 @@ WindRule PlatformCALayerCocoa::shapeWindRule() const
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
     NSString *fillRule = [(CAShapeLayer *)m_layer fillRule];
-    if ([fillRule isEqualToString:@"even-odd"])
+    if ([fillRule isEqualToString:kCAFillRuleEvenOdd])
         return WindRule::EvenOdd;
 
     return WindRule::NonZero;
@@ -978,10 +978,10 @@ void PlatformCALayerCocoa::setShapeWindRule(WindRule windRule)
 
     switch (windRule) {
     case WindRule::NonZero:
-        [(CAShapeLayer *)m_layer setFillRule:@"non-zero"];
+        [(CAShapeLayer *)m_layer setFillRule:kCAFillRuleNonZero];
         break;
     case WindRule::EvenOdd:
-        [(CAShapeLayer *)m_layer setFillRule:@"even-odd"];
+        [(CAShapeLayer *)m_layer setFillRule:kCAFillRuleEvenOdd];
         break;
     }
 }

@@ -1,3 +1,36 @@
+2020-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        itsnicethat.com page is sometimes non-scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=214362
+        <rdar://problem/65431127>
+
+        Reviewed by Tim Horton.
+
+        This page uses 'clip-path: inset(1px); on a 1px x 1px element to hit descendants from
+        hit-testing and compositing code turns this into a layer mask using a CAShapeLayer.
+        Our layer/view hit-testing code failed to check for masking; if a layer has a mask,
+        it needs to be handled like -masksToBounds, in that points outside the mask should
+        never hit descendant layers.
+
+        Make a -_web_maskContainsPoint: to test whether the point is inside the mask layer,
+        and _web_maskMayIntersectRect: which does approximate testing using path bounds
+        intersection (this is used for editable regions).
+
+        Also convert some hard-coded winding rule strings to use the CA constants.
+
+        Tests: fast/scrolling/ios/clip-path-hit-test.html
+               fast/scrolling/mac/clip-path-hit-test.html
+
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+        (collectDescendantLayersAtPoint):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::shapeWindRule const):
+        (WebCore::PlatformCALayerCocoa::setShapeWindRule):
+        * platform/graphics/cocoa/WebCoreCALayerExtras.h:
+        * platform/graphics/cocoa/WebCoreCALayerExtras.mm:
+        (-[CALayer _web_maskContainsPoint:]):
+        (-[CALayer _web_maskMayIntersectRect:]):
+
 2020-07-15  Mark Lam  <mark.lam@apple.com>
 
         Add handling of out of memory handling while adding a worklet module.

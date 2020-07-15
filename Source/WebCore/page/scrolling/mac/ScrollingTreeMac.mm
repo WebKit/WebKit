@@ -35,6 +35,7 @@
 #import "ScrollingTreeOverflowScrollingNodeMac.h"
 #import "ScrollingTreePositionedNode.h"
 #import "ScrollingTreeStickyNode.h"
+#import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
 #import "WheelEventTestMonitor.h"
 #import <wtf/text/TextStream.h>
@@ -81,6 +82,9 @@ using LayerAndPoint = std::pair<CALayer *, FloatPoint>;
 static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint point)
 {
     if (parent.masksToBounds && ![parent containsPoint:point])
+        return;
+
+    if (parent.mask && ![parent _web_maskContainsPoint:point])
         return;
 
     for (CALayer *layer in [parent sublayers]) {

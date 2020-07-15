@@ -36,6 +36,7 @@
 #import "WKDrawingView.h"
 #import <WebCore/Region.h>
 #import <WebCore/TransformationMatrix.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
@@ -44,6 +45,9 @@ namespace WebKit {
 static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UIView *parent, CGPoint point, UIEvent *event)
 {
     if (parent.clipsToBounds && ![parent pointInside:point withEvent:event])
+        return;
+
+    if (parent.layer.mask && ![parent.layer _web_maskContainsPoint:point])
         return;
 
     for (UIView *view in [parent subviews]) {
@@ -86,6 +90,9 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
 static void collectDescendantViewsInRect(Vector<UIView *, 16>& viewsInRect, UIView *parent, CGRect rect)
 {
     if (parent.clipsToBounds && !CGRectIntersectsRect(parent.bounds, rect))
+        return;
+
+    if (parent.layer.mask && ![parent.layer _web_maskMayIntersectRect:rect])
         return;
 
     for (UIView *view in parent.subviews) {
