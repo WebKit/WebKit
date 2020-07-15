@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
@@ -38,7 +39,7 @@ class Worklet final : public RefCounted<Worklet>, public ScriptWrappable {
 public:
     static Ref<Worklet> create();
     
-    void addModule(Document&, const String& moduleURL);
+    ExceptionOr<void> addModule(Document&, const String& moduleURL);
 
 private:
     Worklet();

@@ -1,3 +1,23 @@
+2020-07-15  Mark Lam  <mark.lam@apple.com>
+
+        Add handling of out of memory handling while adding a worklet module.
+        https://bugs.webkit.org/show_bug.cgi?id=214354
+        <rdar://problem/65271931>
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        Add VM::tryCreate() that can fail if we encounter an out of memory issue.
+        As always, we're taking a best effort approach to handling out of memory errors.
+        Hence, we will not attempt to exhaustively handle every OOME scenario.  This patch
+        only checks for failure to allocate a BigInt due to Gigacage exhaustion.  While it
+        doesn't handle other allocation errors, it does enable us to add handling of other
+        cases in the future as needed.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::tryCreate):
+        * runtime/VM.h:
+
 2020-07-15  Jim Mason  <jmason@ibinx.com>
 
         [WTF] Fix PackedAlignedPtr for X86_64 canonical addresses

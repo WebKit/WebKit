@@ -262,7 +262,7 @@ inline unsigned VM::nextID()
 
 static bool vmCreationShouldCrash = false;
 
-VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop)
+VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     : m_id(nextID())
     , m_apiLock(adoptRef(new JSLock(this)))
     , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
@@ -464,8 +464,14 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop)
     }
     {
         auto* bigInt = JSBigInt::tryCreateFrom(*this, 1);
-        RELEASE_ASSERT(bigInt);
-        heapBigIntConstantOne.set(*this, bigInt);
+        if (bigInt)
+            heapBigIntConstantOne.set(*this, bigInt);
+        else {
+            if (success)
+                *success = false;
+            else
+                RELEASE_ASSERT(bigInt);
+        }
     }
 
     Thread::current().setCurrentAtomStringTable(existingEntryAtomStringTable);
@@ -672,6 +678,28 @@ Ref<VM> VM::createContextGroup(HeapType heapType)
 Ref<VM> VM::create(HeapType heapType, WTF::RunLoop* runLoop)
 {
     return adoptRef(*new VM(Default, heapType, runLoop));
+}
+
+RefPtr<VM> VM::tryCreate(HeapType heapType, WTF::RunLoop* runLoop)
+{
+    bool success = true;
+    RefPtr<VM> vm = adoptRef(new VM(Default, heapType, runLoop, &success));
+    if (!success) {
+        // Here, we're destructing a partially constructed VM and we know that
+        // no one else can be using it at the same time. So, acquiring the lock
+        // is superflous. However, we don't want to change how VMs are destructed.
+        // Just going through the motion of acquiring the lock here allows us to
+        // use the standard destruction process.
+
+        // VM expects us to be holding the VM lock when destructing it. Acquiring
+        // the lock also puts the VM in a state (e.g. acquiring heap access) that
+        // is needed for destruction. The lock will hold the last reference to
+        // the VM after we nullify the refPtr below. The VM will actually be
+        // destructed in JSLockHolder's destructor.
+        JSLockHolder lock(vm.get());
+        vm = nullptr;
+    }
+    return vm;
 }
 
 bool VM::sharedInstanceExists()

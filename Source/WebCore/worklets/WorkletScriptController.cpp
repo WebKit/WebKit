@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,8 +47,8 @@
 namespace WebCore {
 using namespace JSC;
 
-WorkletScriptController::WorkletScriptController(WorkletGlobalScope* workletGlobalScope)
-    : m_vm(VM::create())
+WorkletScriptController::WorkletScriptController(Ref<VM>&& vm, WorkletGlobalScope* workletGlobalScope)
+    : m_vm(WTFMove(vm))
     , m_workletGlobalScope(workletGlobalScope)
     , m_workletGlobalScopeWrapper(*m_vm)
 {

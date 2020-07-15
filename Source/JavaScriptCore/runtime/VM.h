@@ -314,6 +314,7 @@ public:
     JS_EXPORT_PRIVATE static VM& sharedInstance();
 
     JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = SmallHeap, WTF::RunLoop* = nullptr);
+    JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = SmallHeap, WTF::RunLoop* = nullptr);
     static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
@@ -1101,7 +1102,7 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
 
-    VM(VMType, HeapType, WTF::RunLoop* = nullptr);
+    VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
 

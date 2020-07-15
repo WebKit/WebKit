@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 
 namespace JSC {
 class JSObject;
+class VM;
 } // namespace JSC
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class JSDOMGlobalObject;
 class PaintWorkletGlobalScope : public WorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(PaintWorkletGlobalScope);
 public:
-    static Ref<PaintWorkletGlobalScope> create(Document&, ScriptSourceCode&&);
+    static RefPtr<PaintWorkletGlobalScope> tryCreate(Document&, ScriptSourceCode&&);
 
     ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, const String& name, JSC::Strong<JSC::JSObject> paintConstructor);
     double devicePixelRatio() const;
@@ -72,7 +73,7 @@ public:
     }
 
 private:
-    PaintWorkletGlobalScope(Document&, ScriptSourceCode&&);
+    PaintWorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);
 
     ~PaintWorkletGlobalScope()
     {

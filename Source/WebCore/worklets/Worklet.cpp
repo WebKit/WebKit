@@ -46,16 +46,21 @@ Worklet::Worklet()
 {
 }
 
-void Worklet::addModule(Document& document, const String& moduleURL)
+ExceptionOr<void> Worklet::addModule(Document& document, const String& moduleURL)
 {
     // FIXME: We should download the source from the URL
     // https://bugs.webkit.org/show_bug.cgi?id=191136
-    auto context = PaintWorkletGlobalScope::create(document, ScriptSourceCode(moduleURL));
+    auto maybeContext = PaintWorkletGlobalScope::tryCreate(document, ScriptSourceCode(moduleURL));
+    if (UNLIKELY(!maybeContext))
+        return Exception { OutOfMemoryError };
+    auto context = maybeContext.releaseNonNull();
     context->evaluate();
 
     auto locker = holdLock(context->paintDefinitionLock());
     for (auto& name : context->paintDefinitionMap().keys())
         document.setPaintWorkletGlobalScopeForName(name, makeRef(context.get()));
+
+    return { };
 }
 
 } // namespace WebCore

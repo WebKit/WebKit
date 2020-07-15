@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,9 +47,9 @@ using namespace Inspector;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
-WorkletGlobalScope::WorkletGlobalScope(Document& document, ScriptSourceCode&& code)
+WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
     : m_document(makeWeakPtr(document))
-    , m_script(makeUnique<WorkletScriptController>(this))
+    , m_script(makeUnique<WorkletScriptController>(WTFMove(vm), this))
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_code(WTFMove(code))
 {

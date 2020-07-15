@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
@@ -139,6 +139,8 @@ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec
 
     if (ec == StackOverflowError)
         return createStackOverflowError(lexicalGlobalObject);
+    if (ec == OutOfMemoryError)
+        return createOutOfMemoryError(lexicalGlobalObject);
 
     // FIXME: All callers to createDOMException need to pass in the correct global object.
     // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:

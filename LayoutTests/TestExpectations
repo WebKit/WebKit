@@ -1108,6 +1108,9 @@ webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure 
 webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure ]
 
+# Skip this because it is too slow on debug builds.
+[ Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Skip ]
+
 # official flexbox tests
 webkit.org/b/143294 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-height-animation-stretch.html [ Pass ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-align-items-center.html [ ImageOnlyFailure ]

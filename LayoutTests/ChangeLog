@@ -1,3 +1,24 @@
+2020-07-15  Mark Lam  <mark.lam@apple.com>
+
+        Add handling of out of memory handling while adding a worklet module.
+        https://bugs.webkit.org/show_bug.cgi?id=214354
+        <rdar://problem/65271931>
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        We're skipping the new test on Debug builds because it will always run too slow.
+        The Release build is sufficient to test this OOME handling.
+
+        * TestExpectations:
+        * fast/css-custom-paint/out-of-memory-while-adding-worklet-module-expected.txt: Added.
+        * fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html: Added.
+        * fast/css-custom-paint/script-tests: Added.
+        * fast/css-custom-paint/script-tests/out-of-memory-while-adding-worklet-module.js: Added.
+        (useAllMemory.try.get Object):
+        (useAllMemory.try.foo):
+        (useAllMemory):
+        (catch):
+
 2020-07-15  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS Debug ] fast/text-indicator/text-indicator-empty-link.html is a flaky crash
