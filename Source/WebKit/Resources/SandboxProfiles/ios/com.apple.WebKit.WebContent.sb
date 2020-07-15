@@ -1282,6 +1282,8 @@
                 host_get_special_port
                 host_info
                 host_request_notification
+                host_security_create_task_token
+                host_security_set_task_token
                 io_connect_add_client
                 io_connect_async_method
                 io_connect_map_memory_into_task
@@ -1295,6 +1297,7 @@
                 io_registry_entry_get_property_bytes
                 io_registry_entry_get_registry_entry_id
                 io_server_version
+                io_service_add_notification_bin
                 io_service_add_notification_bin_64
                 io_service_close
                 io_service_get_matching_service_bin
@@ -1319,7 +1322,7 @@
                 task_restartable_ranges_synchronize
                 task_set_exc_guard_behavior
                 task_set_special_port
-                (when (defined? 'task_threads_from_user) task_threads_from_user)
+                task_threads_from_user
                 thread_get_state_to_user
                 thread_info
                 thread_policy

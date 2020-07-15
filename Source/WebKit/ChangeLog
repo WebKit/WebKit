@@ -1,3 +1,15 @@
+2020-07-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add missing messages to message filter in WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=214334
+        <rdar://problem/65529952>
+
+        Reviewed by Brent Fulgham.
+
+        Allow some messages which are required in the message filter in the WebContent process on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264101): Sharing a link attaches an image instead of the URL
