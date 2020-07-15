@@ -2520,6 +2520,18 @@ static void startTimeoutTimer(Seconds duration)
             vm.notifyNeedShellTimeoutCheck();
             return VMInspector::FunctorStatus::Done;
         });
+
+        if (const char* timeoutString = getenv("JSCTEST_hardTimeout")) {
+            double hardTimeoutInDouble = 0;
+            if (sscanf(timeoutString, "%lf", &hardTimeoutInDouble) != 1)
+                dataLog("WARNING: hardTimeout string is malformed, got ", timeoutString, " but expected a number. Not using a timeout.\n");
+            else {
+                Seconds hardTimeout { hardTimeoutInDouble };
+                sleep(hardTimeout);
+                dataLogLn("HARD TIMEOUT after ", hardTimeout);
+                exit(EXIT_FAILURE);
+            }
+        }
     });
 }
 

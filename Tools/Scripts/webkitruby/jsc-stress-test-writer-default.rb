@@ -256,6 +256,7 @@ class Plan
 
         script += "export DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd)\n"
         script += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])}\n"
+        script += "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])}\n"
         script += "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])}\n"
         $envVars.each { |var| script += "export " << var << "\n" }
         script += "#{shellCommand} || exit 1"

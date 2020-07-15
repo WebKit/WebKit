@@ -570,6 +570,7 @@ if ($coverage) {
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{JSCTEST_timeout} = 120 unless $ENV{JSCTEST_timeout}; # Set a 120 second timeout on all jsc tests (if environment variable not defined already).
+$ENV{JSCTEST_hardTimeout} = 300 unless $ENV{JSCTEST_hardTimeout}; # Set a 300 second hard timeout on all jsc tests (if environment variable not defined already). If the test does not finish after 300 seconds from soft-timeout, we terminate the shell.
 $ENV{TZ}="US/Pacific"; # Some tests fail if the time zone is not set to US/Pacific (<https://webkit.org/b/136363>)
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 

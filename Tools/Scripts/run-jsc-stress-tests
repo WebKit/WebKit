@@ -2105,6 +2105,7 @@ def runTestRunner(remoteIndex=0)
         remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
         remoteScript += "export LD_LIBRARY_PATH=#{remoteHost.remoteDirectory}/#{$outputDir.basename}/#{$jscPath.dirname} && "
         remoteScript += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && "
+        remoteScript += "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])} && "
         remoteScript += "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])} && "
         remoteScript += "export TZ=#{Shellwords.shellescape(ENV['TZ'])} && "
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
@@ -2237,6 +2238,8 @@ if ENV["JSCTEST_timeout"]
     # Increase the timeout proportionally to the number of processors.
     ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i.to_f * Math.sqrt($numChildProcesses)).to_i.to_s
 end
+
+# We do not adjust hardTimeout. If we are not producing any results during 1200 seconds, buildbot terminates the tests. So we should terminate hung tests.
 
 if !ENV["JSCTEST_memoryLimit"] && $memoryLimited
     ENV["JSCTEST_memoryLimit"] = (600 * 1024 * 1024).to_s

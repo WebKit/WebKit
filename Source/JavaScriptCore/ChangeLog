@@ -1,3 +1,30 @@
+2020-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JSCTEST_hardTimeout
+        https://bugs.webkit.org/show_bug.cgi?id=214343
+
+        Reviewed by Mark Lam.
+
+        JSC Debug tests are failing consistently these days, https://build.webkit.org/builders/Apple-Catalina-Debug-JSC-Tests/.
+        My guess is that some tests get stuck inside JSC even if timeout occurs. Let's consider the following case.
+
+            1. The test is having `JSC_useConcurrentJIT=0`.
+            2. The test is building super heavy FTL code in the main thread.
+            3. The timeout thread notifies the VM about the timeout.
+            4. But VM does not stop since it is running super heavy FTL compilation.
+            5. After 1200 seconds, buildbot terminates the entire test.
+
+        In the above case, JSC gets stuck, and eventually buildbot terminates.
+        In this patch, we introduce JSCTEST_hardTimeout. After soft-timeout (usual timeout) happens, we wait another JSCTEST_hardTimeout seconds.
+        And if the JSC shell is not finished, we forcefully terminates the JSC shell via exit(EXIT_FAILURE), to avoid entire JSC test termination
+        in buildbot.
+
+        We pick 300 seconds. This means, after soft-timeout occurs, we wait for 5 mins, and if the JSC shell is still active, kill it. 5 mins sounds
+        reasonable amount of time. And this should fit within buildbot's hard timeout (1200 seconds).
+
+        * jsc.cpp:
+        (startTimeoutTimer):
+
 2020-07-14  Saam Barati  <sbarati@apple.com>
 
         We must hold the CodeBlock lock when calling StructureStubInfo::reset
