@@ -29,7 +29,6 @@ list(APPEND WebCore_SOURCES
 
     platform/ScrollAnimationKinetic.cpp
     platform/ScrollAnimationSmooth.cpp
-    platform/UserAgentQuirks.cpp
 
     platform/generic/KeyedDecoderGeneric.cpp
     platform/generic/KeyedEncoderGeneric.cpp
