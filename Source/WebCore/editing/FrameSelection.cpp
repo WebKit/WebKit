@@ -1784,11 +1784,11 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
 
 void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
 {
-    if (m_selection.isCaret() && m_caretPaint)
-        CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
+    if (m_selection.isCaret() && m_caretPaint && m_selection.start().deprecatedNode())
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
 }
 
-Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, Node* node)
+Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
 {
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -1809,26 +1809,27 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, Node* node)
 #endif
 }
 
-void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_caretVisibility == Hidden)
         return;
 
-    LayoutRect drawingRect = localCaretRectWithoutUpdate();
-    if (auto* renderer = rendererForCaretPainting(node))
+    auto drawingRect = localCaretRectWithoutUpdate();
+    if (auto* renderer = rendererForCaretPainting(&node))
         renderer->flipForWritingMode(drawingRect);
-    drawingRect.moveBy(roundedIntPoint(paintOffset));
-    LayoutRect caret = intersection(drawingRect, clipRect);
+    drawingRect.moveBy(paintOffset);
+    auto caret = intersection(drawingRect, clipRect);
     if (caret.isEmpty())
         return;
 
     Color caretColor = Color::black;
-    Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
+    auto* element = is<Element>(node) ? downcast<Element>(&node) : node.parentElement();
     if (element && element->renderer())
-        caretColor = CaretBase::computeCaretColor(element->renderer()->style(), node);
+        caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
-    context.fillRect(caret, caretColor);
+    auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
+    context.fillRect(pixelSnappedCaretRect, caretColor);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
@@ -2287,8 +2288,8 @@ void FrameSelection::setFocusedElementIfNeeded()
 void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
-    if (m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
+    if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);

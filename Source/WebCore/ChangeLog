@@ -1,3 +1,27 @@
+2020-07-14  Zalan Bujtas  <zalan@apple.com>
+
+        Caret leaves trails behind when the editable content is subpixel positioned
+        https://bugs.webkit.org/show_bug.cgi?id=214333
+        <rdar://problem/61914738>
+
+        Reviewed by Simon Fraser.
+
+        Replace integral rounding with pixelsnapping when painting the caret.
+
+        The paint invalidation uses device pixel snapping and the actual painting needs to match it
+        in order to not paint outside of the invalidated region.
+
+        * editing/Editing.cpp:
+        (WebCore::caretRendersInsideNode):
+        (WebCore::rendererForCaretPainting):
+        * editing/Editing.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::paintCaret):
+        (WebCore::CaretBase::computeCaretColor):
+        (WebCore::CaretBase::paintCaret const):
+        (WebCore::DragCaretController::paintDragCaret const):
+        * editing/FrameSelection.h:
+
 2020-07-14  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] vertexAttribI* and getFragDataLocation

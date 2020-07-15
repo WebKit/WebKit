@@ -1272,12 +1272,12 @@ Element* deprecatedEnclosingBlockFlowElement(Node* node)
     return nullptr;
 }
 
-static inline bool caretRendersInsideNode(Node& node)
+static inline bool caretRendersInsideNode(const Node& node)
 {
     return !isRenderedTable(&node) && !editingIgnoresContent(node);
 }
 
-RenderBlock* rendererForCaretPainting(Node* node)
+RenderBlock* rendererForCaretPainting(const Node* node)
 {
     if (!node)
         return nullptr;

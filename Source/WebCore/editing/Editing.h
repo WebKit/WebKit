@@ -205,7 +205,7 @@ const String& nonBreakingSpaceString();
 
 // Miscellaneous functions for caret rendering.
 
-RenderBlock* rendererForCaretPainting(Node*);
+RenderBlock* rendererForCaretPainting(const Node*);
 LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition&, RenderBlock*&);
 LayoutRect localCaretRectInRendererForRect(LayoutRect&, Node*, RenderObject*, RenderBlock*&);
 IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect&, bool* insideFixed = nullptr);
