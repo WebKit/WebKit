@@ -37,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-computed.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-shorthand.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-computed.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-valid.svg

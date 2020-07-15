@@ -1,3 +1,14 @@
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/svg from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214323
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/svg from upstream b2a666d93581a71e9338b2.
+
+        * platform/mac/imported/w3c/web-platform-tests/svg/*: Updated.
+
 2020-07-15  Daniel Bates  <dabates@apple.com>
 
         [iOS] Caret should be before text placeholder instead of after it

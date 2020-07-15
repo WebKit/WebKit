@@ -1,0 +1,3 @@
+
+PASS No repeat iteration at interval end 
+

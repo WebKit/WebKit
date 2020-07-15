@@ -1,0 +1,3 @@
+
+FAIL Path animation where coordinate modes of start and end differ (M-m, A-a and Z) assert_equals: expected "m -77.50 37.50 a 152.50 162.50 37.50 1.00 1.00 75.00 55.00 m 60.00 -12.50 a 172.50 182.50 97.50 1.00 1.00 220.00 142.50 Z m 225.00 15.00" but got "M -77.50 37.50 A 152.50 162.50 37.50 1.00 1.00 -2.50 92.50 M 57.50 80.00 A 172.50 182.50 97.50 1.00 1.00 277.50 222.50 Z M 307.50 132.50"
+

@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (100,54) size 97x59
+    RenderSVGText {text} at (100,54) size 97x59 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 72x58
+        RenderSVGInlineText {#text} at (0,0) size 72x58
+          chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 1 width 22.19: "a"
+          chunk 1 text run 1 at (143.55,100.00) startOffset 0 endOffset 1 width 28.15 RTL: "\x{5D1}"
+      RenderSVGInlineText {#text} at (22,0) size 75x58
+        chunk 1 text run 1 at (122.19,100.00) startOffset 0 endOffset 1 width 21.36 RTL: "\x{5D2}"
+        chunk 1 text run 1 at (171.70,100.00) startOffset 0 endOffset 1 width 25.00: "b"

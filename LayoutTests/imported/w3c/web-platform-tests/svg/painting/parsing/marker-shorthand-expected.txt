@@ -1,0 +1,10 @@
+
+PASS e.style['marker'] = "none" should set marker-end 
+PASS e.style['marker'] = "none" should set marker-mid 
+PASS e.style['marker'] = "none" should set marker-start 
+PASS e.style['marker'] = "none" should not set unrelated longhands 
+PASS e.style['marker'] = "url(\"https://example.com/\")" should set marker-end 
+PASS e.style['marker'] = "url(\"https://example.com/\")" should set marker-mid 
+PASS e.style['marker'] = "url(\"https://example.com/\")" should set marker-start 
+PASS e.style['marker'] = "url(\"https://example.com/\")" should not set unrelated longhands 
+

@@ -2573,6 +2573,8 @@
         "web-platform-tests/service-workers/service-worker/multi-globals/current/current.https.html",
         "web-platform-tests/service-workers/service-worker/multi-globals/incumbent/incumbent.https.html",
         "web-platform-tests/service-workers/service-worker/multi-globals/relevant/relevant.https.html",
+        "web-platform-tests/svg/animations/end-of-time-crash.html",
+        "web-platform-tests/svg/text/reftests/text-display-contents-crash.html",
         "web-platform-tests/test_keys_wdspec.html",
         "web-platform-tests/upgrade-insecure-requests/support/post-origin-to-parent.html",
         "web-platform-tests/webmessaging/message-channels/004-1.html",

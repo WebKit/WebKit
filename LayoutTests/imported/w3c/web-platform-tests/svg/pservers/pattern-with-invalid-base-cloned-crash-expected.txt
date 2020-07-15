@@ -1,3 +1,0 @@
-
-PASS pattern-with-invalid-base-cloned-crash 
-

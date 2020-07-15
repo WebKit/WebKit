@@ -1,0 +1,3 @@
+
+PASS Timed element not active after first interval active duration changes to unresolved 
+

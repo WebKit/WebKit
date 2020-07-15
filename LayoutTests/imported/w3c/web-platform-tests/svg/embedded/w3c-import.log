@@ -17,3 +17,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-viewref-with-viewbox.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-inline-style.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity.svg

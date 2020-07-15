@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x212
+  RenderBlock {HTML} at (0,0) size 800x212
+    RenderBody {BODY} at (8,16) size 784x188
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 273x18
+          text run at (0,0) width 273: "You should see a green square, and no red."
+      RenderBlock (anonymous) at (0,34) size 784x154
+        RenderSVGRoot {svg} at (8,50) size 100x100
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+            RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+              RenderSVGRect {rect} at (8,50) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+              RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+                RenderSVGRect {rect} at (8,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGContainer {g} at (8,50) size 100x100
+            RenderSVGContainer {use} at (8,50) size 100x100
+              RenderSVGViewportContainer {svg} at (8,50) size 100x100
+                RenderSVGRect {rect} at (8,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderText {#text} at (0,0) size 0x0

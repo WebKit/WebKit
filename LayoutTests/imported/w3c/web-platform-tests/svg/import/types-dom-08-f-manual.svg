@@ -135,7 +135,7 @@
         drawString( "[circle1] " + bbox.x + " " + bbox.y + " " + bbox.width + " " + bbox.height , verifyBBox( bbox, -80, -80, 200, 200, 1 / 65535 ));
 
         bbox = document.getElementById( "rect4" ).getBBox( );
-        drawString( "[rect4] " + bbox.x + " " + bbox.y + " " + bbox.width + " " + bbox.height, verifyBBox( bbox, 0, 0, 0, 0, 1 / 65535 ));
+        drawString( "[rect4] " + bbox.x + " " + bbox.y + " " + bbox.width + " " + bbox.height, verifyBBox( bbox, 10, 10, 400, 0, 1 / 65535 ));
 
         bbox = document.getElementById( "myUse" ).getBBox( );
         drawString( "[myUse] " + bbox.x + " " + bbox.y + " " + bbox.width + " " + bbox.height , verifyBBox( bbox, -30, -20, 60, 40, 1 / 65535 ));

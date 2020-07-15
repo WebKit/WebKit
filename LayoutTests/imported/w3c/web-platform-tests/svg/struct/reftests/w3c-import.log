@@ -14,6 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-with-revalidation.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-with-revalidation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-001.svg

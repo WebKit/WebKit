@@ -3,4 +3,7 @@ PASS e.style['stroke-dashoffset'] = "auto" should not set the property value
 PASS e.style['stroke-dashoffset'] = "-10.px" should not set the property value 
 PASS e.style['stroke-dashoffset'] = "30deg" should not set the property value 
 PASS e.style['stroke-dashoffset'] = "40px 50%" should not set the property value 
+PASS e.style['stroke-dashoffset'] = "calc(2px + 3)" should not set the property value 
+FAIL e.style['stroke-dashoffset'] = "calc(10% + 5)" should not set the property value assert_equals: expected "" but got "calc(5 + 10%)"
+PASS e.style['stroke-dashoffset'] = "calc(40 + calc(3px + 6%))" should not set the property value 
 

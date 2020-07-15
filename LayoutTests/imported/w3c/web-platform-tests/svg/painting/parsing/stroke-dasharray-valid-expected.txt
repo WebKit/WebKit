@@ -6,4 +6,7 @@ PASS e.style['stroke-dasharray'] = "calc(2em + 3ex)" should set the property val
 PASS e.style['stroke-dasharray'] = "10pt 20% 30pc 40in" should set the property value 
 PASS e.style['stroke-dasharray'] = "10vmin, 20vmax, 30em, 40ex" should set the property value 
 PASS e.style['stroke-dasharray'] = "0, 5" should set the property value 
+PASS e.style['stroke-dasharray'] = "calc(3)" should set the property value 
+PASS e.style['stroke-dasharray'] = "calc(2 + 1)" should set the property value 
+PASS e.style['stroke-dasharray'] = "calc(2 + (7 - 5))" should set the property value 
 

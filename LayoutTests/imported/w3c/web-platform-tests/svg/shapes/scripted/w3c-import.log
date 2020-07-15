@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/scripted/stroke-dashes-hit-at-high-scale.svg

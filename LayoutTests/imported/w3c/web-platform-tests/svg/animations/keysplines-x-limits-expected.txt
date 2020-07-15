@@ -1,0 +1,3 @@
+
+FAIL 'keySplines' with x-values outside of the 0 to 1 range assert_equals: first control point x less than zero expected 10 but got 182.52418518066406
+

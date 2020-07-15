@@ -14,12 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-display-contents-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002-ref.svg
@@ -66,3 +68,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/tspan-opacity-mixed-direction-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/tspan-opacity-mixed-direction.svg

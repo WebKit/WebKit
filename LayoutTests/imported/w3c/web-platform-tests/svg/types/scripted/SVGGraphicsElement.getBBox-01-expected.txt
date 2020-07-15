@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1"
+CONSOLE MESSAGE: Error: Problem parsing d="M3"
+CONSOLE MESSAGE: Error: Problem parsing points="47"
+CONSOLE MESSAGE: Error: Problem parsing points="47"
+
+PASS getBBox on detached element 
+PASS getBBox on polygon with no points attribute 
+PASS getBBox on polyline with no points attribute 
+PASS getBBox on path with no d attribute 
+PASS getBBox on path with no valid path segments in d attribute 
+PASS getBBox on polygon with no valid point in the points attribute 
+PASS getBBox on polyline with no valid point in the points attribute 
+PASS polygon doesn't contribute to parent bbox 
+PASS group with hidden child 
+PASS path doesn't contribute to parent bbox 
+PASS path with only invalid segments doesn't contribute to parent bbox 
+PASS polyline doesn't contribute to parent bbox 
+PASS polygon with no valid points doesn't contribute to parent bbox 
+PASS polyline with no valid points doesn't contribute to parent bbox 
+PASS getBBox on path with no height 
+PASS path with no height should contribute to parent bbox 
+PASS arc bbox should be tight 
+FAIL empty foreignObject does not contribute to parent bbox assert_approx_equals: x expected 5 +/- 5.960464477539063e-8 but got 0
+FAIL empty image does not contribute to parent bbox assert_approx_equals: x expected 5 +/- 5.960464477539063e-8 but got 0
+

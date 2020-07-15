@@ -1,0 +1,3 @@
+
+PASS Event dispatching on interval restart 
+

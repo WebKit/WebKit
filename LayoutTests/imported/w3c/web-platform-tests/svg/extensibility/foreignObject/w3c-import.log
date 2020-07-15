@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+backface-visibility
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -26,10 +26,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-margin-collapsing.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-paints-before-rect-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-paints-before-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-size.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-under-clip-path-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-under-defs-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/position-svg-root-in-foreign-object-expected.html

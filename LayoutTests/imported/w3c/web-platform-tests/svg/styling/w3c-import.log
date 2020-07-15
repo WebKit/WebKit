@@ -14,4 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/presentation-attributes-irrelevant.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/presentation-attributes-relevant.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/presentation-attributes-special-cases.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/presentation-attributes-unknown.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/presentation-attributes.js
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/required-properties.svg

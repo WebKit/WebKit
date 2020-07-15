@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/scripted/script-runs-in-shadow-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/scripted/script-style-attribute-csp-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/scripted/script-style-attribute-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/scripted/text-attrs-dxdy-have-length.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/scripted/text-attrs-xyrotate-have-length.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/scripted/text-tspan-attrs-have-length.svg

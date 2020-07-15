@@ -40,8 +40,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedPreserveAspectRatio.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedRect.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.getPointAtLength-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.getPointAtLength-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.getTotalLength-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInFill-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInStroke-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInStroke-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-01.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px-with-context.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px.html

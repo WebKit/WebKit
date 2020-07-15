@@ -1,3 +1,0 @@
-
-FAIL Test the behavior of one discard applied on another discard assert_approx_equals: expected 255 +/- 2 but got 0
-

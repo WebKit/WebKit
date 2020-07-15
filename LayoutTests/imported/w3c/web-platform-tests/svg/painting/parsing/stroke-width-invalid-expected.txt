@@ -3,4 +3,7 @@ PASS e.style['stroke-width'] = "auto" should not set the property value
 PASS e.style['stroke-width'] = "10px 20px" should not set the property value 
 FAIL e.style['stroke-width'] = "-1px" should not set the property value assert_equals: expected "" but got "-1px"
 FAIL e.style['stroke-width'] = "-10%" should not set the property value assert_equals: expected "" but got "-10%"
+PASS e.style['stroke-width'] = "calc(2px + 3)" should not set the property value 
+FAIL e.style['stroke-width'] = "calc(10% + 5)" should not set the property value assert_equals: expected "" but got "calc(5 + 10%)"
+PASS e.style['stroke-width'] = "calc(40 + calc(3px + 6%))" should not set the property value 
 

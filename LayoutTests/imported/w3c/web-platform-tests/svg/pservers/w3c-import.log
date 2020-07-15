@@ -15,4 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/inheritance.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/pattern-with-invalid-base-cloned-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/pattern-with-invalid-base-cloned-thcrash.html

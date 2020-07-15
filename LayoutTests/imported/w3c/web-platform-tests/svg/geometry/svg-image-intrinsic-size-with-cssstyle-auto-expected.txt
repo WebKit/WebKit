@@ -29,4 +29,6 @@ PASS <svg:image> 'auto' sizing with 200x100 svg image viewBox='0 0 400 100', att
 PASS <svg:image> 'auto' sizing with 200x100 svg image viewBox='0 0 400 100', attributes width='60' height='60' and CSS 'width:auto' 
 PASS <svg:image> 'auto' sizing with 200x100 svg image viewBox='0 0 400 100', attributes width='60' height='60' and CSS 'height:auto' 
 PASS <svg:image> 'auto' sizing with 200x100 svg image viewBox='0 0 400 100', attributes width='60' height='60' and CSS 'width:auto; height:auto' 
+FAIL <svg:image> 'auto' sizing with default sized svg image, attributes width='60' height='60' and CSS 'height:auto' assert_equals: expected 150 but got 30
+FAIL <svg:image> 'auto' sizing with default sized svg image, attributes width='60' height='60' and CSS 'width:auto' assert_equals: expected 300 but got 120
 

@@ -1,0 +1,3 @@
+
+FAIL Path animation where coordinate modes of start and end differ (L-l, V-v and H-h) assert_equals: expected "M -15.00 -15.00 l 30.00 15.00 v 15.00 h -15.00 Z" but got "M -15.00 -15.00 L 15.00 0.00 V 15.00 H 0.00 Z"
+

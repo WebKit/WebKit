@@ -21,3 +21,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-negative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect.svg

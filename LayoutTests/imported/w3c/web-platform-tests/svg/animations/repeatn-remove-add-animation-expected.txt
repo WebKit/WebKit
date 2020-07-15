@@ -1,3 +1,3 @@
 
-FAIL This removes and adds an animation element while the animation is repeating assert_approx_equals: 2.2 expected 0 +/- 2 but got 255
+FAIL Remove and add an animation element while the animation is repeating assert_equals: Expected repeatEvent event, but got beginEvent event instead expected "repeatEvent" but got "beginEvent"
 

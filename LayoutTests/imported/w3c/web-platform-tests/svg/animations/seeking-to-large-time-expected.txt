@@ -1,0 +1,3 @@
+
+PASS SVGSVGElement.prototype.setCurrentTime: Large time argument 
+

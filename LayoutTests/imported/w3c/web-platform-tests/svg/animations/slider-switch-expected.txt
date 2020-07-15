@@ -1,3 +1,5 @@
 
-FAIL Check correct event bases for onclick assert_equals: expected "block" but got "none"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Check correct event bases for onclick Test timed out
 

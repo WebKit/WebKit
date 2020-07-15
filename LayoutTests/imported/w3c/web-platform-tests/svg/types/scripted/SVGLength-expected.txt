@@ -1,3 +1,3 @@
 
-FAIL SVGLength interface assert_throws: function "function () { length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString'); }" did not throw
+FAIL SVGLength interface assert_throws_js: function "function () { length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString'); }" did not throw
 

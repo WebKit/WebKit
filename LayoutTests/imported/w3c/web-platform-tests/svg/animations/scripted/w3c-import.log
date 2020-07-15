@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/SVGAnimationElement-exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/SVGAnimationElement-getStartTime.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/end-element-on-inactive-element.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/onhover-syncbases.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/paced-value-animation-overwrites-keyTimes.html

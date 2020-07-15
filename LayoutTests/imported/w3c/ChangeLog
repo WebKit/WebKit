@@ -1,3 +1,15 @@
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/svg from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214323
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/svg from upstream b2a666d93581a71e9338b2.
+
+        * resources/resource-files.json:
+        * web-platform-tests/svg/*: Updated.
+
 2020-07-14  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/mimesniff from upstream
