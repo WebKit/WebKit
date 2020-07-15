@@ -42,6 +42,8 @@ list(APPEND WebDriver_SOURCES ${DERIVED_SOURCES_WEBDRIVER_DIR}/WebDriverAtoms.cp
 
 WEBKIT_EXECUTABLE_DECLARE(WebDriver)
 
+add_dependencies(WebDriver JavaScriptCoreSharedScripts)
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_EXECUTABLE(WebDriver)

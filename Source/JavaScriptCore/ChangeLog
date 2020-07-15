@@ -1,3 +1,12 @@
+2020-07-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][WebDriver] Generating WebDriverAtoms.cpp is rarely failing as "ImportError: No module named jsmin"
+        https://bugs.webkit.org/show_bug.cgi?id=214339
+
+        Reviewed by Don Olmstead.
+
+        * CMakeLists.txt: Renamed stageSharedScripts to JavaScriptCoreSharedScripts.
+
 2020-07-15  Mark Lam  <mark.lam@apple.com>
 
         Add handling of out of memory handling while adding a worklet module.

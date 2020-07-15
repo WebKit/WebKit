@@ -1,3 +1,16 @@
+2020-07-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][WebDriver] Generating WebDriverAtoms.cpp is rarely failing as "ImportError: No module named jsmin"
+        https://bugs.webkit.org/show_bug.cgi?id=214339
+
+        Reviewed by Don Olmstead.
+
+        There are a race condition between copying jsmin.py in
+        JavaScriptCore and using it in WebDriver. WebDriver target should
+        have a dependency to it.
+
+        * CMakeLists.txt: Added add_dependencies for WebDriver.
+
 2020-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Initializing the main thread should initialize the main run loop

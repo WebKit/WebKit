@@ -1410,8 +1410,8 @@ endif ()
 
 # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
 
-add_custom_target(stageSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
-add_dependencies(JavaScriptCore stageSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
+add_custom_target(JavaScriptCoreSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
+add_dependencies(JavaScriptCore JavaScriptCoreSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
 
 # JavaScriptCore target needs to have a direct or indirect dependency
 # of InspectorBackendCommands for CMake Visual Studio generator to
