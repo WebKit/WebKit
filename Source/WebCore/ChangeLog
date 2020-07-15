@@ -1,3 +1,43 @@
+2020-07-15  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Rename SmallestTrackStart to ExplicitGridStart
+        https://bugs.webkit.org/show_bug.cgi?id=214347
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The SmallestTrackStart method used to return a signed int which was
+        never positive, representing the smallest untranslated start among all
+        grid items, clamped by 0 as a maximum.
+
+        In practice, though, what we usually want is the index of the first
+        explicit track/line among all tracks/lines, or equivalently, the number
+        of leading implicit tracks/lines.
+
+        That number is precisely minus the return value of SmallestTrackStart.
+        Thus, in grid layout there were various std::abs() to invert the value.
+
+        But it's a bit confusing to have an API which returns a non-positive
+        integer, which then needs to be made non-negative. Therefore, this patch
+        renames SmallestTrackStart to ExplicitGridStart, and makes it return
+        the unsigned which is usually desired.
+
+        This patch should have no effect in practice.
+
+        This patch is a port of https://crrev.com/777768
+
+        * rendering/Grid.cpp:
+        (WebCore::Grid::setExplicitGridStart):
+        (WebCore::Grid::explicitGridStart const):
+        (WebCore::Grid::setNeedsItemsPlacement):
+        * rendering/Grid.h:
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::rawGridTrackSize const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat const):
+        (WebCore::RenderGrid::placeItemsOnGrid const):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator const):
+        (WebCore::RenderGrid::gridAreaBreadthForOutOfFlowChild):
+
 2020-07-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed atttempt to fix build after r264389.

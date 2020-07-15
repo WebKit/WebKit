@@ -61,8 +61,8 @@ public:
 
     const GridCell& cell(unsigned row, unsigned column) const { return m_grid[row][column]; }
 
-    int smallestTrackStart(GridTrackSizingDirection) const;
-    void setSmallestTracksStart(int rowStart, int columnStart);
+    unsigned explicitGridStart(GridTrackSizingDirection) const;
+    void setExplicitGridStart(unsigned rowStart, unsigned columnStart);
 
     unsigned autoRepeatTracks(GridTrackSizingDirection) const;
     void setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns);
@@ -86,8 +86,8 @@ private:
 
     OrderIterator m_orderIterator;
 
-    int m_smallestColumnStart { 0 };
-    int m_smallestRowStart { 0 };
+    unsigned m_explicitColumnStart { 0 };
+    unsigned m_explicitRowStart { 0 };
 
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };

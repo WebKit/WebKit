@@ -540,7 +540,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
 
     std::unique_ptr<OrderedTrackIndexSet> emptyTrackIndexes;
     unsigned insertionPoint = isRowAxis ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
-    unsigned firstAutoRepeatTrack = insertionPoint + std::abs(grid.smallestTrackStart(direction));
+    unsigned firstAutoRepeatTrack = insertionPoint + grid.explicitGridStart(direction);
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
 
     if (!grid.hasGridItems()) {
@@ -616,9 +616,9 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, Optional<
 
         GridArea area = grid.gridItemArea(*child);
         if (!area.rows.isIndefinite())
-            area.rows.translate(std::abs(grid.smallestTrackStart(ForRows)));
+            area.rows.translate(grid.explicitGridStart(ForRows));
         if (!area.columns.isIndefinite())
-            area.columns.translate(std::abs(grid.smallestTrackStart(ForColumns)));
+            area.columns.translate(grid.explicitGridStart(ForColumns));
 
         if (area.rows.isIndefinite() || area.columns.isIndefinite()) {
             grid.setGridItemArea(*child, area);
@@ -688,8 +688,8 @@ void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algor
 void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
 {
     OrderIteratorPopulator populator(grid.orderIterator());
-    int smallestRowStart = 0;
-    int smallestColumnStart = 0;
+    unsigned explicitRowStart = 0;
+    unsigned explicitColumnStart = 0;
     unsigned autoRepeatRows = grid.autoRepeatTracks(ForRows);
     unsigned autoRepeatColumns = grid.autoRepeatTracks(ForColumns);
     unsigned maximumRowIndex = GridPositionsResolver::explicitGridRowCount(style(), autoRepeatRows);
@@ -701,7 +701,7 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
         
         GridSpan rowPositions = GridPositionsResolver::resolveGridPositionsFromStyle(style(), *child, ForRows, autoRepeatRows);
         if (!rowPositions.isIndefinite()) {
-            smallestRowStart = std::min(smallestRowStart, rowPositions.untranslatedStartLine());
+            explicitRowStart = std::max<int>(explicitRowStart, -rowPositions.untranslatedStartLine());
             maximumRowIndex = std::max<int>(maximumRowIndex, rowPositions.untranslatedEndLine());
         } else {
             // Grow the grid for items with a definite row span, getting the largest such span.
@@ -711,7 +711,7 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
 
         GridSpan columnPositions = GridPositionsResolver::resolveGridPositionsFromStyle(style(), *child, ForColumns, autoRepeatColumns);
         if (!columnPositions.isIndefinite()) {
-            smallestColumnStart = std::min(smallestColumnStart, columnPositions.untranslatedStartLine());
+            explicitColumnStart = std::max<int>(explicitColumnStart, -columnPositions.untranslatedStartLine());
             maximumColumnIndex = std::max<int>(maximumColumnIndex, columnPositions.untranslatedEndLine());
         } else {
             // Grow the grid for items with a definite column span, getting the largest such span.
@@ -722,8 +722,8 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
         grid.setGridItemArea(*child, { rowPositions, columnPositions });
     }
 
-    grid.setSmallestTracksStart(smallestRowStart, smallestColumnStart);
-    grid.ensureGridSize(maximumRowIndex + std::abs(smallestRowStart), maximumColumnIndex + std::abs(smallestColumnStart));
+    grid.setExplicitGridStart(explicitRowStart, explicitColumnStart);
+    grid.ensureGridSize(maximumRowIndex + explicitRowStart, maximumColumnIndex + explicitColumnStart);
 }
 
 std::unique_ptr<GridArea> RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid& grid, const RenderBox& gridItem, GridTrackSizingDirection specifiedDirection, const GridSpan& specifiedPositions) const
@@ -1529,9 +1529,9 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
     if (span.isIndefinite())
         return isRowAxis ? clientLogicalWidth() : clientLogicalHeight();
 
-    int smallestStart = abs(m_grid.smallestTrackStart(direction));
-    int startLine = span.untranslatedStartLine() + smallestStart;
-    int endLine = span.untranslatedEndLine() + smallestStart;
+    unsigned explicitStart = m_grid.explicitGridStart(direction);
+    int startLine = span.untranslatedStartLine() + explicitStart;
+    int endLine = span.untranslatedEndLine() + explicitStart;
     int lastLine = numTracks(direction, m_grid);
     GridPosition startPosition = direction == ForColumns ? child.style().gridItemColumnStart() : child.style().gridItemRowStart();
     GridPosition endPosition = direction == ForColumns ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();

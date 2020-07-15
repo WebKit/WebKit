@@ -176,7 +176,7 @@ const GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingD
     // grid-template-areas is specified for example).
     unsigned explicitTracksCount = trackStyles.size() + autoRepeatTracksCount;
 
-    int untranslatedIndexAsInt = translatedIndex + m_grid.smallestTrackStart(direction);
+    int untranslatedIndexAsInt = translatedIndex - m_grid.explicitGridStart(direction);
     unsigned autoTrackStylesSize = autoTrackStyles.size();
     if (untranslatedIndexAsInt < 0) {
         int index = untranslatedIndexAsInt % static_cast<int>(autoTrackStylesSize);

@@ -74,17 +74,15 @@ void Grid::insert(RenderBox& child, const GridArea& area)
     setGridItemArea(child, area);
 }
 
-void Grid::setSmallestTracksStart(int rowStart, int columnStart)
+void Grid::setExplicitGridStart(unsigned rowStart, unsigned columnStart)
 {
-    ASSERT(rowStart > GridPosition::min() && rowStart < GridPosition::max() - 1);
-    ASSERT(columnStart > GridPosition::min() && columnStart < GridPosition::max() - 1);
-    m_smallestRowStart = rowStart;
-    m_smallestColumnStart = columnStart;
+    m_explicitRowStart = rowStart;
+    m_explicitColumnStart = columnStart;
 }
 
-int Grid::smallestTrackStart(GridTrackSizingDirection direction) const
+unsigned Grid::explicitGridStart(GridTrackSizingDirection direction) const
 {
-    return direction == ForRows ? m_smallestRowStart : m_smallestColumnStart;
+    return direction == ForRows ? m_explicitRowStart : m_explicitColumnStart;
 }
 
 GridArea Grid::gridItemArea(const RenderBox& item) const
@@ -157,8 +155,8 @@ void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 
     m_grid.shrink(0);
     m_gridItemArea.clear();
-    m_smallestRowStart = 0;
-    m_smallestColumnStart = 0;
+    m_explicitRowStart = 0;
+    m_explicitColumnStart = 0;
     m_autoRepeatEmptyColumns = nullptr;
     m_autoRepeatEmptyRows = nullptr;
     m_autoRepeatColumns = 0;
