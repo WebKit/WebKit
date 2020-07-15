@@ -35,6 +35,7 @@
 
 @interface NSImage ()
 - (void)lockFocusWithRect:(NSRect)rect context:(NSGraphicsContext *)context hints:(NSDictionary *)hints flipped:(BOOL)flipped;
++ (NSImage *)_imageWithSystemSymbolName:(NSString *)name;
 @end
 
 #endif

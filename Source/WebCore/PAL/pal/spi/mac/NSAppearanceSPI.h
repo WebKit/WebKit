@@ -34,6 +34,9 @@
 @interface NSAppearance ()
 
 - (void)_drawInRect:(NSRect)rect context:(CGContextRef)context options:(NSDictionary *)options;
+#if !USE(APPLE_INTERNAL_SDK)
+- (BOOL)_usesMetricsAppearance;
+#endif
 
 @end
 

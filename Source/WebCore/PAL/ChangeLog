@@ -1,3 +1,13 @@
+2020-07-15  Saagar Jha  <saagar@saagarjha.com>
+
+        Add some missing boilerplate to help fix build on macOS Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=214338
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/mac/NSAppearanceSPI.h: Add -[NSAppearance _usesMetricsAppearance] to the SPI header.
+        * pal/spi/mac/NSImageSPI.h: Add +[NSImage _imageWithSystemSymbolName:] to the SPI header.
+
 2020-07-15  Rob Buis  <rbuis@igalia.com>
 
         Building AccessibilitySupportSPI with the macOS Big Sur public SDK fails

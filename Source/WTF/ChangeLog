@@ -1,3 +1,12 @@
+2020-07-15  Saagar Jha  <saagar@saagarjha.com>
+
+        Add some missing boilerplate to help fix build on macOS Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=214338
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h: Add HAVE_LARGE_CONTROL_SIZE and enable it on Big Sur.
+
 2020-07-15  Darin Adler  <darin@apple.com>
 
         Remove a few more uses of the terms black/white list
