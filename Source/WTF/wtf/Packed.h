@@ -143,6 +143,20 @@ public:
 #endif
         if (isAlignmentShiftProfitable)
             value <<= alignmentShiftSize;
+
+#if CPU(X86_64) && !(OS(DARWIN) || OS(LINUX) || OS(WINDOWS))
+        // The AMD specification requires that the most significant 16
+        // bits of any virtual address, bits 48 through 63, must be
+        // copies of bit 47 (in a manner akin to sign extension).
+        //
+        // The above-named OSes will never allocate user space addresses
+        // with bit 47 set, thus are already in canonical form.
+        //
+        // Reference: https://en.wikipedia.org/wiki/X86-64#Virtual_address_space_details
+        constexpr unsigned shiftBits = countOfBits<uintptr_t> - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+        value = (bitwise_cast<intptr_t>(value) << shiftBits) >> shiftBits;
+#endif
+
         return bitwise_cast<T*>(value);
     }
 
@@ -156,6 +170,7 @@ public:
 #else
         memcpy(m_storage.data(), bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), storageSize);
 #endif
+        ASSERT(bitwise_cast<uintptr_t>(get()) == value);
     }
 
     void clear()

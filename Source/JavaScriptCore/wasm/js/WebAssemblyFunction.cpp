@@ -122,10 +122,10 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(JSGlobalObject* glob
     {
         // We do the stack check here for the wrapper function because we don't
         // want to emit a stack check inside every wrapper function.
-        const intptr_t sp = bitwise_cast<intptr_t>(currentStackPointer());
-        const intptr_t frameSize = (boxedArgs.size() + CallFrame::headerSizeInRegisters) * sizeof(Register);
-        const intptr_t stackSpaceUsed = 2 * frameSize; // We're making two calls. One to the wrapper, and one to the actual wasm code.
-        if (UNLIKELY((sp < stackSpaceUsed) || ((sp - stackSpaceUsed) < bitwise_cast<intptr_t>(vm.softStackLimit()))))
+        const uintptr_t sp = bitwise_cast<uintptr_t>(currentStackPointer());
+        const uintptr_t frameSize = (boxedArgs.size() + CallFrame::headerSizeInRegisters) * sizeof(Register);
+        const uintptr_t stackSpaceUsed = 2 * frameSize; // We're making two calls. One to the wrapper, and one to the actual wasm code.
+        if (UNLIKELY((sp < stackSpaceUsed) || ((sp - stackSpaceUsed) < bitwise_cast<uintptr_t>(vm.softStackLimit()))))
             return JSValue::encode(throwException(globalObject, scope, createStackOverflowError(globalObject)));
     }
     vm.wasmContext.store(wasmInstance, vm.softStackLimit());
