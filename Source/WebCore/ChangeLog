@@ -1,3 +1,59 @@
+2020-07-15  Brady Eidson  <beidson@apple.com>
+
+        Resolve race between IOHIDManager and GameController framework.
+        <rdar://problem/65554490> and https://bugs.webkit.org/show_bug.cgi?id=214245
+
+        Reviewed by Tim Horton.
+
+        No automated testing available.
+        
+        IOHIDDevices and IOHIDServices are two separate things.
+        
+        An IOHIDDevice and IOHIDService often have a 1-to-1 correlation, but the IOHIDDevice might be
+        published to the application before the IOHIDService is.
+        
+        WebKit's HID gamepad manager uses IOHIDDevice.
+        GameController.framework uses IOHIDServices.
+        
+        When we added the ability for WebKit to switch between HID and GCF, the following happens:
+
+        - Sometimes the IOHIDServiceClient will get published first. Then when the IOHIDDevice is published,
+          and WebKit was deciding which gamepad manager to use, the device's services are available,
+          and we get the right answer.
+        
+        - Sometimes, the IOHIDDevice is published first. Then when WebKit is deciding which gamepad 
+          manager to use, it can't check the IOHIDServiceClient against GameController framework.
+          So we have the HID manager handle the device... but then GCF comes along a split second later
+          and ALSO handles it.
+          
+        The "device before service" scenario results in the same gamepad showing up twice.
+        
+        To resolve this, we do the following:
+        
+        1 - If an IOHIDDevice attaches and its services aren't available yet, we delay managing it.
+        2 - When we delay managing a device, we start listening for IOHIDServiceClient additions.
+        3 - Each time a GamePad service is published, we once again try to determine if GCF will handle
+            the device.
+        4 - As long as the answer is "Maybe" - instead of "Yes" or "No" - we refuse to manage the device.
+        5 - After a brief delay (currently 1 second), we will give up waiting for published services
+            and manage the device with the HID gamepad provider.
+            
+        In my testing, when the service publishes after the devices, it's always within 50ms,
+        (and usually just a spin or two of the runloop) so the 1s delay seems sufficient.
+        
+        NOTE: The above all holds true with the "MultiGamepadProvider" on Catalina.
+        On Big Sur, there's brand new GameController framework API that makes this much easier. 👍
+
+        * platform/gamepad/mac/HIDGamepadProvider.h:
+        * platform/gamepad/mac/HIDGamepadProvider.mm:
+        (WebCore::deviceAddedCallback):
+        (WebCore::gameControllerFrameworkWillHandleHIDDevice):
+        (WebCore::HIDGamepadProvider::waitForManagementDecisionForDevice):
+        (WebCore::HIDGamepadProvider::removeDeviceWaitingForManagementDecision):
+        (WebCore::HIDGamepadProvider::newGamePadServicePublished):
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+
 2020-07-14  Zalan Bujtas  <zalan@apple.com>
 
         Caret leaves trails behind when the editable content is subpixel positioned

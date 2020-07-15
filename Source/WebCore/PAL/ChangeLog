@@ -1,3 +1,12 @@
+2020-07-15  Brady Eidson  <beidson@apple.com>
+
+        Resolve race between IOHIDManager and GameController framework.
+        <rdar://problem/65554490> and https://bugs.webkit.org/show_bug.cgi?id=214245
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/mac/IOKitSPIMac.h:
+
 2020-07-12  Rob Buis  <rbuis@igalia.com>
 
         Building CFNetworkSPI with the macOS Big Sur public SDK fails

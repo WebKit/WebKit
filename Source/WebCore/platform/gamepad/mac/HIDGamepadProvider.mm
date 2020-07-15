@@ -34,6 +34,10 @@
 #import <pal/spi/mac/IOKitSPIMac.h>
 #import <wtf/NeverDestroyed.h>
 
+#if HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+#import <GameController/GCController.h>
+#endif
+
 #import "GameControllerSoftLink.h"
 
 namespace WebCore {
@@ -58,7 +62,7 @@ static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, u
 static void deviceAddedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
     HIDGamepadProvider* listener = static_cast<HIDGamepadProvider*>(context);
-    listener->deviceAdded(device);
+    listener->deviceAdded(device, HIDGamepadProvider::AllowManagementDecisionDelay::Yes);
 }
 
 static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
@@ -180,61 +184,169 @@ void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 }
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
-static bool gameControllerFrameworkWillHandleHIDDevice(IOHIDDeviceRef device)
+
+enum class GameControllerFrameworkHandlesDevice : uint8_t {
+    No,
+    Yes,
+    Maybe,
+};
+
+static GameControllerFrameworkHandlesDevice gameControllerFrameworkWillHandleHIDDevice(IOHIDDeviceRef device)
 {
     if (!isGameControllerFrameworkAvailable())
-        return false;
+        return GameControllerFrameworkHandlesDevice::No;
+
+#if HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+    return [getGCControllerClass() supportsHIDDevice:device] ? GameControllerFrameworkHandlesDevice::Yes : GameControllerFrameworkHandlesDevice::No;
+#endif
 
     auto deviceService = IOHIDDeviceGetService(device);
     if (!deviceService)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
 
     // Check the service directly backing this device
     uint64_t registryID;
     if (IORegistryEntryGetRegistryEntryID(deviceService, &registryID) != KERN_SUCCESS)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
 
     auto eventSystemClient = adoptCF(IOHIDEventSystemClientCreate(nullptr));
     IOHIDEventSystemClientSetMatching(eventSystemClient.get(), nullptr);
     auto serviceClient = adoptCF(IOHIDEventSystemClientCopyServiceForRegistryID(eventSystemClient.get(), registryID));
-    if (serviceClient) {
-        if (ControllerClassForService(serviceClient.get()))
-            return true;
-    }
+    if (serviceClient && ControllerClassForService(serviceClient.get()))
+        return GameControllerFrameworkHandlesDevice::Yes;
 
     // Otherwise, check its grandchild service
     io_registry_entry_t child;
     if (IORegistryEntryGetChildEntry(deviceService, kIOServicePlane, &child) != KERN_SUCCESS)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
     if (!child)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
 
     if (IORegistryEntryGetChildEntry(child, kIOServicePlane, &child) != KERN_SUCCESS)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
     if (!child)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
 
     if (IORegistryEntryGetRegistryEntryID(child, &registryID) != KERN_SUCCESS)
-        return false;
+        return GameControllerFrameworkHandlesDevice::Maybe;
 
     serviceClient = adoptCF(IOHIDEventSystemClientCopyServiceForRegistryID(eventSystemClient.get(), registryID));
     if (!serviceClient)
+        return GameControllerFrameworkHandlesDevice::Maybe;
+
+    return ControllerClassForService(serviceClient.get()) ? GameControllerFrameworkHandlesDevice::Yes : GameControllerFrameworkHandlesDevice::No;
+}
+
+#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+
+static const Seconds managementDecisionDelay { 1000_ms };
+
+void HIDGamepadProvider::waitForManagementDecisionForDevice(IOHIDDeviceRef device)
+{
+    LOG(Gamepad, "Unable to determine if GameController framework will handle newly attached device %p - Delaying management decision", device);
+    m_devicesWaitingManagementDecision.add(device);
+
+    if (!m_delayManagementDecisionQueue)
+        m_delayManagementDecisionQueue = WorkQueue::create("com.apple.WebKit.GamepadManagementDecision", WorkQueue::Type::Serial, WorkQueue::QOS::Utility);
+
+    auto delayedDevice = RetainPtr<IOHIDDeviceRef>(device);
+    m_delayManagementDecisionQueue->dispatchAfter(managementDecisionDelay, [this, delayedDevice = WTFMove(delayedDevice)] {
+        // If this device was still waiting for its management decision, then the HID provider will handle it.
+        if (removeDeviceWaitingForManagementDecision(delayedDevice.get()))
+            deviceAdded(delayedDevice.get(), AllowManagementDecisionDelay::No);
+        else
+            LOG(Gamepad, "Management decision delay for device %p has expired, but device has already been handled", delayedDevice.get());
+    });
+
+    if (m_devicesWaitingManagementDecision.size() > 1)
+        return;
+
+    m_eventSystemClient = adoptCF(IOHIDEventSystemClientCreateWithType(kCFAllocatorDefault, kIOHIDEventSystemClientTypeMonitor, 0));
+
+    NSMutableArray *matchingAttributes = [NSMutableArray array];
+    [matchingAttributes addObject:@{@(kIOHIDDeviceUsagePageKey) : @(kHIDPage_GenericDesktop), @(kIOHIDDeviceUsageKey) : @(kHIDUsage_GD_GamePad)}];
+    [matchingAttributes addObject:@{@(kIOHIDDeviceUsagePageKey) : @(kHIDPage_GenericDesktop), @(kIOHIDDeviceUsageKey) : @(kHIDUsage_GD_Joystick)}];
+
+    IOHIDEventSystemClientSetMatchingMultiple(m_eventSystemClient.get(), (__bridge CFArrayRef)matchingAttributes);
+    IOHIDEventSystemClientScheduleWithDispatchQueue(m_eventSystemClient.get(), dispatch_get_main_queue());
+    IOHIDEventSystemClientRegisterDeviceMatchingBlock(m_eventSystemClient.get(), ^(void *, void *, IOHIDServiceClientRef) {
+        // We don't actually care about the actual published service.
+        // Any new GamePad service is worth re-checking every pending IOHIDDevice against GameController framework.
+        HIDGamepadProvider::singleton().gamePadServiceWasPublished();
+    }, nullptr, nullptr);
+}
+
+bool HIDGamepadProvider::removeDeviceWaitingForManagementDecision(IOHIDDeviceRef device)
+{
+    if (!m_devicesWaitingManagementDecision.remove(device))
         return false;
 
-    return ControllerClassForService(serviceClient.get());
+    if (m_devicesWaitingManagementDecision.isEmpty()) {
+        // That was the last device, so we can stop monitoring for IOHIDServiceClients
+        ASSERT(m_eventSystemClient);
+        IOHIDEventSystemClientUnregisterDeviceMatchingBlock(m_eventSystemClient.get());
+        m_eventSystemClient = nullptr;
+        m_delayManagementDecisionQueue = nullptr;
+    }
+
+    return true;
 }
+
+void HIDGamepadProvider::gamePadServiceWasPublished()
+{
+    LOG(Gamepad, "HIDGamepadProvider::gamePadServiceWasPublished()");
+    IOHIDDeviceRef matchedDevice = nullptr;
+    for (auto device : m_devicesWaitingManagementDecision) {
+        auto result = gameControllerFrameworkWillHandleHIDDevice(device);
+        if (result == GameControllerFrameworkHandlesDevice::Yes || result == GameControllerFrameworkHandlesDevice::No) {
+            matchedDevice = device;
+            break;
+        }
+    }
+
+    if (matchedDevice) {
+        LOG(Gamepad, "Device %p pending management decision can now be managed", matchedDevice);
+        removeDeviceWaitingForManagementDecision(matchedDevice);
+        deviceAdded(matchedDevice, AllowManagementDecisionDelay::No);
+    }
+}
+
+#endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 
-
-
-void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
+void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device, AllowManagementDecisionDelay allowManagementDecisionDelay)
 {
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
-    if (m_ignoresGameControllerFrameworkDevices && gameControllerFrameworkWillHandleHIDDevice(device)) {
-        LOG(Gamepad, "GameController framework will handle attached device %p - HIDGamepadProvider ignoring it", device);
-        m_gameControllerManagedGamepads.add(device);
-        return;
+    if (m_ignoresGameControllerFrameworkDevices) {
+        auto result = gameControllerFrameworkWillHandleHIDDevice(device);
+        switch (result) {
+        case GameControllerFrameworkHandlesDevice::Yes:
+            LOG(Gamepad, "GameController framework will handle newly attached device %p - HIDGamepadProvider ignoring it", device);
+            m_gameControllerManagedGamepads.add(device);
+            return;
+
+        case GameControllerFrameworkHandlesDevice::Maybe:
+#if HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+            UNUSED_PARAM(allowManagementDecisionDelay);
+            RELEASE_ASSERT_NOT_REACHED();
+#else
+            if (allowManagementDecisionDelay == AllowManagementDecisionDelay::No) {
+                LOG(Gamepad, "Unable to determine if GameController framework will handle attached device %p - HIDGamepadProvider will handle it", device);
+                break;
+            }
+
+            // Give IOHIDServiceClient callbacks a chance to confirm whether or not
+            // this device will be handled by GameController framework
+            waitForManagementDecisionForDevice(device);
+            return;
+#endif // HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+        case GameControllerFrameworkHandlesDevice::No:
+            LOG(Gamepad, "GameController framework does not handle attached device %p - HIDGamepadProvider will handle it", device);
+            break;
+        }
     }
+#else
+    UNUSED_PARAM(allowManagementDecisionDelay);
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 
     ASSERT(!m_gamepadMap.get(device));
@@ -272,12 +384,29 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
 
 void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 {
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT) && !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+    bool wasRemoved = removeDeviceWaitingForManagementDecision(device);
+#endif
+
     std::unique_ptr<HIDGamepad> removedGamepad = removeGamepadForDevice(device);
 
     if (!removedGamepad) {
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
         auto taken = m_gameControllerManagedGamepads.take(device);
-        ASSERT_UNUSED(taken, taken);
-        LOG(Gamepad, "HIDGamepadProvider informed of removal of device %p, which is managed by GameController framework. Ignoring.", device);
+
+        // If this device didn't show up in the gamepad map, then it was either managed by GameController framework
+        // or we were still waiting to decide which provider would manage it.
+#if HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+        ASSERT(taken);
+#else
+        ASSERT(taken || wasRemoved);
+#endif
+
+        if (taken)
+            LOG(Gamepad, "HIDGamepadProvider informed of removal of device %p, which is managed by GameController framework. Ignoring.", device);
+        else
+            LOG(Gamepad, "HIDGamepadProvider informed of removal of device %p, which was not yet managed. Ignoring.", device);
+#endif
         return;
     }
 

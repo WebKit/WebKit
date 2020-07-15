@@ -31,9 +31,11 @@
 #include "HIDGamepad.h"
 #include "Timer.h"
 #include <IOKit/hid/IOHIDManager.h>
+#include <pal/spi/mac/IOKitSPIMac.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -51,8 +53,12 @@ public:
 
     WEBCORE_EXPORT void stopMonitoringInput();
     WEBCORE_EXPORT void startMonitoringInput();
-    
-    void deviceAdded(IOHIDDeviceRef);
+
+    enum class AllowManagementDecisionDelay : bool {
+        No,
+        Yes
+    };
+    void deviceAdded(IOHIDDeviceRef, AllowManagementDecisionDelay);
     void deviceRemoved(IOHIDDeviceRef);
     void valuesChanged(IOHIDValueRef);
 
@@ -73,7 +79,6 @@ private:
 
     Vector<PlatformGamepad*> m_gamepadVector;
     HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
-    HashSet<IOHIDDeviceRef> m_gameControllerManagedGamepads;
 
     RetainPtr<IOHIDManagerRef> m_manager;
 
@@ -82,6 +87,19 @@ private:
 
     Timer m_initialGamepadsConnectedTimer;
     Timer m_inputNotificationTimer;
+
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
+    HashSet<IOHIDDeviceRef> m_gameControllerManagedGamepads;
+#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+    void waitForManagementDecisionForDevice(IOHIDDeviceRef);
+    bool removeDeviceWaitingForManagementDecision(IOHIDDeviceRef);
+    void gamePadServiceWasPublished();
+
+    HashSet<IOHIDDeviceRef> m_devicesWaitingManagementDecision;
+    RefPtr<WorkQueue> m_delayManagementDecisionQueue;
+    RetainPtr<IOHIDEventSystemClientRef> m_eventSystemClient;
+#endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+#endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 };
 
 } // namespace WebCore

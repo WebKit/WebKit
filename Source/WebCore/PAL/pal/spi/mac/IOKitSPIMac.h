@@ -35,9 +35,12 @@
 WTF_EXTERN_C_BEGIN
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDServiceClient * IOHIDServiceClientRef;
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
+typedef void (^IOHIDServiceClientBlock)(void *, void *, IOHIDServiceClientRef);
+
 IOHIDEventSystemClientRef IOHIDEventSystemClientCreate(CFAllocatorRef);
 void IOHIDEventSystemClientSetMatching(IOHIDEventSystemClientRef, CFDictionaryRef);
 IOHIDServiceClientRef IOHIDEventSystemClientCopyServiceForRegistryID(IOHIDEventSystemClientRef, uint64_t registryID);
+void IOHIDEventSystemClientRegisterDeviceMatchingBlock(IOHIDEventSystemClientRef, IOHIDServiceClientBlock, void *, void *);
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
