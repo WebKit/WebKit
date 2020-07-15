@@ -21,4 +21,5 @@ FAIL aspectRatio is reported by getSettings() for getUserMedia() video tracks as
 PASS frameRate is reported by getSettings() for getUserMedia() video tracks 
 PASS facingMode is reported by getSettings() for getUserMedia() video tracks 
 FAIL resizeMode is reported by getSettings() for getUserMedia() video tracks assert_equals: resizeMode should exist and it should be a string. expected "string" but got "undefined"
+PASS Stopped tracks should expose deviceId/groupId 
 
