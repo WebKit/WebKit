@@ -399,7 +399,7 @@ void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
 #if HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
         ASSERT(taken);
 #else
-        ASSERT(taken || wasRemoved);
+        ASSERT_UNUSED(wasRemoved, taken || wasRemoved);
 #endif
 
         if (taken)

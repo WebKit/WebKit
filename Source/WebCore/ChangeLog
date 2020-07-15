@@ -1,3 +1,10 @@
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed atttempt to fix build after r264389.
+
+        * platform/gamepad/mac/HIDGamepadProvider.mm:
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+
 2020-07-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove Display::LineBox::isConsideredEmpty
