@@ -35,20 +35,34 @@
     --tab-item-dark-border-color: hsl(0, 0%, 59%);
     --tab-item-medium-border-color: hsl(0, 0%, 65%);
     --tab-item-light-border-color: hsl(0, 0%, 85%);
-    --tab-item-extra-light-border-color: hsl(0, 0%, 92%);
 
     --tab-item-medium-border-style: 1px solid var(--tab-item-medium-border-color);
-    --tab-item-light-border-style: 1px solid var(--tab-item-light-border-color);
+
+    --tab-bar-border-z-index: 10;
+}
+
+body.big-sur .tab-bar {
+    --tab-item-light-border-color: hsl(0, 0%, 85%);
+    --tab-item-medium-border-color: hsl(0, 0%, 85%);
+    --tab-item-dark-border-color: hsl(0, 0%, 75%);
 }
 
 body:not(.docked) .tab-bar {
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
-    background-size: 100% 200%;
+    background: var(--tab-bar-background);
 }
 
-body:not(.docked).window-inactive .tab-bar {
-    background-image: none;
-    background-color: var(--tab-item-extra-light-border-color);
+body.big-sur:not(.docked) .tab-bar {
+    --tab-bar-background: hsl(0, 0%, 90%);
+}
+
+body:not(.big-sur):not(.docked) .tab-bar {
+    background-size: 100% 200%;
+    --tab-bar-background: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
+}
+
+body.big-sur:not(.docked).window-inactive .tab-bar,
+body:not(.big-sur):not(.docked).window-inactive .tab-bar {
+    --tab-bar-background: hsl(0, 0%, 92%);
 }
 
 body.docked.window-inactive .tab-bar {
@@ -59,7 +73,7 @@ body.docked.window-inactive .tab-bar {
     position: absolute;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: var(--tab-bar-border-z-index);
     background-color: var(--tab-item-medium-border-color);
 }
 
@@ -134,7 +148,7 @@ body.docked.bottom .tab-bar > .tabs > .flexible-space {
 
     position: relative;
 
-    z-index: 1;
+    z-index: calc(var(--tab-bar-border-z-index) + 1);
 
     align-items: center;
 
@@ -155,8 +169,19 @@ body.docked.bottom .tab-bar > .tabs > .flexible-space {
 }
 
 body:not(.docked) .tab-bar > .tabs > .item {
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
+    border-top: var(--tab-item-medium-border-style);
+    border-bottom: var(--tab-item-medium-border-style);
+    background: var(--tab-item-background);
+}
+
+body.big-sur:not(.docked) .tab-bar > .tabs > .item {
+    --tab-item-background: var(--tab-bar-background);
+}
+
+body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item {
     background-size: 100% 200%;
+
+    --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
 }
 
 body:not(.docked) .tab-bar > .tabs:not(.calculate-width) > .item:not(.pinned) {
@@ -199,8 +224,14 @@ body.docked .tab-bar > .tabs > .item.pinned {
     width: var(--tab-bar-item-height); /* Make pinned tabs square */
 }
 
-body:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 87%), hsl(0, 0%, 82%));
+body.big-sur:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
+    border-top-color: var(--tab-item-background);
+
+    --tab-item-background: white;
+}
+
+body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
+    --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 87%), hsl(0, 0%, 82%));
     background-size: 100% 100%;
 }
 
@@ -212,8 +243,12 @@ body.docked .tab-bar > .tabs > .item:not(.disabled).selected {
     background-color: lightgrey;
 }
 
-body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 67%), hsl(0, 0%, 64%));
+body.big-sur:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+    --tab-item-background: hsl(0, 0%, 84%);
+}
+
+body:not(.big-sur):not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+    --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 67%), hsl(0, 0%, 64%));
 }
 
 body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
@@ -233,18 +268,21 @@ body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selecte
 }
 
 body:not(.docked).window-inactive .tab-bar > .tabs > .item {
+    border-top-color: var(--tab-item-light-border-color);
+    border-bottom-color: var(--tab-item-light-border-color);
     border-right-color: var(--tab-item-light-border-color) !important;
     border-left-color: var(--tab-item-light-border-color) !important;
-
-    background-image: none;
-    background-color: var(--tab-item-extra-light-border-color);
 
     transition: none;
 }
 
+body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item,
+body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item {
+    --tab-item-background: hsl(0, 0%, 92%);
+}
+
 body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
-    background-image: none;
-    background-color: hsl(0, 0%, 96%);
+    --tab-item-background: hsl(0, 0%, 96%);
 }
 
 body.docked .tab-bar > .tabs > .item:not(.disabled):matches(.selected, :hover) {
@@ -355,7 +393,7 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name {
 }
 
 .tab-bar > .tabs.animating.inserting-tab > .item.being-inserted {
-    z-index: 2;
+    z-index: calc(var(--tab-bar-border-z-index) + 2);
     padding: 0;
 }
 
@@ -372,22 +410,25 @@ body:not(.docked).window-inactive .tab-bar > .tabs.animating.closing-tab > .item
 }
 
 .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected {
-    z-index: 2;
+    z-index: calc(var(--tab-bar-border-z-index) + 2);
     pointer-events: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    .tab-bar {
-        --tab-item-border-color: hsl(0, 0%, 36%);
-
+    body.big-sur .tab-bar,
+    body:not(.big-sur) .tab-bar {
         /* FIXME: <https://webkit.org/b/189769> Dark Mode: use semantic color names */
         --tab-item-dark-border-color: var(--tab-item-border-color);
         --tab-item-medium-border-color: var(--tab-item-border-color);
         --tab-item-light-border-color: var(--tab-item-border-color);
-        --tab-item-extra-light-border-color: var(--tab-item-border-color);
+        --tab-item-border-color: hsl(0, 0%, 36%);
     }
 
-    body:not(.docked) .tab-bar {
+    body.big-sur:not(.docked) .tab-bar {
+        --tab-bar-background: hsl(0, 0%, 8%);
+    }
+
+    body:not(.big-sur):not(.docked) .tab-bar {
         background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
     }
 
@@ -399,16 +440,24 @@ body:not(.docked).window-inactive .tab-bar > .tabs.animating.closing-tab > .item
         filter: brightness(120%);
     }
 
-    body:not(.docked) .tab-bar > .tabs > .item {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
+    body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item {
+        --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
     }
 
-    body:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
+    body.big-sur:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: hsl(0, 0%, 19%);
     }
 
-    body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
+    body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
+    }
+
+    body.big-sur:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+        --tab-item-background: hsl(0, 0%, 7%);
+    }
+
+    body:not(.big-sur):not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+        --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
     }
 
     body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
@@ -433,17 +482,26 @@ body:not(.docked).window-inactive .tab-bar > .tabs.animating.closing-tab > .item
 
     body:not(.docked).window-inactive .tab-bar {
         --tab-item-border-color: hsl(0, 0%, 34%);
-
-        background-image: none;
-        background-color: hsl(0, 0%, 13%);
     }
 
-    body:not(.docked).window-inactive .tab-bar > .tabs > .item {
-        background-image: none;
-        background-color: hsl(0, 0%, 13%);
+    body.big-sur:not(.docked).window-inactive .tab-bar,
+    body:not(.big-sur):not(.docked).window-inactive .tab-bar {
+        --tab-bar-background: hsl(0, 0%, 7%);
     }
 
-    body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
-        background-color: hsl(0, 0%, 19%);
+    body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item {
+        --tab-item-background: hsl(0, 0%, 7%);
+    }
+
+    body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item {
+        --tab-item-background: hsl(0, 0%, 13%);
+    }
+
+    body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: hsl(0, 0%, 11%);
+    }
+
+    body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: hsl(0, 0%, 19%);
     }
 }

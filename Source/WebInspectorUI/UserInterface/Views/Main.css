@@ -115,14 +115,15 @@ body.docked.left #docked-resizer {
     right: 0;
     left: 0;
     height: var(--undocked-title-area-height);
+    background: var(--undocked-title-area-background);
 }
 
 body.big-sur #undocked-title-area {
-    background-color: white;
+    --undocked-title-area-background: white;
 }
 
 body:not(.big-sur) #undocked-title-area {
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
+    --undocked-title-area-background: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
     box-shadow: inset hsla(0, 0%, 100%, 0.5) 0 1px 1px;
 }
 
@@ -131,8 +132,7 @@ body.docked #undocked-title-area {
 }
 
 body.window-inactive #undocked-title-area {
-    background-color: hsl(0, 0%, 96%);
-    background-image: none;
+    --undocked-title-area-background: hsl(0, 0%, 96%);
 }
 
 input[type=range] {
@@ -569,15 +569,19 @@ body[dir=rtl] .device-settings-content > .reference-page-link-container {
     }
 
     body.big-sur #undocked-title-area {
-        background-color: hsl(0, 0%, 19%);
+        --undocked-title-area-background: hsl(0, 0%, 19%);
     }
 
     body:not(.big-sur) #undocked-title-area {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 26%), hsl(0, 0%, 23%));
+        --undocked-title-area-background: linear-gradient(to bottom, hsl(0, 0%, 26%), hsl(0, 0%, 23%));
     }
 
-    body.window-inactive #undocked-title-area {
-        background-color: var(--background-color);
+    body.big-sur.window-inactive #undocked-title-area {
+        --undocked-title-area-background: hsl(0, 0%, 11%);
+    }
+
+    body:not(.big-sur).window-inactive #undocked-title-area {
+        --undocked-title-area-background: hsl(0, 0%, 19%);
     }
 
     .go-to-arrow {

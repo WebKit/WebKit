@@ -1,3 +1,56 @@
+2020-07-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Tab bar colors of undocked Inspector should match Safari in Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=214163
+        <rdar://problem/65293335>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Main.css:
+        (#undocked-title-area):
+        (body.big-sur #undocked-title-area):
+        (body:not(.big-sur) #undocked-title-area):
+        (body.window-inactive #undocked-title-area):
+        (@media (prefers-color-scheme: dark) body.big-sur #undocked-title-area):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur) #undocked-title-area):
+        (@media (prefers-color-scheme: dark) body.big-sur.window-inactive #undocked-title-area):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur).window-inactive #undocked-title-area):
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar):
+        (body.big-sur .tab-bar):
+        (body:not(.docked) .tab-bar):
+        (body.big-sur:not(.docked) .tab-bar):
+        (body:not(.big-sur):not(.docked) .tab-bar):
+        (body.big-sur:not(.docked).window-inactive .tab-bar,):
+        (.tab-bar > .border):
+        (.tab-bar > .tabs > .item):
+        (body:not(.docked) .tab-bar > .tabs > .item):
+        (body.big-sur:not(.docked) .tab-bar > .tabs > .item):
+        (body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item):
+        (body.big-sur:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected):
+        (body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected):
+        (body.big-sur:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover):
+        (body:not(.big-sur):not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover):
+        (body:not(.docked).window-inactive .tab-bar > .tabs > .item):
+        (body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item,):
+        (body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected):
+        (.tab-bar > .tabs.animating.inserting-tab > .item.being-inserted):
+        (.tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body.big-sur .tab-bar,):
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked) .tab-bar):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item):
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover):
+        (@media (prefers-color-scheme: dark) body:not(.docked).window-inactive .tab-bar):
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked).window-inactive .tab-bar,):
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item):
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected):
+
 2020-07-13  Brian Burg  <bburg@apple.com>
 
         Web Inspector: wrong bundle version being used for WebInspectorUI.framework in macOS Big Sur
