@@ -39,6 +39,9 @@ _log = logging.getLogger(__name__)
 
 
 class Bugzilla():
+    bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
+    bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
+
     @classmethod
     def retrieve_attachment(cls, attachment_id):
         attachment_json = Bugzilla._fetch_attachment_json(attachment_id)
@@ -88,6 +91,24 @@ class Bugzilla():
         if not attachment_json or len(attachment_json) == 0:
             return None
         return attachment_json.get(str(attachment_id))
+
+    @classmethod
+    def _get_bug_json(cls, bug_id):
+        if not util.is_valid_id(bug_id):
+            _log.warn('Invalid bug id: {}'.format(bug_id))
+            return []
+
+        bug_url = '{}rest/bug/{}'.format(config.BUG_SERVER_URL, bug_id)
+        api_key = os.getenv('BUGZILLA_API_KEY', None)
+        if api_key:
+            bug_url += '?api_key={}'.format(api_key)
+        bug = util.fetch_data_from_url(bug_url)
+        if not bug:
+            return None
+        bugs_json = bug.json().get('bugs')
+        if not bugs_json or len(bugs_json) == 0:
+            return None
+        return bugs_json[0]
 
     @classmethod
     def _get_commit_queue_patches_from_bug(cls, bug_id):
@@ -143,6 +164,17 @@ class Bugzilla():
         for bug_id in bug_ids_for_commit_queue:
             ids_for_commit_queue.extend(cls._get_commit_queue_patches_from_bug(bug_id))
         return ids_for_commit_queue
+
+    @classmethod
+    def is_bug_closed(cls, bug_id):
+        bug_json = cls._get_bug_json(bug_id)
+        if not bug_json or not bug_json.get('status'):
+            _log.warn('Unable to fetch bug {}.'.format(bug_id))
+            return -1
+
+        if bug_json.get('status') in cls.bug_closed_statuses:
+            return 1
+        return 0
 
 
 class BugzillaBeautifulSoup():

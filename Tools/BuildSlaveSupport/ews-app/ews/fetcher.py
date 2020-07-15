@@ -28,7 +28,7 @@ import time
 
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
-from ews.config import ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
+from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
 from ews.models.patch import Patch
 from ews.views.statusbubble import StatusBubble
 
@@ -89,10 +89,15 @@ class BugzillaPatchFetcher():
                     return ERR_UNABLE_TO_FETCH_PATCH
                 continue
             if bz_patch.get('is_obsolete'):
-                _log.warn('Patch is obsolete, skipping')
+                _log.warn('Patch {} is obsolete, skipping'.format(patch_id))
                 Patch.set_obsolete(patch_id)
                 if len(patches_to_send) == 1:
                     return ERR_OBSOLETE_PATCH
+                continue
+            if Bugzilla.is_bug_closed(bz_patch['bug_id']) == 1:
+                _log.warn('Bug {} for patch {} is already closed, skipping'.format(bz_patch['bug_id'], patch_id))
+                if len(patches_to_send) == 1:
+                    return ERR_BUG_CLOSED
                 continue
             if not send_to_commit_queue and Patch.is_patch_sent_to_buildbot(patch_id):
                 _log.error('Patch {} is already sent to buildbot.'.format(patch_id))

@@ -30,7 +30,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from ews.config import ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
+from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
 from ews.fetcher import BugzillaPatchFetcher
 from ews.models.patch import Patch
 
@@ -61,6 +61,8 @@ class SubmitToEWS(View):
             return HttpResponse('EWS is unable to access patch {}. Please ensure that this patch is publicly accessible or has r? set.'.format(patch_id))
         if rc == ERR_OBSOLETE_PATCH:
             return HttpResponse('Patch {} is obsolete, not submitting to EWS.'.format(patch_id))
+        if rc == ERR_BUG_CLOSED:
+            return HttpResponse('Bug for patch {} is closed, not submitting to EWS.'.format(patch_id))
 
         if request.POST.get('next_action') == 'return_to_bubbles':
             return redirect('/status-bubble/{}'.format(patch_id))
