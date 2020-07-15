@@ -1100,23 +1100,28 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
 static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection& connection)
 {
     NetworkProcessConnectionInfo connectionInfo;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0)) {
-        // If we failed the first time, retry once. The attachment may have become invalid
-        // before it was received by the web process if the network process crashed.
-        if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0)) {
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            // GTK+ and WPE ports don't exit on send sync message failure.
-            // In this particular case, the network process can be terminated by the UI process while the
-            // Web process is still initializing, so we always want to exit instead of crashing. This can
-            // happen when the WebView is created and then destroyed quickly.
-            // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+    auto requestConnection = [&] {
+        if (!connection.isValid()) {
+            // Connection to UIProcess has been severed, exit cleanly.
             exit(0);
-#else
-            CRASH();
-#endif
         }
-    }
+        if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0))
+            return false;
+        return IPC::Connection::identifierIsValid(connectionInfo.identifier());
+    };
 
+    static constexpr unsigned maxFailedAttempts = 10;
+    unsigned failedAttempts = 0;
+    while (!requestConnection()) {
+        if (++failedAttempts >= maxFailedAttempts)
+            CRASH();
+
+        RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will retry...");
+
+        // If we failed, retry after a delay. The attachment may have become invalid
+        // before it was received by the web process if the network process crashed.
+        sleep(100_ms);
+    }
     return connectionInfo;
 }
 
@@ -1128,14 +1133,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection) {
         auto connectionInfo = getNetworkProcessConnection(*parentProcessConnection());
-
-        // Retry once if the IPC to get the connectionIdentifier succeeded but the connectionIdentifier we received
-        // is invalid. This may indicate that the network process has crashed.
-        if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
-            connectionInfo = getNetworkProcessConnection(*parentProcessConnection());
-
-        if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
-            CRASH();
 
         m_networkProcessConnection = NetworkProcessConnection::create(connectionInfo.releaseIdentifier(), connectionInfo.cookieAcceptPolicy);
 #if HAVE(AUDIT_TOKEN)

@@ -1,3 +1,23 @@
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Make establishing a connection between the WebProcess and the Network process more robust
+        https://bugs.webkit.org/show_bug.cgi?id=214307
+        <rdar://problem/64592340>
+
+        Reviewed by Alex Christensen.
+
+        Make establishing a connection between the WebProcess and the Network process more robust.
+        When the network process is crashy, it is not uncommon for the WebProcess to fail to establish
+        a connection to the network process. Previously, we would try twice and then give up by calling
+        CRASH(). I have tweaked the logic so that we now try 10 times and wait 100 ms between each
+        attempt to make a best effort at establishing the connection. I also updated the logic to exit
+        cleanly instead of crashing if the IPC connection to the UIProcess becomes invalid (i.e. the
+        UIProcess has severed the connection because this WebProcess is no longer needed).
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2020-07-15  Rob Buis  <rbuis@igalia.com>
 
         Building AccessibilitySupportSPI with the macOS Big Sur public SDK fails
