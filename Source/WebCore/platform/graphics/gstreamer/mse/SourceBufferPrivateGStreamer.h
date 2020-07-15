@@ -99,7 +99,7 @@ private:
     MediaSourcePrivateGStreamer* m_mediaSource;
     ContentType m_type;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
-    std::unique_ptr<AppendPipeline> m_appendPipeline;
+    UniqueRef<AppendPipeline> m_appendPipeline;
     SourceBufferPrivateClient* m_sourceBufferPrivateClient { nullptr };
     bool m_isReadyForMoreSamples = true;
     bool m_notifyWhenReadyForMoreSamples = false;

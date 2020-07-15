@@ -1,3 +1,48 @@
+2020-07-15  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Break circular reference between SourceBufferPrivateGStreamer and AppendPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=214345
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        SourceBufferPrivate is ref counted.
+
+        AppendPipeline is owned exclusively by SourceBufferPrivateGStreamer:
+        it's born and destroyed with it, managed by a never-moved unique_ptr.
+
+        AppendPipeline needs a reference to SourceBufferPrivateGStreamer to
+        notify it of essential events like samples having been parsed. This
+        used to be a Ref<>, thus creating a circular reference leak:
+
+        AppendPipeline is only destroyed in SourceBufferPrivateGStreamer
+        destructor. AppendPipeline holds ref counted reference to
+        SourceBufferPrivateGStreamer, therefore neither are destroyed.
+
+        This patch breaks the cycle by replacing the Ref<> in AppendPipeline
+        with a plain old reference. This is safe because
+        SourceBufferPrivateGStreamer owns, and therefore is alive at least
+        just as long as AppendPipeline.
+
+        As a consequence of not using Ref<>, the SourceBufferPrivateGStreamer
+        constructor does no longer need to relax the adoption requirements and
+        unique_ptr<AppendPipeline> can be replaced by a UniqueRef<>.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::handleErrorConditionFromStreamingThread):
+        (WebCore::AppendPipeline::handleStateChangeMessage):
+        (WebCore::AppendPipeline::handleEndOfAppend):
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::didReceiveInitializationSegment):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::sourceBufferPrivate):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
 2020-07-15  Brady Eidson  <beidson@apple.com>
 
         Resolve race between IOHIDManager and GameController framework.

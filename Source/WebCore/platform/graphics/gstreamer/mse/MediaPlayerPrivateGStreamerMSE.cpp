@@ -703,9 +703,9 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(AppendPipeline& appendPipelin
     }
 
     if (firstTrackDetected)
-        m_playbackPipeline->attachTrack(appendPipeline.sourceBufferPrivate(), newTrack, caps);
+        m_playbackPipeline->attachTrack(makeRef(appendPipeline.sourceBufferPrivate()), newTrack, caps);
     else
-        m_playbackPipeline->reattachTrack(appendPipeline.sourceBufferPrivate(), newTrack, caps);
+        m_playbackPipeline->reattachTrack(makeRef(appendPipeline.sourceBufferPrivate()), newTrack, caps);
 }
 
 void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)

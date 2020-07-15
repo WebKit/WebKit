@@ -99,8 +99,8 @@ static void assertedElementSetState(GstElement* element, GstState desiredState)
     }
 }
 
-AppendPipeline::AppendPipeline(Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
-    : m_sourceBufferPrivate(sourceBufferPrivate.get())
+AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+    : m_sourceBufferPrivate(sourceBufferPrivate)
     , m_playerPrivate(&playerPrivate)
     , m_id(0)
     , m_wasBusAlreadyNotifiedOfAvailableSamples(false)
@@ -115,7 +115,7 @@ AppendPipeline::AppendPipeline(Ref<SourceBufferPrivateGStreamer> sourceBufferPri
     // The track name is still unknown at this time, though.
     static size_t appendPipelineCount = 0;
     String pipelineName = makeString("append-pipeline-",
-        m_sourceBufferPrivate->type().containerType().replace("/", "-"), '-', appendPipelineCount++);
+        m_sourceBufferPrivate.type().containerType().replace("/", "-"), '-', appendPipelineCount++);
     m_pipeline = gst_pipeline_new(pipelineName.utf8().data());
 
     m_bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -141,7 +141,7 @@ AppendPipeline::AppendPipeline(Ref<SourceBufferPrivateGStreamer> sourceBufferPri
         return static_cast<AppendPipeline*>(userData)->appsrcEndOfAppendCheckerProbe(padProbeInfo);
     }, this, nullptr);
 
-    const String& type = m_sourceBufferPrivate->type().containerType();
+    const String& type = m_sourceBufferPrivate.type().containerType();
     GST_DEBUG("SourceBuffer containerType: %s", type.utf8().data());
     if (type.endsWith("mp4") || type.endsWith("aac"))
         m_demux = gst_element_factory_make("qtdemux", nullptr);
@@ -285,7 +285,7 @@ void AppendPipeline::handleErrorConditionFromStreamingThread()
     auto response = m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this]() {
         m_errorReceived = true;
         // appendParsingFailed() will cause resetParserState() to be called.
-        m_sourceBufferPrivate->appendParsingFailed();
+        m_sourceBufferPrivate.appendParsingFailed();
         return AbortableTaskQueue::Void();
     });
 #ifdef NDEBUG
@@ -342,7 +342,7 @@ void AppendPipeline::handleStateChangeMessage(GstMessage* message)
     if (GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_pipeline.get())) {
         GstState currentState, newState;
         gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
-        CString sourceBufferType = String(m_sourceBufferPrivate->type().raw())
+        CString sourceBufferType = String(m_sourceBufferPrivate.type().raw())
             .replace("/", "_").replace(" ", "_")
             .replace("\"", "").replace("\'", "").utf8();
         CString dotFileName = makeString("webkit-append-",
@@ -448,7 +448,7 @@ void AppendPipeline::handleEndOfAppend()
     ASSERT(isMainThread());
     consumeAppsinkAvailableSamples();
     GST_TRACE_OBJECT(m_pipeline.get(), "Notifying SourceBufferPrivate the append is complete");
-    sourceBufferPrivate()->didReceiveAllPendingSamples();
+    sourceBufferPrivate().didReceiveAllPendingSamples();
 }
 
 void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
@@ -494,7 +494,7 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         mediaSample->extendToTheBeginning();
     }
 
-    m_sourceBufferPrivate->didReceiveSample(mediaSample.get());
+    m_sourceBufferPrivate.didReceiveSample(mediaSample.get());
 }
 
 void AppendPipeline::didReceiveInitializationSegment()
@@ -526,7 +526,7 @@ void AppendPipeline::didReceiveInitializationSegment()
         break;
     }
 
-    m_sourceBufferPrivate->didReceiveInitializationSegment(initializationSegment);
+    m_sourceBufferPrivate.didReceiveInitializationSegment(initializationSegment);
 }
 
 AtomString AppendPipeline::trackId()
@@ -751,7 +751,7 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     ASSERT(isMainThread());
     GST_DEBUG("Connecting to appsink");
 
-    const String& type = m_sourceBufferPrivate->type().containerType();
+    const String& type = m_sourceBufferPrivate.type().containerType();
     if (type.endsWith("webm"))
         gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, matroskademuxForceSegmentStartToEqualZero, nullptr, nullptr);
 
@@ -789,7 +789,7 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
 
         // appendParsingFailed() will immediately cause a resetParserState() which will stop demuxing, then the
         // AppendPipeline will be destroyed.
-        m_sourceBufferPrivate->appendParsingFailed();
+        m_sourceBufferPrivate.appendParsingFailed();
         return;
     default:
         GST_WARNING_OBJECT(m_pipeline.get(), "Pad has unknown track type, ignoring: %" GST_PTR_FORMAT, caps.get());

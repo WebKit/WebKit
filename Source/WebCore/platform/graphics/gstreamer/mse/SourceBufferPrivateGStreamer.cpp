@@ -59,13 +59,12 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
     , m_mediaSource(mediaSource)
     , m_type(contentType)
     , m_playerPrivate(playerPrivate)
+    , m_appendPipeline(makeUniqueRef<AppendPipeline>(*this, playerPrivate))
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSource->logger())
     , m_logIdentifier(mediaSource->nextSourceBufferLogIdentifier())
 #endif
 {
-    relaxAdoptionRequirement();
-    m_appendPipeline = WTF::makeUnique<AppendPipeline>(makeRef(*this), m_playerPrivate);
 }
 
 void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)

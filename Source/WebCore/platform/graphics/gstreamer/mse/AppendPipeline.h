@@ -46,12 +46,12 @@ struct PadProbeInformation {
 class AppendPipeline {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AppendPipeline(Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
+    AppendPipeline(SourceBufferPrivateGStreamer&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
 
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
-    Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
+    SourceBufferPrivateGStreamer& sourceBufferPrivate() { return m_sourceBufferPrivate; }
     GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
     RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
@@ -106,7 +106,7 @@ private:
     // Used only for asserting EOS events are only caused by demuxing errors.
     bool m_errorReceived { false };
 
-    Ref<SourceBufferPrivateGStreamer> m_sourceBufferPrivate;
+    SourceBufferPrivateGStreamer& m_sourceBufferPrivate;
     MediaPlayerPrivateGStreamerMSE* m_playerPrivate;
 
     // (m_mediaType, m_id) is unique.
