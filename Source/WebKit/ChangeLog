@@ -1,5 +1,19 @@
 2020-07-15  Chris Dumez  <cdumez@apple.com>
 
+        Improve navigation policy decision release logging to help better diagnose issues
+        https://bugs.webkit.org/show_bug.cgi?id=214368
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+
+2020-07-15  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Make establishing a connection between the WebProcess and the Network process more robust
         https://bugs.webkit.org/show_bug.cgi?id=214307
         <rdar://problem/64592340>

@@ -3291,6 +3291,8 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    RELEASE_LOG_IF_ALLOWED(Loading, "didReceivePolicyDecision: policyAction: %u - frameID: %llu - webFrame: %p - mainFrame: %d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);
+
     if (!frame)
         return;
 

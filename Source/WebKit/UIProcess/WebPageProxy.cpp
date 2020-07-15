@@ -5163,8 +5163,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     navigation->setDestinationFrameSecurityOrigin(frameInfo.securityOrigin);
 
 #if ENABLE(CONTENT_FILTERING)
-    if (frame.didHandleContentFilterUnblockNavigation(request))
+    if (frame.didHandleContentFilterUnblockNavigation(request)) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring request to load this main resource because it was handled by content filter");
         return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(navigationID), nullptr, WTFMove(sender));
+    }
 #endif
 
     ShouldExpectSafeBrowsingResult shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::Yes;
