@@ -31,6 +31,8 @@
 
 #else
 
+#include <CoreFoundation/CoreFoundation.h>
+
 WTF_EXTERN_C_BEGIN
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

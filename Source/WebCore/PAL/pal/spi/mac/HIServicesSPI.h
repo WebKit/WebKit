@@ -33,6 +33,8 @@
 
 #else
 
+#include <ApplicationServices/ApplicationServices.h>
+
 typedef CF_ENUM(SInt32, CoreCursorType) {
     kCoreCursorFirstCursor = 0,
     kCoreCursorArrow = kCoreCursorFirstCursor,
@@ -144,6 +146,7 @@ typedef CF_ENUM(int32_t, AXClientType)
     kAXClientTypeDictation,
 };
 AXClientType _AXGetClientForCurrentRequestUntrusted(void);
+void _AXSetClientIdentificationOverride(AXClientType);
 #endif // HAVE(AX_CLIENT_TYPE)
 
 WTF_EXTERN_C_END

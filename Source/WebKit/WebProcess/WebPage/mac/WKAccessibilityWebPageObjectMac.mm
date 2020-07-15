@@ -47,6 +47,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace ax = WebCore::Accessibility;
