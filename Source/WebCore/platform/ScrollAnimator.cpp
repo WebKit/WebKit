@@ -129,7 +129,7 @@ unsigned ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) cons
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    if (!m_scrollController.processWheelEventForScrollSnap(e))
+    if (m_scrollController.processWheelEventForScrollSnap(e))
         return false;
 #endif
 #if PLATFORM(COCOA)

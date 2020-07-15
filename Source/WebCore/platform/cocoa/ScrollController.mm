@@ -120,8 +120,8 @@ void ScrollController::stopAllTimers()
 bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (!processWheelEventForScrollSnap(wheelEvent))
-        return false;
+    if (processWheelEventForScrollSnap(wheelEvent))
+        return false; // FIXME: Why don't we report that we handled it?
 #endif
     if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
         return false;
@@ -665,10 +665,10 @@ void ScrollController::stopDeferringWheelEventTestCompletionDueToScrollSnapping(
 bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
 {
     if (!usesScrollSnap())
-        return true;
+        return false;
 
     if (m_scrollSnapState->snapOffsetsForAxis(ScrollEventAxis::Horizontal).isEmpty() && m_scrollSnapState->snapOffsetsForAxis(ScrollEventAxis::Vertical).isEmpty())
-        return true;
+        return false;
 
     auto status = toWheelEventStatus(wheelEvent.phase(), wheelEvent.momentumPhase());
 
@@ -704,7 +704,7 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
         break;
     }
 
-    return !(isMomentumScrolling && shouldOverrideMomentumScrolling());
+    return isMomentumScrolling && shouldOverrideMomentumScrolling();
 }
 
 void ScrollController::updateGestureInProgressState(const PlatformWheelEvent& wheelEvent)
