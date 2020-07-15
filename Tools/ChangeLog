@@ -1,3 +1,15 @@
+2020-07-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-javascriptcore-tests] nativeArchitecture should never be arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=214369
+        <rdar://problem/65364995>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture):
+        (determineArchitecture):
+
 2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Flaky API Test: TestWebKitAPI.SleepDisabler.NavigateBack

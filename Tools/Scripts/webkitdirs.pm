@@ -372,13 +372,6 @@ sub determineNativeArchitecture(;$$)
         $output = "arm64";
     }
 
-    if (isAppleCocoaWebKit() && $output eq "arm64") {
-        determineXcodeSDK();
-        if ($xcodeSDK eq "macosx.internal") {
-            $output = "arm64e";
-        }
-    }
-
     $output = "arm" if $output eq "armv7l";
     $nativeArchitectureMap{"$target:$port"} = $output;
 }
@@ -389,6 +382,12 @@ sub determineArchitecture
 
     determineBaseProductDir();
     $architecture = nativeArchitecture();
+    if (isAppleCocoaWebKit() && $architecture eq "arm64") {
+        determineXcodeSDK();
+        if ($xcodeSDK eq "macosx.internal") {
+            $architecture = "arm64e";
+        }
+    }
 
     if (isAppleCocoaWebKit()) {
         determineXcodeSDK();
