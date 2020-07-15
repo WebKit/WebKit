@@ -1,5 +1,26 @@
 2020-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        REGRESSION (r264101): Sharing a link attaches an image instead of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=214329
+        <rdar://problem/65513607>
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        r264101 added logic that attempts to share an activated (i.e. long-pressed) element as an image, if the image
+        URL scheme for the element is equal to "data" (ignoring case sensitivity). However, in the case where the image
+        URL is nil, the call to `[element.imageURL.scheme caseInsensitiveCompare:@"data"]` is 0, which (conveniently) is
+        equal to `NSOrderedSame`. This causes us to incorrectly proceed by sharing the element as an image.
+
+        Fix this by going through URL::protocolIsData(), so we don't end up with 0 (`NSOrderedSame`) when
+        `element.imageURL.scheme` is `nil`.
+
+        Test: ShareSheetTests.ShareAnchorElementAsURL
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+
+2020-07-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] The completion handler in -handleKeyWebEvent:withCompletionHandler: is sometimes never called
         https://bugs.webkit.org/show_bug.cgi?id=214295
         <rdar://problem/60539389>

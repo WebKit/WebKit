@@ -101,6 +101,24 @@ TEST(ShareSheetTests, ShareImgElementWithBase64URL)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(ShareSheetTests, ShareAnchorElementAsURL)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto observer = adoptNS([[ShareSheetObserver alloc] init]);
+    [webView setUIDelegate:observer.get()];
+    [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
+
+    __block bool done = false;
+    [observer setActivityItemsHandler:^(NSArray *activityItems) {
+        EXPECT_EQ(1UL, activityItems.count);
+        EXPECT_WK_STREQ("https://www.apple.com/", [[activityItems objectAtIndex:0] absoluteString]);
+        done = true;
+    }];
+
+    showShareSheet(webView.get(), observer.get(), CGPointMake(100, 100));
+    TestWebKitAPI::Util::run(&done);
+}
+
 #endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 } // namespace TestWebKitAPI
