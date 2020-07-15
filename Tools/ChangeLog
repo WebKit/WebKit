@@ -1,5 +1,15 @@
 2020-07-15  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add timeout to network requests
+        https://bugs.webkit.org/show_bug.cgi?id=214355
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/util.py:
+        (fetch_data_from_url): Add tiemout as recommended in https://requests.readthedocs.io/en/master/user/quickstart/#timeouts
+
+2020-07-15  Aakash Jain  <aakash_jain@apple.com>
+
         Make ews django app robust against network issues
         https://bugs.webkit.org/show_bug.cgi?id=214351
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ def fetch_data_from_url(url):
     _log.debug('Fetching: {}'.format(url))
     response = None
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
     except Exception as e:
         if response:
             _log.error('Failed to access {url} with status code {status_code}.'.format(url=url, status_code=response.status_code))
