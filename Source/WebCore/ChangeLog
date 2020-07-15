@@ -1,3 +1,21 @@
+2020-07-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove Display::LineBox::isConsideredEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=214335
+
+        Reviewed by Antti Koivisto.
+
+        Display classes should not have layout related bits.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::baselineOffset const):
+        (WebCore::Display::LineBox::LineBox):
+        (WebCore::Display::LineBox::isConsideredEmpty const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+
 2020-07-15  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Break circular reference between SourceBufferPrivateGStreamer and AppendPipeline

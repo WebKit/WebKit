@@ -570,7 +570,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     }
     // FIXME: This is where the logical to physical translate should happen.
     auto& baseline = lineBox.baseline();
-    inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, { baseline.ascent(), baseline.descent() }, lineBox.baselineOffset(), lineBox.isConsideredEmpty() });
+    inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, { baseline.ascent(), baseline.descent() }, lineBox.baselineOffset() });
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

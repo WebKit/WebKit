@@ -47,7 +47,7 @@ public:
         InlineLayoutUnit m_descent { 0 };
     };
 
-    LineBox(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline&, InlineLayoutUnit baselineOffset, bool isConsideredEmpty);
+    LineBox(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline&, InlineLayoutUnit baselineOffset);
 
     const InlineRect& rect() const { return m_rect; }
     const InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
@@ -80,7 +80,6 @@ public:
     //   v
     // -------------------       line bottom       -------------------
     InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
-    bool isConsideredEmpty() const { return m_isConsideredEmpty; }
 
 private:
     InlineRect m_rect;
@@ -88,16 +87,14 @@ private:
     InlineRect m_inkOverflow;
     Baseline m_baseline;
     InlineLayoutUnit m_baselineOffset { 0 };
-    bool m_isConsideredEmpty { true };
 };
 
-inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline& baseline, InlineLayoutUnit baselineOffset, bool isConsideredEmpty)
+inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline& baseline, InlineLayoutUnit baselineOffset)
     : m_rect(rect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_inkOverflow(inkOverflow)
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)
-    , m_isConsideredEmpty(isConsideredEmpty)
 {
 }
 
