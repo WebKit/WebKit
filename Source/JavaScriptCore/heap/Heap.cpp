@@ -972,7 +972,9 @@ void Heap::deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort effort)
 void Heap::deleteUnmarkedCompiledCode()
 {
     vm().forEachScriptExecutableSpace([] (auto& space) { space.space.sweep(); });
-    vm().forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); }); // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
+    // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
+    // And CodeBlock destructor is assuming that CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
+    vm().forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); });
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 

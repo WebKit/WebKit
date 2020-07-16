@@ -817,8 +817,14 @@ CodeBlock::~CodeBlock()
 {
     VM& vm = *m_vm;
 
+    // We use unvalidatedGet because get() has a validation assertion that rejects access.
+    // This assertion is correct since destruction order of cells is not guaranteed, and member cells could already be destroyed.
+    // But for CodeBlock, we are ensuring the order: CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
+    // So, we can access member UnlinkedCodeBlock safely here. We bypass the assertion by using unvalidatedGet.
+    UnlinkedCodeBlock* unlinkedCodeBlock = m_unlinkedCode.unvalidatedGet();
+
     if (Options::returnEarlyFromInfiniteLoopsForFuzzing() && JITCode::isBaselineCode(jitType())) {
-        for (const auto& instruction : instructions()) {
+        for (const auto& instruction : unlinkedCodeBlock->instructions()) {
             if (instruction->is<OpLoopHint>())
                 vm.removeLoopHintExecutionCounter(instruction.ptr());
         }
@@ -849,8 +855,8 @@ CodeBlock::~CodeBlock()
     if (UNLIKELY(vm.m_perBytecodeProfiler))
         vm.m_perBytecodeProfiler->notifyDestruction(this);
 
-    if (!vm.heap.isShuttingDown() && unlinkedCodeBlock()->didOptimize() == TriState::Indeterminate)
-        unlinkedCodeBlock()->setDidOptimize(TriState::False);
+    if (!vm.heap.isShuttingDown() && unlinkedCodeBlock->didOptimize() == TriState::Indeterminate)
+        unlinkedCodeBlock->setDidOptimize(TriState::False);
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();

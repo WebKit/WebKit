@@ -1,3 +1,14 @@
+2020-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use unvalidatedGet instead of get to access UnlinkedCodeBlock from CodeBlock destructor
+        https://bugs.webkit.org/show_bug.cgi?id=214403
+        <rdar://problem/65527229>
+
+        Reviewed by Mark Lam.
+
+        * stress/codeblock-destructor-access-unlinkedcodeblock.js: Added.
+        (foo):
+
 2020-07-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Emit HasOwnPropertyFunctionCallDotNode for "Reflect" identifiers

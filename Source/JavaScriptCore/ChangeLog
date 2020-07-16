@@ -1,3 +1,22 @@
+2020-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use unvalidatedGet instead of get to access UnlinkedCodeBlock from CodeBlock destructor
+        https://bugs.webkit.org/show_bug.cgi?id=214403
+        <rdar://problem/65527229>
+
+        Reviewed by Mark Lam.
+
+        WriteBarrier<>::get has a check whether this is not executed when sweeping cells. This is good assertion since
+        destruction order of cells are not defined in general, so member cell access from a destructor is almost always wrong.
+        But in CodeBlock case, this is OK because (1) CodeBlock destructor accesses UnlinkedCodeBlock and (2) GC ensures that
+        CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed. So this assertion is hit incorrectly.
+        In this patch, we use WriteBarrier<>::unvalidatedGet in CodeBlock destructor to bypass the above assertion explicitly.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+
 2020-07-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][WebDriver] Generating WebDriverAtoms.cpp is rarely failing as "ImportError: No module named jsmin"
