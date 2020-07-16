@@ -1,3 +1,25 @@
+2020-07-16  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        ASAN builds of WebKit should not freeze when an EXC_RESOURCE is delivered
+        https://bugs.webkit.org/show_bug.cgi?id=214346
+
+        Reviewed by Mark Lam.
+
+        When the WebContent process allocates 1000 MB of memory or starts 32
+        threads, it receives an EXC_RESOURCE. This requires iterating all the
+        mappings of the process. For the case of a process instrumented with
+        AddressSanitizer, the mappings total 20 terabytes, and cause the
+        process to "freeze" for several minutes. 
+
+        Setting the sysctl debug.toggle_address_reuse to 1 causes the
+        EXC_RESOURCE mechanism to skip iteration of all the mappings. 
+
+        With this patch, setting the environment variable 
+        DISABLE_FREEZING_ON_EXC_RESOURCE will set the sysctl mentioned above
+        for WebContent and Networking processes.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+
 2020-07-15  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, revert part of r264385.

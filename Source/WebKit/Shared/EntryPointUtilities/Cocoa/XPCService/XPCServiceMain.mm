@@ -30,6 +30,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <sys/sysctl.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -139,6 +140,19 @@ int XPCServiceMain(int argc, const char** argv)
 
     if (bootstrap) {
 #if PLATFORM(MAC)
+#if ASAN_ENABLED
+        // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
+        if (char *disableFreezingOnExcResource = getenv("DISABLE_FREEZING_ON_EXC_RESOURCE")) {
+            if (!strcasecmp(disableFreezingOnExcResource, "yes") || !strcasecmp(disableFreezingOnExcResource, "true") || !strcasecmp(disableFreezingOnExcResource, "1")) {
+                int val = 1;
+                int rc = sysctlbyname("debug.toggle_address_reuse", nullptr, 0, &val, sizeof(val));
+                if (rc < 0)
+                    WTFLogAlways("failed to set debug.toggle_address_reuse: %d\n", rc);
+                else
+                    WTFLogAlways("debug.toggle_address_reuse is now 1.\n");
+            }
+        }
+#endif
         String webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion");
         String expectedBundleVersion = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
         if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
