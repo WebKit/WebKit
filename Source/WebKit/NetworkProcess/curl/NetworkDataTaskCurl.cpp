@@ -236,6 +236,7 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
                 m_curlRequest->completeDidReceiveResponse();
             break;
         case PolicyAction::Ignore:
+            invalidateAndCancel();
             break;
         default:
             notImplemented();

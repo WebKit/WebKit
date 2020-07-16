@@ -1,3 +1,18 @@
+2020-07-16  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [WinCairo][CURL] NetworkProcess consumes CPU resource greedily
+        https://bugs.webkit.org/show_bug.cgi?id=214383
+
+        Reviewed by Fujii Hironori.
+
+        Add PolicyAction::Ignore handling routine in NetworkDataTaskCurl::invokeDidReceiveResponse()
+        If we don't cancel the ignored requests the worker thread for curl scheduler goes busy-looping because the fds of the requests continue to be monitored.
+
+        No tests needed as existing tests cover this change.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::invokeDidReceiveResponse):
+
 2020-07-16  Tim Horton  <timothy_horton@apple.com>
 
         iPad cursor is sometimes slow to change to I-beam (e.g. on reddit.com)
