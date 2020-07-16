@@ -1,3 +1,28 @@
+2020-07-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-writing-modes (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214278
+
+        Unreviewed follow-up to r264337.
+
+        Add missing binary files from r264337. The files were recorded on the
+        import log but I messed it up by not passing --binary when generating
+        the patch.
+
+        * web-platform-tests/css/css-writing-modes/support/blue-200x100.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/mn+arabic.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/mn+latin.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/mn-orientation.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/mn_ar_wrap.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/mn_en_wrap.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/wm-propagation-body-035-exp-res.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/world.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/zh+arabic.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/zh+latin.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/zh-orientation.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/zh_ar_wrap.png: Added.
+        * web-platform-tests/css/css-writing-modes/support/zh_en_wrap.png: Added.
+
 2020-07-16  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/imagebitmap-renderingcontext from upstream

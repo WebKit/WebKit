@@ -1,3 +1,12 @@
+2020-07-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for css-writing-modes (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214278
+
+        Unreviewed follow-up to r264337.
+
+        * TestExpectations: Update expectation for test passing now.
+
 2020-07-16  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk2 ] REGRESSION(r263485): fast/scrolling/mac/scroll-snapping-in-progress.html is a flaky failure
