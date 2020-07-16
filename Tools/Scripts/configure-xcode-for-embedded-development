@@ -65,15 +65,21 @@ MISSING_FRAMEWORKS = [
     ("VideoToolbox.framework", False),
 ]
 
+xcode_version = subprocess.run(['/usr/bin/xcodebuild', '-version'], capture_output=True, encoding='ascii').stdout.splitlines()[0].split(' ')[1]
+if int(xcode_version.split('.')[0]) >= 12:
+    mac_xcspec_location = 'Platforms/MacOSX.platform/Developer/Library/Xcode/PrivatePlugIns/IDEOSXSupportCore.ideplugin/Contents/Resources'
+else:
+    mac_xcspec_location = 'Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications'
+
 XCSPEC_INFO = [
     {
         "id":       "com.apple.package-type.mach-o-executable",
-        "source":   "Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX Package Types.xcspec",
+        "source":   f"{mac_xcspec_location}/MacOSX Package Types.xcspec",
         "dest":     "../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec"
     },
     {
         "id":       "com.apple.product-type.tool",
-        "source":   "Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX Product Types.xcspec",
+        "source":   f"{mac_xcspec_location}/MacOSX Product Types.xcspec",
         "dest":     "../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec"
     },
 ]

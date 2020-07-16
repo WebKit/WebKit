@@ -1,3 +1,14 @@
+2020-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [configure-xcode-for-embedded-development] Support Xcode 12
+        https://bugs.webkit.org/show_bug.cgi?id=214420
+        <rdar://problem/65687153>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/configure-xcode-for-embedded-development: Mac xcspec files are in a different
+        spot in Xcode 12.
+
 2020-07-16  Eric Carlson  <eric.carlson@apple.com>
 
         Use AVRoutePickerView when available for choosing AirPlay devices
