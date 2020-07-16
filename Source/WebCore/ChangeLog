@@ -1,3 +1,16 @@
+2020-07-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        [webAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange]needs to autorelease the return value from the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=214404
+        <rdar://problem/65627156>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:spellCheck:]):
+        Call retrieveAutoreleasedValueFromMainthread instead of retrieveValueFromMainThread.
+        The autorelease call inside the lambda doesn't do the job.
+
 2020-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r264280) [GTK][WPE] fast/gradients/conic-gradient-alpha.html is failing
