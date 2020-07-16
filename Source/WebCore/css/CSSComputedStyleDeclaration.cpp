@@ -868,20 +868,24 @@ static Ref<CSSValueList> valueForGridTrackSizeList(GridTrackSizingDirection dire
 }
 
 template <typename T, typename F>
-void populateGridTrackList(CSSValueList& list, OrderedNamedLinesCollector& collector, const Vector<T>& tracks, F getTrackSize, unsigned start, unsigned end, unsigned offset = 0)
+void populateGridTrackList(CSSValueList& list, OrderedNamedLinesCollector& collector, const Vector<T>& tracks, F getTrackSize, int start, int end, int offset = 0)
 {
-    ASSERT(end <= tracks.size());
-    for (unsigned i = start; i < end; ++i) {
-        addValuesForNamedGridLinesAtIndex(collector, i + offset, list);
+    ASSERT(0 <= start);
+    ASSERT(start <= end);
+    ASSERT(static_cast<unsigned>(end) <= tracks.size());
+    for (int i = start; i < end; ++i) {
+        if (i + offset >= 0)
+            addValuesForNamedGridLinesAtIndex(collector, i + offset, list);
         list.append(getTrackSize(tracks[i]));
     }
-    addValuesForNamedGridLinesAtIndex(collector, end + offset, list);
+    if (end + offset >= 0)
+        addValuesForNamedGridLinesAtIndex(collector, end + offset, list);
 }
 
 template <typename T, typename F>
-void populateGridTrackList(CSSValueList& list, OrderedNamedLinesCollector& collector, const Vector<T>& tracks, F getTrackSize)
+void populateGridTrackList(CSSValueList& list, OrderedNamedLinesCollector& collector, const Vector<T>& tracks, F getTrackSize, int offset = 0)
 {
-    populateGridTrackList<T>(list, collector, tracks, getTrackSize, 0, tracks.size());
+    populateGridTrackList<T>(list, collector, tracks, getTrackSize, 0, tracks.size(), offset);
 }
 
 static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle& style)
@@ -911,9 +915,12 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     if (isRenderGrid) {
         auto* grid = downcast<RenderGrid>(renderer);
         OrderedNamedLinesCollectorInGridLayout collector(style, isRowAxis, grid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
+        // Named grid line indices are relative to the explicit grid, but we are including all tracks.
+        // So we need to subtract the number of leading implicit tracks in order to get the proper line index.
+        int offset = -grid->explicitGridStartForDirection(direction);
         populateGridTrackList(list.get(), collector, grid->trackSizesForComputedStyle(direction), [&](const LayoutUnit& v) {
             return zoomAdjustedPixelValue(v, style);
-        });
+        }, offset);
         return list;
     }
 

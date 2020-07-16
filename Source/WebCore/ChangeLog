@@ -1,3 +1,29 @@
+2020-07-16  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Fix line name positions after implicit tracks
+        https://bugs.webkit.org/show_bug.cgi?id=214315
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        When serializing grid-template-rows/columns of a grid container, we get
+        the list of used track sizes, and then insert line names at the
+        corresponding indices.
+
+        Before this patch, these indices were simply taken from the computed
+        value. However, leading implicit tracks appear in the used value but not
+        in the computed one. Therefore, we have to offset the indices so that
+        the line names appear at the proper positions.
+
+        This patch is a port of https://crrev.com/777829
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::populateGridTrackList):
+        (WebCore::valueForGridTrackList):
+        * rendering/RenderGrid.h:
+
 2020-07-16  Andres Gonzalez  <andresg_22@apple.com>
 
         [webAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange]needs to autorelease the return value from the main thread.
