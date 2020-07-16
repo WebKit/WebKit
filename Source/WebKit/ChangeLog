@@ -1,3 +1,11 @@
+2020-07-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix logging added in r264414 that was incorrectly marked as "error" logging.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2020-07-16  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         ASAN builds of WebKit should not freeze when an EXC_RESOURCE is delivered
