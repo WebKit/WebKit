@@ -1,3 +1,10 @@
+2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, add iOS baseliens for tests re-synced in r264427 and r264432.
+
+        * platform/ios/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/resize-observer/svg-expected.txt: Added.
+
 2020-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         [ iOS WK2 Release ] fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html is a flaky failure
