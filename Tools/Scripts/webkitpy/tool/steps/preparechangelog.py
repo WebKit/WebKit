@@ -1,3 +1,4 @@
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,6 +56,9 @@ class PrepareChangeLog(AbstractStep):
         changelogs = self.cached_lookup(state, "changelogs")
         for changelog_path in changelogs:
             changelog = ChangeLog(changelog_path, self._tool.filesystem)
+            if not changelog.latest_entry():
+                _log.error('Invalid ChangeLog at: {}'.format(changelog_path))
+                sys.exit(1)
             if not changelog.latest_entry().bug_id():
                 changelog.set_short_description_and_bug_url(
                     self.cached_lookup(state, "bug_title"),

@@ -1,3 +1,13 @@
+2020-07-16  Aakash Jain  <aakash_jain@apple.com>
+
+        Improve handling of invalid ChangeLog by webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=214365
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog._ensure_bug_url):
+
 2020-07-16  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Correct url in setup.py
