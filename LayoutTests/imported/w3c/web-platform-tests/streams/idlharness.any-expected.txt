@@ -1,3 +1,5 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Error fetching /interfaces/streams.idl."
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "WebIDLParseError: Syntax error at line 18 in streams, since `interface ReadableStream`:
+  async iterable<any>(optional ReadableStreamIteratorOptions options
+                    ^ Missing second type argument in iterable declaration"
 

@@ -60,7 +60,7 @@ PASS XMLHttpRequest interface: operation setRequestHeader(ByteString, ByteString
 PASS XMLHttpRequest interface: attribute timeout 
 PASS XMLHttpRequest interface: attribute withCredentials 
 PASS XMLHttpRequest interface: attribute upload 
-PASS XMLHttpRequest interface: operation send(optional (Document or BodyInit)?) 
+PASS XMLHttpRequest interface: operation send(optional (Document or XMLHttpRequestBodyInit)?) 
 PASS XMLHttpRequest interface: operation abort() 
 PASS XMLHttpRequest interface: attribute responseURL 
 PASS XMLHttpRequest interface: attribute status 
@@ -90,8 +90,8 @@ PASS XMLHttpRequest interface: calling setRequestHeader(ByteString, ByteString) 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "timeout" with the proper type 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "withCredentials" with the proper type 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "upload" with the proper type 
-PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "send(optional (Document or BodyInit)?)" with the proper type 
-PASS XMLHttpRequest interface: calling send(optional (Document or BodyInit)?) on new XMLHttpRequest() with too few arguments must throw TypeError 
+PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "send(optional (Document or XMLHttpRequestBodyInit)?)" with the proper type 
+PASS XMLHttpRequest interface: calling send(optional (Document or XMLHttpRequestBodyInit)?) on new XMLHttpRequest() with too few arguments must throw TypeError 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "abort()" with the proper type 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "responseURL" with the proper type 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "status" with the proper type 

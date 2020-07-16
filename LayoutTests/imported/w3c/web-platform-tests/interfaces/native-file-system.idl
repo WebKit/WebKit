@@ -7,24 +7,30 @@ dictionary FileSystemHandlePermissionDescriptor {
   boolean writable = false;
 };
 
+enum FileSystemHandleKind {
+  "file",
+  "directory",
+};
+
 [Exposed=(Window,Worker), SecureContext, Serializable]
 interface FileSystemHandle {
-  readonly attribute boolean isFile;
-  readonly attribute boolean isDirectory;
+  readonly attribute FileSystemHandleKind kind;
   readonly attribute USVString name;
+
+  Promise<boolean> isSameEntry(FileSystemHandle other);
 
   Promise<PermissionState> queryPermission(optional FileSystemHandlePermissionDescriptor descriptor = {});
   Promise<PermissionState> requestPermission(optional FileSystemHandlePermissionDescriptor descriptor = {});
 };
 
-dictionary FileSystemCreateWriterOptions {
+dictionary FileSystemCreateWritableOptions {
   boolean keepExistingData = false;
 };
 
 [Exposed=(Window,Worker), SecureContext, Serializable]
 interface FileSystemFileHandle : FileSystemHandle {
   Promise<File> getFile();
-  Promise<FileSystemWriter> createWriter(optional FileSystemCreateWriterOptions options = {});
+  Promise<FileSystemWritableFileStream> createWritable(optional FileSystemCreateWritableOptions options = {});
 };
 
 dictionary FileSystemGetFileOptions {
@@ -41,52 +47,66 @@ dictionary FileSystemRemoveOptions {
 
 [Exposed=(Window,Worker), SecureContext, Serializable]
 interface FileSystemDirectoryHandle : FileSystemHandle {
-  Promise<FileSystemFileHandle> getFile(USVString name, optional FileSystemGetFileOptions options = {});
-  Promise<FileSystemDirectoryHandle> getDirectory(USVString name, optional FileSystemGetDirectoryOptions options = {});
+  async iterable<USVString, FileSystemHandle>;
 
-  // This really returns an async iterable, but that is not yet expressable in WebIDL.
-  object getEntries();
+  Promise<FileSystemFileHandle> getFileHandle(USVString name, optional FileSystemGetFileOptions options = {});
+  Promise<FileSystemDirectoryHandle> getDirectoryHandle(USVString name, optional FileSystemGetDirectoryOptions options = {});
 
   Promise<void> removeEntry(USVString name, optional FileSystemRemoveOptions options = {});
+
+  Promise<sequence<USVString>?> resolve(FileSystemHandle possibleDescendant);
 };
+
+enum WriteCommandType {
+  "write",
+  "seek",
+  "truncate",
+};
+
+dictionary WriteParams {
+  required WriteCommandType type;
+  unsigned long long? size;
+  unsigned long long? position;
+  (BufferSource or Blob or USVString)? data;
+};
+
+typedef (BufferSource or Blob or USVString or WriteParams) FileSystemWriteChunkType;
 
 [Exposed=(Window,Worker), SecureContext]
-interface FileSystemWriter {
-  Promise<void> write(unsigned long long position, (BufferSource or Blob or USVString) data);
+interface FileSystemWritableFileStream : WritableStream {
+  Promise<void> write(FileSystemWriteChunkType data);
+  Promise<void> seek(unsigned long long position);
   Promise<void> truncate(unsigned long long size);
-  Promise<void> close();
 };
 
-enum ChooseFileSystemEntriesType { "open-file", "save-file", "open-directory" };
-
-dictionary ChooseFileSystemEntriesOptionsAccepts {
-  USVString description;
-  sequence<USVString> mimeTypes;
-  sequence<USVString> extensions;
+dictionary FilePickerAcceptType {
+    USVString description;
+    record<USVString, sequence<USVString>> accept;
 };
 
-dictionary ChooseFileSystemEntriesOptions {
-    ChooseFileSystemEntriesType type = "open-file";
-    boolean multiple = false;
-    sequence<ChooseFileSystemEntriesOptionsAccepts> accepts;
+dictionary FilePickerOptions {
+    sequence<FilePickerAcceptType> types;
     boolean excludeAcceptAllOption = false;
+};
+
+dictionary OpenFilePickerOptions : FilePickerOptions {
+    boolean multiple = false;
+};
+
+dictionary SaveFilePickerOptions : FilePickerOptions {
+};
+
+dictionary DirectoryPickerOptions {
 };
 
 [SecureContext]
 partial interface Window {
-    Promise<(FileSystemHandle or sequence<FileSystemHandle>)>
-        chooseFileSystemEntries(optional ChooseFileSystemEntriesOptions options = {});
-};
-
-enum SystemDirectoryType {
-  "sandbox"
-};
-
-dictionary GetSystemDirectoryOptions {
-  required SystemDirectoryType type;
+    Promise<sequence<FileSystemFileHandle>> showOpenFilePicker(optional OpenFilePickerOptions options = {});
+    Promise<FileSystemFileHandle> showSaveFilePicker(optional SaveFilePickerOptions options = {});
+    Promise<FileSystemDirectoryHandle> showDirectoryPicker(optional DirectoryPickerOptions options = {});
 };
 
 [SecureContext]
-partial interface FileSystemDirectoryHandle {
-  static Promise<FileSystemDirectoryHandle> getSystemDirectory(GetSystemDirectoryOptions options);
+partial interface mixin WindowOrWorkerGlobalScope {
+  Promise<FileSystemDirectoryHandle> getOriginPrivateDirectory();
 };

@@ -1,5 +1,54 @@
 2020-07-16  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/interfaces from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214413
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/interfaces from upstream 81de986322a0de90f2.
+
+        * web-platform-tests/interfaces/CSS-Parser-API.idl: Removed.
+        * web-platform-tests/interfaces/ambient-light.idl:
+        * web-platform-tests/interfaces/appmanifest.idl:
+        * web-platform-tests/interfaces/background-sync.idl: Renamed from LayoutTests/imported/w3c/web-platform-tests/interfaces/BackgroundSync.idl.
+        * web-platform-tests/interfaces/compression.idl: Added.
+        * web-platform-tests/interfaces/content-index.idl: Added.
+        * web-platform-tests/interfaces/cookie-store.idl:
+        * web-platform-tests/interfaces/css-properties-values-api.idl:
+        * web-platform-tests/interfaces/custom-state-pseudo-class.idl: Added.
+        * web-platform-tests/interfaces/deprecation-reporting.idl: Added.
+        * web-platform-tests/interfaces/fetch.idl:
+        * web-platform-tests/interfaces/get-installed-related-apps.idl: Added.
+        * web-platform-tests/interfaces/html.idl:
+        * web-platform-tests/interfaces/image-capture.idl:
+        * web-platform-tests/interfaces/input-device-capabilities.idl: Renamed from LayoutTests/imported/w3c/web-platform-tests/interfaces/InputDeviceCapabilities.idl.
+        * web-platform-tests/interfaces/intervention-reporting.idl: Added.
+        * web-platform-tests/interfaces/is-input-pending.idl: Added.
+        * web-platform-tests/interfaces/media-capabilities.idl:
+        * web-platform-tests/interfaces/native-file-system.idl:
+        * web-platform-tests/interfaces/payment-handler.idl:
+        * web-platform-tests/interfaces/picture-in-picture.idl:
+        * web-platform-tests/interfaces/pointerevents.idl:
+        * web-platform-tests/interfaces/savedata.idl: Added.
+        * web-platform-tests/interfaces/scroll-animations.idl:
+        * web-platform-tests/interfaces/storage-access-api.tentative.idl: Removed.
+        * web-platform-tests/interfaces/storage-access.idl: Added.
+        * web-platform-tests/interfaces/streams.idl: Added.
+        * web-platform-tests/interfaces/ua-client-hints.idl: Added.
+        * web-platform-tests/interfaces/w3c-import.log:
+        * web-platform-tests/interfaces/wai-aria.idl:
+        * web-platform-tests/interfaces/web-otp.idl: Added.
+        * web-platform-tests/interfaces/webauthn.idl:
+        * web-platform-tests/interfaces/webdriver.idl:
+        * web-platform-tests/interfaces/webhid.idl: Added.
+        * web-platform-tests/interfaces/webxr-ar-module.idl:
+        * web-platform-tests/interfaces/webxr.idl:
+        * web-platform-tests/interfaces/xhr.idl:
+        * web-platform-tests/xhr/idlharness.any-expected.txt:
+        * web-platform-tests/xhr/idlharness.any.worker-expected.txt:
+
+2020-07-16  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/webaudio from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214411
 
