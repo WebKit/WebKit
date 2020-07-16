@@ -1,4 +1,4 @@
 
-PASS Property column-rule-color value 'currentcolor' computes to 'rgb(0, 255, 0)' 
-PASS Property column-rule-color value 'red' computes to 'rgb(255, 0, 0)' 
+PASS Property column-rule-color value 'currentcolor' 
+PASS Property column-rule-color value 'red' 
 

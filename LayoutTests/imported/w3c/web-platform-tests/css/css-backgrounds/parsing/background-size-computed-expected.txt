@@ -1,13 +1,13 @@
 
-PASS Property background-size value '1px' computes to '1px' 
-PASS Property background-size value '1px auto' computes to '1px' 
-PASS Property background-size value '2% 3%' computes to '2% 3%' 
-PASS Property background-size value 'auto' computes to 'auto' 
-PASS Property background-size value 'auto auto' computes to 'auto' 
-PASS Property background-size value 'auto 4%' computes to 'auto 4%' 
-PASS Property background-size value 'contain' computes to 'contain' 
-PASS Property background-size value 'cover' computes to 'cover' 
-FAIL Property background-size value 'calc(10px + 0.5em) calc(10px - 0.5em)' computes to '30px 0px' assert_equals: expected "30px 0px" but got "30px -10px"
-FAIL Property background-size value 'calc(10px - 0.5em) calc(10px + 0.5em)' computes to '0px 30px' assert_equals: expected "0px 30px" but got "-10px 30px"
-PASS Property background-size value 'auto 1px, 2% 3%, contain' computes to 'auto 1px' 
+PASS Property background-size value '1px' 
+PASS Property background-size value '1px auto' 
+PASS Property background-size value '2% 3%' 
+PASS Property background-size value 'auto' 
+PASS Property background-size value 'auto auto' 
+PASS Property background-size value 'auto 4%' 
+PASS Property background-size value 'contain' 
+PASS Property background-size value 'cover' 
+FAIL Property background-size value 'calc(10px + 0.5em) calc(10px - 0.5em)' assert_equals: expected "30px 0px" but got "30px -10px"
+FAIL Property background-size value 'calc(10px - 0.5em) calc(10px + 0.5em)' assert_equals: expected "0px 30px" but got "-10px 30px"
+PASS Property background-size value 'auto 1px, 2% 3%, contain' 
 

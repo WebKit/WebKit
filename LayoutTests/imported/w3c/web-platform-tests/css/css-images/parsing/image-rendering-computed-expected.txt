@@ -1,7 +1,7 @@
 
-PASS Property image-rendering value 'auto' computes to 'auto' 
-FAIL Property image-rendering value 'smooth' computes to 'smooth' assert_true: 'smooth' is a supported value for image-rendering. expected true got false
-FAIL Property image-rendering value 'high-quality' computes to 'high-quality' assert_true: 'high-quality' is a supported value for image-rendering. expected true got false
-PASS Property image-rendering value 'crisp-edges' computes to 'crisp-edges' 
-PASS Property image-rendering value 'pixelated' computes to 'pixelated' 
+PASS Property image-rendering value 'auto' 
+FAIL Property image-rendering value 'smooth' assert_true: 'smooth' is a supported value for image-rendering. expected true got false
+FAIL Property image-rendering value 'high-quality' assert_true: 'high-quality' is a supported value for image-rendering. expected true got false
+PASS Property image-rendering value 'crisp-edges' 
+PASS Property image-rendering value 'pixelated' 
 

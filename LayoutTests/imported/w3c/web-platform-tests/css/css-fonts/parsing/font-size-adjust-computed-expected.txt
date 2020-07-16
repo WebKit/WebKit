@@ -1,4 +1,4 @@
 
-FAIL Property font-size-adjust value 'none' computes to 'none' assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
-FAIL Property font-size-adjust value '0.5' computes to '0.5' assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
+FAIL Property font-size-adjust value 'none' assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
+FAIL Property font-size-adjust value '0.5' assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
 

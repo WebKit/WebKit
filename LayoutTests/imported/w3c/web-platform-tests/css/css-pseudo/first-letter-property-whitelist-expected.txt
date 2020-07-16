@@ -28,7 +28,7 @@ FAIL Whitelisted property textDecoration should be applied to first-letter pseud
 FAIL Whitelisted property textJustify should be applied to first-letter pseudo elements. assert_equals: expected (string) "inter-word" but got (undefined) undefined
 PASS Whitelisted property textShadow should be applied to first-letter pseudo elements. 
 PASS Whitelisted property textTransform should be applied to first-letter pseudo elements. 
-FAIL Whitelisted property textUnderlinePosition should be applied to first-letter pseudo elements. assert_equals: expected (string) "under" but got (undefined) undefined
+PASS Whitelisted property textUnderlinePosition should be applied to first-letter pseudo elements. 
 PASS Whitelisted property verticalAlign should be applied to first-letter pseudo elements. 
 PASS Whitelisted property wordSpacing should be applied to first-letter pseudo elements. 
 FAIL Non-whitelisted property transition should not be applied to first-letter pseudo elements. assert_equals: expected "all 0s ease 0s" but got "transform 1s ease 0s"

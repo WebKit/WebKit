@@ -8,12 +8,12 @@ PASS x-large <= xx-large
 PASS xx-large <= xxx-large 
 PASS inherit <= larger 
 PASS smaller <= inherit 
-PASS Property font-size value '10px' computes to '10px' 
-PASS Property font-size value '20%' computes to '8px' 
-PASS Property font-size value 'calc(30% - 40px)' computes to '0px' 
-PASS Property font-size value 'calc(30% + 40px)' computes to '52px' 
-PASS Property font-size value 'calc(10px - 0.5em)' computes to '0px' 
-PASS Property font-size value 'calc(10px + 0.5em)' computes to '30px' 
+PASS Property font-size value '10px' 
+PASS Property font-size value '20%' 
+PASS Property font-size value 'calc(30% - 40px)' 
+PASS Property font-size value 'calc(30% + 40px)' 
+PASS Property font-size value 'calc(10px - 0.5em)' 
+PASS Property font-size value 'calc(10px + 0.5em)' 
 PASS <font size="2"> is font-size: small 
 PASS <font size="3"> is font-size: medium 
 PASS <font size="4"> is font-size: large 

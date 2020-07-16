@@ -1,16 +1,14 @@
 
-Harness Error (FAIL), message = 2 duplicate test names: "Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 0px [g] 4px [h e f] 0px [g] 0px [h i] 5px [k] 6px [l m]'", "Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 4px [h i] 5px [k] 6px [l m]'"
-
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 0px [h e f] 0px [g] 0px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 0px [g] 4px [h e f] 0px [g] 0px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 0px [g] 0px [h e f] 3px [g] 0px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 0px [g] 0px [h e f] 0px [g] 4px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 0px [g] 4px [h e f] 0px [g] 0px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 0px [g] 4px [h e f] 3px [g] 0px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 0px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 4px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 4px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 4px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 4px [h i] 5px [k] 6px [l m]' 
-PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' computes to '[a] 1px [b] 2px [c d e f] 3px [g] 4px [h e f] 3px [g] 4px [h i] 5px [k] 6px [l m]' 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 3 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 4 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 5 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 6 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 4 / 5 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 4 / 6 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fit, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 3 / 6 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 3 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 4 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 5 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 4 / 7 
+PASS Property grid-template-columns value '[a] 1px [b] 2px [c d] repeat(auto-fill, [e f] 3px [g] 4px [h]) [i] 5px [k] 6px [l m] ' gridColumn = 3 / 6 
 

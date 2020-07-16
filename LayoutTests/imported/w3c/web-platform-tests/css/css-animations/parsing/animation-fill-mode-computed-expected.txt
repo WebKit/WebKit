@@ -1,3 +1,3 @@
 
-PASS Property animation-fill-mode value 'none, forwards, backwards, both' computes to 'none, forwards, backwards, both' 
+PASS Property animation-fill-mode value 'none, forwards, backwards, both' 
 

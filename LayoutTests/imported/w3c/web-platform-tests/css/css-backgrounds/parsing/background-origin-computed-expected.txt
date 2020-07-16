@@ -1,6 +1,6 @@
 
-PASS Property background-origin value 'border-box' computes to 'border-box' 
-PASS Property background-origin value 'padding-box' computes to 'padding-box' 
-PASS Property background-origin value 'content-box' computes to 'content-box' 
-PASS Property background-origin value 'border-box, padding-box, content-box' computes to 'border-box' 
+PASS Property background-origin value 'border-box' 
+PASS Property background-origin value 'padding-box' 
+PASS Property background-origin value 'content-box' 
+PASS Property background-origin value 'border-box, padding-box, content-box' 
 

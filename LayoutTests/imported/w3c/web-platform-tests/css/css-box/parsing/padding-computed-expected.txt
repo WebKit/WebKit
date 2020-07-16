@@ -1,15 +1,15 @@
 
-PASS Property padding value '10px' computes to '10px' 
-PASS Property padding value '10px 20px 30px 40px' computes to '10px 20px 30px 40px' 
-PASS Property padding-top value '10px' computes to '10px' 
-PASS Property padding-right value '20px' computes to '20px' 
-PASS Property padding-bottom value '30px' computes to '30px' 
-PASS Property padding-left value '40px' computes to '40px' 
-FAIL Property padding value '20%' computes to '40px' assert_equals: expected "40px" but got "160px"
-FAIL Property padding value '10px 20% 30% 40px' computes to '10px 40px 60px' assert_equals: expected "10px 40px 60px" but got "10px 160px 240px 40px"
-FAIL Property padding-right value '20%' computes to '40px' assert_equals: expected "40px" but got "160px"
-FAIL Property padding-top value 'calc(10% - 40px)' computes to '0px' assert_equals: expected "0px" but got "40px"
-FAIL Property padding-right value 'calc(10% + 40px)' computes to '60px' assert_equals: expected "60px" but got "120px"
-PASS Property padding-bottom value 'calc(10px - 0.5em)' computes to '0px' 
-PASS Property padding-left value 'calc(10px + 0.5em)' computes to '30px' 
+PASS Property padding value '10px' 
+PASS Property padding value '10px 20px 30px 40px' 
+PASS Property padding-top value '10px' 
+PASS Property padding-right value '20px' 
+PASS Property padding-bottom value '30px' 
+PASS Property padding-left value '40px' 
+FAIL Property padding value '20%' assert_equals: expected "40px" but got "160px"
+FAIL Property padding value '10px 20% 30% 40px' assert_equals: expected "10px 40px 60px" but got "10px 160px 240px 40px"
+FAIL Property padding-right value '20%' assert_equals: expected "40px" but got "160px"
+FAIL Property padding-top value 'calc(10% - 40px)' assert_equals: expected "0px" but got "40px"
+FAIL Property padding-right value 'calc(10% + 40px)' assert_equals: expected "60px" but got "120px"
+PASS Property padding-bottom value 'calc(10px - 0.5em)' 
+PASS Property padding-left value 'calc(10px + 0.5em)' 
 

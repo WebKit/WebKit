@@ -1,8 +1,8 @@
 
-PASS Property column-rule value '10px' computes to '0px none rgb(0, 255, 0)' 
-PASS Property column-rule value 'dotted' computes to '3px dotted rgb(0, 255, 0)' 
-PASS Property column-rule value '0px none rgb(255, 0, 255)' computes to '0px none rgb(255, 0, 255)' 
-PASS Property column-rule value '10px dotted rgb(255, 0, 255)' computes to '10px dotted rgb(255, 0, 255)' 
-PASS Property column-rule value 'medium hidden currentcolor' computes to '0px hidden rgb(0, 255, 0)' 
-PASS Property column-rule value 'medium solid currentcolor' computes to '3px solid rgb(0, 255, 0)' 
+PASS Property column-rule value '10px' 
+PASS Property column-rule value 'dotted' 
+PASS Property column-rule value '0px none rgb(255, 0, 255)' 
+PASS Property column-rule value '10px dotted rgb(255, 0, 255)' 
+PASS Property column-rule value 'medium hidden currentcolor' 
+PASS Property column-rule value 'medium solid currentcolor' 
 

@@ -1,9 +1,9 @@
 
-PASS Property animation-name value 'none' computes to 'none' 
-PASS Property animation-name value 'foo' computes to 'foo' 
-PASS Property animation-name value 'Both' computes to 'Both' 
-PASS Property animation-name value 'ease-in' computes to 'ease-in' 
-PASS Property animation-name value 'infinite' computes to 'infinite' 
-PASS Property animation-name value 'paused' computes to 'paused' 
-PASS Property animation-name value 'first, second, third' computes to 'first, second, third' 
+PASS Property animation-name value 'none' 
+PASS Property animation-name value 'foo' 
+PASS Property animation-name value 'Both' 
+PASS Property animation-name value 'ease-in' 
+PASS Property animation-name value 'infinite' 
+PASS Property animation-name value 'paused' 
+PASS Property animation-name value 'first, second, third' 
 

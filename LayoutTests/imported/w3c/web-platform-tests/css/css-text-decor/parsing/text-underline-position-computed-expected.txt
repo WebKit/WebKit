@@ -1,7 +1,7 @@
 
-PASS Property text-underline-position value 'auto' computes to 'auto' 
-PASS Property text-underline-position value 'under' computes to 'under' 
-FAIL Property text-underline-position value 'left' computes to 'left' assert_true: 'left' is a supported value for text-underline-position. expected true got false
-FAIL Property text-underline-position value 'right' computes to 'right' assert_true: 'right' is a supported value for text-underline-position. expected true got false
-FAIL Property text-underline-position value 'under left' computes to 'under left' assert_true: 'under left' is a supported value for text-underline-position. expected true got false
+PASS Property text-underline-position value 'auto' 
+PASS Property text-underline-position value 'under' 
+FAIL Property text-underline-position value 'left' assert_true: 'left' is a supported value for text-underline-position. expected true got false
+FAIL Property text-underline-position value 'right' assert_true: 'right' is a supported value for text-underline-position. expected true got false
+FAIL Property text-underline-position value 'under left' assert_true: 'under left' is a supported value for text-underline-position. expected true got false
 

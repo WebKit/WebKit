@@ -1,5 +1,5 @@
 
-FAIL Property hyphens value 'none' computes to 'none' assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
-FAIL Property hyphens value 'manual' computes to 'manual' assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
-FAIL Property hyphens value 'auto' computes to 'auto' assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
+FAIL Property hyphens value 'none' assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
+FAIL Property hyphens value 'manual' assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
+FAIL Property hyphens value 'auto' assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
 

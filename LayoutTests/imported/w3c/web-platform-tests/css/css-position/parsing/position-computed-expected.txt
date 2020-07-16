@@ -1,7 +1,7 @@
 
-PASS Property position value 'static' computes to 'static' 
-PASS Property position value 'relative' computes to 'relative' 
-PASS Property position value 'absolute' computes to 'absolute' 
-PASS Property position value 'sticky' computes to 'sticky' 
-PASS Property position value 'fixed' computes to 'fixed' 
+PASS Property position value 'static' 
+PASS Property position value 'relative' 
+PASS Property position value 'absolute' 
+PASS Property position value 'sticky' 
+PASS Property position value 'fixed' 
 

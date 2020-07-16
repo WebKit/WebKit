@@ -1,4 +1,4 @@
 
-FAIL Property text-decoration-skip-ink value 'auto' computes to 'auto' assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-decoration-skip-ink value 'none' computes to 'none' assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-ink value 'auto' assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-ink value 'none' assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
 

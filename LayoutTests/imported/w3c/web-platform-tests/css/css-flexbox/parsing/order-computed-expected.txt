@@ -1,5 +1,5 @@
 
-PASS Property order value '0' computes to '0' 
-PASS Property order value '123' computes to '123' 
-PASS Property order value '-45' computes to '-45' 
+PASS Property order value '0' 
+PASS Property order value '123' 
+PASS Property order value '-45' 
 

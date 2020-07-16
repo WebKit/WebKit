@@ -1,8 +1,8 @@
 
-PASS Property fill-opacity value '-1' computes to '0' 
-PASS Property fill-opacity value '0.5' computes to '0.5' 
-PASS Property fill-opacity value '3' computes to '1' 
-PASS Property fill-opacity value '-100%' computes to '0' 
-PASS Property fill-opacity value '50%' computes to '0.5' 
-PASS Property fill-opacity value '300%' computes to '1' 
+PASS Property fill-opacity value '-1' 
+PASS Property fill-opacity value '0.5' 
+PASS Property fill-opacity value '3' 
+PASS Property fill-opacity value '-100%' 
+PASS Property fill-opacity value '50%' 
+PASS Property fill-opacity value '300%' 
 

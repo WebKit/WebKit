@@ -1,5 +1,5 @@
 
-PASS Property marker-mid value 'none' computes to 'none' 
-FAIL Property marker-mid value 'url("https://example.com/")' computes to 'url("https://example.com/")' assert_equals: expected "url(\"https://example.com/\")" but got "none"
+PASS Property marker-mid value 'none' 
+FAIL Property marker-mid value 'url("https://example.com/")' assert_equals: expected "url(\"https://example.com/\")" but got "none"
 FAIL url values are made absolute assert_equals: expected "url(\"http://localhost:8800/svg/painting/parsing/a.b#c\")" but got "none"
 

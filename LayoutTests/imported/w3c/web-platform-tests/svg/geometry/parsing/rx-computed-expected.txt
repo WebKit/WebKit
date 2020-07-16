@@ -1,9 +1,9 @@
 
-PASS Property rx value 'auto' computes to 'auto' 
-PASS Property rx value '10px' computes to '10px' 
-PASS Property rx value '0.5em' computes to '20px' 
-PASS Property rx value 'calc(10px + 0.5em)' computes to '30px' 
-PASS Property rx value 'calc(10px - 0.5em)' computes to '0px' 
-PASS Property rx value '40%' computes to '40%' 
-PASS Property rx value 'calc(50% + 60px)' computes to 'calc(50% + 60px)' 
+PASS Property rx value 'auto' 
+PASS Property rx value '10px' 
+PASS Property rx value '0.5em' 
+PASS Property rx value 'calc(10px + 0.5em)' 
+PASS Property rx value 'calc(10px - 0.5em)' 
+PASS Property rx value '40%' 
+PASS Property rx value 'calc(50% + 60px)' 
 

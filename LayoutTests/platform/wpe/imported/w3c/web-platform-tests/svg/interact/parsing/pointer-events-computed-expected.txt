@@ -1,0 +1,13 @@
+
+PASS Property pointer-events value 'auto' 
+PASS Property pointer-events value 'bounding-box' 
+FAIL Property pointer-events value 'visiblepainted' assert_equals: expected "visiblepainted" but got "visiblePainted"
+FAIL Property pointer-events value 'visiblefill' assert_equals: expected "visiblefill" but got "visibleFill"
+FAIL Property pointer-events value 'visiblestroke' assert_equals: expected "visiblestroke" but got "visibleStroke"
+PASS Property pointer-events value 'visible' 
+PASS Property pointer-events value 'painted' 
+PASS Property pointer-events value 'fill' 
+PASS Property pointer-events value 'stroke' 
+PASS Property pointer-events value 'all' 
+PASS Property pointer-events value 'none' 
+

@@ -17,8 +17,28 @@ Column
  
 Row
 
+FAIL .inline-flex 1 assert_equals: 
+<div class="inline-flex" style="display: inline-flex; flex-direction: column;" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Column</div>
+</div>
+width expected 0 but got 52
+FAIL .inline-flex 2 assert_equals: 
+<div class="inline-flex" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Row</div>
+</div>
+width expected 0 but got 30
 PASS .inline-flex 3 
 PASS .inline-flex 4 
+FAIL .inline-flex 5 assert_equals: 
+<div class="inline-flex" style="flex-direction: column; align-items: flex-start;" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Column</div>
+</div>
+width expected 0 but got 52
+FAIL .inline-flex 6 assert_equals: 
+<div class="inline-flex" style="align-items: flex-start;" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Row</div>
+</div>
+width expected 0 but got 30
 PASS .inline-flex 7 
 PASS .inline-flex 8 
 

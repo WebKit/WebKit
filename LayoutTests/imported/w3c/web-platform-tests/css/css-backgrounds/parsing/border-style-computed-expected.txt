@@ -1,10 +1,10 @@
 
-PASS Property border-style value 'none' computes to 'none' 
-PASS Property border-style value 'inset outset' computes to 'inset outset' 
-PASS Property border-style value 'hidden dotted dashed' computes to 'hidden dotted dashed' 
-PASS Property border-style value 'solid double groove ridge' computes to 'solid double groove ridge' 
-PASS Property border-top-style value 'solid' computes to 'solid' 
-PASS Property border-right-style value 'double' computes to 'double' 
-PASS Property border-bottom-style value 'groove' computes to 'groove' 
-PASS Property border-left-style value 'ridge' computes to 'ridge' 
+PASS Property border-style value 'none' 
+PASS Property border-style value 'inset outset' 
+PASS Property border-style value 'hidden dotted dashed' 
+PASS Property border-style value 'solid double groove ridge' 
+PASS Property border-top-style value 'solid' 
+PASS Property border-right-style value 'double' 
+PASS Property border-bottom-style value 'groove' 
+PASS Property border-left-style value 'ridge' 
 

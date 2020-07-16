@@ -1,6 +1,6 @@
 
-PASS Property font-synthesis value 'none' computes to 'none' 
-PASS Property font-synthesis value 'weight' computes to 'weight' 
-PASS Property font-synthesis value 'style' computes to 'style' 
-FAIL Property font-synthesis value 'weight style' computes to 'weight style' assert_equals: expected "weight style" but got "style weight"
+PASS Property font-synthesis value 'none' 
+PASS Property font-synthesis value 'weight' 
+PASS Property font-synthesis value 'style' 
+FAIL Property font-synthesis value 'weight style' assert_equals: expected "weight style" but got "style weight"
 

@@ -1,8 +1,8 @@
 
-PASS Property stroke value 'none' computes to 'none' 
-PASS Property stroke value 'rgb(12, 34, 56)' computes to 'rgb(12, 34, 56)' 
-PASS Property stroke value 'url("https://example.com/")' computes to 'url("https://example.com/")' 
-PASS Property stroke value 'url("https://example.com/") none' computes to 'url("https://example.com/") none' 
-PASS Property stroke value 'url("https://example.com/") rgb(12, 34, 56)' computes to 'url("https://example.com/") rgb(12, 34, 56)' 
+PASS Property stroke value 'none' 
+PASS Property stroke value 'rgb(12, 34, 56)' 
+PASS Property stroke value 'url("https://example.com/")' 
+PASS Property stroke value 'url("https://example.com/") none' 
+PASS Property stroke value 'url("https://example.com/") rgb(12, 34, 56)' 
 FAIL url values are made absolute assert_equals: expected "url(\"http://localhost:8800/svg/painting/parsing/a.b#c\")" but got "url(\"a.b#c\")"
 

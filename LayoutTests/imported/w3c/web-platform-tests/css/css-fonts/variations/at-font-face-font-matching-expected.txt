@@ -65,7 +65,7 @@ PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 40deg 50deg' ov
 FAIL Matching font-style: 'oblique 20deg' should prefer 'oblique 10deg' over 'italic' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique 20deg' should prefer 'italic' over 'oblique 0deg' 
 PASS Matching font-style: 'oblique 20deg' should prefer 'oblique 0deg' over 'oblique -50deg -20deg' 
-FAIL Matching font-style: 'oblique 20deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' assert_true: Unexpected font on test element expected true got false
+PASS Matching font-style: 'oblique 20deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 21deg' over 'oblique 30deg 60deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' 
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 40deg 50deg' over 'oblique 20deg' 
@@ -97,7 +97,7 @@ PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -60deg -30deg'
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -50deg -40deg' over 'italic' 
 FAIL Matching font-style: 'oblique -10deg' should prefer 'italic' over 'oblique 0deg 10deg' assert_true: Unexpected font on test element expected true got false
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique 0deg 10deg' over 'oblique 40deg 50deg' 
-FAIL Matching font-style: 'oblique -20deg' should prefer 'oblique -20deg' over 'oblique -60deg -40deg' assert_true: Unexpected font on test element expected true got false
+PASS Matching font-style: 'oblique -20deg' should prefer 'oblique -20deg' over 'oblique -60deg -40deg' 
 PASS Matching font-style: 'oblique -20deg' should prefer 'oblique -60deg -40deg' over 'oblique -10deg' 
 PASS Matching font-style: 'oblique -20deg' should prefer 'oblique -10deg' over 'italic' 
 FAIL Matching font-style: 'oblique -20deg' should prefer 'italic' over 'oblique 0deg' assert_true: Unexpected font on test element expected true got false

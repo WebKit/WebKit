@@ -1,7 +1,7 @@
 
-PASS Property float value 'none' computes to 'none' 
-PASS Property float value 'left' computes to 'left' 
-PASS Property float value 'right' computes to 'right' 
-FAIL Property float value 'inline-start' computes to 'inline-start' assert_true: 'inline-start' is a supported value for float. expected true got false
-FAIL Property float value 'inline-end' computes to 'inline-end' assert_true: 'inline-end' is a supported value for float. expected true got false
+PASS Property float value 'none' 
+PASS Property float value 'left' 
+PASS Property float value 'right' 
+FAIL Property float value 'inline-start' assert_true: 'inline-start' is a supported value for float. expected true got false
+FAIL Property float value 'inline-end' assert_true: 'inline-end' is a supported value for float. expected true got false
 

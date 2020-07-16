@@ -1,4 +1,4 @@
 
-PASS Property transition-property value 'left, top, right, bottom' computes to 'left, top, right, bottom' 
-FAIL Property transition-property value 'one, two, three' computes to 'one, two, three' assert_equals: expected "one, two, three" but got "three"
+PASS Property transition-property value 'left, top, right, bottom' 
+FAIL Property transition-property value 'one, two, three' assert_equals: expected "one, two, three" but got "three"
 

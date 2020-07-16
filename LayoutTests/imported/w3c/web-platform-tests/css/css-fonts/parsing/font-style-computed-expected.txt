@@ -1,5 +1,5 @@
 
-PASS Property font-style value 'normal' computes to 'normal' 
-PASS Property font-style value 'italic' computes to 'italic' 
-PASS Property font-style value 'oblique' computes to 'oblique' 
+PASS Property font-style value 'normal' 
+PASS Property font-style value 'italic' 
+PASS Property font-style value 'oblique' 
 

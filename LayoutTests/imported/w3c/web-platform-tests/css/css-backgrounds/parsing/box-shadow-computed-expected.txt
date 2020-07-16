@@ -1,6 +1,6 @@
 
-PASS Property box-shadow value 'none' computes to 'none' 
-PASS Property box-shadow value '1px 2px' computes to 'rgb(0, 0, 255) 1px 2px 0px 0px' 
-PASS Property box-shadow value 'currentcolor -1em -2em 3em -4em' computes to 'rgb(0, 0, 255) -20px -40px 60px -80px' 
-PASS Property box-shadow value 'rgb(0, 255, 0) 1px 2px 3px 4px inset' computes to 'rgb(0, 255, 0) 1px 2px 3px 4px inset' 
+PASS Property box-shadow value 'none' 
+PASS Property box-shadow value '1px 2px' 
+PASS Property box-shadow value 'currentcolor -1em -2em 3em -4em' 
+PASS Property box-shadow value 'rgb(0, 255, 0) 1px 2px 3px 4px inset' 
 

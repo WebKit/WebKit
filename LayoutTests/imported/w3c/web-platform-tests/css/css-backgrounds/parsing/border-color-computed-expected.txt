@@ -1,10 +1,10 @@
 
-PASS Property border-color value 'currentcolor' computes to 'rgb(0, 255, 0)' 
-PASS Property border-color value 'red yellow' computes to 'rgb(255, 0, 0) rgb(255, 255, 0)' 
-PASS Property border-color value 'red yellow currentcolor' computes to 'rgb(255, 0, 0) rgb(255, 255, 0) rgb(0, 255, 0)' 
-PASS Property border-color value 'red yellow green blue' computes to 'rgb(255, 0, 0) rgb(255, 255, 0) rgb(0, 128, 0) rgb(0, 0, 255)' 
-PASS Property border-top-color value 'red' computes to 'rgb(255, 0, 0)' 
-PASS Property border-right-color value 'yellow' computes to 'rgb(255, 255, 0)' 
-PASS Property border-bottom-color value 'green' computes to 'rgb(0, 128, 0)' 
-PASS Property border-left-color value 'blue' computes to 'rgb(0, 0, 255)' 
+PASS Property border-color value 'currentcolor' 
+PASS Property border-color value 'red yellow' 
+PASS Property border-color value 'red yellow currentcolor' 
+PASS Property border-color value 'red yellow green blue' 
+PASS Property border-top-color value 'red' 
+PASS Property border-right-color value 'yellow' 
+PASS Property border-bottom-color value 'green' 
+PASS Property border-left-color value 'blue' 
 

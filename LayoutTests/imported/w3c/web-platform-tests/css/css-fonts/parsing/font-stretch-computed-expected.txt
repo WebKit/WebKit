@@ -1,12 +1,12 @@
 
-FAIL Property font-stretch value 'ultra-condensed' computes to '50%' assert_equals: expected "50%" but got "ultra-condensed"
-FAIL Property font-stretch value 'extra-condensed' computes to '62.5%' assert_equals: expected "62.5%" but got "extra-condensed"
-FAIL Property font-stretch value 'condensed' computes to '75%' assert_equals: expected "75%" but got "condensed"
-FAIL Property font-stretch value 'semi-condensed' computes to '87.5%' assert_equals: expected "87.5%" but got "semi-condensed"
-FAIL Property font-stretch value 'normal' computes to '100%' assert_equals: expected "100%" but got "normal"
-FAIL Property font-stretch value 'semi-expanded' computes to '112.5%' assert_equals: expected "112.5%" but got "semi-expanded"
-FAIL Property font-stretch value 'expanded' computes to '125%' assert_equals: expected "125%" but got "expanded"
-FAIL Property font-stretch value 'extra-expanded' computes to '150%' assert_equals: expected "150%" but got "extra-expanded"
-FAIL Property font-stretch value 'ultra-expanded' computes to '200%' assert_equals: expected "200%" but got "ultra-expanded"
-PASS Property font-stretch value '234.5%' computes to '234.5%' 
+FAIL Property font-stretch value 'ultra-condensed' assert_equals: expected "50%" but got "ultra-condensed"
+FAIL Property font-stretch value 'extra-condensed' assert_equals: expected "62.5%" but got "extra-condensed"
+FAIL Property font-stretch value 'condensed' assert_equals: expected "75%" but got "condensed"
+FAIL Property font-stretch value 'semi-condensed' assert_equals: expected "87.5%" but got "semi-condensed"
+FAIL Property font-stretch value 'normal' assert_equals: expected "100%" but got "normal"
+FAIL Property font-stretch value 'semi-expanded' assert_equals: expected "112.5%" but got "semi-expanded"
+FAIL Property font-stretch value 'expanded' assert_equals: expected "125%" but got "expanded"
+FAIL Property font-stretch value 'extra-expanded' assert_equals: expected "150%" but got "extra-expanded"
+FAIL Property font-stretch value 'ultra-expanded' assert_equals: expected "200%" but got "ultra-expanded"
+PASS Property font-stretch value '234.5%' 
 

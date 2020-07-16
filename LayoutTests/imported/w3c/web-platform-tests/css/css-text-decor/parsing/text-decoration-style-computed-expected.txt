@@ -1,7 +1,7 @@
 
-PASS Property text-decoration-style value 'solid' computes to 'solid' 
-PASS Property text-decoration-style value 'double' computes to 'double' 
-PASS Property text-decoration-style value 'dotted' computes to 'dotted' 
-PASS Property text-decoration-style value 'dashed' computes to 'dashed' 
-PASS Property text-decoration-style value 'wavy' computes to 'wavy' 
+PASS Property text-decoration-style value 'solid' 
+PASS Property text-decoration-style value 'double' 
+PASS Property text-decoration-style value 'dotted' 
+PASS Property text-decoration-style value 'dashed' 
+PASS Property text-decoration-style value 'wavy' 
 

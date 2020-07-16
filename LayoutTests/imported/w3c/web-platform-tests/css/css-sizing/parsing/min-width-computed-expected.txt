@@ -1,9 +1,9 @@
 
-PASS Property min-width value 'min-content' computes to 'min-content' 
-PASS Property min-width value 'max-content' computes to 'max-content' 
-PASS Property min-width value '10px' computes to '10px' 
-PASS Property min-width value '20%' computes to '20%' 
-PASS Property min-width value 'calc(10% + 40px)' computes to 'calc(10% + 40px)' 
-PASS Property min-width value 'calc(10px - 0.5em)' computes to '0px' 
-PASS Property min-width value 'calc(10px + 0.5em)' computes to '30px' 
+PASS Property min-width value 'min-content' 
+PASS Property min-width value 'max-content' 
+PASS Property min-width value '10px' 
+PASS Property min-width value '20%' 
+PASS Property min-width value 'calc(10% + 40px)' 
+PASS Property min-width value 'calc(10px - 0.5em)' 
+PASS Property min-width value 'calc(10px + 0.5em)' 
 

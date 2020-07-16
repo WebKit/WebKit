@@ -1,7 +1,7 @@
 
-PASS Property right value 'auto' computes to 'auto' 
-PASS Property right value 'calc(10px + 0.5em)' computes to '30px' 
-PASS Property right value 'calc(10px - 0.5em)' computes to '-10px' 
-PASS Property right value '-40%' computes to '-40%' 
-PASS Property right value 'calc(50% + 60px)' computes to 'calc(50% + 60px)' 
+PASS Property right value 'auto' 
+PASS Property right value 'calc(10px + 0.5em)' 
+PASS Property right value 'calc(10px - 0.5em)' 
+PASS Property right value '-40%' 
+PASS Property right value 'calc(50% + 60px)' 
 

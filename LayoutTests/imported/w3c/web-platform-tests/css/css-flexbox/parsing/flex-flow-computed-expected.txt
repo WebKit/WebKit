@@ -1,4 +1,4 @@
 
-PASS Property flex-flow value 'column wrap-reverse' computes to 'column wrap-reverse' 
-PASS Property flex-flow value 'row-reverse wrap' computes to 'row-reverse wrap' 
+PASS Property flex-flow value 'column wrap-reverse' 
+PASS Property flex-flow value 'row-reverse wrap' 
 

@@ -1,4 +1,4 @@
 
-PASS Property scroll-behavior value 'auto' computes to 'auto' 
-PASS Property scroll-behavior value 'smooth' computes to 'smooth' 
+PASS Property scroll-behavior value 'auto' 
+PASS Property scroll-behavior value 'smooth' 
 

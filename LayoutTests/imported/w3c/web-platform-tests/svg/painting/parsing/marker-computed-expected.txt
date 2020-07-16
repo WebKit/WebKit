@@ -1,5 +1,5 @@
 
-FAIL Property marker value 'none' computes to 'none' assert_equals: expected "none" but got ""
-FAIL Property marker value 'url("https://example.com/")' computes to 'url("https://example.com/")' assert_equals: expected "url(\"https://example.com/\")" but got ""
+FAIL Property marker value 'none' assert_equals: expected "none" but got ""
+FAIL Property marker value 'url("https://example.com/")' assert_equals: expected "url(\"https://example.com/\")" but got ""
 FAIL url values are made absolute assert_equals: expected "url(\"http://localhost:8800/svg/painting/parsing/a.b#c\")" but got ""
 

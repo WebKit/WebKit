@@ -1,10 +1,10 @@
 
-PASS Property font-feature-settings value 'normal' computes to 'normal' 
-PASS Property font-feature-settings value '"dlig"' computes to '"dlig"' 
-PASS Property font-feature-settings value '"smcp"' computes to '"smcp"' 
-PASS Property font-feature-settings value '"c2sc"' computes to '"c2sc"' 
-PASS Property font-feature-settings value '"liga" 0' computes to '"liga" 0' 
-PASS Property font-feature-settings value '"tnum", "hist"' computes to '"tnum", "hist"' 
-FAIL Property font-feature-settings value '"PKRN"' computes to '"PKRN"' assert_equals: expected "\"PKRN\"" but got "\"pkrn\""
-FAIL Property font-feature-settings value '"dlig", "smcp", "dlig" 0' computes to '"dlig", "smcp", "dlig" 0' assert_equals: expected "\"dlig\", \"smcp\", \"dlig\" 0" but got "\"smcp\", \"dlig\", \"dlig\" 0"
+PASS Property font-feature-settings value 'normal' 
+PASS Property font-feature-settings value '"dlig"' 
+PASS Property font-feature-settings value '"smcp"' 
+PASS Property font-feature-settings value '"c2sc"' 
+PASS Property font-feature-settings value '"liga" 0' 
+PASS Property font-feature-settings value '"tnum", "hist"' 
+FAIL Property font-feature-settings value '"PKRN"' assert_equals: expected "\"PKRN\"" but got "\"pkrn\""
+FAIL Property font-feature-settings value '"dlig", "smcp", "dlig" 0' assert_equals: expected "\"dlig\", \"smcp\", \"dlig\" 0" but got "\"smcp\", \"dlig\", \"dlig\" 0"
 

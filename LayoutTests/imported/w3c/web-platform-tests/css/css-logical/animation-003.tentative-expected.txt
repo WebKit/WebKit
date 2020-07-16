@@ -1,3 +1,3 @@
 
-FAIL Logical properties are represented as physical properties in keyframes undefined is not an object (evaluating 'anim.effect')
+FAIL Logical properties are represented as physical properties in keyframes assert_own_property: expected property "height" missing
 

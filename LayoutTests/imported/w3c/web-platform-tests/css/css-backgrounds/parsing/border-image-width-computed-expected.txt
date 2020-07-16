@@ -1,14 +1,14 @@
 
-PASS Property border-image-width value '0' computes to '0' 
-PASS Property border-image-width value '1' computes to '1' 
-PASS Property border-image-width value 'auto' computes to 'auto' 
-PASS Property border-image-width value '10px' computes to '10px' 
-PASS Property border-image-width value '20%' computes to '20%' 
-FAIL Property border-image-width value 'calc(20% + 10px)' computes to 'calc(20% + 10px)' assert_equals: expected "calc(20% + 10px)" but got "30px"
-PASS Property border-image-width value 'calc(-0.5em + 10px)' computes to '0px' 
-PASS Property border-image-width value 'calc(0.5em + 10px)' computes to '30px' 
-PASS Property border-image-width value '1 auto' computes to '1 auto' 
-PASS Property border-image-width value '1 auto 10px' computes to '1 auto 10px' 
-PASS Property border-image-width value '1 auto 10px 20%' computes to '1 auto 10px 20%' 
-PASS Property border-image-width value '20% 10px auto 1' computes to '20% 10px auto 1' 
+PASS Property border-image-width value '0' 
+PASS Property border-image-width value '1' 
+PASS Property border-image-width value 'auto' 
+PASS Property border-image-width value '10px' 
+PASS Property border-image-width value '20%' 
+FAIL Property border-image-width value 'calc(20% + 10px)' assert_equals: expected "calc(20% + 10px)" but got "30px"
+PASS Property border-image-width value 'calc(-0.5em + 10px)' 
+PASS Property border-image-width value 'calc(0.5em + 10px)' 
+PASS Property border-image-width value '1 auto' 
+PASS Property border-image-width value '1 auto 10px' 
+PASS Property border-image-width value '1 auto 10px 20%' 
+PASS Property border-image-width value '20% 10px auto 1' 
 

@@ -1,6 +1,6 @@
 
-PASS Property shape-rendering value 'auto' computes to 'auto' 
-FAIL Property shape-rendering value 'optimizespeed' computes to 'optimizespeed' assert_equals: expected "optimizespeed" but got "optimizeSpeed"
-PASS Property shape-rendering value 'crispedges' computes to 'crispedges' 
-FAIL Property shape-rendering value 'geometricprecision' computes to 'geometricprecision' assert_equals: expected "geometricprecision" but got "geometricPrecision"
+PASS Property shape-rendering value 'auto' 
+FAIL Property shape-rendering value 'optimizespeed' assert_equals: expected "optimizespeed" but got "optimizeSpeed"
+PASS Property shape-rendering value 'crispedges' 
+FAIL Property shape-rendering value 'geometricprecision' assert_equals: expected "geometricprecision" but got "geometricPrecision"
 

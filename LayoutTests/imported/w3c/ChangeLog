@@ -1,3 +1,250 @@
+2020-07-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT css/support directory
+        https://bugs.webkit.org/show_bug.cgi?id=214350
+
+        Reviewed by Chris Dumez.
+
+        This updates the WPT import of css/support to e3698c7bb3.
+
+        * web-platform-tests/css/css-animations/parsing/animation-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-delay-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-direction-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-duration-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-name-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-attachment-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-clip-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-color-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-origin-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-x-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-y-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-repeat-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-size-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-color-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-outset-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-repeat-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-slice-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-source-computed.sub-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-width-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-style-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-width-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/box-shadow-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/clear-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/float-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/margin-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/padding-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/visibility-computed-expected.txt:
+        * web-platform-tests/css/css-color/parsing/color-computed-expected.txt:
+        * web-platform-tests/css/css-color/parsing/opacity-computed-expected.txt:
+        * web-platform-tests/css/css-display/parsing/display-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/order-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-family-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-feature-settings-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-kerning-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-language-override-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-optical-sizing-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-size-adjust-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-size-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-stretch-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-style-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-synthesis-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-caps-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-east-asian-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-ligatures-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-numeric-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variant-position-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-weight-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/at-font-face-font-matching-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-model/grid-button-001-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-repeat-auto-computed-withcontent-001-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-repeat-auto-computed-withcontent-002-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent-expected.txt:
+        * web-platform-tests/css/css-images/parsing/image-orientation-computed-expected.txt:
+        * web-platform-tests/css/css-images/parsing/image-rendering-computed-expected.txt:
+        * web-platform-tests/css/css-images/parsing/object-fit-computed-expected.txt:
+        * web-platform-tests/css/css-images/parsing/object-position-computed-expected.txt:
+        * web-platform-tests/css/css-inline/parsing/line-height-computed-expected.txt:
+        * web-platform-tests/css/css-lists/parsing/list-style-type-computed-expected.txt:
+        * web-platform-tests/css/css-logical/animation-003.tentative-expected.txt:
+        * web-platform-tests/css/css-masking/parsing/clip-path-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-count-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-fill-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-rule-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-span-computed-expected.txt:
+        * web-platform-tests/css/css-multicol/parsing/column-width-computed-expected.txt:
+        * web-platform-tests/css/css-overflow/parsing/overflow-computed-expected.txt:
+        * web-platform-tests/css/css-overflow/parsing/text-overflow-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/bottom-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/inset-after-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/inset-before-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/inset-end-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/inset-start-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/left-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/position-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/right-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/top-computed-expected.txt:
+        * web-platform-tests/css/css-position/parsing/z-index-computed-expected.txt:
+        * web-platform-tests/css/css-pseudo/first-letter-property-whitelist-expected.txt:
+        * web-platform-tests/css/css-scoping/keyframes-001-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-image-threshold-computed-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-margin-computed-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes-expected.txt:
+        * web-platform-tests/css/css-sizing/parsing/box-sizing-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/parsing/max-height-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/parsing/max-width-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/parsing/min-height-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/parsing/min-width-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/percentage-height-replaced-content-in-auto-cb-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-computed-expected.txt:
+        * web-platform-tests/css/css-text-decor/text-underline-offset-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/hyphens-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/letter-spacing-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/line-break-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/overflow-wrap-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/tab-size-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-align-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-align-last-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-indent-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-justify-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-transform-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/white-space-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/word-boundary-detection-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/word-boundary-expansion-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/word-break-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/word-spacing-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/word-wrap-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-property-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/box-sizing-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/caret-color-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/cursor-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/outline-color-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/outline-offset-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/outline-style-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/outline-width-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/resize-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/text-overflow-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/user-select-computed-expected.txt:
+        * web-platform-tests/css/css-values/clamp-length-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-angle-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-integer-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-number-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-percentage-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-time-computed-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/direction-computed-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-computed-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/text-orientation-computed-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-computed-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/writing-mode-computed-expected.txt:
+        * web-platform-tests/css/cssom-view/parsing/scroll-behavior-computed-expected.txt:
+        * web-platform-tests/css/support/META.yml:
+        * web-platform-tests/css/support/computed-testcommon.js:
+        (test_computed_value):
+        * web-platform-tests/css/support/height-keyword-classes.css: Added.
+        (.min-content):
+        (.max-content):
+        (.fit-content):
+        (.max-height-min-content):
+        (.max-height-max-content):
+        (.max-height-fit-content):
+        (.min-height-min-content):
+        (.min-height-max-content):
+        (.min-height-fit-content):
+        * web-platform-tests/css/support/numeric-testcommon.js: Added.
+        (test_math_used):
+        * web-platform-tests/css/support/parsing-testcommon.js:
+        * web-platform-tests/css/support/serialize-testcommon.js: Added.
+        (test_specified_serialization):
+        * web-platform-tests/css/support/w3c-import.log:
+        * web-platform-tests/css/support/width-keyword-classes.css:
+        (.min-content):
+        (.max-content):
+        (.fit-content):
+        (.max-width-min-content):
+        (.max-width-max-content):
+        (.max-width-fit-content):
+        (.min-width-min-content):
+        (.min-width-max-content):
+        (.min-width-fit-content):
+        * web-platform-tests/pointerevents/parsing/touch-action-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/cx-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/cy-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/r-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/rx-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/ry-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/sizing-properties-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/x-computed-expected.txt:
+        * web-platform-tests/svg/geometry/parsing/y-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/color-interpolation-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/fill-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/fill-opacity-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/fill-rule-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/image-rendering-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/marker-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/marker-end-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/marker-mid-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/marker-start-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/paint-order-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/shape-rendering-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-dasharray-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-dashoffset-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-linecap-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-linejoin-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-miterlimit-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-opacity-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/stroke-width-computed-expected.txt:
+        * web-platform-tests/svg/painting/parsing/text-rendering-computed-expected.txt:
+        * web-platform-tests/svg/pservers/parsing/stop-color-computed-expected.txt:
+        * web-platform-tests/svg/pservers/parsing/stop-opacity-computed-expected.txt:
+        * web-platform-tests/svg/text/parsing/text-anchor-computed-expected.txt:
+
 2020-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening after r264424 and r264427

@@ -28,16 +28,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/support/a-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/alignment.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/support/blue-100.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/blue32x32.ico
 /LayoutTests/imported/w3c/web-platform-tests/css/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/cat.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/computed-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/green.ico
 /LayoutTests/imported/w3c/web-platform-tests/css/support/grid.css
+/LayoutTests/imported/w3c/web-platform-tests/css/support/height-keyword-classes.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/import-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/inheritance-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/interpolation-testcommon.js
+/LayoutTests/imported/w3c/web-platform-tests/css/support/numeric-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/parsing-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-grg-rrg-rgg.png
@@ -49,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/support/ruler-h-50px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/ruler-v-100px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/support/serialize-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/shorthand-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/square-purple.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/square-teal.png

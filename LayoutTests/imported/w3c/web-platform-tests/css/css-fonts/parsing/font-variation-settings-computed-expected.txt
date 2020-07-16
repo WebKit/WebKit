@@ -1,6 +1,6 @@
 
-PASS Property font-variation-settings value 'normal' computes to 'normal' 
-PASS Property font-variation-settings value '"wght" 700' computes to '"wght" 700' 
-PASS Property font-variation-settings value '"wght" 700, "XHGT" 0.7' computes to '"wght" 700, "XHGT" 0.7' 
-PASS Property font-variation-settings value '"XHGT" calc(0.4 + 0.3)' computes to '"XHGT" 0.7' 
+PASS Property font-variation-settings value 'normal' 
+PASS Property font-variation-settings value '"wght" 700' 
+PASS Property font-variation-settings value '"wght" 700, "XHGT" 0.7' 
+PASS Property font-variation-settings value '"XHGT" calc(0.4 + 0.3)' 
 

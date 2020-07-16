@@ -1,4 +1,4 @@
 
-PASS Property fill-rule value 'nonzero' computes to 'nonzero' 
-PASS Property fill-rule value 'evenodd' computes to 'evenodd' 
+PASS Property fill-rule value 'nonzero' 
+PASS Property fill-rule value 'evenodd' 
 

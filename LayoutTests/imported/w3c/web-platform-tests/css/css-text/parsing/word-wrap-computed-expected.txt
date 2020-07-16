@@ -1,5 +1,5 @@
 
-PASS Property word-wrap value 'normal' computes to 'normal' 
-PASS Property word-wrap value 'break-word' computes to 'break-word' 
-FAIL Property word-wrap value 'anywhere' computes to 'anywhere' assert_true: 'anywhere' is a supported value for word-wrap. expected true got false
+PASS Property word-wrap value 'normal' 
+PASS Property word-wrap value 'break-word' 
+FAIL Property word-wrap value 'anywhere' assert_true: 'anywhere' is a supported value for word-wrap. expected true got false
 

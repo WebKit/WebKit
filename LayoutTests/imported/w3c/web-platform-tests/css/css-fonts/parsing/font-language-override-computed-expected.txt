@@ -1,4 +1,4 @@
 
-FAIL Property font-language-override value 'normal' computes to 'normal' assert_true: font-language-override doesn't seem to be supported in the computed style expected true got false
-FAIL Property font-language-override value '"ksw"' computes to '"ksw"' assert_true: font-language-override doesn't seem to be supported in the computed style expected true got false
+FAIL Property font-language-override value 'normal' assert_true: font-language-override doesn't seem to be supported in the computed style expected true got false
+FAIL Property font-language-override value '"ksw"' assert_true: font-language-override doesn't seem to be supported in the computed style expected true got false
 

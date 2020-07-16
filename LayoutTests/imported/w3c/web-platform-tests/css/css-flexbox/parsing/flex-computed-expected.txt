@@ -1,10 +1,10 @@
 
-PASS Property flex value 'none' computes to '0 0 auto' 
-PASS Property flex value '1' computes to '1 1 0%' 
-PASS Property flex value '2 3' computes to '2 3 0%' 
-PASS Property flex value '4 5 6px' computes to '4 5 6px' 
-PASS Property flex value '7% 8' computes to '8 1 7%' 
-PASS Property flex value '8 auto' computes to '8 1 auto' 
-PASS Property flex value 'calc(10px + 0.5em)' computes to '1 1 30px' 
-PASS Property flex value 'calc(10px - 0.5em)' computes to '1 1 0px' 
+PASS Property flex value 'none' 
+PASS Property flex value '1' 
+PASS Property flex value '2 3' 
+PASS Property flex value '4 5 6px' 
+PASS Property flex value '7% 8' 
+PASS Property flex value '8 auto' 
+PASS Property flex value 'calc(10px + 0.5em)' 
+PASS Property flex value 'calc(10px - 0.5em)' 
 

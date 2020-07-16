@@ -1,16 +1,16 @@
 
-PASS Property width value '10px' computes to '10px' 
-PASS Property width value '0.5em' computes to '20px' 
-PASS Property width value 'calc(10px + 0.5em)' computes to '30px' 
-PASS Property width value 'calc(10px - 0.5em)' computes to '0px' 
-FAIL Property width value '40%' computes to '320px' assert_equals: expected "320px" but got "40%"
-FAIL Property width value 'calc(50% + 1.5em)' computes to '460px' assert_equals: expected "460px" but got "calc(50% + 60px)"
-PASS Property height value '10px' computes to '10px' 
-PASS Property height value '0.5em' computes to '20px' 
-PASS Property height value 'calc(10px + 0.5em)' computes to '30px' 
-PASS Property height value 'calc(10px - 0.5em)' computes to '0px' 
-FAIL Property height value '40%' computes to '320px' assert_equals: expected "320px" but got "40%"
-FAIL Property height value 'calc(50% + 1.5em)' computes to '460px' assert_equals: expected "460px" but got "calc(50% + 60px)"
+PASS Property width value '10px' 
+PASS Property width value '0.5em' 
+PASS Property width value 'calc(10px + 0.5em)' 
+PASS Property width value 'calc(10px - 0.5em)' 
+FAIL Property width value '40%' assert_equals: expected "320px" but got "40%"
+FAIL Property width value 'calc(50% + 1.5em)' assert_equals: expected "460px" but got "calc(50% + 60px)"
+PASS Property height value '10px' 
+PASS Property height value '0.5em' 
+PASS Property height value 'calc(10px + 0.5em)' 
+PASS Property height value 'calc(10px - 0.5em)' 
+FAIL Property height value '40%' assert_equals: expected "320px" but got "40%"
+FAIL Property height value 'calc(50% + 1.5em)' assert_equals: expected "460px" but got "calc(50% + 60px)"
 PASS resolved value is computed value when display is none 
 PASS resolved value is computed value when display is contents 
 

@@ -1,4 +1,4 @@
 
-PASS Property image-orientation value 'from-image' computes to 'from-image' 
-PASS Property image-orientation value 'none' computes to 'none' 
+PASS Property image-orientation value 'from-image' 
+PASS Property image-orientation value 'none' 
 

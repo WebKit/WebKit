@@ -1,15 +1,15 @@
 
-FAIL Property font-weight value 'normal' computes to '400' assert_equals: expected "400" but got "normal"
-FAIL Property font-weight value 'bold' computes to '700' assert_equals: expected "700" but got "bold"
-PASS Property font-weight value '100' computes to '100' 
-PASS Property font-weight value '200' computes to '200' 
-PASS Property font-weight value '300' computes to '300' 
-FAIL Property font-weight value '400' computes to '400' assert_equals: expected "400" but got "normal"
-PASS Property font-weight value '500' computes to '500' 
-PASS Property font-weight value '600' computes to '600' 
-FAIL Property font-weight value '700' computes to '700' assert_equals: expected "700" but got "bold"
-PASS Property font-weight value '800' computes to '800' 
-PASS Property font-weight value '900' computes to '900' 
+FAIL Property font-weight value 'normal' assert_equals: expected "400" but got "normal"
+FAIL Property font-weight value 'bold' assert_equals: expected "700" but got "bold"
+PASS Property font-weight value '100' 
+PASS Property font-weight value '200' 
+PASS Property font-weight value '300' 
+FAIL Property font-weight value '400' assert_equals: expected "400" but got "normal"
+PASS Property font-weight value '500' 
+PASS Property font-weight value '600' 
+FAIL Property font-weight value '700' assert_equals: expected "700" but got "bold"
+PASS Property font-weight value '800' 
+PASS Property font-weight value '900' 
 FAIL 100 made bolder computes to 400 assert_equals: expected "400" but got "normal"
 FAIL 200 made bolder computes to 400 assert_equals: expected "400" but got "normal"
 FAIL 300 made bolder computes to 400 assert_equals: expected "400" but got "normal"

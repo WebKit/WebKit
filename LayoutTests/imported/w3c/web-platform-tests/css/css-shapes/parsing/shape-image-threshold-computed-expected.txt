@@ -1,8 +1,8 @@
 
-PASS Property shape-image-threshold value '-7' computes to '0' 
-PASS Property shape-image-threshold value '0.5' computes to '0.5' 
-PASS Property shape-image-threshold value '12.5' computes to '1' 
-FAIL Property shape-image-threshold value '-100%' computes to '0' assert_true: '-100%' is a supported value for shape-image-threshold. expected true got false
-FAIL Property shape-image-threshold value '50%' computes to '0.5' assert_true: '50%' is a supported value for shape-image-threshold. expected true got false
-FAIL Property shape-image-threshold value '300%' computes to '1' assert_true: '300%' is a supported value for shape-image-threshold. expected true got false
+PASS Property shape-image-threshold value '-7' 
+PASS Property shape-image-threshold value '0.5' 
+PASS Property shape-image-threshold value '12.5' 
+FAIL Property shape-image-threshold value '-100%' assert_true: '-100%' is a supported value for shape-image-threshold. expected true got false
+FAIL Property shape-image-threshold value '50%' assert_true: '50%' is a supported value for shape-image-threshold. expected true got false
+FAIL Property shape-image-threshold value '300%' assert_true: '300%' is a supported value for shape-image-threshold. expected true got false
 

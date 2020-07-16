@@ -1,6 +1,6 @@
 
-FAIL Property text-justify value 'auto' computes to 'auto' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-justify value 'none' computes to 'none' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-justify value 'inter-word' computes to 'inter-word' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-justify value 'inter-character' computes to 'inter-character' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-justify value 'auto' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-justify value 'none' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-justify value 'inter-word' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-justify value 'inter-character' assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
 

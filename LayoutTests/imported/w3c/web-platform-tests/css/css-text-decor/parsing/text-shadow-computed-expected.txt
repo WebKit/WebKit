@@ -1,9 +1,9 @@
 
-PASS Property text-shadow value 'none' computes to 'none' 
-PASS Property text-shadow value '10px 20px' computes to 'rgb(0, 0, 255) 10px 20px 0px' 
-PASS Property text-shadow value 'red 10px 20px 30px' computes to 'rgb(255, 0, 0) 10px 20px 30px' 
-PASS Property text-shadow value 'calc(0.5em + 10px) calc(0.5em + 10px) calc(0.5em + 10px)' computes to 'rgb(0, 0, 255) 30px 30px 30px' 
-PASS Property text-shadow value 'calc(-0.5em + 10px) calc(-0.5em + 10px) calc(-0.5em + 10px)' computes to 'rgb(0, 0, 255) -10px -10px 0px' 
-PASS Property text-shadow value '10px 20px, 30px 40px' computes to 'rgb(0, 0, 255) 10px 20px 0px, rgb(0, 0, 255) 30px 40px 0px' 
-PASS Property text-shadow value 'lime 10px 20px 30px, red 40px 50px' computes to 'rgb(0, 255, 0) 10px 20px 30px, rgb(255, 0, 0) 40px 50px 0px' 
+PASS Property text-shadow value 'none' 
+PASS Property text-shadow value '10px 20px' 
+PASS Property text-shadow value 'red 10px 20px 30px' 
+PASS Property text-shadow value 'calc(0.5em + 10px) calc(0.5em + 10px) calc(0.5em + 10px)' 
+PASS Property text-shadow value 'calc(-0.5em + 10px) calc(-0.5em + 10px) calc(-0.5em + 10px)' 
+PASS Property text-shadow value '10px 20px, 30px 40px' 
+PASS Property text-shadow value 'lime 10px 20px 30px, red 40px 50px' 
 

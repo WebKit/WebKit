@@ -1,5 +1,5 @@
 
-PASS Property z-index value 'auto' computes to 'auto' 
-PASS Property z-index value '-1' computes to '-1' 
-PASS Property z-index value 'calc(3 - 2)' computes to '1' 
+PASS Property z-index value 'auto' 
+PASS Property z-index value '-1' 
+PASS Property z-index value 'calc(3 - 2)' 
 
