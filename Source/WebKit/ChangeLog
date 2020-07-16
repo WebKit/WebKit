@@ -1,3 +1,49 @@
+2020-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        iPad cursor is sometimes slow to change to I-beam (e.g. on reddit.com)
+        https://bugs.webkit.org/show_bug.cgi?id=214424
+        <rdar://problem/59503572>
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests, just an optimization.
+
+        * Shared/ios/InteractionInformationRequest.h:
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::encode const):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest):
+        (WebKit::InteractionInformationRequest::isApproximatelyValidForRequest):
+        'const'-ify these getters
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+        Make it possible to disable computation of the 'nodeAtPositionHasDoubleClickHandler' property,
+        because it can be quite expensive for some web content. We will still compute it by default,
+        but high-rate interaction information requests (like those for the cursor) can optionally disable it.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView requestAsynchronousPositionInformationUpdate:]):
+        (-[WKContentView _hasValidOutstandingPositionInformationRequest:]):
+        (-[WKContentView _positionInformationDidChange:]):
+        When position information updates come in, only clear the outstanding request
+        if the reply is valid for that request; otherwise, the outstanding request is
+        definitely still outstanding, and we've probably just sent multiple requests.
+        A more formal mechanism that actually keeps track of all requests might be
+        more appropriate here in the future, but this helps us avoid re-requesting
+        position information for the same point repeatedly, just because old (stale)
+        updates are coming in.
+
+        (-[WKContentView _cursorInteraction:regionForLocation:defaultRegion:completion:]):
+        Instead of requesting an interaction information update for every cursor update,
+        and then dropping them on the floor when they return, if a new request was sent,
+        simply coalesce all requests that come in while we have an outstanding one.
+        This avoids a great deal of unnecessary (and ignored) work when the Web Content
+        process is responding to requests at a slower rate than the cursor interaction
+        is trying to retrieve new regions.
+
 2020-07-16  Megan Gardner  <megan_gardner@apple.com>
 
         Selection is not always clearing when tapping.

@@ -2945,7 +2945,9 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     auto* nodeRespondingToClickEvents = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
 
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
-    info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
+
+    if (request.includeHasDoubleClickHandler)
+        info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
     auto& eventHandler = m_page->mainFrame().eventHandler();
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::AllowFrameScrollbars, HitTestRequest::AllowVisibleChildFrameContentOnly };

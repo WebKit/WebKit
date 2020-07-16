@@ -52,7 +52,7 @@ struct InteractionInformationAtPosition {
     InteractionInformationRequest request;
 
     bool canBeValid { true };
-    bool nodeAtPositionHasDoubleClickHandler { false };
+    Optional<bool> nodeAtPositionHasDoubleClickHandler;
     bool isSelectable { false };
     bool prefersDraggingOverTextSelection { false };
     bool isNearMarkedText { false };

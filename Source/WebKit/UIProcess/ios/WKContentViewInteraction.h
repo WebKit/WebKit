@@ -124,8 +124,6 @@ typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsM
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
-typedef uint64_t CursorInteractionRequestID;
-
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
     M(_define) \
@@ -249,7 +247,8 @@ struct WKAutoCorrectionData {
 
 #if HAVE(UI_CURSOR_INTERACTION)
     RetainPtr<_UICursorInteraction> _cursorInteraction;
-    CursorInteractionRequestID _currentCursorInteractionRequestID;
+    BOOL _hasOutstandingCursorInteractionRequest;
+    Optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(_UICursorRegion *)>>> _deferredCursorInteractionRequest;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
@@ -324,7 +323,7 @@ struct WKAutoCorrectionData {
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 
-    Optional<WebKit::InteractionInformationRequest> _outstandingPositionInformationRequest;
+    Optional<WebKit::InteractionInformationRequest> _lastOutstandingPositionInformationRequest;
 
     uint64_t _positionInformationCallbackDepth;
     Vector<Optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
