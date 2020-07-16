@@ -932,6 +932,12 @@ enum ContentSizeCategory {
 
     boolean systemHasBattery();
 
+    void setSystemHasBatteryForTesting(boolean hasBattery);
+    void setSystemHasACForTesting(boolean hasAC);
+
+    void setHardwareVP9DecoderDisabledForTesting(boolean disabled);
+    void setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale);
+
     long readPreferenceInteger(DOMString domain, DOMString key);
     DOMString encodedPreferenceValue(DOMString domain, DOMString key);
 

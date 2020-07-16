@@ -172,6 +172,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     NotifyPreferencesChanged(String domain, String key, Optional<String> encodedValue)
     UnblockPreferenceService(WebKit::SandboxExtension::HandleArray handleArray)
 #endif
+    PowerSourceDidChange(bool hasAC)
 #endif
 
 #if PLATFORM(GTK) && !USE(GTK4)

@@ -1018,6 +1018,12 @@ public:
 
     bool systemHasBattery() const;
 
+    void setSystemHasBatteryForTesting(bool);
+    void setSystemHasACForTesting(bool);
+
+    void setHardwareVP9DecoderDisabledForTesting(bool);
+    void setVP9ScreenSizeAndScaleForTesting(double, double, double);
+
     int readPreferenceInteger(const String& domain, const String& key);
     String encodedPreferenceValue(const String& domain, const String& key);
 

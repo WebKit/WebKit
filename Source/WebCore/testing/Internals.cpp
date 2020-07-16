@@ -319,10 +319,6 @@
 #include "WebXRTest.h"
 #endif
 
-#if PLATFORM(MAC) && USE(LIBWEBRTC)
-#include <webrtc/sdk/WebKit/VideoProcessingSoftLink.h>
-#endif
-
 #if PLATFORM(MAC)
 #include "GraphicsContextGLOpenGLManager.h"
 #include "NSScrollerImpDetails.h"
@@ -331,8 +327,13 @@
 
 #if PLATFORM(COCOA)
 #include "SystemBattery.h"
+#include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cocoa/CoreTextSPI.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
+#if PLATFORM(MAC) && USE(LIBWEBRTC)
+#include <webrtc/sdk/WebKit/VideoProcessingSoftLink.h>
 #endif
 
 using JSC::CallData;
@@ -629,6 +630,13 @@ Internals::Internals(Document& document)
 
 #if PLATFORM(COCOA) &&  ENABLE(WEB_AUDIO)
     AudioDestinationCocoa::createOverride = nullptr;
+#endif
+
+#if PLATFORM(COCOA)
+    setOverrideSystemHasBatteryForTesting(WTF::nullopt);
+    setOverrideSystemHasACForTesting(WTF::nullopt);
+    setOverrideVP9HardwareDecoderDisabledForTesting(false);
+    resetOverrideVP9ScreenSizeAndScaleForTesting();
 #endif
 }
 
@@ -5815,6 +5823,44 @@ bool Internals::systemHasBattery() const
     return WebCore::systemHasBattery();
 #else
     return false;
+#endif
+}
+
+void Internals::setSystemHasBatteryForTesting(bool hasBattery)
+{
+#if PLATFORM(COCOA)
+    WebCore::setOverrideSystemHasBatteryForTesting(hasBattery);
+#else
+    UNUSED_PARAM(hasBattery);
+#endif
+}
+
+void Internals::setSystemHasACForTesting(bool hasAC)
+{
+#if PLATFORM(COCOA)
+    WebCore::setOverrideSystemHasACForTesting(hasAC);
+#else
+    UNUSED_PARAM(hasAC);
+#endif
+}
+
+void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
+{
+#if PLATFORM(COCOA)
+    WebCore::setOverrideVP9HardwareDecoderDisabledForTesting(disabled);
+#else
+    UNUSED_PARAM(disabled);
+#endif
+}
+
+void Internals::setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale)
+{
+#if PLATFORM(COCOA)
+    WebCore::setOverrideVP9ScreenSizeAndScaleForTesting(width, height, scale);
+#else
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(scale);
 #endif
 }
 

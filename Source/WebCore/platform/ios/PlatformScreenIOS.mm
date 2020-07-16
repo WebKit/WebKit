@@ -200,8 +200,10 @@ ScreenProperties collectScreenProperties()
         int screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
         bool screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
         bool screenHasInvertedColors = WebCore::screenHasInvertedColors();
+        bool hdr = screenSupportsHighDynamicRange(nullptr);
+        float scaleFactor = WebCore::screenPPIFactor();
 
-        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors });
+        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, hdr, scaleFactor });
         
         if (screen == [PAL::getUIScreenClass() mainScreen])
             screenProperties.primaryDisplayID = displayID;

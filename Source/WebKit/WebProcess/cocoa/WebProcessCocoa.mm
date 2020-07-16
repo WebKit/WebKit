@@ -312,6 +312,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
     
     setSystemHasBattery(parameters.systemHasBattery);
+    setSystemHasAC(parameters.systemHasAC);
 
 #if PLATFORM(IOS_FAMILY)
     RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));
@@ -1020,6 +1021,11 @@ void WebProcess::unblockServicesRequiredByAccessibility(const SandboxExtension::
     ASSERT_UNUSED(consumed, consumed);
 #endif
     registerWithAccessibility();
+}
+
+void WebProcess::powerSourceDidChange(bool hasAC)
+{
+    setSystemHasAC(hasAC);
 }
 
 

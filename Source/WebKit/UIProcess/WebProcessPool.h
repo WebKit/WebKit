@@ -94,6 +94,9 @@ namespace WebCore {
 class RegistrableDomain;
 enum class EventMakesGamepadsVisible : bool;
 struct MockMediaDevice;
+#if PLATFORM(COCOA)
+class PowerSourceNotifier;
+#endif
 }
 
 namespace WebKit {
@@ -710,6 +713,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
+    std::unique_ptr<WebCore::PowerSourceNotifier> m_powerSourceNotifier;
     RetainPtr<NSObject> m_activationObserver;
     RetainPtr<NSObject> m_accessibilityEnabledObserver;
 #endif

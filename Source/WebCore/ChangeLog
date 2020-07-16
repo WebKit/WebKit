@@ -1,3 +1,63 @@
+2020-07-16  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add MediaCapabilities support for SW VP9 decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=214316
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html
+
+        Add some foundational support for SW VP9, which due to policy decisions will need information
+        both on the system battery status and the power adapter status, and these need to be shipped
+        into the WebContent process from the UIProcess.
+
+        Add some Internal override settings to allow the policies to be effectively tested through
+        LayouTests. This includes overrides for system battery and AC state, as well as overrides for
+        screen size and resolution.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PlatformScreen.cpp:
+        (WebCore::getScreenProperties):
+        * platform/PlatformScreen.h:
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/cocoa/PowerSourceNotifier.h:
+        * platform/cocoa/PowerSourceNotifier.mm:
+        (WebCore::PowerSourceNotifier::PowerSourceNotifier):
+        (WebCore::PowerSourceNotifier::~PowerSourceNotifier):
+        (WebCore::PowerSourceNotifier::notifyPowerSourceChanged):
+        * platform/cocoa/SystemBattery.h:
+        * platform/cocoa/SystemBattery.mm:
+        (WebCore::systemHasBattery):
+        (WebCore::resetSystemHasAC):
+        (WebCore::setSystemHasAC):
+        (WebCore::systemHasAC):
+        (WebCore::setOverrideSystemHasBatteryForTesting):
+        (WebCore::setOverrideSystemHasACForTesting):
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp:
+        (WebCore::videoCodecTypeFromRFC4281Type):
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa):
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h: Copied from Source/WebCore/PAL/pal/spi/cocoa/IOPSLibSPI.h.
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm: Added.
+        (WebCore::setOverrideVP9HardwareDecoderDisabledForTesting):
+        (WebCore::setOverrideVP9ScreenSizeAndScaleForTesting):
+        (WebCore::resetOverrideVP9ScreenSizeAndScaleForTesting):
+        (WebCore::validateVPParameters):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::collectScreenProperties):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::setSystemHasBattery):
+        (WebCore::Internals::setSystemHasAC):
+        (WebCore::Internals::setHardwareVP9DecoderDisabledForTesting):
+        (WebCore::Internals::setVP9ScreenSizeAndScale):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-07-16  Brady Eidson  <beidson@apple.com>
 
         Remove (entirely unused) hat switch dpad support in HIDGamepad.

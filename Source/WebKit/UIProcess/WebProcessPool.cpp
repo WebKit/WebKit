@@ -127,6 +127,7 @@
 
 #if PLATFORM(COCOA)
 #include "VersionChecks.h"
+#include <WebCore/PowerSourceNotifier.h>
 #endif
 
 #if PLATFORM(MAC)

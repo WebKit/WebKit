@@ -117,6 +117,7 @@ ScreenProperties collectScreenProperties()
         uint32_t displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
         IORegistryGPUID gpuID = 0;
         bool screenSupportsHighDynamicRange = false;
+        float scaleFactor = screen.backingScaleFactor;
 
 #if USE(MEDIATOOLBOX)
         if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
@@ -126,7 +127,7 @@ ScreenProperties collectScreenProperties()
         if (displayMask)
             gpuID = gpuIDForDisplayMask(displayMask);
 
-        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID });
+        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID, scaleFactor });
 
         if (!screenProperties.primaryDisplayID)
             screenProperties.primaryDisplayID = displayID;

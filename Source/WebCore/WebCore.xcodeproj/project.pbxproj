@@ -4200,6 +4200,7 @@
 		CDC69DD61632026C007C38DF /* WebCoreFullScreenWarningView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC69DD41632026C007C38DF /* WebCoreFullScreenWarningView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDC69DDA16371FD4007C38DF /* WebCoreFullScreenPlaceholderView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC69DD816371FD3007C38DF /* WebCoreFullScreenPlaceholderView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC734131977896C0046BFC5 /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDC7470424BE2FC700C1868B /* PowerSourceNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC7470024BE267900C1868B /* PowerSourceNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDC8B5A2180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC8B5A0180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.mm */; };
 		CDC8B5A3180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5A1180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h */; };
 		CDC8B5A6180474F70016E685 /* MediaSourcePrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC8B5A4180474F70016E685 /* MediaSourcePrivateAVFObjC.mm */; };
@@ -14107,6 +14108,8 @@
 		CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourcePrivate.h; sourceTree = "<group>"; };
 		CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivate.h; sourceTree = "<group>"; };
 		CD641EC7181ED60100EE4C41 /* MediaSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSample.h; sourceTree = "<group>"; };
+		CD6FE5B724BCE645009FCDA4 /* VP9UtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VP9UtilitiesCocoa.h; sourceTree = "<group>"; };
+		CD6FE5B824BCE645009FCDA4 /* VP9UtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VP9UtilitiesCocoa.mm; sourceTree = "<group>"; };
 		CD6FE5BA24BCE7B6009FCDA4 /* VP9Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VP9Utilities.h; sourceTree = "<group>"; };
 		CD6FE5BB24BCE7B6009FCDA4 /* VP9Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VP9Utilities.cpp; sourceTree = "<group>"; };
 		CD720B4722682C7E00047FDE /* ISOFairPlayStreamingPsshBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ISOFairPlayStreamingPsshBox.cpp; sourceTree = "<group>"; };
@@ -14283,6 +14286,8 @@
 		CDC69DD916371FD3007C38DF /* WebCoreFullScreenPlaceholderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFullScreenPlaceholderView.mm; sourceTree = "<group>"; };
 		CDC734121977896C0046BFC5 /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
 		CDC734131977896C0046BFC5 /* CARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARingBuffer.h; sourceTree = "<group>"; };
+		CDC7470024BE267900C1868B /* PowerSourceNotifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PowerSourceNotifier.h; sourceTree = "<group>"; };
+		CDC7470124BE267900C1868B /* PowerSourceNotifier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PowerSourceNotifier.mm; sourceTree = "<group>"; };
 		CDC8B5A0180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateMediaSourceAVFObjC.mm; sourceTree = "<group>"; };
 		CDC8B5A1180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateMediaSourceAVFObjC.h; sourceTree = "<group>"; };
 		CDC8B5A4180474F70016E685 /* MediaSourcePrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSourcePrivateAVFObjC.mm; sourceTree = "<group>"; };
@@ -23630,6 +23635,8 @@
 				CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */,
 				CDA29A0D1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h */,
 				CDA29A0C1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm */,
+				CDC7470024BE267900C1868B /* PowerSourceNotifier.h */,
+				CDC7470124BE267900C1868B /* PowerSourceNotifier.mm */,
 				465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm */,
 				1AA84F03143BA7BD0051D153 /* ScrollController.h */,
 				1AA84F02143BA7BD0051D153 /* ScrollController.mm */,
@@ -25744,11 +25751,11 @@
 				076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */,
 				BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
-				CD6FE5BA24BCE7B6009FCDA4 /* VP9Utilities.h */,
-				CD6FE5BB24BCE7B6009FCDA4 /* VP9Utilities.cpp */,
 				0F5A57CA229B18AE0025EDA9 /* VelocityData.cpp */,
 				0F1A0C36229A481800D37ADB /* VelocityData.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,
+				CD6FE5BB24BCE7B6009FCDA4 /* VP9Utilities.cpp */,
+				CD6FE5BA24BCE7B6009FCDA4 /* VP9Utilities.h */,
 				1411DCB0164C39A800D49BC1 /* WidthCache.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
 				939B02ED0EA2DBC400C54570 /* WidthIterator.h */,
@@ -25886,6 +25893,8 @@
 				E4E8B4EA216B79E500B8834D /* SystemFontDatabaseCoreText.h */,
 				526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */,
 				526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */,
+				CD6FE5B724BCE645009FCDA4 /* VP9UtilitiesCocoa.h */,
+				CD6FE5B824BCE645009FCDA4 /* VP9UtilitiesCocoa.mm */,
 				2D3EF4441917915C00034184 /* WebActionDisablingCALayerDelegate.h */,
 				2D3EF4451917915C00034184 /* WebActionDisablingCALayerDelegate.mm */,
 				2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */,
@@ -32640,6 +32649,7 @@
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */,
+				CDC7470424BE2FC700C1868B /* PowerSourceNotifier.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
 				515BE1951D54F5FB00DD7C68 /* PlatformGamepad.h in Headers */,

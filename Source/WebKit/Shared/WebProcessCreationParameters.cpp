@@ -170,6 +170,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << mapDBExtensionHandle;
     encoder << systemHasBattery;
+    encoder << systemHasAC;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -459,6 +460,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!systemHasBattery)
         return false;
     parameters.systemHasBattery = WTFMove(*systemHasBattery);
+
+    Optional<bool> systemHasAC;
+    decoder >> systemHasAC;
+    if (!systemHasAC)
+        return false;
+    parameters.systemHasAC = WTFMove(*systemHasAC);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

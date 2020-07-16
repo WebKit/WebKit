@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "PowerSourceNotifier.h"
 
-#include <CoreFoundation/CoreFoundation.h>
+#import "SystemBattery.h"
+#import <notify.h>
+#import <pal/spi/cocoa/IOPSLibSPI.h>
 
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+namespace WebCore {
 
-#include <IOKit/ps/IOPSKeys.h>
-#include <IOKit/ps/IOPowerSources.h>
+PowerSourceNotifier::PowerSourceNotifier(PowerSourceNotifierCallback&& callback)
+    : m_callback(WTFMove(callback))
+{
+    int token = 0;
+    auto status = notify_register_dispatch(kIOPSNotifyPowerSource, &token, dispatch_get_main_queue(), ^(int) {
+        notifyPowerSourceChanged();
+    });
+    if (status == NOTIFY_STATUS_OK)
+        m_tokenID = token;
+}
 
-#else
+PowerSourceNotifier::~PowerSourceNotifier()
+{
+    if (m_tokenID)
+        notify_cancel(*m_tokenID);
+}
 
-#define kIOPSTypeKey "Type"
-#define kIOPSInternalBatteryType "InternalBattery"
-#define kIOPSPowerSourceStateKey "Power Source State"
-#define kIOPSACPowerValue "AC Power"
-#define kIOPSNotifyPowerSource "com.apple.system.powersources.source"
+void PowerSourceNotifier::notifyPowerSourceChanged()
+{
+    resetSystemHasAC();
+    if (m_callback)
+        m_callback(systemHasAC());
+}
 
-#endif
-
-WTF_EXTERN_C_BEGIN
-
-CFTypeRef IOPSCopyPowerSourcesInfo(void);
-CFArrayRef IOPSCopyPowerSourcesList(CFTypeRef blob);
-CFDictionaryRef IOPSGetPowerSourceDescription(CFTypeRef blob, CFTypeRef ps);
-
-WTF_EXTERN_C_END
+}

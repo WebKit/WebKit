@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../../../media/video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+    var info;
+
+    async function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.setSystemHasBatteryForTesting(true)');
+        run('internals.setSystemHasACForTesting(true)');
+        run('internals.setHardwareVP9DecoderDisabledForTesting(true)');
+        run('internals.setVP9ScreenSizeAndScaleForTesting(1024, 768, 1)');
+
+        consoleWrite('');
+        consoleWrite('Test that 4k @ 30fps is supported, smooth, but not powerEfficient');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.powerEfficient', false);
+        testExpected('info.smooth', true);
+
+        consoleWrite('');
+        consoleWrite('Test that 4k @ 60fps is supported, but not smooth or powerEfficient');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 60 }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.powerEfficient', false);
+        testExpected('info.smooth', false);
+
+        consoleWrite('');
+        consoleWrite('Test that SW VP9 decoder is not supported on battery power when screen is not 4k resolution');
+        run('internals.setSystemHasACForTesting(false)');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', false);
+        testExpected('info.powerEfficient', false);
+        testExpected('info.smooth', false);
+
+        consoleWrite('');
+        consoleWrite('Test that SW VP9 decoder is supported on battery power when screen is at least 4k resolution');
+        run('internals.setVP9ScreenSizeAndScaleForTesting(3840, 2160, 1)');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.powerEfficient', false);
+        testExpected('info.smooth', true);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

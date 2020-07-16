@@ -55,6 +55,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformPasteboard.h>
+#import <WebCore/PowerSourceNotifier.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
@@ -407,6 +408,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
 #if PLATFORM(COCOA)
     parameters.systemHasBattery = systemHasBattery();
+    parameters.systemHasAC = systemHasAC();
 
     SandboxExtension::Handle mapDBHandle;
     if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb"_s, WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
@@ -697,6 +699,10 @@ void WebProcessPool::registerNotificationObservers()
     }];
 #endif
 #endif
+
+    m_powerSourceNotifier = WTF::makeUnique<WebCore::PowerSourceNotifier>([this] (bool hasAC) {
+        sendToAllProcesses(Messages::WebProcess::PowerSourceDidChange(hasAC));
+    });
 }
 
 void WebProcessPool::unregisterNotificationObservers()
@@ -726,6 +732,8 @@ void WebProcessPool::unregisterNotificationObservers()
 #endif
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
+
+    m_powerSourceNotifier = nullptr;
 }
 
 static CFURLStorageSessionRef privateBrowsingSession()

@@ -241,6 +241,7 @@ platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PasteboardCustomDataCocoa.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
+platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/ScrollController.mm
 platform/cocoa/ScrollSnapAnimatorState.mm
@@ -349,6 +350,7 @@ platform/graphics/cocoa/IntRectCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp
 platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
+platform/graphics/cocoa/VP9UtilitiesCocoa.mm
 platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm

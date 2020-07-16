@@ -214,6 +214,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     Optional<SandboxExtension::Handle> mapDBExtensionHandle;
     bool systemHasBattery { false };
+    bool systemHasAC { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)

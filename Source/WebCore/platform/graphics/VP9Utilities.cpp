@@ -34,20 +34,20 @@ namespace WebCore {
 static bool isValidVPLevel(uint8_t level)
 {
     constexpr uint8_t validLevels[] = {
-        10,
-        11,
-        20,
-        21,
-        30,
-        31,
-        40,
-        41,
-        50,
-        51,
-        52,
-        60,
-        61,
-        62,
+        VPConfigurationLevel::Level_1,
+        VPConfigurationLevel::Level_1_1,
+        VPConfigurationLevel::Level_2,
+        VPConfigurationLevel::Level_2_1,
+        VPConfigurationLevel::Level_3,
+        VPConfigurationLevel::Level_3_1,
+        VPConfigurationLevel::Level_4,
+        VPConfigurationLevel::Level_4_1,
+        VPConfigurationLevel::Level_5,
+        VPConfigurationLevel::Level_5_1,
+        VPConfigurationLevel::Level_5_2,
+        VPConfigurationLevel::Level_6,
+        VPConfigurationLevel::Level_6_1,
+        VPConfigurationLevel::Level_6_2,
     };
 
     ASSERT(std::is_sorted(std::begin(validLevels), std::end(validLevels)));
@@ -130,7 +130,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
 
     // Fourth element: chromaSubsampling. Legal values are 0-3.
     auto chromaSubsampling = toIntegralType<uint8_t>(*nextElement);
-    if (!chromaSubsampling || *chromaSubsampling > 3)
+    if (!chromaSubsampling || *chromaSubsampling > VPConfigurationChromaSubsampling::Subsampling_444)
         return WTF::nullopt;
     configuration.chromaSubsampling = *chromaSubsampling;
 

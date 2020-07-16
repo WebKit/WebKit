@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,21 @@
 
 #pragma once
 
-#include <CoreFoundation/CoreFoundation.h>
+#if PLATFORM(COCOA)
 
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+#include "VP9Utilities.h"
 
-#include <IOKit/ps/IOPSKeys.h>
-#include <IOKit/ps/IOPowerSources.h>
+namespace WebCore {
 
-#else
+struct MediaCapabilitiesInfo;
+struct VideoConfiguration;
 
-#define kIOPSTypeKey "Type"
-#define kIOPSInternalBatteryType "InternalBattery"
-#define kIOPSPowerSourceStateKey "Power Source State"
-#define kIOPSACPowerValue "AC Power"
-#define kIOPSNotifyPowerSource "com.apple.system.powersources.source"
+WEBCORE_EXPORT extern void setOverrideVP9HardwareDecoderDisabledForTesting(bool);
+WEBCORE_EXPORT extern void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale);
+WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
+
+extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
+
+}
 
 #endif
-
-WTF_EXTERN_C_BEGIN
-
-CFTypeRef IOPSCopyPowerSourcesInfo(void);
-CFArrayRef IOPSCopyPowerSourcesList(CFTypeRef blob);
-CFDictionaryRef IOPSGetPowerSourceDescription(CFTypeRef blob, CFTypeRef ps);
-
-WTF_EXTERN_C_END

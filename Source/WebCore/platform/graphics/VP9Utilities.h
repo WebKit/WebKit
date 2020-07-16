@@ -30,13 +30,42 @@
 
 namespace WebCore {
 
+namespace VPConfigurationLevel {
+constexpr uint8_t Level_1   = 10;
+constexpr uint8_t Level_1_1 = 11;
+constexpr uint8_t Level_2   = 20;
+constexpr uint8_t Level_2_1 = 21;
+constexpr uint8_t Level_3   = 30;
+constexpr uint8_t Level_3_1 = 31;
+constexpr uint8_t Level_4   = 40;
+constexpr uint8_t Level_4_1 = 41;
+constexpr uint8_t Level_5   = 50;
+constexpr uint8_t Level_5_1 = 51;
+constexpr uint8_t Level_5_2 = 52;
+constexpr uint8_t Level_6   = 60;
+constexpr uint8_t Level_6_1 = 61;
+constexpr uint8_t Level_6_2 = 62;
+}
+
+namespace VPConfigurationChromaSubsampling {
+constexpr uint8_t Subsampling_420_Vertical = 0;
+constexpr uint8_t Subsampling_420_Colocated = 1;
+constexpr uint8_t Subsampling_422 = 2;
+constexpr uint8_t Subsampling_444 = 3;
+}
+
+namespace VPConfigurationRange {
+constexpr uint8_t VideoRange = 0;
+constexpr uint8_t FullRange = 1;
+}
+
 struct VPCodecConfigurationRecord {
     String codecName;
     uint8_t profile { 0 };
-    uint8_t level { 0 };
-    uint8_t bitDepth { 0 };
-    uint8_t chromaSubsampling { 1 };
-    uint8_t videoFullRangeFlag { 0 };
+    uint8_t level { VPConfigurationLevel::Level_1 };
+    uint8_t bitDepth { 8 };
+    uint8_t chromaSubsampling { VPConfigurationChromaSubsampling::Subsampling_420_Colocated };
+    uint8_t videoFullRangeFlag { VPConfigurationRange::VideoRange };
     uint8_t colorPrimaries { 1 };
     uint8_t transferCharacteristics { 1 };
     uint8_t matrixCoefficients { 1 };

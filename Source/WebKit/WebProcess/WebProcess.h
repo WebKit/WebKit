@@ -307,6 +307,7 @@ public:
     void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
     void unblockPreferenceService(SandboxExtension::HandleArray&&);
 #endif
+    void powerSourceDidChange(bool);
 #endif
 
     bool areAllPagesThrottleable() const;

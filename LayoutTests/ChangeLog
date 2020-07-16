@@ -1,3 +1,13 @@
+2020-07-16  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add MediaCapabilities support for SW VP9 decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=214316
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/mediacapabilities/vp9-decodingInfo-sw-expected.txt: Added.
+        * platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html: Added.
+
 2020-07-16  Hector Lopez  <hector_i_lopez@apple.com>
 
         Regression tests cannot load video over HTTPS with self-signed certificate

@@ -51,6 +51,10 @@ struct ScreenData {
     IORegistryGPUID gpuID { 0 };
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    float scaleFactor { 1 };
+#endif
+
     enum class ColorSpaceType : uint8_t { None, Name, Data };
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ScreenData> decode(Decoder&);
@@ -96,6 +100,10 @@ void ScreenData::encode(Encoder& encoder) const
 
 #if PLATFORM(MAC)
     encoder << screenIsMonochrome << displayMask << gpuID;
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    encoder << scaleFactor;
 #endif
 
     if (colorSpace) {
@@ -176,6 +184,13 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
         return WTF::nullopt;
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    Optional<float> scaleFactor;
+    decoder >> scaleFactor;
+    if (!scaleFactor)
+        return WTF::nullopt;
+#endif
+
     ColorSpaceType dataType;
     if (!decoder.decode(dataType))
         return WTF::nullopt;
@@ -219,7 +234,10 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
 #if PLATFORM(MAC)
         WTFMove(*screenIsMonochrome),
         WTFMove(*displayMask),
-        WTFMove(*gpuID)
+        WTFMove(*gpuID),
+#endif
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+        WTFMove(*scaleFactor),
 #endif
     } };
 }

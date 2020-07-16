@@ -38,6 +38,11 @@ static ScreenProperties& screenProperties()
     return screenProperties;
 }
 
+const ScreenProperties& getScreenProperties()
+{
+    return screenProperties();
+}
+
 PlatformDisplayID primaryScreenDisplayID()
 {
     return screenProperties().primaryDisplayID;

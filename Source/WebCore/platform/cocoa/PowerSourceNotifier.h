@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,24 @@
 
 #pragma once
 
-#include <CoreFoundation/CoreFoundation.h>
+#include <wtf/Function.h>
 
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+namespace WebCore {
 
-#include <IOKit/ps/IOPSKeys.h>
-#include <IOKit/ps/IOPowerSources.h>
+class PowerSourceNotifier {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    using PowerSourceNotifierCallback = WTF::Function<void(bool hasAC)>;
+    WEBCORE_EXPORT explicit PowerSourceNotifier(PowerSourceNotifierCallback&&);
+    WEBCORE_EXPORT ~PowerSourceNotifier();
 
-#else
+    WEBCORE_EXPORT bool isLowPowerModeEnabled() const;
 
-#define kIOPSTypeKey "Type"
-#define kIOPSInternalBatteryType "InternalBattery"
-#define kIOPSPowerSourceStateKey "Power Source State"
-#define kIOPSACPowerValue "AC Power"
-#define kIOPSNotifyPowerSource "com.apple.system.powersources.source"
+private:
+    void notifyPowerSourceChanged();
 
-#endif
+    Optional<int> m_tokenID;
+    PowerSourceNotifierCallback m_callback;
+};
 
-WTF_EXTERN_C_BEGIN
-
-CFTypeRef IOPSCopyPowerSourcesInfo(void);
-CFArrayRef IOPSCopyPowerSourcesList(CFTypeRef blob);
-CFDictionaryRef IOPSGetPowerSourceDescription(CFTypeRef blob, CFTypeRef ps);
-
-WTF_EXTERN_C_END
+}

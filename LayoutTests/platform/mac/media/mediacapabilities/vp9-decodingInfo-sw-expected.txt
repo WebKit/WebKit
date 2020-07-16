@@ -1,0 +1,36 @@
+RUN(internals.setSystemHasBatteryForTesting(true))
+RUN(internals.setSystemHasACForTesting(true))
+RUN(internals.setHardwareVP9DecoderDisabledForTesting(true))
+RUN(internals.setVP9ScreenSizeAndScaleForTesting(1024, 768, 1))
+
+Test that 4k @ 30fps is supported, smooth, but not powerEfficient
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="vp09.00.41.08"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (info.powerEfficient == 'false') OK
+EXPECTED (info.smooth == 'true') OK
+
+Test that 4k @ 60fps is supported, but not smooth or powerEfficient
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="vp09.00.41.08"', height: 1080, bitrate: 800000, width: 3180, framerate: 60 }});)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (info.powerEfficient == 'false') OK
+EXPECTED (info.smooth == 'false') OK
+
+Test that SW VP9 decoder is not supported on battery power when screen is not 4k resolution
+RUN(internals.setSystemHasACForTesting(false))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="vp09.00.41.08"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+EXPECTED (info.powerEfficient == 'false') OK
+EXPECTED (info.smooth == 'false') OK
+
+Test that SW VP9 decoder is supported on battery power when screen is at least 4k resolution
+RUN(internals.setVP9ScreenSizeAndScaleForTesting(3840, 2160, 1))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="vp09.00.41.08"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (info.powerEfficient == 'false') OK
+EXPECTED (info.smooth == 'true') OK
+END OF TEST
+

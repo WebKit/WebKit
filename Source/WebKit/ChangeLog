@@ -1,3 +1,28 @@
+2020-07-16  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add MediaCapabilities support for SW VP9 decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=214316
+
+        Reviewed by Eric Carlson.
+
+        Pass the system AC state to the WebContent process at creation time, and also create
+        a power state listener so the WebProcess can be updated dynamically.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::powerSourceDidChange):
+
 2020-07-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add syscall to WebContent sandbox
