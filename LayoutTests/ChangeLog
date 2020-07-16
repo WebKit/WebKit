@@ -1,3 +1,9 @@
+2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, move a test baseline to the correct subdirectory.
+
+        * platform/mac/imported/w3c/web-platform-tests/css/css-fonts/generic-family-keywords-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/css-fonts/generic-family-keywords-001-expected.txt.
+
 2020-07-15  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS ] canvas/philip/tests/2d.pattern.animated.gif.html is passing and needs expectations removed
