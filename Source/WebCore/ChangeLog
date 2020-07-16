@@ -1,3 +1,29 @@
+2020-07-16  Peng Liu  <peng.liu6@apple.com>
+
+        Double tapping to zoom out a fullscreen video will zoom in slightly before zooming out
+        https://bugs.webkit.org/show_bug.cgi?id=214400
+
+        Reviewed by Jer Noble.
+
+        When changing the video gravity of a fullscreen video from AVLayerVideoGravityResizeAspectFill
+        to AVLayerVideoGravityResizeAspect, the implicit animation of the AVPlayerLayer in the web process
+        will conflict with the implicit animation of the _videoSublayer in the WebAVPlayerLayer in the
+        UI process. To avoid the implicit animation in the web process because of the video gravity change,
+        we have to let the remote hosting layer and the corresponding AVPlayerLayer in the web process
+        to include the whole video, even when the video gravity is AVLayerVideoGravityResizeAspectFill
+        and the video will be clipped by the superlayer. When the AVPlayerLayer has the whole video,
+        changing the video gravity from AVLayerVideoGravityResizeAspectFill to AVLayerVideoGravityResizeAspect
+        will not generate an implicit animation in the web process.
+
+        This patch also adds an instance variable _previousVideoGravity to make sure the transform is
+        correctly calculated when video gravity is changing.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer init]):
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer resolveBounds]):
+        (-[WebAVPlayerLayer setVideoGravity:]):
+
 2020-07-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Crash caused by clients that don't support isolated tree mode calling on the secondary thread.

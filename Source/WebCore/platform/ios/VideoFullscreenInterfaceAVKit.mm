@@ -202,7 +202,9 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     RefPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
     RetainPtr<WebAVPlayerController> _avPlayerController;
     RetainPtr<CALayer> _videoSublayer;
+    FloatRect _videoSublayerFrame;
     RetainPtr<NSString> _videoGravity;
+    RetainPtr<NSString> _previousVideoGravity;
 }
 
 - (instancetype)init
@@ -212,6 +214,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
         self.masksToBounds = YES;
         self.allowsHitTesting = NO;
         _videoGravity = AVLayerVideoGravityResizeAspect;
+        _previousVideoGravity = AVLayerVideoGravityResizeAspect;
     }
     return self;
 }
@@ -270,27 +273,34 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     FloatRect sourceVideoFrame;
     FloatRect targetVideoFrame;
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
-    
-    if ([AVLayerVideoGravityResize isEqualToString:self.videoGravity]) {
+
+    if ([AVLayerVideoGravityResize isEqualToString:_previousVideoGravity.get()])
         sourceVideoFrame = self.modelVideoLayerFrame;
-        targetVideoFrame = self.bounds;
-    } else if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity]) {
+    else if ([AVLayerVideoGravityResizeAspect isEqualToString:_previousVideoGravity.get()])
         sourceVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.modelVideoLayerFrame);
-        targetVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
-    } else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity]) {
+    else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:_previousVideoGravity.get()])
         sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
+    else
+        ASSERT_NOT_REACHED();
+
+    if ([AVLayerVideoGravityResize isEqualToString:self.videoGravity])
+        targetVideoFrame = self.bounds;
+    else if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity])
+        targetVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
+    else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity])
         targetVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
-    } else
+    else
         ASSERT_NOT_REACHED();
 
     UIView *view = (UIView *)[_videoSublayer delegate];
     CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
     [view setTransform:transform];
-    
+
     NSTimeInterval animationDuration = [CATransaction animationDuration];
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
 
+        _videoSublayerFrame = targetVideoFrame;
         [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
     });
 }
@@ -314,7 +324,9 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     if (!CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds])) {
         self.modelVideoLayerFrame = [self bounds];
         if (auto* model = _fullscreenInterface->videoFullscreenModel())
-            model->setVideoLayerFrame(self.modelVideoLayerFrame);
+            model->setVideoLayerFrame(_videoSublayerFrame);
+
+        _previousVideoGravity = _videoGravity;
     }
     [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     
@@ -329,8 +341,12 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
         videoGravity = AVLayerVideoGravityResizeAspect;
 #endif
 
+    if ([_videoGravity.get() isEqualToString:videoGravity])
+        return;
+
+    _previousVideoGravity = _videoGravity;
     _videoGravity = videoGravity;
-    
+
     if (![_avPlayerController delegate])
         return;
 
