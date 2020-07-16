@@ -1,3 +1,15 @@
+2020-07-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add syscall to WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=214394
+        <rdar://problem/65638758>
+
+        Reviewed by Darin Adler.
+
+        Add required syscall to WebContent process on macOS.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-07-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix logging added in r264414 that was incorrectly marked as "error" logging.

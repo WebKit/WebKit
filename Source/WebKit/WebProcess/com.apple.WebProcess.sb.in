@@ -1160,6 +1160,7 @@
     (if (equal? (param "CPU") "arm64")
         (allow syscall-unix
             (syscall-number SYS_mremap_encrypted)
+            (syscall-number SYS_fileport_makefd)
         )
     )
 
