@@ -1,3 +1,9 @@
+2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, move the Mojave baseline to the correct folder since I really messed up in r264373.
+
+        * platform/mac-mojave/imported/w3c/web-platform-tests/css/css-fonts/generic-family-keywords-001-expected.txt: Renamed from LayoutTests/platform/mac-mojave/imported/w3c/web-platform-tests/css-fonts/generic-family-keywords-001-expected.txt.
+
 2020-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening after r264424 and r264427
