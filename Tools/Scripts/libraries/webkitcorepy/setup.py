@@ -44,7 +44,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     keywords='python unicode',
-    url='https://github.pie.apple.com',
+    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitcorepy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',

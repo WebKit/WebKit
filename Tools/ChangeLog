@@ -1,3 +1,12 @@
+2020-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Correct url in setup.py
+        https://bugs.webkit.org/show_bug.cgi?id=214399
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py:
+
 2020-07-16  Philippe Normand  <pnormand@igalia.com>
 
         run-minibrowser --debug runs the release build on macOS
