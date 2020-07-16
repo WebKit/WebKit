@@ -1,3 +1,24 @@
+2020-07-15  Dean Jackson  <dino@apple.com>
+
+        MiniBrowser toolbar is ugly with default macOS Big Sur style
+        https://bugs.webkit.org/show_bug.cgi?id=214390
+        rdar://65637420
+
+        Reviewed by Tim Horton.
+
+        Rather than using the Big Sur default "unified" style, explicitly
+        ask for the "expanded" style.
+
+        While here, use symbols for the toolbar buttons, and move the
+        progress indicator to the end of the toolbar. I hope this
+        change to the xib file won't break the Catalina version.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController updateTitle:]):
+
 2020-07-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Spin off general webkitpy tools into a pip module
