@@ -1,5 +1,14 @@
 2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [macOS iOS] imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214387
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Mark test as flaky.
+
+2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening, move a test baseline to the correct subdirectory.
 
         * platform/mac/imported/w3c/web-platform-tests/css/css-fonts/generic-family-keywords-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/css-fonts/generic-family-keywords-001-expected.txt.
