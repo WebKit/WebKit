@@ -51,7 +51,7 @@ uint8_t convertToComponentByte(float);
 constexpr float convertToComponentFloat(uint8_t);
 
 constexpr uint8_t clampToComponentByte(int);
-constexpr uint8_t clampToComponentFloat(float);
+constexpr float clampToComponentFloat(float);
 
 template<typename T> T convertComponentByteTo(uint8_t);
 template<typename T> T convertComponentFloatTo(float);
@@ -97,7 +97,7 @@ constexpr uint8_t clampToComponentByte(int c)
     return std::clamp(c, 0, 255);
 }
 
-constexpr uint8_t clampToComponentFloat(float f)
+constexpr float clampToComponentFloat(float f)
 {
     return std::clamp(f, 0.0f, 1.0f);
 }

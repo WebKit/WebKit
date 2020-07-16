@@ -261,4 +261,36 @@ TEST(ExtendedColor, LinearSRGBConversionToSRGB)
     EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.alpha, 0.75f));
 }
 
+TEST(ExtendedColor, ColorWithAlphaMultipliedBy)
+{
+    Color color { SRGBA<float> { 0., 0., 1., 0.6 } };
+    EXPECT_TRUE(color.isExtended());
+
+    {
+        Color colorWithAlphaMultipliedBy = color.colorWithAlphaMultipliedBy(1.);
+        EXPECT_TRUE(colorWithAlphaMultipliedBy.isExtended());
+        EXPECT_EQ(color, colorWithAlphaMultipliedBy);
+    }
+
+    {
+        Color colorWithAlphaMultipliedBy = color.colorWithAlphaMultipliedBy(0.5);
+        EXPECT_TRUE(colorWithAlphaMultipliedBy.isExtended());
+        auto [r, g, b, a] = colorWithAlphaMultipliedBy.asExtended().components();
+        EXPECT_FLOAT_EQ(r, 0.);
+        EXPECT_FLOAT_EQ(g, 0.);
+        EXPECT_FLOAT_EQ(b, 1.);
+        EXPECT_FLOAT_EQ(a, 0.3);
+    }
+
+    {
+        Color colorWithAlphaMultipliedBy = color.colorWithAlphaMultipliedBy(0.);
+        EXPECT_TRUE(colorWithAlphaMultipliedBy.isExtended());
+        auto [r, g, b, a] = colorWithAlphaMultipliedBy.asExtended().components();
+        EXPECT_FLOAT_EQ(r, 0.);
+        EXPECT_FLOAT_EQ(g, 0.);
+        EXPECT_FLOAT_EQ(b, 1.);
+        EXPECT_FLOAT_EQ(a, 0.);
+    }
+}
+
 } // namespace TestWebKitAPI

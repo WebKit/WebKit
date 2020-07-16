@@ -1,3 +1,15 @@
+2020-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r264272) [GTK][WPE] css3/color/composited-solid-backgrounds.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=214260
+
+        Reviewed by Darin Adler.
+
+        Add a test case.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-07-15  Dean Jackson  <dino@apple.com>
 
         MiniBrowser toolbar is ugly with default macOS Big Sur style

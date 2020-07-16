@@ -1,3 +1,16 @@
+2020-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r264272) [GTK][WPE] css3/color/composited-solid-backgrounds.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=214260
+
+        Reviewed by Darin Adler.
+
+        The problem is that clampToComponentFloat is returning a uint8_t instead of a float, so we always end up
+        returning 0.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::clampToComponentFloat):
+
 2020-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Should clear exception after microtask draining
