@@ -1757,7 +1757,6 @@ webkit.org/b/131354 imported/mozilla/svg/blend-difference-stacking.html [ ImageO
 webkit.org/b/131354 imported/mozilla/svg/blend-hard-light.svg [ ImageOnlyFailure ]
 webkit.org/b/131354 imported/mozilla/svg/blend-hue.svg [ ImageOnlyFailure ]
 webkit.org/b/131354 imported/mozilla/svg/blend-luminosity.svg [ ImageOnlyFailure ]
-webkit.org/b/131354 imported/mozilla/svg/blend-saturation.svg [ ImageOnlyFailure ]
 webkit.org/b/139210 imported/mozilla/svg/text/textLength-5.svg [ ImageOnlyFailure ]
 webkit.org/b/139210 imported/mozilla/svg/text/textLength-6.svg [ ImageOnlyFailure ]
 webkit.org/b/139237 imported/mozilla/svg/filters/feComposite-1.svg [ ImageOnlyFailure ]
