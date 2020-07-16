@@ -142,7 +142,7 @@ static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float an
     // So add three additional interpolated stops, allowing for four Bezier curves.
     if (stops.size() == 2) {
         auto interpolatedStop = [&] (double fraction) -> Gradient::ColorStop {
-            return { blend(stops.first().offset, stops.last().offset, fraction), blend(stops.first().color, stops.last().color, fraction) };
+            return { blend(stops.first().offset, stops.last().offset, fraction), blendWithoutPremultiply(stops.first().color, stops.last().color, fraction) };
         };
         stops = { stops.first(), interpolatedStop(0.25), interpolatedStop(0.5), interpolatedStop(0.75), stops.last() };
     }

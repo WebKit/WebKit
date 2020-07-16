@@ -1,5 +1,17 @@
 2020-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r264280) [GTK][WPE] fast/gradients/conic-gradient-alpha.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=214259
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ColorBlending.cpp:
+        (WebCore::blendWithoutPremultiply): Use 'to' instead of 'from' when converting to SRGBA.
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::createConic): Use blendWithoutPremultiply() instead of blend() for the color stops interpolation.
+
+2020-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r264272) [GTK][WPE] css3/color/composited-solid-backgrounds.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=214260
 

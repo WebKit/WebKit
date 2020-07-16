@@ -118,7 +118,7 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
         return { };
 
     auto fromSRGB = from.toSRGBALossy<uint8_t>();
-    auto toSRGB = from.toSRGBALossy<uint8_t>();
+    auto toSRGB = to.toSRGBALossy<uint8_t>();
 
     return clampToComponentBytes<SRGBA>(
         WebCore::blend(fromSRGB.red, toSRGB.red, progress),
