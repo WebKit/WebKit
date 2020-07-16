@@ -139,8 +139,11 @@ private:
 
         setCurrentState(m_previousState);
 
-        if (didExitJavaScript)
+        if (didExitJavaScript) {
             didLeaveScriptContext(lexicalGlobalObject);
+            // We need to clear any exceptions from microtask drain.
+            scope.clearException();
+        }
     }
 
     static void setCurrentState(JSC::JSGlobalObject* lexicalGlobalObject)

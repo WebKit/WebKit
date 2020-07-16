@@ -44,9 +44,6 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 
 static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, Document* targetDocument, SecurityReportingOption reportingOption)
 {
-    VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (!targetDocument)
         return false;
 
@@ -59,9 +56,12 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
         return true;
 
     switch (reportingOption) {
-    case ThrowSecurityError:
+    case ThrowSecurityError: {
+        VM& vm = lexicalGlobalObject->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         throwSecurityError(*lexicalGlobalObject, scope, targetDocument->domWindow()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::No));
         break;
+    }
     case LogSecurityError:
         printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes));
         break;

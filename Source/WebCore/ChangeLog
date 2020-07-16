@@ -1,3 +1,23 @@
+2020-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Should clear exception after microtask draining
+        https://bugs.webkit.org/show_bug.cgi?id=214391
+        <rdar://problem/65536227>
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/microtask-drain-should-clear-exceptions.html
+
+        Since microtask draining involves JS calls, potentially it can cause exception.
+        We should clear exceptions after microtask draining since we do not handle it and suppress exception-check validation.
+        And we also should not create ThrowScope in canAccessDocument when parameter says it never throws an error.
+        Both cases are handled in the attached test.
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::canAccessDocument):
+        * bindings/js/JSExecState.h:
+        (WebCore::JSExecState::~JSExecState):
+
 2020-07-15  Devin Rousso  <drousso@apple.com>
 
         Unreviewed followup, use `objectReplacementCharacter` instead of `0xFFFC`
