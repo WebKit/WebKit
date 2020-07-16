@@ -80,14 +80,13 @@ void HIDGamepad::initElements()
         return a->priority < b->priority;
     });
 
+    LOG(Gamepad, "HIDGamepad initialized with %zu buttons and %zu axes", m_buttons.size(), m_axes.size());
+
     m_axisValues.resize(m_axes.size());
-    m_buttonValues.resize(m_buttons.size() + (m_dPads.size() * 4));
+    m_buttonValues.resize(m_buttons.size());
 
     for (auto& button : m_buttons)
         getCurrentValueForElement(button.get());
-
-    for (auto& dPad : m_dPads)
-        getCurrentValueForElement(dPad.get());
 
     for (auto& axis : m_axes)
         getCurrentValueForElement(axis.get());
@@ -111,8 +110,6 @@ void HIDGamepad::initElementsFromArray(CFArrayRef elements)
 
         if ((type == kIOHIDElementTypeInput_Misc || type == kIOHIDElementTypeInput_Button)) {
             if (maybeAddButton(element))
-                continue;
-            if (maybeAddDPad(element))
                 continue;
         }
 
@@ -150,27 +147,6 @@ bool HIDGamepad::maybeAddButton(IOHIDElementRef element)
     return true;
 }
 
-bool HIDGamepad::maybeAddDPad(IOHIDElementRef element)
-{
-    uint32_t usagePage = IOHIDElementGetUsagePage(element);
-    if (usagePage != kHIDPage_GenericDesktop)
-        return false;
-
-    uint32_t usage = IOHIDElementGetUsage(element);
-    if (!usage || usage != kHIDUsage_GD_Hatswitch)
-        return false;
-
-    CFIndex min = IOHIDElementGetLogicalMin(element);
-    CFIndex max = IOHIDElementGetLogicalMax(element);
-
-    m_dPads.append(makeUniqueRef<HIDGamepadDPad>(min, max, element));
-
-    IOHIDElementCookie cookie = IOHIDElementGetCookie(element);
-    m_elementMap.set(cookie, &m_dPads.last().get());
-
-    return true;
-}
-
 bool HIDGamepad::maybeAddAxis(IOHIDElementRef element)
 {
     uint32_t usagePage = IOHIDElementGetUsagePage(element);
@@ -191,38 +167,6 @@ bool HIDGamepad::maybeAddAxis(IOHIDElementRef element)
     m_elementMap.set(cookie, &m_axes.last().get());
 
     return true;
-}
-
-static void fillInButtonValues(int value, double& button0, double& button1, double& button2, double& button3)
-{
-    // Standard DPads have 8 possible position values, moving around a circle:
-    // 0 - Up
-    // 1 - Up + right
-    // 2 - Right
-    // 3 - Down + right
-    // 4 - Down
-    // 5 - Down + left
-    // 6 - Left
-    // 7 - Up and Left
-    // These 8 positions are mapped on to 4 button positions:
-    // 0 - Up
-    // 1 - Down
-    // 2 - Left
-    // 3 - Right
-
-    if (value < 0 || value > 7) {
-        // Handle an invalid input value that we don't know how to interpret.
-        button0 = 0.0;
-        button1 = 0.0;
-        button2 = 0.0;
-        button3 = 0.0;
-        return;
-    }
-
-    button0 = value < 2 || value == 7 ? 1.0 : 0.0;
-    button1 = value > 2 && value < 6 ? 1.0 : 0.0;
-    button2 = value > 4 ? 1.0 : 0.0;
-    button3 = value > 0 && value < 4 ? 1.0 : 0.0;
 }
 
 HIDInputType HIDGamepad::valueChanged(IOHIDValueRef value)
@@ -249,19 +193,6 @@ HIDInputType HIDGamepad::valueChanged(IOHIDValueRef value)
                 m_axisValues[i] = element->normalizedValue();
                 break;
             }
-        }
-    } else if (element->isDPad()) {
-        int intValue = IOHIDValueGetIntegerValue(value) - element->min;
-        for (unsigned i = 0; i < m_dPads.size(); ++i) {
-            if (&m_dPads[i].get() != element)
-                continue;
-
-            // Each DPad represents 4 button values which are tacked on to the end of the values from non-DPad buttons.
-            unsigned firstButtonValue = m_buttons.size() + i * 4;
-
-            ASSERT(m_buttonValues.size() > firstButtonValue + 3);
-
-            fillInButtonValues(intValue, m_buttonValues[firstButtonValue], m_buttonValues[firstButtonValue + 1], m_buttonValues[firstButtonValue + 2], m_buttonValues[firstButtonValue + 3]);
         }
     } else
         ASSERT_NOT_REACHED();

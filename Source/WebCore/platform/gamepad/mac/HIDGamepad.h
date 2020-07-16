@@ -56,7 +56,6 @@ struct HIDGamepadElement {
 
     virtual bool isButton() const { return false; }
     virtual bool isAxis() const { return false; }
-    virtual bool isDPad() const { return false; }
 
     virtual double normalizedValue() = 0;
 };
@@ -94,17 +93,6 @@ struct HIDGamepadAxis : HIDGamepadElement {
     }
 };
 
-struct HIDGamepadDPad : HIDGamepadElement {
-    HIDGamepadDPad(double min, double max, IOHIDElementRef element)
-        : HIDGamepadElement(min, max, element)
-    {
-    }
-
-    bool isDPad() const final { return true; }
-
-    virtual double normalizedValue() { RELEASE_ASSERT_NOT_REACHED(); }
-};
-
 enum class HIDInputType {
     ButtonPress,
     NotAButtonPress,
@@ -128,7 +116,6 @@ private:
     void initElementsFromArray(CFArrayRef);
 
     bool maybeAddButton(IOHIDElementRef);
-    bool maybeAddDPad(IOHIDElementRef);
     bool maybeAddAxis(IOHIDElementRef);
 
     void getCurrentValueForElement(const HIDGamepadElement&);
@@ -139,7 +126,6 @@ private:
 
     Vector<UniqueRef<HIDGamepadButton>> m_buttons;
     Vector<UniqueRef<HIDGamepadAxis>> m_axes;
-    Vector<UniqueRef<HIDGamepadDPad>> m_dPads;
     Vector<double> m_buttonValues;
     Vector<double> m_axisValues;
 };

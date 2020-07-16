@@ -1,3 +1,25 @@
+2020-07-16  Brady Eidson  <beidson@apple.com>
+
+        Remove (entirely unused) hat switch dpad support in HIDGamepad.
+        https://bugs.webkit.org/show_bug.cgi?id=214419
+
+        Reviewed by Andy Estes.
+
+        Turns out these devices simply don't exist in the wild.
+
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::initElements):
+        (WebCore::HIDGamepad::initElementsFromArray):
+        (WebCore::HIDGamepad::valueChanged):
+        (WebCore::HIDGamepad::maybeAddDPad): Deleted.
+        (WebCore::fillInButtonValues): Deleted.
+
+        * platform/gamepad/mac/HIDGamepad.h:
+        (WebCore::HIDGamepadElement::isAxis const):
+        (WebCore::HIDGamepadElement::isDPad const): Deleted.
+        (WebCore::HIDGamepadDPad::HIDGamepadDPad): Deleted.
+        (WebCore::HIDGamepadDPad::normalizedValue): Deleted.
+
 2020-07-16  Peng Liu  <peng.liu6@apple.com>
 
         Double tapping to zoom out a fullscreen video will zoom in slightly before zooming out
