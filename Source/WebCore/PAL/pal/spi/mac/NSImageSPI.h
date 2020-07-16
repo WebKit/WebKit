@@ -47,7 +47,6 @@ typedef NS_ENUM(NSInteger, NSImageSymbolScale) {
 
 @interface NSImage ()
 - (void)lockFocusWithRect:(NSRect)rect context:(nullable NSGraphicsContext *)context hints:(nullable NSDictionary *)hints flipped:(BOOL)flipped;
-+ (NSImage *)_imageWithSystemSymbolName:(NSString *)name;
 @end
 
 @interface NSImage (NSSystemSymbols)
