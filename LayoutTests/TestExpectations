@@ -1693,7 +1693,6 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Failure ]
 
 # Imported Mozilla SVG tests
-webkit.org/b/5968 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
 webkit.org/b/32177 imported/mozilla/svg/as-image/background-image-rect-1png.html [ ImageOnlyFailure ]
 webkit.org/b/32177 imported/mozilla/svg/as-image/background-image-rect-2.html [ ImageOnlyFailure ]
 webkit.org/b/32177 imported/mozilla/svg/text-white-space-01.svg [ ImageOnlyFailure ]
