@@ -1,3 +1,12 @@
+2020-07-15  Mark Lam  <mark.lam@apple.com>
+
+        Speculative fix for flaky fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html.
+        https://bugs.webkit.org/show_bug.cgi?id=214386
+
+        Unreviewed gardening.
+
+        * fast/css-custom-paint/script-tests/out-of-memory-while-adding-worklet-module.js:
+
 2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, move the Mojave baseline to the correct folder since I really messed up in r264373.

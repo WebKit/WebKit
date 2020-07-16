@@ -7,7 +7,7 @@ function useAllMemory() {
         function foo() {
             new Uint8Array(a);
         }
-        new Promise(foo);
+        new Promise(foo).catch(() => {});
         while(1) {
             new ArrayBuffer(1000);
         }
