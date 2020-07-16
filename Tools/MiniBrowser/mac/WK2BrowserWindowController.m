@@ -514,11 +514,12 @@ static BOOL areEssentiallyEqual(double a, double b)
         title = url.lastPathComponent ?: url._web_userVisibleString;
     }
 
-    if (@available(macOS 11, *)) {
-        self.window.title = title;
-        self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
-    } else
-        self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]%@", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier, _webView._editable ? @" [Editable]" : @""];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    self.window.title = title;
+    self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
+#else
+    self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]%@", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier, _webView._editable ? @" [Editable]" : @""];
+#endif
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
