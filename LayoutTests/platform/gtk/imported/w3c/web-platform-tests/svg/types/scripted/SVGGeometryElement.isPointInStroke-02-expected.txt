@@ -1,0 +1,3 @@
+
+PASS isPointInStroke w/dashes works properly at large scale factors 
+

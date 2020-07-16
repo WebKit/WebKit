@@ -1,3 +1,135 @@
+2020-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening after r264424 and r264427
+
+        Unreviewed gardening.
+
+        Merge common expectations for svg/ when they are the same.
+
+        * platform/gtk/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/resize-observer/svg-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/animations/seeking-events-4-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-001-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-002-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-002-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-001-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-002-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-002-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-003-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-003-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-001-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-002-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-002-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-003-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-003-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-invalid-base-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-invalid-base-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/url-reference-local-textpath-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-002-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/use-hidden-attr-change-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/use-nested-symbol-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/linking/reftests/use-symbol-rendered-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-009-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/marker-009-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-orient-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-002-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-userspaceonuse-non-scaling-stroke-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-userspaceonuse-non-scaling-stroke-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/scripted/stroke-dashes-hit-at-high-scale-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/tspan-opacity-mixed-direction-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInStroke-02-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/flex-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-list-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-enumerated-ascii-case-insensitive-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_getCoalescedEvents_when_pointerlocked-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerlock_after_pointercapture-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerlock_supercedes_capture-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_on_chorded_mouse_button_when_locked-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/resize-observer/svg-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-001-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-001-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-002-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-002-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-001-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-001-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-002-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-002-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-003-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-003-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-001-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-001-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-002-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-002-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-003-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-003-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-invalid-base-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-invalid-base-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/url-reference-local-textpath-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-002-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/use-hidden-attr-change-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/use-nested-symbol-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/linking/reftests/use-symbol-rendered-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-009-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/marker-009-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-orient-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-002-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-userspaceonuse-non-scaling-stroke-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-userspaceonuse-non-scaling-stroke-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/scripted/stroke-dashes-hit-at-high-scale-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/tspan-opacity-mixed-direction-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInStroke-02-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/touch-events/historical-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/touch-events/idlharness.window-expected.txt: Added.
+
 2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS WK1 EWS] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html is a flaky failure

@@ -1,3 +1,47 @@
+2020-07-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening after r264424 and r264427
+
+        Unreviewed gardening.
+
+        Merge common expectations for svg/ when they are the same.
+
+        * web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/circle-001-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-001-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/circle-002-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-002-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/circle-003-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/ellipse-001-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-001-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/ellipse-002-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-002-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/ellipse-003-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-003-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/rect-001-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-001-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/rect-002-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-002-expected.txt.
+        * web-platform-tests/svg/geometry/reftests/rect-003-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/geometry/reftests/rect-003-expected.txt.
+        * web-platform-tests/svg/linking/reftests/url-processing-invalid-base-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-invalid-base-expected.txt.
+        * web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.txt.
+        * web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.txt.
+        * web-platform-tests/svg/linking/reftests/url-processing-whitespace-003-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003-expected.txt.
+        * web-platform-tests/svg/painting/marker-009-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/marker-009-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-path-001-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-path-003-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-path-011-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-path-012-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-path-013-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke-expected.txt.
+        * web-platform-tests/svg/painting/reftests/marker-units-userspaceonuse-non-scaling-stroke-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-userspaceonuse-non-scaling-stroke-expected.txt.
+        * web-platform-tests/svg/painting/reftests/mask-print-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-expected.txt.
+        * web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt.
+        * web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-zero-expected.txt.
+        * web-platform-tests/svg/path/distance/pathlength-rect-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-expected.txt.
+        * web-platform-tests/svg/path/distance/pathlength-rect-mutating-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating-expected.txt.
+        * web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative-expected.txt.
+        * web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative-expected.txt.
+        * web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative-expected.txt.
+        * web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative-expected.txt.
+        * web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.txt.
+        * web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative-expected.txt.
+        * web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.txt.
+        * web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.txt: Copied from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.txt.
+
 2020-07-15  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/resize-observer from upstream

@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 72x102
+    RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 0 80 L 100 80"]
+    RenderSVGText {text} at (0,-10) size 72x112 contains 1 chunk(s)
+      RenderSVGTextPath {textPath} at (0,0) size 72x111
+        RenderSVGInlineText {#text} at (0,0) size 72x111
+          chunk 1 text run 1 at (36.00,80.00) startOffset 0 endOffset 1 width 72.00: "X"

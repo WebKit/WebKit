@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: div1.requestPointerLock is not a function. (In 'div1.requestPointerLock()', 'div1.requestPointerLock' is undefined)
+PointerMove getCoalescedEvent in locked state test
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+Test Description: This test checks if pointerevent.getCoalescedEvent work correctly when pointer is locked.
+Press left button down on the green rectangle to lock pointer.
+Move the mouse
+Test passes if the proper behavior of the events is observed.
+
+
+Harness Error (FAIL), message = TypeError: div1.requestPointerLock is not a function. (In 'div1.requestPointerLock()', 'div1.requestPointerLock' is undefined)
+
+FAIL mouse pointermove getCoalescedEvents when lock test assert_true: document.pointerLockElement should have coalesced events. expected true got false
+

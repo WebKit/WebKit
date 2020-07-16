@@ -1,0 +1,22 @@
+input_list
+
+
+FAIL getting .list of input must return the datalist with that id assert_equals: expected (object) Element node <datalist id="thelist">
+      <option value="one">one</op... but got (undefined) undefined
+FAIL getting .list of input must return null if it has no list attribute assert_equals: expected (object) null but got (undefined) undefined
+FAIL getting .list of input must return null if the list attribute is a non-datalist's id assert_equals: expected (object) null but got (undefined) undefined
+FAIL getting .list of input must return null if the list attribute is no element's id assert_equals: expected (object) null but got (undefined) undefined
+FAIL getting .list of input must return null if the list attribute is used in a non-datalist earlier than a datalist assert_equals: expected (object) null but got (undefined) undefined
+FAIL getting .list of input must return the datalist with that id even if a later non-datalist also has the id assert_equals: expected (object) Element node <datalist id="datalist_first">
+      <option value="one">... but got (undefined) undefined
+ 
+
+
+
+
+
+
+
+
+
+
