@@ -33,6 +33,7 @@
 #include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
+#include "JSIDBSerializationGlobalObject.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
 #include "JSServiceWorkerGlobalScope.h"
@@ -71,6 +72,9 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::create<JSPaintWorkletGlobalScope>())
     , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::create<JSWorkletGlobalScope>())
 #endif
+#if ENABLE(INDEXED_DATABASE)
+    , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::create<JSIDBSerializationGlobalObject>())
+#endif
     , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMBuiltinConstructorBase)
     , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMConstructorBase)
     , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMWindowProperties)
@@ -78,6 +82,9 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), RuntimeMethod) // Hash:0xf70c4a85
     , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeObjectHeapCellType.get(), JSC::Bindings::RuntimeObject)
     , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, m_windowProxyHeapCellType.get(), JSWindowProxy)
+#if ENABLE(INDEXED_DATABASE)
+    , m_idbSerializationSpace ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSIDBSerializationGlobalObject.get(), JSIDBSerializationGlobalObject)
+#endif
     , m_subspaces(makeUnique<DOMIsoSubspaces>())
 {
 }

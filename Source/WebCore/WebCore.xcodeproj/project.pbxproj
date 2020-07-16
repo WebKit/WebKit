@@ -2693,6 +2693,8 @@
 		9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382AAB10D8C386100F357A6 /* NodeWithIndex.h */; };
 		9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382DF5710A8D5C900925652 /* ColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		938430B42475DE40003F9617 /* DictationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 938430B22475DE3F003F9617 /* DictationContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93849C1F24BE404B00448D5A /* EmptyScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93849C1E24BE404A00448D5A /* EmptyScriptExecutionContext.h */; };
+		93849C2324BEDD8900448D5A /* JSIDBSerializationGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 93849C2124BEDD8800448D5A /* JSIDBSerializationGlobalObject.h */; };
 		938E65F109F09840008A48EC /* JSHTMLElementWrapperFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */; };
 		938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */; };
 		9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */; };
@@ -10969,6 +10971,9 @@
 		9382AAB10D8C386100F357A6 /* NodeWithIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeWithIndex.h; sourceTree = "<group>"; };
 		9382DF5710A8D5C900925652 /* ColorSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
 		938430B22475DE3F003F9617 /* DictationContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationContext.h; sourceTree = "<group>"; };
+		93849C1624BE12E500448D5A /* JSIDBSerializationGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBSerializationGlobalObject.cpp; sourceTree = "<group>"; };
+		93849C1E24BE404A00448D5A /* EmptyScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyScriptExecutionContext.h; sourceTree = "<group>"; };
+		93849C2124BEDD8800448D5A /* JSIDBSerializationGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBSerializationGlobalObject.h; sourceTree = "<group>"; };
 		938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLElementWrapperFactory.h; path = DerivedSources/WebCore/JSHTMLElementWrapperFactory.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLElementWrapperFactory.cpp; path = DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		938E662509F09956008A48EC /* HTMLCanvasElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLCanvasElement.idl; sourceTree = "<group>"; };
@@ -25998,6 +26003,8 @@
 				8F934D841189F1EE00508D5D /* JSExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSExecState.h */,
 				B56576E417DA599F00A56BDC /* JSExecStateInstrumentation.h */,
+				93849C1624BE12E500448D5A /* JSIDBSerializationGlobalObject.cpp */,
+				93849C2124BEDD8800448D5A /* JSIDBSerializationGlobalObject.h */,
 				E3C9AEC92113147400419B92 /* JSMicrotaskCallback.h */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
@@ -28926,6 +28933,7 @@
 				4FAB48641643A66D00F70C07 /* ElementRareData.cpp */,
 				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
 				E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */,
+				93849C1E24BE404A00448D5A /* EmptyScriptExecutionContext.h */,
 				2ECF7ADE10162B5800427DE7 /* ErrorEvent.cpp */,
 				2ECF7ADF10162B5800427DE7 /* ErrorEvent.h */,
 				2ECF7AE010162B5800427DE7 /* ErrorEvent.idl */,
@@ -30680,6 +30688,7 @@
 				B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */,
 				414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */,
 				515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */,
+				93849C1F24BE404B00448D5A /* EmptyScriptExecutionContext.h in Headers */,
 				7C77C3D71DEF850A00A50BFA /* EndingType.h in Headers */,
 				F403E7872363B58C00044550 /* EnterKeyHint.h in Headers */,
 				1D2F8E042344751600993B68 /* EnterPictureInPictureEvent.h in Headers */,
@@ -31679,6 +31688,7 @@
 				C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */,
 				C585A68F11D4FB08004C3E4B /* JSIDBObjectStore.h in Headers */,
 				C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */,
+				93849C2324BEDD8900448D5A /* JSIDBSerializationGlobalObject.h in Headers */,
 				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 				838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,

@@ -1,3 +1,45 @@
+2020-07-16  Sihui Liu  <sihui_liu@appe.com>
+
+        IDB serialization of some DOM object types crashes the Networking process due to incorrect global object type (WPT IndexedDB/structured-clone.any tests fail)
+        https://bugs.webkit.org/show_bug.cgi?id=210735
+        <rdar://problem/62045703>
+
+        Reviewed by Yusuke Suzuki.
+
+        In r239746, IDB went back to use JSGlobalObject for serialization and deserialization. However, in our current
+        implementation, there is a strong assumption that DOM JS objects are tied to JSDOMGlobalObject, which is 
+        derived from JSGlobalObject. For example, in SerializedScriptValue.cpp, we cast the global object to
+        JSDOMGlobalObject in many places. 
+
+        We recently notice this issue when we enable some wpt test, which has been disabled since it was imported as 
+        some types were not supported. The test fails as DOMMatrix object requires its global object to be
+        JSDOMGlobalObject. To fix this, introduce a new Class JSIDBSerializationGlobalObject, derived from 
+        JSDOMGlobalObject, and use it for IDB serialization.
+
+        Tests: LayoutTests/storage/indexeddb/structured-clone.html
+               LayoutTests/storage/indexeddb/structured-clone-private.html
+
+        * Modules/indexeddb/server/IDBSerializationContext.cpp:
+        (WebCore::IDBServer::IDBSerializationContext::initializeVM):
+        * Modules/indexeddb/server/IDBSerializationContext.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext const):
+        * bindings/js/JSIDBSerializationGlobalObject.cpp: Added.
+        (WebCore::JSIDBSerializationGlobalObject::JSIDBSerializationGlobalObject):
+        (WebCore::JSIDBSerializationGlobalObject::create):
+        (WebCore::JSIDBSerializationGlobalObject::finishCreation):
+        (WebCore::JSIDBSerializationGlobalObject::subspaceForImpl):
+        (WebCore::JSIDBSerializationGlobalObject::destroy):
+        * bindings/js/JSIDBSerializationGlobalObject.h: Added.
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::JSVMClientData::idbSerializationSpace):
+        * dom/EmptyScriptExecutionContext.h: Added.
+        * worklets/WorkletScriptController.h:
+
 2020-07-16  Eric Carlson  <eric.carlson@apple.com>
 
         Use AVRoutePickerView when available for choosing AirPlay devices

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IDBSerializationContext.h"
 
+#include "DOMWrapperWorld.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <pal/SessionID.h>
 
@@ -76,9 +78,11 @@ void IDBSerializationContext::initializeVM()
 
     ASSERT(!m_globalObject);
     m_vm = JSC::VM::create();
+    m_vm->heap.acquireAccess();
+    JSVMClientData::initNormalWorld(m_vm.get());
 
     JSC::JSLockHolder locker(m_vm.get());
-    m_globalObject.set(*m_vm, JSC::JSGlobalObject::create(*m_vm, JSC::JSGlobalObject::createStructure(*m_vm, JSC::jsNull())));
+    m_globalObject.set(*m_vm, JSIDBSerializationGlobalObject::create(*m_vm, JSIDBSerializationGlobalObject::createStructure(*m_vm, JSC::jsNull()), normalWorld(*m_vm)));
 }
 
 JSC::VM& IDBSerializationContext::vm()

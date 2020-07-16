@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "JSIDBSerializationGlobalObject.h"
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <pal/SessionID.h>
@@ -54,7 +55,7 @@ private:
     void initializeVM();
 
     RefPtr<JSC::VM> m_vm;
-    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
+    JSC::Strong<JSIDBSerializationGlobalObject> m_globalObject;
     PAL::SessionID m_sessionID;
 };
 

@@ -20,7 +20,6 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
-
 Testing: null
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -28,16 +27,13 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
-
 Testing boolean primitives
-
 Testing: true
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: false
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -45,121 +41,103 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
-
 Testing number primitives
-
 Testing: NaN
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -Infinity
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -Number.MAX_VALUE
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -0xffffffff
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -0x80000000
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -0x7fffffff
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -1
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -Number.MIN_VALUE
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: -0
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 0
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 1
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: Number.MIN_VALUE
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 0x7fffffff
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 0x80000000
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 0xffffffff
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: Number.MAX_VALUE
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: Infinity
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -167,23 +145,19 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
-
 Testing string primitives
-
 Testing: ''
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 'this is a sample string'
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
-
 Testing: 'null(\0)'
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -191,9 +165,39 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
+Testing BigInt primitives
+Testing: -12345678901234567890n
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+Testing: -1n
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+Testing: 0n
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+Testing: 1n
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+Testing: 12345678901234567890n
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
 
 Testing Boolean objects
-
 Testing: new Boolean(true)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -204,7 +208,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Boolean(false)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -216,9 +219,7 @@ PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
 
-
 Testing Number objects
-
 Testing: new Number(NaN)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -229,7 +230,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(-Infinity)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -240,7 +240,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(-Number.MAX_VALUE)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -251,7 +250,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(-Number.MIN_VALUE)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -262,7 +260,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(-0)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -273,7 +270,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(0)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -284,7 +280,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(Number.MIN_VALUE)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -295,7 +290,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(Number.MAX_VALUE)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -306,7 +300,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Number(Infinity)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -318,9 +311,7 @@ PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
 
-
 Testing String objects
-
 Testing: new String()
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -331,7 +322,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new String('this is a sample string')
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -342,7 +332,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new String('null(\0)')
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -354,9 +343,51 @@ PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
 
+Testing BigInt objects
+Testing BigInt object: BigInt(-12345678901234567890)
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "bigint"
+PASS test_data.toString() is result.toString()
+Testing BigInt object: BigInt(-1)
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "bigint"
+PASS test_data.toString() is result.toString()
+Testing BigInt object: BigInt(0)
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "bigint"
+PASS test_data.toString() is result.toString()
+Testing BigInt object: BigInt(1)
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "bigint"
+PASS test_data.toString() is result.toString()
+Testing BigInt object: BigInt(-0)
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "bigint"
+PASS test_data.toString() is result.toString()
+Testing BigInt object: BigInt('0x1fffffffffffff')
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "bigint"
+PASS test_data.toString() is result.toString()
 
 Testing Date objects
-
 Testing: new Date(-1e13)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -367,7 +398,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(-1e12)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -378,7 +408,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(-1e9)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -389,7 +418,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(-1e6)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -400,7 +428,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(-1e3)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -411,7 +438,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(0)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -422,7 +448,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(1e3)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -433,7 +458,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(1e6)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -444,7 +468,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(1e9)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -455,7 +478,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(1e12)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -466,7 +488,6 @@ PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(te
 PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
-
 Testing: new Date(1e13)
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -478,9 +499,7 @@ PASS test_data !== result is true
 PASS result.toString() is test_data.toString()
 PASS is(test_data.valueOf(), result.valueOf()) is true
 
-
 Testing RegExp objects
-
 Testing RegExp: new RegExp()
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -588,29 +607,6 @@ Skipping test
 Testing FileList
 Skipping test
 
-Testing Array
-test_data = []
-test_data[0] = 'foo'
-test_data[1] = 'bar'
-test_data[10] = true
-test_data[11] = false
-test_data[20] = 123
-test_data[21] = 456
-test_data[30] = null
-transaction = db.transaction('storeName', 'readwrite')
-store = transaction.objectStore('storeName')
-store.put(value, 'key')
-store.get('key')
-PASS test_data !== result is true
-PASS test_data.length === result.length is true
-PASS test_data[0] is result[0]
-PASS test_data[1] is result[1]
-PASS test_data[10] is result[10]
-PASS test_data[11] is result[11]
-PASS test_data[20] is result[20]
-PASS test_data[21] is result[21]
-PASS test_data[30] is result[30]
-
 Testing Object
 test_data = []
 test_data[0] = 'foo'
@@ -634,6 +630,29 @@ PASS test_data["foo"] is result["foo"]
 PASS test_data["bar"] is result["bar"]
 PASS test_data[""] is result[""]
 
+Testing Array
+test_data = []
+test_data[0] = 'foo'
+test_data[1] = 'bar'
+test_data[10] = true
+test_data[11] = false
+test_data[20] = 123
+test_data[21] = 456
+test_data[30] = null
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS test_data.length === result.length is true
+PASS test_data[0] is result[0]
+PASS test_data[1] is result[1]
+PASS test_data[10] is result[10]
+PASS test_data[11] is result[11]
+PASS test_data[20] is result[20]
+PASS test_data[21] is result[21]
+PASS test_data[30] is result[30]
+
 Testing TypedArray
 value = new Uint8Array([])
 transaction = db.transaction('storeName', 'readwrite')
@@ -643,7 +662,6 @@ store.get('key')
 PASS test_data !== result is true
 PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
 PASS test_data.length === result.length is true
-
 value = new Uint8Array([0, 1, 254, 255])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -656,7 +674,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Uint16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -669,7 +686,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Uint32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -682,7 +698,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Int8Array([0, 1, 254, 255])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -695,7 +710,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Int16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -708,7 +722,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Int32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -721,7 +734,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Uint8ClampedArray([0, 1, 254, 255])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -734,7 +746,6 @@ PASS is(test_data[0], result[0]) is true
 PASS is(test_data[1], result[1]) is true
 PASS is(test_data[2], result[2]) is true
 PASS is(test_data[3], result[3]) is true
-
 value = new Float32Array([-Infinity, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, Infinity, NaN])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -753,7 +764,6 @@ PASS is(test_data[6], result[6]) is true
 PASS is(test_data[7], result[7]) is true
 PASS is(test_data[8], result[8]) is true
 PASS is(test_data[9], result[9]) is true
-
 value = new Float64Array([-Infinity, -Number.MAX_VALUE, -Number.MIN_VALUE, 0, Number.MIN_VALUE, Number.MAX_VALUE, Infinity, NaN])
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -771,24 +781,157 @@ PASS is(test_data[5], result[5]) is true
 PASS is(test_data[6], result[6]) is true
 PASS is(test_data[7], result[7]) is true
 
-
-
-Test types that can't be cloned:
-
+Testing Arrays
+test_data = []
+test_data[0] = []
+test_data[1] = [1, 2, 3]
+test_data[10] = Object.assign(['foo', 'bar'], {10: true, 11: false, 20: 123, 21: 456, 30: null})
+test_data[11] = Object.assign(['foo', 'bar'], {a: true, b: false, foo: 123, bar: 456, '': null})
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof test_data is typeof result
+PASS test_data.length === result.length is true
+PASS arrayCompare(test_data[0], result[0]) is true
+PASS arrayCompare(test_data[1], result[1]) is true
+PASS arrayCompare(test_data[10], result[10]) is true
+PASS arrayCompare(test_data[11], result[11]) is true
 
-Other JavaScript object types:
+Testing Map
+test_data = new Map([[1,2],[3,4]])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof test_data is typeof result
+PASS test_data.size is result.size
+
+Testing Set
+test_data = new Set([1,2,3,4])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof test_data is typeof result
+PASS test_data.size is result.size
+PASS result.has(1) is true
+PASS result.has(2) is true
+PASS result.has(3) is true
+PASS result.has(4) is true
+
+Testing geometry types
+Testing geometry type: new DOMMatrix()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+Testing geometry type: new DOMMatrixReadOnly()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+Testing geometry type: new DOMPoint()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+Testing geometry type: new DOMPointReadOnly()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+Testing geometry type: new DOMRect()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+Testing geometry type: new DOMRectReadOnly()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+Testing geometry type: new DOMQuad()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(test_data) is Object.prototype.toString.call(result)
+PASS test_data.toString() is result.toString()
+
+Testing RTCCertificate
+promise = RTCPeerConnection.generateCertificate({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256'})
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RTCCertificate]"
+PASS test_data.expires is result.expires
+dataFingerPrints = test_data.getFingerprints()
+resultFingerPrints = result.getFingerprints()
+PASS dataFingerPrints.length is resultFingerPrints.length
+PASS test_data.getFingerprints()[0].algorithm is resultFingerPrints[0].algorithm
+PASS test_data.getFingerprints()[0].value is resultFingerPrints[0].value
+
+Testing CryptoKey
+promise = crypto.subtle.generateKey({ name: 'HMAC', hash: {name: 'SHA-512'}}, true, ['sign', 'verify']);
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof test_data is typeof result
+PASS test_data.type is result.type
+PASS test_data.extractable is result.extractable
+PASS test_data.algorithm.toString() is result.algorithm.toString()
+PASS arrayCompare(test_data.usages, result.usages) is true
+
+Test types that can't be cloned:
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+Testing Error
 Expecting exception from store.put(new Error, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
 Exception message: The object can not be cloned.
+Testing Function
 Expecting exception from store.put(new Function, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
 Exception message: The object can not be cloned.
-
-Other host object types:
+Testing DOMException
+Expecting exception from store.put(new DOMException, 'key')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
+Exception message: The object can not be cloned.
+Testing other host object types
 Expecting exception from store.put(self, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR

@@ -68,7 +68,8 @@ public:
     JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
     JSC::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
     JSC::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
-    
+    JSC::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
+
     Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
 
     template<typename Func>
@@ -102,6 +103,9 @@ public:
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSPaintWorkletGlobalScope;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkletGlobalScope;
 #endif
+#if ENABLE(INDEXED_DATABASE)
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSIDBSerializationGlobalObject;
+#endif
 private:
     JSC::IsoSubspace m_domBuiltinConstructorSpace;
     JSC::IsoSubspace m_domConstructorSpace;
@@ -110,6 +114,9 @@ private:
     JSC::IsoSubspace m_runtimeMethodSpace;
     JSC::IsoSubspace m_runtimeObjectSpace;
     JSC::IsoSubspace m_windowProxySpace;
+#if ENABLE(INDEXED_DATABASE)
+    JSC::IsoSubspace m_idbSerializationSpace;
+#endif
     std::unique_ptr<DOMIsoSubspaces> m_subspaces;
     Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
 };

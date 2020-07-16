@@ -49,7 +49,7 @@ class WorkletConsoleClient;
 class WorkletScriptController {
     WTF_MAKE_NONCOPYABLE(WorkletScriptController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkletScriptController(Ref<VM>&&, WorkletGlobalScope*);
+    WorkletScriptController(Ref<JSC::VM>&&, WorkletGlobalScope*);
     ~WorkletScriptController();
 
     JSWorkletGlobalScope* workletGlobalScopeWrapper()
