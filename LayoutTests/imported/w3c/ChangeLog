@@ -1,3 +1,45 @@
+2020-07-16  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/webaudio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214411
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/webaudio from upstream 81de986322a0de90f2.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-zero-outputs.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-zero-outputs.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/array-check-processor.js: Added.
+        (ArrayFrozenProcessor):
+        (ArrayFrozenProcessor.prototype.process):
+        (ArrayTransferProcessor):
+        (ArrayTransferProcessor.prototype.process):
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/port-processor.js:
+        (PortProcessor):
+        (PortProcessor.prototype.handleMessage):
+        (PortProcessor.prototype.process):
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/zero-outputs-check-processor.js: Added.
+        (IsAllZero):
+        (ZeroOutputsCheckProcessor):
+        (ZeroOutputsCheckProcessor.prototype.process):
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering.html:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/w3c-import.log:
+
 2020-07-16  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Fix line name positions after implicit tracks

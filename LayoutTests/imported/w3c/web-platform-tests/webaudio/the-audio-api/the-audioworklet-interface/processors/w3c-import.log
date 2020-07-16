@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/active-processing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/add-offset.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/array-check-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/channel-count-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/construction-port-new-after-new.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/construction-port-new-after-super.js
@@ -37,3 +38,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/sharedarraybuffer-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/timing-info-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/zero-output-processor.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/zero-outputs-check-processor.js

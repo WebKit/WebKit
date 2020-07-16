@@ -18,3 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-getoutputtimestamp.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-suspend-resume.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html

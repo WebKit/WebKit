@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "check-zero-outputs" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+PASS Audit report 
+PASS > [check-zero-outputs]  
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+
