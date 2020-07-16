@@ -1,0 +1,3 @@
+
+FAIL Test that canvas.getContext('bitmaprenderer') returns an instance of ImageBitmapRenderingContext and ctx.canvas on a ImageBitmapRenderingContext returns the original OffscreenCanvas Can't find variable: OffscreenCanvas
+

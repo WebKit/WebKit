@@ -21,9 +21,7 @@ function testCanvas(bitmapCanvas, r, g, b, a)
 
 promise_test(function() {
     function testTransferFromImageBitmapNullability(greenImage, redImage) {
-        var bitmapCanvas = document.createElement('canvas');
-        bitmapCanvas.width = width;
-        bitmapCanvas.height = height;
+        var bitmapCanvas = new OffscreenCanvas(width,height);
         var bitmapCtx = bitmapCanvas.getContext('bitmaprenderer');
         bitmapCtx.transferFromImageBitmap(greenImage);
 

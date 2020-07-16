@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test that call convertToBlob on a tainted OffscreenCanvas throws exception Test timed out
+

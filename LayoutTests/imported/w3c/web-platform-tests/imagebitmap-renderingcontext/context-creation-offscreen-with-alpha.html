@@ -10,9 +10,7 @@ var height = 10;
 
 function testImageBitmap(image, opts, expectedR, expectedG, expectedB, expectedA)
 {
-    var dstCanvas = document.createElement('canvas');
-    dstCanvas.width = width;
-    dstCanvas.height = height;
+    var dstCanvas = new OffscreenCanvas(width,height);
     var dstCtx = dstCanvas.getContext('bitmaprenderer', opts);
     dstCtx.transferFromImageBitmap(image);
 

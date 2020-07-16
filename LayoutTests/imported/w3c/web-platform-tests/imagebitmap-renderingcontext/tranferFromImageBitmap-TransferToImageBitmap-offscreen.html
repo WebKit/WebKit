@@ -20,24 +20,23 @@ function testCanvas(bitmapCanvas, r, g, b, a)
 }
 
 promise_test(function() {
-    function testTransferFromImageBitmapNullability(greenImage, redImage) {
-        var bitmapCanvas = document.createElement('canvas');
-        bitmapCanvas.width = width;
-        bitmapCanvas.height = height;
+    function testTransferFromImageBitmapNullability(greenImage) {
+        var bitmapCanvas = new OffscreenCanvas(width,height);
         var bitmapCtx = bitmapCanvas.getContext('bitmaprenderer');
         bitmapCtx.transferFromImageBitmap(greenImage);
 
         // Make sure the bitmap renderer canvas is filled correctly.
-        testCanvas(bitmapCanvas, 0, 255, 0, 255);
+        var myCanvas = document.createElement('canvas');
+        var myCtx = myCanvas.getContext('bitmaprenderer');
+        myCtx.transferFromImageBitmap(bitmapCanvas.transferToImageBitmap());
+        testCanvas(myCanvas, 0, 255, 0, 255);
 
-        // Test if passing null resets the bitmap renderer canvas.
-        // Drawing the resetted canvas cannot change the destination canvas.
-        bitmapCtx.transferFromImageBitmap(null);
-        testCanvas(bitmapCanvas, 0, 0, 0, 0);
-
-        // Test if we can redraw the bitmap canvas correctly after reset.
-        bitmapCtx.transferFromImageBitmap(redImage);
-        testCanvas(bitmapCanvas, 255, 0, 0, 255);
+        // Test that after transfering for second time to ImageBitmap produces
+        // a black bitmap of the same size
+        var myCanvas2 = document.createElement('canvas');
+        var myCtx2 = myCanvas2.getContext('bitmaprenderer');
+        myCtx2.transferFromImageBitmap(bitmapCanvas.transferToImageBitmap());
+        testCanvas(myCanvas2, 0, 0, 0, 0);
     }
 
     var greenCanvas = document.createElement('canvas');
@@ -47,19 +46,11 @@ promise_test(function() {
     greenCtx.fillStyle = '#0f0';
     greenCtx.fillRect(0, 0, width, height);
 
-    var redCanvas = document.createElement('canvas');
-    redCanvas.width = width;
-    redCanvas.height = height;
-    var redCtx = redCanvas.getContext('2d');
-    redCtx.fillStyle = '#f00';
-    redCtx.fillRect(0, 0, width, height);
-
     return Promise.all([
         createImageBitmap(greenCanvas),
-        createImageBitmap(redCanvas),
-    ]).then(([greenImage, redImage]) => {
-        testTransferFromImageBitmapNullability(greenImage, redImage);
+    ]).then(([greenImage]) => {
+        testTransferFromImageBitmapNullability(greenImage);
     });
-},'Test that transferFromImageBitmap(null) discards the previously transferred image');
+},'Test that transferToImageBitmap works and that resets the imagebitmap to black');
 
 </script>
