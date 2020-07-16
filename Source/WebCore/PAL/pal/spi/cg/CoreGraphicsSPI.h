@@ -339,7 +339,7 @@ CGSDisplayID CGSMainDisplayID(void);
 
 #endif // PLATFORM(MAC)
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
 
 extern const off_t kCGDataProviderIndeterminateSize;
 extern const CFStringRef kCGDataProviderHasHighLatency;
@@ -360,6 +360,6 @@ extern CGDataProviderRef CGDataProviderCreateMultiRangeDirectAccess(
     void *info, off_t size,
     const CGDataProviderDirectAccessRangesCallbacks *);
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_END

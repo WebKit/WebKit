@@ -1,5 +1,15 @@
 2020-07-16  Jonathan Bedard  <jbedard@apple.com>
 
+        [Big Sur] Build on Seed 1 (Follow-up Fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214396
+        <rdar://problem/65644762>
+
+        Unreviewed follow-up fix.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
+2020-07-16  Jonathan Bedard  <jbedard@apple.com>
+
         [Big Sur] Build on Seed 1
         https://bugs.webkit.org/show_bug.cgi?id=214396
         <rdar://problem/65644762>
