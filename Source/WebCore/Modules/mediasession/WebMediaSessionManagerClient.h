@@ -29,6 +29,7 @@
 
 #include "MediaPlaybackTarget.h"
 #include "MediaProducer.h"
+#include "PlatformView.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include <wtf/Ref.h>
 
@@ -43,6 +44,7 @@ public:
     virtual void setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier, bool) = 0;
     virtual void playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier) = 0;
     virtual bool alwaysOnLoggingAllowed() { return false; }
+    virtual PlatformView* platformView() const = 0;
 };
 
 } // namespace WebCore

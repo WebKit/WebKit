@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerMock_h
-#define MediaPlaybackTargetPickerMock_h
+#pragma once
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-#include "GenericTaskQueue.h"
-#include "MediaPlaybackTargetContext.h"
-#include "MediaPlaybackTargetPicker.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/WeakPtr.h>
+
+OBJC_CLASS AVOutputContext;
+OBJC_CLASS NSView;
 
 namespace WebCore {
 
-class MediaPlaybackTargetPickerMock final : public MediaPlaybackTargetPicker {
+class FloatRect;
+
+class AVPlaybackTargetPicker : public CanMakeWeakPtr<AVPlaybackTargetPicker> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMock);
+    WTF_MAKE_NONCOPYABLE(AVPlaybackTargetPicker);
 public:
-    explicit MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client&);
+    class Client : public CanMakeWeakPtr<Client> {
+    protected:
+        virtual ~Client() = default;
 
-    virtual ~MediaPlaybackTargetPickerMock();
+    public:
+        virtual void pickerWasDismissed() = 0;
+        virtual void availableDevicesChanged() = 0;
+        virtual void currentDeviceChanged() = 0;
+    };
 
-    void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) override;
-    void startingMonitoringPlaybackTargets() override;
-    void stopMonitoringPlaybackTargets() override;
-    void invalidatePlaybackTargets() override;
+    explicit AVPlaybackTargetPicker(Client& client)
+        : m_client(makeWeakPtr(&client))
+    {
+    }
+    virtual ~AVPlaybackTargetPicker() = default;
 
-    void setState(const String&, MediaPlaybackTargetContext::State);
-    void dismissPopup();
+    virtual void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) = 0;
+    virtual void startingMonitoringPlaybackTargets() = 0;
+    virtual void stopMonitoringPlaybackTargets() = 0;
+    virtual void invalidatePlaybackTargets() = 0;
+    virtual bool externalOutputDeviceAvailable() = 0;
+
+    virtual AVOutputContext* outputContext() = 0;
+
+    WeakPtr<AVPlaybackTargetPicker::Client> client() const { return m_client; }
 
 private:
-    bool externalOutputDeviceAvailable() override;
-    Ref<MediaPlaybackTarget> playbackTarget() override;
-
-    String m_deviceName;
-    GenericTaskQueue<Timer> m_taskQueue;
-    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unknown };
-    bool m_showingMenu { false };
+    WeakPtr<AVPlaybackTargetPicker::Client> m_client;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-
-#endif // WebContextMenuProxyMac_h
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

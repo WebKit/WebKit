@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerMock_h
-#define MediaPlaybackTargetPickerMock_h
+#pragma once
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-#include "GenericTaskQueue.h"
-#include "MediaPlaybackTargetContext.h"
-#include "MediaPlaybackTargetPicker.h"
-#include <wtf/text/WTFString.h>
+#include "AVPlaybackTargetPicker.h"
+
+OBJC_CLASS AVOutputDeviceMenuController;
+OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
 
 namespace WebCore {
 
-class MediaPlaybackTargetPickerMock final : public MediaPlaybackTargetPicker {
+class AVOutputDeviceMenuControllerTargetPicker final : public AVPlaybackTargetPicker {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMock);
+    WTF_MAKE_NONCOPYABLE(AVOutputDeviceMenuControllerTargetPicker);
 public:
-    explicit MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client&);
+    explicit AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPicker::Client&);
+    virtual ~AVOutputDeviceMenuControllerTargetPicker();
 
-    virtual ~MediaPlaybackTargetPickerMock();
-
-    void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) override;
-    void startingMonitoringPlaybackTargets() override;
-    void stopMonitoringPlaybackTargets() override;
-    void invalidatePlaybackTargets() override;
-
-    void setState(const String&, MediaPlaybackTargetContext::State);
-    void dismissPopup();
+    void availableDevicesDidChange();
+    void currentDeviceDidChange();
 
 private:
-    bool externalOutputDeviceAvailable() override;
-    Ref<MediaPlaybackTarget> playbackTarget() override;
+    void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
+    void startingMonitoringPlaybackTargets() final;
+    void stopMonitoringPlaybackTargets() final;
+    void invalidatePlaybackTargets() final;
+    bool externalOutputDeviceAvailable() final;
+    AVOutputContext* outputContext() final;
 
-    String m_deviceName;
-    GenericTaskQueue<Timer> m_taskQueue;
-    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unknown };
+    AVOutputDeviceMenuController *devicePicker();
+
+    RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
+    RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
     bool m_showingMenu { false };
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-
-#endif // WebContextMenuProxyMac_h
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -1,3 +1,15 @@
+2020-07-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Use AVRoutePickerView when available for choosing AirPlay devices
+        https://bugs.webkit.org/show_bug.cgi?id=213497
+        <rdar://problem/58610662>
+
+        Reviewed by Jer Noble.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm: Soft link AVRoutePickerView.
+        * pal/spi/cocoa/AVKitSPI.h: Declare AVRoutePickerView.
+
 2020-07-16  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add MediaCapabilities support for SW VP9 decoder.

@@ -32,6 +32,8 @@
 #include <WebCore/WebMediaSessionManagerClient.h>
 #include <wtf/Ref.h>
 
+OBJC_CLASS WebView;
+
 namespace WebCore {
 class FloatRect;
 class MediaPlaybackTarget;
@@ -41,10 +43,10 @@ class Page;
 class WebMediaPlaybackTargetPicker : public WebCore::WebMediaSessionManagerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<WebMediaPlaybackTargetPicker> create(WebCore::Page&);
+    static std::unique_ptr<WebMediaPlaybackTargetPicker> create(WebView *, WebCore::Page&);
 
-    explicit WebMediaPlaybackTargetPicker(WebCore::Page&);
-    virtual ~WebMediaPlaybackTargetPicker() { }
+    explicit WebMediaPlaybackTargetPicker(WebView *, WebCore::Page&);
+    virtual ~WebMediaPlaybackTargetPicker() = default;
 
     void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier);
     void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier);
@@ -54,16 +56,18 @@ public:
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State);
     void mockMediaPlaybackTargetPickerDismissPopup();
 
-    // WebMediaSessionManagerClient
-    void setPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, Ref<WebCore::MediaPlaybackTarget>&&) override;
-    void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) override;
-    void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) override;
-    void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) override;
-
     void invalidate();
 
 private:
+    // WebMediaSessionManagerClient
+    void setPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, Ref<WebCore::MediaPlaybackTarget>&&) final;
+    void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
+    void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
+    void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
+    PlatformView* platformView() const final;
+
     WebCore::Page* m_page;
+    WebView *m_webView;
 };
 
 #endif
