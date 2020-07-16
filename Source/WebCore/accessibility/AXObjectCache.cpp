@@ -711,7 +711,10 @@ bool AXObjectCache::isIsolatedTreeEnabled()
     if (UNLIKELY(_AXGetClientForCurrentRequestUntrusted() == kAXClientTypeWebKitTesting))
         return true;
 
-    return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff && clientSupportsIsolatedTree();
+    // If isolated tree mode is on, return true whether the client supports
+    // isolated tree mode or the call is off of the main thread.
+    return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff
+        && (!isMainThread() || clientSupportsIsolatedTree());
 }
 
 #endif

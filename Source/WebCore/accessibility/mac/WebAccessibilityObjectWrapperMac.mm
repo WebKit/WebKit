@@ -3825,7 +3825,7 @@ enum class TextUnit {
             break;
         }
 
-        return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), visiblePositionRange.start, visiblePositionRange.end);
+        return textMarkerRangeFromVisiblePositions(cache, visiblePositionRange.start, visiblePositionRange.end);
     });
 }
 

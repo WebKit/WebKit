@@ -1,3 +1,27 @@
+2020-07-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Crash caused by clients that don't support isolated tree mode calling on the secondary thread.
+        https://bugs.webkit.org/show_bug.cgi?id=214409
+
+        Reviewed by Chris Fleizach.
+
+        In isolated tree mode, isIsolatedTreeEnabled should return true whenever
+        is called off of the main thread, even if the client doesn’t support
+        isolated tree mode.
+        Once the secondary AX thread is initialized due to a call from a client
+        that supports isolated tree mode like VoiceOver, all calls into the
+        accessibility API will happen on the secondary thread, including calls
+        from clients that don't support isolated tree mode. At this point, we
+        need to handle those clients as if they supported isolated tree mode.
+        In other words, one client that supports isolated tree mode makes all
+        other clients to be treated as such.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isIsolatedTreeEnabled):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper lineTextMarkerRangeForTextMarker:forUnit:]): Minor cleanup, the cache is already
+        in a local varriable.
+
 2020-07-16  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Fix line name positions after implicit tracks
