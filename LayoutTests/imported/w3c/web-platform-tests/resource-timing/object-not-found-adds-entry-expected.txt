@@ -1,0 +1,5 @@
+
+FAIL Test that an navigation object with a 404 response displays an entry promise_test: Unhandled rejection with value: object "TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence"
+FAIL Test that an navigation object with a 200 response displays an entry promise_test: Unhandled rejection with value: object "TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence"
+FAIL Test that an image object with a 404 response displays an entry promise_test: Unhandled rejection with value: object "TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence"
+

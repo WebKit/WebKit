@@ -1,0 +1,14 @@
+Description
+
+This test validates that connectStart and connectEnd are the same when a connection is reused (e.g. when a persistent connection is used).
+
+
+PASS window.performance is defined 
+PASS window.performance.getEntriesByType is defined 
+PASS There should be 2 PerformanceEntries 
+PASS connectStart and fetchStart should be the same 
+PASS connectEnd and fetchStart should be the same 
+FAIL secureConnectionStart and fetchStart should be the same assert_equals: secureConnectionStart and fetchStart should be the same expected 0 but got 18.000000000000004
+PASS domainLookupStart and fetchStart should be the same 
+PASS domainLookupEnd and fetchStart should be the same 
+

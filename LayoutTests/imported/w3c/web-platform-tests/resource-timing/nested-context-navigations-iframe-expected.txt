@@ -1,0 +1,14 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Test that iframe navigations are not observable by the parent, even after history navigations by the parent promise_test: Unhandled rejection with value: "FAIL - first document not exposed. navigated_back is true"
+FAIL Test that crossorigin iframe navigations are not observable by the parent, even after history navigations by the parent promise_test: Unhandled rejection with value: "FAIL - first document not exposed. navigated_back is true"
+PASS Test that iframe navigations are not observable by the parent 
+PASS Test that crossorigin iframe navigations are not observable by the parent 
+TIMEOUT Test that iframe refreshes are not observable by the parent Test timed out
+NOTRUN Test that crossorigin iframe refreshes are not observable by the parent 
+

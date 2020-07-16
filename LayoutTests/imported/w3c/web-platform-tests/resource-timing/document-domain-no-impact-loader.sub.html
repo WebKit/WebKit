@@ -11,5 +11,5 @@
     addEventListener("message", t.step_func_done(e => {
         assert_equals(e.data, "PASS", "Document domain had no impact on the timing-allow check");
     }));
-window.open("//{{domains[www]}}:{{ports[http][1]}}/resource-timing/resources/document-domain-no-impact.sub.html");
+window.open("//{{hosts[alt][]}}:{{ports[http][1]}}/resource-timing/resources/document-domain-no-impact.sub.html");
 </script>

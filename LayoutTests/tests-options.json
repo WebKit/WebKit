@@ -2582,10 +2582,28 @@
     "imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-embed.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-iframe.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-object.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/nextHopProtocol-tao-protected.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/workerStart-tao-protected.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/resources/test/tests/unit/exceptional-cases-timeouts.html": [

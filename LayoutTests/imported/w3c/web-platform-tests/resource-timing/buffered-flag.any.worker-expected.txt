@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = Error in remote http://localhost:8800/resource-timing/buffered-flag.any.js: TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence
+
+TIMEOUT PerformanceObserver with buffered flag sees previous resource entries. Test timed out
+

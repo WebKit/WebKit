@@ -1,0 +1,7 @@
+Description
+
+This test validates that for a cross origin resource with different ports, the timing allow check algorithm will fail when the value of Timing-Allow-Origin value has the right host but the wrong port in it.
+
+
+FAIL Makes sure that the iframe passed the test and had an entry which passed the timing allow check assert_equals: expected "PASS" but got "FAIL"
+

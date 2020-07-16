@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<iframe id="frame" src="//{{domains[www]}}:{{ports[http][1]}}/resource-timing/resources/iframe-setdomain.sub.html"></iframe>
+<iframe id="frame" src="//{{hosts[alt][]}}:{{ports[http][1]}}/resource-timing/resources/iframe-setdomain.sub.html"></iframe>
 <script>
     let opener = window.opener;
     window.addEventListener("load", () => {
@@ -15,7 +15,7 @@
                 opener.postMessage("FAIL - error is " + error.name, "*");
                 return;
             }
-            let entry = performance.getEntriesByName(window.location.protocol + "//{{domains[www]}}:{{ports[http][1]}}/resource-timing/resources/iframe-setdomain.sub.html");
+            let entry = performance.getEntriesByName(window.location.protocol + "//{{hosts[alt][]}}:{{ports[http][1]}}/resource-timing/resources/iframe-setdomain.sub.html");
             // To verify that setting 'document.domain' did not change the results of the timing allow check,
             // verify that the following non-zero properties return their value.
             ["domainLookupStart", "domainLookupEnd", "connectStart", "connectEnd"].forEach(property => {

@@ -1,0 +1,10 @@
+Description
+
+This test validates that a hash in an image URL is preserved in resource timing API results.
+
+
+PASS window.performance is defined 
+PASS window.performance.getEntriesByType is defined 
+PASS There should be one entry 
+FAIL There should be a hash in the resource name assert_true: There should be a hash in the resource name expected true got false
+

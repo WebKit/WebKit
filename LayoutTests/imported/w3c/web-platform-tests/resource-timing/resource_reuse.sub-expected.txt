@@ -1,6 +1,6 @@
 Description
 
-This test validates that a memory cached resource appears in the buffer once.
+This test validates that a reused resource appears in the buffer once.
 
 
 PASS There should be only one entry 

@@ -1,0 +1,11 @@
+main frame - has 1 onunload handler(s)
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test that embed navigations are not observable by the parent, even after history navigations by the parent Test timed out
+NOTRUN Test that crossorigin embed navigations are not observable by the parent, even after history navigations by the parent 
+NOTRUN Test that embed navigations are not observable by the parent 
+NOTRUN Test that crossorigin embed navigations are not observable by the parent 
+NOTRUN Test that embed refreshes are not observable by the parent 
+NOTRUN Test that crossorigin embed refreshes are not observable by the parent 
+

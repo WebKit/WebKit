@@ -1,6 +1,4 @@
-Blocked access to external URL http://www.localhost:8801/resource-timing/resources/document-domain-no-impact.sub.html
+CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Finite resource timing entries buffer size 
+FAIL Finite resource timing entries buffer size assert_equals: Document domain had no impact on the timing-allow check expected "PASS" but got "FAIL - iframe document.domain was not set"
 

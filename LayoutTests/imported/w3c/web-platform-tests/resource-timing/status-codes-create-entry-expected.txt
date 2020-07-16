@@ -1,4 +1,4 @@
    
 
-PASS Make sure all status codes are reported 
+FAIL Make sure all status codes are reported assert_greater_than: http://localhost:8800/resource-timing/resources/status-code.py?status=404&script=1 expected a number greater than 0 but got 0
 

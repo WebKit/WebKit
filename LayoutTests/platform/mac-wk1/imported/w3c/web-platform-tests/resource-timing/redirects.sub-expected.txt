@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: NetworkError:  A network error occurred.
+Description
+
+This test validates that redirects do not alter the URL.
+
+
+FAIL Testing resource entries assert_unreached: http://localhost:8800/common/redirect.py?location=https://127.0.0.1:9443/resource-timing/resources/blank_page_green.htm?id=xhr is expected to be in the Resource Timing buffer Reached unreachable code
+
