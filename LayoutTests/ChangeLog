@@ -1,5 +1,14 @@
 2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [macOS WK1 EWS] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214388
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark test as flaky to speed up EWS and reduce false positives.
+
+2020-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
         [macOS iOS] imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=214387
 
