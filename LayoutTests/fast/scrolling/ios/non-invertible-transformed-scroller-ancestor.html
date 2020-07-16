@@ -37,6 +37,7 @@
             description('An overflow scrolling inside a scale(0) layer should not hit-test');
 
             await UIHelper.immediateScrollElementAtContentPointToOffset(20, 20, 0, 100);
+            await UIHelper.ensureVisibleContentRectUpdate();
 
             windowScrollTop = document.scrollingElement.scrollTop;
             overflowScrollTop = scroller.scrollTop;

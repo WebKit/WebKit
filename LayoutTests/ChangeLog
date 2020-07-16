@@ -1,3 +1,15 @@
+2020-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [ iOS WK2 Release ] fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214133
+
+        Unreviewed test fixing.
+
+        Test needs to wait for the visible content rect update to trigger scroll updates in the web process.
+
+        * fast/scrolling/ios/non-invertible-transformed-scroller-ancestor.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-15  Mark Lam  <mark.lam@apple.com>
 
         Speculative fix for flaky fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html.
