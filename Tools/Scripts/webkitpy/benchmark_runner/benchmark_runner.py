@@ -2,12 +2,7 @@
 
 import json
 import logging
-import shutil
-import signal
-import subprocess
 import sys
-import tempfile
-import time
 import os
 
 from webkitpy.benchmark_runner.benchmark_builder import BenchmarkBuilder

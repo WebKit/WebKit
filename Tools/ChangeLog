@@ -1,3 +1,20 @@
+2020-07-16  W.D. Xiong  <w_xiong@apple.com>
+
+        [webkitpy] Remove unused imports from benchmark_runner
+        https://bugs.webkit.org/show_bug.cgi?id=214395
+
+        Reviewed by Jonathan Bedard.
+
+        Removed a bunch of unused import statements in webkitpy.benchmark_runner
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py:
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        * Scripts/webkitpy/benchmark_runner/generic_factory.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver_factory.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+
 2020-07-16  Aakash Jain  <aakash_jain@apple.com>
 
         Improve handling of invalid ChangeLog by webkit-patch
