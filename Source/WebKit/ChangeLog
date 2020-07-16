@@ -1,3 +1,32 @@
+2020-07-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r264457. rdar://problem/65638758
+
+    [macOS] Add syscall to WebContent sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=214394
+    <rdar://problem/65638758>
+    
+    Reviewed by Darin Adler.
+    
+    Add required syscall to WebContent process on macOS.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@264457 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-07-16  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Add syscall to WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=214394
+            <rdar://problem/65638758>
+
+            Reviewed by Darin Adler.
+
+            Add required syscall to WebContent process on macOS.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-07-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r264019. rdar://problem/65179688
