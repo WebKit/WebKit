@@ -1,3 +1,24 @@
+2020-07-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Selection is not always clearing when tapping.
+        https://bugs.webkit.org/show_bug.cgi?id=214326
+        <rdar://problem/65069201>
+
+        Reviewed by Wenson Hsieh.
+
+        In r262280 we stopped the UIWKGestureOneFingerTap gesture from starting if the tap was not inside
+        the current selection. That caused the selection to not always be cleared, especially when tapping
+        on an element that could create an overlay in which the selection was supposed to be obscured. We 
+        short circuited this gesture because it used to cause a sync IPC message to be sent to the web process,
+        but that code has subsequently changed, so allowing the gesture to start and clear the selection in all
+        cases is no longer a performance concern, so changing the behavior back to allowing the gesture to always
+        start, even if the touch is not inside the selection rect.
+
+        Test: editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
 2020-07-16  Eric Carlson  <eric.carlson@apple.com>
 
         Use AVRoutePickerView when available for choosing AirPlay devices

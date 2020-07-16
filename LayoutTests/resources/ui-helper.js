@@ -129,6 +129,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static tapElement(element, delay = 0)
+    {
+        const x = element.offsetLeft + (element.offsetWidth / 2);
+        const y = element.offsetTop + (element.offsetHeight / 2);
+        this.tapAt(x, y);
+    }
+
     static doubleTapElement(element, delay = 0)
     {
         const x = element.offsetLeft + (element.offsetWidth / 2);

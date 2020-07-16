@@ -2585,9 +2585,7 @@ static Class tapAndAHalfRecognizerClass()
                 return NO;
             }
             default:
-                if (!_page->editorState().selectionIsRange)
-                    return NO;
-                return [self _pointIsInsideSelectionRect:point outBoundingRect:nil];
+                return _page->editorState().selectionIsRange;
             }
         }
     }

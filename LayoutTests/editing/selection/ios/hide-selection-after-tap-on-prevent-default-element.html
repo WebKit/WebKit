@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#text {
+    width: 100%;
+    height: 100%;
+    font-size: 100px;
+    font: monospace;
+}
+
+#spacer {
+    width: 100%;
+    height: 200px;
+}
+
+
+#target {
+    width: 1em;
+    height: 1em;
+}
+
+input {
+    width: 320px;
+    height: 3em;
+}
+</style>
+<script>
+addEventListener("load", runTest);
+jsTestIsAsync = true;
+
+async function runTest() {
+    description("Verifies that text selection is suppressed when tapping on a different element that prevents default. To manually run the test, select some text, and then tap the button below it. Platform selection views should disappear.");
+
+    button = document.querySelector("input");
+    text = document.getElementById("text");
+    button.addEventListener("click", () => {
+        event.preventDefault();
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.longPressElement(text);
+    await UIHelper.waitForSelectionToAppear();
+    await UIHelper.tapElement(text);
+    await UIHelper.activateElement(button);
+    await UIHelper.waitForSelectionToDisappear();
+    selectionRects = await UIHelper.getUISelectionViewRects();
+
+    shouldBe("selectionRects.length", "0");
+
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<div id="text">HelloWorld</div>
+<div id="spacer"></div>
+<input type="button" value="Press me">
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>
