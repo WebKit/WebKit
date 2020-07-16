@@ -2091,7 +2091,6 @@ webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-vi
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.php [ Failure ]
 webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
-webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure ]
 webkit.org/b/158480 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Skip ]
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
