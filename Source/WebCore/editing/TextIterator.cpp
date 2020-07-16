@@ -1011,7 +1011,7 @@ void TextIterator::representNodeOffsetZero()
             emitCharacter(' ', *m_node->parentNode(), m_node, 0, 0);
     } else if (shouldEmitReplacementInsteadOfNode(*m_node)) {
         if (shouldRepresentNodeOffsetZero())
-            emitCharacter(0xFFFC, *m_node->parentNode(), m_node, 0, 0);
+            emitCharacter(objectReplacementCharacter, *m_node->parentNode(), m_node, 0, 0);
     }
 }
 
