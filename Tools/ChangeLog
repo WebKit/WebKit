@@ -1,3 +1,21 @@
+2020-07-16  Philippe Normand  <pnormand@igalia.com>
+
+        run-minibrowser --debug runs the release build on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=214397
+
+        Reviewed by Žan Doberšek.
+
+        Pass-through port configuration and platform options to old-run-minibrowser. GTK and WPE
+        ports are not affected by this because they build the path to MiniBrowser for the given
+        configuration already.
+
+        Also set ignore_errors to True when invoking the Executive, to prevent useless and confusing
+        tracebacks raised when old-run-minibrowser exits with a positive exit code, eg, when it's
+        being called with the --help argument.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.run_minibrowser):
+
 2020-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r264272) [GTK][WPE] css3/color/composited-solid-backgrounds.html is failing
