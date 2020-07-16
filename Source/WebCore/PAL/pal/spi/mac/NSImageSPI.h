@@ -33,10 +33,28 @@
 
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
+extern const NSImageHintKey NSImageHintSymbolFont;
+extern const NSImageHintKey NSImageHintSymbolScale;
+
+typedef NS_ENUM(NSInteger, NSImageSymbolScale) {
+    NSImageSymbolScaleDefault = -1,
+    NSImageSymbolScaleSmall = 1,
+    NSImageSymbolScaleMedium = 2,
+    NSImageSymbolScaleLarge = 3,
+};
+
 @interface NSImage ()
-- (void)lockFocusWithRect:(NSRect)rect context:(NSGraphicsContext *)context hints:(NSDictionary *)hints flipped:(BOOL)flipped;
+- (void)lockFocusWithRect:(NSRect)rect context:(nullable NSGraphicsContext *)context hints:(nullable NSDictionary *)hints flipped:(BOOL)flipped;
 + (NSImage *)_imageWithSystemSymbolName:(NSString *)name;
 @end
+
+@interface NSImage (NSSystemSymbols)
++ (nullable NSImage *)_imageWithSystemSymbolName:(NSString *) symbolName;
+@end
+
+NS_ASSUME_NONNULL_END
 
 #endif
 

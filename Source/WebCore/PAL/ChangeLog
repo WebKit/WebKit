@@ -1,3 +1,14 @@
+2020-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [Big Sur] Build on Seed 1
+        https://bugs.webkit.org/show_bug.cgi?id=214396
+        <rdar://problem/65644762>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cg/CoreGraphicsSPI.h: Add CoreGraphics SPI for PDFKIT_PLUGIN.
+        * pal/spi/mac/NSImageSPI.h:
+
 2020-07-15  Saagar Jha  <saagar@saagarjha.com>
 
         Add some missing boilerplate to help fix build on macOS Big Sur
