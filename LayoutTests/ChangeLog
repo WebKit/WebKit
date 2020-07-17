@@ -1,3 +1,13 @@
+2020-07-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Garden svg failures and unify some svg expectations
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-07-17  Sihui Liu  <sihui_liu@appe.com>
 
         REGRESSION(r264486): storage/indexeddb/structured-clone.html crashes

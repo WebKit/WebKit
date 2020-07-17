@@ -489,8 +489,6 @@ webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html [ Failure ]
 
-webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
-
 webkit.org/b/206583 webrtc/video-gpuProcess.html [ Failure ]
 
 webkit.org/b/206589 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
@@ -544,8 +542,6 @@ webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
 
 webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
-webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
-webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual.svg [ Failure ]
 
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
@@ -929,10 +925,6 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html
 
 # Passing since r260259.
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html
-
-imported/mozilla/svg/blend-hard-light.svg [ Pass ]
-imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
-imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
 # Passing since r261992.
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
@@ -1636,33 +1628,11 @@ Bug(WPE) svg/animations/animations-paused-page-non-visible.html [ Skip ]
 Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document.html [ Skip ]
 Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
-webkit.org/b/135529 svg/animations/animate-css-xml-attributeType.html [ Failure ]
-webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
-webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
-webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
-webkit.org/b/135529 svg/css/parse-length.html [ Failure ]
-webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
 webkit.org/b/134758 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure Pass ]
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFailure Timeout ]
 webkit.org/b/160137 svg/custom/non-scaling-stroke.svg [ Failure Pass ]
-webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
-webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
-webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 Bug(WPE) svg/text/select-text-svgfont.html [ Failure ]
 Bug(WPE) svg/text/offset-square-svg-font.html [ ImageOnlyFailure ]
@@ -1680,8 +1650,6 @@ webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 webkit.org/b/185676 fullscreen/requestFullscreen-escape-key.html [ Failure ]
 webkit.org/b/185676 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/185676 fullscreen/full-screen-plugin.html [ Timeout ]
-
-webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
 
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
 
@@ -1922,16 +1890,6 @@ webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-dat
 # Bug in iOS, probably will require a baseline once it's fixed.
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
 
-webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-path.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-text-css-transform.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
-
-webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual.svg [ Failure ]
-webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual.svg [ Failure ]
-webkit.org/b/203677 svg/W3C-SVG-1.1/painting-fill-05-b.svg [ Failure ]
-
 webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.php [ Failure ]
 
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml [ Failure ]
@@ -2044,10 +2002,6 @@ webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html
 webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/160119 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
 webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
 
 webkit.org/b/212198 fast/attachment/attachment-border-should-stay-inside-attachment.html [ ImageOnlyFailure ]
 webkit.org/b/212199 fast/attachment/attachment-respects-css-size.html [ ImageOnlyFailure ]
@@ -2191,7 +2145,5 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orienta
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.tentative.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-#  >> NOTICE <<
-# Please see guidelines at the top of this file and place new test expectations
-# appropriately!
+# UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////

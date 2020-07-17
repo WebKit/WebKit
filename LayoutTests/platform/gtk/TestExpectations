@@ -703,9 +703,6 @@ webkit.org/b/141698 editing/pasteboard/5761530-1.html [ Failure Pass ]
 webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
 
-webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
-webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
-
 webkit.org/b/141837 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/141837 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 
@@ -1164,8 +1161,6 @@ webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
 webkit.org/b/208631 compositing/repaint/fixed-background-scroll.html [ Failure Pass ]
 
 webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
-webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
-webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual.svg [ Failure ]
 
 webkit.org/b/208294 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 
@@ -1409,10 +1404,6 @@ webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Cra
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
@@ -2830,12 +2821,8 @@ webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 
 webkit.org/b/109469 [ Debug ] fast/events/mouse-cursor-image-set.html [ Crash ]
 
-webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
-
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
-
-webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
@@ -2876,16 +2863,6 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
-
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 
 webkit.org/b/127743 webkit.org/b/198830 media/video-restricted-no-preload-auto.html [ Failure Crash ]
 
@@ -2968,10 +2945,6 @@ webkit.org/b/134979 media/track/texttrackcue/texttrackcue-displaycue.html [ Cras
 webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure Crash Timeout ]
 webkit.org/b/134995 media/track/track-long-word-container-sizing.html [ Failure Crash ]
 
-webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
-webkit.org/b/135529 svg/css/parse-length.html [ Failure ]
-webkit.org/b/135529 svg/animations/animate-css-xml-attributeType.html [ Failure ]
-
 webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
 
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
@@ -3052,11 +3025,6 @@ webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html
 webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/replaced/viewport-percentage-height-with-dynamic-container-height.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
-webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
-
 webkit.org/b/153602 fast/table/003.html [ Failure ]
 webkit.org/b/153602 fast/text/emoji.html [ Failure ]
 webkit.org/b/153602 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure ]
@@ -3120,7 +3088,6 @@ webkit.org/b/163823 webkit.org/b/198830 media/video-volume-slider.html [ Failure
 webkit.org/b/163827 storage/websql/quota-tracking.html [ Failure ]
 
 webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
-webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
 
 webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
 
@@ -3344,9 +3311,6 @@ webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
-webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
-webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
-
 webkit.org/b/186142 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
 
 webkit.org/b/186618 imported/w3c/web-platform-tests/fetch/api/headers/header-values.html [ Failure ]
@@ -3373,8 +3337,6 @@ webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
-
-webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
 
@@ -3622,16 +3584,6 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-con
 # Bug in iOS, probably will require a baseline once it's fixed.
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
 
-webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-path.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-text-css-transform.svg [ Failure ]
-webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
-
-webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual.svg [ Failure ]
-webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual.svg [ Failure ]
-webkit.org/b/203677 svg/W3C-SVG-1.1/painting-fill-05-b.svg [ Failure ]
-
 webkit.org/b/99036 pointer-lock/locked-element-iframe-removed-from-dom.html [ Failure ]
 webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
 
@@ -3664,8 +3616,6 @@ webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-re
 # These tests are passing on GTK+ but they do not in the Apple ports
 
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
-
-imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
@@ -3708,10 +3658,6 @@ fast/scrolling/rtl-scrollbars-text-selection.html [ Pass ]
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
-
-webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
-
-imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
@@ -3894,6 +3840,9 @@ webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/waiting.https.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
-# failures here. See the top of the file for where to put new expectations.
+# End of tests failing due to THREADED COMPOSITOR enablement.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////

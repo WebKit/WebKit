@@ -386,6 +386,62 @@ webkit.org/b/213113 svg/filters/feGaussianBlur-clipped.svg [ ImageOnlyFailure ]
 
 webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass ]
 
+webkit.org/b/131354 imported/mozilla/svg/blend-saturation.svg [ ImageOnlyFailure ]
+
+webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
+webkit.org/b/189739 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
+
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
+
+webkit.org/b/135529 svg/animations/animate-css-xml-attributeType.html [ Failure ]
+webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
+webkit.org/b/135529 svg/css/parse-length.html [ Failure ]
+
+webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
+webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
+
+webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-path.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-text-css-transform.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
+
+webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
+
+webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
+webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
+
+webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual.svg [ Failure ]
+webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual.svg [ Failure ]
+webkit.org/b/203677 svg/W3C-SVG-1.1/painting-fill-05-b.svg [ Failure ]
+
+webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
+webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual.svg [ Failure ]
+
+webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
+
+webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
+
+webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
+
+webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
+
+webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -771,6 +827,10 @@ imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pas
 
 # Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Failure Pass ]
+
+imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
+imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
