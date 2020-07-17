@@ -1,3 +1,13 @@
+2020-07-17  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: (r264492) Broke 9 WebRTC tests and 4 indexeddb tests
+        https://bugs.webkit.org/show_bug.cgi?id=214478
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-17  Rob Buis  <rbuis@igalia.com>
 
         Changing URL.host should not override port

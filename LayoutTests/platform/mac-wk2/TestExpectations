@@ -1045,3 +1045,18 @@ webkit.org/b/214084 [ Release ] webrtc/libwebrtc/descriptionGetters.html [ Pass 
 webkit.org/b/214286 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Pass Failure ]
 
 webkit.org/b/213804 fast/scrolling/mac/scroll-snapping-in-progress.html [ Pass Failure ]
+
+webkit.org/b/214478 [ Debug ] http/wpt/webrtc/generateCertificate.html [ Crash ]
+webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertificate-postMessage.html [ Crash ]
+webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertificate.html [ Crash ]
+webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html [ Crash ]
+webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Crash ]
+webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/idlharness.https.window.html [ Crash ]
+webkit.org/b/214478 [ Debug ] storage/indexeddb/modern/blob-simple-workers.html [ Crash ]
+webkit.org/b/214478 [ Debug ] storage/indexeddb/modern/blob-simple.html [ Crash ]
+webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone-private.html [ Crash ]
+webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone.html [ Crash ]
+webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html [ Crash ]
+webkit.org/b/214478 [ Debug ] webrtc/certificates-indexeddb.html [ Crash ]
+webkit.org/b/214478 [ Debug ] webrtc/h265.html [ Crash ]
+webkit.org/b/214478 [ Debug ] webrtc/simulcast-h264.html [ Crash ]
