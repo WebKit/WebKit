@@ -1,5 +1,19 @@
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK][WPE] Garden imported html failures
+
+        Unreviewed test gardening.
+
+        Updated idlharness expectations and marked the 2dpattern one as flaky
+        due to those unhandled promise rejection message.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
+2020-07-17  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Garden imagebitmap-rendering context failures after r264459
 
         Unreviewed test gardening.

@@ -577,6 +577,10 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-01.html [ Pass ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ Pass ]
 
+# Flaky Unhandled promise rejection messages
+webkit.org/b/171094 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1.html [ Pass Failure ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
