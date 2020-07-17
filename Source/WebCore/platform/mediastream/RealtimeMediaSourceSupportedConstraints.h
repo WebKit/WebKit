@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-enum class MediaConstraintType {
+enum class MediaConstraintType : uint8_t {
     Unknown,
     Width,
     Height,

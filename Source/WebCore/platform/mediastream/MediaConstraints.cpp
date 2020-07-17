@@ -419,23 +419,23 @@ void MediaConstraint::log() const
         break;
     case DataType::None:
     case DataType::String:
-        WTFLogAlways("MediaConstraint %d of type %d", constraintType(), dataType());
+        WTFLogAlways("MediaConstraint %d of type %d", static_cast<int>(constraintType()), static_cast<int>(dataType()));
     }
 }
 
 void BooleanConstraint::logAsBoolean() const
 {
-    WTFLogAlways("BooleanConstraint %d, exact %d, ideal %d", constraintType(), m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
+    WTFLogAlways("BooleanConstraint %d, exact %d, ideal %d", static_cast<int>(constraintType()), m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
 void DoubleConstraint::logAsDouble() const
 {
-    WTFLogAlways("DoubleConstraint %d, min %f, max %f, exact %f, ideal %f", constraintType(), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
+    WTFLogAlways("DoubleConstraint %d, min %f, max %f, exact %f, ideal %f", static_cast<int>(constraintType()), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
 void IntConstraint::logAsInt() const
 {
-    WTFLogAlways("IntConstraint %d, min %d, max %d, exact %d, ideal %d", constraintType(), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
+    WTFLogAlways("IntConstraint %d, min %d, max %d, exact %d, ideal %d", static_cast<int>(constraintType()), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
 

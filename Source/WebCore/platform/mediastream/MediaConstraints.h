@@ -43,7 +43,7 @@ namespace WebCore {
     
 class MediaConstraint {
 public:
-    enum class DataType { None, Integer, Double, Boolean, String };
+    enum class DataType : uint8_t { None, Integer, Double, Boolean, String };
 
     bool isInt() const { return m_dataType == DataType::Integer; }
     bool isDouble() const { return m_dataType == DataType::Double; }

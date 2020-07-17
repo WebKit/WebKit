@@ -1,3 +1,24 @@
+2020-07-17  Lauro Moura  <lmoura@igalia.com>
+
+        Fix -Wformat= warnings when passing enum to integer specifiers
+        https://bugs.webkit.org/show_bug.cgi?id=214441
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::MediaConstraint::log const):
+        (WebCore::BooleanConstraint::logAsBoolean const):
+        (WebCore::DoubleConstraint::logAsDouble const):
+        (WebCore::IntConstraint::logAsInt const):
+        * platform/mediastream/MediaConstraints.h: Made uint8_t the underlying
+        type for MediaConstraints::DataType.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::selectSettings):
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.h: Made
+        uint8_t the underlying type for MediaConstraintType.
+
 2020-07-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Don't include <wtf/text/WTFString.h> in SVGParserUtilities.h

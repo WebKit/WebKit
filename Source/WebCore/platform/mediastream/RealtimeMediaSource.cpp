@@ -682,7 +682,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
         double constraintDistance = fitnessDistance(constraint);
         if (std::isinf(constraintDistance)) {
-            WTFLogAlways("RealtimeMediaSource::selectSettings failed constraint %d", constraint.constraintType());
+            WTFLogAlways("RealtimeMediaSource::selectSettings failed constraint %d", static_cast<int>(constraint.constraintType()));
             failedConstraint = constraint.name();
             return true;
         }
