@@ -2870,25 +2870,42 @@ private:
         case DoubleRepUse: {
             LValue left = lowDouble(m_node->child1());
             LValue right = lowDouble(m_node->child2());
-            
+
             LBasicBlock notLessThan = m_out.newBlock();
+            LBasicBlock isEqual = m_out.newBlock();
+            LBasicBlock notEqual = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
-            
+
             Vector<ValueFromBlock, 2> results;
-            
+
             results.append(m_out.anchor(left));
             m_out.branch(
                 m_node->op() == ArithMin
                     ? m_out.doubleLessThan(left, right)
                     : m_out.doubleGreaterThan(left, right),
                 unsure(continuation), unsure(notLessThan));
-            
-            LBasicBlock lastNext = m_out.appendTo(notLessThan, continuation);
-            results.append(m_out.anchor(m_out.select(
+
+            // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
+            LBasicBlock lastNext = m_out.appendTo(notLessThan, isEqual);
+            m_out.branch(
+                m_out.doubleEqual(left, right),
+                    rarely(isEqual), usually(notEqual));
+
+            lastNext = m_out.appendTo(isEqual, notEqual);
+            results.append(m_out.anchor(
                 m_node->op() == ArithMin
-                    ? m_out.doubleGreaterThanOrEqual(left, right)
-                    : m_out.doubleLessThanOrEqual(left, right),
-                right, m_out.constDouble(PNaN))));
+                    ? m_out.bitOr(left, right)
+                    : m_out.bitAnd(left, right)));
+            m_out.jump(continuation);
+
+            lastNext = m_out.appendTo(notEqual, continuation);
+            results.append(
+                m_out.anchor(
+                    m_out.select(
+                        m_node->op() == ArithMin
+                            ? m_out.doubleGreaterThan(left, right)
+                            : m_out.doubleLessThan(left, right),
+                        right, m_out.constDouble(PNaN))));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);

@@ -2291,6 +2291,52 @@ void testOrImmMem()
     CHECK_EQ(memoryLocation, 0x12341234);
 }
 
+void testAndOrDouble()
+{
+    double arg1, arg2;
+
+    auto andDouble = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT1);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT2);
+
+        jit.andDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT2, FPRInfo::returnValueFPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    auto operands = doubleOperands();
+    for (auto a : operands) {
+        for (auto b : operands) {
+            arg1 = a;
+            arg2 = b;
+            uint64_t expectedResult = bitwise_cast<uint64_t>(arg1) & bitwise_cast<uint64_t>(arg2);
+            CHECK_EQ(bitwise_cast<uint64_t>(invoke<double>(andDouble)), expectedResult);
+        }
+    }
+
+    auto orDouble = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT1);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT2);
+
+        jit.orDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT2, FPRInfo::returnValueFPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : operands) {
+        for (auto b : operands) {
+            arg1 = a;
+            arg2 = b;
+            uint64_t expectedResult = bitwise_cast<uint64_t>(arg1) | bitwise_cast<uint64_t>(arg2);
+            CHECK_EQ(bitwise_cast<uint64_t>(invoke<double>(orDouble)), expectedResult);
+        }
+    }
+}
+
 void testByteSwap()
 {
 #if CPU(X86_64) || CPU(ARM64)
@@ -2651,6 +2697,8 @@ void run(const char* filter)
     RUN(testBranchIfNotType());
 
     RUN(testOrImmMem());
+
+    RUN(testAndOrDouble());
 
     if (tasks.isEmpty())
         usage();

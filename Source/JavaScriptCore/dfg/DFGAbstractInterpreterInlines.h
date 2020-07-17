@@ -1181,7 +1181,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (left && right && left.isNumber() && right.isNumber()) {
                 double a = left.asNumber();
                 double b = right.asNumber();
-                setConstant(node, jsDoubleNumber(a < b ? a : (b <= a ? b : a + b)));
+                // The spec for Math.min states that +0 is considered to be larger than -0.
+                double result = a < b || (!a && !b && std::signbit(a)) ? a : (b <= a ? b : a + b);
+                setConstant(node, jsDoubleNumber(result));
                 break;
             }
             setNonCellTypeForNode(node, 
@@ -1210,7 +1212,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (left && right && left.isNumber() && right.isNumber()) {
                 double a = left.asNumber();
                 double b = right.asNumber();
-                setConstant(node, jsDoubleNumber(a > b ? a : (b >= a ? b : a + b)));
+                // The spec for Math.max states that +0 is considered to be larger than -0.
+                double result = a > b || (!a && !b && !std::signbit(a)) ? a : (b >= a ? b : a + b);
+                setConstant(node, jsDoubleNumber(result));
                 break;
             }
             setNonCellTypeForNode(node, 

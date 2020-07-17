@@ -1,3 +1,38 @@
+2020-07-17  Xan López  <xan@igalia.com>
+
+        Math.max() can yield the wrong result for max(0, -0).
+        https://bugs.webkit.org/show_bug.cgi?id=204457
+
+        Reviewed by Mark Lam.
+
+        The implementations for Math.{max,min} in both DFG and FTL are not
+        considering the fact that according to the spec -0.0 < 0.0 (which
+        is not true for normal double arithmetic).
+        See: https://tc39.es/ecma262/#sec-math.max and https://tc39.es/ecma262/#sec-math.min
+
+        Beyond tweaking the algorithms used in DFG and FTL we must
+        implement the and/or operations on double in MIPS and ARMv7, since
+        these are used in the DFG JIT to distinguish between -0.0 and 0.0.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::vand):
+        (JSC::ARMv7Assembler::vorr):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::andDouble):
+        (JSC::MacroAssemblerARMv7::orDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::andDouble):
+        (JSC::MacroAssemblerMIPS::orDouble):
+        * assembler/testmasm.cpp:
+        (JSC::testAndOrDouble):
+        (JSC::run):
+        * dfg/DFGAbstractInterpreterInlines.h: consider that -0.0 < 0.0 per the ECMAScript spec.
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGSpeculativeJIT.cpp: ditto.
+        (JSC::DFG::SpeculativeJIT::compileArithMinMax):
+        * ftl/FTLLowerDFGToB3.cpp: ditto.
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMinOrMax):
+
 2020-07-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         emitIsUndefined() should not special-case [[IsHTMLDDA]] objects
