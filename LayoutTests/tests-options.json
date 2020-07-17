@@ -560,6 +560,9 @@
     "imported/w3c/web-platform-tests/beacon/beacon-navigate.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/clipboard-apis/async-idlharness.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required_csp-header.html": [
         "slow"
     ],

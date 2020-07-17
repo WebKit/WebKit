@@ -1,0 +1,3 @@
+
+FAIL Verify navigator.clipboard attached only on attached frames assert_equals: detached child iframe's clipboard should not exist expected null but got object "[object Clipboard]"
+

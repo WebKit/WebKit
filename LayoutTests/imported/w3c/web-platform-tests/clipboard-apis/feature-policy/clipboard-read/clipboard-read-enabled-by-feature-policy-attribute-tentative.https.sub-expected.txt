@@ -1,0 +1,6 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Feature policy "clipboard-read" can be enabled in same-origin iframe using allow="clipboard-read" attribute Test timed out
+

@@ -1,0 +1,6 @@
+Body needed for test_driver.click()
+Note: This is a manual test because it writes/reads to the shared system clipboard and thus cannot be run async with other tests that might interact with the clipboard.
+
+
+FAIL Verify write and read clipboard given platform-specific raw input promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
+

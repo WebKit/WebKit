@@ -1,0 +1,3 @@
+
+FAIL navigator.clipboard.readText() fails when permission denied promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

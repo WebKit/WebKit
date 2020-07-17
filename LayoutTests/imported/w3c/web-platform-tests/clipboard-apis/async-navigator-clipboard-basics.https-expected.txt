@@ -1,11 +1,17 @@
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/clipboard-apis/async-navigator-clipboard-basics.https.html was not allowed to display insecure content from http://localhost:8001/clipboard-apis/resources/greenbox.png.
+
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8001/clipboard-apis/resources/greenbox.png due to access control checks.
 
 PASS navigator.clipboard exists 
-FAIL navigator.clipboard.write(DataTransfer) succeeds function is not a constructor (evaluating 'new DataTransfer()')
-PASS navigator.clipboard.write() fails (expect DataTransfer) 
-PASS navigator.clipboard.write(null) fails (expect DataTransfer) 
-PASS navigator.clipboard.write(DOMString) fails (expect DataTransfer) 
+PASS navigator.clipboard.write([text/plain ClipboardItem]) succeeds 
+PASS navigator.clipboard.write() fails (expect [ClipboardItem]) 
+PASS navigator.clipboard.write(null) fails (expect [ClipboardItem]) 
+PASS navigator.clipboard.write(DOMString) fails (expect [ClipboardItem]) 
+PASS navigator.clipboard.write(Blob) fails (expect [ClipboardItem]) 
 PASS navigator.clipboard.writeText(DOMString) succeeds 
 PASS navigator.clipboard.writeText() fails (expect DOMString) 
-FAIL navigator.clipboard.read() succeeds assert_true: expected true got false
+FAIL navigator.clipboard.write({string : image/png Blob}) succeeds promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+PASS navigator.clipboard.read() succeeds 
 PASS navigator.clipboard.readText() succeeds 
 

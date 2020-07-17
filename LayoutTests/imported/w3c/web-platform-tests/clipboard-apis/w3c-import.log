@@ -15,10 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-interfaces.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-html-script-removal.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-idlharness.https.html
 /LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html
-/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-dttext-read-dttext-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-dttext-read-text-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-platform-specific-write-read.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-blobs-read-blobs.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-html-read-html.https.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-write-image-read-image.https.html
 /LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/clipboard-events-synthetic.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/clipboard-item.https.html

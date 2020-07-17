@@ -1,0 +1,47 @@
+
+PASS Test driver 
+PASS Partial interface Navigator: original interface defined 
+PASS Partial interface Navigator: member names are unique 
+FAIL Navigator interface: attribute clipboard assert_true: The prototype object must have a property "clipboard" expected true got false
+FAIL Navigator interface: navigator must inherit property "clipboard" with the proper type assert_inherits: property "clipboard" not found in prototype chain
+PASS ClipboardEvent interface: existence and properties of interface object 
+PASS ClipboardEvent interface object length 
+PASS ClipboardEvent interface object name 
+PASS ClipboardEvent interface: existence and properties of interface prototype object 
+PASS ClipboardEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS ClipboardEvent interface: existence and properties of interface prototype object's @@unscopables property 
+PASS ClipboardEvent interface: attribute clipboardData 
+PASS ClipboardEvent must be primary interface of new ClipboardEvent("x") 
+PASS Stringification of new ClipboardEvent("x") 
+PASS ClipboardEvent interface: new ClipboardEvent("x") must inherit property "clipboardData" with the proper type 
+FAIL Clipboard interface: existence and properties of interface object assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface object length assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface object name assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: operation read() assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: operation readText() assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: operation write(ClipboardItems) assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard interface: operation writeText(DOMString) assert_own_property: self does not have own property "Clipboard" expected property "Clipboard" missing
+FAIL Clipboard must be primary interface of navigator.clipboard assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of navigator.clipboard assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Clipboard interface: navigator.clipboard must inherit property "read()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Clipboard interface: navigator.clipboard must inherit property "readText()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Clipboard interface: navigator.clipboard must inherit property "write(ClipboardItems)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Clipboard interface: calling write(ClipboardItems) on navigator.clipboard with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Clipboard interface: navigator.clipboard must inherit property "writeText(DOMString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Clipboard interface: calling writeText(DOMString) on navigator.clipboard with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ClipboardItem interface: existence and properties of interface object assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface object length assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface object name assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: operation createDelayed(record<DOMString, ClipboardItemDelayedCallback>, optional ClipboardItemOptions) assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: attribute presentationStyle assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: attribute lastModified assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: attribute delayed assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: attribute types assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: operation getType(DOMString) assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+

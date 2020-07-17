@@ -355,6 +355,12 @@ fast/dom/navigator-detached-no-crash.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202495 imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html [ ImageOnlyFailure ]
 
 # Newly imported WPT tests that are timing out.
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-disabled-by-feature-policy.tentative.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-tentative.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-cross-origin-tentative.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy.tentative.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/per-global.window.html [ Skip ]

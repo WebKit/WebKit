@@ -1,5 +1,111 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/clipboard-apis from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214496
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/clipboard-apis from upstream 81de986322a0de90f2.
+
+        * web-platform-tests/clipboard-apis/async-html-script-removal.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-html-script-removal.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-idlharness.https-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/async-interfaces.https-expected.txt.
+        * web-platform-tests/clipboard-apis/async-idlharness.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-interfaces.https.html: Removed.
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt:
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html:
+        * web-platform-tests/clipboard-apis/async-platform-specific-write-read.tentative.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-platform-specific-write-read.tentative.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-blobs-read-blobs.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-blobs-read-blobs.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-dttext-manual.https-expected.txt: Removed.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-dttext-manual.https.html: Removed.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-text-manual.https-expected.txt: Removed.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-text-manual.https.html: Removed.
+        * web-platform-tests/clipboard-apis/async-write-html-read-html.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-html-read-html.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-image-read-image.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-image-read-image.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https-expected.txt: Removed.
+        * web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https.html: Removed.
+        * web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https-expected.txt: Removed.
+        * web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https.html: Removed.
+        * web-platform-tests/clipboard-apis/clipboard-events-synthetic.html:
+        * web-platform-tests/clipboard-apis/clipboard-item.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/clipboard-item.https.html: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/clipboard-on-detached-iframe.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/clipboard-on-detached-iframe.https.html: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/read-on-detaching-iframe.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/read-on-detaching-iframe.https.html: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/w3c-import.log: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/write-on-detaching-iframe.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/write-on-detaching-iframe.https.html: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/write-read-on-detached-iframe.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/write-read-on-detached-iframe.https.html: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/writeText-readText-on-detached-iframe.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/detached-iframe/writeText-readText-on-detached-iframe.https.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-disabled-by-feature-policy.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-disabled-by-feature-policy.tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-disabled-by-feature-policy.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-cross-origin-tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-cross-origin-tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-cross-origin.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy.tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-on-self-origin-by-feature-policy.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-read/w3c-import.log: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-attribute-tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-attribute-tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-cross-origin-tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-cross-origin-tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-cross-origin.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy.tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-on-self-origin-by-feature-policy.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/clipboard-apis/feature-policy/clipboard-write/w3c-import.log: Added.
+        * web-platform-tests/clipboard-apis/permissions/readText-denied.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/permissions/readText-denied.https.html: Added.
+        * web-platform-tests/clipboard-apis/permissions/readText-granted.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/permissions/readText-granted.https.html: Added.
+        * web-platform-tests/clipboard-apis/permissions/w3c-import.log: Added.
+        * web-platform-tests/clipboard-apis/permissions/writeText-denied.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/permissions/writeText-denied.https.html: Added.
+        * web-platform-tests/clipboard-apis/permissions/writeText-granted.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/permissions/writeText-granted.https.html: Added.
+        * web-platform-tests/clipboard-apis/resources/greenbox.png: Added.
+        * web-platform-tests/clipboard-apis/resources/user-activation.js: Added.
+        (async waitForUserActivation):
+        * web-platform-tests/clipboard-apis/resources/w3c-import.log: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-write-read.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-write-read.https.html: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-write-readText.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-write-readText.https.html: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-writeText-read.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-writeText-read.https.html: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-writeText-readText.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/async-writeText-readText.https.html: Added.
+        * web-platform-tests/clipboard-apis/text-write-read/w3c-import.log: Added.
+        * web-platform-tests/clipboard-apis/w3c-import.log:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/background-fetch from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214495
 
