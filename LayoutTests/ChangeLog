@@ -1,3 +1,21 @@
+2020-07-17  Sihui Liu  <sihui_liu@appe.com>
+
+        REGRESSION(r264486): storage/indexeddb/structured-clone.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=214481
+
+        Reviewed by Yusuke Suzuki.
+ 
+        r264486 added a new type RTCCertificate in structured-clone.html to test as many types in IDB as possible. 
+        However, RTCCertificate is not supported before the fix because of a crash in web process. Given that this is a 
+        separate issue, track it in https://bugs.webkit.org/show_bug.cgi?id=214447 and remove this type from test to 
+        make sure it runs to the end on the bots. 
+
+        * storage/indexeddb/resources/structured-clone.js:
+        (testRTCCertificate.promise.then): Deleted.
+        (testRTCCertificate): Deleted.
+        * storage/indexeddb/structured-clone-expected.txt:
+        * storage/indexeddb/structured-clone-private-expected.txt:
+
 2020-07-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT css directory

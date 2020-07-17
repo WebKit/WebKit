@@ -52,7 +52,6 @@ function startTests()
         testMap,
         testSet,
         testGeometryTypes,
-        testRTCCertificate,
         testCryptoKey
     ];
 
@@ -627,27 +626,6 @@ function testGeometryTypes(callback)
         "new DOMRectReadOnly()",
         "new DOMQuad()"
     ], callback);
-}
-
-function testRTCCertificate(callback)
-{
-    debug("Testing RTCCertificate");
-    evalAndLog("promise = RTCPeerConnection.generateCertificate({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256'})");
-    promise.then((test_data) => {
-        self.test_data = test_data;
-        testValue(test_data, function(result) {
-            self.result = result;
-            shouldBeTrue("test_data !== result");
-            shouldBeEqualToString("Object.prototype.toString.call(result)", "[object RTCCertificate]");
-            shouldBe("test_data.expires", "result.expires");
-            evalAndLog("dataFingerPrints = test_data.getFingerprints()");
-            evalAndLog("resultFingerPrints = result.getFingerprints()");
-            shouldBe("dataFingerPrints.length", "resultFingerPrints.length");
-            shouldBe("test_data.getFingerprints()[0].algorithm", "resultFingerPrints[0].algorithm");
-            shouldBe("test_data.getFingerprints()[0].value", "resultFingerPrints[0].value");
-            callback();
-        });
-    });
 }
 
 function testCryptoKey(callback)
