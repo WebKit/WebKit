@@ -4521,3 +4521,5 @@ webkit.org/b/212172 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
 webkit.org/b/214088 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
+
+webkit.org/b/214428 imported/mozilla/svg/blend-saturation.svg [ Failure ]

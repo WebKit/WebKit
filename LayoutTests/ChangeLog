@@ -1,3 +1,13 @@
+2020-07-17  Truitt Savell  <tsavell@apple.com>
+
+        Add Failing expectations for Windows and GTK after r264483
+        https://bugs.webkit.org/show_bug.cgi?id=214428
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Garden svg failures and unify some svg expectations

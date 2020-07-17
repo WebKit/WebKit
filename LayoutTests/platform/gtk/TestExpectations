@@ -3578,6 +3578,8 @@ webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
 
 webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
 
+webkit.org/b/214428 imported/mozilla/svg/blend-saturation.svg [ Failure ]
+
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 
