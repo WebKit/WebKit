@@ -1,5 +1,37 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/credential-management from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214501
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/credential-management from upstream 81de986322a0de90f.
+
+        * resources/resource-files.json:
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https-expected.txt:
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https.html:
+        * web-platform-tests/credential-management/federatedcredential-framed-get.sub.https-expected.txt:
+        * web-platform-tests/credential-management/federatedcredential-framed-get.sub.https.html:
+        * web-platform-tests/credential-management/idlharness.https.window.js:
+        * web-platform-tests/credential-management/otpcredential-get-basics.https-expected.txt: Added.
+        * web-platform-tests/credential-management/otpcredential-get-basics.https.html: Added.
+        * web-platform-tests/credential-management/otpcredential-iframe.https-expected.txt: Added.
+        * web-platform-tests/credential-management/otpcredential-iframe.https.html: Added.
+        * web-platform-tests/credential-management/passwordcredential-framed-get.sub.https-expected.txt:
+        * web-platform-tests/credential-management/passwordcredential-framed-get.sub.https.html:
+        * web-platform-tests/credential-management/support/README.md: Added.
+        * web-platform-tests/credential-management/support/otpcredential-helper.js: Added.
+        (async loadChromiumResources):
+        (async create_sms_provider):
+        (receive):
+        (expect.return.async andReturn):
+        (expect):
+        * web-platform-tests/credential-management/support/otpcredential-iframe.html: Added.
+        * web-platform-tests/credential-management/support/w3c-import.log:
+        * web-platform-tests/credential-management/w3c-import.log:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/clipboard-apis from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214496
 

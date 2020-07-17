@@ -94,6 +94,7 @@
         "web-platform-tests/content-security-policy/unsafe-hashes/support/child_window_location_navigate.sub.html",
         "web-platform-tests/credential-management/support/echoing-nester.html",
         "web-platform-tests/credential-management/support/federatedcredential-get.html",
+        "web-platform-tests/credential-management/support/otpcredential-iframe.html",
         "web-platform-tests/credential-management/support/passwordcredential-get.html",
         "web-platform-tests/css/WOFF2/available-001.xht",
         "web-platform-tests/css/WOFF2/available-002.xht",
