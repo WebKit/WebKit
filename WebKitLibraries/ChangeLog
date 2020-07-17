@@ -1,3 +1,39 @@
+2020-07-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Add WebKitPrivateFrameworkStubs for tvOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=214476
+        <rdar://problem/65725761>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/appletvos/14: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/CorePrediction.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/DeviceIdentity.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/DeviceIdentity.framework/DeviceIdentity.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/FileProvider.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/IOKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/IOKit.framework/IOKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/IOSurfaceAccelerator.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/LocalAuthentication.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/LocalAuthentication.framework/LocalAuthentication.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/RunningBoardServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/SafariSafeBrowsing.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/URLFormatting.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/14/URLFormatting.framework/URLFormatting.tbd: Added.
+
 2020-07-16  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitPrivateFrameworkStubs for iOS 14

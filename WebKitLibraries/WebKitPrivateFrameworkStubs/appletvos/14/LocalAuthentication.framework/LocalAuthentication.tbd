@@ -1,0 +1,10 @@
+--- !tapi-tbd-v3
+archs:           [ x86_64, arm64 ]
+platform:        tvos
+install-name:    '/System/Library/Frameworks/LocalAuthentication.framework/LocalAuthentication'
+exports:
+  - archs:           [ x86_64, arm64 ]
+    symbols:         [ _LAAvailableMechanisms, _LACopyExternalizedContext, _LAErrorDomain, 
+                       _LAErrorSubcodeKey ]
+    objc-classes:    [ LAContext ]
+...
