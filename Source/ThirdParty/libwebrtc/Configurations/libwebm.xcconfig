@@ -1,0 +1,13 @@
+PRODUCT_NAME = webm;
+
+CLANG_WARN_BOOL_CONVERSION = YES;
+CLANG_WARN_ENUM_CONVERSION = YES;
+CLANG_WARN_INT_CONVERSION = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+
+HEADER_SEARCH_PATHS = Source/third_party/libwebm Source/third_party/libwebm/webm_parser Source/third_party/libwebm/webm_parser/include;
+
+INSTALL_PATH = /usr/local/lib;
+PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/webm;
+USE_HEADERMAP = NO;
+

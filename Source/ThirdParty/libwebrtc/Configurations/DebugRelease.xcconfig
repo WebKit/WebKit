@@ -38,3 +38,6 @@ WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
 
 WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
 #include "../../../../Tools/ccache/ccache.xcconfig"
+
+DEBUG_DEFINES[config=Debug] = $(DEBUG_DEFINES_debug);
+GCC_OPTIMIZATION_LEVEL[config=Debug] = $(GCC_OPTIMIZATION_LEVEL_debug);
