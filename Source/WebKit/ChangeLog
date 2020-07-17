@@ -1,3 +1,17 @@
+2020-07-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Add Launch Services database update logging
+        https://bugs.webkit.org/show_bug.cgi?id=214500
+
+        Reviewed by Geoffrey Garen.
+
+        Log if the WebContent process is waiting a considerable amount of time for the initial update of the Launch Services database.
+
+        No new tests, since this patch is not introducing any behavior change.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+
 2020-07-17  Brent Fulgham  <bfulgham@apple.com>
 
         Remove logging for necessary sysctl call
