@@ -1,3 +1,12 @@
+2020-07-17  Truitt Savell  <tsavell@apple.com>
+
+        Rebase compositing/repaint/iframes/compositing-iframe-scroll-repaint.html back to previous state after https://trac.webkit.org/changeset/264522/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=214414
+
+        Unreviewed test gardening.
+
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/clipboard-apis from upstream

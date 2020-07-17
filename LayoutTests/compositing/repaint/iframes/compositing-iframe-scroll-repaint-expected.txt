@@ -12,6 +12,9 @@
           (position 14.00 14.00)
           (bounds 432.00 332.00)
           (drawsContent 1)
+          (repaint rects
+            (rect 16.00 16.00 400.00 300.00)
+          )
           (children 1
             (GraphicsLayer
               (position 16.00 16.00)
