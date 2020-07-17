@@ -118,7 +118,6 @@
 		073794EC19EE341E00E5A045 /* JSRTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794EA19EE341E00E5A045 /* JSRTCIceServer.h */; };
 		073794FA19F5864E00E5A045 /* RTCDataChannelHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */; };
 		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
-		0738E5EC2499839000DA101C /* AVOutputDeviceMenuControllerTargetPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0738E5EA249968AD00DA101C /* AVOutputDeviceMenuControllerTargetPicker.mm */; };
 		073A15542177A42600EA08F2 /* RemoteVideoSample.h in Headers */ = {isa = PBXBuildFile; fileRef = 073A15532177A39A00EA08F2 /* RemoteVideoSample.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
 		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; };
@@ -205,7 +204,6 @@
 		07C046CB1E426413007201E7 /* AudioStreamDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87561E40DCE50071C0EC /* AudioStreamDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */; };
 		07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E41BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		07CB9E72249C36B200A69489 /* AVRoutePickerViewTargetPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CB9E6F249C226C00A69489 /* AVRoutePickerViewTargetPicker.mm */; };
 		07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D12F5C23DE543F0080997D /* ISOVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C651FB52B6700F0B965 /* ISOVTTCue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5574,9 +5572,6 @@
 		073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerMock.h; sourceTree = "<group>"; };
 		073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNotifiersMock.cpp; sourceTree = "<group>"; };
 		073794F819F5864E00E5A045 /* RTCNotifiersMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNotifiersMock.h; sourceTree = "<group>"; };
-		0738E5E8249968AC00DA101C /* AVOutputDeviceMenuControllerTargetPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVOutputDeviceMenuControllerTargetPicker.h; sourceTree = "<group>"; };
-		0738E5EA249968AD00DA101C /* AVOutputDeviceMenuControllerTargetPicker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AVOutputDeviceMenuControllerTargetPicker.mm; sourceTree = "<group>"; };
-		0738E5EB2499690900DA101C /* AVPlaybackTargetPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVPlaybackTargetPicker.h; sourceTree = "<group>"; };
 		073A15512177A39800EA08F2 /* RemoteVideoSample.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoSample.cpp; sourceTree = "<group>"; };
 		073A15532177A39A00EA08F2 /* RemoteVideoSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoSample.h; sourceTree = "<group>"; };
 		073B87561E40DCE50071C0EC /* AudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamDescription.h; sourceTree = "<group>"; };
@@ -5691,8 +5686,6 @@
 		07C1C0E41BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeMediaSourceSupportedConstraints.h; sourceTree = "<group>"; };
 		07C8AD111D073D630087C5CE /* AVAssetMIMETypeCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVAssetMIMETypeCache.mm; sourceTree = "<group>"; };
 		07C8AD121D073D630087C5CE /* AVAssetMIMETypeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVAssetMIMETypeCache.h; sourceTree = "<group>"; };
-		07CB9E6F249C226C00A69489 /* AVRoutePickerViewTargetPicker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AVRoutePickerViewTargetPicker.mm; sourceTree = "<group>"; };
-		07CB9E71249C226C00A69489 /* AVRoutePickerViewTargetPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVRoutePickerViewTargetPicker.h; sourceTree = "<group>"; };
 		07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateClient.h; sourceTree = "<group>"; };
 		07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAudioSourceProviderAVFObjC.h; sourceTree = "<group>"; };
 		07D6373F1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAudioSourceProviderAVFObjC.mm; sourceTree = "<group>"; };
@@ -27366,11 +27359,6 @@
 				07C8AD111D073D630087C5CE /* AVAssetMIMETypeCache.mm */,
 				CDECA8991EDF447D00DCB08B /* AVAssetTrackUtilities.h */,
 				CDECA8981EDF447D00DCB08B /* AVAssetTrackUtilities.mm */,
-				0738E5E8249968AC00DA101C /* AVOutputDeviceMenuControllerTargetPicker.h */,
-				0738E5EA249968AD00DA101C /* AVOutputDeviceMenuControllerTargetPicker.mm */,
-				0738E5EB2499690900DA101C /* AVPlaybackTargetPicker.h */,
-				07CB9E71249C226C00A69489 /* AVRoutePickerViewTargetPicker.h */,
-				07CB9E6F249C226C00A69489 /* AVRoutePickerViewTargetPicker.mm */,
 				CD11B3DF227CAAA90023AFC7 /* AVStreamDataParserMIMETypeCache.h */,
 				CD11B3E0227CAAA90023AFC7 /* AVStreamDataParserMIMETypeCache.mm */,
 				CD78A2EE1F75648600DE371B /* CDMInstanceFairPlayStreamingAVFObjC.h */,
@@ -34507,8 +34495,6 @@
 				CDECA89A1EDF447D00DCB08B /* AVAssetTrackUtilities.mm in Sources */,
 				CDC675221EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm in Sources */,
 				070363E3181A1CDC00C074A5 /* AVCaptureDeviceManager.mm in Sources */,
-				0738E5EC2499839000DA101C /* AVOutputDeviceMenuControllerTargetPicker.mm in Sources */,
-				07CB9E72249C36B200A69489 /* AVRoutePickerViewTargetPicker.mm in Sources */,
 				CD11B3E1227CE6F30023AFC7 /* AVStreamDataParserMIMETypeCache.mm in Sources */,
 				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
 				070363E7181A1CDC00C074A5 /* AVVideoCaptureSource.mm in Sources */,

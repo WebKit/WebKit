@@ -61,7 +61,7 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMock::playbackTarget()
     return WebCore::MediaPlaybackTargetMock::create(m_deviceName, m_state);
 }
 
-void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance)
+void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDarkAppearance)
 {
     if (!client() || m_showingMenu)
         return;

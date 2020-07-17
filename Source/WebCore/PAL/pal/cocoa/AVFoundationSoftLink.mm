@@ -111,7 +111,6 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAudioRoutingArbiter,
 #if !PLATFORM(WATCHOS)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVRouteDetector, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVVideoPerformanceMetrics, PAL_EXPORT)
-SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVRoutePickerView, PAL_EXPORT)
 #endif
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
@@ -215,6 +214,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureSessionInt
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureSessionInterruptionReasonKey, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureSessionRuntimeErrorNotification, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureSessionWasInterruptedNotification, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAudioSessionRouteChangeNotification, NSString *, PAL_EXPORT)
@@ -227,10 +227,5 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAsset
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AVFoundation, AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout, void, (AVCaptureSession *session), (session))
 #endif // PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-
-#if !PLATFORM(WATCHOS)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *, PAL_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVOutputContextOutputDevicesDidChangeNotification, NSString *, PAL_EXPORT)
-#endif // !PLATFORM(WATCHOS)
 
 #endif // USE(AVFOUNDATION)

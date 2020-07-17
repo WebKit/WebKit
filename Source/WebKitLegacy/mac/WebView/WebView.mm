@@ -9743,7 +9743,7 @@ bool LayerFlushController::flushLayers()
 - (WebMediaPlaybackTargetPicker *) _devicePicker
 {
     if (!_private->m_playbackTargetPicker)
-        _private->m_playbackTargetPicker = WebMediaPlaybackTargetPicker::create(self, *_private->page);
+        _private->m_playbackTargetPicker = WebMediaPlaybackTargetPicker::create(*_private->page);
 
     return _private->m_playbackTargetPicker.get();
 }

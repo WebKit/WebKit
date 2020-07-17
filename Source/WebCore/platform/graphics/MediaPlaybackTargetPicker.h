@@ -28,7 +28,6 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "PlatformView.h"
 #include <wtf/Ref.h>
 #include <wtf/RunLoop.h>
 
@@ -53,7 +52,7 @@ public:
 
     virtual ~MediaPlaybackTargetPicker();
 
-    virtual void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance);
+    virtual void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDarkAppearance);
     virtual void startingMonitoringPlaybackTargets();
     virtual void stopMonitoringPlaybackTargets();
     virtual void invalidatePlaybackTargets();

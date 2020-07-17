@@ -31,7 +31,6 @@
 #include "MediaPlaybackTargetPicker.h"
 #include "MediaPlaybackTargetPickerMock.h"
 #include "MediaProducer.h"
-#include "PlatformView.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>

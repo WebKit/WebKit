@@ -274,8 +274,6 @@ platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp @no-unify
 platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm @no-unify
 platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify
-platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm @no-unify
-platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm @no-unify
 platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm @no-unify
 platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp @no-unify

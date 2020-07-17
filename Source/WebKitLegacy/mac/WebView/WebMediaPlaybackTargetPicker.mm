@@ -27,19 +27,17 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-#import "WebView.h"
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/Page.h>
 #import <WebCore/WebMediaSessionManager.h>
 
-std::unique_ptr<WebMediaPlaybackTargetPicker> WebMediaPlaybackTargetPicker::create(WebView *webView, WebCore::Page& page)
+std::unique_ptr<WebMediaPlaybackTargetPicker> WebMediaPlaybackTargetPicker::create(WebCore::Page& page)
 {
-    return makeUnique<WebMediaPlaybackTargetPicker>(webView, page);
+    return makeUnique<WebMediaPlaybackTargetPicker>(page);
 }
 
-WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker(WebView *webView, WebCore::Page& page)
+WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker(WebCore::Page& page)
     : m_page(&page)
-    , m_webView(webView)
 {
 }
 
@@ -111,14 +109,7 @@ void WebMediaPlaybackTargetPicker::playbackTargetPickerWasDismissed(WebCore::Pla
 void WebMediaPlaybackTargetPicker::invalidate()
 {
     m_page = nullptr;
-    m_webView = nil;
     WebCore::WebMediaSessionManager::shared().removeAllPlaybackTargetPickerClients(*this);
-}
-
-PlatformView* WebMediaPlaybackTargetPicker::platformView() const
-{
-    ASSERT(m_webView);
-    return m_webView;
 }
 
 #endif

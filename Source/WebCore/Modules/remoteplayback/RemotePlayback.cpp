@@ -324,9 +324,6 @@ void RemotePlayback::disconnect()
 
 void RemotePlayback::playbackTargetPickerWasDismissed()
 {
-    if (m_promptPromises.isEmpty())
-        return;
-
     // 6.2.2 Prompt user for changing remote playback state [Ctd]
     // https://w3c.github.io/remote-playback/#stop-observing-remote-playback-devices-availability
     // W3C Editor's Draft 15 July 2016

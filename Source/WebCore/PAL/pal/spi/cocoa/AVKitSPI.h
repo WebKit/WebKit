@@ -232,8 +232,6 @@ NS_ASSUME_NONNULL_END
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVKit/AVOutputDeviceMenuController.h>
-#import <AVKit/AVRoutePickerView_Private.h>
-#import <AVKit/AVRoutePickerView_WebKitOnly.h>
 
 #else
 
@@ -253,23 +251,6 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 - (void)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName;
 - (BOOL)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName allowReselectionOfSelectedOutputDevice:(BOOL)allowReselectionOfSelectedOutputDevice;
 
-@end
-
-@protocol AVRoutePickerViewDelegate;
-
-@interface AVRoutePickerView : NSView
-
-- (void)showRoutePickingControlsForOutputContext:(AVOutputContext *)outputContext relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView;
-
-@property (nonatomic, nullable, weak) id<AVRoutePickerViewDelegate> delegate;
-@property (nonatomic) BOOL routeListAlwaysHasDarkAppearance;
-
-@end
-
-@protocol AVRoutePickerViewDelegate <NSObject>
-@optional
-- (void)routePickerViewWillBeginPresentingRoutes:(AVRoutePickerView *)routePickerView;
-- (void)routePickerViewDidEndPresentingRoutes:(AVRoutePickerView *)routePickerView;
 @end
 
 NS_ASSUME_NONNULL_END
