@@ -1,3 +1,52 @@
+2020-07-17  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Sync objects
+        https://bugs.webkit.org/show_bug.cgi?id=126942
+
+        Reviewed by Dean Jackson.
+
+        Passes WebGL conformance tests
+        webgl/2.0.0/conformance2/sync/sync-webgl-specific.html
+        and
+        webgl/2.0.0/deqp/functional/gles3/sync.html
+
+        although the latter times out in the layout test harness.
+
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::fenceSync):
+        (WebCore::WebGL2RenderingContext::isSync):
+        (WebCore::WebGL2RenderingContext::deleteSync):
+        (WebCore::WebGL2RenderingContext::clientWaitSync):
+        (WebCore::WebGL2RenderingContext::waitSync):
+        (WebCore::WebGL2RenderingContext::getSyncParameter):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLSync.cpp:
+        (WebCore::WebGLSync::WebGLSync):
+        (WebCore::WebGLSync::deleteObjectImpl):
+        (WebCore::WebGLSync::updateCache):
+        (WebCore::WebGLSync::getCachedResult const):
+        (WebCore::WebGLSync::isSignaled const):
+        (WebCore::WebGLSync::scheduleAllowCacheUpdate):
+        * html/canvas/WebGLSync.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/GraphicsTypesGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::fenceSync):
+        (WebCore::GraphicsContextGLOpenGL::isSync):
+        (WebCore::GraphicsContextGLOpenGL::deleteSync):
+        (WebCore::GraphicsContextGLOpenGL::clientWaitSync):
+        (WebCore::GraphicsContextGLOpenGL::waitSync):
+        (WebCore::GraphicsContextGLOpenGL::getSynciv):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::fenceSync):
+        (WebCore::GraphicsContextGLOpenGL::isSync):
+        (WebCore::GraphicsContextGLOpenGL::deleteSync):
+        (WebCore::GraphicsContextGLOpenGL::clientWaitSync):
+        (WebCore::GraphicsContextGLOpenGL::waitSync):
+        (WebCore::GraphicsContextGLOpenGL::getSynciv):
+
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
         Fix -Wformat= warnings when passing enum to integer specifiers

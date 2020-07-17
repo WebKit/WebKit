@@ -2460,48 +2460,40 @@ void GraphicsContextGLOpenGL::getSamplerParameteriv(PlatformGLObject sampler, GC
     gl::GetSamplerParameteriv(sampler, pname, value);
 }
 
-PlatformGLObject GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitfield flags)
+GCGLsync GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitfield flags)
 {
-    UNUSED_PARAM(condition);
-    UNUSED_PARAM(flags);
-
-    return 0;
+    makeContextCurrent();
+    return gl::FenceSync(condition, flags);
 }
 
-GCGLboolean GraphicsContextGLOpenGL::isSync(PlatformGLObject sync)
+GCGLboolean GraphicsContextGLOpenGL::isSync(GCGLsync sync)
 {
-    UNUSED_PARAM(sync);
-
-    return false;
+    makeContextCurrent();
+    return gl::IsSync(sync);
 }
 
-void GraphicsContextGLOpenGL::deleteSync(PlatformGLObject sync)
+void GraphicsContextGLOpenGL::deleteSync(GCGLsync sync)
 {
-    UNUSED_PARAM(sync);
+    makeContextCurrent();
+    gl::DeleteSync(sync);
 }
 
-GCGLenum GraphicsContextGLOpenGL::clientWaitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLuint64 timeout)
+GCGLenum GraphicsContextGLOpenGL::clientWaitSync(GCGLsync sync, GCGLbitfield flags, GCGLuint64 timeout)
 {
-    UNUSED_PARAM(sync);
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(timeout);
-
-    return 0;
+    makeContextCurrent();
+    return gl::ClientWaitSync(sync, flags, timeout);
 }
 
-void GraphicsContextGLOpenGL::waitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLint64 timeout)
+void GraphicsContextGLOpenGL::waitSync(GCGLsync sync, GCGLbitfield flags, GCGLint64 timeout)
 {
-    UNUSED_PARAM(sync);
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(timeout);
+    makeContextCurrent();
+    gl::WaitSync(sync, flags, timeout);
 }
 
-void GraphicsContextGLOpenGL::getSynciv(PlatformGLObject sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value)
+void GraphicsContextGLOpenGL::getSynciv(GCGLsync sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value)
 {
-    UNUSED_PARAM(sync);
-    UNUSED_PARAM(pname);
-    UNUSED_PARAM(bufSize);
-    UNUSED_PARAM(value);
+    makeContextCurrent();
+    gl::GetSynciv(sync, pname, bufSize, nullptr, value);
 }
 
 void GraphicsContextGLOpenGL::pauseTransformFeedback()

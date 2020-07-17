@@ -412,6 +412,7 @@ protected:
     friend class WebGLVertexArrayObjectOES;
     friend class WebGLVertexArrayObject;
     friend class WebGLVertexArrayObjectBase;
+    friend class WebGLSync;
 
     // Implementation helpers.
     friend class ScopedUnpackParametersResetRestore;

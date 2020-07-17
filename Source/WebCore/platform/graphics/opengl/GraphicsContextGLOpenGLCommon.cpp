@@ -2629,7 +2629,7 @@ void GraphicsContextGLOpenGL::getSamplerParameteriv(PlatformGLObject sampler, GC
     UNUSED_PARAM(value);
 }
 
-PlatformGLObject GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitfield flags)
+GCGLsync GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitfield flags)
 {
     UNUSED_PARAM(condition);
     UNUSED_PARAM(flags);
@@ -2637,19 +2637,19 @@ PlatformGLObject GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitf
     return 0;
 }
 
-GCGLboolean GraphicsContextGLOpenGL::isSync(PlatformGLObject sync)
+GCGLboolean GraphicsContextGLOpenGL::isSync(GCGLsync sync)
 {
     UNUSED_PARAM(sync);
 
     return false;
 }
 
-void GraphicsContextGLOpenGL::deleteSync(PlatformGLObject sync)
+void GraphicsContextGLOpenGL::deleteSync(GCGLsync sync)
 {
     UNUSED_PARAM(sync);
 }
 
-GCGLenum GraphicsContextGLOpenGL::clientWaitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLuint64 timeout)
+GCGLenum GraphicsContextGLOpenGL::clientWaitSync(GCGLsync sync, GCGLbitfield flags, GCGLuint64 timeout)
 {
     UNUSED_PARAM(sync);
     UNUSED_PARAM(flags);
@@ -2658,14 +2658,14 @@ GCGLenum GraphicsContextGLOpenGL::clientWaitSync(PlatformGLObject sync, GCGLbitf
     return 0;
 }
 
-void GraphicsContextGLOpenGL::waitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLint64 timeout)
+void GraphicsContextGLOpenGL::waitSync(GCGLsync sync, GCGLbitfield flags, GCGLint64 timeout)
 {
     UNUSED_PARAM(sync);
     UNUSED_PARAM(flags);
     UNUSED_PARAM(timeout);
 }
 
-void GraphicsContextGLOpenGL::getSynciv(PlatformGLObject sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value)
+void GraphicsContextGLOpenGL::getSynciv(GCGLsync sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value)
 {
     UNUSED_PARAM(sync);
     UNUSED_PARAM(pname);

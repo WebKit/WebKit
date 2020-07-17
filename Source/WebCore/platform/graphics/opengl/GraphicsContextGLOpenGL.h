@@ -465,14 +465,14 @@ public:
     void getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value) final;
     void getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value) final;
 
-    PlatformGLObject fenceSync(GCGLenum condition, GCGLbitfield flags) final;
-    GCGLboolean isSync(PlatformGLObject sync) final;
-    void deleteSync(PlatformGLObject sync) final;
-    GCGLenum clientWaitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLuint64 timeout) final;
-    void waitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLint64 timeout) final;
+    GCGLsync fenceSync(GCGLenum condition, GCGLbitfield flags) final;
+    GCGLboolean isSync(GCGLsync) final;
+    void deleteSync(GCGLsync) final;
+    GCGLenum clientWaitSync(GCGLsync, GCGLbitfield flags, GCGLuint64 timeout) final;
+    void waitSync(GCGLsync, GCGLbitfield flags, GCGLint64 timeout) final;
     // getSyncParameter
     // FIXME - this can be implemented at the WebGL level if we signal the WebGLSync object.
-    void getSynciv(PlatformGLObject sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value) final;
+    void getSynciv(GCGLsync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value) final;
 
     PlatformGLObject createTransformFeedback() final;
     void deleteTransformFeedback(PlatformGLObject id) final;

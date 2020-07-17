@@ -2032,42 +2032,89 @@ WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler& sampler, GCGL
     }
 }
 
-RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum, GCGLbitfield)
+RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum condition, GCGLbitfield flags)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] fenceSync()");
-    return nullptr;
+    if (isContextLostOrPending())
+        return nullptr;
+
+    if (condition != GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "fenceSync", "condition must be SYNC_GPU_COMMANDS_COMPLETE");
+        return nullptr;
+    }
+    if (flags) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "fenceSync", "flags must be zero");
+        return nullptr;
+    }
+    auto sync = WebGLSync::create(*this);
+    sync->scheduleAllowCacheUpdate(*this);
+    addSharedObject(sync.get());
+    return sync;
 }
 
-GCGLboolean WebGL2RenderingContext::isSync(WebGLSync*)
+GCGLboolean WebGL2RenderingContext::isSync(WebGLSync* sync)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isSync()");
-    return false;
+    return !isContextLostOrPending() && sync && !sync->isDeleted() && validateWebGLObject("isSync", sync);
 }
 
-void WebGL2RenderingContext::deleteSync(WebGLSync*)
+void WebGL2RenderingContext::deleteSync(WebGLSync* sync)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteSync()");
+    if (isContextLostOrPending() || !sync || sync->isDeleted() || !validateWebGLObject("deleteSync", sync))
+        return;
+    deleteObject(sync);
 }
 
-GCGLenum WebGL2RenderingContext::clientWaitSync(WebGLSync&, GCGLbitfield, GCGLuint64)
+GCGLenum WebGL2RenderingContext::clientWaitSync(WebGLSync& sync, GCGLbitfield flags, GCGLuint64 timeout)
 {
-    // Note: Do not implement this function without consulting webkit-dev and WebGL
-    // reviewers beforehand. Apple folks, see <rdar://problem/36666458>.
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] clientWaitSync()");
-    return 0;
+    if (isContextLostOrPending() || !validateWebGLObject("clientWaitSync", &sync))
+        return GraphicsContextGL::WAIT_FAILED;
+
+    if (timeout > MaxClientWaitTimeout) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "clientWaitSync", "timeout > MAX_CLIENT_WAIT_TIMEOUT_WEBGL");
+        return GraphicsContextGL::WAIT_FAILED;
+    }
+    
+    if (flags && flags != GraphicsContextGL::SYNC_FLUSH_COMMANDS_BIT) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clientWaitSync", "invalid flags");
+        return GraphicsContextGL::WAIT_FAILED;
+    }
+
+    if (sync.isSignaled())
+        return GraphicsContextGL::ALREADY_SIGNALED;
+    sync.updateCache(*this);
+    if (sync.isSignaled())
+        return GraphicsContextGL::CONDITION_SATISFIED;
+    return GraphicsContextGL::TIMEOUT_EXPIRED;
 }
 
-void WebGL2RenderingContext::waitSync(WebGLSync&, GCGLbitfield, GCGLint64)
+void WebGL2RenderingContext::waitSync(WebGLSync& sync, GCGLbitfield flags, GCGLint64 timeout)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] waitSync()");
+    if (isContextLostOrPending() || !validateWebGLObject("waitSync", &sync))
+        return;
+
+    if (flags)
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "waitSync", "flags must be zero");
+    else if (timeout != -1)
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "waitSync", "invalid timeout");
+
+    // This function is a no-op in WebGL 2.
 }
 
-WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync&, GCGLenum)
+WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync& sync, GCGLenum pname)
 {
-    // Note: Do not implement this function without consulting webkit-dev and WebGL
-    // reviewers beforehand. Apple folks, see <rdar://problem/36666458>.
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getSyncParameter()");
-    return nullptr;
+    if (isContextLostOrPending() || !validateWebGLObject("getSyncParameter", &sync))
+        return nullptr;
+
+    switch (pname) {
+    case GraphicsContextGL::OBJECT_TYPE:
+    case GraphicsContextGL::SYNC_STATUS:
+    case GraphicsContextGL::SYNC_CONDITION:
+    case GraphicsContextGL::SYNC_FLAGS:
+        sync.updateCache(*this);
+        return sync.getCachedResult(pname);
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getSyncParameter", "invalid parameter name");
+        return nullptr;
+    }
 }
 
 RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()

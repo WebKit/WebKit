@@ -1216,13 +1216,13 @@ public:
     virtual void getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value) = 0;
     virtual void getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value) = 0;
 
-    virtual PlatformGLObject fenceSync(GCGLenum condition, GCGLbitfield flags) = 0;
-    virtual GCGLboolean isSync(PlatformGLObject sync) = 0;
-    virtual void deleteSync(PlatformGLObject sync) = 0;
-    virtual GCGLenum clientWaitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLuint64 timeout) = 0;
-    virtual void waitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLint64 timeout) = 0;
+    virtual GCGLsync fenceSync(GCGLenum condition, GCGLbitfield flags) = 0;
+    virtual GCGLboolean isSync(GCGLsync) = 0;
+    virtual void deleteSync(GCGLsync) = 0;
+    virtual GCGLenum clientWaitSync(GCGLsync, GCGLbitfield flags, GCGLuint64 timeout) = 0;
+    virtual void waitSync(GCGLsync, GCGLbitfield flags, GCGLint64 timeout) = 0;
     // getSyncParameter
-    virtual void getSynciv(PlatformGLObject sync, GCGLenum pname, GCGLsizei bufSize, GCGLint* value) = 0;
+    virtual void getSynciv(GCGLsync, GCGLenum pname, GCGLsizei bufSize, GCGLint* value) = 0;
 
     virtual PlatformGLObject createTransformFeedback() = 0;
     virtual void deleteTransformFeedback(PlatformGLObject id) = 0;

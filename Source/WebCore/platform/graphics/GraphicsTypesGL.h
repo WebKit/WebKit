@@ -47,6 +47,7 @@ typedef intptr_t GCGLsizeiptr;
 typedef char GCGLchar;
 typedef long long GCGLint64;
 typedef unsigned long long GCGLuint64;
+typedef struct __GLsync* GCGLsync;
 
 typedef GCGLuint PlatformGLObject;
 
