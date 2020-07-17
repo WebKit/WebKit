@@ -1,3 +1,17 @@
+2020-07-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove logging for necessary sysctl call
+        https://bugs.webkit.org/show_bug.cgi?id=214497
+        <rdar://problem/65737636>
+
+        Reviewed by Per Arne Vollan.
+
+        We discovered that kern.proc.pid is needed in SecTaskCopyDebugDescription, so
+        we can remove that telemetry and logging.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-07-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Cache the PIN to improve NFC user experience

@@ -483,7 +483,6 @@
     (sysctl-name "security.mac.sandbox.sentinel")
     (sysctl-name "vm.loadavg")
     (sysctl-name-prefix "kern.argmax")
-    (sysctl-name-prefix "kern.proc.pid.")
 )
 
 (with-filter (system-attribute apple-internal)
@@ -567,7 +566,9 @@
         "kern.tcsm_available" ;; Needed for IndexedDB support
         "kern.version"
         "sysctl.name2oid"
-        "vm.footprint_suspend"))
+        "vm.footprint_suspend")
+    (sysctl-name-prefix "kern.proc.pid.")
+)
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
 ;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>

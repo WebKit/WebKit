@@ -183,6 +183,7 @@
         "kern.version"
         "sysctl.name2oid"
         "vm.footprint_suspend")
+    (sysctl-name-prefix "kern.proc.pid.")
     (sysctl-name-regex #"^net.routetable")
     (sysctl-name-prefix "sysctl.oidfmt.") ; Remove when <rdar://problem/64208532> is fixed.
 )
