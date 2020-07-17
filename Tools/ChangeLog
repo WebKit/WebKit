@@ -1,3 +1,11 @@
+2020-07-15  Jer Noble  <jer.noble@apple.com>
+
+        Unreviwed test gardening; disable the SleepDisabler.NavigateBack
+        test, as it is flaky on the bots.
+
+        * TestWebKitAPI/Tests/WebKit/SleepDisabler.mm:
+        (TEST_F):
+
 2020-07-16  Jonathan Bedard  <jbedard@apple.com>
 
         [configure-xcode-for-embedded-development] Support TBD version 4
