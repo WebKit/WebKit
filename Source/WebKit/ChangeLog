@@ -1,3 +1,19 @@
+2020-07-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Use MediaOnly user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=213595
+        <rdar://problem/64946612>
+
+        Reviewed by Brent Fulgham.
+
+        MediaOnly user gesture is more flexible than regular user gesture. For example, it can be propagated through XHR.
+        A common use case for WebAuthn is to call the API within XHR events, which could be triggered by user activated events initially.
+        By using MediaOnly user gesture, it allows developer to keep using this XHR model.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+
 2020-07-17  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Add nullptr checks to WebKit::WebInspectorProxy::platformStartWindowDrag()

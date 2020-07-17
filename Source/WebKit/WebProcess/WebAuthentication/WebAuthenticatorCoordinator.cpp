@@ -53,7 +53,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
     if (!webFrame)
         return;
 
-    auto processingUserGesture = UserGestureIndicator::processingUserGesture();
+    auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
     if (!processingUserGesture)
         m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events."_s);
 
@@ -66,7 +66,7 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
     if (!webFrame)
         return;
 
-    auto processingUserGesture = UserGestureIndicator::processingUserGesture();
+    auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
     if (!processingUserGesture)
         m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.get' within user activated events."_s);
 
