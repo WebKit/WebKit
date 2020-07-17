@@ -6547,7 +6547,6 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
 
     // Discard any enqueued mouse events that have been delivered to the UIProcess whilst the WebProcess is still processing the
     // MouseDown event that triggered this ShowContextMenu message. This can happen if we take too long to enter the nested runloop.
-    ASSERT(isProcessingMouseEvents());
     discardQueuedMouseEvents();
 
     m_activeContextMenuContextData = contextMenuContextData;

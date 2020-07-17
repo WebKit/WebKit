@@ -1,3 +1,12 @@
+2020-07-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] fast/events/context-activated-by-key-event.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=199444
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations: Remove fixed test entry.
+
 2020-07-17  Truitt Savell  <tsavell@apple.com>
 
         Rebase compositing/repaint/iframes/compositing-iframe-scroll-repaint.html back to previous state after ​r264522

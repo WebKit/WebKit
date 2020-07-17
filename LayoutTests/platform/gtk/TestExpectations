@@ -40,9 +40,6 @@ swipe [ Pass ]
 # Accessibility
 webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
 
-# Events
-webkit.org/b/199444 [ Debug ] fast/events/context-activated-by-key-event.html [ Crash ]
-
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 
