@@ -1,3 +1,13 @@
+2020-07-17  Truitt Savell  <tsavell@apple.com>
+
+        [ Mac iOS ] imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html is failing as of the re-sync in r 264522
+        https://bugs.webkit.org/show_bug.cgi?id=214512
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-07-17  Sihui Liu  <sihui_liu@appe.com>
 
         REGRESSION(r264486): storage/indexeddb/structured-clone.html crashes
