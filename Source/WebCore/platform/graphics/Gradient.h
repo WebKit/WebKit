@@ -313,7 +313,7 @@ template<typename Decoder> Optional<Ref<Gradient>> Gradient::decode(Decoder& dec
         return WTF::nullopt;
     gradient->setGradientSpaceTransform(WTFMove(*gradientSpaceTransformation));
 
-    return WTFMove(gradient);
+    return gradient;
 }
 
 } // namespace WebCore

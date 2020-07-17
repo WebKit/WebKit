@@ -1,5 +1,15 @@
 2020-07-17  Joonghun Park  <jh718.park@samsung.com>
 
+        Unreviewed. Remove the build warning below since r264280.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        No new tests, no new behaviors.
+
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::decode):
+
+2020-07-17  Joonghun Park  <jh718.park@samsung.com>
+
         Unreviewed. Remove the build warning below and redundant spaces since r264381.
         warning: this statement may fall through [-Wimplicit-fallthrough=]
 
