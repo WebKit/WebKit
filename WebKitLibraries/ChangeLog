@@ -1,5 +1,43 @@
 2020-07-17  Jonathan Bedard  <jbedard@apple.com>
 
+        Add WebKitPrivateFrameworkStubs for watchOS 7
+        https://bugs.webkit.org/show_bug.cgi?id=214479
+        <rdar://problem/65727787>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/watchos/7: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/CorePrediction.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/DeviceIdentity.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/DeviceIdentity.framework/DeviceIdentity.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/FileProvider.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/IOKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/IOKit.framework/IOKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/IOSurfaceAccelerator.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/LocalAuthentication.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/LocalAuthentication.framework/LocalAuthentication.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/PepperUICore.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/PepperUICore.framework/PepperUICore.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/RunningBoardServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/SafariSafeBrowsing.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/URLFormatting.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/7/URLFormatting.framework/URLFormatting.tbd: Added.
+
+2020-07-17  Jonathan Bedard  <jbedard@apple.com>
+
         Add WebKitPrivateFrameworkStubs for tvOS 14
         https://bugs.webkit.org/show_bug.cgi?id=214476
         <rdar://problem/65725761>

@@ -1,0 +1,10 @@
+--- !tapi-tbd-v3
+archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
+platform:        watchos
+install-name:    '/System/Library/Frameworks/LocalAuthentication.framework/LocalAuthentication'
+exports:
+  - archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
+    symbols:         [ _LAAvailableMechanisms, _LACopyExternalizedContext, _LAErrorDomain, 
+                       _LAErrorSubcodeKey ]
+    objc-classes:    [ LAContext ]
+...

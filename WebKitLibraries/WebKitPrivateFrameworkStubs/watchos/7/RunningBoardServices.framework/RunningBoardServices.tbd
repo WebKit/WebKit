@@ -1,0 +1,10 @@
+--- !tapi-tbd-v3
+archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
+install-name:    '/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices'
+objc-constraint: none
+platform: watchos
+exports:
+  - archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
+    symbols:         [ _RBSProcessTimeLimitationNone ]
+    objc-classes:    [ RBSAttribute, RBSDomainAttribute, RBSTarget, RBSAssertion, RBSProcessIdentifier, RBSProcessState, RBSProcessHandle, RBSProcessStateDescriptor, RBSProcessPredicate, RBSProcessMonitor ]
+...
