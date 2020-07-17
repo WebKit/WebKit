@@ -81,4 +81,39 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObje
     RELEASE_AND_RETURN(scope, factory(vm));
 }
 
+template<typename ResultType>
+ResultType intlOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
+{
+    // GetOption (options, property, type="string", values, fallback)
+    // https://tc39.github.io/ecma402/#sec-getoption
+
+    ASSERT(values.size() > 0);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (options.isUndefined())
+        return fallback;
+
+    JSObject* opts = options.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue value = opts->get(globalObject, property);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!value.isUndefined()) {
+        String stringValue = value.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        for (const auto& entry : values) {
+            if (entry.first == stringValue)
+                return entry.second;
+        }
+        throwException(globalObject, scope, createRangeError(globalObject, notFoundMessage));
+        return { };
+    }
+
+    return fallback;
+}
+
 } // namespace JSC

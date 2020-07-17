@@ -421,9 +421,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     HashMap<String, String> opt;
 
-    String localeMatcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
-    opt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
     String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
@@ -460,7 +459,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         opt.add("hc"_s, String());
 
     const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlDateTimeFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDateTimeFormatInternal::relevantExtensionKeys), localeData);
+    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, opt, IntlDateTimeFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDateTimeFormatInternal::relevantExtensionKeys), localeData);
 
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {
@@ -496,110 +495,148 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     m_timeZone = tz;
 
     StringBuilder skeletonBuilder;
-    auto narrowShortLong = { "narrow", "short", "long" };
-    auto twoDigitNumeric = { "2-digit", "numeric" };
-    auto twoDigitNumericNarrowShortLong = { "2-digit", "numeric", "narrow", "short", "long" };
-    auto shortLong = { "short", "long" };
 
-    String weekday = intlStringOption(globalObject, options, vm.propertyNames->weekday, narrowShortLong, "weekday must be \"narrow\", \"short\", or \"long\"", nullptr);
+    Weekday weekday = intlOption<Weekday>(globalObject, options, vm.propertyNames->weekday, { { "narrow"_s, Weekday::Narrow }, { "short"_s, Weekday::Short }, { "long"_s, Weekday::Long } }, "weekday must be \"narrow\", \"short\", or \"long\""_s, Weekday::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!weekday.isNull()) {
-        if (weekday == "narrow")
-            skeletonBuilder.appendLiteral("EEEEE");
-        else if (weekday == "short")
-            skeletonBuilder.appendLiteral("EEE");
-        else if (weekday == "long")
-            skeletonBuilder.appendLiteral("EEEE");
+    switch (weekday) {
+    case Weekday::Narrow:
+        skeletonBuilder.appendLiteral("EEEEE");
+        break;
+    case Weekday::Short:
+        skeletonBuilder.appendLiteral("EEE");
+        break;
+    case Weekday::Long:
+        skeletonBuilder.appendLiteral("EEEE");
+        break;
+    case Weekday::None:
+        break;
     }
 
-    String era = intlStringOption(globalObject, options, vm.propertyNames->era, narrowShortLong, "era must be \"narrow\", \"short\", or \"long\"", nullptr);
+    Era era = intlOption<Era>(globalObject, options, vm.propertyNames->era, { { "narrow"_s, Era::Narrow }, { "short"_s, Era::Short }, { "long"_s, Era::Long } }, "era must be \"narrow\", \"short\", or \"long\""_s, Era::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!era.isNull()) {
-        if (era == "narrow")
-            skeletonBuilder.appendLiteral("GGGGG");
-        else if (era == "short")
-            skeletonBuilder.appendLiteral("GGG");
-        else if (era == "long")
-            skeletonBuilder.appendLiteral("GGGG");
+    switch (era) {
+    case Era::Narrow:
+        skeletonBuilder.appendLiteral("GGGGG");
+        break;
+    case Era::Short:
+        skeletonBuilder.appendLiteral("GGG");
+        break;
+    case Era::Long:
+        skeletonBuilder.appendLiteral("GGGG");
+        break;
+    case Era::None:
+        break;
     }
 
-    String year = intlStringOption(globalObject, options, vm.propertyNames->year, twoDigitNumeric, "year must be \"2-digit\" or \"numeric\"", nullptr);
+    Year year = intlOption<Year>(globalObject, options, vm.propertyNames->year, { { "2-digit"_s, Year::TwoDigit }, { "numeric"_s, Year::Numeric } }, "year must be \"2-digit\" or \"numeric\""_s, Year::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!year.isNull()) {
-        if (year == "2-digit")
-            skeletonBuilder.appendLiteral("yy");
-        else if (year == "numeric")
-            skeletonBuilder.append('y');
+    switch (year) {
+    case Year::TwoDigit:
+        skeletonBuilder.appendLiteral("yy");
+        break;
+    case Year::Numeric:
+        skeletonBuilder.append('y');
+        break;
+    case Year::None:
+        break;
     }
 
-    String month = intlStringOption(globalObject, options, vm.propertyNames->month, twoDigitNumericNarrowShortLong, "month must be \"2-digit\", \"numeric\", \"narrow\", \"short\", or \"long\"", nullptr);
+    Month month = intlOption<Month>(globalObject, options, vm.propertyNames->month, { { "2-digit"_s, Month::TwoDigit }, { "numeric"_s, Month::Numeric }, { "narrow"_s, Month::Narrow }, { "short"_s, Month::Short }, { "long"_s, Month::Long } }, "month must be \"2-digit\", \"numeric\", \"narrow\", \"short\", or \"long\""_s, Month::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!month.isNull()) {
-        if (month == "2-digit")
-            skeletonBuilder.appendLiteral("MM");
-        else if (month == "numeric")
-            skeletonBuilder.append('M');
-        else if (month == "narrow")
-            skeletonBuilder.appendLiteral("MMMMM");
-        else if (month == "short")
-            skeletonBuilder.appendLiteral("MMM");
-        else if (month == "long")
-            skeletonBuilder.appendLiteral("MMMM");
+    switch (month) {
+    case Month::TwoDigit:
+        skeletonBuilder.appendLiteral("MM");
+        break;
+    case Month::Numeric:
+        skeletonBuilder.append('M');
+        break;
+    case Month::Narrow:
+        skeletonBuilder.appendLiteral("MMMMM");
+        break;
+    case Month::Short:
+        skeletonBuilder.appendLiteral("MMM");
+        break;
+    case Month::Long:
+        skeletonBuilder.appendLiteral("MMMM");
+        break;
+    case Month::None:
+        break;
     }
 
-    String day = intlStringOption(globalObject, options, vm.propertyNames->day, twoDigitNumeric, "day must be \"2-digit\" or \"numeric\"", nullptr);
+    Day day = intlOption<Day>(globalObject, options, vm.propertyNames->day, { { "2-digit"_s, Day::TwoDigit }, { "numeric"_s, Day::Numeric } }, "day must be \"2-digit\" or \"numeric\""_s, Day::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!day.isNull()) {
-        if (day == "2-digit")
-            skeletonBuilder.appendLiteral("dd");
-        else if (day == "numeric")
-            skeletonBuilder.append('d');
+    switch (day) {
+    case Day::TwoDigit:
+        skeletonBuilder.appendLiteral("dd");
+        break;
+    case Day::Numeric:
+        skeletonBuilder.append('d');
+        break;
+    case Day::None:
+        break;
     }
 
-    String hour = intlStringOption(globalObject, options, vm.propertyNames->hour, twoDigitNumeric, "hour must be \"2-digit\" or \"numeric\"", nullptr);
+    Hour hour = intlOption<Hour>(globalObject, options, vm.propertyNames->hour, { { "2-digit"_s, Hour::TwoDigit }, { "numeric"_s, Hour::Numeric } }, "hour must be \"2-digit\" or \"numeric\""_s, Hour::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (hour == "2-digit") {
+    switch (hour) {
+    case Hour::TwoDigit:
         if (isHour12Undefined && m_hourCycle.isNull())
             skeletonBuilder.appendLiteral("jj");
         else if (hour12 == TriState::True)
             skeletonBuilder.appendLiteral("hh");
         else
             skeletonBuilder.appendLiteral("HH");
-    } else if (hour == "numeric") {
+        break;
+    case Hour::Numeric:
         if (isHour12Undefined && m_hourCycle.isNull())
             skeletonBuilder.append('j');
         else if (hour12 == TriState::True)
             skeletonBuilder.append('h');
         else
             skeletonBuilder.append('H');
-    } else
+        break;
+    case Hour::None:
         m_hourCycle = String();
-
-    String minute = intlStringOption(globalObject, options, vm.propertyNames->minute, twoDigitNumeric, "minute must be \"2-digit\" or \"numeric\"", nullptr);
-    RETURN_IF_EXCEPTION(scope, void());
-    if (!minute.isNull()) {
-        if (minute == "2-digit")
-            skeletonBuilder.appendLiteral("mm");
-        else if (minute == "numeric")
-            skeletonBuilder.append('m');
+        break;
     }
 
-    String second = intlStringOption(globalObject, options, vm.propertyNames->second, twoDigitNumeric, "second must be \"2-digit\" or \"numeric\"", nullptr);
+    Minute minute = intlOption<Minute>(globalObject, options, vm.propertyNames->minute, { { "2-digit"_s, Minute::TwoDigit }, { "numeric"_s, Minute::Numeric } }, "minute must be \"2-digit\" or \"numeric\""_s, Minute::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!second.isNull()) {
-        if (second == "2-digit")
-            skeletonBuilder.appendLiteral("ss");
-        else if (second == "numeric")
-            skeletonBuilder.append('s');
+    switch (minute) {
+    case Minute::TwoDigit:
+        skeletonBuilder.appendLiteral("mm");
+        break;
+    case Minute::Numeric:
+        skeletonBuilder.append('m');
+        break;
+    case Minute::None:
+        break;
     }
 
-    String timeZoneName = intlStringOption(globalObject, options, vm.propertyNames->timeZoneName, shortLong, "timeZoneName must be \"short\" or \"long\"", nullptr);
+    Second second = intlOption<Second>(globalObject, options, vm.propertyNames->second, { { "2-digit"_s, Second::TwoDigit }, { "numeric"_s, Second::Numeric } }, "second must be \"2-digit\" or \"numeric\""_s, Second::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (!timeZoneName.isNull()) {
-        if (timeZoneName == "short")
-            skeletonBuilder.append('z');
-        else if (timeZoneName == "long")
-            skeletonBuilder.appendLiteral("zzzz");
+    switch (second) {
+    case Second::TwoDigit:
+        skeletonBuilder.appendLiteral("ss");
+        break;
+    case Second::Numeric:
+        skeletonBuilder.append('s');
+        break;
+    case Second::None:
+        break;
+    }
+
+    TimeZoneName timeZoneName = intlOption<TimeZoneName>(globalObject, options, vm.propertyNames->timeZoneName, { { "short"_s, TimeZoneName::Short }, { "long"_s, TimeZoneName::Long } }, "timeZoneName must be \"short\" or \"long\""_s, TimeZoneName::None);
+    RETURN_IF_EXCEPTION(scope, void());
+    switch (timeZoneName) {
+    case TimeZoneName::Short:
+        skeletonBuilder.append('z');
+        break;
+    case TimeZoneName::Long:
+        skeletonBuilder.appendLiteral("zzzz");
+        break;
+    case TimeZoneName::None:
+        break;
     }
 
     intlStringOption(globalObject, options, vm.propertyNames->formatMatcher, { "basic", "best fit" }, "formatMatcher must be either \"basic\" or \"best fit\"", "best fit");

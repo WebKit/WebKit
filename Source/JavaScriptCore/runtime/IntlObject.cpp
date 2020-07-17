@@ -629,13 +629,12 @@ static void unicodeExtensionSubTags(const String& extension, Vector<String>& sub
     subtags.append(extension.substring(valueStart, extensionLength - valueStart));
 }
 
-HashMap<String, String> resolveLocale(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t))
+HashMap<String, String> resolveLocale(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher localeMatcher, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t))
 {
     // ResolveLocale (availableLocales, requestedLocales, options, relevantExtensionKeys, localeData)
     // https://tc39.github.io/ecma402/#sec-resolvelocale
 
-    const String& matcher = options.get("localeMatcher"_s);
-    MatcherResult matcherResult = (matcher == "lookup")
+    MatcherResult matcherResult = localeMatcher == LocaleMatcher::Lookup
         ? lookupMatcher(globalObject, availableLocales, requestedLocales)
         : bestFitMatcher(globalObject, availableLocales, requestedLocales);
 
@@ -744,13 +743,10 @@ JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& av
     auto scope = DECLARE_THROW_SCOPE(vm);
     String matcher;
 
-    if (!options.isUndefined()) {
-        matcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
-        RETURN_IF_EXCEPTION(scope, JSValue());
-    } else
-        matcher = "best fit"_s;
+    LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
-    JSArray* supportedLocales = (matcher == "best fit")
+    JSArray* supportedLocales = localeMatcher == LocaleMatcher::BestFit
         ? bestFitSupportedLocales(globalObject, availableLocales, requestedLocales)
         : lookupSupportedLocales(globalObject, availableLocales, requestedLocales);
     RETURN_IF_EXCEPTION(scope, JSValue());

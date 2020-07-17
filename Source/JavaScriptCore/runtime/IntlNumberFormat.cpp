@@ -30,7 +30,7 @@
 #include "IntlNumberFormat.h"
 
 #include "Error.h"
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -173,9 +173,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 
     HashMap<String, String> opt;
 
-    String matcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
-    opt.add("localeMatcher"_s, matcher);
 
     String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
@@ -188,7 +187,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     }
 
     auto& availableLocales = intlNumberFormatAvailableLocales();
-    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlNumberFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlNumberFormatInternal::relevantExtensionKeys), localeData);
+    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, opt, IntlNumberFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlNumberFormatInternal::relevantExtensionKeys), localeData);
 
     m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {
@@ -198,16 +197,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 
     m_numberingSystem = result.get("nu"_s);
 
-    String styleString = intlStringOption(globalObject, options, vm.propertyNames->style, { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
+    m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "decimal"_s, Style::Decimal }, { "percent"_s, Style::Percent }, { "currency"_s, Style::Currency } }, "style must be either \"decimal\", \"percent\", or \"currency\""_s, Style::Decimal);
     RETURN_IF_EXCEPTION(scope, void());
-    if (styleString == "decimal")
-        m_style = Style::Decimal;
-    else if (styleString == "percent")
-        m_style = Style::Percent;
-    else if (styleString == "currency")
-        m_style = Style::Currency;
-    else
-        ASSERT_NOT_REACHED();
 
     String currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"), { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
@@ -230,18 +221,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         currencyDigits = computeCurrencyDigits(currency);
     }
 
-    String currencyDisplayString = intlStringOption(globalObject, options, Identifier::fromString(vm, "currencyDisplay"), { "code", "symbol", "name" }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\"", "symbol");
+    m_currencyDisplay = intlOption<CurrencyDisplay>(globalObject, options, Identifier::fromString(vm, "currencyDisplay"), { { "code"_s, CurrencyDisplay::Code }, { "symbol"_s, CurrencyDisplay::Symbol }, { "name"_s, CurrencyDisplay::Name } }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\""_s, CurrencyDisplay::Symbol);
     RETURN_IF_EXCEPTION(scope, void());
-    if (m_style == Style::Currency) {
-        if (currencyDisplayString == "code")
-            m_currencyDisplay = CurrencyDisplay::Code;
-        else if (currencyDisplayString == "symbol")
-            m_currencyDisplay = CurrencyDisplay::Symbol;
-        else if (currencyDisplayString == "name")
-            m_currencyDisplay = CurrencyDisplay::Name;
-        else
-            ASSERT_NOT_REACHED();
-    }
 
     unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());

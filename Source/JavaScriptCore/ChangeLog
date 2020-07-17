@@ -1,3 +1,30 @@
+2020-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up Intl option parsing code by introducing intlOption<>
+        https://bugs.webkit.org/show_bug.cgi?id=214437
+
+        Reviewed by Ross Kirsling.
+
+        This patch introduces intlOption<>(...) function and remove redundant string comparisons.
+        This makes option handling efficient, and it makes code clean.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlObject.cpp:
+        (JSC::resolveLocale):
+        (JSC::supportedLocales):
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::intlOption):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+
 2020-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTF] Remove the unnecessary inner class DefaultHash<T>::Hash

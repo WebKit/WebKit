@@ -28,7 +28,7 @@
 #include "config.h"
 #include "IntlCollator.h"
 
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -178,22 +178,15 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    String usageString = intlStringOption(globalObject, options, vm.propertyNames->usage, { "sort", "search" }, "usage must be either \"sort\" or \"search\"", "sort");
+    m_usage = intlOption<Usage>(globalObject, options, vm.propertyNames->usage, { { "sort"_s, Usage::Sort }, { "search"_s, Usage::Search } }, "usage must be either \"sort\" or \"search\""_s, Usage::Sort);
     RETURN_IF_EXCEPTION(scope, void());
-    if (usageString == "sort")
-        m_usage = Usage::Sort;
-    else if (usageString == "search")
-        m_usage = Usage::Search;
-    else
-        ASSERT_NOT_REACHED();
 
     auto localeData = (m_usage == Usage::Sort) ? sortLocaleData : searchLocaleData;
 
     HashMap<String, String> opt;
 
-    String matcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
-    opt.add("localeMatcher"_s, matcher);
 
     TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
     RETURN_IF_EXCEPTION(scope, void());
@@ -206,7 +199,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
         opt.add("kf"_s, caseFirstOption);
 
     auto& availableLocales = intlCollatorAvailableLocales();
-    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlCollatorInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlCollatorInternal::relevantExtensionKeys), localeData);
+    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, opt, IntlCollatorInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlCollatorInternal::relevantExtensionKeys), localeData);
 
     m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {
@@ -226,16 +219,8 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     else
         m_caseFirst = CaseFirst::False;
 
-    String sensitivityString = intlStringOption(globalObject, options, vm.propertyNames->sensitivity, { "base", "accent", "case", "variant" }, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", nullptr);
+    m_sensitivity = intlOption<Sensitivity>(globalObject, options, vm.propertyNames->sensitivity, { { "base"_s, Sensitivity::Base }, { "accent"_s, Sensitivity::Accent }, { "case"_s, Sensitivity::Case }, { "variant"_s, Sensitivity::Variant } }, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\""_s, Sensitivity::Variant);
     RETURN_IF_EXCEPTION(scope, void());
-    if (sensitivityString == "base")
-        m_sensitivity = Sensitivity::Base;
-    else if (sensitivityString == "accent")
-        m_sensitivity = Sensitivity::Accent;
-    else if (sensitivityString == "case")
-        m_sensitivity = Sensitivity::Case;
-    else
-        m_sensitivity = Sensitivity::Variant;
 
     TriState ignorePunctuation = intlBooleanOption(globalObject, options, vm.propertyNames->ignorePunctuation);
     RETURN_IF_EXCEPTION(scope, void());

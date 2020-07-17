@@ -34,6 +34,11 @@ struct UFieldPositionIterator;
 
 namespace JSC {
 
+enum class LocaleMatcher : uint8_t {
+    Lookup,
+    BestFit,
+};
+
 class IntlObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -71,7 +76,7 @@ unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigne
 Vector<char, 32> localeIDBufferForLanguageTag(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
-HashMap<String, String> resolveLocale(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t));
+HashMap<String, String> resolveLocale(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t));
 JSValue supportedLocales(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
 String removeUnicodeLocaleExtension(const String& locale);
 String bestAvailableLocale(const HashSet<String>& availableLocales, const String& requestedLocale);
