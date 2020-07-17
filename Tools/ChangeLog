@@ -1,3 +1,13 @@
+2020-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [configure-xcode-for-embedded-development] Support TBD version 4
+        https://bugs.webkit.org/show_bug.cgi?id=214431
+        <rdar://problem/65695728>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/configure-xcode-for-embedded-development: Match both archs and targets.
+
 2020-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTF] Remove the unnecessary inner class DefaultHash<T>::Hash

@@ -200,7 +200,7 @@ def patch_tbd_architecture(framework_path):
 
         modified_lines = []
         for line in lines:
-            if re.match(".*archs: +\[.*\]", line) is not None:
+            if re.match(".*(archs|targets): +\[.*\]", line) is not None:
                 line = re.sub("\[.*\]", "[ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]", line)
             modified_lines.append(line)
 
