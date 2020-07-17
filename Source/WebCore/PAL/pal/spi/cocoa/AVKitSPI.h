@@ -228,9 +228,12 @@ NS_ASSUME_NONNULL_END
 #endif // PLATFORM(MAC)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVKit/AVOutputDeviceMenuController.h>
+#import <AVKit/AVRoutePickerView_Private.h>
+#import <AVKit/AVRoutePickerView_WebKitOnly.h>
 
 #else
 
@@ -252,22 +255,6 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 
 @end
 
-NS_ASSUME_NONNULL_END
-
-#endif // USE(APPLE_INTERNAL_SDK)
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-
-#if HAVE(AVROUTEPICKERVIEW)
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <AVKit/AVRoutePickerView.h>
-#import <AVKit/AVRoutePickerView_Private.h>
-#import <AVKit/AVRoutePickerView_WebKitOnly.h>
-
-#else
-
-NS_ASSUME_NONNULL_BEGIN
-
 @protocol AVRoutePickerViewDelegate;
 
 @interface AVRoutePickerView : NSView
@@ -288,7 +275,8 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-#endif // HAVE(AVROUTEPICKERVIEW)
+
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 NS_ASSUME_NONNULL_BEGIN
 
