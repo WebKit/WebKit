@@ -1,3 +1,12 @@
+2020-07-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Don't include <wtf/text/WTFString.h> in SVGParserUtilities.h
+        https://bugs.webkit.org/show_bug.cgi?id=214320
+
+        Reviewed by Darin Adler.
+
+        * wtf/Forward.h: Added foward declarations for template specializations of DefaultHash.
+
 2020-07-17  Keith Miller  <keith_miller@apple.com>
 
         Fix 32-bit debug watchos build

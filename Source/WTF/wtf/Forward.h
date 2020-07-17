@@ -79,6 +79,13 @@ template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename
 template<typename, typename = EmptyCounter> class WeakPtr;
 
 template<typename> struct DefaultHash;
+template<> struct DefaultHash<AtomString>;
+template<typename T> struct DefaultHash<OptionSet<T>>;
+template<> struct DefaultHash<String>;
+template<> struct DefaultHash<StringImpl*>;
+template<> struct DefaultHash<URL>;
+template<typename T, size_t inlineCapacity> struct DefaultHash<Vector<T, inlineCapacity>>;
+
 template<typename> struct DumbValueTraits;
 template<typename> struct EnumTraits;
 template<typename E, E...> struct EnumValues;
