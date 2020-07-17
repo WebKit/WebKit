@@ -109,30 +109,4 @@
   return _i420Buffer;
 }
 
-#pragma mark - Debugging
-
-#if !defined(NDEBUG) && defined(WEBRTC_IOS)
-- (id)debugQuickLookObject {
-  UIGraphicsBeginImageContext(CGSizeMake(_i420Buffer->width(), _i420Buffer->height()));
-  CGContextRef c = UIGraphicsGetCurrentContext();
-  uint8_t *ctxData = (uint8_t *)CGBitmapContextGetData(c);
-
-  libyuv::I420ToARGB(_i420Buffer->DataY(),
-                     _i420Buffer->StrideY(),
-                     _i420Buffer->DataU(),
-                     _i420Buffer->StrideU(),
-                     _i420Buffer->DataV(),
-                     _i420Buffer->StrideV(),
-                     ctxData,
-                     CGBitmapContextGetBytesPerRow(c),
-                     CGBitmapContextGetWidth(c),
-                     CGBitmapContextGetHeight(c));
-
-  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
-
-  return image;
-}
-#endif
-
 @end
