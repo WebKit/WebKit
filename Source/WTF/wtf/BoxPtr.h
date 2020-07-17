@@ -46,7 +46,7 @@ template<typename T> struct BoxPtrDeleter {
 
 template<typename T> using BoxPtr = Box<std::unique_ptr<T, BoxPtrDeleter<T>>>;
 
-template<typename T> BoxPtr<T> createBoxPtr(T* ptr)
+template<typename T> BoxPtr<T> adoptInBoxPtr(T* ptr)
 {
     return BoxPtr<T>::create(ptr);
 }
@@ -75,5 +75,5 @@ template<typename T> bool operator!=(const BoxPtr<T>& lhs, const BoxPtr<T>& rhs)
 
 } // namespace WTF
 
-using WTF::createBoxPtr;
+using WTF::adoptInBoxPtr;
 using WTF::BoxPtr;

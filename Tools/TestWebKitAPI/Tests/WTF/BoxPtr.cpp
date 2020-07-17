@@ -70,7 +70,7 @@ TEST(WTF_BoxPtr, Basic)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> ptr = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> ptr = adoptInBoxPtr(a);
         EXPECT_EQ(true, static_cast<bool>(ptr));
         EXPECT_EQ(a, ptr->get());
         EXPECT_EQ(a->name, (*ptr)->name);
@@ -79,7 +79,7 @@ TEST(WTF_BoxPtr, Basic)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
         BoxPtr<BoxPtrLogger> p2(p1);
         EXPECT_EQ(a, p1->get());
         EXPECT_EQ(a, p2->get());
@@ -88,7 +88,7 @@ TEST(WTF_BoxPtr, Basic)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
         BoxPtr<BoxPtrLogger> p2 = p1;
         EXPECT_EQ(a, p1->get());
         EXPECT_EQ(a, p2->get());
@@ -97,7 +97,7 @@ TEST(WTF_BoxPtr, Basic)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
         BoxPtr<BoxPtrLogger> p2 = WTFMove(p1);
         EXPECT_EQ(false, static_cast<bool>(p1));
         EXPECT_EQ(a, p2->get());
@@ -106,7 +106,7 @@ TEST(WTF_BoxPtr, Basic)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
         BoxPtr<BoxPtrLogger> p2(WTFMove(p1));
         EXPECT_EQ(false, static_cast<bool>(p1));
         EXPECT_EQ(a, p2->get());
@@ -115,7 +115,7 @@ TEST(WTF_BoxPtr, Basic)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> ptr = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> ptr = adoptInBoxPtr(a);
         EXPECT_EQ(a, ptr->get());
         ptr = nullptr;
         EXPECT_EQ(false, static_cast<bool>(ptr));
@@ -128,8 +128,8 @@ TEST(WTF_BoxPtr, Assignment)
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
         BoxPtrLogger* b = BoxPtrLogger::create("b");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
-        BoxPtr<BoxPtrLogger> p2 = createBoxPtr(b);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p2 = adoptInBoxPtr(b);
         EXPECT_EQ(a, p1->get());
         EXPECT_EQ(b, p2->get());
         log() << "| ";
@@ -143,8 +143,8 @@ TEST(WTF_BoxPtr, Assignment)
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
         BoxPtrLogger* b = BoxPtrLogger::create("b");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
-        BoxPtr<BoxPtrLogger> p2 = createBoxPtr(b);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p2 = adoptInBoxPtr(b);
         EXPECT_EQ(a, p1->get());
         EXPECT_EQ(b, p2->get());
         log() << "| ";
@@ -157,7 +157,7 @@ TEST(WTF_BoxPtr, Assignment)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> ptr = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> ptr = adoptInBoxPtr(a);
         EXPECT_EQ(a, ptr->get());
         log() << "| ";
         IGNORE_CLANG_WARNINGS_BEGIN("self-assign-overloaded")
@@ -170,7 +170,7 @@ TEST(WTF_BoxPtr, Assignment)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> ptr = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> ptr = adoptInBoxPtr(a);
         EXPECT_EQ(a, ptr->get());
         IGNORE_CLANG_WARNINGS_BEGIN("self-move")
         ptr = WTFMove(ptr);
@@ -185,8 +185,8 @@ TEST(WTF_BoxPtr, Operators)
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
         BoxPtrLogger* b = BoxPtrLogger::create("b");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
-        BoxPtr<BoxPtrLogger> p2 = createBoxPtr(b);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p2 = adoptInBoxPtr(b);
         EXPECT_EQ(p1, p1);
         EXPECT_NE(p1, p2);
     }
@@ -194,7 +194,7 @@ TEST(WTF_BoxPtr, Operators)
 
     {
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
         EXPECT_EQ(static_cast<bool>(p1), true);
         EXPECT_EQ(!p1, false);
     }
@@ -203,7 +203,7 @@ TEST(WTF_BoxPtr, Operators)
     {
         BoxPtr<BoxPtrLogger> empty;
         BoxPtrLogger* a = BoxPtrLogger::create("a");
-        BoxPtr<BoxPtrLogger> p1 = createBoxPtr(a);
+        BoxPtr<BoxPtrLogger> p1 = adoptInBoxPtr(a);
         EXPECT_NE(empty, p1);
         EXPECT_EQ(empty, empty);
     }

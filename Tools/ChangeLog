@@ -1,3 +1,13 @@
+2020-07-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Rename createBoxPtr into adoptBoxPtr
+        https://bugs.webkit.org/show_bug.cgi?id=214171
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/BoxPtr.cpp:
+        (TestWebKitAPI::TEST): Used the renamed function.
+
 2020-07-15  Jer Noble  <jer.noble@apple.com>
 
         Unreviwed test gardening; disable the SleepDisabler.NavigateBack
