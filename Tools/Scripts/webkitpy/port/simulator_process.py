@@ -79,7 +79,7 @@ class SimulatorProcess(ServerProcess):
 
     def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None, crash_message=None):
         env['PORT'] = str(target_host.listening_port())  # The target_host should be a device.
-        super(SimulatorProcess, self).__init__(port_obj, name, cmd, env, universal_newlines, treat_no_data_as_crash, target_host, crash_message)
+        super(SimulatorProcess, self).__init__(port_obj, name, cmd, env, universal_newlines, treat_no_data_as_crash, target_host, crash_message, allow_emulation=False)
 
         self._bundle_id = port_obj.app_identifier_from_bundle(cmd[0])
 

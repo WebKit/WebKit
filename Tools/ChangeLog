@@ -1,3 +1,16 @@
+2020-07-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Simulators should opt out of emulation
+        https://bugs.webkit.org/show_bug.cgi?id=214486
+        <rdar://problem/65644439>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__): Caller may request that emulation be disabled.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.__init__): Disable emulation.
+
 2020-07-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r264477.

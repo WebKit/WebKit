@@ -61,12 +61,12 @@ class ServerProcess(object):
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None, crash_message=None):
+    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None, crash_message=None, allow_emulation=True):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
 
         platform = self._port.host.platform
-        if platform.is_mac() and platform.architecture() != self._port.architecture():
+        if allow_emulation and platform.is_mac() and platform.architecture() != self._port.architecture():
             self._cmd = ['/usr/bin/arch', '-{}'.format(self._port.architecture())] + cmd
         else:
             self._cmd = cmd
