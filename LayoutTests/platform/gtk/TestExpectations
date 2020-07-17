@@ -40,12 +40,21 @@ swipe [ Pass ]
 # Accessibility
 webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
 
+# Events
+webkit.org/b/199444 [ Debug ] fast/events/context-activated-by-key-event.html [ Crash ]
+
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 
 # Printing
 webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
 webkit.org/b/196542 printing/printing-events.html [ Crash ]
+
+# ResourceLoading
+webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
+webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]
+webkit.org/b/201270 [ Release ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Timeout ]
+webkit.org/b/201270 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Crash ]
 
 # Workers
 ## Also timeouts sometimes in Wayland
@@ -1227,7 +1236,8 @@ webkit.org/b/211693 editing/input/caret-at-the-edge-of-input.html [ Failure Pass
 # The test is failing since r261576 and crashing occasionally
 webkit.org/b/211833 compositing/video/video-poster.html [ Failure Crash ]
 
-webkit.org/b/211887 fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
+# The first one is also crashing for both GTK and WPE debug
+webkit.org/b/211887 [ Release ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadArgs.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Failure ]
@@ -2406,10 +2416,6 @@ webkit.org/b/196250 inspector/console/heapSnapshot.html [ Timeout ]
 webkit.org/b/198118 media/playlist-inherits-user-gesture.html [ Timeout ]
 
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
-
-webkit.org/b/201270 http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
-
-webkit.org/b/201271 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Timeout ]
 
 webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
 

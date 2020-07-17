@@ -103,6 +103,8 @@ webkit.org/b/214192 [ Debug ] imported/blink/fast/gradients/large-vertical-gradi
 
 webkit.org/b/214060 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 
+webkit.org/b/214417 css3/color/composited-solid-backgrounds.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -413,6 +415,8 @@ webkit.org/b/211942 webgl/1.0.3/conformance/more/functions/copyTexImage2DBadArgs
 
 webkit.org/b/169917 fast/canvas/webgl/unprefixed-anisotropic-extension.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
+
+webkit.org/b/211887 [ Debug ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs

@@ -1,3 +1,12 @@
+2020-07-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Garden some debug crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-07-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add a console message: "User gesture is required to use the platform authenticator."
