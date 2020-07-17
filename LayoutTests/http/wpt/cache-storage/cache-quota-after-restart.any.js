@@ -17,7 +17,7 @@ promise_test(async (test) => {
 
     testRunner.setAllowStorageQuotaIncrease(false);
 
-    return promise_rejects(test, "QuotaExceededError", cache.put("30ko", response30ko.clone()), "put should fail");
+    return promise_rejects_dom(test, "QuotaExceededError", cache.put("30ko", response30ko.clone()), "put should fail");
 }, 'Increasing quota');
 
 promise_test(async (test) => {
@@ -37,7 +37,7 @@ promise_test(async (test) => {
     // Space used is around 831ko. After rounding, quota should be 840ko.
     internals.updateQuotaBasedOnSpaceUsage();
 
-    return promise_rejects(test, "QuotaExceededError", cache.put("30ko2", response30ko.clone()), "put should fail");
+    return promise_rejects_dom(test, "QuotaExceededError", cache.put("30ko2", response30ko.clone()), "put should fail");
 }, 'After network process restart, verify quota is computed according space being used and does not increase');
 
 done();

@@ -8,7 +8,7 @@
 <body>
 <script>
 promise_test(async (test) => {
-    return promise_rejects(test, new TypeError, navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-run" }));
+    return promise_rejects_js(test, TypeError, navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-run" }));
 }, "Spin at running ");
 
 promise_test(async (test) => {

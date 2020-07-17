@@ -5,18 +5,18 @@
 <script src="/resources/testharnessreport.js"></script>
 <script>
 promise_test(t => {
-    return promise_rejects(t, 'NotSupportedError', RTCPeerConnection.generateCertificate('ECDSA'));
+    return promise_rejects_dom(t, 'NotSupportedError', RTCPeerConnection.generateCertificate('ECDSA'));
 }, 'generateCertificate() with algorithm as a string fails');
 
 promise_test(t => {
-    return promise_rejects(t, 'NotSupportedError', RTCPeerConnection.generateCertificate({
+    return promise_rejects_dom(t, 'NotSupportedError', RTCPeerConnection.generateCertificate({
         name: 'ECDSA',
         namedCurve: 'P-257'
     }));
 }, 'generateCertificate() with unsupported ECDSA curve');
 
 promise_test(t => {
-    return promise_rejects(t, 'NotSupportedError', RTCPeerConnection.generateCertificate({
+    return promise_rejects_dom(t, 'NotSupportedError', RTCPeerConnection.generateCertificate({
         name: 'RSASSA-PKCS1-v1_5',
         modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),

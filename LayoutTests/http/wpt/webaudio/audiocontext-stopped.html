@@ -85,15 +85,15 @@ function runTests()
     }, "createPeriodicWave");
 
     promise_test((test) => {
-        return promise_rejects(test, 'InvalidStateError', context.suspend());
+        return promise_rejects_dom(test, 'InvalidStateError', context.suspend());
     }, "suspend");
 
     promise_test((test) => {
-        return promise_rejects(test, 'InvalidStateError', context.resume());
+        return promise_rejects_dom(test, 'InvalidStateError', context.resume());
     }, "resume");
 
     promise_test((test) => {
-        return promise_rejects(test, 'InvalidStateError', context.close());
+        return promise_rejects_dom(test, 'InvalidStateError', context.close());
     }, "close");
 }
 </script>

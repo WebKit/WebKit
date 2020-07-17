@@ -31,7 +31,7 @@ promise_test(test => {
 
 promise_test(test => {
     let promise = fetch("resources/status-garbage.asis");
-    return promise_rejects(test, new TypeError(), promise);
+    return promise_rejects_js(test, TypeError, promise);
 }, "Garbage status line.");
 </script>
 </body>

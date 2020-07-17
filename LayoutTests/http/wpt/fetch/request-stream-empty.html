@@ -38,7 +38,7 @@ promise_test(test => {
 }, "Empty stream body as arrayBuffer");
 
 promise_test(test => {
-    return promise_rejects(test, "SyntaxError", createRequestWithEmptyReadableStream().json());
+    return promise_rejects_dom(test, "SyntaxError", createRequestWithEmptyReadableStream().json());
 }, "Empty stream body as JSON");
 
 promise_test(test => {
@@ -68,7 +68,7 @@ promise_test(test => {
 }, "Empty chunk stream body as arrayBuffer");
 
 promise_test(test => {
-    return promise_rejects(test, "SyntaxError", createRequestWithEmptyReadableStream().json());
+    return promise_rejects_dom(test, "SyntaxError", createRequestWithEmptyReadableStream().json());
 }, "Empty chunk stream body as JSON");
 
 promise_test(test => {

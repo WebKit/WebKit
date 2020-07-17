@@ -16,25 +16,25 @@ function createRequestWithLockedReadableStream(callback) {
 
 promise_test(function(test) {
     return createRequestWithLockedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.blob());
+        return promise_rejects_js(test, TypeError, request.blob());
     });
 }, "Getting blob after getting a locked Request body");
 
 promise_test(function(test) {
     return createRequestWithLockedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.text());
+        return promise_rejects_js(test, TypeError, request.text());
     });
 }, "Getting text after getting a locked Request body");
 
 promise_test(function(test) {
     return createRequestWithLockedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.json());
+        return promise_rejects_js(test, TypeError, request.json());
     });
 }, "Getting json after getting a locked Request body");
 
 promise_test(function(test) {
     return createRequestWithLockedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.arrayBuffer());
+        return promise_rejects_js(test, TypeError, request.arrayBuffer());
     });
 }, "Getting arrayBuffer after getting a locked Request body");
 

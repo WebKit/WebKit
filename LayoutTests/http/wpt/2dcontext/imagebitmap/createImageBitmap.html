@@ -16,11 +16,11 @@
     });
 
     promise_test(function(t) {
-        return promise_rejects(t, new RangeError, createImageBitmap(new Image(), 0, 0, 0, 10));
+        return promise_rejects_js(t, RangeError, createImageBitmap(new Image(), 0, 0, 0, 10));
     }, "createImageBitmap rejects with RangeError if width is zero");
 
     promise_test(function(t) {
-        return promise_rejects(t, new RangeError, createImageBitmap(new Image(), 0, 0, 10, 0));
+        return promise_rejects_js(t, RangeError, createImageBitmap(new Image(), 0, 0, 10, 0));
     }, "createImageBitmap rejects with RangeError if height is zero");
 
     promise_test(function(t) {
@@ -46,7 +46,7 @@
     }, "createImageBitmap if height is negative");
 
     promise_test(function(t) {
-        return promise_rejects(t, "InvalidStateError", createImageBitmap(new Image()));
+        return promise_rejects_dom(t, "InvalidStateError", createImageBitmap(new Image()));
     }, "createImageBitmap rejects with InvalidStateError on an HTMLImageElement with no image data");
 
     promise_test(function() {
@@ -62,7 +62,7 @@
         let canvas = document.createElement("canvas");
         canvas.width = 0;
         canvas.height = 0;
-        return promise_rejects(t, "InvalidStateError", createImageBitmap(canvas));
+        return promise_rejects_dom(t, "InvalidStateError", createImageBitmap(canvas));
     }, "createImageBitmap rejects with InvalidStateError from an canvas with zero dimensions");
 
     promise_test(function() {

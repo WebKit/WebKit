@@ -18,25 +18,25 @@ function createRequestWithDisturbedReadableStream(callback) {
 
 promise_test(function(test) {
     return createRequestWithDisturbedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.blob());
+        return promise_rejects_js(test, TypeError, request.blob());
     });
 }, "Getting blob after reading the Request body");
 
 promise_test(function(test) {
     return createRequestWithDisturbedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.text());
+        return promise_rejects_js(test, TypeError, request.text());
     });
 }, "Getting text after reading the Request body");
 
 promise_test(function(test) {
     return createRequestWithDisturbedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.json());
+        return promise_rejects_js(test, TypeError, request.json());
     });
 }, "Getting json after reading the Request body");
 
 promise_test(function(test) {
     return createRequestWithDisturbedReadableStream(function(request) {
-        return promise_rejects(test, new TypeError(), request.arrayBuffer());
+        return promise_rejects_js(test, TypeError, request.arrayBuffer());
     });
 }, "Getting arrayBuffer after reading the Request body");
 

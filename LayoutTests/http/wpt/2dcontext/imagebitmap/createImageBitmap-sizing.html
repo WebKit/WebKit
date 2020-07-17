@@ -13,11 +13,11 @@
     // The ImageBitmap part of the HTML specification says this should be an InvalidStateError, but
     // the IDL requires an unsigned value, so the TypeError will hit first.
     promise_test(function(t) {
-        return promise_rejects(t, new TypeError, createImageBitmap(new Image(), 0, 0, 10, 10, { resizeWidth: -10, resizeHeight: 10 }));
+        return promise_rejects_js(t, TypeError, createImageBitmap(new Image(), 0, 0, 10, 10, { resizeWidth: -10, resizeHeight: 10 }));
     }, "createImageBitmap rejects with TypeError if resizeWidth is negative");
 
     promise_test(function(t) {
-        return promise_rejects(t, new TypeError, createImageBitmap(new Image(), 0, 0, 10, 10, { resizeWidth: 10, resizeHeight: -10 }));
+        return promise_rejects_js(t, TypeError, createImageBitmap(new Image(), 0, 0, 10, 10, { resizeWidth: 10, resizeHeight: -10 }));
     }, "createImageBitmap rejects with TypeError if resizeHeight is negative");
 
     promise_test(function() {

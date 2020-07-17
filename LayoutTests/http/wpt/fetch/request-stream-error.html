@@ -14,7 +14,7 @@ promise_test(test => {
         controller.close();
     }});
     var request = new Request("", {body: stream, method: "POST"});
-    return promise_rejects(test, new TypeError, request.text());
+    return promise_rejects_js(test, TypeError, request.text());
 }, "Request body should only contain BufferSource chunks");
     </script>
   </body>

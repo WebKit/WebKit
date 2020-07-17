@@ -13,7 +13,7 @@ promise_test(async test => {
     if (!window.testRunner)
         return Promise.reject("Requires internals API");
     testRunner.terminateNetworkProcess();
-    return promise_rejects(test, new TypeError, Promise.all([
+    return promise_rejects_js(test, TypeError, Promise.all([
         cache.put("1Mo1", response1Mo.clone()),
         cache.put("1Mo2", response1Mo.clone()),
         cache.put("1Mo3", response1Mo.clone()),
