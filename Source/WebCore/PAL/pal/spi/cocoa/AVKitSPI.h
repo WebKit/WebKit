@@ -262,7 +262,10 @@ NS_ASSUME_NONNULL_END
 
 #import <AVKit/AVRoutePickerView.h>
 #import <AVKit/AVRoutePickerView_Private.h>
+
+#if __has_include(<AVKit/AVRoutePickerView_WebKitOnly.h>)
 #import <AVKit/AVRoutePickerView_WebKitOnly.h>
+#endif
 
 #else
 
