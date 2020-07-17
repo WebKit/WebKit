@@ -1,3 +1,16 @@
+2020-07-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Cache the PIN to improve NFC user experience
+        https://bugs.webkit.org/show_bug.cgi?id=213900
+        <rdar://problem/60073622>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc-pin-disconnect.html: Added.
+
 2020-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Recommended article titles on csdn.net are clipped after translating to English

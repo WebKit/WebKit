@@ -1,0 +1,34 @@
+<input type="text" id="input">
+<script>
+    const testNfcCtapVersionBase64 = "RklET18yXzCQAA==";
+    const testGetInfoResponseApduBase64 =
+        "AKYBgmZVMkZfVjJoRklET18yXzACgWtobWFjLXNlY3JldANQbUS6m/bsLkm5MAyP" +
+        "6SDLcwSkYnJr9WJ1cPVkcGxhdPRpY2xpZW50UGlu9QUZBLAGgQGQAA==";
+    const testCtapPinAuthInvalidErrorBase64 = "M5AA";
+    const testPinGetRetriesResponseBase64 = "AKEDCJAA";
+    const testPinGetKeyAgreementResponseBase64 = "AKEBpQECAzgYIAEhWCDodiWJbuTkbcAydm6Ah5YvNt+d/otWfzdjAVsZkKYOFCJYICfeYS1mQYvaGVBYHrxcjB2tcQyxTCL4yXBF9GEvsgyRkAA=";
+    const testPinGetPinTokenResponseBase64 = "AKECUBOk7rcOyRrqAB6TFvYeQfeQAA==";
+    const testAssertionMessageBase64 =
+        "AKQBomJpZFDmAkMt8gsltnzy15Zp9MbpZHR5cGVqcHVibGljLWtleQJYJeRTKdA6" +
+        "IGjRyvf3uwrpVOaw5iWXRfMvSCn3UPBQEfnCBQAAAGcDWEcwRQIgGGBmLZRfmUfs" +
+        "uB3H2yBZTnRhBacx68E+XWFgEQ0oayUCIQCrEBEg7t9//lVkK68mSFNGaBUpRhLI" +
+        "8YfFb+82Pzf6SAShYmlkT2JvYkBleGFtcGxlLmNvbZAA"
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, nfc: { payloadBase64: [testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testCtapPinAuthInvalidErrorBase64, testPinGetRetriesResponseBase64, testPinGetKeyAgreementResponseBase64, "", testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testCtapPinAuthInvalidErrorBase64, testPinGetRetriesResponseBase64, testPinGetKeyAgreementResponseBase64, testPinGetPinTokenResponseBase64, testAssertionMessageBase64] } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+        }
+    };
+
+    navigator.credentials.get(options).then(credential => {
+        // console.log("Succeeded!");
+        window.webkit.messageHandlers.testHandler.postMessage("Succeeded!");
+    }, error => {
+        // console.log(error.message);
+        window.webkit.messageHandlers.testHandler.postMessage(error.message);
+    });
+</script>

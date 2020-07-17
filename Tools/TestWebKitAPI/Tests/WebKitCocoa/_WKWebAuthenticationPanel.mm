@@ -1158,6 +1158,25 @@ TEST(WebAuthenticationPanel, GetAssertionPinInvalidErrorAndRetry)
     EXPECT_TRUE(webAuthenticationPanelUpdatePINInvalid);
 }
 
+#if HAVE(NEAR_FIELD)
+TEST(WebAuthenticationPanel, NfcPinCachedDisconnect)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc-pin-disconnect" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    webAuthenticationPanelPin = "1234";
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+}
+#endif // HAVE(NEAR_FIELD)
+
 TEST(WebAuthenticationPanel, MultipleAccountsNullDelegate)
 {
     reset();

@@ -264,6 +264,10 @@ void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& dow
 
 void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus status)
 {
+    // Immediately invalidate the cache if the PIN is incorrect. A status update often means
+    // an error. We don't really care what kind of error it really is.
+    m_pendingRequestData.cachedPin = String();
+
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
         panel.client().updatePanel(status);
     });
@@ -271,8 +275,25 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
 
 void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler)
 {
-    dispatchPanelClientCall([retries, completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.client().requestPin(retries, WTFMove(completionHandler));
+    // Cache the PIN to improve NFC user experience so that a momentary movement of the NFC key away from the scanner doesn't
+    // force the PIN entry to be re-entered.
+    // We don't distinguish USB and NFC here becuase there is no harms to have this optimization for USB even though it is useless.
+    if (!m_pendingRequestData.cachedPin.isNull()) {
+        completionHandler(m_pendingRequestData.cachedPin);
+        m_pendingRequestData.cachedPin = String();
+        return;
+    }
+
+    auto callback = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)] (const WTF::String& pin) mutable {
+        if (!weakThis)
+            return;
+
+        m_pendingRequestData.cachedPin = pin;
+        completionHandler(pin);
+    };
+
+    dispatchPanelClientCall([retries, callback = WTFMove(callback)] (const API::WebAuthenticationPanel& panel) mutable {
+        panel.client().requestPin(retries, WTFMove(callback));
     });
 }
 

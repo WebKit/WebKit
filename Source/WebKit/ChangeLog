@@ -1,3 +1,36 @@
+2020-07-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Cache the PIN to improve NFC user experience
+        https://bugs.webkit.org/show_bug.cgi?id=213900
+        <rdar://problem/60073622>
+
+        Reviewed by Brent Fulgham.
+
+        Cache the PIN to improve NFC user experience. Users might not hold the NFC key against the NFC scanner all the time
+        while entering the PIN. Therefore, we cache the PIN from the previous connection and immediately return the cached PIN to
+        the current connection such that users don't need to enter the PIN again.
+
+        The only downside for this optimization is that a wrong PIN could be used if the user switch to another authenticator for
+        the new connection. Given there is no UUID to identify a particular authenticator, there is nothing we can do to resolve the
+        issue. The probability of the issue, however, should be rare.
+
+        Covered by new API tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::authenticatorStatusUpdated):
+        (WebKit::AuthenticatorManager::requestPin):
+        Where the above logic is implemented.
+
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+        (WebKit::NfcConnection::transact const):
+        Adds a comment.
+
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        Adds a field for the cached PIN.
+
 2020-07-17  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Crash under WebProcess::handleXPCEndpointMessages

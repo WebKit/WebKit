@@ -51,6 +51,7 @@ struct WebAuthenticationRequestData {
     WTF::Optional<WebCore::GlobalFrameIdentifier> frameID;
     WebKit::FrameInfoData frameInfo;
     bool processingUserGesture;
+    String cachedPin; // Only used to improve NFC Client PIN experience.
 };
 
 WebCore::ClientDataType getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
