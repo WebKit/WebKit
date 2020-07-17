@@ -1,3 +1,12 @@
+2020-07-17  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete code for old flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=214492
+
+        Reviewed by Jonathan Bedard.
+
+        * TestResultServer: Removed.
+
 2020-07-17  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Simulators should opt out of emulation
