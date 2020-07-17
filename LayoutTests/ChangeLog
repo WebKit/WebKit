@@ -1,3 +1,13 @@
+2020-07-17  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] imported/w3c/web-platform-tests/cors/remote-origin.htm is passing need to add passing expectation for macOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=214498
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
         Stop using promise_rejects() under LayoutTests/http/wpt

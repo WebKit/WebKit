@@ -1925,3 +1925,5 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
+
+webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
