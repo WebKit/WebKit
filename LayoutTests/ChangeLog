@@ -1,3 +1,17 @@
+2020-07-17  Rob Buis  <rbuis@igalia.com>
+
+        Changing URL.host should not override port
+        https://bugs.webkit.org/show_bug.cgi?id=151613
+
+        Reviewed by Alex Christensen.
+
+        Adjust tests to expect the new behavior.
+
+        * fast/dom/DOMURL/set-href-attribute-host-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-host.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host.html:
+
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Garden imported html failures

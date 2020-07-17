@@ -46,13 +46,13 @@ shouldBe("a.href", "'https://www.otherdomain.com:44/path/'");
 debug("Leading space in port number");
 a.href = "https://www.mydomain.com:8080/path/";
 a.host = "www.otherdomain.com: 443";
-shouldBe("a.href", "'https://www.otherdomain.com:0/path/'");
+shouldBe("a.href", "'https://www.otherdomain.com:8080/path/'");
 
 // Firefox 3.5.2 removed the port, clearly against the spec .
 debug("Colon without port number");
 a.href = "https://www.mydomain.com:8080/path/";
 a.host = "www.otherdomain.com:";
-shouldBe("a.href", "'https://www.otherdomain.com:0/path/'");
+shouldBe("a.href", "'https://www.otherdomain.com:8080/path/'");
 
 debug("Set host to null");
 a.href = "https://www.mydomain.com:8080/path/";

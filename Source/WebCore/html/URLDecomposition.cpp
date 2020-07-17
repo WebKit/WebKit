@@ -116,11 +116,7 @@ void URLDecomposition::setHost(StringView value)
             return;
         unsigned portLength = countASCIIDigits(value.substring(separator + 1));
         if (!portLength) {
-            // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes
-            // specifically goes against RFC 3986 (p3.2) and
-            // requires setting the port to "0" if it is set to empty string.
-            // FIXME: This seems like something that has since been changed and this rule and code may be obsolete.
-            fullURL.setHostAndPort(makeString(value.substring(0, separator + 1), '0'));
+            fullURL.setHost(value.substring(0, separator));
         } else {
             auto portNumber = parseUInt16(value.substring(separator + 1, portLength));
             if (portNumber && WTF::isDefaultPortForProtocol(*portNumber, fullURL.protocol()))

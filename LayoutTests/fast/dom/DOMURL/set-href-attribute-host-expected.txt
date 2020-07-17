@@ -14,9 +14,9 @@ PASS a.href is 'https://www.otherdomain.com/path/'
 Set host with letters in port number
 PASS a.href is 'https://www.otherdomain.com:44/path/'
 Leading space in port number
-PASS a.href is 'https://www.otherdomain.com:0/path/'
+PASS a.href is 'https://www.otherdomain.com:8080/path/'
 Colon without port number
-PASS a.href is 'https://www.otherdomain.com:0/path/'
+PASS a.href is 'https://www.otherdomain.com:8080/path/'
 Set host to null
 PASS a.href is 'https://null:8080/path/'
 Set host to empty string

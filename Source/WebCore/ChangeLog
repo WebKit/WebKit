@@ -1,3 +1,23 @@
+2020-07-17  Rob Buis  <rbuis@igalia.com>
+
+        Changing URL.host should not override port
+        https://bugs.webkit.org/show_bug.cgi?id=151613
+
+        Reviewed by Alex Christensen.
+
+        When setting host, empty/incorrect port strings
+        should not change the existing port [1, 2].
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://url.spec.whatwg.org/#host-state Step 2.4
+        [2] https://url.spec.whatwg.org/#port-state Step 2.2
+
+        Test: imported/w3c/web-platform-tests/url/url-setters.html
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHost):
+
 2020-07-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r264477.
