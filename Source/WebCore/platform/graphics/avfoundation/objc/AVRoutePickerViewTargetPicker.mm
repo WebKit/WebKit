@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AVRoutePickerViewTargetPicker.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
 #import <AVFoundation/AVRouteDetector.h>

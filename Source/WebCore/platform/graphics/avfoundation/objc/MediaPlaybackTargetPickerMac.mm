@@ -73,11 +73,9 @@ AVPlaybackTargetPicker& MediaPlaybackTargetPickerMac::routePicker()
     if (m_routePicker)
         return *m_routePicker;
 
-#if HAVE(AVROUTEPICKERVIEW)
     if (AVRoutePickerViewTargetPicker::isAvailable())
         m_routePicker = makeUnique<AVRoutePickerViewTargetPicker>(*this);
     else
-#endif
         m_routePicker = makeUnique<AVOutputDeviceMenuControllerTargetPicker>(*this);
     
     return *m_routePicker;
