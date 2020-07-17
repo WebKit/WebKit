@@ -1,5 +1,16 @@
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK][WPE] Garden imagebitmap-rendering context failures after r264459
+
+        Unreviewed test gardening.
+
+        GLib ports fail not due to missing OffscreenCanvas, but missing
+        bitmaprender support there, already tracked in another bug.
+
+        * platform/glib/TestExpectations:
+
+2020-07-17  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Remove deprecated baselines after latest WPT css update.
 
         Unreviewed test gardening.

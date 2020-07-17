@@ -292,6 +292,14 @@ webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadow
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.transparent.1.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.transparent.2.html [ DumpJSConsoleLogInStdErr ]
 
+# Tests requiring bitmaprenderer context support in OffscreenCanvas.
+# Might need glib-specific baselines when actually fixed as the root expectations fail with missing OffscreenCanvas support.
+webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/context-creation-offscreen-with-alpha.html [ Failure ]
+webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/context-creation-offscreen.html [ Failure ]
+webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-ToBlob-offscreen.html [ Failure ]
+webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-TransferToImageBitmap-offscreen.html [ Failure ]
+webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-null-offscreen.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
