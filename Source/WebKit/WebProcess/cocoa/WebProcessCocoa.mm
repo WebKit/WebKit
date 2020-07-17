@@ -171,6 +171,8 @@ void WebProcess::handleXPCEndpointMessages() const
 
     auto connection = parentProcessConnection()->xpcConnection();
 
+    xpc_connection_suspend(connection);
+
     xpc_connection_set_target_queue(connection, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
         if (xpc_get_type(event) != XPC_TYPE_DICTIONARY)
@@ -186,6 +188,8 @@ void WebProcess::handleXPCEndpointMessages() const
             return;
         }
     });
+
+    xpc_connection_resume(connection);
 }
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)

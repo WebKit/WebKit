@@ -1,3 +1,17 @@
+2020-07-16  Per Arne Vollan  <pvollan@apple.com>
+
+        XPC connection should be suspended before setting target queue
+        https://bugs.webkit.org/show_bug.cgi?id=214427
+
+        Reviewed by Darin Adler.
+
+        According to system logs, an active XPC connection should be suspended before setting a new target queue.
+
+        No new tests, since there should be no behavior change introduced by this patch.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::handleXPCEndpointMessages const):
+
 2020-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTF] Remove the unnecessary inner class DefaultHash<T>::Hash

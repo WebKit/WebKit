@@ -127,6 +127,7 @@ xpc_connection_t xpc_connection_create_from_endpoint(xpc_endpoint_t);
 xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
 pid_t xpc_connection_get_pid(xpc_connection_t);
 void xpc_connection_resume(xpc_connection_t);
+void xpc_connection_suspend(xpc_connection_t);
 void xpc_connection_send_message(xpc_connection_t, xpc_object_t);
 void xpc_connection_send_message_with_reply(xpc_connection_t, xpc_object_t, dispatch_queue_t, xpc_handler_t);
 void xpc_connection_set_event_handler(xpc_connection_t, xpc_handler_t);
