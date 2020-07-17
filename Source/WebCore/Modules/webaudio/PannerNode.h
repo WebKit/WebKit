@@ -51,7 +51,7 @@ public:
     virtual float dopplerRate() = 0;
 
 protected:
-    
+
     // FIXME: Remove once dependencies on old constructor are removed
     PannerNodeBase(BaseAudioContext&, float sampleRate);
     PannerNodeBase(BaseAudioContext&);
@@ -72,9 +72,9 @@ public:
     {
         return adoptRef(*new PannerNode(context, sampleRate));
     }
-    
+
     static ExceptionOr<Ref<PannerNode>> create(BaseAudioContext&, const PannerOptions& = { });
-    
+
     virtual ~PannerNode();
 
     // AudioNode

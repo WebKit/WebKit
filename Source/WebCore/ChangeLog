@@ -1,3 +1,16 @@
+2020-07-17  Joonghun Park  <jh718.park@samsung.com>
+
+        Remove the build warning below and redundant spaces since r263985.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        No new tests, no new behaviors.
+
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::create):
+        (WebCore::PannerNode::PannerNode):
+        * Modules/webaudio/PannerNode.h:
+
 2020-07-16  Rob Buis  <rbuis@igalia.com>
 
         Make DocumentParser.ParserState an enum class

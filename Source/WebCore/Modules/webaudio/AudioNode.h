@@ -210,10 +210,10 @@ private:
     volatile bool m_isInitialized { false };
     NodeType m_nodeType { NodeTypeUnknown };
     Ref<BaseAudioContext> m_context;
-    
+
     // FIXME: Remove m_sampleRate once old constructor is removed.
     float m_sampleRate;
-    
+
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;
 

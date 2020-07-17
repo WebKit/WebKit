@@ -97,32 +97,32 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
     auto result = panner->setMaxDistance(options.maxDistance);
     if (result.hasException())
         return result.releaseException();
-    
+
     result = panner->setRefDistance(options.refDistance);
     if (result.hasException())
         return result.releaseException();
-    
+
     result = panner->setRolloffFactor(options.rolloffFactor);
     if (result.hasException())
         return result.releaseException();
-    
+
     result = panner->setConeOuterGain(options.coneOuterGain);
     if (result.hasException())
         return result.releaseException();
-    
+
     result = panner->setChannelCount(options.channelCount.valueOr(2));
     if (result.hasException())
         return result.releaseException();
-    
+
     result = panner->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::ClampedMax));
     if (result.hasException())
         return result.releaseException();
-    
+
     result = panner->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
     if (result.hasException())
         return result.releaseException();
-    
-    return WTFMove(panner);
+
+    return panner;
 }
 
 PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
@@ -143,10 +143,10 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     setConeInnerAngle(options.coneInnerAngle);
     setConeOuterAngle(options.coneOuterAngle);
     setNodeType(NodeTypePanner);
-    
+
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 2));
-    
+
     initialize();
 }
 
