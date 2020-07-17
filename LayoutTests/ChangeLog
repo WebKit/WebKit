@@ -1,3 +1,41 @@
+2020-07-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Add a console message: "User gesture is required to use the platform authenticator."
+        https://bugs.webkit.org/show_bug.cgi?id=214380
+        <rdar://problem/65300587>
+
+        Reviewed by Devin Rousso.
+
+        * http/wpt/credential-management/credentialscontainer-store-basics.https-expected.txt:
+        * http/wpt/webauthn/ctap-hid-failure.https-expected.txt:
+        * http/wpt/webauthn/ctap-hid-success.https-expected.txt:
+        * http/wpt/webauthn/ctap-nfc-failure.https-expected.txt:
+        * http/wpt/webauthn/idl.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt:
+
 2020-07-16  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] imported/mozilla/svg/linearGradient-basic-03.svg is passing and expectations need to be removed

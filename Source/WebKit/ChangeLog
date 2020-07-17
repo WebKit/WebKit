@@ -1,3 +1,17 @@
+2020-07-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Add a console message: "User gesture is required to use the platform authenticator."
+        https://bugs.webkit.org/show_bug.cgi?id=214380
+        <rdar://problem/65300587>
+
+        Reviewed by Devin Rousso.
+
+        Covered by existing tests.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+
 2020-07-16  Per Arne Vollan  <pvollan@apple.com>
 
         XPC connection should be suspended before setting target queue
