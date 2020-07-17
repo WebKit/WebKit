@@ -1,3 +1,13 @@
+2020-07-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 14] Some PassKit SPI is now API
+        https://bugs.webkit.org/show_bug.cgi?id=214433
+        <rdar://problem/65695889>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+
 2020-07-16  Eric Carlson  <eric.carlson@apple.com>
 
         Use AVRoutePickerView when available for choosing AirPlay devices

@@ -327,9 +327,15 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @property (nonatomic, strong) NSArray <PKPaymentSetupFeature *> *paymentSetupFeatures;
 @end
 
+#if PLATFORM(MAC) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED < 70000)
+
 @interface PKPaymentMerchantSession : NSObject <NSSecureCoding, NSCopying>
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 @end
+
+#endif
 
 @interface PKPaymentAuthorizationViewController ()
 + (void)paymentServicesMerchantURL:(void(^)(NSURL *merchantURL, NSError *error))completion;
