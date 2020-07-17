@@ -1,3 +1,15 @@
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop a couple of Fetch WPT tests that were dropped upstream
+
+        Those failed to get dropped during the recent resync in r264144.
+
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-expected.txt: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.js: Removed.
+
 2020-07-17  Clark Wang  <clark_wang@apple.com>
 
         Added Fixes for AudioScheduledSourceNode
