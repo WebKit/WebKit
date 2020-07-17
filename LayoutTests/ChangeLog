@@ -1,3 +1,17 @@
+2020-07-17  Clark Wang  <clark_wang@apple.com>
+
+        Added Fixes for AudioScheduledSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=214381
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests.
+
+        * webaudio/oscillator-custom-expected.wav:
+        * webaudio/oscillator-sawtooth-expected.wav:
+        * webaudio/oscillator-square-expected.wav:
+        * webaudio/oscillator-triangle-expected.wav:
+
 2020-07-17  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] ReadPixels updates

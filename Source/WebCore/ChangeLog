@@ -1,3 +1,24 @@
+2020-07-17  Clark Wang  <clark_wang@apple.com>
+
+        Added Fixes for AudioScheduledSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=214381
+
+        Reviewed by Chris Dumez.
+
+        Added in IDL file for AudioScheduledSourceNode, according to spec: https://www.w3.org/TR/webaudio/#AudioScheduledSourceNode
+
+        Re-baselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioScheduledSourceNode.idl: Added.
+        * Modules/webaudio/OscillatorNode.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-07-17  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] ReadPixels updates

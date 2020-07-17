@@ -459,6 +459,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioNodeOptions.idl
     Modules/webaudio/AudioParam.idl
     Modules/webaudio/AudioProcessingEvent.idl
+    Modules/webaudio/AudioScheduledSourceNode.idl
     Modules/webaudio/BaseAudioContext.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/ChannelCountMode.idl

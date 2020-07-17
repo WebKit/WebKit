@@ -2638,6 +2638,7 @@ JSAudioNode.cpp
 JSAudioNodeOptions.cpp
 JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
+JSAudioScheduledSourceNode.cpp
 JSAudioTrack.cpp
 JSAudioTrackList.cpp
 JSAudioTrackMediaSource.cpp

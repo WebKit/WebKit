@@ -15812,6 +15812,7 @@
 		E785D95E24B7F7270014DB21 /* AudioContextLatencyCategory.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioContextLatencyCategory.idl; sourceTree = "<group>"; };
 		E785D95F24B7F7340014DB21 /* AudioContextOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextOptions.h; sourceTree = "<group>"; };
 		E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextLatencyCategory.h; sourceTree = "<group>"; };
+		E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioScheduledSourceNode.idl; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29392,6 +29393,7 @@
 				FD315FD712B0267600C1A359 /* AudioProcessingEvent.idl */,
 				FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */,
 				FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */,
+				E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */,
 				FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */,
 				FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */,
 				83198FBB24A160C100420B05 /* BaseAudioContext.cpp */,
@@ -32659,7 +32661,6 @@
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */,
-				CDC7470424BE2FC700C1868B /* PowerSourceNotifier.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
 				515BE1951D54F5FB00DD7C68 /* PlatformGamepad.h in Headers */,
@@ -32720,6 +32721,7 @@
 				9746AF3214F4DDE6003E7A70 /* PositionOptions.h in Headers */,
 				466172EC23A2AC1F003AB309 /* PostMessageOptions.h in Headers */,
 				46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */,
+				CDC7470424BE2FC700C1868B /* PowerSourceNotifier.h in Headers */,
 				C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */,
 				A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */,
 				A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */,

@@ -26,8 +26,7 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
-    ActiveDOMObject,
-] interface AudioBufferSourceNode : AudioNode {
+] interface AudioBufferSourceNode : AudioScheduledSourceNode {
     attribute AudioBuffer? buffer;
 
     const unsigned short UNSCHEDULED_STATE = 0;
@@ -46,7 +45,4 @@
     attribute unrestricted double loopEnd;
 
     [MayThrowException, ImplementedAs=startLater] void start(optional unrestricted double when = 0, optional unrestricted double grainOffset = 0, optional unrestricted double grainDuration);
-    [MayThrowException, ImplementedAs=stopLater] void stop(optional unrestricted double when = 0);
-
-    attribute EventHandler onended;
 };

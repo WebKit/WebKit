@@ -1,3 +1,14 @@
+2020-07-17  Clark Wang  <clark_wang@apple.com>
+
+        Added Fixes for AudioScheduledSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=214381
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing test for new PASS cases.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+
 2020-07-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT css directory

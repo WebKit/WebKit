@@ -254,15 +254,15 @@ FAIL AudioParam interface: new AudioBufferSourceNode(context).playbackRate must 
 FAIL AudioParam interface: calling cancelScheduledValues(double) on new AudioBufferSourceNode(context).playbackRate with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioBufferSourceNode(context)')"
 FAIL AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "cancelAndHoldAtTime(double)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioBufferSourceNode(context)')"
 FAIL AudioParam interface: calling cancelAndHoldAtTime(double) on new AudioBufferSourceNode(context).playbackRate with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioBufferSourceNode(context)')"
-FAIL AudioScheduledSourceNode interface: existence and properties of interface object assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface object length assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface object name assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface: attribute onended assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface: operation start(optional double) assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
-FAIL AudioScheduledSourceNode interface: operation stop(optional double) assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
+PASS AudioScheduledSourceNode interface: existence and properties of interface object 
+PASS AudioScheduledSourceNode interface object length 
+PASS AudioScheduledSourceNode interface object name 
+PASS AudioScheduledSourceNode interface: existence and properties of interface prototype object 
+PASS AudioScheduledSourceNode interface: existence and properties of interface prototype object's "constructor" property 
+PASS AudioScheduledSourceNode interface: existence and properties of interface prototype object's @@unscopables property 
+PASS AudioScheduledSourceNode interface: attribute onended 
+PASS AudioScheduledSourceNode interface: operation start(optional double) 
+PASS AudioScheduledSourceNode interface: operation stop(optional double) 
 PASS AnalyserNode interface: existence and properties of interface object 
 FAIL AnalyserNode interface object length assert_equals: wrong value for AnalyserNode.length expected 1 but got 0
 PASS AnalyserNode interface object name 
@@ -316,10 +316,10 @@ FAIL AudioNode interface: new AnalyserNode(context) must inherit property "numbe
 FAIL AudioNode interface: new AnalyserNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AnalyserNode(context)')"
 FAIL AudioNode interface: new AnalyserNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AnalyserNode(context)')"
 FAIL AudioNode interface: new AnalyserNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AnalyserNode(context)')"
-FAIL AudioBufferSourceNode interface: existence and properties of interface object assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
+PASS AudioBufferSourceNode interface: existence and properties of interface object 
 FAIL AudioBufferSourceNode interface object length assert_equals: wrong value for AudioBufferSourceNode.length expected 1 but got 0
 PASS AudioBufferSourceNode interface object name 
-FAIL AudioBufferSourceNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
+PASS AudioBufferSourceNode interface: existence and properties of interface prototype object 
 PASS AudioBufferSourceNode interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioBufferSourceNode interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AudioBufferSourceNode interface: attribute buffer 
@@ -857,10 +857,10 @@ FAIL MediaStreamTrackAudioSourceNode interface object name assert_own_property: 
 FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
 FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
 FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
-FAIL OscillatorNode interface: existence and properties of interface object assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
+PASS OscillatorNode interface: existence and properties of interface object 
 FAIL OscillatorNode interface object length assert_equals: wrong value for OscillatorNode.length expected 1 but got 0
 PASS OscillatorNode interface object name 
-FAIL OscillatorNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioScheduledSourceNode" expected property "AudioScheduledSourceNode" missing
+PASS OscillatorNode interface: existence and properties of interface prototype object 
 PASS OscillatorNode interface: existence and properties of interface prototype object's "constructor" property 
 PASS OscillatorNode interface: existence and properties of interface prototype object's @@unscopables property 
 PASS OscillatorNode interface: attribute type 
