@@ -86,7 +86,7 @@ void IntlPluralRules::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-Vector<String> IntlPluralRules::localeData(const String&, size_t)
+Vector<String> IntlPluralRules::localeData(const String&, RelevantExtensionKey)
 {
     return { };
 }
@@ -108,13 +108,13 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    HashMap<String, String> localeOpt;
+    ResolveLocaleOptions localeOptions;
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
     const HashSet<String>& availableLocales = intlPluralRulesAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOpt, nullptr, 0, localeData);
-    m_locale = resolved.get(vm.propertyNames->locale.string());
+    auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
+    m_locale = resolved.locale;
     if (m_locale.isEmpty()) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules due to invalid locale"_s);
         return;

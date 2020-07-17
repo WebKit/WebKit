@@ -41,7 +41,6 @@ namespace JSC {
 const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlNumberFormat) };
 
 namespace IntlNumberFormatInternal {
-constexpr const char* relevantExtensionKeys[1] = { "nu" };
 constexpr bool verbose = false;
 }
 
@@ -89,10 +88,10 @@ void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_boundFormat);
 }
 
-Vector<String> IntlNumberFormat::localeData(const String& locale, size_t keyIndex)
+Vector<String> IntlNumberFormat::localeData(const String& locale, RelevantExtensionKey key)
 {
     // 9.1 Internal slots of Service Constructors & 11.2.3 Internal slots (ECMA-402 2.0)
-    ASSERT_UNUSED(keyIndex, !keyIndex); // The index of the extension key "nu" in relevantExtensionKeys is 0.
+    ASSERT_UNUSED(key, key == RelevantExtensionKey::Nu);
     return numberingSystemsForLocale(locale);
 }
 
@@ -171,7 +170,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    HashMap<String, String> opt;
+    ResolveLocaleOptions localeOptions;
 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
@@ -183,19 +182,19 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
             throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
             return;
         }
-        opt.add("nu"_s, numberingSystem);
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
     }
 
     auto& availableLocales = intlNumberFormatAvailableLocales();
-    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, opt, IntlNumberFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlNumberFormatInternal::relevantExtensionKeys), localeData);
+    auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
 
-    m_locale = result.get("locale"_s);
+    m_locale = resolved.locale;
     if (m_locale.isEmpty()) {
         throwTypeError(globalObject, scope, "failed to initialize NumberFormat due to invalid locale"_s);
         return;
     }
 
-    m_numberingSystem = result.get("nu"_s);
+    m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "decimal"_s, Style::Decimal }, { "percent"_s, Style::Percent }, { "currency"_s, Style::Currency } }, "style must be either \"decimal\", \"percent\", or \"currency\""_s, Style::Decimal);
     RETURN_IF_EXCEPTION(scope, void());
@@ -292,7 +291,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         ASSERT_NOT_REACHED();
     }
 
-    CString dataLocaleWithExtensions = makeString(result.get("dataLocale"_s), "-u-nu-", m_numberingSystem).utf8();
+    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-", m_numberingSystem).utf8();
     dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
 
     UErrorCode status = U_ZERO_ERROR;

@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+enum class RelevantExtensionKey : uint8_t;
+
 class IntlPluralRules final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -62,7 +64,7 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Vector<String> localeData(const String&, size_t);
+    static Vector<String> localeData(const String&, RelevantExtensionKey);
 
     enum class Type : bool { Cardinal, Ordinal };
 

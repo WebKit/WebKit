@@ -62,7 +62,7 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Vector<String> localeData(const String&, size_t);
+    static Vector<String> localeData(const String&, RelevantExtensionKey);
 
     String formatInternal(JSGlobalObject*, double, StringView unit) const;
 

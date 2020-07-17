@@ -37,7 +37,6 @@ namespace JSC {
 const ClassInfo IntlRelativeTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormat) };
 
 namespace IntlRelativeTimeFormatInternal {
-constexpr const char* relevantExtensionKeys[1] = { "nu" };
 }
 
 void IntlRelativeTimeFormat::URelativeDateTimeFormatterDeleter::operator()(URelativeDateTimeFormatter* relativeDateTimeFormatter) const
@@ -83,10 +82,9 @@ void IntlRelativeTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-Vector<String> IntlRelativeTimeFormat::localeData(const String& locale, size_t keyIndex)
+Vector<String> IntlRelativeTimeFormat::localeData(const String& locale, RelevantExtensionKey key)
 {
-    // The index of the extension key "nu" in relevantExtensionKeys is 0.
-    ASSERT_UNUSED(keyIndex, !keyIndex);
+    ASSERT_UNUSED(key, key == RelevantExtensionKey::Nu);
     return numberingSystemsForLocale(locale);
 }
 
@@ -107,7 +105,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    HashMap<String, String> opt;
+    ResolveLocaleOptions localeOptions;
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -118,19 +116,19 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
             throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
             return;
         }
-        opt.add("nu"_s, numberingSystem);
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
     }
 
     const HashSet<String>& availableLocales = intlRelativeTimeFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, opt, IntlRelativeTimeFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlRelativeTimeFormatInternal::relevantExtensionKeys), localeData);
-    m_locale = resolved.get(vm.propertyNames->locale.string());
+    auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
+    m_locale = resolved.locale;
     if (m_locale.isEmpty()) {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat due to invalid locale"_s);
         return;
     }
 
-    m_numberingSystem = resolved.get("nu"_s);
-    CString dataLocaleWithExtensions = makeString(resolved.get("dataLocale"_s), "-u-nu-", m_numberingSystem).utf8();
+    m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
+    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-", m_numberingSystem).utf8();
 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow } }, "style must be either \"long\", \"short\", or \"narrow\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());

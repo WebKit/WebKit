@@ -32,6 +32,7 @@
 namespace JSC {
 
 class JSBoundFunction;
+enum class RelevantExtensionKey : uint8_t;
 
 class IntlNumberFormat final : public JSNonFinalObject {
 public:
@@ -71,7 +72,7 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Vector<String> localeData(const String&, size_t);
+    static Vector<String> localeData(const String&, RelevantExtensionKey);
 
     enum class Style : uint8_t { Decimal, Percent, Currency };
     enum class CurrencyDisplay : uint8_t { Code, Symbol, Name };

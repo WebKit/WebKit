@@ -31,6 +31,8 @@ struct UCollator;
 
 namespace JSC {
 
+enum class RelevantExtensionKey : uint8_t;
+
 class JSBoundFunction;
 
 class IntlCollator final : public JSNonFinalObject {
@@ -67,8 +69,8 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Vector<String> sortLocaleData(const String&, size_t);
-    static Vector<String> searchLocaleData(const String&, size_t);
+    static Vector<String> sortLocaleData(const String&, RelevantExtensionKey);
+    static Vector<String> searchLocaleData(const String&, RelevantExtensionKey);
 
     enum class Usage : uint8_t { Sort, Search };
     enum class Sensitivity : uint8_t { Base, Accent, Case, Variant };

@@ -39,6 +39,23 @@ enum class LocaleMatcher : uint8_t {
     BestFit,
 };
 
+#define JSC_INTL_RELEVANT_EXTENSION_KEYS(macro) \
+    macro(ca, Ca) /* calendar */ \
+    macro(co, Co) /* collation */ \
+    macro(hc, Hc) /* hour-cycle */ \
+    macro(kf, Kf) /* case-first */ \
+    macro(kn, Kn) /* numeric */ \
+    macro(nu, Nu) /* numbering-system */ \
+
+enum class RelevantExtensionKey : uint8_t {
+#define JSC_DECLARE_INTL_RELEVANT_EXTENSION_KEYS(lowerName, capitalizedName) capitalizedName,
+JSC_INTL_RELEVANT_EXTENSION_KEYS(JSC_DECLARE_INTL_RELEVANT_EXTENSION_KEYS)
+#undef JSC_DECLARE_INTL_RELEVANT_EXTENSION_KEYS
+};
+#define JSC_COUNT_INTL_RELEVANT_EXTENSION_KEYS(lowerName, capitalizedName) + 1
+static constexpr uint8_t numberOfRelevantExtensionKeys = 0 JSC_INTL_RELEVANT_EXTENSION_KEYS(JSC_COUNT_INTL_RELEVANT_EXTENSION_KEYS);
+#undef JSC_COUNT_INTL_RELEVANT_EXTENSION_KEYS
+
 class IntlObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -76,7 +93,16 @@ unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigne
 Vector<char, 32> localeIDBufferForLanguageTag(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
-HashMap<String, String> resolveLocale(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t));
+
+using ResolveLocaleOptions = std::array<Optional<String>, numberOfRelevantExtensionKeys>;
+using RelevantExtensions = std::array<String, numberOfRelevantExtensionKeys>;
+struct ResolvedLocale {
+    String locale;
+    String dataLocale;
+    RelevantExtensions extensions;
+};
+
+ResolvedLocale resolveLocale(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const ResolveLocaleOptions&, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey));
 JSValue supportedLocales(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
 String removeUnicodeLocaleExtension(const String& locale);
 String bestAvailableLocale(const HashSet<String>& availableLocales, const String& requestedLocale);

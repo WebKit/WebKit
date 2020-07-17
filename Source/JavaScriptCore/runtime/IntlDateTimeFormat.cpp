@@ -44,10 +44,6 @@ static const double minECMAScriptTime = -8.64E15;
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
 namespace IntlDateTimeFormatInternal {
-constexpr const char* relevantExtensionKeys[3] = { "ca", "hc", "nu" };
-constexpr size_t calendarIndex = 0;
-constexpr size_t hourCycleIndex = 1;
-constexpr size_t numberingSystemIndex = 2;
 }
 
 void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat) const
@@ -163,11 +159,11 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
     return canonical;
 }
 
-Vector<String> IntlDateTimeFormat::localeData(const String& locale, size_t keyIndex)
+Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExtensionKey key)
 {
     Vector<String> keyLocaleData;
-    switch (keyIndex) {
-    case IntlDateTimeFormatInternal::calendarIndex: {
+    switch (key) {
+    case RelevantExtensionKey::Ca: {
         UErrorCode status = U_ZERO_ERROR;
         UEnumeration* calendars = ucal_getKeywordValuesForLocale("calendar", locale.utf8().data(), false, &status);
         ASSERT(U_SUCCESS(status));
@@ -188,7 +184,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, size_t keyIn
         uenum_close(calendars);
         break;
     }
-    case IntlDateTimeFormatInternal::hourCycleIndex:
+    case RelevantExtensionKey::Hc:
         // Null default so we know to use 'j' in pattern.
         keyLocaleData.append(String());
         keyLocaleData.append("h11"_s);
@@ -196,7 +192,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, size_t keyIn
         keyLocaleData.append("h23"_s);
         keyLocaleData.append("h24"_s);
         break;
-    case IntlDateTimeFormatInternal::numberingSystemIndex:
+    case RelevantExtensionKey::Nu:
         keyLocaleData = numberingSystemsForLocale(locale);
         break;
     default:
@@ -419,7 +415,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     JSObject* options = toDateTimeOptionsAnyDate(globalObject, originalOptions);
     RETURN_IF_EXCEPTION(scope, void());
 
-    HashMap<String, String> opt;
+    ResolveLocaleOptions localeOptions;
 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
@@ -431,7 +427,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_s);
             return;
         }
-        opt.add("ca"_s, calendar);
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Ca)] = calendar;
     }
 
     String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, nullptr, nullptr);
@@ -441,7 +437,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
             return;
         }
-        opt.add("nu"_s, numberingSystem);
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
     }
 
     TriState hour12 = intlBooleanOption(globalObject, options, vm.propertyNames->hour12);
@@ -454,20 +450,20 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         // Set hour12 here to simplify hour logic later.
         hour12 = triState(hourCycle == "h11" || hourCycle == "h12");
         if (!hourCycle.isNull())
-            opt.add("hc"_s, hourCycle);
+            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = hourCycle;
     } else
-        opt.add("hc"_s, String());
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String();
 
     const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, opt, IntlDateTimeFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDateTimeFormatInternal::relevantExtensionKeys), localeData);
+    auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Ca, RelevantExtensionKey::Hc, RelevantExtensionKey::Nu }, localeData);
 
-    m_locale = resolved.get(vm.propertyNames->locale.string());
+    m_locale = resolved.locale;
     if (m_locale.isEmpty()) {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat due to invalid locale"_s);
         return;
     }
 
-    m_calendar = resolved.get("ca"_s);
+    m_calendar = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Ca)];
     if (m_calendar == "gregorian")
         m_calendar = "gregory"_s;
     else if (m_calendar == "islamicc")
@@ -475,9 +471,9 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     else if (m_calendar == "ethioaa")
         m_calendar = "ethiopic-amete-alem"_s;
 
-    m_hourCycle = resolved.get("hc"_s);
-    m_numberingSystem = resolved.get("nu"_s);
-    CString dataLocaleWithExtensions = makeString(resolved.get("dataLocale"_s), "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
+    m_hourCycle = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)];
+    m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
+    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
 
     JSValue tzValue = options->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, void());

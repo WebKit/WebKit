@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+enum class RelevantExtensionKey : uint8_t;
+
 class JSBoundFunction;
 
 class IntlDateTimeFormat final : public JSNonFinalObject {
@@ -67,7 +69,7 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Vector<String> localeData(const String&, size_t);
+    static Vector<String> localeData(const String&, RelevantExtensionKey);
 
     enum class Weekday : uint8_t { None, Narrow, Short, Long };
     enum class Era : uint8_t { None, Narrow, Short, Long };
