@@ -1,3 +1,15 @@
+2020-07-17  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Add nullptr checks to WebKit::WebInspectorProxy::platformStartWindowDrag()
+        <https://webkit.org/b/214436>
+        <rdar://problem/59645910>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        - Add nullptr checks.
+
 2020-07-17  Simon Fraser  <simon.fraser@apple.com>
 
         Make ScrollbarControlSize an enum class

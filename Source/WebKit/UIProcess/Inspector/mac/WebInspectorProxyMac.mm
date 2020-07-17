@@ -756,7 +756,10 @@ void WebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
 
 void WebInspectorProxy::platformStartWindowDrag()
 {
-    [m_inspectorViewController webView]->_page->startWindowDrag();
+    if (auto* webView = [m_inspectorViewController webView]) {
+        if (webView->_page)
+            webView->_page->startWindowDrag();
+    }
 }
 
 String WebInspectorProxy::inspectorPageURL()
