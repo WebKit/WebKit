@@ -1,3 +1,14 @@
+2020-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Recommended article titles on csdn.net are clipped after translating to English
+        https://bugs.webkit.org/show_bug.cgi?id=214488
+        <rdar://problem/64531754>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-07-17  Aakash Jain  <aakash_jain@apple.com>
 
         Delete code for old flakiness dashboard

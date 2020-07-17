@@ -2830,6 +2830,65 @@ TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAft
     EXPECT_WK_STREQ("end", items[2].tokens[0].content);
 }
 
+TEST(TextManipulation, CompleteTextManipulationAddsOverflowHiddenToAvoidBreakingLayout)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "  <style>"
+        "    span {"
+        "      display: inline-block;"
+        "      width: 28px;"
+        "      height: 40px;"
+        "      margin: 0;"
+        "      word-break: break-all;"
+        "      font-size: 32px;"
+        "    }"
+        "    a {"
+        "      display: block;"
+        "      width: 100px;"
+        "      height: 100px;"
+        "      overflow: hidden;"
+        "    }"
+        "  </style>"
+        "</head>"
+        "<body>"
+        "  <a>"
+        "    <span>A</span> Hello world"
+        "  </a>"
+        "</body>"
+        "</html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("A", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ(" Hello world", items[1].tokens[0].content);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"This is a long translation" }}).get(),
+        createItem(items[1].identifier, {{ items[1].tokens[0].identifier, @" Foo bar" }}).get()
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("This is a long translation Foo bar", [webView stringByEvaluatingJavaScript:@"document.querySelector('a').textContent.trim()"]);
+    EXPECT_WK_STREQ("hidden", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).overflow"]);
+}
+
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
 {
     auto token = adoptNS([[_WKTextManipulationToken alloc] init]);

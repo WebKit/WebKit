@@ -1,3 +1,38 @@
+2020-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Recommended article titles on csdn.net are clipped after translating to English
+        https://bugs.webkit.org/show_bug.cgi?id=214488
+        <rdar://problem/64531754>
+
+        Reviewed by Tim Horton.
+
+        On csdn.net, the translation of the "荐" pill into English is "Recommended". This increase in the size of the
+        text node after translation breaks the layout of the page by clipping content below the pill, since the page
+        expects the element containing this text to have a fixed width and height.
+
+        Add a heuristic to detect and mitigate this exact scenario by applying `overflow: hidden;` onto containers
+        after translation, in the case where the container:
+
+        1. Did not have any visual overflow before translation.
+        2. Has visual overflow after translation.
+        3. Has both fixed width and fixed height.
+        4. Does not have any overflow clip.
+        5. Is not out-of-flow (i.e. fixed or absolute position).
+
+        While it does mean that the text inside the fixed-dimension container will be clipped, this will at least
+        prevent this overflow from breaking the rest of the page.
+
+        Test: TextManipulation.CompleteTextManipulationAddsOverflowHiddenToAvoidBreakingLayout
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::completeManipulation):
+        (WebCore::TextManipulationController::replace):
+
+        While replacing content, keep track of nodes under which we're inserting content that didn't have any visual
+        overflow prior to replacement.
+
+        * editing/TextManipulationController.h:
+
 2020-07-17  Simon Fraser  <simon.fraser@apple.com>
 
         Make ScrollbarControlSize an enum class

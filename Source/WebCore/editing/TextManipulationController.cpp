@@ -604,6 +604,7 @@ void TextManipulationController::flushPendingItemsForCallback()
 auto TextManipulationController::completeManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>& completionItems) -> Vector<ManipulationFailure>
 {
     Vector<ManipulationFailure> failures;
+    HashSet<Ref<Node>> containersWithoutVisualOverflowBeforeReplacement;
     for (unsigned i = 0; i < completionItems.size(); ++i) {
         auto& itemToComplete = completionItems[i];
         auto identifier = itemToComplete.identifier;
@@ -622,10 +623,30 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
         std::exchange(itemData, itemDataIterator->value);
         m_items.remove(itemDataIterator);
 
-        auto failureOrNullopt = replace(itemData, itemToComplete.tokens);
+        auto failureOrNullopt = replace(itemData, itemToComplete.tokens, containersWithoutVisualOverflowBeforeReplacement);
         if (failureOrNullopt)
             failures.append(ManipulationFailure { identifier, i, *failureOrNullopt });
     }
+
+    if (!containersWithoutVisualOverflowBeforeReplacement.isEmpty()) {
+        if (m_document)
+            m_document->updateLayoutIgnorePendingStylesheets();
+
+        for (auto& container : containersWithoutVisualOverflowBeforeReplacement) {
+            if (!is<StyledElement>(container))
+                continue;
+
+            auto& element = downcast<StyledElement>(container.get());
+            auto* box = element.renderBox();
+            if (!box || !box->hasVisualOverflow())
+                continue;
+
+            auto* style = element.renderStyle();
+            if (style && style->width().isFixed() && style->height().isFixed() && !style->hasOutOfFlowPosition() && !style->hasClip())
+                element.setInlineStyleProperty(CSSPropertyOverflow, CSSValueHidden);
+        }
+    }
+
     return failures;
 }
 
@@ -678,7 +699,7 @@ void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDown
         insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *currentNode });
 }
 
-auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens) -> Optional<ManipulationFailureType>
+auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> Optional<ManipulationFailureType>
 {
     if (item.start.isOrphan() || item.end.isOrphan())
         return ManipulationFailureType::ContentChanged;
@@ -824,11 +845,18 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         node->remove();
 
     for (auto& insertion : insertions) {
+        auto parentContainer = insertion.parentIfDifferentFromCommonAncestor;
         if (!insertion.parentIfDifferentFromCommonAncestor) {
-            insertionPoint.containerNode()->insertBefore(insertion.child, insertionPoint.computeNodeAfterPosition());
+            parentContainer = insertionPoint.containerNode();
+            parentContainer->insertBefore(insertion.child, insertionPoint.computeNodeAfterPosition());
             insertionPoint = positionInParentAfterNode(insertion.child.ptr());
         } else
             insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
+
+        if (auto* box = parentContainer->renderBox()) {
+            if (!box->hasVisualOverflow())
+                containersWithoutVisualOverflowBeforeReplacement.add(*parentContainer);
+        }
 
         if (insertion.isChildManipulated == IsNodeManipulated::Yes)
             m_manipulatedNodes.add(insertion.child.ptr());
