@@ -1,3 +1,18 @@
+2020-07-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Crash under WebProcess::handleXPCEndpointMessages
+        https://bugs.webkit.org/show_bug.cgi?id=214490
+
+        Reviewed by Chris Dumez.
+
+        According to crash logs, it seems possible that the parent process XPC connection can be null. Add a null check,
+        and also check that the connection XPC object really is an XPC connection object.
+
+        No new tests, since I have not been able to reproduce this issue.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::handleXPCEndpointMessages const):
+
 2020-07-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Use MediaOnly user gesture

@@ -171,6 +171,11 @@ void WebProcess::handleXPCEndpointMessages() const
 
     auto connection = parentProcessConnection()->xpcConnection();
 
+    if (!connection)
+        return;
+
+    RELEASE_ASSERT(xpc_get_type(connection) == XPC_TYPE_CONNECTION);
+
     xpc_connection_suspend(connection);
 
     xpc_connection_set_target_queue(connection, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
