@@ -31,6 +31,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TranslatedProcess.h>
 
+#if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/UserMediaProcessManagerAdditions.cpp>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -99,8 +103,12 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         extensionCount++;
 
     bool needsAppleCameraSandboxExtension = needsVideoSandboxExtension && needsAppleCameraService();
-    if (needsAppleCameraSandboxExtension)
+    if (needsAppleCameraSandboxExtension) {
         extensionCount++;
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+        extensionCount++;
+#endif
+    }
 
     if (extensionCount) {
         SandboxExtension::HandleArray handles;
@@ -116,8 +124,14 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             if (needsVideoSandboxExtension && SandboxExtension::createHandleForGenericExtension(videoExtensionPath, handles[--extensionCount]))
                 ids.uncheckedAppend(videoExtensionPath);
 
-            if (needsAppleCameraSandboxExtension && SandboxExtension::createHandleForMachLookup(appleCameraServicePath, WTF::nullopt, handles[--extensionCount]))
-                ids.uncheckedAppend(appleCameraServicePath);
+            if (needsAppleCameraSandboxExtension) {
+                if (SandboxExtension::createHandleForMachLookup(appleCameraServicePath, WTF::nullopt, handles[--extensionCount]))
+                    ids.uncheckedAppend(appleCameraServicePath);
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+                if (SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, WTF::nullopt, handles[--extensionCount]))
+                    ids.uncheckedAppend(additionalAppleCameraServicePath);
+#endif
+            }
 
             if (ids.size() != handles.size()) {
                 WTFLogAlways("Could not create a required sandbox extension, capture will fail!");
@@ -173,8 +187,12 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
     }
     if (!hasVideoCapture && process.hasVideoCaptureExtension()) {
         params.append(videoExtensionPath);
-        if (needsAppleCameraService())
+        if (needsAppleCameraService()) {
             params.append(appleCameraServicePath);
+#if USE(APPLE_INTERNAL_SDK) && HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+            params.append(additionalAppleCameraServicePath);
+#endif
+        }
         process.revokeVideoCaptureExtension();
     }
 

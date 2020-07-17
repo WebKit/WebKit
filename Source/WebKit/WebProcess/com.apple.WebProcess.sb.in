@@ -1169,3 +1169,7 @@
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
 #endif
 )
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
+#endif
