@@ -1,3 +1,33 @@
+2020-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        Add WebKitPrivateFrameworkStubs for iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=214432
+        <rdar://problem/65695714>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/iOS/14: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/CorePrediction.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/DeviceIdentity.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/DeviceIdentity.framework/DeviceIdentity.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/IOSurfaceAccelerator.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/RunningBoardServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/SafariSafeBrowsing.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/URLFormatting.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/14/URLFormatting.framework/URLFormatting.tbd: Added.
+
 2020-07-14  Jonathan Bedard  <jbedard@apple.com>
 
         [watchOS] Support armv7k build

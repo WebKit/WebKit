@@ -1,0 +1,30 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+  - i386
+  - x86_64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+      - i386
+      - x86_64
+    symbols:
+      - _DeviceIdentityIssueClientCertificateWithCompletion
+      - _kMAOptionsBAAAccessControls
+      - _kMAOptionsBAAIgnoreExistingKeychainItems
+      - _kMAOptionsBAAKeychainAccessGroup
+      - _kMAOptionsBAAKeychainLabel
+      - _kMAOptionsBAANonce
+      - _kMAOptionsBAAOIDNonce
+      - _kMAOptionsBAAOIDSToInclude
+      - _kMAOptionsBAASCRTAttestation
+      - _kMAOptionsBAAValidity
+install-name: /System/Library/PrivateFrameworks/DeviceIdentity.framework/DeviceIdentity
+objc-constraint: none
+platform: ios
+...
