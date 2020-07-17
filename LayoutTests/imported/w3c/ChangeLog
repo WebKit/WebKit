@@ -1,5 +1,85 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/background-fetch from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214495
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/background-fetch from upstream 81de986322a0de90f2.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/background-fetch/META.yml: Added.
+        * web-platform-tests/background-fetch/OWNERS: Removed.
+        * web-platform-tests/background-fetch/abort.https.window.html: Added.
+        * web-platform-tests/background-fetch/abort.https.window.js: Added.
+        (backgroundFetchTest.async test):
+        (backgroundFetch.await.new.Promise.resolve.registration.onprogress.async event):
+        * web-platform-tests/background-fetch/content-security-policy.https.window.html: Added.
+        * web-platform-tests/background-fetch/content-security-policy.https.window.js:
+        (backgroundFetchTest):
+        * web-platform-tests/background-fetch/credentials-in-url.https.window.js: Removed.
+        * web-platform-tests/background-fetch/dangling-markup.https.window.js: Removed.
+        * web-platform-tests/background-fetch/fetch-uploads.https.window.html: Added.
+        * web-platform-tests/background-fetch/fetch-uploads.https.window.js: Added.
+        (backgroundFetchTest.async test):
+        * web-platform-tests/background-fetch/fetch.https.window.html: Added.
+        * web-platform-tests/background-fetch/fetch.https.window.js: Added.
+        (promise_test.async test):
+        (backgroundFetchTest.async test):
+        * web-platform-tests/background-fetch/get-ids.https.window.html: Added.
+        * web-platform-tests/background-fetch/get-ids.https.window.js: Added.
+        (promise_test.async test):
+        (backgroundFetchTest.async test):
+        * web-platform-tests/background-fetch/get.https.window.html: Added.
+        * web-platform-tests/background-fetch/get.https.window.js: Added.
+        (promise_test.async test):
+        (backgroundFetchTest.async test):
+        * web-platform-tests/background-fetch/idlharness.https.any.html: Added.
+        * web-platform-tests/background-fetch/idlharness.https.any.js: Added.
+        * web-platform-tests/background-fetch/idlharness.https.any.worker.html: Added.
+        * web-platform-tests/background-fetch/interfaces-worker.https-expected.txt: Removed.
+        * web-platform-tests/background-fetch/interfaces-worker.https.html: Removed.
+        * web-platform-tests/background-fetch/interfaces.html: Removed.
+        * web-platform-tests/background-fetch/interfaces.worker.js: Removed.
+        * web-platform-tests/background-fetch/match.https.window.html: Added.
+        * web-platform-tests/background-fetch/match.https.window.js: Added.
+        (backgroundFetchTest.async test):
+        * web-platform-tests/background-fetch/mixed-content-and-allowed-schemes.https.window.html: Added.
+        * web-platform-tests/background-fetch/mixed-content-and-allowed-schemes.https.window.js:
+        (backgroundFetchTest):
+        * web-platform-tests/background-fetch/port-blocking.https.window.html: Added.
+        * web-platform-tests/background-fetch/port-blocking.https.window.js:
+        (backgroundFetchTest):
+        * web-platform-tests/background-fetch/resources/feature-name.txt: Added.
+        * web-platform-tests/background-fetch/resources/sw.js: Removed.
+        * web-platform-tests/background-fetch/resources/upload.py: Added.
+        (main):
+        * web-platform-tests/background-fetch/resources/utils.js:
+        (async getMessageFromServiceWorker.return.new.Promise):
+        (async getMessageFromServiceWorker):
+        (async registerAndActivateServiceWorker):
+        (backgroundFetchTest):
+        (async uniqueId):
+        * web-platform-tests/background-fetch/resources/w3c-import.log:
+        * web-platform-tests/background-fetch/service_workers/sw-abort.js: Added.
+        (async getFetchResult):
+        * web-platform-tests/background-fetch/service_workers/sw-helpers.js: Added.
+        (sendMessageToDocument):
+        (cloneRegistration.deepCopy):
+        (cloneRegistration):
+        * web-platform-tests/background-fetch/service_workers/sw-update-ui.js: Added.
+        (async updateUI):
+        * web-platform-tests/background-fetch/service_workers/sw.js: Added.
+        (async getFetchResult):
+        (handleBackgroundFetchEvent.switch.async bind):
+        * web-platform-tests/background-fetch/service_workers/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/background-fetch/resources/w3c-import.log.
+        * web-platform-tests/background-fetch/update-ui.https.window.html: Added.
+        * web-platform-tests/background-fetch/update-ui.https.window.js: Added.
+        (backgroundFetchTest.async test):
+        * web-platform-tests/background-fetch/w3c-import.log:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop a couple of Fetch WPT tests that were dropped upstream
 
         Those failed to get dropped during the recent resync in r264144.

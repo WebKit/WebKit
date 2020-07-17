@@ -1,7 +1,0 @@
-idlharness test
-
-This test validates the WebIDL included in the Background Fetch API (Service Workers).
-
-
-FAIL Service Worker-scoped tests. assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
-

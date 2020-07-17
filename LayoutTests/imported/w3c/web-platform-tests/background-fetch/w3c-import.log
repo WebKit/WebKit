@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,12 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/abort.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/content-security-policy.https.window.js
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/credentials-in-url.https.window.js
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/dangling-markup.https.window.js
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces.html
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/fetch-uploads.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/fetch.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/get-ids.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/get.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/match.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/mixed-content-and-allowed-schemes.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/background-fetch/update-ui.https.window.js

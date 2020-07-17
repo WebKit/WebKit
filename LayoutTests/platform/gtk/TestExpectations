@@ -970,8 +970,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/175419 [ Release ] http/tests/workers/service/postmessage-after-terminate.https.html [ Pass Failure Timeout ]
 
 # FIXME: This can't be the right bug number.
-webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
 
 # GTK ought to support async clipboard

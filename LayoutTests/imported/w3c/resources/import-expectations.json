@@ -50,6 +50,7 @@
     "web-platform-tests/assumptions": "skip", 
     "web-platform-tests/audio-output": "skip", 
     "web-platform-tests/auxclick": "skip", 
+    "web-platform-tests/background-fetch": "import", 
     "web-platform-tests/battery-status": "skip", 
     "web-platform-tests/beacon": "import", 
     "web-platform-tests/bluetooth": "skip", 
