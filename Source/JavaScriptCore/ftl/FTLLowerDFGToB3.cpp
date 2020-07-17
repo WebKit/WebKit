@@ -1364,8 +1364,8 @@ private:
         case IsEmpty:
             compileIsEmpty();
             break;
-        case IsUndefined:
-            compileIsUndefined();
+        case TypeOfIsUndefined:
+            compileTypeOfIsUndefined();
             break;
         case IsUndefinedOrNull:
             compileIsUndefinedOrNull();
@@ -10998,7 +10998,7 @@ private:
         setBoolean(m_out.isZero64(lowJSValue(m_node->child1())));
     }
     
-    void compileIsUndefined()
+    void compileTypeOfIsUndefined()
     {
         setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
     }

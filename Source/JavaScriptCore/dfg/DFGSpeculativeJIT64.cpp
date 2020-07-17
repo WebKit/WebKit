@@ -4242,7 +4242,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case IsUndefined: {
+    case TypeOfIsUndefined: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this);
         GPRTemporary localGlobalObject(this);

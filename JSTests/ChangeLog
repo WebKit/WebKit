@@ -1,3 +1,16 @@
+2020-07-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        emitIsUndefined() should not special-case [[IsHTMLDDA]] objects
+        https://bugs.webkit.org/show_bug.cgi?id=214443
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/default-value-destructuring-array.js: Added.
+        * microbenchmarks/default-value-destructuring-object.js: Added.
+        * microbenchmarks/default-value-function-parameters.js: Added.
+        * stress/default-value-masquerader.js: Added.
+        * test262/expectations.yaml: Mark 10 test cases as passing.
+
 2020-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use unvalidatedGet instead of get to access UnlinkedCodeBlock from CodeBlock destructor

@@ -1681,7 +1681,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             const String& value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
             if (value == "undefined") {
                 rewind();
-                OpIsUndefined::emit(this, dst, op.m_value);
+                OpTypeofIsUndefined::emit(this, dst, op.m_value);
                 return true;
             }
             if (value == "boolean") {
@@ -4421,12 +4421,6 @@ RegisterID* BytecodeGenerator::emitIsConstructor(RegisterID* dst, RegisterID* sr
 RegisterID* BytecodeGenerator::emitIsNumber(RegisterID* dst, RegisterID* src)
 {
     OpIsNumber::emit(this, dst, src);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitIsUndefined(RegisterID* dst, RegisterID* src)
-{
-    OpIsUndefined::emit(this, dst, src);
     return dst;
 }
 

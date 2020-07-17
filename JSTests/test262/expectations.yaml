@@ -295,12 +295,6 @@ test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-skip-earl
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/expressions/assignment/dstr/array-pattern-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/annexB/language/expressions/assignment/dstr/object-pattern-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
 test/annexB/language/function-code/block-decl-func-skip-early-err-block.js:
@@ -609,15 +603,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/statements/const/dstr/array-pattern-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/annexB/language/statements/const/dstr/object-pattern-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'

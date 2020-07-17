@@ -143,7 +143,7 @@ bool doesGC(Graph& graph, Node* node)
     case ProfileControlFlow:
     case OverridesHasInstance:
     case IsEmpty:
-    case IsUndefined:
+    case TypeOfIsUndefined:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:

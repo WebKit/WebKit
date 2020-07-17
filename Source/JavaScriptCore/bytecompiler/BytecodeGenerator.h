@@ -929,7 +929,8 @@ namespace JSC {
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsConstructor(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsNumber(RegisterID* dst, RegisterID* src);
-        RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src);
+        RegisterID* emitIsNull(RegisterID* dst, RegisterID* src) { return emitEqualityOp<OpStricteq>(dst, src, emitLoad(nullptr, jsNull())); }
+        RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src) { return emitEqualityOp<OpStricteq>(dst, src, emitLoad(nullptr, jsUndefined())); }
         RegisterID* emitIsUndefinedOrNull(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }

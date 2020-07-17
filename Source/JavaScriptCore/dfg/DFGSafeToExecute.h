@@ -256,7 +256,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ParseInt:
     case OverridesHasInstance:
     case IsEmpty:
-    case IsUndefined:
+    case TypeOfIsUndefined:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:

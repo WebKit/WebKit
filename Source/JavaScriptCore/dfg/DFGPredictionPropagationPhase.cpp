@@ -1031,7 +1031,7 @@ private:
         case InstanceOf:
         case InstanceOfCustom:
         case IsEmpty:
-        case IsUndefined:
+        case TypeOfIsUndefined:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:

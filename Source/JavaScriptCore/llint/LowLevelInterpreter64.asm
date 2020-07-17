@@ -1301,7 +1301,7 @@ llintOpWithReturn(op_is_empty, OpIsEmpty, macro (size, get, dispatch, return)
 end)
 
 
-llintOpWithReturn(op_is_undefined, OpIsUndefined, macro (size, get, dispatch, return)
+llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
     btqz t0, notCellMask, .opIsUndefinedCell

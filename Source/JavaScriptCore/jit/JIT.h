@@ -535,7 +535,7 @@ namespace JSC {
         void emit_op_instanceof(const Instruction*);
         void emit_op_instanceof_custom(const Instruction*);
         void emit_op_is_empty(const Instruction*);
-        void emit_op_is_undefined(const Instruction*);
+        void emit_op_typeof_is_undefined(const Instruction*);
         void emit_op_is_undefined_or_null(const Instruction*);
         void emit_op_is_boolean(const Instruction*);
         void emit_op_is_number(const Instruction*);

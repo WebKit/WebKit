@@ -143,7 +143,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_instanceof:
     case op_instanceof_custom:
     case op_is_empty:
-    case op_is_undefined:
+    case op_typeof_is_undefined:
     case op_is_undefined_or_null:
     case op_is_boolean:
     case op_is_number:

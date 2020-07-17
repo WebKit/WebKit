@@ -1,3 +1,83 @@
+2020-07-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        emitIsUndefined() should not special-case [[IsHTMLDDA]] objects
+        https://bugs.webkit.org/show_bug.cgi?id=214443
+
+        Reviewed by Yusuke Suzuki.
+
+        According to Annex B [1], there is only a handful of language constructs
+        that handle [[IsHTMLDDA]] objects: ToBoolean, abstract equality with `null`
+        or `undefined`, and `typeof`. Currently, op_is_undefined does special-case
+        masquarader objects, even though it is used beyond `typeof`.
+
+        With this change, emitIsUndefined() produces `=== undefined`, which meets
+        developer expectations and the spec for all its usages, while op_is_undefined
+        is renamed to op_typeof_is_undefined. New name offers better semantics and
+        clearly communicates the op should be avoided when implementing new features.
+
+        Apart from fixing default values with [[IsHTMLDDA]] objects [2], this change
+        brings significant speed-up: +50% for function parameters and +20% for
+        object destructuring (masqueradesAsUndefinedWatchpoint is not fired).
+
+        This patch also introduces similar emitIsNull() method to avoid breaking
+        masquarader object as superclass test262 case.
+
+        [1]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+        [2]: https://tc39.es/ecma262/#sec-runtime-semantics-keyedbindinginitialization (step 2)
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOpImpl):
+        (JSC::BytecodeGenerator::emitIsUndefined): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsNull):
+        (JSC::BytecodeGenerator::emitIsUndefined):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTypeOfIsUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsUndefined): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_typeof_is_undefined):
+        (JSC::JIT::emit_op_is_undefined): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_typeof_is_undefined):
+        (JSC::JIT::emit_op_is_undefined): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2020-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up Intl option parsing code by introducing intlOption<>

@@ -71,7 +71,7 @@ private:
     void handle()
     {
         switch (m_node->op()) {
-        case IsUndefined:
+        case TypeOfIsUndefined:
             handleMasqueradesAsUndefined();
             break;
             

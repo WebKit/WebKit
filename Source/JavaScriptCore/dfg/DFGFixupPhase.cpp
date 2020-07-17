@@ -2713,7 +2713,7 @@ private:
         case NewRegexp:
         case IsTypedArrayView:
         case IsEmpty:
-        case IsUndefined:
+        case TypeOfIsUndefined:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:

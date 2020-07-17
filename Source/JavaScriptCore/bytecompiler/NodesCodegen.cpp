@@ -3962,7 +3962,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLabel(loopStart.get());
         generator.emitLoopHint();
 
-        RefPtr<RegisterID> result = generator.emitUnaryOp<OpEqNull>(generator.newTemporary(), propertyName.get());
+        RefPtr<RegisterID> result = generator.emitIsNull(generator.newTemporary(), propertyName.get());
         generator.emitJumpIfTrue(result.get(), loopEnd.get());
         generator.emitHasStructureProperty(result.get(), base.get(), propertyName.get(), enumerator.get());
         generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
@@ -4003,7 +4003,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLabel(loopStart.get());
         generator.emitLoopHint();
 
-        RefPtr<RegisterID> result = generator.emitUnaryOp<OpEqNull>(generator.newTemporary(), propertyName.get());
+        RefPtr<RegisterID> result = generator.emitIsNull(generator.newTemporary(), propertyName.get());
         generator.emitJumpIfTrue(result.get(), loopEnd.get());
 
         generator.emitHasGenericProperty(result.get(), base.get(), propertyName.get());
@@ -4896,7 +4896,7 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitJumpIfTrue(generator.emitIsUndefined(tempRegister.get(), superclass.get()), superclassIsUndefinedLabel.get());
 
         Ref<Label> superclassIsNullLabel = generator.newLabel();
-        generator.emitJumpIfTrue(generator.emitUnaryOp<OpEqNull>(tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
+        generator.emitJumpIfTrue(generator.emitIsNull(tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
 
         Ref<Label> superclassIsConstructorLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitIsConstructor(tempRegister.get(), superclass.get()), superclassIsConstructorLabel.get());

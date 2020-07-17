@@ -224,7 +224,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareStrictEq:
     case SameValue:
     case IsEmpty:
-    case IsUndefined:
+    case TypeOfIsUndefined:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:

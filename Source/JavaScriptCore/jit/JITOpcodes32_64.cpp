@@ -227,9 +227,9 @@ void JIT::emit_op_is_empty(const Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
-void JIT::emit_op_is_undefined(const Instruction* currentInstruction)
+void JIT::emit_op_typeof_is_undefined(const Instruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpIsUndefined>();
+    auto bytecode = currentInstruction->as<OpTypeofIsUndefined>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister value = bytecode.m_operand;
     
