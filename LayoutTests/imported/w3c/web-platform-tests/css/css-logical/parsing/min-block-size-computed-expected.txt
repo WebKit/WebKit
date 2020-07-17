@@ -1,0 +1,11 @@
+
+PASS Property min-block-size value 'auto' 
+PASS Property min-block-size value '10px' 
+PASS Property min-block-size value '20%' 
+PASS Property min-block-size value 'calc(10px + 0.5em)' 
+PASS Property min-block-size value 'calc(10px - 0.5em)' 
+PASS Property min-block-size value 'calc(20% + 10px)' 
+PASS Property min-block-size value 'min-content' 
+PASS Property min-block-size value 'max-content' 
+PASS min-block-size auto computes to auto with flex layout. 
+

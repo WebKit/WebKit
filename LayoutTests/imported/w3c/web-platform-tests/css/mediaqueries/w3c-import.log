@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-002-expected.xht
@@ -23,6 +23,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-002-expected.xht
@@ -35,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/forced-colors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-003.xht
@@ -52,6 +58,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-deprecated-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-deprecated-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-002-expected.xht
@@ -60,6 +82,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-negative-range-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-negative-range-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-range-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-range-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/navigation-controls.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-reduced-data.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-reduced-motion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-002-expected.xht

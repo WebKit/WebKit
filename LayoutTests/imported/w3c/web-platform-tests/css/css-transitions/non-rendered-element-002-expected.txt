@@ -2,5 +2,4 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Transitions on ::before/::after pseudo-elements are canceled when the content property is cleared Test timed out
-NOTRUN Transitions on ::marker pseudo-elements are canceled when the parent display type is no longer list-item 
 

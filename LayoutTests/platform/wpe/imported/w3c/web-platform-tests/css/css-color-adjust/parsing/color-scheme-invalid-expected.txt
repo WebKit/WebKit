@@ -1,0 +1,13 @@
+
+PASS e.style['color-scheme'] = "only normal" should not set the property value 
+PASS e.style['color-scheme'] = "normal dark" should not set the property value 
+PASS e.style['color-scheme'] = "normal purple" should not set the property value 
+PASS e.style['color-scheme'] = "light normal" should not set the property value 
+PASS e.style['color-scheme'] = "light, dark" should not set the property value 
+PASS e.style['color-scheme'] = "light inherit" should not set the property value 
+PASS e.style['color-scheme'] = "light initial" should not set the property value 
+PASS e.style['color-scheme'] = "light unset" should not set the property value 
+PASS e.style['color-scheme'] = "light revert" should not set the property value 
+PASS e.style['color-scheme'] = "default" should not set the property value 
+PASS e.style['color-scheme'] = "light default" should not set the property value 
+

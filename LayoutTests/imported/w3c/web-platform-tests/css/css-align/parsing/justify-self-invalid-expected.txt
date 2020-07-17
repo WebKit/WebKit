@@ -1,0 +1,19 @@
+
+PASS e.style['justify-self'] = "baseline last" should not set the property value 
+PASS e.style['justify-self'] = "center baseline" should not set the property value 
+PASS e.style['justify-self'] = "first" should not set the property value 
+PASS e.style['justify-self'] = "flex-start flex-end" should not set the property value 
+PASS e.style['justify-self'] = "last" should not set the property value 
+PASS e.style['justify-self'] = "legacy center" should not set the property value 
+PASS e.style['justify-self'] = "legacy left" should not set the property value 
+PASS e.style['justify-self'] = "legacy" should not set the property value 
+PASS e.style['justify-self'] = "normal baseline" should not set the property value 
+PASS e.style['justify-self'] = "right legacy" should not set the property value 
+PASS e.style['justify-self'] = "safe" should not set the property value 
+PASS e.style['justify-self'] = "self-end unsafe" should not set the property value 
+PASS e.style['justify-self'] = "space-around" should not set the property value 
+PASS e.style['justify-self'] = "space-between" should not set the property value 
+PASS e.style['justify-self'] = "space-evenly" should not set the property value 
+PASS e.style['justify-self'] = "start safe" should not set the property value 
+PASS e.style['justify-self'] = "unsafe" should not set the property value 
+

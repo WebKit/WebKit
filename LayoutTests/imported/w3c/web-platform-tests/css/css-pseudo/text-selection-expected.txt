@@ -1,0 +1,11 @@
+helloworld
+helloworld
+helloworld
+
+FAIL Selection ending in ::before assert_equals: toString expected "hello" but got ""
+PASS Selection contained in ::before 
+FAIL Selection ending in ::marker assert_equals: toString expected "hello" but got ""
+PASS Selection contained in ::marker 
+FAIL Selection ending in ::before-marker assert_equals: toString expected "hello" but got ""
+PASS Selection contained in ::before-marker 
+

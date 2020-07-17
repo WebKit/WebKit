@@ -1,0 +1,4 @@
+
+FAIL Test that 'resize: block' is supported. assert_equals: logical values in inline style, resize expected "block" but got ""
+FAIL Test that 'resize: inline' is supported. assert_equals: logical values in inline style, resize expected "inline" but got ""
+

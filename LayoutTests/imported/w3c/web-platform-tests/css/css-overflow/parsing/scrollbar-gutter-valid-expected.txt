@@ -1,0 +1,13 @@
+
+FAIL e.style['scrollbar-gutter'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "stable" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "stable both" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "stable force" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "stable both force" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "always" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "always both" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "always force" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "always both force" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "force both stable" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-gutter'] = "force always both" should set the property value assert_not_equals: property should be set got disallowed value ""
+

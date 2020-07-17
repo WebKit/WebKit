@@ -1,11 +1,31 @@
 
 PASS Initial value for <length> correctly computed [calc(10px + 15px)] 
+PASS Initial value for <length> correctly computed [1in] 
+PASS Initial value for <length> correctly computed [2.54cm] 
+PASS Initial value for <length> correctly computed [25.4mm] 
+PASS Initial value for <length> correctly computed [6pc] 
+PASS Initial value for <length> correctly computed [72pt] 
+FAIL Initial value for <percentage> correctly computed [calc(10% + 20%)] The given initial value does not parse for the given syntax.
 FAIL Initial value for <length-percentage> correctly computed [calc(1in + 10% + 4px)] The given initial value does not parse for the given syntax.
 FAIL Initial value for <color> correctly computed [pink, inherits] The given initial value does not parse for the given syntax.
 FAIL Initial value for <color> correctly computed [purple] The given initial value does not parse for the given syntax.
 FAIL Initial value for <transform-function> correctly computed [rotate(42deg)] The given initial value does not parse for the given syntax.
 FAIL Initial value for <transform-list> correctly computed [scale(calc(2 + 2))] The given initial value does not parse for the given syntax.
 FAIL Initial value for <transform-list> correctly computed [scale(calc(2 + 1)) translateX(calc(3px + 1px))] The given initial value does not parse for the given syntax.
+FAIL Initial value for <url> correctly computed [url(a)] The given initial value does not parse for the given syntax.
+FAIL Initial value for <url>+ correctly computed [url(a) url(a)] The given initial value does not parse for the given syntax.
 FAIL Initial inherited value can be substituted [purple, color] The given initial value does not parse for the given syntax.
 FAIL Initial non-inherited value can be substituted [pink, background-color] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	foo	, --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	1turn, --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [ pink , --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	test, --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [calc(20 + 20 + 10), --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	calc(13% + 37px), --x] The given initial value does not parse for the given syntax.
+PASS Initial non-inherited value can be substituted [calc(10px + 15px), --x] 
+FAIL Initial non-inherited value can be substituted [calc(13 + 37), --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [calc(13% + 37%), --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [2000ms, --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [scale(calc(2 + 2)), --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [scale(calc(2 + 2)) translateX(calc(3px + 1px)), --x] The given initial value does not parse for the given syntax.
 

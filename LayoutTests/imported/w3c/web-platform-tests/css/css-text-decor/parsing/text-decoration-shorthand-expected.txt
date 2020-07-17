@@ -1,6 +1,7 @@
 
-FAIL e.style['text-decoration'] = "overline dotted green" should set text-decoration-color assert_equals: text-decoration-color should be canonical expected "green" but got ""
-FAIL e.style['text-decoration'] = "overline dotted green" should set text-decoration-line assert_equals: text-decoration-line should be canonical expected "overline" but got ""
-FAIL e.style['text-decoration'] = "overline dotted green" should set text-decoration-style assert_equals: text-decoration-style should be canonical expected "dotted" but got ""
-FAIL e.style['text-decoration'] = "overline dotted green" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-color assert_equals: text-decoration-color should be canonical expected "green" but got ""
+FAIL e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-line assert_equals: text-decoration-line should be canonical expected "overline" but got ""
+FAIL e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-style assert_equals: text-decoration-style should be canonical expected "dotted" but got ""
+FAIL e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-thickness assert_equals: text-decoration-thickness should be canonical expected "from-font" but got ""
+FAIL e.style['text-decoration'] = "overline from-font dotted green" should not set unrelated longhands assert_true: expected true got false
 

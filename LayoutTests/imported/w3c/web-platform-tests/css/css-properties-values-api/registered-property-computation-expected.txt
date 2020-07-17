@@ -8,6 +8,11 @@ PASS <length> values are computed correctly [13vw]
 PASS <length> values are computed correctly [14em] 
 PASS <length> values are computed correctly [15vmin] 
 PASS <length> values are computed correctly [calc(16px - 7em + 10vh)] 
+PASS <length> values are computed correctly [1in] 
+PASS <length> values are computed correctly [2.54cm] 
+PASS <length> values are computed correctly [25.4mm] 
+PASS <length> values are computed correctly [6pc] 
+PASS <length> values are computed correctly [72pt] 
 PASS <length-percentage> values are computed correctly [17em] 
 FAIL <length-percentage> values are computed correctly [18%] assert_equals: expected "18%" but got "0px"
 FAIL <length-percentage> values are computed correctly [calc(19em - 2%)] assert_equals: expected "calc(-2% + 190px)" but got "0px"

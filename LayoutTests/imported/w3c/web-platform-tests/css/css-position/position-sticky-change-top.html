@@ -7,6 +7,7 @@
 <meta name="assert" content="This test checks that sticky elements are invalidated correctly when top/left/bottom/right change "/>
 
 <script src="/common/reftest-wait.js"></script>
+<script src="resources/ref-rectangle.js"></script>
 
 <!--
   It is important for this test that the sticky element is viewport-bound, and
@@ -23,7 +24,7 @@
 
 .sticky {
   /* Triggers promotion without creating stacking context. */
-  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   background: green;
   position: sticky;
   top: 0;
@@ -44,6 +45,7 @@
 requestAnimationFrame(() => {
   requestAnimationFrame(() => {
     document.querySelector('.sticky').style.setProperty('top', '200px');
+    createIndicatorForStickyElements(document.querySelectorAll('.sticky'));
     takeScreenshot();
   });
 });

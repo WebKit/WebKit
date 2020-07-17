@@ -1,0 +1,14 @@
+
+FAIL e.style['inset-block'] = "10px" should set inset-block-end assert_equals: inset-block-end should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['inset-block'] = "10px" should set inset-block-start assert_equals: inset-block-start should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['inset-block'] = "10px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['inset-block'] = "20% auto" should set inset-block-end assert_equals: inset-block-end should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['inset-block'] = "20% auto" should set inset-block-start assert_equals: inset-block-start should be canonical expected (string) "20%" but got (undefined) undefined
+FAIL e.style['inset-block'] = "20% auto" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['inset-inline'] = "30%" should set inset-inline-end assert_equals: inset-inline-end should be canonical expected (string) "30%" but got (undefined) undefined
+FAIL e.style['inset-inline'] = "30%" should set inset-inline-start assert_equals: inset-inline-start should be canonical expected (string) "30%" but got (undefined) undefined
+FAIL e.style['inset-inline'] = "30%" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['inset-inline'] = "auto 40px" should set inset-inline-end assert_equals: inset-inline-end should be canonical expected (string) "40px" but got (undefined) undefined
+FAIL e.style['inset-inline'] = "auto 40px" should set inset-inline-start assert_equals: inset-inline-start should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['inset-inline'] = "auto 40px" should not set unrelated longhands assert_true: expected true got false
+

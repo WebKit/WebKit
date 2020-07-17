@@ -1,0 +1,11 @@
+First letter is float and flex.
+First letter is float but not flex.
+First letter is flex but not float.
+First letter not float or flex.
+First line is float and flex.
+First line is float but not flex.
+First line is flex but not float.
+First line is not float or flex.
+
+FAIL display of first-letter and first-line assert_equals: expected "block" but got "flex"
+

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: checkLayout
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x130
+  RenderBlock {HTML} at (0,0) size 800x130
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (8,8) size 203x0
+  RenderBlock (relative positioned) {DIV} at (0,0) size 204x0
+    RenderHTMLCanvas {CANVAS} at (0,0) size 61x61 [bgcolor=#008000]
+    RenderHTMLCanvas {CANVAS} at (60,0) size 62x61 [bgcolor=#008000]
+    RenderHTMLCanvas {CANVAS} at (0,61) size 122x61 [bgcolor=#008000]

@@ -1,0 +1,3 @@
+
+PASS @keyframes in shadow tree applies to the slotted element 
+

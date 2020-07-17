@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -22,15 +22,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/1x1-white.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/60x60-gg-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/60x60-green.png
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/60x60-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/README
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/a-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/black.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/constructable-import.css
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/getComputedStyle-insets.js
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/import-charset.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/import-rule.css
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/malformed-http-response.asis
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/pattern-grg-rrg-rgg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/support/pattern-rgr-grg-rgr.png

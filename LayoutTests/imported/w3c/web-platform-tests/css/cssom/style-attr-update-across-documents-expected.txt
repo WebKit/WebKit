@@ -1,0 +1,3 @@
+
+PASS Changing the style of a node that switched documents works 
+

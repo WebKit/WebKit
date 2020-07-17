@@ -3,7 +3,7 @@
 <head>
   <title>CSS Test: CSSOM MediaList Interfaces</title>
   <link rel="author" title="Chapman Shoop" href="mailto:chapman.shoop@gmail.com">
-  <link rel="reviewer" title="Ms2ger" href="mailto:ms2ger@gmail.com"> <!--  2012-06-17  -->
+  <link rel="reviewer" title="Ms2ger" href="mailto:ms2ger@gmail.com"> <!-- 2012-06-17 -->
   <link rel="help" href="https://drafts.csswg.org/cssom/#the-medialist-interface">
   <meta name="flags" content="dom">
   <meta name="assert" content="MediaList object has deleteMedium method and it functions properly.">
@@ -33,12 +33,13 @@
 
   <script type="text/javascript">
 
+    // MediaList.deleteMedium called without argument throws error.
     test(function() {
       media_list = setup();
-      assert_throws(new TypeError, function() { media_list.deleteMedium(); });
-    }, "deleteMedium_called_without_argument",
-    { assert: "MediaList.deleteMedium called without argument throws error." });
+      assert_throws_js(TypeError, function() { media_list.deleteMedium(); });
+    }, "deleteMedium_called_without_argument");
 
+    // MediaList.deleteMedium removes correct medium and updates corresponding properties.
     test(function() {
       media_list = setup();
 
@@ -50,21 +51,20 @@
       assert_equals(media_list.length, 1);
       assert_equals(media_list.item(0), "all");
       assert_equals(media_list.mediaText, "all");
-    }, "deleteMedium_removes_correct_medium",
-    { assert: "MediaList.deleteMedium removes correct medium and updates corresponding properties." });
+    }, "deleteMedium_removes_correct_medium");
 
+    // MediaList.deleteMedium doesn't modify MediaList when medium is not found.
     test(function() {
       media_list = setup();
 
       media_list.appendMedium("all");
 
-      assert_throws("NotFoundError", () => media_list.deleteMedium("screen"));
+      assert_throws_dom("NotFoundError", () => media_list.deleteMedium("screen"));
 
       assert_equals(media_list.length, 1);
       assert_equals(media_list.item(0), "all");
       assert_equals(media_list.mediaText, "all");
-    }, "deleteMedium_no_matching_medium_to_remove",
-    { assert: "MediaList.deleteMedium doesn't modify MediaList when medium is not found." });
+    }, "deleteMedium_no_matching_medium_to_remove");
 
   </script>
 </body>

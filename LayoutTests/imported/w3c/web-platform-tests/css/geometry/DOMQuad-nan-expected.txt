@@ -1,0 +1,10 @@
+
+PASS Setting DOMQuad's p1.x to NaN 
+PASS Setting DOMQuad's p1.y to NaN 
+PASS Setting DOMQuad's p2.x to NaN 
+PASS Setting DOMQuad's p2.y to NaN 
+PASS Setting DOMQuad's p3.x to NaN 
+PASS Setting DOMQuad's p3.y to NaN 
+PASS Setting DOMQuad's p4.x to NaN 
+PASS Setting DOMQuad's p4.y to NaN 
+

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/100x100-blue-and-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/100x100-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-lime.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-maroon.png
@@ -25,7 +26,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/50x50-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-gg-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-green.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/a-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/aqua_color.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/b-green.css
@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/bg_flower.gif
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/black96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/black_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue-and-red-diamonds-81x81.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue-diamond.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue_color.png
@@ -85,6 +86,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-tl.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-tr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/white_color.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/y.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/yy.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/yyy.png

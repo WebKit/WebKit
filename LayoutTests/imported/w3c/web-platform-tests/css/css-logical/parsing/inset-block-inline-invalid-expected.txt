@@ -1,0 +1,9 @@
+
+PASS e.style['inset-block-start'] = "none" should not set the property value 
+PASS e.style['inset-block-end'] = "10" should not set the property value 
+PASS e.style['inset-inline-start'] = "20% calc(10px - 0.5em)" should not set the property value 
+PASS e.style['inset-inline-end'] = "10px, auto" should not set the property value 
+PASS e.style['inset-block'] = "none" should not set the property value 
+PASS e.style['inset-block'] = "20%, calc(10px - 0.5em)" should not set the property value 
+PASS e.style['inset-inline'] = "10px auto 20px" should not set the property value 
+

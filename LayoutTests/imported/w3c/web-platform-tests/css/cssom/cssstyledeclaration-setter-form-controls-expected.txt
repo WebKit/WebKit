@@ -1,0 +1,13 @@
+Historically, the Apple Safari web browser has added an "intrinsic margin" to form controls which do not specify a `height`. It removed this margin following modification of the `height`. This non-standard behavior was identified as a source of confusion for web developers.
+
+
+
+FAIL text input element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
+FAIL button input element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
+FAIL submit input element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
+PASS radio input element 
+PASS checkbox input element 
+FAIL textarea element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
+FAIL select element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
+FAIL button element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
+

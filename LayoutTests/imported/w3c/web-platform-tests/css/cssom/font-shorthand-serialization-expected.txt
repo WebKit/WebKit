@@ -1,3 +1,3 @@
 
-FAIL The font shorthand should be serialized just like any other shorthand. assert_equals: expected "font: 10px/1 Ahem;" but got "font-style: normal; font-variant-caps: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: 1; font-family: Ahem;"
+FAIL The font shorthand should be serialized just like any other shorthand. assert_equals: expected "font: 10px / 1 Ahem;" but got "font-style: normal; font-variant-caps: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: 1; font-family: Ahem;"
 

@@ -1,0 +1,4 @@
+
+PASS getComputedStyle gets invalidated in display: none subtrees due to inherited changes to an ancestor 
+FAIL getComputedStyle gets invalidated in display: none subtrees due to inherited changes to an ancestor shadow host assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

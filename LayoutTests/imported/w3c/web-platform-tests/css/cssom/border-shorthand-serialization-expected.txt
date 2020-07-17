@@ -1,0 +1,5 @@
+
+FAIL Declaration with border longhands is not serialized to a border shorthand declaration. assert_equals: border shorthand isn't serialized if border-image longhands are not initial expected "" but got "1px solid black"
+FAIL Declaration with border longhands and border-image is not serialized to a border shorthand declaration. assert_equals: border shorthand isn't serialized if border-image longhands are not initial expected "" but got "1px solid black"
+PASS Border shorthand is serialized correctly if all border-image-* are set to their initial specified values. 
+

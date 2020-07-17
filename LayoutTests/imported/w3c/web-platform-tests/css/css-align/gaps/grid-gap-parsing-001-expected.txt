@@ -10,7 +10,7 @@ PASS grid-gap accepts vw and vh
 PASS grid-gap accepts percentage 
 PASS grid-gap accepts percentage 2 
 PASS grid-gap accepts calc() 
-FAIL grid-gap accepts calc() mixing fixed and percentage values assert_equals: expected "calc(5px + 10%)" but got "calc(10% + 5px)"
+PASS grid-gap accepts calc() mixing fixed and percentage values 
 PASS grid-gap accepts calc() 2 
 PASS Initial grid-gap is 'normal' 
 PASS Initial grid-gap is 'normal' 2 

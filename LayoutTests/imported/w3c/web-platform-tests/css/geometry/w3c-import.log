@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -18,19 +18,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-a-f-alias.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-css-string.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-newobject.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-stringifier.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrixInit-validate-fixup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMPoint-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMPoint-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMQuad-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMQuad-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMQuad-nan.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMRect-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/geometry/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMRect-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMRect-nan.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMRectList.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/WebKitCSSMatrix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/WebKitCSSMatrix.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/historical.html
-/LayoutTests/imported/w3c/web-platform-tests/css/geometry/interfaces.html
-/LayoutTests/imported/w3c/web-platform-tests/css/geometry/interfaces.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/idlharness.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/spec-examples.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/structured-serialization.html

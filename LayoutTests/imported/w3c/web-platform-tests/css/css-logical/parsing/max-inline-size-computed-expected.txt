@@ -1,0 +1,10 @@
+
+PASS Property max-inline-size value 'none' 
+PASS Property max-inline-size value '10px' 
+PASS Property max-inline-size value '20%' 
+PASS Property max-inline-size value 'calc(10px + 0.5em)' 
+PASS Property max-inline-size value 'calc(10px - 0.5em)' 
+PASS Property max-inline-size value 'calc(20% + 10px)' 
+PASS Property max-inline-size value 'min-content' 
+PASS Property max-inline-size value 'max-content' 
+

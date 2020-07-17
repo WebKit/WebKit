@@ -1,0 +1,38 @@
+ 
+
+
+FAIL document.adoptedStyleSheets should initially have length 0. undefined is not an object (evaluating 'document.adoptedStyleSheets.length')
+FAIL new CSSStyleSheet produces empty CSSStyleSheet function is not a constructor (evaluating 'new CSSStyleSheet({disabled: true, media: "screen, print"})')
+FAIL title can be set in the CSSStyleSheet constructor function is not a constructor (evaluating 'new CSSStyleSheet({title: "something"})')
+FAIL CSSStyleSheet.replace produces Promise<CSSStyleSheet> function is not a constructor (evaluating 'new CSSStyleSheet({disabled: true, media: "screen, print"})')
+FAIL Constructed style sheets can be applied on document function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Constructed style sheets can be applied on shadow root function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Re-attaching shadow host with adopted stylesheets work function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Attaching a shadow root that already has adopted stylesheets work function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Re-attaching shadow host and updating attributes work function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Changes to constructed stylesheets through CSSOM is reflected function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Constructed stylesheet can be used and modified in multiple TreeScopes function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Stylesheets constructed on the main Document cannot be used in iframes function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Stylesheet constructed on iframe cannot be used in the main Document promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new CSSStyleSheet()')"
+FAIL Adding non-constructed stylesheet to AdoptedStyleSheets is not allowed when the owner document of the stylesheet is in the same document tree as the AdoptedStyleSheets assert_throws_dom: function "() => { document.adoptedStyleSheets = [nonConstructedStyleSheet]; }" did not throw
+FAIL Adding non-constructed stylesheet to AdoptedStyleSheets is not allowed when the owner document of the stylesheet and the AdoptedStyleSheets are in different document trees assert_throws_dom: function "() => {
+    iframe.contentDocument.adoptedStyleSheets = [nonConstructedStyleSheet];
+  }" did not throw
+FAIL CSSStyleSheet.replaceSync replaces stylesheet text synchronously function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL CSSStyleSheet.replaceSync correctly updates the style of its adopters synchronously function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Adopted sheets are ordered after non-adopted sheets in the shadow root function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Adopted sheets are ordered after non-adopted sheets in the document function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Inserting an @import rule through insertRule on a constructed stylesheet throws an exception assert_throws_dom: function "() => { (new CSSStyleSheet).insertRule(import_text) }" threw object "TypeError: function is not a constructor (evaluating 'new CSSStyleSheet')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+FAIL CSSStyleSheet.replaceSync should not trigger any loads from @import rules function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL CSSStyleSheet.replace allows, but ignores, import rule inside function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL CSSStyleSheet.replace ignores @import rule but still loads other rules function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL CSSStyleSheet.replaceSync allows, but ignores, import rule inside function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL CSSStyleSheet.replace does not reject on failed imports function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Cloning a shadow host will not clone shadow root, and also adoptedStyleSheets function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Importing a shadow host will not copy shadow root, and also adoptedStyleSheets function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Adopting a shadow host will empty adoptedStyleSheets if adopting to a different document function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Adopting a shadow host's ancestor will empty adoptedStyleSheets if adopting to a different document function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Forcing a style update after adding an adopted stylesheet on a disconnected shadow root should not crash. function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Modifying an adopted stylesheet on a disconnected shadow root should not crash. function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Constructing a sheet with the default base URL uses the constructor document's base URL for CSS rules function is not a constructor (evaluating 'new CSSStyleSheet()')
+

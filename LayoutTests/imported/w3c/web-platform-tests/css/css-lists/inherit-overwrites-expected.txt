@@ -1,0 +1,4 @@
+
+FAIL Inheritance of counter-reset replaces existing value assert_equals: expected "second 0 first 1" but got "second 0 fifth 0 first 1"
+FAIL Inheritance of counter-increment replaces existing value assert_equals: expected "second 2 first 0" but got "second 2 fourth 0 first 0"
+

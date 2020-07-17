@@ -1,0 +1,3 @@
+
+PASS Custom properties are included in computed style 
+

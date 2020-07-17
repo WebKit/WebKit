@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>CSSOM: getComputedStyle returns no style for elements not in the tree</title>
+<title>CSSOM: getComputedStyle enumeration</title>
 <link rel="help" href="https://drafts.csswg.org/cssom/#dom-window-getcomputedstyle">
 <link rel="author" title="Emilio Cobos Álvarez" href="mailto:emilio@crisal.io">
 <link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=210695">
@@ -22,6 +22,6 @@
     }
     assert_true(longhand, "Logical longhands should be enumerated in computed style");
     assert_false(shorthand, "Logical shorthands should not be enumerated in computed style");
-    assert_false(env, "environment variables should not be enumerated in computed style");
+    assert_false(env, "Environment variables should not be enumerated in computed style");
   }, "Logical properties in enumeration of computed style")
 </script>

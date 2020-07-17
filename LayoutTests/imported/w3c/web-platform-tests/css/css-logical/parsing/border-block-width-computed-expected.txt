@@ -1,0 +1,13 @@
+
+FAIL Property border-block-start-width value 'calc(10px + 0.5em)' assert_equals: expected "30px" but got "0px"
+PASS Property border-block-start-width value 'calc(10px - 0.5em)' 
+FAIL Property border-block-start-width value 'thin' assert_equals: expected "1px" but got "0px"
+FAIL Property border-block-start-width value 'medium' assert_equals: expected "3px" but got "0px"
+FAIL Property border-block-end-width value 'calc(10px + 0.5em)' assert_equals: expected "30px" but got "0px"
+PASS Property border-block-end-width value 'calc(10px - 0.5em)' 
+FAIL Property border-block-end-width value 'thick' assert_equals: expected "5px" but got "0px"
+FAIL Property border-block-width value '10px' assert_true: border-block-width doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-block-width value '10px 20px' assert_true: border-block-width doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-block-width value '10px 10px' assert_true: border-block-width doesn't seem to be supported in the computed style expected true got false
+FAIL width is zero if the border block style is none or hidden assert_equals: expected (string) "10px" but got (undefined) undefined
+

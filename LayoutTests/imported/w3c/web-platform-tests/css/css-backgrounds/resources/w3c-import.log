@@ -16,4 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/blue-100.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/green-100.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/green-bottom.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/green-right.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/green1x50.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/green50x1.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/resources/stripes-100.png

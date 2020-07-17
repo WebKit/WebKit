@@ -1,0 +1,16 @@
+
+PASS e.style['margin-block-start'] = "calc(20% + 10px)" should set the property value 
+PASS e.style['margin-block-start'] = "auto" should set the property value 
+PASS e.style['margin-block-end'] = "-10px" should set the property value 
+PASS e.style['margin-inline-start'] = "-20%" should set the property value 
+PASS e.style['margin-inline-end'] = "calc(2em + 3ex)" should set the property value 
+FAIL e.style['margin-block'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-block'] = "-10px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-block'] = "calc(2em + 3ex) -20%" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-block'] = "auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-block'] = "-20% calc(20% + 10px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-inline'] = "20%" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-inline'] = "calc(2em + 3ex)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-inline'] = "-10px auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['margin-inline'] = "auto calc(2em + 3ex)" should set the property value assert_not_equals: property should be set got disallowed value ""
+

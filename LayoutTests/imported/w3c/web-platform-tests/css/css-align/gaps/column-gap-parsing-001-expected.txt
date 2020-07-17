@@ -5,7 +5,7 @@ PASS column-gap accepts em
 PASS column-gap accepts vw 
 PASS column-gap accepts percentage 
 PASS column-gap accepts calc() 
-FAIL column-gap accepts calc() mixing fixed and percentage values assert_equals: expected "calc(5px + 10%)" but got "calc(10% + 5px)"
+PASS column-gap accepts calc() mixing fixed and percentage values 
 PASS Initial column-gap is 'normal' 
 PASS Initial column-gap is 'normal' 2 
 PASS Initial inherited column-gap is 'normal' 

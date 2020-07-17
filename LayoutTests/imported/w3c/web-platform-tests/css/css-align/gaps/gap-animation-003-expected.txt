@@ -1,3 +1,3 @@
 
-PASS Default gap is not interpolable 
+FAIL Default gap is not interpolable assert_equals: expected "100px" but got "100px 100px"
 

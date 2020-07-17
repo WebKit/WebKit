@@ -1,6 +1,5 @@
 
 PASS e.style['text-underline-offset'] = "auto" should set the property value 
-FAIL e.style['text-underline-offset'] = "from-font" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['text-underline-offset'] = "-10px" should set the property value 
 PASS e.style['text-underline-offset'] = "2001em" should set the property value 
 PASS e.style['text-underline-offset'] = "-49em" should set the property value 

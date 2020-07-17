@@ -1,0 +1,6 @@
+
+PASS e.style['gap'] = "auto" should not set the property value 
+PASS e.style['gap'] = "-10px" should not set the property value 
+PASS e.style['gap'] = "10px 20% 30px" should not set the property value 
+PASS e.style['gap'] = "normal 10px normal" should not set the property value 
+

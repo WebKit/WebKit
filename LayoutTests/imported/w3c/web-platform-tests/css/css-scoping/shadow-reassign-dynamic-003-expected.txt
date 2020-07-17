@@ -1,0 +1,5 @@
+This text should be green.
+
+PASS Initial computed color. 
+PASS Computed color after re-slotting. 
+

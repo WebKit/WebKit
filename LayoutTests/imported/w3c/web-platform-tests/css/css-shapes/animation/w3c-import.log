@@ -15,5 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/animation/shape-image-threshold-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/animation/shape-margin-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/animation/shape-margin-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/animation/shape-outside-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/animation/shape-outside-interpolation.html

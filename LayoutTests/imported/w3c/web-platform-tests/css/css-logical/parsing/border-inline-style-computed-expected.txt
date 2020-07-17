@@ -1,0 +1,15 @@
+
+PASS Property border-inline-start-style value 'dotted' 
+PASS Property border-inline-start-style value 'groove' 
+PASS Property border-inline-start-style value 'inset' 
+PASS Property border-inline-start-style value 'none' 
+PASS Property border-inline-start-style value 'solid' 
+PASS Property border-inline-end-style value 'dashed' 
+PASS Property border-inline-end-style value 'double' 
+PASS Property border-inline-end-style value 'hidden' 
+PASS Property border-inline-end-style value 'outset' 
+PASS Property border-inline-end-style value 'ridge' 
+FAIL Property border-inline-style value 'dotted' assert_true: border-inline-style doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-inline-style value 'double groove' assert_true: border-inline-style doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-inline-style value 'hidden hidden' assert_true: border-inline-style doesn't seem to be supported in the computed style expected true got false
+

@@ -1,0 +1,21 @@
+
+FAIL Computed 'content' for list-item ::marker, variant default assert_equals: expected "normal" but got ""
+FAIL Computed 'content' for list-item ::marker, variant normal assert_equals: expected "normal" but got ""
+FAIL Computed 'content' for list-item ::marker, variant string assert_equals: expected "\"string\"" but got ""
+FAIL Computed 'content' for list-item ::marker, variant image assert_equals: expected "url(\"about:invalid\")" but got ""
+FAIL Computed 'content' for list-item ::marker, variant none assert_equals: expected "none" but got ""
+FAIL Computed 'content' for non-list-item ::marker, variant default assert_equals: expected "normal" but got ""
+FAIL Computed 'content' for non-list-item ::marker, variant normal assert_equals: expected "normal" but got ""
+FAIL Computed 'content' for non-list-item ::marker, variant string assert_equals: expected "\"string\"" but got ""
+FAIL Computed 'content' for non-list-item ::marker, variant image assert_equals: expected "url(\"about:invalid\")" but got ""
+FAIL Computed 'content' for non-list-item ::marker, variant none assert_equals: expected "none" but got ""
+item
+item
+item
+item
+item
+item
+item
+item
+item
+item

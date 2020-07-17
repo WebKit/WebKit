@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'element.attributeStyleMap.clear')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'element.attributeStyleMap.clear')
+
+

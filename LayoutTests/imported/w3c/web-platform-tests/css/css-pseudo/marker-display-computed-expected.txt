@@ -1,0 +1,17 @@
+
+PASS Computed 'display' for inside ::marker, variant default 
+PASS Computed 'display' for inside ::marker, variant color 
+PASS Computed 'display' for inside ::marker, variant string 
+PASS Computed 'display' for inside ::marker, variant content 
+FAIL Computed 'display' for outside ::marker, variant default assert_in_array: Outside markers should be block containers value "inline" not in array ["inline-block", "block"]
+FAIL Computed 'display' for outside ::marker, variant color assert_in_array: Outside markers should be block containers value "inline" not in array ["inline-block", "block"]
+FAIL Computed 'display' for outside ::marker, variant string assert_in_array: Outside markers should be block containers value "inline" not in array ["inline-block", "block"]
+FAIL Computed 'display' for outside ::marker, variant content assert_in_array: Outside markers should be block containers value "inline" not in array ["inline-block", "block"]
+item
+item
+item
+item
+item
+item
+item
+item

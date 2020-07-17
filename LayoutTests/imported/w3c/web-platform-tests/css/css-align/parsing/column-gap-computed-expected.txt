@@ -1,0 +1,7 @@
+
+PASS Property column-gap value 'normal' 
+PASS Property column-gap value 'calc(10px + 0.5em)' 
+PASS Property column-gap value 'calc(10px - 0.5em)' 
+PASS Property column-gap value '40%' 
+PASS Property column-gap value 'calc(50% + 60px)' 
+

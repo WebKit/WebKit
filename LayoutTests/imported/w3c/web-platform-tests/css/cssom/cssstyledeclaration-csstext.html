@@ -3,7 +3,7 @@
     <head>
         <title>CSSOM Test: CSSStyleDeclaration.cssText Test</title>
         <link rel="author" title="kkoichi" href="mailto:coarse.ground@gmail.com">
-        <link rel="reviewer" title="Simon Pieters" href="mailto:simonp@opera.com"><!--  06-27-2013  -->
+        <link rel="reviewer" title="Simon Pieters" href="mailto:simonp@opera.com"><!-- 06-27-2013 -->
         <link rel="help" href="https://drafts.csswg.org/cssom-1/#dom-cssstyledeclaration-csstext">
         <meta name="assert" content="CSS declarations is serialized as expected">
         <meta name="flags" content="dom">
@@ -97,6 +97,18 @@
 
         }, 'invalid property does not appear');
 
+        // https://github.com/w3c/csswg-drafts/issues/1033
+        test(function() {
+            var elm = newElm();
+            var style = elm.style;
+
+            style.color = 'red';
+            style.unknown = 'unknown';
+            style.fontSize = '10pt';
+
+            assert_not_equals(getComputedStyle(elm).length, 0, "Should have a style");
+            assert_equals(getComputedStyle(elm).cssText, "", "cssText is empty");
+        }, 'cssText on computed style declaration returns the empty string');
     </script>
     </body>
 </html>

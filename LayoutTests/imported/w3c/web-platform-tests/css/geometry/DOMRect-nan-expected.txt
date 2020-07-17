@@ -1,0 +1,10 @@
+
+PASS DOMRect's x coordinate is NaN 
+PASS DOMRect's y coordinate is NaN 
+PASS DOMRect's width is NaN 
+PASS DOMRect's height is NaN 
+PASS DOMRectReadOnly's x coordinate is NaN 
+PASS DOMRectReadOnly's y coordinate is NaN 
+PASS DOMRectReadOnly's width is NaN 
+PASS DOMRectReadOnly's height is NaN 
+

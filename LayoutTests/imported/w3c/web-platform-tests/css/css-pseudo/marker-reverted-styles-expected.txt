@@ -1,0 +1,17 @@
+
+FAIL Reverted computed values for outside symbol assert_object_equals: property "font-variant-numeric" expected "normal" got "tabular-nums"
+FAIL Reverted computed values for outside decimal assert_object_equals: property "font-variant-numeric" expected "normal" got "tabular-nums"
+FAIL Reverted computed values for outside string assert_object_equals: property "font-variant-numeric" expected "normal" got "tabular-nums"
+PASS Reverted computed values for outside marker 
+FAIL Reverted computed values for inside symbol assert_object_equals: property "font-variant-numeric" expected "normal" got "tabular-nums"
+FAIL Reverted computed values for inside decimal assert_object_equals: property "font-variant-numeric" expected "normal" got "tabular-nums"
+FAIL Reverted computed values for inside string assert_object_equals: property "font-variant-numeric" expected "normal" got "tabular-nums"
+PASS Reverted computed values for inside marker 
+outside symbol
+outside decimal
+outside string
+outside marker
+inside symbol
+inside decimal
+inside string
+inside marker

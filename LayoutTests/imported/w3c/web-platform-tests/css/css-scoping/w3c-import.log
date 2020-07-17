@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,11 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-assigned-node-with-before-after-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-assigned-node-with-before-after.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-assigned-node-with-rules-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-assigned-node-with-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-host-functional-rule-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-host-functional-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-host-namespace-expected.html
@@ -51,6 +52,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-with-rules-no-style-leak-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-with-rules-no-style-leak.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-with-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-descendant-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-descendant-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-descendant-002-expected.html
@@ -64,13 +71,31 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-nested-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-slotted-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-slotted-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-with-default-namespace-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-with-default-namespace-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/keyframes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/keyframes-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/keyframes-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/keyframes-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/keyframes-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/keyframes-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/reslot-text-inheritance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/reslot-text-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-assign-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-assign-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-at-import-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-at-import.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-cascade-order-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-directionality-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-directionality-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-directionality-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-directionality-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-disabled-sheet-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-disabled-sheet-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-fallback-dynamic-001-expected.html
@@ -83,18 +108,38 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-fallback-dynamic-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-fallback-dynamic-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-fallback-dynamic-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-host-removal-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-host-with-before-after-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-host-with-before-after.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-link-rel-stylesheet-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-link-rel-stylesheet-no-style-leak-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-link-rel-stylesheet-no-style-leak.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-link-rel-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-multiple-links.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-root-insert-into-document-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-root-insert-into-document.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slot-non-html-display-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-link.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-matches.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-placeholder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-specificity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-specificity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-with-pseudo-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-with-pseudo-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/whitespace-crash-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/whitespace-crash-001.html

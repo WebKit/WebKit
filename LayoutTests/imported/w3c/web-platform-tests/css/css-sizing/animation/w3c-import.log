@@ -14,9 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/height-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/height-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/max-height-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/max-height-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/max-width-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/max-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/min-height-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/min-height-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/min-width-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/min-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/width-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/width-interpolation.html

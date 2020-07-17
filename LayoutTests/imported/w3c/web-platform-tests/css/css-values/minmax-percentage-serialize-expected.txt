@@ -1,14 +1,25 @@
 
-PASS e.style['margin-left'] = "min(1%)" should set the property value 
-PASS e.style['margin-left'] = "max(1%)" should set the property value 
-FAIL e.style['margin-left'] = "min(1%, 2%, 3%)" should set the property value assert_equals: serialization should be canonical expected "min(1%, 2%, 3%)" but got "min(1%)"
-FAIL e.style['margin-left'] = "min(3%, 2%, 1%)" should set the property value assert_equals: serialization should be canonical expected "min(3%, 2%, 1%)" but got "min(1%)"
-FAIL e.style['margin-left'] = "max(1%, 2%, 3%)" should set the property value assert_equals: serialization should be canonical expected "max(1%, 2%, 3%)" but got "max(3%)"
-FAIL e.style['margin-left'] = "max(3%, 2%, 1%)" should set the property value assert_equals: serialization should be canonical expected "max(3%, 2%, 1%)" but got "max(3%)"
-FAIL e.style['margin-left'] = "calc(min(1%) + min(2%))" should set the property value assert_equals: serialization should be canonical expected "calc(min(1%) + min(2%))" but got "calc(3%)"
-FAIL e.style['margin-left'] = "calc(max(1%) + max(2%))" should set the property value assert_equals: serialization should be canonical expected "calc(max(1%) + max(2%))" but got "calc(3%)"
-FAIL e.style['margin-left'] = "calc(1% + min(1%))" should set the property value assert_equals: serialization should be canonical expected "calc(1% + min(1%))" but got "calc(2%)"
-FAIL e.style['margin-left'] = "calc(min(1%) + 1%)" should set the property value assert_equals: serialization should be canonical expected "calc(1% + min(1%))" but got "calc(2%)"
-FAIL e.style['margin-left'] = "calc(1% + max(1%))" should set the property value assert_equals: serialization should be canonical expected "calc(1% + max(1%))" but got "calc(2%)"
-FAIL e.style['margin-left'] = "calc(max(1%) + 1%)" should set the property value assert_equals: serialization should be canonical expected "calc(1% + max(1%))" but got "calc(2%)"
+FAIL 'min(1%)' as a specified value should serialize as 'calc(1%)'. assert_equals: 'min(1%)' and 'calc(1%)' should serialize the same in specified values. expected "calc(1%)" but got "min(1%)"
+FAIL 'min(1%)' as a computed value should serialize as '1%'. assert_equals: 'min(1%)' and '1%' should serialize the same in computed values. expected "1%" but got "min(1%)"
+PASS 'min(1%)' as a used value should serialize as '1px'. 
+FAIL 'max(1%)' as a specified value should serialize as 'calc(1%)'. assert_equals: 'max(1%)' and 'calc(1%)' should serialize the same in specified values. expected "calc(1%)" but got "max(1%)"
+FAIL 'max(1%)' as a computed value should serialize as '1%'. assert_equals: 'max(1%)' and '1%' should serialize the same in computed values. expected "1%" but got "max(1%)"
+PASS 'max(1%)' as a used value should serialize as '1px'. 
+FAIL 'min(1%, 2%, 3%)' as a specified value should serialize as 'min(1%, 2%, 3%)'. assert_equals: 'min(1%, 2%, 3%)' should round-trip exactly in specified values. expected "min(1%, 2%, 3%)" but got "min(1%)"
+FAIL 'min(1%, 2%, 3%)' as a computed value should serialize as 'min(1%, 2%, 3%)'. assert_equals: 'min(1%, 2%, 3%)' should round-trip exactly in computed values. expected "min(1%, 2%, 3%)" but got "min(1%)"
+PASS 'min(1%, 2%, 3%)' as a used value should serialize as '1px'. 
+FAIL 'min(3%, 2%, 1%)' as a specified value should serialize as 'min(3%, 2%, 1%)'. assert_equals: 'min(3%, 2%, 1%)' should round-trip exactly in specified values. expected "min(3%, 2%, 1%)" but got "min(1%)"
+FAIL 'min(3%, 2%, 1%)' as a computed value should serialize as 'min(3%, 2%, 1%)'. assert_equals: 'min(3%, 2%, 1%)' should round-trip exactly in computed values. expected "min(3%, 2%, 1%)" but got "min(1%)"
+PASS 'min(3%, 2%, 1%)' as a used value should serialize as '1px'. 
+FAIL 'max(1%, 2%, 3%)' as a specified value should serialize as 'max(1%, 2%, 3%)'. assert_equals: 'max(1%, 2%, 3%)' should round-trip exactly in specified values. expected "max(1%, 2%, 3%)" but got "max(3%)"
+FAIL 'max(1%, 2%, 3%)' as a computed value should serialize as 'max(1%, 2%, 3%)'. assert_equals: 'max(1%, 2%, 3%)' should round-trip exactly in computed values. expected "max(1%, 2%, 3%)" but got "max(3%)"
+PASS 'max(1%, 2%, 3%)' as a used value should serialize as '3px'. 
+FAIL 'max(3%, 2%, 1%)' as a specified value should serialize as 'max(3%, 2%, 1%)'. assert_equals: 'max(3%, 2%, 1%)' should round-trip exactly in specified values. expected "max(3%, 2%, 1%)" but got "max(3%)"
+FAIL 'max(3%, 2%, 1%)' as a computed value should serialize as 'max(3%, 2%, 1%)'. assert_equals: 'max(3%, 2%, 1%)' should round-trip exactly in computed values. expected "max(3%, 2%, 1%)" but got "max(3%)"
+PASS 'max(3%, 2%, 1%)' as a used value should serialize as '3px'. 
+FAIL 'min(1%, 2%, 3%) 0px' as a specified value should serialize as 'min(1%, 2%, 3%) 0px'. assert_equals: 'min(1%, 2%, 3%) 0px' should round-trip exactly in specified values. expected "min(1%, 2%, 3%) 0px" but got "min(1%) 0px"
+FAIL 'min(1%, 2%, 3%) 0px' as a computed value should serialize as 'min(1%, 2%, 3%) 0px'. assert_equals: 'min(1%, 2%, 3%) 0px' should round-trip exactly in computed values. expected "min(1%, 2%, 3%) 0px" but got "min(1%) 0px"
+PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a specified value should serialize as 'calc(15%)'. 
+FAIL 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a computed value should serialize as '15%'. assert_equals: 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' and '15%' should serialize the same in computed values. expected "15%" but got "calc(15%)"
+PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a used value should serialize as '15px'. 
 

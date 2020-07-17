@@ -18,9 +18,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animation-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animation-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/cascading-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/cascading-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/getComputedStyle-listing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-border-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-border-shorthands.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-border-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-border-width.html
@@ -28,6 +32,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-reftest-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-reftest.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logicalprops-block-size-vlr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logicalprops-block-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logicalprops-inline-size-vlr.html

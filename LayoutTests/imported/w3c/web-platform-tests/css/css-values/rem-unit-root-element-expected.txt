@@ -1,0 +1,6 @@
+
+FAIL rem based margin. assert_equals: expected "100px" but got "32px"
+FAIL rem based padding. assert_equals: expected "100px" but got "32px"
+FAIL rem based line-height. assert_equals: expected "100px" but got "32px"
+PASS Check that rem font-size is based on the initial font-size. 
+

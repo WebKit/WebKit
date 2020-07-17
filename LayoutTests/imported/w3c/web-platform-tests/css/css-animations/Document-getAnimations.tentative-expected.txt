@@ -14,6 +14,7 @@ PASS Finished but not filling CSS Animations are not returned
 PASS Yet-to-start CSS Animations are returned 
 PASS CSS Animations canceled via the API are not returned 
 PASS CSS Animations canceled and restarted via the API are returned 
+PASS pseudo element with replaced target does not affect animation ordering 
 PASS CSS Animations targetting (pseudo-)elements should have correct order after sorting 
 FAIL CSS Animations targetting (pseudo-)elements should have correct order after sorting (::marker) assert_equals: CSS animations on both pseudo-elements and elements are returned expected 5 but got 4
 

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSS.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-cssRules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-insertRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSKeyframeRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSKeyframesRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSNamespaceRule.html
@@ -22,50 +24,97 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleRule-set-selectorText-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleRule-set-selectorText.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleRule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-baseURL.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disabled-regular-sheet-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-duplicate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-replace-on-regular-sheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList2.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/StyleSheetList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/at-namespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/border-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-set-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-attribute-modifications.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-declaration-modifications.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-reparse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssimportrule-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssimportrule-sheet-identity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssimportrule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-cssText-serialize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-cssstyledeclaration-set.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-fontfacerule-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-fontfacerule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-pagerule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-ruleTypeAndOrder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-setProperty-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-final-delimiter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-custom-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutability.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-004.html
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-order.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-declarations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-form-controls.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-logical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/escape.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-family-serialization-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-shorthand-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-animations-replaced-into-ib-split.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-dynamic-subdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-fixed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-nobox.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-static.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-sticky-container-for-abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-sticky.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-layout-dependent-removed-ib-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-layout-dependent-replaced-into-ib-split.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-logical-enumeration.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-property-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-resolved-min-max-clamping.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-sticky-pos-percent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-width-scroll.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/inline-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-charset-no-index.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-import-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-namespace-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-syntax-error-01.html
-/LayoutTests/imported/w3c/web-platform-tests/css/cssom/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-001.html
@@ -80,12 +129,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialization-CSSDeclaration-with-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-media-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-namespaced-type-selectors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-values.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-variable-reference.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/setproperty-null-undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/shorthand-values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-update-across-documents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-expected.html

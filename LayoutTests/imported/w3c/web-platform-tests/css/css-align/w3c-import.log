@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,4 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-align/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/inheritance.html

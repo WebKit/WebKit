@@ -4,10 +4,18 @@ Test DOMMatrix non-mutating methods
 PASS test translate() 
 PASS test scale() without offsets 
 PASS test scale() with offsets 
+PASS test scale() with identity scale and nonzero originZ 
+FAIL test scaleNonUniform() initialDOMMatrix().scaleNonUniform is not a function. (In 'initialDOMMatrix().scaleNonUniform()', 'initialDOMMatrix().scaleNonUniform' is undefined)
+FAIL test scaleNonUniform() with sx initialDOMMatrix().scaleNonUniform is not a function. (In 'initialDOMMatrix().scaleNonUniform(6)', 'initialDOMMatrix().scaleNonUniform' is undefined)
+FAIL test scaleNonUniform() with sx, sy initialDOMMatrix().scaleNonUniform is not a function. (In 'initialDOMMatrix().scaleNonUniform(5, 7)', 'initialDOMMatrix().scaleNonUniform' is undefined)
 PASS test scale3d() 
 PASS test rotate() 2d 
 PASS test rotate() 
+PASS test rotate() order 
 PASS test rotateFromVector() 
+PASS test rotateFromVector() with x being zero 
+PASS test rotateFromVector() with y being zero 
+PASS test rotateFromVector() with two zeros 
 PASS test rotateAxisAngle()  
 PASS test skewX() 
 PASS test skewY() 

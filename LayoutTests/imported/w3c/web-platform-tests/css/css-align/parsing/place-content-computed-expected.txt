@@ -1,0 +1,25 @@
+
+FAIL Property place-content value 'normal normal' assert_equals: expected "normal" but got "normal normal"
+FAIL Property place-content value 'first baseline' assert_true: 'first baseline' is a supported value for place-content. expected true got false
+FAIL Property place-content value 'baseline' assert_true: 'baseline' is a supported value for place-content. expected true got false
+PASS Property place-content value 'first baseline start' 
+FAIL Property place-content value 'last baseline' assert_true: 'last baseline' is a supported value for place-content. expected true got false
+PASS Property place-content value 'first baseline stretch' 
+PASS Property place-content value 'last baseline flex-start' 
+PASS Property place-content value 'baseline stretch' 
+FAIL Property place-content value 'space-between' assert_equals: expected "space-between" but got "space-between space-between"
+FAIL Property place-content value 'space-around' assert_equals: expected "space-around" but got "space-around space-around"
+FAIL Property place-content value 'space-evenly' assert_equals: expected "space-evenly" but got "space-evenly space-evenly"
+FAIL Property place-content value 'stretch' assert_equals: expected "stretch" but got "stretch stretch"
+FAIL Property place-content value 'center' assert_equals: expected "center" but got "center center"
+FAIL Property place-content value 'end' assert_equals: expected "end" but got "end end"
+FAIL Property place-content value 'flex-start flex-start' assert_equals: expected "flex-start" but got "flex-start flex-start"
+FAIL Property place-content value 'unsafe end unsafe end' assert_equals: expected "unsafe end" but got "unsafe end unsafe end"
+FAIL Property place-content value 'safe flex-start' assert_equals: expected "safe flex-start" but got "safe flex-start safe flex-start"
+PASS Property place-content value 'normal stretch' 
+PASS Property place-content value 'baseline space-around' 
+PASS Property place-content value 'space-evenly unsafe end' 
+PASS Property place-content value 'center normal' 
+PASS Property place-content value 'normal right' 
+PASS Property place-content value 'baseline unsafe left' 
+

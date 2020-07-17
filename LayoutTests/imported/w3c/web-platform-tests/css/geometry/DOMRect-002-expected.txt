@@ -1,0 +1,34 @@
+
+PASS DOMRect constructor without parameter 
+PASS DOMRect constructor with one parameter 
+PASS DOMRect constructor with two parameters 
+PASS DOMRect constructor with three parameters 
+PASS DOMRect constructor with four parameters 
+PASS DOMRect constructor with five parameters 
+PASS DOMRect constructor with negative width 
+PASS DOMRect constructor with negative height 
+PASS DOMRect constructor with negative width and height 
+PASS DOMRect constructor with undefined 
+PASS DOMRect constructor with NaN and infinity and null 
+PASS DOMRect constructor with number string 
+PASS DOMRect constructor with character string 
+PASS DOMRectReadOnly constructor without parameter 
+PASS DOMRectReadOnly constructor with one parameter 
+PASS DOMRectReadOnly constructor with two parameters 
+PASS DOMRectReadOnly constructor with three parameters 
+PASS DOMRectReadOnly constructor with four parameters 
+PASS DOMRectReadOnly constructor with five parameters 
+PASS DOMRectReadOnly constructor with negative width 
+PASS DOMRectReadOnly constructor with negative height 
+PASS DOMRectReadOnly constructor with negative width and height 
+PASS DOMRectReadOnly constructor with undefined 
+PASS DOMRectReadOnly constructor with NaN and infinity and null 
+PASS DOMRectReadOnly constructor with number string 
+PASS DOMRectReadOnly constructor with character string 
+PASS DOMRect: set top/right/bottom/left 
+PASS DOMRect: set x/y/width/height 
+PASS DOMRectReadOnly: set top/right/bottom/left 
+PASS DOMRectReadOnly: set x/y/width/height 
+PASS DOMRect.fromRect 
+PASS DOMRectReadOnly.fromRect 
+

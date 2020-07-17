@@ -34,6 +34,12 @@
                             (GraphicsLayer
                               (bounds 400.00 1016.00)
                               (drawsContent 1)
+                              (repaint rects
+                                (rect 0.00 0.00 400.00 1016.00)
+                                (rect 0.00 0.00 400.00 1016.00)
+                                (rect 8.00 8.00 384.00 1000.00)
+                                (rect 0.00 0.00 400.00 1016.00)
+                              )
                               (children 1
                                 (GraphicsLayer
                                   (position 8.00 8.00)

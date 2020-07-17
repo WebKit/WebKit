@@ -24,3 +24,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-png-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-png.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg.html

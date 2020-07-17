@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+box-decoration-break
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -23,6 +23,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/block-image-percentage-max-height-inside-inline-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/block-image-percentage-max-height-inside-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/button-min-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/canvas-intrinsic-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/canvas-intrinsic-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-nowrap-intrinsic-size-bidi-expected.html
@@ -32,6 +34,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/fit-content-percentage-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/frameset-intrinsic-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-002-expected.html
@@ -74,7 +79,34 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-content-negative-margin-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-max-content-orthogonal-flow-crash-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/ortho-writing-mode-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/ortho-writing-mode-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/orthogonal-writing-mode-float-in-inline-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/orthogonal-writing-mode-float-in-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html
@@ -86,6 +118,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-fractional-height-from-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-nowrap-intrinsic-size-bidi-expected.html
@@ -95,5 +128,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-percentage-max-width-beside-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-percentage-min-width-below-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-percentage-min-width-beside-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/thin-element-render-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/thin-element-render.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/whitespace-and-break-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/whitespace-and-break.html

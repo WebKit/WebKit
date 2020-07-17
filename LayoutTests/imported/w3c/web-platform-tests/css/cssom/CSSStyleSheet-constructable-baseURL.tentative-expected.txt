@@ -1,0 +1,5 @@
+
+FAIL Constructing sheet with custom base URL ueses that URL for CSS rules function is not a constructor (evaluating 'new CSSStyleSheet({ baseURL })')
+FAIL Constructing sheet with relative URL adds to the constructor document's base URL function is not a constructor (evaluating 'new CSSStyleSheet({ baseURL })')
+FAIL Constructing sheet with invalid base URL throws a NotAllowedError assert_throws_dom: function "() => { new CSSStyleSheet({ baseURL: "chrome://"}) }" threw object "TypeError: function is not a constructor (evaluating 'new CSSStyleSheet({ baseURL: "chrome://"})')" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+

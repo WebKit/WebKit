@@ -1,9 +1,21 @@
-Blocked access to external URL http://www1.localhost:8801/stylesheet-same-origin.css
-Blocked access to external URL http://www1.localhost:8801/stylesheet-same-origin.css
+Blocked access to external URL http://www1.localhost:8801/css/cssom/stylesheet-same-origin.css
+Blocked access to external URL http://www1.localhost:8801/common/redirect.py?location=http://localhost:8800/css/cssom/stylesheet-same-origin.css
+Blocked access to external URL http://www1.localhost:8801/css/cssom/stylesheet-same-origin.css
+Blocked access to external URL http://www1.localhost:8801/common/redirect.py?location=http://localhost:8800/css/cssom/stylesheet-same-origin.css
+Blocked access to external URL http://www1.localhost:8801/css/cssom/stylesheet-same-origin.css
 
-FAIL Origin-clean check in cross-origin CSSOM Stylesheets assert_throws: Cross origin stylesheet.cssRules should throw SecurityError. function "function () {
-                    crossorigin.cssRules;
-                }" threw object "TypeError: null is not an object (evaluating 'crossorigin.cssRules')" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Origin-clean check in cross-origin CSSOM Stylesheets assert_throws_dom: stylesheet.cssRules should throw SecurityError. function "function () {
+                    sheet.cssRules;
+                }" threw object "TypeError: null is not an object (evaluating 'sheet.cssRules')" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Origin-clean check in cross-origin CSSOM Stylesheets (redirect from same-origin to cross-origin) assert_throws_dom: stylesheet.cssRules should throw SecurityError. function "function () {
+                    sheet.cssRules;
+                }" did not throw
+FAIL Origin-clean check in cross-origin CSSOM Stylesheets (redirect from cross-origin to same-origin) assert_throws_dom: stylesheet.cssRules should throw SecurityError. function "function () {
+                    sheet.cssRules;
+                }" threw object "TypeError: null is not an object (evaluating 'sheet.cssRules')" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Origin-clean check in loading error CSSOM Stylesheets assert_throws_dom: stylesheet.cssRules should throw SecurityError. function "function () {
+                    sheet.cssRules;
+                }" did not throw
 PASS Origin-clean check in same-origin CSSOM Stylesheets 
 FAIL Origin-clean check in data:css CSSOM Stylesheets null is not an object (evaluating 'sheet.cssRules.length')
 

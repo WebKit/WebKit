@@ -1,0 +1,4 @@
+               
+
+PASS image-orientation:none computed style reports correct values 
+

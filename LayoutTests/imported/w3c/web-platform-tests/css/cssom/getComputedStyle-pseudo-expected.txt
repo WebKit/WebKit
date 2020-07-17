@@ -6,5 +6,6 @@ FAIL Resolution of pseudo-element styles in display: none elements assert_equals
 PASS Item-based blockification of pseudo-elements 
 FAIL Item-based blockification of nonexistent pseudo-elements assert_equals: Pseudo-styles of display: flex elements should get blockified expected "block" but got "inline"
 PASS display: contents on pseudo-elements 
-FAIL Unknown pseudo-elements throw assert_throws: getComputedStyle with an unknown pseudo-element throws function "() => getComputedStyle(div, "totallynotapseudo")" did not throw
+FAIL Dynamically change to display: contents on pseudo-elements assert_equals: display: contents in :before should get reflected on CSSOM expected "contents" but got "block"
+FAIL Unknown pseudo-elements throw assert_throws_js: getComputedStyle with an unknown pseudo-element throws function "() => getComputedStyle(div, "totallynotapseudo")" did not throw
 

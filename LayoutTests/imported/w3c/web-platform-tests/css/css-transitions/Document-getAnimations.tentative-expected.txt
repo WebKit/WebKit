@@ -1,6 +1,9 @@
 
 PASS getAnimations for non-animated content 
 PASS getAnimations for CSS Transitions 
+PASS getAnimations for CSS Transitions sort by property name 
+PASS getAnimations for CSS Transitions sort by transition generation 
 PASS CSS Transitions targetting (pseudo-)elements should have correct order after sorting 
+FAIL CSS Transitions targetting (pseudo-)elements should have correct order after sorting (::marker) assert_equals: CSS transition on both pseudo-elements and elements are returned expected 5 but got 4
 PASS Transitions are not returned after they have finished 
 

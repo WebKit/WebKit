@@ -2,4 +2,5 @@
 PASS KeyframeEffect.getKeyframes() returns expected frames for a simple transition 
 PASS KeyframeEffect.getKeyframes() returns frames unaffected by a non-default easing function 
 PASS KeyframeEffect.getKeyframes() returns expected frames for a transition with a CSS variable endpoint 
+PASS KeyframeEffect.getKeyframes() returns expected frames for a transition after resetting the effect target 
 

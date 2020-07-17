@@ -1,6 +1,8 @@
 
 PASS e.style['text-underline-position'] = "auto under" should not set the property value 
+PASS e.style['text-underline-position'] = "auto from-font" should not set the property value 
 PASS e.style['text-underline-position'] = "left auto" should not set the property value 
 PASS e.style['text-underline-position'] = "left right" should not set the property value 
 PASS e.style['text-underline-position'] = "right under left" should not set the property value 
+PASS e.style['text-underline-position'] = "under from-font" should not set the property value 
 

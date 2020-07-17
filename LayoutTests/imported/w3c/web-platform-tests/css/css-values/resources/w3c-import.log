@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/resources/ChTestNoZero.woff
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/resources/ChTestShortZero.woff
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/resources/ChTestZeroWidthZero.woff
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/resources/ExTest-NoSpace.woff
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/resources/ExTest.woff

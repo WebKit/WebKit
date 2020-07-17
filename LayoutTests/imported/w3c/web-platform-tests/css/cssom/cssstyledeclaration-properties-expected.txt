@@ -1,0 +1,3 @@
+
+FAIL CSS Test: CSSStyleDeclaration properties are defined as WebIDL attributes, not using getOwnPropertyNames() assert_false: shouldn't have an own property for WebIDL attributes expected false got true
+

@@ -1,0 +1,14 @@
+
+FAIL Property overscroll-behavior-x value 'contain' assert_true: overscroll-behavior-x doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-x value 'none' assert_true: overscroll-behavior-x doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-x value 'auto' assert_true: overscroll-behavior-x doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-y value 'contain' assert_true: overscroll-behavior-y doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-y value 'none' assert_true: overscroll-behavior-y doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-y value 'auto' assert_true: overscroll-behavior-y doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-inline value 'contain' assert_true: overscroll-behavior-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-inline value 'none' assert_true: overscroll-behavior-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-inline value 'auto' assert_true: overscroll-behavior-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-block value 'contain' assert_true: overscroll-behavior-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-block value 'none' assert_true: overscroll-behavior-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-block value 'auto' assert_true: overscroll-behavior-block doesn't seem to be supported in the computed style expected true got false
+

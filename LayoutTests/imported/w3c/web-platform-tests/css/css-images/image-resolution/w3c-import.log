@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-011.html

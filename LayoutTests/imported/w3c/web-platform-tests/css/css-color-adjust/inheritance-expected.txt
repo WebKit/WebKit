@@ -1,0 +1,4 @@
+
+FAIL Property color-scheme has initial value normal assert_equals: expected "normal" but got "auto"
+PASS Property color-scheme inherits 
+

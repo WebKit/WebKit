@@ -14,5 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/margin-bottom-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/margin-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/margin-left-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/margin-right-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/margin-top-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/padding-bottom-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/padding-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/padding-left-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/padding-right-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/animation/padding-top-composition.html

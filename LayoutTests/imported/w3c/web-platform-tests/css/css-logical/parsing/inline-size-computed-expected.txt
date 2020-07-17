@@ -1,0 +1,9 @@
+
+PASS Property inline-size value 'auto' 
+PASS Property inline-size value '10px' 
+PASS Property inline-size value '20%' 
+PASS Property inline-size value 'calc(0.5em + 10px)' 
+PASS Property inline-size value 'calc(-0.5em + 10px)' 
+PASS Property inline-size value 'min-content' 
+PASS Property inline-size value 'max-content' 
+

@@ -98,6 +98,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-z-index-fractions-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-zero-percent-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-zero-percent-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-empty-pseudo-recalc-on-font-load.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-pseudo-recalc-on-font-load.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-recalc-on-font-load.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-002-expected.html
@@ -116,18 +119,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-012-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-013-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-013.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-014-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-014.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-015-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-016-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-016.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-017-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-017.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-018-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ch-unit-018.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/clamp-length-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/clamp-length-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/clamp-length-serialize.html
@@ -139,6 +134,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ex-unit-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ex-unit-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ex-unit-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ex-unit-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/getComputedStyle-border-radius-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/getComputedStyle-border-radius-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/getComputedStyle-border-radius-003.html
@@ -203,8 +200,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/q-unit-case-insensitivity-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/q-unit-case-insensitivity-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/q-unit-case-insensitivity-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/rem-unit-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/rgba-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/round-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/unset-value-storage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/update-subpixel-rem-unit.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-calc-support-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-calc-support-pct-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-calc-support-pct.html
@@ -219,8 +219,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-interpolate-px.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-interpolate-vh-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-interpolate-vh.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-support-atviewport-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-support-atviewport.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-support-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-support-margin-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-support-margin.html
@@ -236,4 +234,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-relative-lengths-scaled-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-unit-011-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-unit-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-units-after-font-load.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-units-css2-001.html

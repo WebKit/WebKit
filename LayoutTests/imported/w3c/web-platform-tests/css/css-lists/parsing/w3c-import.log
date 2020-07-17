@@ -14,5 +14,24 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/content-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-increment-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-increment-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-reset-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-reset-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-set-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-set-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/counter-set-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-computed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-image-computed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-image-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-image-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-position-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-position-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-position-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-shorthand.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-type-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-type-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-type-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-valid.html

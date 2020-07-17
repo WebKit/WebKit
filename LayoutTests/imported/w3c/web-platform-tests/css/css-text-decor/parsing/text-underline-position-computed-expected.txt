@@ -1,7 +1,9 @@
 
 PASS Property text-underline-position value 'auto' 
 PASS Property text-underline-position value 'under' 
+PASS Property text-underline-position value 'from-font' 
 FAIL Property text-underline-position value 'left' assert_true: 'left' is a supported value for text-underline-position. expected true got false
 FAIL Property text-underline-position value 'right' assert_true: 'right' is a supported value for text-underline-position. expected true got false
 FAIL Property text-underline-position value 'under left' assert_true: 'under left' is a supported value for text-underline-position. expected true got false
+FAIL Property text-underline-position value 'from-font left' assert_true: 'from-font left' is a supported value for text-underline-position. expected true got false
 

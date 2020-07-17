@@ -1,6 +1,6 @@
 Should be green
 
-FAIL CSS Test: @namespace in CSSOM is not severely broken assert_throws: function "function () {
+FAIL CSS Test: @namespace in CSSOM is not severely broken assert_throws_dom: function "function () {
     s.sheet.insertRule('@namespace myhtml url("http://www.w3.org/1999/xhtml")', 0);
   }" threw object "HierarchyRequestError: The operation would yield an incorrect node tree." that is not a DOMException InvalidStateError: property "code" is equal to 3, expected 11
 

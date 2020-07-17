@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+backface-visibility
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -28,7 +28,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/hypothetical-dynamic-change-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/hypothetical-dynamic-change-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/nested-positions-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-abspos-table-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-002.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-chrome-bug-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-chrome-bug-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html
@@ -45,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-013.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-containing-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-list-marker-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-list-marker.html
@@ -54,7 +64,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-relayout-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-relayout-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-relayout-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-relayout-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-relayout-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-relayout-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-flex-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-floats-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-floats-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-floats-002-expected.html
@@ -63,6 +79,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-floats-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-floats-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-floats-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-margin-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-margin-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-margin-002-expected.html
@@ -77,7 +95,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-percentage-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-replaced-minmax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-flex-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-flex.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-grid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-table-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-at-bottom-right-on-viewport.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-root-element-flex-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-root-element-flex.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-root-element-grid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-root-element-grid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-table-tbody-left-absolute-child-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-table-tbody-left-absolute-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-table-tbody-left-expected.html
@@ -119,6 +146,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-change-top.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-child-multicolumn-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-child-multicolumn.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-iframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-flexbox-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-flexbox.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-get-bounding-client-rect.html
@@ -130,6 +161,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-inline-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-input-box-gets-focused-after-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top-2.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top-2.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-left.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-margins.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-bottom.html
@@ -149,6 +184,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-right.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-root-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-reposition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-reposition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scrolled-remove-sibling.html

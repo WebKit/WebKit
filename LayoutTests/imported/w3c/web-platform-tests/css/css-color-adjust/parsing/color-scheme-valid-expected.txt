@@ -1,0 +1,25 @@
+
+FAIL e.style['color-scheme'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color-scheme'] = "light" should set the property value 
+PASS e.style['color-scheme'] = "dark" should set the property value 
+PASS e.style['color-scheme'] = "light dark" should set the property value 
+PASS e.style['color-scheme'] = "dark light" should set the property value 
+PASS e.style['color-scheme'] = "only light" should set the property value 
+PASS e.style['color-scheme'] = "light only" should set the property value 
+FAIL e.style['color-scheme'] = "light light" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color-scheme'] = "dark dark" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color-scheme'] = "light purple" should set the property value assert_equals: serialization should be canonical expected "light purple" but got "light"
+FAIL e.style['color-scheme'] = "purple dark interesting" should set the property value assert_equals: serialization should be canonical expected "purple dark interesting" but got "dark"
+FAIL e.style['color-scheme'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color-scheme'] = "light none" should set the property value assert_equals: serialization should be canonical expected "light none" but got "light"
+PASS e.style['color-scheme'] = "inherit" should set the property value 
+PASS e.style['color-scheme'] = "initial" should set the property value 
+PASS e.style['color-scheme'] = "unset" should set the property value 
+FAIL e.style['color-scheme'] = "revert" should set the property value assert_equals: serialization should be canonical expected "revert" but got "Revert"
+PASS e.style['color-scheme'] = "only" should set the property value 
+FAIL e.style['color-scheme'] = "only only" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['color-scheme'] = "only light dark" should set the property value 
+FAIL e.style['color-scheme'] = "only light light" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['color-scheme'] = "only light purple" should set the property value assert_equals: serialization should be canonical expected "only light purple" but got "only light"
+FAIL e.style['color-scheme'] = "only none" should set the property value assert_equals: serialization should be canonical expected "only none" but got "only"
+

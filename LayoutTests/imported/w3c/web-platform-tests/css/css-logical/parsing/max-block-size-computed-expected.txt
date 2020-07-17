@@ -1,0 +1,10 @@
+
+PASS Property max-block-size value 'none' 
+PASS Property max-block-size value '10px' 
+PASS Property max-block-size value '20%' 
+PASS Property max-block-size value 'calc(10px + 0.5em)' 
+PASS Property max-block-size value 'calc(10px - 0.5em)' 
+PASS Property max-block-size value 'calc(20% + 10px)' 
+PASS Property max-block-size value 'min-content' 
+PASS Property max-block-size value 'max-content' 
+

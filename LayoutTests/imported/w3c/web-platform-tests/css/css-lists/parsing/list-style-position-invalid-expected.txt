@@ -1,0 +1,4 @@
+
+PASS e.style['list-style-position'] = "auto" should not set the property value 
+PASS e.style['list-style-position'] = "inside outside" should not set the property value 
+

@@ -1,0 +1,7 @@
+
+FAIL Property contain-intrinsic-size value 'auto' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain-intrinsic-size value '1px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain-intrinsic-size value '2vw 3px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain-intrinsic-size value '2px 3vh' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain-intrinsic-size value '5px 5px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
+

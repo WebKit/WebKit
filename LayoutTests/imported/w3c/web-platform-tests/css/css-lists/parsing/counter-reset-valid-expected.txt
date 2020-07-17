@@ -1,0 +1,6 @@
+
+PASS e.style['counter-reset'] = "none" should set the property value 
+PASS e.style['counter-reset'] = "chapter" should set the property value 
+PASS e.style['counter-reset'] = "section -1" should set the property value 
+PASS e.style['counter-reset'] = "first -1 second third 99" should set the property value 
+

@@ -1,0 +1,3 @@
+
+PASS getComputedStyle() should return animation styles for nodes just inserted into the document, even if they're in an IB-split 
+

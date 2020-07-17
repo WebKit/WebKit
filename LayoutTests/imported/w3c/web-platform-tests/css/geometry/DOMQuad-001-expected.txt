@@ -2,40 +2,36 @@ Test DOMQuad interface
 
 
 PASS testConstructor0: points 
-FAIL testConstructor0: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor0: bounds 
 PASS testConstructor1 
 PASS testConstructor2 
 PASS testConstructor3 
 PASS testConstructor4 
-FAIL testConstructor5: points assert_equals: Expected value for p2.x is 110 expected 110 but got 0
-FAIL testConstructor5: bounds undefined is not an object (evaluating 'q.bounds.x')
-FAIL testConstructor6: points assert_equals: Expected value for p2.x is -90 expected -90 but got 0
-FAIL testConstructor6: bounds undefined is not an object (evaluating 'q.bounds.x')
-FAIL testConstructor7: points assert_equals: Expected value for p2.x is NaN expected NaN but got 0
-FAIL testConstructor7: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS fromRect() method on DOMQuad: points 
+PASS fromRect() method on DOMQuad: bounds 
+PASS fromRect() method on DOMQuad with negatives: points 
+PASS fromRect() method on DOMQuad with negatives: bounds 
+PASS fromRect() method on DOMQuad with Infinity: points 
+PASS fromRect() method on DOMQuad with Infinity: bounds 
 PASS testConstructor8: points 
-FAIL testConstructor8: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor8: bounds 
 PASS testConstructor9: points 
-FAIL testConstructor9: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor9: bounds 
 PASS testConstructor10: points 
-FAIL testConstructor10: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor10: bounds 
 PASS testConstructor11: points 
-FAIL testConstructor11: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor11: bounds 
 PASS testConstructor12: points 
-FAIL testConstructor12: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor12: bounds 
 PASS testConstructor13: points 
-FAIL testConstructor13: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor13: bounds 
 PASS testConstructor14: points 
-FAIL testConstructor14: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor14: bounds 
 PASS testConstructor15 
 PASS testConstructor16: points 
-FAIL testConstructor16: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor16: bounds 
 PASS p1Top4Attributes0: points 
-FAIL p1Top4Attributes0: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS p1Top4Attributes0: bounds 
 PASS p1Top4Attributes1: points 
-FAIL p1Top4Attributes1: bounds undefined is not an object (evaluating 'q.bounds.x')
-PASS boundsAttribute0: points 
-FAIL boundsAttribute0: bounds assert_equals: Expected value for bounds.x is 0 expected 0 but got 10
-FAIL boundsAttribute1: points undefined is not an object (evaluating 'q.bounds.x = 10')
-FAIL boundsAttribute1: bounds undefined is not an object (evaluating 'q.bounds.x = 10')
+PASS p1Top4Attributes1: bounds 
 

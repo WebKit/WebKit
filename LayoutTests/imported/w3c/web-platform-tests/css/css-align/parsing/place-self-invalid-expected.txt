@@ -1,0 +1,11 @@
+
+PASS e.style['place-self'] = "space-around" should not set the property value 
+PASS e.style['place-self'] = "space-between" should not set the property value 
+PASS e.style['place-self'] = "space-evenly" should not set the property value 
+PASS e.style['place-self'] = "right" should not set the property value 
+PASS e.style['place-self'] = "unsafe left" should not set the property value 
+PASS e.style['place-self'] = "right start" should not set the property value 
+PASS e.style['place-self'] = "unsafe left stretch" should not set the property value 
+PASS e.style['place-self'] = "normal flex-start baseline" should not set the property value 
+PASS e.style['place-self'] = "baseline safe" should not set the property value 
+

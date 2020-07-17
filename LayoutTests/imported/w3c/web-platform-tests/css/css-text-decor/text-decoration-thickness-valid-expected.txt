@@ -7,4 +7,8 @@ PASS e.style['text-decoration-thickness'] = "-49em" should set the property valu
 PASS e.style['text-decoration-thickness'] = "53px" should set the property value 
 PASS e.style['text-decoration-thickness'] = "calc(40em - 10px)" should set the property value 
 PASS e.style['text-decoration-thickness'] = "calc(-50em + 13px)" should set the property value 
+FAIL e.style['text-decoration-thickness'] = "10%" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-decoration-thickness'] = "-27%" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-decoration-thickness'] = "calc(40% - 20px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-decoration-thickness'] = "calc(100% - 40em)" should set the property value assert_not_equals: property should be set got disallowed value ""
 

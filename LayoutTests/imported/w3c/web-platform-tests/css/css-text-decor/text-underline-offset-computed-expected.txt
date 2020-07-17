@@ -1,5 +1,4 @@
 
 PASS Property text-underline-offset value 'auto' 
-FAIL Property text-underline-offset value 'from-font' assert_true: 'from-font' is a supported value for text-underline-offset. expected true got false
 PASS Property text-underline-offset value 'calc(10px - 8px)' 
 

@@ -1,5 +1,4 @@
 
-PASS DOMMatrixReadOnly scaleNonUniform must be nuked 
 PASS DOMMatrix scaleNonUniformSelf must be nuked 
 PASS DOMMatrix multiplyBy must be nuked 
 PASS DOMMatrix preMultiplyBy must be nuked 
@@ -12,6 +11,7 @@ PASS DOMMatrix rotateFromVectorBy must be nuked
 PASS DOMMatrix rotateAxisAngleBy must be nuked 
 PASS DOMMatrix skewXBy must be nuked 
 PASS DOMMatrix skewYBy must be nuked 
+PASS DOMQuad bounds must be nuked 
 PASS DOMMatrix fromString static member must be nuked 
 PASS DOMMatrixReadOnly fromString static member must be nuked 
 PASS DOMMatrixReadOnly scale number of required arguments 

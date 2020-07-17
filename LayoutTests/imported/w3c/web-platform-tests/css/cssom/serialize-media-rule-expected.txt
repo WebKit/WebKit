@@ -1,0 +1,14 @@
+
+FAIL empty media query list assert_equals: expected "@media  {\n}" but got "@media  { \n}"
+FAIL type - no features assert_equals: expected "@media speech {\n}" but got "@media speech { \n}"
+FAIL type - no features - negation assert_equals: expected "@media not speech {\n}" but got "@media not speech { \n}"
+FAIL type - no features - character case normalization assert_equals: expected "@media speech {\n}" but got "@media speech { \n}"
+FAIL type - omission of all assert_equals: expected "@media (color) {\n}" but got "@media (color) { \n}"
+FAIL type - inclusion of negated all assert_equals: expected "@media not all and (color) {\n}" but got "@media not all and (color) { \n}"
+FAIL features - character case normalization assert_equals: expected "@media screen and (color) {\n}" but got "@media screen and (color) { \n}"
+FAIL features - preservation of overspecified features assert_equals: expected "@media print and (max-width: 23px) and (max-width: 45px) {\n}" but got "@media print and (max-width: 23px) and (max-width: 45px) { \n}"
+FAIL features - lexicographical sorting assert_equals: expected "@media screen and (color) and (max-width: 0px) {\n}" but got "@media screen and (color) and (max-width: 0px) { \n}"
+FAIL media query list assert_equals: expected "@media screen and (max-width: 0px), screen and (color) {\n}" but got "@media screen and (max-width: 0px), screen and (color) { \n}"
+FAIL one rule assert_equals: expected "@media print {\n  #foo { z-index: 23; float: left; }\n}" but got "@media print { \n  #foo { z-index: 23; float: left; }\n}"
+FAIL many rules assert_equals: expected "@media print {\n  #bar { float: none; z-index: 45; }\n  #foo { z-index: 23; float: left; }\n}" but got "@media print { \n  #bar { float: none; z-index: 45; }\n  #foo { z-index: 23; float: left; }\n}"
+

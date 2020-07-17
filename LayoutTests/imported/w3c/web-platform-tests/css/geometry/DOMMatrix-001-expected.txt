@@ -26,11 +26,11 @@ PASS new DOMMatrix("scale(2, 2), translateX(5)  ,translateY(5)")
 PASS new DOMMatrix("translateX(5em)") 
 PASS new DOMMatrix("translateX(5ex)") 
 PASS new DOMMatrix("translateX(5ch)") 
-FAIL new DOMMatrix("translateX(5rem)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrix("translateX(5vw)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrix("translateX(5vh)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrix("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrix("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5rem)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vw)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vh)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vmin)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vmax)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
 PASS new DOMMatrix("translateX(5%)") 
 PASS new DOMMatrix("rotate(5)") 
 PASS new DOMMatrix("rotate(5, 5, 5)") 
@@ -81,11 +81,11 @@ PASS new DOMMatrixReadOnly("scale(2, 2), translateX(5)  ,translateY(5)")
 PASS new DOMMatrixReadOnly("translateX(5em)") 
 PASS new DOMMatrixReadOnly("translateX(5ex)") 
 PASS new DOMMatrixReadOnly("translateX(5ch)") 
-FAIL new DOMMatrixReadOnly("translateX(5rem)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrixReadOnly("translateX(5vw)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrixReadOnly("translateX(5vh)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrixReadOnly("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" did not throw
-FAIL new DOMMatrixReadOnly("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5rem)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vw)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vh)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vmin)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vmax)") assert_throws_dom: function "function () { new self[constr](string); }" did not throw
 PASS new DOMMatrixReadOnly("translateX(5%)") 
 PASS new DOMMatrixReadOnly("rotate(5)") 
 PASS new DOMMatrixReadOnly("rotate(5, 5, 5)") 

@@ -1,0 +1,5 @@
+
+FAIL ch in pseudo-element ::before should be recalculated after loading a web font assert_less_than: expected a number less than 24 but got NaN
+FAIL ch in pseudo-element ::after should be recalculated after loading a web font assert_less_than: expected a number less than 24 but got NaN
+FAIL ch in pseudo-element ::backdrop should be recalculated after loading a web font assert_less_than: expected a number less than 24 but got NaN
+

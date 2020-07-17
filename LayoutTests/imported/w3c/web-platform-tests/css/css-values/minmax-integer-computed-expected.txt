@@ -1,12 +1,12 @@
 
-PASS Property z-index value 'min(1)' 
-PASS Property z-index value 'max(1)' 
-PASS Property z-index value 'min(0.4)' 
-PASS Property z-index value 'min(0.6)' 
-PASS Property z-index value 'max(0.4)' 
-PASS Property z-index value 'max(0.6)' 
-PASS Property z-index value 'min(1.1, max(0.4, 0.6))' 
-PASS Property z-index value 'max(0.3, min(1.1, 0.4))' 
-PASS Property z-index value 'calc(min(0.3, 0.6) * 2)' 
-PASS Property z-index value 'calc(max(0.3, 0.6) / 2)' 
+PASS min(1) should be used-value-equivalent to 1 
+PASS max(1) should be used-value-equivalent to 1 
+PASS min(0.4) should be used-value-equivalent to 0 
+PASS min(0.6) should be used-value-equivalent to 1 
+PASS max(0.4) should be used-value-equivalent to 0 
+PASS max(0.6) should be used-value-equivalent to 1 
+PASS min(1.1, max(0.4, 0.6)) should be used-value-equivalent to 1 
+PASS max(0.3, min(1.1, 0.4)) should be used-value-equivalent to 0 
+PASS calc(min(0.3, 0.6) * 2) should be used-value-equivalent to 1 
+PASS calc(max(0.3, 0.6) / 2) should be used-value-equivalent to 0 
 

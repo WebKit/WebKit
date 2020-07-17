@@ -1,8 +1,8 @@
 
 PASS registerProperty requires a Dictionary type 
 PASS registerProperty requires a name matching <custom-property-name> 
-FAIL registerProperty only allows omitting initialValue if syntax is '*' assert_throws: function "() => CSS.registerProperty({name: '--syntax-test-3', syntax: 'length', inherits: false})" did not throw
-FAIL registerProperty fails for an already registered property assert_throws: function "() => CSS.registerProperty({name: '--re-register', syntax: '<percentage>', initialValue: '0%', inherits: false})" threw object "SyntaxError: The given initial value does not parse for the given syntax." ("SyntaxError") expected object "[object Object]" ("InvalidModificationError")
+FAIL registerProperty only allows omitting initialValue if syntax is '*' assert_throws_dom: function "() => CSS.registerProperty({name: '--syntax-test-3', syntax: 'length', inherits: false})" did not throw
+FAIL registerProperty fails for an already registered property assert_throws_dom: function "() => CSS.registerProperty({name: '--re-register', syntax: '<percentage>', initialValue: '0%', inherits: false})" threw object "SyntaxError: The given initial value does not parse for the given syntax." that is not a DOMException InvalidModificationError: property "code" is equal to 12, expected 13
 PASS registerProperty requires inherits 
 FAIL Registering a property should not cause a transition The given initial value does not parse for the given syntax.
 

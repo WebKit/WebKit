@@ -25,6 +25,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-valid.html

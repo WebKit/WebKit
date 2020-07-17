@@ -1,0 +1,15 @@
+
+FAIL @property determines the registration when uncontested assert_equals: expected "1px" but got ""
+FAIL CSS.registerProperty wins over @property The given initial value does not parse for the given syntax.
+FAIL @property later in document order wins assert_equals: expected "6" but got ""
+FAIL @property later in stylesheet wins assert_equals: expected "rgb(255, 0, 0)" but got ""
+FAIL CSS.registerProperty determines the registration when uncontested The given initial value does not parse for the given syntax.
+FAIL @property registrations are cleared when rule removed assert_equals: expected "10px" but got ""
+FAIL Computed value becomes token sequence when @property is removed assert_equals: expected "2px" but got " calc(1px + 1px)"
+FAIL Inherited status is reflected in computed styles when @property is removed assert_equals: expected "0px" but got " 10px"
+FAIL Invalid @property rule (missing syntax) does not overwrite previous valid rule assert_equals: expected "1px" but got ""
+FAIL Invalid @property rule (missing inherits descriptor) does not overwrite previous valid rule assert_equals: expected "1px" but got ""
+FAIL Invalid @property rule (missing initial-value) does not overwrite previous valid rule assert_equals: expected "1px" but got ""
+FAIL Previous invalid rule does not prevent valid rule from causing registration assert_equals: expected "1px" but got ""
+FAIL Unknown descriptors are ignored and do not invalidate rule assert_equals: expected "1px" but got ""
+

@@ -1,0 +1,15 @@
+
+PASS e.style['border-inline-start-style'] = "dotted" should set the property value 
+PASS e.style['border-inline-start-style'] = "groove" should set the property value 
+PASS e.style['border-inline-start-style'] = "inset" should set the property value 
+PASS e.style['border-inline-start-style'] = "none" should set the property value 
+PASS e.style['border-inline-start-style'] = "solid" should set the property value 
+PASS e.style['border-inline-end-style'] = "dashed" should set the property value 
+PASS e.style['border-inline-end-style'] = "double" should set the property value 
+PASS e.style['border-inline-end-style'] = "hidden" should set the property value 
+PASS e.style['border-inline-end-style'] = "outset" should set the property value 
+PASS e.style['border-inline-end-style'] = "ridge" should set the property value 
+FAIL e.style['border-inline-style'] = "dotted" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['border-inline-style'] = "double groove" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['border-inline-style'] = "hidden hidden" should set the property value assert_not_equals: property should be set got disallowed value ""
+

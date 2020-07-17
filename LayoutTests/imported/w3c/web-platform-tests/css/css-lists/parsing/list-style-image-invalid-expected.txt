@@ -1,0 +1,4 @@
+
+PASS e.style['list-style-image'] = "auto" should not set the property value 
+PASS e.style['list-style-image'] = "url(\"https://example.com/\") none" should not set the property value 
+

@@ -1,21 +1,29 @@
 
-PASS Should be an invalid selector: '::slotted' 
-PASS Should be an invalid selector: '::slotted()' 
-PASS Should be an invalid selector: '::slotted(*).class' 
-PASS Should be an invalid selector: '::slotted(*)#id {}' 
-PASS Should be an invalid selector: '::slotted(*)[attr]' 
-PASS Should be an invalid selector: '::slotted(*):hover' 
-PASS Should be an invalid selector: '::slotted(*):read-only' 
-PASS Should be an invalid selector: '::slotted(*)::slotted(*)' 
-PASS Should be an invalid selector: '::slotted(*)::before::slotted(*)' 
-PASS Should be an invalid selector: '::slotted(*) span' 
-PASS Should be a valid selector: '::slotted(*)' 
-PASS Should be a valid selector: '::slotted(div)' 
-PASS Should be a valid selector: '::slotted([attr]:hover)' 
-PASS Should be a valid selector: '::slotted(:not(.a))' 
-FAIL Should be a valid selector: '::slotted(*)::before' assert_true: expected true got false
-FAIL Should be a valid selector: '::slotted(*)::after' assert_true: expected true got false
-PASS Should be an invalid selector: '::slotted(*)::first-line' 
-PASS Should be an invalid selector: '::slotted(*)::first-letter' 
-PASS Should be an invalid selector: '::slotted(*)::selection' 
+PASS "::slotted" should be an invalid selector 
+PASS "::slotted()" should be an invalid selector 
+PASS "::slotted(*).class" should be an invalid selector 
+PASS "::slotted(*)#id {}" should be an invalid selector 
+PASS "::slotted(*)[attr]" should be an invalid selector 
+PASS "::slotted(*):host" should be an invalid selector 
+PASS "::slotted(*):host(div)" should be an invalid selector 
+PASS "::slotted(*):hover" should be an invalid selector 
+PASS "::slotted(*):is(:hover)" should be an invalid selector 
+PASS "::slotted(*):where(:hover)" should be an invalid selector 
+PASS "::slotted(*):is(#id)" should be an invalid selector 
+PASS "::slotted(*):where(#id)" should be an invalid selector 
+PASS "::slotted(*):read-only" should be an invalid selector 
+PASS "::slotted(*)::slotted(*)" should be an invalid selector 
+PASS "::slotted(*)::before::slotted(*)" should be an invalid selector 
+PASS "::slotted(*) span" should be an invalid selector 
+PASS "::slotted(*)" should be a valid selector 
+PASS "::slotted(div)" should be a valid selector 
+PASS "::slotted([attr]:hover)" should be a valid selector 
+PASS "::slotted(:not(.a))" should be a valid selector 
+FAIL "::slotted(*)::before" should be a valid selector The string did not match the expected pattern.
+FAIL "::slotted(*)::after" should be a valid selector The string did not match the expected pattern.
+FAIL "::slotted(*)::placeholder" should be a valid selector The string did not match the expected pattern.
+FAIL "::slotted(*)::marker" should be a valid selector The string did not match the expected pattern.
+PASS "::slotted(*)::first-line" should be an invalid selector 
+PASS "::slotted(*)::first-letter" should be an invalid selector 
+PASS "::slotted(*)::selection" should be an invalid selector 
 

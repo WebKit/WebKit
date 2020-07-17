@@ -1,0 +1,8 @@
+x
+
+PASS DOMRectList is not [NoInterfaceObject] 
+PASS DOMRectList is not [LegacyArrayClass] 
+PASS DOMRectList length 
+PASS DOMRectList indexed getter 
+PASS DOMRectList item() 
+

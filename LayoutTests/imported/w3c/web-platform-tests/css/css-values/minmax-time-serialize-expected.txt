@@ -1,22 +1,24 @@
 
-PASS e.style['transition-delay'] = "min(1ms)" should set the property value 
-FAIL e.style['transition-delay'] = "min(1s)" should set the property value assert_equals: serialization should be canonical expected "min(1s)" but got "min(1000ms)"
-PASS e.style['transition-delay'] = "max(1ms)" should set the property value 
-FAIL e.style['transition-delay'] = "max(1s)" should set the property value assert_equals: serialization should be canonical expected "max(1s)" but got "max(1000ms)"
-FAIL e.style['transition-delay'] = "min(1ms, 2ms, 3ms)" should set the property value assert_equals: serialization should be canonical expected "min(1ms, 2ms, 3ms)" but got "min(1ms)"
-FAIL e.style['transition-delay'] = "min(3ms, 2ms, 1ms)" should set the property value assert_equals: serialization should be canonical expected "min(3ms, 2ms, 1ms)" but got "min(1ms)"
-FAIL e.style['transition-delay'] = "max(1ms, 2ms, 3ms)" should set the property value assert_equals: serialization should be canonical expected "max(1ms, 2ms, 3ms)" but got "max(3ms)"
-FAIL e.style['transition-delay'] = "max(3ms, 2ms, 1ms)" should set the property value assert_equals: serialization should be canonical expected "max(3ms, 2ms, 1ms)" but got "max(3ms)"
-FAIL e.style['transition-delay'] = "min(1000ms, 1s)" should set the property value assert_equals: serialization should be canonical expected "min(1000ms, 1s)" but got "min(1000ms)"
-FAIL e.style['transition-delay'] = "min(1s, 1000ms)" should set the property value assert_equals: serialization should be canonical expected "min(1s, 1000ms)" but got "min(1000ms)"
-FAIL e.style['transition-delay'] = "max(1000ms, 1s)" should set the property value assert_equals: serialization should be canonical expected "max(1000ms, 1s)" but got "max(1000ms)"
-FAIL e.style['transition-delay'] = "max(1s, 1000ms)" should set the property value assert_equals: serialization should be canonical expected "max(1s, 1000ms)" but got "max(1000ms)"
-FAIL e.style['transition-delay'] = "calc(min(1s) + min(2s))" should set the property value assert_equals: serialization should be canonical expected "calc(min(1s) + min(2s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(min(2s) + min(1s))" should set the property value assert_equals: serialization should be canonical expected "calc(min(2s) + min(1s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(max(1s) + max(2s))" should set the property value assert_equals: serialization should be canonical expected "calc(max(1s) + max(2s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(max(2s) + max(1s))" should set the property value assert_equals: serialization should be canonical expected "calc(max(2s) + max(1s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(1s + min(2s))" should set the property value assert_equals: serialization should be canonical expected "calc(1s + min(2s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(min(2s) + 1s)" should set the property value assert_equals: serialization should be canonical expected "calc(1s + min(2s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(1s + max(2s))" should set the property value assert_equals: serialization should be canonical expected "calc(1s + max(2s))" but got "calc(3000ms)"
-FAIL e.style['transition-delay'] = "calc(max(2s) + 1s)" should set the property value assert_equals: serialization should be canonical expected "calc(1s + max(2s))" but got "calc(3000ms)"
+FAIL 'min(1ms)' as a specified value should serialize as 'calc(0.001s)'. assert_equals: 'calc(0.001s)' should round-trip exactly in specified values. expected "calc(0.001s)" but got "calc(1ms)"
+PASS 'min(1ms)' as a computed value should serialize as '0.001s'. 
+FAIL 'min(1s)' as a specified value should serialize as 'calc(1s)'. assert_equals: 'calc(1s)' should round-trip exactly in specified values. expected "calc(1s)" but got "calc(1000ms)"
+PASS 'min(1s)' as a computed value should serialize as '1s'. 
+FAIL 'max(1ms)' as a specified value should serialize as 'calc(0.001s)'. assert_equals: 'calc(0.001s)' should round-trip exactly in specified values. expected "calc(0.001s)" but got "calc(1ms)"
+PASS 'max(1ms)' as a computed value should serialize as '0.001s'. 
+FAIL 'max(1s)' as a specified value should serialize as 'calc(1s)'. assert_equals: 'calc(1s)' should round-trip exactly in specified values. expected "calc(1s)" but got "calc(1000ms)"
+PASS 'max(1s)' as a computed value should serialize as '1s'. 
+FAIL 'min(1s, 2s, 3s)' as a specified value should serialize as 'calc(1s)'. assert_equals: 'calc(1s)' should round-trip exactly in specified values. expected "calc(1s)" but got "calc(1000ms)"
+PASS 'min(1s, 2s, 3s)' as a computed value should serialize as '1s'. 
+FAIL 'min(3s, 2s, 1s)' as a specified value should serialize as 'calc(1s)'. assert_equals: 'calc(1s)' should round-trip exactly in specified values. expected "calc(1s)" but got "calc(1000ms)"
+PASS 'min(3s, 2s, 1s)' as a computed value should serialize as '1s'. 
+FAIL 'max(1s, 2s, 3s)' as a specified value should serialize as 'calc(3s)'. assert_equals: 'calc(3s)' should round-trip exactly in specified values. expected "calc(3s)" but got "calc(3000ms)"
+PASS 'max(1s, 2s, 3s)' as a computed value should serialize as '3s'. 
+FAIL 'max(3s, 2s, 1s)' as a specified value should serialize as 'calc(3s)'. assert_equals: 'calc(3s)' should round-trip exactly in specified values. expected "calc(3s)" but got "calc(3000ms)"
+PASS 'max(3s, 2s, 1s)' as a computed value should serialize as '3s'. 
+FAIL 'min(900ms, 1s)' as a specified value should serialize as 'calc(0.9s)'. assert_equals: 'calc(0.9s)' should round-trip exactly in specified values. expected "calc(0.9s)" but got "calc(900ms)"
+PASS 'min(900ms, 1s)' as a computed value should serialize as '0.9s'. 
+FAIL 'max(1100ms, 1s)' as a specified value should serialize as 'calc(1.1s)'. assert_equals: 'calc(1.1s)' should round-trip exactly in specified values. expected "calc(1.1s)" but got "calc(1100ms)"
+PASS 'max(1100ms, 1s)' as a computed value should serialize as '1.1s'. 
+FAIL 'calc(min(1s, 2s) + max(3s, 4s) + 10s)' as a specified value should serialize as 'calc(15s)'. assert_equals: 'calc(15s)' should round-trip exactly in specified values. expected "calc(15s)" but got "calc(15000ms)"
+PASS 'calc(min(1s, 2s) + max(3s, 4s) + 10s)' as a computed value should serialize as '15s'. 
 

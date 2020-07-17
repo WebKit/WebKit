@@ -1,0 +1,20 @@
+
+FAIL Property place-items value 'normal' assert_equals: expected "normal" but got "normal normal"
+FAIL Property place-items value 'stretch stretch' assert_equals: expected "stretch" but got "stretch stretch"
+FAIL Property place-items value 'first baseline' assert_equals: expected "baseline" but got "baseline baseline"
+FAIL Property place-items value 'last baseline last baseline' assert_equals: expected "last baseline" but got "last baseline last baseline"
+FAIL Property place-items value 'center' assert_equals: expected "center" but got "center center"
+FAIL Property place-items value 'end end' assert_equals: expected "end" but got "end end"
+FAIL Property place-items value 'self-start' assert_equals: expected "self-start" but got "self-start self-start"
+FAIL Property place-items value 'flex-end' assert_equals: expected "flex-end" but got "flex-end flex-end"
+FAIL Property place-items value 'unsafe center unsafe center' assert_equals: expected "unsafe center" but got "unsafe center unsafe center"
+FAIL Property place-items value 'safe self-end' assert_equals: expected "safe self-end" but got "safe self-end safe self-end"
+PASS Property place-items value 'stretch baseline' 
+PASS Property place-items value 'last baseline center' 
+PASS Property place-items value 'safe self-end normal' 
+PASS Property place-items value 'normal right' 
+PASS Property place-items value 'baseline unsafe left' 
+PASS Property place-items value 'flex-end legacy' 
+PASS Property place-items value 'stretch legacy left' 
+PASS Property place-items value 'first baseline right legacy' 
+

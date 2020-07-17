@@ -2,25 +2,19 @@ Test DOMPoint and DOMPointReadOnly interfaces
 
 
 PASS testConstructor0 
-FAIL testConstructor1 assert_throws: function "function () { new DOMPoint(1);}" did not throw
+PASS testConstructor1 
 PASS testConstructor2 
 PASS testConstructor3 
 PASS testConstructor4 
 PASS testConstructor5 
-PASS testConstructorDictionary0 
-PASS testConstructorDictionary1 
-PASS testConstructorDictionary2 
-PASS testConstructorDictionary3 
-PASS testConstructorDictionary4 
-PASS testConstructorDictionary5 
-PASS testConstructorDictionary2irregular 
-PASS testConstructorDictionary2undefined 
-PASS testConstructorDOMPoint 
+FAIL testConstructorDictionary0 assert_equals: Expected value for x is NaN expected NaN but got 0
+FAIL testConstructorDictionary1 assert_equals: Expected value for x is NaN expected NaN but got 1
+FAIL testConstructorDictionary2 assert_equals: Expected value for x is NaN expected NaN but got 1
 PASS testConstructor2undefined 
 PASS testConstructorUndefined1 
-PASS testConstructorUndefined2 
-FAIL testConstructorIllegal1 assert_throws: function "function () { new DOMPointReadOnly();}" did not throw
-FAIL testConstructorIllegal2 assert_throws: function "function () { new DOMPointReadOnly(1, 2, 3, 4);}" did not throw
+FAIL testConstructorUndefined2 assert_equals: Expected value for y is 0 expected 0 but got NaN
+PASS DOMPointReadOnly constructor with no values 
+PASS DOMPointReadOnly constructor with 4 values 
 PASS testAttributesUndefined 
 PASS testAttributesNaNInfinity 
 

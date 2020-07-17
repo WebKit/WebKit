@@ -1,0 +1,7 @@
+
+PASS e.style['counter-increment'] = "none chapter" should not set the property value 
+PASS e.style['counter-increment'] = "3" should not set the property value 
+PASS e.style['counter-increment'] = "99 imagenum" should not set the property value 
+PASS e.style['counter-increment'] = "section -1, imagenum 99" should not set the property value 
+PASS e.style['counter-increment'] = "section 3.14" should not set the property value 
+

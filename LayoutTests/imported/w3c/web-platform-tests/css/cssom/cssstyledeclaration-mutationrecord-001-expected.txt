@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN CSSStyleDeclaration.setPropertyValue queues a mutation record, even if not mutated 
+PASS CSSStyleDeclaration.setPropertyValue queues a mutation record when serialization is changed 
 

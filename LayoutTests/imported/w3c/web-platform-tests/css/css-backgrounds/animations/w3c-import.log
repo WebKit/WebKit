@@ -40,4 +40,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-right-radius-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-width-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/box-shadow-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation.html

@@ -10,7 +10,7 @@ PASS gap accepts vw and vh
 PASS gap accepts percentage 
 PASS gap accepts percentage 2 
 PASS gap accepts calc() 
-FAIL gap accepts calc() mixing fixed and percentage values assert_equals: expected "calc(5px + 10%)" but got "calc(10% + 5px)"
+PASS gap accepts calc() mixing fixed and percentage values 
 PASS gap accepts calc() 2 
 PASS Initial gap is 'normal' 
 PASS Initial gap is 'normal' 2 

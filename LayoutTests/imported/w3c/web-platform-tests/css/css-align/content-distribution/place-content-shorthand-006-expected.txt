@@ -1,5 +1,5 @@
 
-PASS Checking place-content: normal normal 
+FAIL Checking place-content: normal normal assert_in_array: place-content resolved value value "normal normal" not in array ["", "normal"]
 PASS Checking place-content: normal left 
 PASS Checking place-content: normal right 
 PASS Checking place-content: normal start 
@@ -14,7 +14,7 @@ PASS Checking place-content: normal space-evenly
 PASS Checking place-content: start normal 
 PASS Checking place-content: start left 
 PASS Checking place-content: start right 
-PASS Checking place-content: start start 
+FAIL Checking place-content: start start assert_in_array: place-content resolved value value "start start" not in array ["", "start"]
 PASS Checking place-content: start end 
 PASS Checking place-content: start center 
 PASS Checking place-content: start flex-start 
@@ -27,7 +27,7 @@ PASS Checking place-content: end normal
 PASS Checking place-content: end left 
 PASS Checking place-content: end right 
 PASS Checking place-content: end start 
-PASS Checking place-content: end end 
+FAIL Checking place-content: end end assert_in_array: place-content resolved value value "end end" not in array ["", "end"]
 PASS Checking place-content: end center 
 PASS Checking place-content: end flex-start 
 PASS Checking place-content: end flex-end 
@@ -40,7 +40,7 @@ PASS Checking place-content: center left
 PASS Checking place-content: center right 
 PASS Checking place-content: center start 
 PASS Checking place-content: center end 
-PASS Checking place-content: center center 
+FAIL Checking place-content: center center assert_in_array: place-content resolved value value "center center" not in array ["", "center"]
 PASS Checking place-content: center flex-start 
 PASS Checking place-content: center flex-end 
 PASS Checking place-content: center stretch 
@@ -53,7 +53,7 @@ PASS Checking place-content: flex-start right
 PASS Checking place-content: flex-start start 
 PASS Checking place-content: flex-start end 
 PASS Checking place-content: flex-start center 
-PASS Checking place-content: flex-start flex-start 
+FAIL Checking place-content: flex-start flex-start assert_in_array: place-content resolved value value "flex-start flex-start" not in array ["", "flex-start"]
 PASS Checking place-content: flex-start flex-end 
 PASS Checking place-content: flex-start stretch 
 PASS Checking place-content: flex-start space-around 
@@ -66,7 +66,7 @@ PASS Checking place-content: flex-end start
 PASS Checking place-content: flex-end end 
 PASS Checking place-content: flex-end center 
 PASS Checking place-content: flex-end flex-start 
-PASS Checking place-content: flex-end flex-end 
+FAIL Checking place-content: flex-end flex-end assert_in_array: place-content resolved value value "flex-end flex-end" not in array ["", "flex-end"]
 PASS Checking place-content: flex-end stretch 
 PASS Checking place-content: flex-end space-around 
 PASS Checking place-content: flex-end space-between 
@@ -79,7 +79,7 @@ PASS Checking place-content: stretch end
 PASS Checking place-content: stretch center 
 PASS Checking place-content: stretch flex-start 
 PASS Checking place-content: stretch flex-end 
-PASS Checking place-content: stretch stretch 
+FAIL Checking place-content: stretch stretch assert_in_array: place-content resolved value value "stretch stretch" not in array ["", "stretch"]
 PASS Checking place-content: stretch space-around 
 PASS Checking place-content: stretch space-between 
 PASS Checking place-content: stretch space-evenly 
@@ -92,7 +92,7 @@ PASS Checking place-content: space-around center
 PASS Checking place-content: space-around flex-start 
 PASS Checking place-content: space-around flex-end 
 PASS Checking place-content: space-around stretch 
-PASS Checking place-content: space-around space-around 
+FAIL Checking place-content: space-around space-around assert_in_array: place-content resolved value value "space-around space-around" not in array ["", "space-around"]
 PASS Checking place-content: space-around space-between 
 PASS Checking place-content: space-around space-evenly 
 PASS Checking place-content: space-between normal 
@@ -105,7 +105,7 @@ PASS Checking place-content: space-between flex-start
 PASS Checking place-content: space-between flex-end 
 PASS Checking place-content: space-between stretch 
 PASS Checking place-content: space-between space-around 
-PASS Checking place-content: space-between space-between 
+FAIL Checking place-content: space-between space-between assert_in_array: place-content resolved value value "space-between space-between" not in array ["", "space-between"]
 PASS Checking place-content: space-between space-evenly 
 PASS Checking place-content: space-evenly normal 
 PASS Checking place-content: space-evenly left 
@@ -118,7 +118,7 @@ PASS Checking place-content: space-evenly flex-end
 PASS Checking place-content: space-evenly stretch 
 PASS Checking place-content: space-evenly space-around 
 PASS Checking place-content: space-evenly space-between 
-PASS Checking place-content: space-evenly space-evenly 
+FAIL Checking place-content: space-evenly space-evenly assert_in_array: place-content resolved value value "space-evenly space-evenly" not in array ["", "space-evenly"]
 PASS Checking place-content: baseline normal 
 PASS Checking place-content: baseline left 
 PASS Checking place-content: baseline right 

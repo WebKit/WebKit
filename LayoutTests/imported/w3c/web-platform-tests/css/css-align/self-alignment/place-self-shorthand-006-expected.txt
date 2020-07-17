@@ -1,7 +1,7 @@
 
 PASS Checking place-self: auto left 
 PASS Checking place-self: auto right 
-PASS Checking place-self: auto auto 
+FAIL Checking place-self: auto auto assert_in_array: place-self resolved value value "auto auto" not in array ["", "auto"]
 PASS Checking place-self: auto normal 
 PASS Checking place-self: auto stretch 
 PASS Checking place-self: auto start 
@@ -17,7 +17,7 @@ PASS Checking place-self: auto last baseline
 PASS Checking place-self: normal left 
 PASS Checking place-self: normal right 
 PASS Checking place-self: normal auto 
-PASS Checking place-self: normal normal 
+FAIL Checking place-self: normal normal assert_in_array: place-self resolved value value "normal normal" not in array ["", "normal"]
 PASS Checking place-self: normal stretch 
 PASS Checking place-self: normal start 
 PASS Checking place-self: normal end 
@@ -33,7 +33,7 @@ PASS Checking place-self: stretch left
 PASS Checking place-self: stretch right 
 PASS Checking place-self: stretch auto 
 PASS Checking place-self: stretch normal 
-PASS Checking place-self: stretch stretch 
+FAIL Checking place-self: stretch stretch assert_in_array: place-self resolved value value "stretch stretch" not in array ["", "stretch"]
 PASS Checking place-self: stretch start 
 PASS Checking place-self: stretch end 
 PASS Checking place-self: stretch self-start 
@@ -49,7 +49,7 @@ PASS Checking place-self: start right
 PASS Checking place-self: start auto 
 PASS Checking place-self: start normal 
 PASS Checking place-self: start stretch 
-PASS Checking place-self: start start 
+FAIL Checking place-self: start start assert_in_array: place-self resolved value value "start start" not in array ["", "start"]
 PASS Checking place-self: start end 
 PASS Checking place-self: start self-start 
 PASS Checking place-self: start self-end 
@@ -65,7 +65,7 @@ PASS Checking place-self: end auto
 PASS Checking place-self: end normal 
 PASS Checking place-self: end stretch 
 PASS Checking place-self: end start 
-PASS Checking place-self: end end 
+FAIL Checking place-self: end end assert_in_array: place-self resolved value value "end end" not in array ["", "end"]
 PASS Checking place-self: end self-start 
 PASS Checking place-self: end self-end 
 PASS Checking place-self: end center 
@@ -81,7 +81,7 @@ PASS Checking place-self: self-start normal
 PASS Checking place-self: self-start stretch 
 PASS Checking place-self: self-start start 
 PASS Checking place-self: self-start end 
-PASS Checking place-self: self-start self-start 
+FAIL Checking place-self: self-start self-start assert_in_array: place-self resolved value value "self-start self-start" not in array ["", "self-start"]
 PASS Checking place-self: self-start self-end 
 PASS Checking place-self: self-start center 
 PASS Checking place-self: self-start flex-start 
@@ -97,7 +97,7 @@ PASS Checking place-self: self-end stretch
 PASS Checking place-self: self-end start 
 PASS Checking place-self: self-end end 
 PASS Checking place-self: self-end self-start 
-PASS Checking place-self: self-end self-end 
+FAIL Checking place-self: self-end self-end assert_in_array: place-self resolved value value "self-end self-end" not in array ["", "self-end"]
 PASS Checking place-self: self-end center 
 PASS Checking place-self: self-end flex-start 
 PASS Checking place-self: self-end flex-end 
@@ -113,7 +113,7 @@ PASS Checking place-self: center start
 PASS Checking place-self: center end 
 PASS Checking place-self: center self-start 
 PASS Checking place-self: center self-end 
-PASS Checking place-self: center center 
+FAIL Checking place-self: center center assert_in_array: place-self resolved value value "center center" not in array ["", "center"]
 PASS Checking place-self: center flex-start 
 PASS Checking place-self: center flex-end 
 PASS Checking place-self: center baseline 
@@ -129,7 +129,7 @@ PASS Checking place-self: flex-start end
 PASS Checking place-self: flex-start self-start 
 PASS Checking place-self: flex-start self-end 
 PASS Checking place-self: flex-start center 
-PASS Checking place-self: flex-start flex-start 
+FAIL Checking place-self: flex-start flex-start assert_in_array: place-self resolved value value "flex-start flex-start" not in array ["", "flex-start"]
 PASS Checking place-self: flex-start flex-end 
 PASS Checking place-self: flex-start baseline 
 PASS Checking place-self: flex-start first baseline 
@@ -145,7 +145,7 @@ PASS Checking place-self: flex-end self-start
 PASS Checking place-self: flex-end self-end 
 PASS Checking place-self: flex-end center 
 PASS Checking place-self: flex-end flex-start 
-PASS Checking place-self: flex-end flex-end 
+FAIL Checking place-self: flex-end flex-end assert_in_array: place-self resolved value value "flex-end flex-end" not in array ["", "flex-end"]
 PASS Checking place-self: flex-end baseline 
 PASS Checking place-self: flex-end first baseline 
 PASS Checking place-self: flex-end last baseline 
@@ -161,8 +161,8 @@ PASS Checking place-self: baseline self-end
 PASS Checking place-self: baseline center 
 PASS Checking place-self: baseline flex-start 
 PASS Checking place-self: baseline flex-end 
-PASS Checking place-self: baseline baseline 
-PASS Checking place-self: baseline first baseline 
+FAIL Checking place-self: baseline baseline assert_in_array: place-self resolved value value "baseline baseline" not in array ["", "baseline"]
+FAIL Checking place-self: baseline first baseline assert_in_array: place-self resolved value value "baseline baseline" not in array ["", "baseline"]
 PASS Checking place-self: baseline last baseline 
 PASS Checking place-self: first baseline left 
 PASS Checking place-self: first baseline right 
@@ -176,8 +176,8 @@ PASS Checking place-self: first baseline self-end
 PASS Checking place-self: first baseline center 
 PASS Checking place-self: first baseline flex-start 
 PASS Checking place-self: first baseline flex-end 
-PASS Checking place-self: first baseline baseline 
-PASS Checking place-self: first baseline first baseline 
+FAIL Checking place-self: first baseline baseline assert_in_array: place-self resolved value value "baseline baseline" not in array ["", "baseline"]
+FAIL Checking place-self: first baseline first baseline assert_in_array: place-self resolved value value "baseline baseline" not in array ["", "baseline"]
 PASS Checking place-self: first baseline last baseline 
 PASS Checking place-self: last baseline left 
 PASS Checking place-self: last baseline right 
@@ -193,5 +193,5 @@ PASS Checking place-self: last baseline flex-start
 PASS Checking place-self: last baseline flex-end 
 PASS Checking place-self: last baseline baseline 
 PASS Checking place-self: last baseline first baseline 
-PASS Checking place-self: last baseline last baseline 
+FAIL Checking place-self: last baseline last baseline assert_in_array: place-self resolved value value "last baseline last baseline" not in array ["", "last baseline"]
 

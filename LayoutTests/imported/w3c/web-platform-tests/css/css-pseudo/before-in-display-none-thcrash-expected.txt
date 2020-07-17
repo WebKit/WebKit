@@ -1,0 +1,3 @@
+
+PASS Invalidating style inside display:none with ::before should not crash. 
+

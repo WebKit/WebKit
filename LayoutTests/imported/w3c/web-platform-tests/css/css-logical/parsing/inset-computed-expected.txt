@@ -1,0 +1,10 @@
+
+FAIL Property inset value 'auto' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value '-10px' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value 'calc(10px - 0.5em) -20%' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value 'auto auto' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value '10px calc(10px - 0.5em) -30px' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value 'auto auto auto' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value '10px 20px auto -30px' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset value 'auto auto auto auto' assert_true: inset doesn't seem to be supported in the computed style expected true got false
+

@@ -50,6 +50,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-calc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html
@@ -62,6 +63,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-marker-pseudoelement.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-pseudoelement.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/cancel-animation-shadow-slot-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/cancel-animation-shadow-slot-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/computed-style-animation-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/event-order.tentative.html
@@ -71,3 +74,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/style-animation-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html

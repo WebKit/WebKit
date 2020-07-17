@@ -2,4 +2,5 @@
 PASS Reading CSSStyleDeclaration initialized from a style element 
 PASS Setting CSSStyleDeclaration#cssText 
 PASS Calling CSSStyleDeclaration#setProperty 
+PASS setProperty priority should be case-insensitive 
 

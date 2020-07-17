@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/resources/position-sticky-fixed-ancestor-iframe-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/resources/ref-rectangle.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/resources/sticky-util.js

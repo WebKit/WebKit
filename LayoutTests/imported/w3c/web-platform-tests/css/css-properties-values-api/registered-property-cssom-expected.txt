@@ -2,8 +2,8 @@
 PASS CSSOM setters function as expected for unregistered properties 
 FAIL CSS.registerProperty The given initial value does not parse for the given syntax.
 FAIL Formerly valid values are still readable from inline styles but are computed as the unset value assert_equals: expected "rgb(0, 0, 255)" but got "hello"
-FAIL Values not matching the registered type can't be set assert_equals: expected "hello" but got "20"
+FAIL Values not matching the registered type can still be set assert_equals: expected "hi" but got "5"
 FAIL Values can be removed from inline styles assert_equals: expected "rgb(255, 0, 0)" but got " red"
-PASS Stylesheets can be modified by CSSOM 
+FAIL Stylesheets can be modified by CSSOM assert_equals: expected "0px" but got "10px"
 FAIL Valid values can be set on inline styles assert_equals: expected "rgb(255, 192, 203)" but got "pink"
 

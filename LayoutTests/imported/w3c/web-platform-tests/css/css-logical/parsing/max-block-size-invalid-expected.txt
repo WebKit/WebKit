@@ -1,0 +1,12 @@
+
+PASS e.style['max-block-size'] = "auto" should not set the property value 
+PASS e.style['max-block-size'] = "min-content available" should not set the property value 
+PASS e.style['max-block-size'] = "max-content 10px" should not set the property value 
+PASS e.style['max-block-size'] = "20% available" should not set the property value 
+PASS e.style['max-block-size'] = "-10px" should not set the property value 
+PASS e.style['max-block-size'] = "-20%" should not set the property value 
+PASS e.style['max-block-size'] = "60" should not set the property value 
+PASS e.style['max-block-size'] = "10px 20%" should not set the property value 
+PASS e.style['max-block-size'] = "10px border-box" should not set the property value 
+PASS e.style['max-block-size'] = "content-box 20%" should not set the property value 
+

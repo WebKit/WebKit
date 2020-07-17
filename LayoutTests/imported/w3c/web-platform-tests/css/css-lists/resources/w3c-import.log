@@ -14,4 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/resources/blue-20.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/resources/green-20.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/resources/stripes-20.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-lists/resources/white.gif

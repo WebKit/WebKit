@@ -1,0 +1,32 @@
+
+PASS border-block-end-color 
+PASS border-block-end-style 
+PASS border-block-end-width 
+PASS border-block-start-color 
+PASS border-block-start-style 
+PASS border-block-start-width 
+PASS border-inline-end-color 
+PASS border-inline-end-style 
+PASS border-inline-end-width 
+PASS border-inline-start-color 
+PASS border-inline-start-style 
+PASS border-inline-start-width 
+FAIL inset-block-start assert_true: The computed style has the property inset-block-start or insetBlockStart. expected true got false
+FAIL inset-block-end assert_true: The computed style has the property inset-block-end or insetBlockEnd. expected true got false
+FAIL inset-inline-start assert_true: The computed style has the property inset-inline-start or insetInlineStart. expected true got false
+FAIL inset-inline-end assert_true: The computed style has the property inset-inline-end or insetInlineEnd. expected true got false
+PASS margin-block-start 
+PASS margin-block-end 
+PASS margin-inline-start 
+PASS margin-inline-end 
+PASS padding-block-start 
+PASS padding-block-end 
+PASS padding-inline-start 
+PASS padding-inline-end 
+PASS block-size 
+PASS inline-size 
+PASS max-block-size 
+PASS max-inline-size 
+PASS min-block-size 
+PASS min-inline-size 
+

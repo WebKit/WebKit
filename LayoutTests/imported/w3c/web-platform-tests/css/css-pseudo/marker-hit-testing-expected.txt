@@ -1,0 +1,30 @@
+ 
+
+FAIL outside image ::marker's content assert_equals: event.target expected Element node <li class="image"></li> but got Element node <ol class="outside" data-x="-65">
+  <li class="image"></l...
+FAIL outside image ::marker assert_equals: event.target expected Element node <li class="image"></li> but got Element node <html><head><meta charset="utf-8">
+<title>CSS Pseudo-Elem...
+FAIL outside string ::marker's content assert_equals: event.target expected Element node <li class="string"></li> but got Element node <ol class="outside" data-x="-65">
+  <li class="image"></l...
+FAIL outside string ::marker assert_equals: event.target expected Element node <li class="string"></li> but got Element node <li class="image"></li>
+FAIL outside marker ::marker's content assert_equals: event.target expected Element node <li class="marker"></li> but got Element node <ol class="outside" data-x="-65">
+  <li class="image"></l...
+FAIL outside marker ::marker assert_equals: event.target expected Element node <li class="marker"></li> but got Element node <li class="string"></li>
+FAIL outside nested image ::marker's content assert_equals: event.target expected Element node <li class="nested image"></li> but got Element node <ol class="outside" data-x="-65">
+  <li class="image"></l...
+FAIL outside nested image ::marker assert_equals: event.target expected Element node <li class="nested image"></li> but got Element node <li class="marker"></li>
+FAIL outside nested string ::marker's content assert_equals: event.target expected Element node <li class="nested string"></li> but got Element node <ol class="outside" data-x="-65">
+  <li class="image"></l...
+FAIL outside nested string ::marker assert_equals: event.target expected Element node <li class="nested string"></li> but got Element node <li class="nested image"></li>
+PASS inside image ::marker's content 
+FAIL inside image ::marker assert_equals: event.target expected Element node <li class="image"></li> but got Element node <html><head><meta charset="utf-8">
+<title>CSS Pseudo-Elem...
+PASS inside string ::marker's content 
+FAIL inside string ::marker assert_equals: event.target expected Element node <li class="string"></li> but got Element node <li class="image"></li>
+PASS inside marker ::marker's content 
+FAIL inside marker ::marker assert_equals: event.target expected Element node <li class="marker"></li> but got Element node <li class="string"></li>
+PASS inside nested image ::marker's content 
+FAIL inside nested image ::marker assert_equals: event.target expected Element node <li class="nested image"></li> but got Element node <li class="marker"></li>
+PASS inside nested string ::marker's content 
+FAIL inside nested string ::marker assert_equals: event.target expected Element node <li class="nested string"></li> but got Element node <li class="nested image"></li>
+

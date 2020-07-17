@@ -1,0 +1,13 @@
+
+FAIL e.style['color-scheme'] = "only normal" should not set the property value assert_equals: expected "" but got "only"
+FAIL e.style['color-scheme'] = "normal dark" should not set the property value assert_equals: expected "" but got "dark"
+PASS e.style['color-scheme'] = "normal purple" should not set the property value 
+FAIL e.style['color-scheme'] = "light normal" should not set the property value assert_equals: expected "" but got "light"
+PASS e.style['color-scheme'] = "light, dark" should not set the property value 
+FAIL e.style['color-scheme'] = "light inherit" should not set the property value assert_equals: expected "" but got "light"
+FAIL e.style['color-scheme'] = "light initial" should not set the property value assert_equals: expected "" but got "light"
+FAIL e.style['color-scheme'] = "light unset" should not set the property value assert_equals: expected "" but got "light"
+FAIL e.style['color-scheme'] = "light revert" should not set the property value assert_equals: expected "" but got "light"
+PASS e.style['color-scheme'] = "default" should not set the property value 
+FAIL e.style['color-scheme'] = "light default" should not set the property value assert_equals: expected "" but got "light"
+

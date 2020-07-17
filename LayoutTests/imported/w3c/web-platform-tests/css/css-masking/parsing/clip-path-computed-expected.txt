@@ -1,6 +1,0 @@
-
-PASS Property clip-path value 'circle(calc(10px + 0.5em) at -50% 50%)' 
-PASS Property clip-path value 'circle(calc(10px - 0.5em) at 50% -50%)' 
-PASS Property clip-path value 'ellipse(at 50% 50%)' 
-PASS Property clip-path value 'ellipse(60% closest-side at 50% 50%)' 
-

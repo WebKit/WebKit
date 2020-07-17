@@ -116,6 +116,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-oof-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-oof-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-parsing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-root-background-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-root-background.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-host-whitespace-expected.html
@@ -148,6 +150,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-unusual-html-elements-none.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-line-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-line-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-line-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001-expected.html
@@ -157,6 +162,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-list-item-height-after-dom-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-none-inline-img-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-with-float-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-with-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html

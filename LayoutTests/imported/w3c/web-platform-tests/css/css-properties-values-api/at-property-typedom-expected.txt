@@ -1,0 +1,4 @@
+
+FAIL Properties declared with @property reify correctly div.computedStyleMap is not a function. (In 'div.computedStyleMap()', 'div.computedStyleMap' is undefined)
+FAIL Re-declaring a property with a different type affects reification div.computedStyleMap is not a function. (In 'div.computedStyleMap()', 'div.computedStyleMap' is undefined)
+

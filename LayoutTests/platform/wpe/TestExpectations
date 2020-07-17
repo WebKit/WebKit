@@ -499,7 +499,6 @@ webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-029.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-005.html [ ImageOnlyFailure ]
-webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-border-collapsed-gradient.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
 
@@ -2170,6 +2169,26 @@ webkit.org/b/213507 fast/text/text-styles/small-caption.html [ ImageOnlyFailure 
 webkit.org/b/213507 fast/text/text-styles/status-bar.html [ ImageOnlyFailure ]
 
 webkit.org/b/213508 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Failure ]
+
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round.xht [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-011.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-001.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-002.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-rtl-001.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-variable.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.tentative.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

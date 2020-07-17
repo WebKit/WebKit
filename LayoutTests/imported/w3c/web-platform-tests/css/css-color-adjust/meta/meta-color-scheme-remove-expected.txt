@@ -1,0 +1,5 @@
+
+FAIL First meta applies. assert_equals: expected "dark" but got "auto"
+FAIL Second meta applies after first one is removed. assert_equals: expected "light" but got "auto"
+FAIL Initial color-scheme with both meta elements removed. assert_equals: expected "normal" but got "auto"
+

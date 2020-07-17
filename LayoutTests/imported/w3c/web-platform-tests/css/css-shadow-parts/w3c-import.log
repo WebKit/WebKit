@@ -21,7 +21,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/complex-non-matching.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/different-host.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/double-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/exportparts-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/host-part-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/host-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/inner-host.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder.html
@@ -36,7 +39,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/multiple-parts.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/part-name-idl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/precedence-part-vs-part.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-forward-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-important-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-important-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/style-sharing.html

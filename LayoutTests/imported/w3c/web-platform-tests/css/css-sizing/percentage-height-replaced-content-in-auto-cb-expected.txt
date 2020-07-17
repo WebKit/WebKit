@@ -3,6 +3,6 @@ Test passes if there is a green square below.
 
 
 FAIL img 1 assert_equals: 
-<img id="img" data-expected-height="100" style="width: 100px; height: 100%" src="/css/support/60x60-green.png?0.3215517067041094">
+<img id="img" data-expected-height="100" style="width: 100px; height: 100%" src="/css/support/60x60-green.png?0.4974114301605089">
 height expected 100 but got 0
 

@@ -1,3 +1,91 @@
+2020-07-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT css directory
+        https://bugs.webkit.org/show_bug.cgi?id=214414
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline expectations for testharness tests and update expectations for ref-tests.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-color-property-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-multicol/change-abspos-width-in-second-column-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-multicol/change-out-of-flow-type-and-remove-inner-multicol-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-non-matching-media-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-pseudo/marker-intrinsic-contribution-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup-expected.txt: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-box/animation/padding-bottom-composition-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-box/animation/padding-top-composition-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/svg-as-image-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-multicol/change-abspos-width-in-second-column-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-multicol/change-out-of-flow-type-and-remove-inner-multicol-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-non-matching-media-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-sizing/frameset-intrinsic-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-sizing/min-content-negative-margin-crash-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-001-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/inheritance-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-attribute-changes-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-empty-content-value-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-first-valid-applies-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-insert-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-no-content-value-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-presentational-hint-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-remove-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-remove-head-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-single-value-in-body-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-single-value-in-head-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-single-value-in-shadow-tree-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/parsing/color-scheme-computed-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/parsing/color-scheme-invalid-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/parsing/color-scheme-valid-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-color-property-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-non-matching-media-crash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-pseudo/marker-intrinsic-contribution-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-expected.txt: Added.
+
 2020-07-17  Truitt Savell  <tsavell@apple.com>
 
         Changing expectations to Skip from r264519

@@ -1,0 +1,7 @@
+
+PASS e.style['column-gap'] = "auto" should not set the property value 
+PASS e.style['column-gap'] = "10" should not set the property value 
+PASS e.style['column-gap'] = "10px 20px" should not set the property value 
+PASS e.style['column-gap'] = "-1px" should not set the property value 
+PASS e.style['column-gap'] = "-10%" should not set the property value 
+

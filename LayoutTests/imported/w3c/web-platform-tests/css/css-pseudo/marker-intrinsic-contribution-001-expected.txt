@@ -1,0 +1,10 @@
+
+PASS Intrinsic contribution of outside symbol marker 
+PASS Intrinsic contribution of outside decimal marker 
+PASS Intrinsic contribution of outside string marker 
+PASS Intrinsic contribution of outside content marker 
+PASS Intrinsic contribution of inside symbol marker 
+PASS Intrinsic contribution of inside decimal marker 
+FAIL Intrinsic contribution of inside string marker assert_equals: clientWidth expected 60 but got 30
+FAIL Intrinsic contribution of inside content marker assert_equals: clientWidth expected 70 but got 30
+

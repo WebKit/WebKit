@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x40
+  RenderBlock {HTML} at (0,0) size 800x40
+    RenderBody {BODY} at (8,8) size 784x24
+      RenderFileUploadControl {INPUT} at (2,2) size 233x20 "no file selected"
+        RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (12,3) size 59x14
+            RenderText at (0,0) size 59x14
+              text run at (0,0) width 59: "Choose File"
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

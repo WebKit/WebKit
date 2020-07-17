@@ -842,8 +842,6 @@ webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/position-st
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure ]
 
-webkit.org/b/203501 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
-webkit.org/b/203501 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
 
 webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
 
@@ -987,3 +985,12 @@ webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes/composited-iframe-wit
 
 webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone-private.html [ Skip ]
 webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone.html [ Skip ]
+
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-overflow/overflow-ellipsis-dynamic-001.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-reposition.html [ ImageOnlyFailure ]
+webkit.org/b/214469 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-013.html [ Skip ]
+webkit.org/b/214469 [ Debug ] imported/w3c/web-platform-tests/css/css-scoping/slotted-matches.html [ Skip ]

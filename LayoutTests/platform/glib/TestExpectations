@@ -573,13 +573,16 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/o
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-028.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padding-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-05.html [ Pass ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-01.html [ Pass ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ Pass ]
 
 # Flaky Unhandled promise rejection messages
 webkit.org/b/171094 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1.html [ Pass Failure ]
 
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Timeout ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Timeout ]
+
+webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style.html [ Failure Pass ]
+webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

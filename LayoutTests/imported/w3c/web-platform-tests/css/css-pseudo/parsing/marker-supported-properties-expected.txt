@@ -1,0 +1,46 @@
+
+PASS Property font value 'italic small-caps 900 expanded 25px / 50px Ahem' in ::marker 
+PASS Property font-family value 'Ahem' in ::marker 
+PASS Property font-feature-settings value '"smcp"' in ::marker 
+FAIL Property font-kerning value 'none' in ::marker assert_equals: expected "none" but got "auto"
+PASS Property font-size value '25px' in ::marker 
+FAIL Property font-size-adjust value '1' in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
+PASS Property font-stretch value 'expanded' in ::marker 
+PASS Property font-style value 'italic' in ::marker 
+PASS Property font-synthesis value 'none' in ::marker 
+PASS Property font-variant value 'small-caps' in ::marker 
+PASS Property font-variant-caps value 'small-caps' in ::marker 
+PASS Property font-variant-east-asian value 'full-width' in ::marker 
+PASS Property font-variant-ligatures value 'historical-ligatures' in ::marker 
+PASS Property font-variant-numeric value 'slashed-zero' in ::marker 
+PASS Property font-variant-position value 'sub' in ::marker 
+PASS Property font-weight value '900' in ::marker 
+FAIL Property white-space value 'nowrap' in ::marker assert_equals: expected "nowrap" but got "normal"
+PASS Property color value 'rgb(0, 100, 200)' in ::marker 
+FAIL Property text-combine-upright value 'all' in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
+FAIL Property unicode-bidi value 'plaintext' in ::marker assert_equals: expected "plaintext" but got "normal"
+FAIL Property direction value 'rtl' in ::marker assert_equals: expected "rtl" but got "ltr"
+FAIL Property content value '"foo"' in ::marker assert_equals: expected "\"foo\"" but got ""
+FAIL Property animation value '1s linear 2s infinite alternate forwards paused anim' in ::marker assert_equals: expected "1s linear 2s infinite alternate forwards paused anim" but got ""
+FAIL Property animation-delay value '1s' in ::marker assert_equals: expected "1s" but got "0s"
+FAIL Property animation-direction value 'alternate' in ::marker assert_equals: expected "alternate" but got "normal"
+FAIL Property animation-duration value '2s' in ::marker assert_equals: expected "2s" but got "0s"
+FAIL Property animation-fill-mode value 'forwards' in ::marker assert_equals: expected "forwards" but got "none"
+FAIL Property animation-iteration-count value 'infinite' in ::marker assert_equals: expected "infinite" but got "1"
+FAIL Property animation-name value 'anim' in ::marker assert_equals: expected "anim" but got "none"
+FAIL Property animation-play-state value 'paused' in ::marker assert_equals: expected "paused" but got "running"
+FAIL Property animation-timing-function value 'linear' in ::marker assert_equals: expected "linear" but got "ease"
+FAIL Property transition value 'display 1s linear 2s' in ::marker assert_equals: expected "display 1s linear 2s" but got "all 0s ease 0s"
+FAIL Property transition-delay value '1s' in ::marker assert_equals: expected "1s" but got "0s"
+FAIL Property transition-duration value '2s' in ::marker assert_equals: expected "2s" but got "0s"
+FAIL Property transition-property value 'display' in ::marker assert_equals: expected "display" but got "all"
+FAIL Property transition-timing-function value 'linear' in ::marker assert_equals: expected "linear" but got "ease"
+PASS Property display value 'none' in ::marker 
+PASS Property position value 'absolute' in ::marker 
+PASS Property float value 'right' in ::marker 
+FAIL Property list-style value 'inside url('foo') decimal' in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
+PASS Property list-style-image value 'url('foo')' in ::marker 
+PASS Property list-style-position value 'inside' in ::marker 
+PASS Property list-style-type value 'decimal' in ::marker 
+PASS Property line-height value '50px' in ::marker 
+target

@@ -40,6 +40,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-val-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-val-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-val-002-expected.xht

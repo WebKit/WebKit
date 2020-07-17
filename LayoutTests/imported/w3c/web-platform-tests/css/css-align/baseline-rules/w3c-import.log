@@ -14,6 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-flexbox-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-grid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-inline-block-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001.html

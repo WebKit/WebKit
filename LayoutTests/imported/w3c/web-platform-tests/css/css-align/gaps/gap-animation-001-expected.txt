@@ -1,3 +1,3 @@
 
-PASS gap is interpolable 
+FAIL gap is interpolable assert_equals: expected "50px" but got "50px 50px"
 

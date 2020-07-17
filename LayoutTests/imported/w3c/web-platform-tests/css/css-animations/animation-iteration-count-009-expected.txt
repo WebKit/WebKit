@@ -1,0 +1,6 @@
+
+PASS Basic floating point iteration count 
+PASS Floating point iteration count after multiple iterations 
+PASS Floating point iteration count during first iteration 
+PASS Floating point iteration count with alternating directions 
+

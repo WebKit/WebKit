@@ -1,0 +1,4 @@
+
+PASS Property list-style-position value 'inside' 
+PASS Property list-style-position value 'outside' 
+

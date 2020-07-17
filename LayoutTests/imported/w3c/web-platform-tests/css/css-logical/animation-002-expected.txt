@@ -12,5 +12,6 @@ FAIL Filling animations update when the writing-mode is changed assert_equals: e
 FAIL The number of interpolating properties can be increased when the writing-mode is changed assert_equals: expected "50px" but got "0px"
 FAIL The number of interpolating properties can be decreased when the writing-mode is changed assert_equals: expected "150px" but got "100px"
 FAIL Animations update when the writing-mode is changed through a CSS variable assert_equals: expected "50px" but got "0px"
+FAIL Logical shorthand with variable references animates correctly assert_equals: expected (string) "250px" but got (undefined) undefined
 FAIL Animations update when the direction is changed assert_equals: expected "50px" but got "0px"
 

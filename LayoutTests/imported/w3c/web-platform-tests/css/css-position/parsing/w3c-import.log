@@ -43,4 +43,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/top-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-positioned-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-valid.html

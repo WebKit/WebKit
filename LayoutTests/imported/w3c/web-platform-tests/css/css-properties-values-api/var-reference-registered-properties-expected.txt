@@ -6,6 +6,7 @@ FAIL Registered lists may be concatenated assert_equals: expected "1px, 10px, 2p
 PASS Font-relative units are absolutized when substituting 
 PASS Calc expressions are resolved when substituting 
 FAIL Lists with relative units are absolutized when substituting assert_equals: expected "110px, 120px" but got "0px"
+FAIL Values are absolutized when substituting into properties with universal syntax The given initial value does not parse for the given syntax.
 PASS Valid fallback does not invalidate var()-reference [<length>, 10px] 
 PASS Valid fallback does not invalidate var()-reference [<length> | <color>, red] 
 PASS Valid fallback does not invalidate var()-reference [<length> | none, none] 

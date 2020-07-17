@@ -5,7 +5,7 @@ PASS grid-row-gap accepts em
 PASS grid-row-gap accepts vw 
 PASS grid-row-gap accepts percentage 
 PASS grid-row-gap accepts calc() 
-FAIL grid-row-gap accepts calc() mixing fixed and percentage values assert_equals: expected "calc(5px + 10%)" but got "calc(10% + 5px)"
+PASS grid-row-gap accepts calc() mixing fixed and percentage values 
 PASS Initial grid-row-gap is 'normal' 
 PASS Initial grid-row-gap is 'normal' 2 
 PASS Initial inherited grid-row-gap is 'normal' 

@@ -1,8 +1,0 @@
-
-PASS e.style['min-height'] = "10px" should set the property value 
-PASS e.style['min-height'] = "20%" should set the property value 
-PASS e.style['min-height'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['min-height'] = "min-content" should set the property value 
-PASS e.style['min-height'] = "max-content" should set the property value 
-PASS e.style['min-height'] = "fit-content" should set the property value 
-

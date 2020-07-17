@@ -1,0 +1,8 @@
+
+FAIL e.style['border-inline'] = "1px dotted red" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['border-inline'] = "double" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['border-inline-start'] = "green double thin" should set the property value 
+PASS e.style['border-inline-start'] = "green" should set the property value 
+PASS e.style['border-inline-end'] = "thin" should set the property value 
+PASS e.style['border-inline-end'] = "calc(10px - 0.5em) dotted red" should set the property value 
+

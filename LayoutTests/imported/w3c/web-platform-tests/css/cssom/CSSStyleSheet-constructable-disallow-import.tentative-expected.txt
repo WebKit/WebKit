@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: function is not a constructor (evaluating 'new CSSStyleSheet()')
+
+Harness Error (FAIL), message = Unhandled rejection: function is not a constructor (evaluating 'new CSSStyleSheet()')
+
+FAIL Inserting an @import rule through insertRule on a constructed stylesheet throws an exception assert_throws_dom: function "() => { (new CSSStyleSheet).insertRule(import_text) }" threw object "TypeError: function is not a constructor (evaluating 'new CSSStyleSheet')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+TIMEOUT @import rules should not trigger any loads. Test timed out
+FAIL @import rules are not parsed in CSSStyleSheet.replace function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL @import rules are not parsed in CSSStyleSheet.replaceSync function is not a constructor (evaluating 'new CSSStyleSheet()')
+
+Harness Error (FAIL), message = Unhandled rejection: function is not a constructor (evaluating 'new CSSStyleSheet()')
+
+FAIL Inserting an @import rule through insertRule on a constructed stylesheet throws an exception assert_throws_dom: function "() => { (new CSSStyleSheet).insertRule(import_text) }" threw object "TypeError: function is not a constructor (evaluating 'new CSSStyleSheet')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+TIMEOUT @import rules should not trigger any loads. Test timed out
+FAIL @import rules are not parsed in CSSStyleSheet.replace function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL @import rules are not parsed in CSSStyleSheet.replaceSync function is not a constructor (evaluating 'new CSSStyleSheet()')
+

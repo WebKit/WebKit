@@ -1,0 +1,16 @@
+
+PASS Property justify-content value 'normal' 
+PASS Property justify-content value 'space-between' 
+PASS Property justify-content value 'space-around' 
+PASS Property justify-content value 'space-evenly' 
+PASS Property justify-content value 'stretch' 
+PASS Property justify-content value 'center' 
+PASS Property justify-content value 'start' 
+PASS Property justify-content value 'end' 
+PASS Property justify-content value 'flex-start' 
+PASS Property justify-content value 'flex-end' 
+PASS Property justify-content value 'unsafe end' 
+PASS Property justify-content value 'safe flex-start' 
+PASS Property justify-content value 'left' 
+PASS Property justify-content value 'unsafe right' 
+

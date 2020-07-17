@@ -1,0 +1,4 @@
+
+PASS Setting an invalid property via the declaration setter doesn't create a declaration 
+PASS Setting an invalid value via the declaration setter doesn't create a declaration 
+

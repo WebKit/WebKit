@@ -14,7 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/bottom-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/bottom-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/left-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/left-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/position-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/right-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/right-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/top-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/animations/top-interpolation.html

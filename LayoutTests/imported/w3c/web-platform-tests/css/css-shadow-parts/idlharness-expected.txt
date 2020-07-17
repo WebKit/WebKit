@@ -1,0 +1,14 @@
+
+PASS idl_test setup 
+PASS idl_test validation 
+PASS Partial interface Element: original interface defined 
+PASS Partial interface Element: member names are unique 
+PASS Element includes ParentNode: member names are unique 
+PASS Element includes NonDocumentTypeChildNode: member names are unique 
+PASS Element includes ChildNode: member names are unique 
+PASS Element includes Slottable: member names are unique 
+PASS Element interface: attribute part 
+PASS Element interface: element must inherit property "part" with the proper type 
+PASS Element interface: htmlElement must inherit property "part" with the proper type 
+PASS Element interface: svgElement must inherit property "part" with the proper type 
+

@@ -1,0 +1,8 @@
+
+PASS Sanity checks 
+FAIL Page selector is initially the empty string assert_equals: expected "" but got "@page"
+FAIL Set selectorText to :left pseudo page assert_equals: expected ":left" but got "@page"
+FAIL Set selectorText to named page assert_equals: expected "named" but got "@page named"
+FAIL Set selectorText to named page with :first pseudo page assert_equals: expected "named:first" but got "@page named"
+PASS Set selectorText to named page after rule was removed 
+

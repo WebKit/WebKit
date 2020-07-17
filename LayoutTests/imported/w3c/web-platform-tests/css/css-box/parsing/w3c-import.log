@@ -30,10 +30,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-height-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-width-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-height-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-height-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-width-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-width-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/overflow-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/padding-computed.html

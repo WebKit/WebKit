@@ -1,0 +1,8 @@
+
+PASS e.style['column-gap'] = "normal" should set the property value 
+PASS e.style['column-gap'] = "0" should set the property value 
+PASS e.style['column-gap'] = "1px" should set the property value 
+PASS e.style['column-gap'] = "calc(2em + 3ex)" should set the property value 
+PASS e.style['column-gap'] = "4%" should set the property value 
+PASS e.style['column-gap'] = "5vmin" should set the property value 
+
