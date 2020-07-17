@@ -1,3 +1,14 @@
+2020-07-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Remove deprecated baselines after latest WPT css update.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom.tentative-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom.tentative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Removed.
+
 2020-07-16  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Garden two resource timing failures after WPT update
