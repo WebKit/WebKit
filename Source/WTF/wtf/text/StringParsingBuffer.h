@@ -52,7 +52,7 @@ public:
     {
         ASSERT(characters <= end);
         ASSERT(!characters == !end);
-        ASSERT(end - characters <= std::numeric_limits<unsigned>::max());
+        ASSERT(static_cast<size_t>(end - characters) <= std::numeric_limits<unsigned>::max());
     }
 
     constexpr auto position() const { return m_position; }
