@@ -1,5 +1,18 @@
 2020-07-17  Joonghun Park  <jh718.park@samsung.com>
 
+        Unreviewed. Remove the build warning below and redundant spaces since r264381.
+        warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+        No new tests, no new behaviors.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::vertexAttribI4iv):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib):
+        (WebCore::WebGLRenderingContextBase::vertexAttribfvImpl):
+
+2020-07-17  Joonghun Park  <jh718.park@samsung.com>
+
         Remove the build warning below and redundant spaces since r263985.
         warning: redundant move in return statement [-Wredundant-move]
 

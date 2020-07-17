@@ -3601,7 +3601,7 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
         return state.originalStride;
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_TYPE:
         return state.type;
-    case GraphicsContextGL::CURRENT_VERTEX_ATTRIB:
+    case GraphicsContextGL::CURRENT_VERTEX_ATTRIB: {
         switch (m_vertexAttribValue[index].type) {
         case GraphicsContextGL::FLOAT:
             return Float32Array::tryCreate(m_vertexAttribValue[index].fValue, 4);
@@ -3609,7 +3609,12 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
             return Int32Array::tryCreate(m_vertexAttribValue[index].iValue, 4);
         case GraphicsContextGL::UNSIGNED_INT:
             return Uint32Array::tryCreate(m_vertexAttribValue[index].uiValue, 4);
+        default:
+            ASSERT_NOT_REACHED();
+            break;
         }
+        return nullptr;
+    }
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getVertexAttrib", "invalid parameter name");
         return nullptr;
@@ -7007,7 +7012,7 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no array");
         return;
     }
-    
+
     int size = list.length();
     if (size < expectedSize) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size");
