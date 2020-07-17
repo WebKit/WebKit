@@ -1,3 +1,25 @@
+2020-07-16  Rob Buis  <rbuis@igalia.com>
+
+        Make DocumentParser.ParserState an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=214416
+
+        Reviewed by Darin Adler.
+
+        Make DocumentParser.ParserState an enum class since it is more readable.
+
+        * dom/DocumentParser.cpp:
+        (WebCore::DocumentParser::DocumentParser):
+        (WebCore::DocumentParser::startParsing):
+        (WebCore::DocumentParser::prepareToStopParsing):
+        (WebCore::DocumentParser::stopParsing):
+        (WebCore::DocumentParser::detach):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::isParsing const):
+        (WebCore::DocumentParser::isStopping const):
+        (WebCore::DocumentParser::isStopped const):
+        (WebCore::DocumentParser::isDetached const):
+        (): Deleted.
+
 2020-07-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Rename createBoxPtr into adoptBoxPtr
