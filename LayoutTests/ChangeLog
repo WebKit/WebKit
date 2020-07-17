@@ -1,3 +1,13 @@
+2020-07-17  Sihui Liu  <sihui_liu@appe.com>
+
+        REGRESSION(r264486): storage/indexeddb/structured-clone.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=214481
+        <rdar://problem/65735839>
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] fast/events/context-activated-by-key-event.html is crashing

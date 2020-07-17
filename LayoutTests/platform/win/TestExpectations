@@ -4523,3 +4523,6 @@ webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 webkit.org/b/214088 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
 webkit.org/b/214428 imported/mozilla/svg/blend-saturation.svg [ Failure ]
+
+storage/indexeddb/structured-clone.html [ Skip ]
+storage/indexeddb/structured-clone-private.html [ Skip ]
