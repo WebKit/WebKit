@@ -1,3 +1,13 @@
+2020-07-17  Jer Noble  <jer.noble@apple.com>
+
+        Unreviwed build fix after r265592; rather than remove the dead code causing link errors
+        instead link against CoreGraphics and UIKit for debug builds; revert the previous build
+        fix as well.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.mm:
+        (-[RTCI420Buffer debugQuickLookObject]):
+
 2020-07-16  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r264492; previously dead code in RTCNativeI420Buffer.mm was

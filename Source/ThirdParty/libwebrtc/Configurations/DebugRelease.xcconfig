@@ -41,3 +41,6 @@ WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
 
 DEBUG_DEFINES[config=Debug] = $(DEBUG_DEFINES_debug);
 GCC_OPTIMIZATION_LEVEL[config=Debug] = $(GCC_OPTIMIZATION_LEVEL_debug);
+OTHER_LDFLAGS[config=Debug][sdk=iphone*] = $(inherited) -framework UIKit -framework CoreGraphics
+OTHER_LDFLAGS[config=Debug][sdk=tv*] = $(inherited) -framework UIKit -framework CoreGraphics
+OTHER_LDFLAGS[config=Debug][sdk=watch*] = $(inherited) -framework UIKit -framework CoreGraphics
