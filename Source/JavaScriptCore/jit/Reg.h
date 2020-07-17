@@ -234,9 +234,7 @@ struct RegHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::Reg> {
-    typedef JSC::RegHash Hash;
-};
+template<> struct DefaultHash<JSC::Reg> : JSC::RegHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Reg> : SimpleClassHashTraits<JSC::Reg> {

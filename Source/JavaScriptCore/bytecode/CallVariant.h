@@ -212,9 +212,7 @@ CallVariantList despecifiedVariantList(const CallVariantList&);
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::CallVariant> {
-    typedef JSC::CallVariantHash Hash;
-};
+template<> struct DefaultHash<JSC::CallVariant> : JSC::CallVariantHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::CallVariant> : SimpleClassHashTraits<JSC::CallVariant> { };

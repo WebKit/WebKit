@@ -61,7 +61,7 @@ static bool matchMode(Binding::BindingDetails bindingType, AST::ResourceSemantic
 static Optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>& entryPointItems, Layout& layout, ShaderStage shaderStage)
 {
     HashMap<Binding*, size_t> result;
-    HashSet<size_t, DefaultHash<size_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
+    HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
     for (auto& bindGroup : layout) {
         auto space = bindGroup.name;
         for (auto& binding : bindGroup.bindings) {
@@ -140,7 +140,7 @@ static bool isAcceptableFormat(VertexFormat vertexFormat, AST::UnnamedType& unna
 static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<EntryPointItem>& vertexInputs, VertexAttributes& vertexAttributes, Intrinsics& intrinsics)
 {
     HashMap<VertexAttribute*, size_t> result;
-    HashSet<size_t, DefaultHash<size_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
+    HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
     for (auto& vertexAttribute : vertexAttributes) {
         for (size_t i = 0; i < vertexInputs.size(); ++i) {
             auto& item = vertexInputs[i];
@@ -226,7 +226,7 @@ static bool isAcceptableFormat(TextureFormat textureFormat, AST::UnnamedType& un
 static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Vector<EntryPointItem>& fragmentOutputs, Vector<AttachmentDescriptor>& attachmentDescriptors, Intrinsics& intrinsics)
 {
     HashMap<AttachmentDescriptor*, size_t> result;
-    HashSet<size_t, DefaultHash<size_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
+    HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> itemIndices;
     for (auto& attachmentDescriptor : attachmentDescriptors) {
         for (size_t i = 0; i < fragmentOutputs.size(); ++i) {
             auto& item = fragmentOutputs[i];

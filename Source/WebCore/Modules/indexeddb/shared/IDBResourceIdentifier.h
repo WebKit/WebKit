@@ -145,9 +145,7 @@ bool IDBResourceIdentifier::decode(Decoder& decoder, IDBResourceIdentifier& iden
 namespace WTF {
 
 template<> struct HashTraits<WebCore::IDBResourceIdentifier> : WebCore::IDBResourceIdentifierHashTraits { };
-template<> struct DefaultHash<WebCore::IDBResourceIdentifier> {
-    typedef WebCore::IDBResourceIdentifierHash Hash;
-};
+template<> struct DefaultHash<WebCore::IDBResourceIdentifier> : WebCore::IDBResourceIdentifierHash { };
 
 inline WebCore::IDBConnectionIdentifier crossThreadCopy(WebCore::IDBConnectionIdentifier identifier)
 {

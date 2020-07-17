@@ -668,7 +668,7 @@ private:
     Second m_second;
 };
 
-template<typename Key, typename Value, typename HashArg = typename DefaultHash<SourceType<Key>>::Hash, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>>
+template<typename Key, typename Value, typename HashArg = DefaultHash<SourceType<Key>>, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>>
 class CachedHashMap : public VariableLengthObject<HashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     template<typename K, typename V>
     using Map = HashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg>;
@@ -924,7 +924,7 @@ private:
     size_t m_numBits;
 };
 
-template<typename T, typename HashArg = typename DefaultHash<T>::Hash>
+template<typename T, typename HashArg = DefaultHash<T>>
 class CachedHashSet : public CachedObject<HashSet<SourceType<T>, HashArg>> {
 public:
     void encode(Encoder& encoder, const HashSet<SourceType<T>, HashArg>& set)

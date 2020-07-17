@@ -63,6 +63,7 @@ namespace WTF {
         }
     };
 
+    template<> struct DefaultHash<AtomString> : AtomStringHash { };
 }
 
 using WTF::AtomStringHash;

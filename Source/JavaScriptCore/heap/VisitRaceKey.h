@@ -96,9 +96,7 @@ struct VisitRaceKeyHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::VisitRaceKey> {
-    typedef JSC::VisitRaceKeyHash Hash;
-};
+template<> struct DefaultHash<JSC::VisitRaceKey> : JSC::VisitRaceKeyHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::VisitRaceKey> : SimpleClassHashTraits<JSC::VisitRaceKey> { };

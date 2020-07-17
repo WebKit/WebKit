@@ -733,9 +733,7 @@ template<typename T> struct DefaultHash;
 
 // Hash declarations in the 'Database' Domain
 template<>
-struct DefaultHash<Inspector::Protocol::Database::PrimaryColors> {
-    using Hash = IntHash<Inspector::Protocol::Database::PrimaryColors>;
-};
+struct DefaultHash<Inspector::Protocol::Database::PrimaryColors> : IntHash<Inspector::Protocol::Database::PrimaryColors> { };
 
 } // namespace WTF
 ### End File: TestProtocolObjects.h

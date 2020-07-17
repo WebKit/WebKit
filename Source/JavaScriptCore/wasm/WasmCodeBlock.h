@@ -136,7 +136,7 @@ private:
     Vector<RefPtr<OMGCallee>> m_omgCallees;
     Vector<RefPtr<BBQCallee>> m_bbqCallees;
     RefPtr<LLIntCallees> m_llintCallees;
-    HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
+    HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
     Vector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;

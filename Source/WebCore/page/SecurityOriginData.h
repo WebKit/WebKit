@@ -152,8 +152,6 @@ struct SecurityOriginDataHash {
 namespace WTF {
 
 template<> struct HashTraits<WebCore::SecurityOriginData> : WebCore::SecurityOriginDataHashTraits { };
-template<> struct DefaultHash<WebCore::SecurityOriginData> {
-    typedef WebCore::SecurityOriginDataHash Hash;
-};
+template<> struct DefaultHash<WebCore::SecurityOriginData> : WebCore::SecurityOriginDataHash { };
 
 } // namespace WTF

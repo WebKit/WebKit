@@ -559,9 +559,9 @@ protected:
     Vector<Vector<IndexType, 0, UnsafeVectorOverflow, 4>, 0, UnsafeVectorOverflow> m_adjacencyList;
     Vector<IndexType, 0, UnsafeVectorOverflow> m_degrees;
 
-    using IndexTypeSet = HashSet<IndexType, typename DefaultHash<IndexType>::Hash, WTF::UnsignedWithZeroKeyHashTraits<IndexType>>;
+    using IndexTypeSet = HashSet<IndexType, DefaultHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType>>;
 
-    HashMap<IndexType, IndexTypeSet, typename DefaultHash<IndexType>::Hash, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
+    HashMap<IndexType, IndexTypeSet, DefaultHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
 
     // Instead of keeping track of the move instructions, we just keep their operands around and use the index
     // in the vector as the "identifier" for the move.

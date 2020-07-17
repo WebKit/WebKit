@@ -59,11 +59,11 @@ struct TestDoubleHashTraits : HashTraits<double> {
     static const int minimumTableSize = 8;
 };
 
-typedef HashCountedSet<double, DefaultHash<double>::Hash, TestDoubleHashTraits> DoubleHashCountedSet;
+typedef HashCountedSet<double, DefaultHash<double>, TestDoubleHashTraits> DoubleHashCountedSet;
 
 static int bucketForKey(double key)
 {
-    return DefaultHash<double>::Hash::hash(key) & (TestDoubleHashTraits::minimumTableSize - 1);
+    return DefaultHash<double>::hash(key) & (TestDoubleHashTraits::minimumTableSize - 1);
 }
 
 TEST(WTF_HashCountedSet, DoubleHashCollisions)

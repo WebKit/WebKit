@@ -170,9 +170,7 @@ Optional<Cookie> Cookie::decode(Decoder& decoder)
 
 namespace WTF {
     template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<WebCore::Cookie> {
-        typedef WebCore::CookieHash Hash;
-    };
+    template<> struct DefaultHash<WebCore::Cookie> : WebCore::CookieHash { };
     template<> struct HashTraits<WebCore::Cookie> : GenericHashTraits<WebCore::Cookie> {
         static WebCore::Cookie emptyValue() { return { }; }
         static void constructDeletedValue(WebCore::Cookie& slot) { slot = WebCore::Cookie(WTF::HashTableDeletedValue); }

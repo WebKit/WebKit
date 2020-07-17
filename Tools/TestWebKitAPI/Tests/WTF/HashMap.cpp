@@ -63,11 +63,11 @@ struct TestDoubleHashTraits : HashTraits<double> {
     static const int minimumTableSize = 8;
 };
 
-typedef HashMap<double, int64_t, DefaultHash<double>::Hash, TestDoubleHashTraits> DoubleHashMap;
+typedef HashMap<double, int64_t, DefaultHash<double>, TestDoubleHashTraits> DoubleHashMap;
 
 static int bucketForKey(double key)
 {
-    return DefaultHash<double>::Hash::hash(key) & (TestDoubleHashTraits::minimumTableSize - 1);
+    return DefaultHash<double>::hash(key) & (TestDoubleHashTraits::minimumTableSize - 1);
 }
 
 template<typename T> struct BigTableHashTraits : public HashTraits<T> {
@@ -1021,7 +1021,7 @@ TEST(WTF_HashMap, Random_WrapAround)
 
 TEST(WTF_HashMap, Random_IsEvenlyDistributed)
 {
-    HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
     map.add(0, 0);
     map.add(1, 1);
 
@@ -1094,7 +1094,7 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
 TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
 {
     for (size_t tableSize = 2; tableSize <= 2 * 6; ++tableSize) { // Our hash tables shrink at a load factor of 1 / 6.
-        HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+        HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
         for (size_t i = 0; i < tableSize; ++i)
             map.add(i, i);
         for (size_t i = 2; i < tableSize; ++i)

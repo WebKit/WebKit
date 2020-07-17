@@ -110,9 +110,7 @@ template<> struct HashTraits<WebCore::ServiceWorkerRegistrationKey> : GenericHas
     static bool isDeletedValue(const WebCore::ServiceWorkerRegistrationKey& slot) { return slot.scope().isHashTableDeletedValue(); }
 };
 
-template<> struct DefaultHash<WebCore::ServiceWorkerRegistrationKey> {
-    typedef ServiceWorkerRegistrationKeyHash Hash;
-};
+template<> struct DefaultHash<WebCore::ServiceWorkerRegistrationKey> : ServiceWorkerRegistrationKeyHash { };
 
 } // namespace WTF
 

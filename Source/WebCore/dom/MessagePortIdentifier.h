@@ -105,8 +105,6 @@ template<> struct HashTraits<WebCore::MessagePortIdentifier> : GenericHashTraits
     static bool isDeletedValue(const WebCore::MessagePortIdentifier& slot) { return slot.processIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
 };
 
-template<> struct DefaultHash<WebCore::MessagePortIdentifier> {
-    typedef MessagePortIdentifierHash Hash;
-};
+template<> struct DefaultHash<WebCore::MessagePortIdentifier> : MessagePortIdentifierHash { };
 
 } // namespace WTF

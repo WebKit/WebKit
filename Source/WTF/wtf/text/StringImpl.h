@@ -59,7 +59,6 @@ class SymbolRegistry;
 struct CStringTranslator;
 struct HashAndUTF8CharactersTranslator;
 struct LCharBufferTranslator;
-struct StringHash;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
 
@@ -614,17 +613,11 @@ bool isSpaceOrNewline(UChar32);
 
 template<typename CharacterType> unsigned lengthOfNullTerminatedString(const CharacterType*);
 
-// StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
-template<typename T> struct DefaultHash;
-template<> struct DefaultHash<StringImpl*> {
-    typedef StringHash Hash;
-};
-template<> struct DefaultHash<RefPtr<StringImpl>> {
-    typedef StringHash Hash;
-};
-template<> struct DefaultHash<PackedPtr<StringImpl>> {
-    using Hash = StringHash;
-};
+// StringHashd is the default hash for StringImpl* and RefPtr<StringImpl>
+template<typename> struct DefaultHash;
+template<> struct DefaultHash<StringImpl*>;
+template<> struct DefaultHash<RefPtr<StringImpl>>;
+template<> struct DefaultHash<PackedPtr<StringImpl>>;
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
         static StaticStringImpl impl(characters); \

@@ -690,9 +690,7 @@ struct MarkedBlockHash : PtrHash<JSC::MarkedBlock*> {
     }
 };
 
-template<> struct DefaultHash<JSC::MarkedBlock*> {
-    typedef MarkedBlockHash Hash;
-};
+template<> struct DefaultHash<JSC::MarkedBlock*> : MarkedBlockHash { };
 
 void printInternal(PrintStream& out, JSC::MarkedBlock::Handle::SweepMode);
 

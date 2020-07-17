@@ -505,7 +505,7 @@ private:
             }
         }
         
-        using InlineCallFrames = HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>>;
+        using InlineCallFrames = HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>>;
         using InlineCallFramesForCanditates = HashMap<Node*, InlineCallFrames>;
         InlineCallFramesForCanditates inlineCallFramesForCandidate;
         auto forEachDependentNode = recursableLambda([&](auto self, Node* node, const auto& functor) -> void {

@@ -272,7 +272,7 @@ struct PackedPtrTraits {
     static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr.get() == bitwise_cast<T*>(static_cast<uintptr_t>(StorageType::alignment)); }
 };
 
-template<typename P> struct DefaultHash<PackedPtr<P>> { using Hash = PtrHash<PackedPtr<P>>; };
+template<typename P> struct DefaultHash<PackedPtr<P>> : PtrHash<PackedPtr<P>> { };
 
 } // namespace WTF
 

@@ -266,9 +266,7 @@ template<typename T> struct IsSmartPtr<WKRetainPtr<T>> {
     WTF_INTERNAL static const bool value = true;
 };
 
-template<typename P> struct DefaultHash<WKRetainPtr<P>> {
-    typedef PtrHash<WKRetainPtr<P>> Hash;
-};
+template<typename P> struct DefaultHash<WKRetainPtr<P>> : PtrHash<WKRetainPtr<P>> { };
 
 template<typename P> struct HashTraits<WKRetainPtr<P>> : SimpleClassHashTraits<WKRetainPtr<P>> {
     static P emptyValue() { return nullptr; }

@@ -110,7 +110,7 @@ uint32_t DFANode::bestFallbackTarget(const DFA& dfa) const
 {
     ASSERT(canUseFallbackTransition(dfa));
 
-    HashMap<uint32_t, unsigned, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> histogram;
+    HashMap<uint32_t, unsigned, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> histogram;
 
     IterableConstRange iterableTransitions = transitions(dfa);
     auto iterator = iterableTransitions.begin();

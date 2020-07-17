@@ -55,7 +55,7 @@ private:
     ContentExtensionStyleSheet(Document&);
 
     Ref<CSSStyleSheet> m_styleSheet;
-    HashSet<uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_addedSelectorIDs;
+    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_addedSelectorIDs;
 };
 
 } // namespace ContentExtensions

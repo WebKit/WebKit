@@ -1482,9 +1482,7 @@ JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Role);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Signedness);
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::B3::Air::Arg> {
-    typedef JSC::B3::Air::ArgHash Hash;
-};
+template<> struct DefaultHash<JSC::B3::Air::Arg> : JSC::B3::Air::ArgHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::B3::Air::Arg> : SimpleClassHashTraits<JSC::B3::Air::Arg> {

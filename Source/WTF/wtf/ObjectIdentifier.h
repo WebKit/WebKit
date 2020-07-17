@@ -139,9 +139,7 @@ template<typename T> struct ObjectIdentifierHash {
 
 template<typename T> struct HashTraits<ObjectIdentifier<T>> : SimpleClassHashTraits<ObjectIdentifier<T>> { };
 
-template<typename T> struct DefaultHash<ObjectIdentifier<T>> {
-    typedef ObjectIdentifierHash<T> Hash;
-};
+template<typename T> struct DefaultHash<ObjectIdentifier<T>> : ObjectIdentifierHash<T> { };
 
 template<typename T>
 TextStream& operator<<(TextStream& ts, const ObjectIdentifier<T>& identifier)

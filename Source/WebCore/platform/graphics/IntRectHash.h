@@ -36,15 +36,15 @@ namespace WTF {
 template<> struct IntHash<WebCore::IntRect> {
     static unsigned hash(const WebCore::IntRect& key)
     {
-        return pairIntHash(DefaultHash<WebCore::IntPoint>::Hash::hash(key.location()), DefaultHash<WebCore::IntSize>::Hash::hash(key.size()));
+        return pairIntHash(DefaultHash<WebCore::IntPoint>::hash(key.location()), DefaultHash<WebCore::IntSize>::hash(key.size()));
     }
     static bool equal(const WebCore::IntRect& a, const WebCore::IntRect& b)
     {
-        return DefaultHash<WebCore::IntPoint>::Hash::equal(a.location(), b.location()) && DefaultHash<WebCore::IntSize>::Hash::equal(a.size(), b.size());
+        return DefaultHash<WebCore::IntPoint>::equal(a.location(), b.location()) && DefaultHash<WebCore::IntSize>::equal(a.size(), b.size());
     }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
-template<> struct DefaultHash<WebCore::IntRect> { typedef IntHash<WebCore::IntRect> Hash; };
+template<> struct DefaultHash<WebCore::IntRect> : IntHash<WebCore::IntRect> { };
 
 template<> struct HashTraits<WebCore::IntRect> : GenericHashTraits<WebCore::IntRect> {
     static const bool emptyValueIsZero = true;

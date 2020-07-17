@@ -154,9 +154,7 @@ namespace WTF {
     
     template<typename T> struct DefaultHash;
 
-    template<> struct DefaultHash<WebCore::QualifiedName> {
-        typedef WebCore::QualifiedNameHash Hash;
-    };
+    template<> struct DefaultHash<WebCore::QualifiedName> : WebCore::QualifiedNameHash { };
     
     template<> struct HashTraits<WebCore::QualifiedName> : SimpleClassHashTraits<WebCore::QualifiedName> {
         static const bool emptyValueIsZero = false;

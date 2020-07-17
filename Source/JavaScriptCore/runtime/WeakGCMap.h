@@ -38,7 +38,7 @@ public:
     virtual void pruneStaleEntries() = 0;
 };
 
-template<typename KeyArg, typename ValueArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
+template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>,
     typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap final : public WeakGCMapBase {
     WTF_MAKE_FAST_ALLOCATED;

@@ -90,9 +90,7 @@ template<> struct HashTraits<WebKit::DownloadID> : GenericHashTraits<WebKit::Dow
     static void constructDeletedValue(WebKit::DownloadID& slot) { slot = WebKit::DownloadID(std::numeric_limits<uint64_t>::max()); }
     static bool isDeletedValue(const WebKit::DownloadID& slot) { return slot.downloadID() == std::numeric_limits<uint64_t>::max(); }
 };
-template<> struct DefaultHash<WebKit::DownloadID> {
-    typedef DownloadIDHash Hash;
-};
+template<> struct DefaultHash<WebKit::DownloadID> : DownloadIDHash { };
 
 }
 #endif /* DownloadID_h */

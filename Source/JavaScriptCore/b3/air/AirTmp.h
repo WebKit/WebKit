@@ -330,9 +330,7 @@ struct TmpHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::B3::Air::Tmp> {
-    typedef JSC::B3::Air::TmpHash Hash;
-};
+template<> struct DefaultHash<JSC::B3::Air::Tmp> : JSC::B3::Air::TmpHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::B3::Air::Tmp> : SimpleClassHashTraits<JSC::B3::Air::Tmp> { };

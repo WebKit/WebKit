@@ -551,7 +551,7 @@ protected:
     };
     Vector<TextureUnitState> m_textureUnits;
 #if !USE(ANGLE)
-    HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_unrenderableTextureUnits;
+    HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_unrenderableTextureUnits;
 #endif
     unsigned long m_activeTextureUnit;
 

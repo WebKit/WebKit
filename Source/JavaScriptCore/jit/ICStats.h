@@ -178,9 +178,7 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::ICEvent::Kind);
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::ICEvent> {
-    typedef JSC::ICEventHash Hash;
-};
+template<> struct DefaultHash<JSC::ICEvent> : JSC::ICEventHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::ICEvent> : SimpleClassHashTraits<JSC::ICEvent> {

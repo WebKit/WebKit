@@ -111,11 +111,9 @@ inline unsigned TemplateObjectDescriptor::calculateHash(const StringVector& rawS
 } // namespace JSC
 
 namespace WTF {
-template<typename T> struct DefaultHash;
+template<typename> struct DefaultHash;
 
-template<> struct DefaultHash<JSC::TemplateObjectDescriptor> {
-    typedef JSC::TemplateObjectDescriptor::Hasher Hash;
-};
+template<> struct DefaultHash<JSC::TemplateObjectDescriptor> : JSC::TemplateObjectDescriptor::Hasher { };
 
 template<> struct HashTraits<JSC::TemplateObjectDescriptor> : CustomHashTraits<JSC::TemplateObjectDescriptor> {
 };

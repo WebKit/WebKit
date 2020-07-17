@@ -38,9 +38,7 @@ template<> struct HashTraits<WebCore::IntPoint> : GenericHashTraits<WebCore::Int
     static void constructDeletedValue(WebCore::IntPoint& slot) { slot = WebCore::IntPoint(std::numeric_limits<int>::min(), 0); }
     static bool isDeletedValue(const WebCore::IntPoint& slot) { return slot == WebCore::IntPoint(std::numeric_limits<int>::min(), 0); }
 };
-template<> struct DefaultHash<WebCore::IntPoint> {
-    typedef IntPointHash Hash;
-};
+template<> struct DefaultHash<WebCore::IntPoint> : IntPointHash { };
 
 }
 

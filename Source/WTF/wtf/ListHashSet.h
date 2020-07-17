@@ -49,7 +49,7 @@ template<typename ValueArg> struct ListHashSetNode;
 template<typename HashArg> struct ListHashSetNodeHashFunctions;
 template<typename HashArg> struct ListHashSetTranslator;
 
-template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet final
+template<typename ValueArg, typename HashArg = DefaultHash<ValueArg>> class ListHashSet final
 #if CHECK_HASHTABLE_ITERATORS
     : public CanMakeWeakPtr<ListHashSet<ValueArg, HashArg>, WeakPtrFactoryInitialization::Eager>
 #endif

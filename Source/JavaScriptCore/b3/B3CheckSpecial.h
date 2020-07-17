@@ -149,9 +149,7 @@ struct CheckSpecialKeyHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::B3::CheckSpecial::Key> {
-    typedef JSC::B3::CheckSpecialKeyHash Hash;
-};
+template<> struct DefaultHash<JSC::B3::CheckSpecial::Key> : JSC::B3::CheckSpecialKeyHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::B3::CheckSpecial::Key> : SimpleClassHashTraits<JSC::B3::CheckSpecial::Key> {

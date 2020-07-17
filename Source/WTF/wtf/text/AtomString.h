@@ -32,8 +32,6 @@
 
 namespace WTF {
 
-struct AtomStringHash;
-
 class AtomString final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -323,10 +321,8 @@ inline AtomString AtomString::fromUTF8(const char* characters)
 }
 
 // AtomStringHash is the default hash for AtomString
-template<typename T> struct DefaultHash;
-template<> struct DefaultHash<AtomString> {
-    typedef AtomStringHash Hash;
-};
+template<typename> struct DefaultHash;
+template<> struct DefaultHash<AtomString>;
 
 template<unsigned length> inline bool equalLettersIgnoringASCIICase(const AtomString& string, const char (&lowercaseLetters)[length])
 {

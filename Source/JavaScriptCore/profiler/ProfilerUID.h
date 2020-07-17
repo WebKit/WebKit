@@ -99,9 +99,7 @@ struct UIDHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::Profiler::UID> {
-    typedef JSC::Profiler::UIDHash Hash;
-};
+template<> struct DefaultHash<JSC::Profiler::UID> : JSC::Profiler::UIDHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Profiler::UID> : SimpleClassHashTraits<JSC::Profiler::UID> { };

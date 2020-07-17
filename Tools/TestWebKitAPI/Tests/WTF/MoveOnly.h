@@ -84,19 +84,17 @@ template<> struct HashTraits<MoveOnly> : public GenericHashTraits<MoveOnly> {
 };
 
 template<> struct DefaultHash<MoveOnly> {
-    struct Hash {
-        static unsigned hash(const MoveOnly& key)
-        {
-            return intHash(key.value());
-        }
+    static unsigned hash(const MoveOnly& key) 
+    {
+        return intHash(key.value());
+    }
 
-        static bool equal(const MoveOnly& a, const MoveOnly& b)
-        {
-            return a == b;
-        }
+    static bool equal(const MoveOnly& a, const MoveOnly& b)
+    {
+        return a == b;
+    }
 
-        static const bool safeToCompareToEmptyOrDeleted = true;
-    };
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 } // namespace WTF
 

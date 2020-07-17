@@ -91,7 +91,7 @@ private:
     private:
         static inline unsigned hashPointer(TaggedNativeFunction p)
         {
-            return DefaultHash<TaggedNativeFunction>::Hash::hash(p);
+            return DefaultHash<TaggedNativeFunction>::hash(p);
         }
 
         static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, const String& name)
@@ -100,7 +100,7 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=207835
             unsigned hash = WTF::pairIntHash(hashPointer(function), hashPointer(constructor));
             if (!name.isNull())
-                hash = WTF::pairIntHash(hash, DefaultHash<String>::Hash::hash(name));
+                hash = WTF::pairIntHash(hash, DefaultHash<String>::hash(name));
             return hash;
         }
     };

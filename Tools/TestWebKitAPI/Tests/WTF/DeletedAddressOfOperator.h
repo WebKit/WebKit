@@ -66,19 +66,17 @@ template<> struct HashTraits<DeletedAddressOfOperator> : public GenericHashTrait
 };
 
 template<> struct DefaultHash<DeletedAddressOfOperator> {
-    struct Hash {
-        static unsigned hash(const DeletedAddressOfOperator& key)
-        {
-            return intHash(key.value());
-        }
+    static unsigned hash(const DeletedAddressOfOperator& key)
+    {
+        return intHash(key.value());
+    }
 
-        static bool equal(const DeletedAddressOfOperator& a, const DeletedAddressOfOperator& b)
-        {
-            return a == b;
-        }
+    static bool equal(const DeletedAddressOfOperator& a, const DeletedAddressOfOperator& b)
+    {
+        return a == b;
+    }
 
-        static const bool safeToCompareToEmptyOrDeleted = true;
-    };
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 }
 

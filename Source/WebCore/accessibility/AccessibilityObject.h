@@ -819,7 +819,7 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const WTF::Funct
 
 namespace Accessibility {
 
-using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
 PlatformRoleMap createPlatformRoleMap();
 String roleToPlatformString(AccessibilityRole);

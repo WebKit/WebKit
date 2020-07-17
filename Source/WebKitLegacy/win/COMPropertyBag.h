@@ -31,7 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 
-template<typename ValueType, typename KeyType = typename WTF::String, typename HashType = typename WTF::StringHash>
+template<typename ValueType, typename KeyType = typename WTF::String, typename HashType = typename WTF::DefaultHash<KeyType>>
 class COMPropertyBag final : public IPropertyBag, public IPropertyBag2 {
     WTF_MAKE_NONCOPYABLE(COMPropertyBag);
 public:

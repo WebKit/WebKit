@@ -119,8 +119,6 @@ template<> struct HashTraits<WebCore::BackForwardItemIdentifier> : GenericHashTr
     static bool isDeletedValue(const WebCore::BackForwardItemIdentifier& slot) { return slot.processIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
 };
 
-template<> struct DefaultHash<WebCore::BackForwardItemIdentifier> {
-    typedef BackForwardItemIdentifierHash Hash;
-};
+template<> struct DefaultHash<WebCore::BackForwardItemIdentifier> : BackForwardItemIdentifierHash { };
 
 } // namespace WTF

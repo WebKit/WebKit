@@ -98,7 +98,7 @@ static void printTransitions(const DFA& dfa, unsigned sourceNodeId)
     if (transitions.begin() == transitions.end())
         return;
 
-    HashMap<unsigned, Vector<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
+    HashMap<unsigned, Vector<uint16_t>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
 
     // First, we build the list of transitions coming to each target node.
     for (const auto& transition : transitions) {

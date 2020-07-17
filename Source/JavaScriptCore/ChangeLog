@@ -1,3 +1,76 @@
+2020-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF] Remove the unnecessary inner class DefaultHash<T>::Hash
+        https://bugs.webkit.org/show_bug.cgi?id=214389
+
+        Reviewed by Darin Adler.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        * b3/B3CheckSpecial.h:
+        * b3/B3Kind.h:
+        * b3/B3ValueKey.h:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirArg.h:
+        * b3/air/AirTmp.h:
+        * bytecode/BytecodeIndex.h:
+        * bytecode/CallVariant.h:
+        * bytecode/CodeOrigin.h:
+        * bytecode/DFGExitProfile.h:
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/ObjectPropertyCondition.h:
+        * bytecode/PropertyCondition.h:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCompilationKey.h:
+        * dfg/DFGDesiredGlobalProperty.h:
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        * dfg/DFGMinifiedID.h:
+        * dfg/DFGNodeFlowProjection.h:
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGPropertyTypeKey.h:
+        * dfg/DFGPureValue.h:
+        * ftl/FTLLocation.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        * ftl/FTLSlowPathCallKey.h:
+        * heap/MarkedBlock.h:
+        * heap/VisitRaceKey.h:
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * jit/ICStats.h:
+        * jit/JITThunks.h:
+        * jit/Reg.h:
+        * jit/RegisterSet.h:
+        * parser/VariableEnvironment.h:
+        * profiler/ProfilerOrigin.h:
+        * profiler/ProfilerOriginStack.h:
+        * profiler/ProfilerUID.h:
+        * runtime/CachedTypes.cpp:
+        * runtime/ControlFlowProfiler.h:
+        * runtime/NativeFunction.h:
+        * runtime/PrototypeKey.h:
+        * runtime/RegExpKey.h:
+        * runtime/TemplateObjectDescriptor.h:
+        * runtime/TypeProfiler.h:
+        * runtime/VarOffset.h:
+        * runtime/WeakGCMap.h:
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCodeBlock.h:
+        * wasm/WasmEntryPlan.h:
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmSignature.h:
+
 2020-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use unvalidatedGet instead of get to access UnlinkedCodeBlock from CodeBlock destructor

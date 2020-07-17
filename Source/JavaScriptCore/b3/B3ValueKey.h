@@ -186,9 +186,7 @@ struct ValueKeyHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::B3::ValueKey> {
-    typedef JSC::B3::ValueKeyHash Hash;
-};
+template<> struct DefaultHash<JSC::B3::ValueKey> : JSC::B3::ValueKeyHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::B3::ValueKey> : public SimpleClassHashTraits<JSC::B3::ValueKey> {

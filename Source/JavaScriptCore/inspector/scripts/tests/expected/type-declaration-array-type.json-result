@@ -379,9 +379,7 @@ template<typename T> struct DefaultHash;
 
 // Hash declarations in the 'Debugger' Domain
 template<>
-struct DefaultHash<Inspector::Protocol::Debugger::Reason> {
-    using Hash = IntHash<Inspector::Protocol::Debugger::Reason>;
-};
+struct DefaultHash<Inspector::Protocol::Debugger::Reason> : IntHash<Inspector::Protocol::Debugger::Reason> { };
 
 } // namespace WTF
 ### End File: TestProtocolObjects.h

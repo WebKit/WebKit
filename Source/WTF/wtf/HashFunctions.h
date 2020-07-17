@@ -160,13 +160,13 @@ namespace WTF {
     template<typename T, typename U> struct PairHash {
         static unsigned hash(const std::pair<T, U>& p)
         {
-            return pairIntHash(DefaultHash<T>::Hash::hash(p.first), DefaultHash<U>::Hash::hash(p.second));
+            return pairIntHash(DefaultHash<T>::hash(p.first), DefaultHash<U>::hash(p.second));
         }
         static bool equal(const std::pair<T, U>& a, const std::pair<T, U>& b)
         {
-            return DefaultHash<T>::Hash::equal(a.first, b.first) && DefaultHash<U>::Hash::equal(a.second, b.second);
+            return DefaultHash<T>::equal(a.first, b.first) && DefaultHash<U>::equal(a.second, b.second);
         }
-        static constexpr bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::Hash::safeToCompareToEmptyOrDeleted && DefaultHash<U>::Hash::safeToCompareToEmptyOrDeleted;
+        static constexpr bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::safeToCompareToEmptyOrDeleted && DefaultHash<U>::safeToCompareToEmptyOrDeleted;
     };
 
     template<typename T, typename U> struct IntPairHash {
@@ -181,94 +181,94 @@ namespace WTF {
         static typename std::enable_if<I < sizeof...(Types) - 1, unsigned>::type hash(const std::tuple<Types...>& t)
         {
             using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
-            return pairIntHash(DefaultHash<IthTupleElementType>::Hash::hash(std::get<I>(t)), hash<I + 1>(t));
+            return pairIntHash(DefaultHash<IthTupleElementType>::hash(std::get<I>(t)), hash<I + 1>(t));
         }
 
         template<size_t I = 0>
         static typename std::enable_if<I == sizeof...(Types) - 1, unsigned>::type hash(const std::tuple<Types...>& t)
         {
             using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
-            return DefaultHash<IthTupleElementType>::Hash::hash(std::get<I>(t));
+            return DefaultHash<IthTupleElementType>::hash(std::get<I>(t));
         }
 
         template<size_t I = 0>
         static typename std::enable_if<I < sizeof...(Types) - 1, bool>::type equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
         {
             using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
-            return DefaultHash<IthTupleElementType>::Hash::equal(std::get<I>(a), std::get<I>(b)) && equal<I + 1>(a, b);
+            return DefaultHash<IthTupleElementType>::equal(std::get<I>(a), std::get<I>(b)) && equal<I + 1>(a, b);
         }
 
         template<size_t I = 0>
         static typename std::enable_if<I == sizeof...(Types) - 1, bool>::type equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
         {
             using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
-            return DefaultHash<IthTupleElementType>::Hash::equal(std::get<I>(a), std::get<I>(b));
+            return DefaultHash<IthTupleElementType>::equal(std::get<I>(a), std::get<I>(b));
         }
 
-        // We should use safeToCompareToEmptyOrDeleted = DefaultHash<Types>::Hash::safeToCompareToEmptyOrDeleted &&... whenever
+        // We should use safeToCompareToEmptyOrDeleted = DefaultHash<Types>::safeToCompareToEmptyOrDeleted &&... whenever
         // we switch to C++17. We can't do anything better here right now because GCC can't do C++.
         template<typename BoolType>
         static constexpr bool allTrue(BoolType value) { return value; }
         template<typename BoolType, typename... BoolTypes>
         static constexpr bool allTrue(BoolType value, BoolTypes... values) { return value && allTrue(values...); }
-        static constexpr bool safeToCompareToEmptyOrDeleted = allTrue(DefaultHash<Types>::Hash::safeToCompareToEmptyOrDeleted...);
+        static constexpr bool safeToCompareToEmptyOrDeleted = allTrue(DefaultHash<Types>::safeToCompareToEmptyOrDeleted...);
     };
 
     // make IntHash the default hash function for many integer types
 
-    template<> struct DefaultHash<bool> { typedef IntHash<uint8_t> Hash; };
-    template<> struct DefaultHash<uint8_t> { typedef IntHash<uint8_t> Hash; };
-    template<> struct DefaultHash<short> { typedef IntHash<unsigned> Hash; };
-    template<> struct DefaultHash<unsigned short> { typedef IntHash<unsigned> Hash; };
-    template<> struct DefaultHash<int> { typedef IntHash<unsigned> Hash; };
-    template<> struct DefaultHash<unsigned> { typedef IntHash<unsigned> Hash; };
-    template<> struct DefaultHash<long> { typedef IntHash<unsigned long> Hash; };
-    template<> struct DefaultHash<unsigned long> { typedef IntHash<unsigned long> Hash; };
-    template<> struct DefaultHash<long long> { typedef IntHash<unsigned long long> Hash; };
-    template<> struct DefaultHash<unsigned long long> { typedef IntHash<unsigned long long> Hash; };
+    template<> struct DefaultHash<bool> : IntHash<uint8_t> { };
+    template<> struct DefaultHash<uint8_t> : IntHash<uint8_t> { };
+    template<> struct DefaultHash<short> : IntHash<unsigned> { };
+    template<> struct DefaultHash<unsigned short> : IntHash<unsigned> { };
+    template<> struct DefaultHash<int> : IntHash<unsigned> { };
+    template<> struct DefaultHash<unsigned> : IntHash<unsigned> { };
+    template<> struct DefaultHash<long> : IntHash<unsigned long> { };
+    template<> struct DefaultHash<unsigned long> : IntHash<unsigned long> { };
+    template<> struct DefaultHash<long long> : IntHash<unsigned long long> { };
+    template<> struct DefaultHash<unsigned long long> : IntHash<unsigned long long> { };
 
 #if defined(_NATIVE_WCHAR_T_DEFINED)
-    template<> struct DefaultHash<wchar_t> { typedef IntHash<wchar_t> Hash; };
+    template<> struct DefaultHash<wchar_t> : IntHash<wchar_t> { };
 #endif
 
-    template<> struct DefaultHash<float> { typedef FloatHash<float> Hash; };
-    template<> struct DefaultHash<double> { typedef FloatHash<double> Hash; };
+    template<> struct DefaultHash<float> : FloatHash<float> { };
+    template<> struct DefaultHash<double> : FloatHash<double> { };
 
     // make PtrHash the default hash function for pointer types that don't specialize
 
-    template<typename P> struct DefaultHash<P*> { typedef PtrHash<P*> Hash; };
-    template<typename P> struct DefaultHash<RefPtr<P>> { typedef PtrHash<RefPtr<P>> Hash; };
-    template<typename P> struct DefaultHash<Ref<P>> { typedef PtrHash<Ref<P>> Hash; };
+    template<typename P> struct DefaultHash<P*> : PtrHash<P*> { };
+    template<typename P> struct DefaultHash<RefPtr<P>> : PtrHash<RefPtr<P>> { };
+    template<typename P> struct DefaultHash<Ref<P>> : PtrHash<Ref<P>> { };
 
-    template<typename P, typename Deleter> struct DefaultHash<std::unique_ptr<P, Deleter>> { typedef PtrHash<std::unique_ptr<P, Deleter>> Hash; };
+    template<typename P, typename Deleter> struct DefaultHash<std::unique_ptr<P, Deleter>> : PtrHash<std::unique_ptr<P, Deleter>> { };
 
 #ifdef __OBJC__
-    template<> struct DefaultHash<__unsafe_unretained id> { using Hash = PtrHash<__unsafe_unretained id>; };
+    template<> struct DefaultHash<__unsafe_unretained id> : PtrHash<__unsafe_unretained id> { };
 #endif
 
     // make IntPairHash the default hash function for pairs of (at most) 32-bit integers.
 
-    template<> struct DefaultHash<std::pair<short, short>> { typedef IntPairHash<short, short> Hash; };
-    template<> struct DefaultHash<std::pair<short, unsigned short>> { typedef IntPairHash<short, unsigned short> Hash; };
-    template<> struct DefaultHash<std::pair<short, int>> { typedef IntPairHash<short, int> Hash; };
-    template<> struct DefaultHash<std::pair<short, unsigned>> { typedef IntPairHash<short, unsigned> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned short, short>> { typedef IntPairHash<unsigned short, short> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned short, unsigned short>> { typedef IntPairHash<unsigned short, unsigned short> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned short, int>> { typedef IntPairHash<unsigned short, int> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned short, unsigned>> { typedef IntPairHash<unsigned short, unsigned> Hash; };
-    template<> struct DefaultHash<std::pair<int, short>> { typedef IntPairHash<int, short> Hash; };
-    template<> struct DefaultHash<std::pair<int, unsigned short>> { typedef IntPairHash<int, unsigned short> Hash; };
-    template<> struct DefaultHash<std::pair<int, int>> { typedef IntPairHash<int, int> Hash; };
-    template<> struct DefaultHash<std::pair<int, unsigned>> { typedef IntPairHash<unsigned, unsigned> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned, short>> { typedef IntPairHash<unsigned, short> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned, unsigned short>> { typedef IntPairHash<unsigned, unsigned short> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned, int>> { typedef IntPairHash<unsigned, int> Hash; };
-    template<> struct DefaultHash<std::pair<unsigned, unsigned>> { typedef IntPairHash<unsigned, unsigned> Hash; };
+    template<> struct DefaultHash<std::pair<short, short>> : IntPairHash<short, short> { };
+    template<> struct DefaultHash<std::pair<short, unsigned short>> : IntPairHash<short, unsigned short> { };
+    template<> struct DefaultHash<std::pair<short, int>> : IntPairHash<short, int> { };
+    template<> struct DefaultHash<std::pair<short, unsigned>> : IntPairHash<short, unsigned> { };
+    template<> struct DefaultHash<std::pair<unsigned short, short>> : IntPairHash<unsigned short, short> { };
+    template<> struct DefaultHash<std::pair<unsigned short, unsigned short>> : IntPairHash<unsigned short, unsigned short> { };
+    template<> struct DefaultHash<std::pair<unsigned short, int>> : IntPairHash<unsigned short, int> { };
+    template<> struct DefaultHash<std::pair<unsigned short, unsigned>> : IntPairHash<unsigned short, unsigned> { };
+    template<> struct DefaultHash<std::pair<int, short>> : IntPairHash<int, short> { };
+    template<> struct DefaultHash<std::pair<int, unsigned short>> : IntPairHash<int, unsigned short> { };
+    template<> struct DefaultHash<std::pair<int, int>> : IntPairHash<int, int> { };
+    template<> struct DefaultHash<std::pair<int, unsigned>> : IntPairHash<unsigned, unsigned> { };
+    template<> struct DefaultHash<std::pair<unsigned, short>> : IntPairHash<unsigned, short> { };
+    template<> struct DefaultHash<std::pair<unsigned, unsigned short>> : IntPairHash<unsigned, unsigned short> { };
+    template<> struct DefaultHash<std::pair<unsigned, int>> : IntPairHash<unsigned, int> { };
+    template<> struct DefaultHash<std::pair<unsigned, unsigned>> : IntPairHash<unsigned, unsigned> { };
 
     // make PairHash the default hash function for pairs of arbitrary values.
 
-    template<typename T, typename U> struct DefaultHash<std::pair<T, U>> { typedef PairHash<T, U> Hash; };
-    template<typename... Types> struct DefaultHash<std::tuple<Types...>> { typedef TupleHash<Types...> Hash; };
+    template<typename T, typename U> struct DefaultHash<std::pair<T, U>> : PairHash<T, U> { };
+    template<typename... Types> struct DefaultHash<std::tuple<Types...>> : TupleHash<Types...> { };
 
 } // namespace WTF
 

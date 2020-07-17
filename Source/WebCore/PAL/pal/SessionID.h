@@ -119,8 +119,6 @@ template<> struct HashTraits<PAL::SessionID> : GenericHashTraits<PAL::SessionID>
     static bool isDeletedValue(const PAL::SessionID& slot) { return slot.isHashTableDeletedValue(); }
 };
 
-template<> struct DefaultHash<PAL::SessionID> {
-    typedef SessionIDHash Hash;
-};
+template<> struct DefaultHash<PAL::SessionID> : SessionIDHash { };
 
 } // namespace WTF

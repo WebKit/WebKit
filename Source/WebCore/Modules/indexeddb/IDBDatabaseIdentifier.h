@@ -140,9 +140,7 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
 namespace WTF {
 
 template<> struct HashTraits<WebCore::IDBDatabaseIdentifier> : WebCore::IDBDatabaseIdentifierHashTraits { };
-template<> struct DefaultHash<WebCore::IDBDatabaseIdentifier> {
-    typedef WebCore::IDBDatabaseIdentifierHash Hash;
-};
+template<> struct DefaultHash<WebCore::IDBDatabaseIdentifier> : WebCore::IDBDatabaseIdentifierHash { };
 
 } // namespace WTF
 

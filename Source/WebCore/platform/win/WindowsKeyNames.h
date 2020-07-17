@@ -54,7 +54,7 @@ private:
     bool m_hasAltGraph = false;
 
     using VirtualKeyModifierSetPair = std::pair<unsigned, KeyModifierSet>;
-    using VirtualKeyToKeyMap = HashMap<VirtualKeyModifierSetPair, String, DefaultHash<VirtualKeyModifierSetPair>::Hash, PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<unsigned>, HashTraits<KeyModifierSet>>>;
+    using VirtualKeyToKeyMap = HashMap<VirtualKeyModifierSetPair, String, DefaultHash<VirtualKeyModifierSetPair>, PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<unsigned>, HashTraits<KeyModifierSet>>>;
     VirtualKeyToKeyMap m_printableKeyCodeToKey;
 };
 

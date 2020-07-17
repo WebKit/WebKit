@@ -92,9 +92,7 @@ template<> struct HashTraits<WebKit::NetworkCache::GlobalFrameID> : GenericHashT
     static bool isDeletedValue(const WebKit::NetworkCache::GlobalFrameID& slot) { return slot.webPageID.toUInt64() == std::numeric_limits<uint64_t>::max(); }
 };
 
-template<> struct DefaultHash<WebKit::NetworkCache::GlobalFrameID> {
-    typedef GlobalFrameIDHash Hash;
-};
+template<> struct DefaultHash<WebKit::NetworkCache::GlobalFrameID> : GlobalFrameIDHash { };
 
 }
 

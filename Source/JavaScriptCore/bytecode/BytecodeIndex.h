@@ -113,9 +113,7 @@ struct BytecodeIndexHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::BytecodeIndex> {
-    typedef JSC::BytecodeIndexHash Hash;
-};
+template<> struct DefaultHash<JSC::BytecodeIndex> : JSC::BytecodeIndexHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::BytecodeIndex> : SimpleClassHashTraits<JSC::BytecodeIndex> {

@@ -30,7 +30,7 @@ namespace WTF {
         static bool equal(const WebCore::IntSize& a, const WebCore::IntSize& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
-    template<> struct DefaultHash<WebCore::IntSize> { typedef IntHash<WebCore::IntSize> Hash; };
+    template<> struct DefaultHash<WebCore::IntSize> : IntHash<WebCore::IntSize> { };
     
     template<> struct HashTraits<WebCore::IntSize> : GenericHashTraits<WebCore::IntSize> {
         static const bool emptyValueIsZero = true;

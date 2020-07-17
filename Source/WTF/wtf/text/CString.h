@@ -106,9 +106,7 @@ struct CStringHash {
 };
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<CString> {
-    typedef CStringHash Hash;
-};
+template<> struct DefaultHash<CString> : CStringHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<CString> : SimpleClassHashTraits<CString> { };

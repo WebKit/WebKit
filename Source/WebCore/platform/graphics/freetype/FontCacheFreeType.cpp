@@ -222,7 +222,7 @@ struct FallbackFontDescriptionKey {
 
     unsigned computeHash() const
     {
-        return WTF::pairIntHash(descriptionKey.computeHash(), WTF::DefaultHash<bool>::Hash::hash(coloredFont));
+        return WTF::pairIntHash(descriptionKey.computeHash(), WTF::DefaultHash<bool>::hash(coloredFont));
     }
 
     FontDescriptionKey descriptionKey;

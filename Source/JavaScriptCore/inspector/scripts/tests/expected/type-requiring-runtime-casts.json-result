@@ -595,13 +595,9 @@ template<typename T> struct DefaultHash;
 
 // Hash declarations in the 'Test' Domain
 template<>
-struct DefaultHash<Inspector::Protocol::Test::UncastedAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Test::UncastedAnimals>;
-};
+struct DefaultHash<Inspector::Protocol::Test::UncastedAnimals> : IntHash<Inspector::Protocol::Test::UncastedAnimals> { };
 template<>
-struct DefaultHash<Inspector::Protocol::Test::CastedAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Test::CastedAnimals>;
-};
+struct DefaultHash<Inspector::Protocol::Test::CastedAnimals> : IntHash<Inspector::Protocol::Test::CastedAnimals> { };
 
 } // namespace WTF
 ### End File: TestProtocolObjects.h

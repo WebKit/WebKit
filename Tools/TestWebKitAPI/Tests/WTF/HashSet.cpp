@@ -47,7 +47,7 @@ template<unsigned size>
 void testInitialCapacity()
 {
     const unsigned initialCapacity = WTF::HashTableCapacityForSize<size>::value;
-    HashSet<int, DefaultHash<int>::Hash, InitialCapacityTestHashTraits<initialCapacity> > testSet;
+    HashSet<int, DefaultHash<int>, InitialCapacityTestHashTraits<initialCapacity> > testSet;
 
     // Initial capacity is null.
     ASSERT_EQ(0u, testSet.capacity());

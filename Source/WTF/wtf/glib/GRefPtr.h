@@ -255,7 +255,7 @@ template <typename T> inline void derefGPtr(T* ptr)
         g_object_unref(ptr);
 }
 
-template<typename P> struct DefaultHash<GRefPtr<P>> { typedef PtrHash<GRefPtr<P>> Hash; };
+template<typename P> struct DefaultHash<GRefPtr<P>> : PtrHash<GRefPtr<P>> { };
 
 template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefPtr<P>> {
     static P* emptyValue() { return nullptr; }

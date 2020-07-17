@@ -95,12 +95,10 @@ struct PrototypeKeyHash {
 
 namespace WTF {
 
-template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::PrototypeKey> {
-    typedef JSC::PrototypeKeyHash Hash;
-};
+template<typename> struct DefaultHash;
+template<> struct DefaultHash<JSC::PrototypeKey> : JSC::PrototypeKeyHash { };
 
-template<typename T> struct HashTraits;
+template<typename> struct HashTraits;
 template<> struct HashTraits<JSC::PrototypeKey> : SimpleClassHashTraits<JSC::PrototypeKey> { };
 
 } // namespace WTF

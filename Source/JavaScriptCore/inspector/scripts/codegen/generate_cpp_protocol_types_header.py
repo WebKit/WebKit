@@ -485,9 +485,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             for enum_type in enum_types:
                 enum_lines = []
                 enum_lines.append('template<>')
-                enum_lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> {' % (domain.domain_name, enum_type.raw_name()))
-                enum_lines.append('    using Hash = IntHash<Inspector::Protocol::%s::%s>;' % (domain.domain_name, enum_type.raw_name()))
-                enum_lines.append('};')
+                enum_lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> : IntHash<Inspector::Protocol::%s::%s> { };' % (domain.domain_name, enum_type.raw_name(), domain.domain_name, enum_type.raw_name()))
                 domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, '\n'.join(enum_lines)))
 
             lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))

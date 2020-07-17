@@ -442,7 +442,7 @@ WTF_EXPORT_PRIVATE const String& emptyString();
 WTF_EXPORT_PRIVATE const String& nullString();
 
 template<typename> struct DefaultHash;
-template<> struct DefaultHash<String> { using Hash = StringHash; };
+template<> struct DefaultHash<String>;
 template<> struct VectorTraits<String> : VectorTraitsBase<false, void> {
     static constexpr bool canInitializeWithMemset = true;
     static constexpr bool canMoveWithMemcpy = true;

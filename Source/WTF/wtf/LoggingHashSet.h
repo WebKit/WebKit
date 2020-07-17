@@ -34,7 +34,7 @@ namespace WTF {
 
 template<
     const char* typeArguments,
-    typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash,
+    typename ValueArg, typename HashArg = DefaultHash<ValueArg>,
     typename TraitsArg = HashTraits<ValueArg>,
     typename LoggingTraits = LoggingHashKeyTraits<ValueArg>>
 class LoggingHashSet final {

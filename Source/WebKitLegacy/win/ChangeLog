@@ -1,3 +1,12 @@
+2020-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF] Remove the unnecessary inner class DefaultHash<T>::Hash
+        https://bugs.webkit.org/show_bug.cgi?id=214389
+
+        Reviewed by Darin Adler.
+
+        * COMPropertyBag.h:
+
 2020-07-07  Sam Weinig  <weinig@apple.com>
 
         Part 2 of SimpleColor and SRGBA<uint8_t> are essentially the same - let's converge them

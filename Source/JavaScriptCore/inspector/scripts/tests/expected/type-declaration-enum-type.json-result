@@ -378,13 +378,9 @@ template<typename T> struct DefaultHash;
 
 // Hash declarations in the 'Runtime' Domain
 template<>
-struct DefaultHash<Inspector::Protocol::Runtime::FarmAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Runtime::FarmAnimals>;
-};
+struct DefaultHash<Inspector::Protocol::Runtime::FarmAnimals> : IntHash<Inspector::Protocol::Runtime::FarmAnimals> { };
 template<>
-struct DefaultHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Runtime::TwoLeggedAnimals>;
-};
+struct DefaultHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> : IntHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> { };
 
 } // namespace WTF
 ### End File: TestProtocolObjects.h

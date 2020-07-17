@@ -117,9 +117,7 @@ template<> struct HashTraits<WebCore::ServiceWorkerClientIdentifier> : GenericHa
     static bool isDeletedValue(const WebCore::ServiceWorkerClientIdentifier& slot) { return slot.serverConnectionIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
 };
 
-template<> struct DefaultHash<WebCore::ServiceWorkerClientIdentifier> {
-    typedef ServiceWorkerClientIdentifierHash Hash;
-};
+template<> struct DefaultHash<WebCore::ServiceWorkerClientIdentifier> : ServiceWorkerClientIdentifierHash { };
 
 }
 

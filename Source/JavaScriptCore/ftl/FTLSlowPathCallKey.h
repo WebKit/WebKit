@@ -118,9 +118,7 @@ struct SlowPathCallKeyHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::FTL::SlowPathCallKey> {
-    typedef JSC::FTL::SlowPathCallKeyHash Hash;
-};
+template<> struct DefaultHash<JSC::FTL::SlowPathCallKey> : JSC::FTL::SlowPathCallKeyHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::FTL::SlowPathCallKey> : public CustomHashTraits<JSC::FTL::SlowPathCallKey> { };

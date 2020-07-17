@@ -493,9 +493,7 @@ struct BitVectorHash {
 };
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<BitVector> {
-    typedef BitVectorHash Hash;
-};
+template<> struct DefaultHash<BitVector> : BitVectorHash { };
 
 template<> struct HashTraits<BitVector> : public CustomHashTraits<BitVector> { };
 

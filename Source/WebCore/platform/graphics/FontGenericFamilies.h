@@ -42,7 +42,7 @@ struct UScriptCodeHashTraits : WTF::GenericHashTraits<int> {
     static bool isDeletedValue(int value) { return value == -3; }
 };
 
-typedef HashMap<int, AtomString, DefaultHash<int>::Hash, UScriptCodeHashTraits> ScriptFontFamilyMap;
+typedef HashMap<int, AtomString, DefaultHash<int>, UScriptCodeHashTraits> ScriptFontFamilyMap;
 
 class FontGenericFamilies {
     WTF_MAKE_FAST_ALLOCATED;

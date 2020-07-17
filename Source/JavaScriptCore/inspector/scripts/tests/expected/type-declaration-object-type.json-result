@@ -908,9 +908,7 @@ template<typename T> struct DefaultHash;
 
 // Hash declarations in the 'Database' Domain
 template<>
-struct DefaultHash<Inspector::Protocol::Database::MouseButton> {
-    using Hash = IntHash<Inspector::Protocol::Database::MouseButton>;
-};
+struct DefaultHash<Inspector::Protocol::Database::MouseButton> : IntHash<Inspector::Protocol::Database::MouseButton> { };
 
 } // namespace WTF
 ### End File: TestProtocolObjects.h

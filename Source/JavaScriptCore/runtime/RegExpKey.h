@@ -88,11 +88,9 @@ inline bool operator==(const RegExpKey& a, const RegExpKey& b)
 } // namespace JSC
 
 namespace WTF {
-template<typename T> struct DefaultHash;
+template<typename> struct DefaultHash;
 
-template<> struct DefaultHash<JSC::RegExpKey> {
-    typedef JSC::RegExpKey::Hash Hash;
-};
+template<> struct DefaultHash<JSC::RegExpKey> : JSC::RegExpKey::Hash { };
 
 template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey> {
     static constexpr bool emptyValueIsZero = true;

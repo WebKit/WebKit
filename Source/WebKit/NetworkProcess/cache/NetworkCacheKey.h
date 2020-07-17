@@ -122,9 +122,7 @@ struct NetworkCacheKeyHash {
 };
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<WebKit::NetworkCache::Key> {
-    typedef NetworkCacheKeyHash Hash;
-};
+template<> struct DefaultHash<WebKit::NetworkCache::Key> : NetworkCacheKeyHash { };
 
 template<> struct HashTraits<WebKit::NetworkCache::Key> : SimpleClassHashTraits<WebKit::NetworkCache::Key> {
     static const bool emptyValueIsZero = false;

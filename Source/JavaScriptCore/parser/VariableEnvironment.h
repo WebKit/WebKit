@@ -327,9 +327,7 @@ private:
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::CompactVariableMapKey> {
-    using Hash = JSC::CompactVariableMapKey;
-};
+template<> struct DefaultHash<JSC::CompactVariableMapKey> : JSC::CompactVariableMapKey { };
 
 template<> struct HashTraits<JSC::CompactVariableMapKey> : GenericHashTraits<JSC::CompactVariableMapKey> {
     static constexpr bool emptyValueIsZero = true;

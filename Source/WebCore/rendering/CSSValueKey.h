@@ -93,8 +93,6 @@ template<> struct HashTraits<WebCore::CSSValueKey> : GenericHashTraits<WebCore::
     static bool isDeletedValue(const WebCore::CSSValueKey& slot) { return slot.cssValueID == WebCore::CSSValueInvalid && slot.useDarkAppearance && slot.useElevatedUserInterfaceLevel; }
 };
 
-template<> struct DefaultHash<WebCore::CSSValueKey> {
-    typedef CSSValueKeyHash Hash;
-};
+template<> struct DefaultHash<WebCore::CSSValueKey> : CSSValueKeyHash { };
 
 } // namespace WTF

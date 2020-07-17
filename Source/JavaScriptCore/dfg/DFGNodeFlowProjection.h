@@ -142,9 +142,7 @@ struct NodeFlowProjectionHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::DFG::NodeFlowProjection> {
-    typedef JSC::DFG::NodeFlowProjectionHash Hash;
-};
+template<> struct DefaultHash<JSC::DFG::NodeFlowProjection> : JSC::DFG::NodeFlowProjectionHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::DFG::NodeFlowProjection> : SimpleClassHashTraits<JSC::DFG::NodeFlowProjection> { };

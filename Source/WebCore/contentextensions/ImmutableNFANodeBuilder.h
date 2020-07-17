@@ -41,7 +41,7 @@ namespace ContentExtensions {
 template <typename CharacterType, typename ActionType>
 class ImmutableNFANodeBuilder {
     typedef ImmutableNFA<CharacterType, ActionType> TypedImmutableNFA;
-    typedef HashSet<uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> TargetSet;
+    typedef HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> TargetSet;
 public:
     ImmutableNFANodeBuilder() { }
 

@@ -1,3 +1,90 @@
+2020-07-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF] Remove the unnecessary inner class DefaultHash<T>::Hash
+        https://bugs.webkit.org/show_bug.cgi?id=214389
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedTypeHash.h:
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp:
+        (WebCore::WHLSL::matchResources):
+        (WebCore::WHLSL::matchVertexAttributes):
+        (WebCore::WHLSL::matchColorAttachments):
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityObject.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeActions):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::TriggerHash::hash):
+        * contentextensions/ContentExtensionStyleSheet.h:
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::printTransitions):
+        * contentextensions/DFABytecodeInterpreter.h:
+        * contentextensions/DFACombiner.cpp:
+        (WebCore::ContentExtensions::DFAMerger::getOrCreateCombinedNode):
+        * contentextensions/DFANode.cpp:
+        (WebCore::ContentExtensions::DFANode::bestFallbackTarget const):
+        * contentextensions/ImmutableNFANodeBuilder.h:
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::debugPrintDot const):
+        * contentextensions/NFANode.h:
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetSource::NodeIdSetToUniqueNodeIdSetSource):
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::translate):
+        * css/makeprop.pl:
+        * css/parser/CSSParserContext.h:
+        * dom/GCReachableRef.h:
+        * dom/MessagePortIdentifier.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::hash):
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::equal):
+        * dom/QualifiedName.h:
+        * history/BackForwardItemIdentifier.h:
+        * html/canvas/WebGLRenderingContextBase.h:
+        * layout/LayoutUnits.h:
+        * loader/AdClickAttribution.h:
+        * loader/ResourceCryptographicDigest.h:
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::hash):
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::equal):
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::Hash::hash): Deleted.
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::Hash::equal): Deleted.
+        * page/ClientOrigin.h:
+        * page/GlobalWindowIdentifier.h:
+        * page/SecurityOriginData.h:
+        * page/SecurityOriginHash.h:
+        * platform/Cookie.h:
+        * platform/RegistrableDomain.h:
+        * platform/graphics/ColorHash.h:
+        * platform/graphics/FloatSizeHash.h:
+        (WTF::FloatHash<WebCore::FloatSize>::hash):
+        * platform/graphics/FontGenericFamilies.h:
+        * platform/graphics/IntPointHash.h:
+        * platform/graphics/IntRectHash.h:
+        (WTF::IntHash<WebCore::IntRect>::hash):
+        (WTF::IntHash<WebCore::IntRect>::equal):
+        * platform/graphics/IntSizeHash.h:
+        * platform/graphics/WidthCache.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FallbackFontDescriptionKey::computeHash const):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ProtectionSpaceHash.h:
+        * platform/win/COMPtr.h:
+        * platform/win/WindowsKeyNames.h:
+        * rendering/CSSValueKey.h:
+        * rendering/GridBaselineAlignment.h:
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid const):
+        * rendering/RenderTheme.h:
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::evaluateDynamicMediaQueryRules):
+        * svg/SVGElement.h:
+        (WebCore::SVGAttributeHashTranslator::hash):
+        * workers/service/ServiceWorkerClientIdentifier.h:
+        * workers/service/ServiceWorkerRegistrationKey.h:
+
 2020-07-16  Sihui Liu  <sihui_liu@appe.com>
 
         IDB serialization of some DOM object types crashes the Networking process due to incorrect global object type (WPT IndexedDB/structured-clone.any tests fail)

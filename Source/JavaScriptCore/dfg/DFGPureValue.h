@@ -153,9 +153,7 @@ struct PureValueHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::DFG::PureValue> {
-    typedef JSC::DFG::PureValueHash Hash;
-};
+template<> struct DefaultHash<JSC::DFG::PureValue> : JSC::DFG::PureValueHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::DFG::PureValue> : SimpleClassHashTraits<JSC::DFG::PureValue> {

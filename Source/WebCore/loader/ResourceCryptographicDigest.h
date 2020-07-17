@@ -81,17 +81,15 @@ ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDig
 namespace WTF {
 
 template<> struct DefaultHash<WebCore::ResourceCryptographicDigest> {
-    struct Hash {
-        static unsigned hash(const WebCore::ResourceCryptographicDigest& digest)
-        {
-            return pairIntHash(intHash(static_cast<unsigned>(digest.algorithm)), StringHasher::computeHash(digest.value.data(), digest.value.size()));
-        }
-        static bool equal(const WebCore::ResourceCryptographicDigest& a, const WebCore::ResourceCryptographicDigest& b)
-        {
-            return a == b;
-        }
-        static const bool safeToCompareToEmptyOrDeleted = true;
-    };
+    static unsigned hash(const WebCore::ResourceCryptographicDigest& digest)
+    {
+        return pairIntHash(intHash(static_cast<unsigned>(digest.algorithm)), StringHasher::computeHash(digest.value.data(), digest.value.size()));
+    }
+    static bool equal(const WebCore::ResourceCryptographicDigest& a, const WebCore::ResourceCryptographicDigest& b)
+    {
+        return a == b;
+    }
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 template<> struct HashTraits<WebCore::ResourceCryptographicDigest> : GenericHashTraits<WebCore::ResourceCryptographicDigest> {

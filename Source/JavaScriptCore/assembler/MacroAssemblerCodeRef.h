@@ -529,9 +529,7 @@ inline FunctionPtr<tag>::FunctionPtr(MacroAssemblerCodePtr<tag> ptr)
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<JSC::PtrTag tag> struct DefaultHash<JSC::MacroAssemblerCodePtr<tag>> {
-    typedef JSC::MacroAssemblerCodePtrHash<tag> Hash;
-};
+template<JSC::PtrTag tag> struct DefaultHash<JSC::MacroAssemblerCodePtr<tag>> : JSC::MacroAssemblerCodePtrHash<tag> { };
 
 template<typename T> struct HashTraits;
 template<JSC::PtrTag tag> struct HashTraits<JSC::MacroAssemblerCodePtr<tag>> : public CustomHashTraits<JSC::MacroAssemblerCodePtr<tag>> { };

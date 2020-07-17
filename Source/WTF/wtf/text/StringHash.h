@@ -217,6 +217,10 @@ namespace WTF {
         }
     };
 
+    template<> struct DefaultHash<StringImpl*> : StringHash { };
+    template<> struct DefaultHash<RefPtr<StringImpl>> : StringHash { };
+    template<> struct DefaultHash<PackedPtr<StringImpl>> : StringHash { };
+    template<> struct DefaultHash<String> : StringHash { };
 }
 
 using WTF::ASCIICaseInsensitiveHash;

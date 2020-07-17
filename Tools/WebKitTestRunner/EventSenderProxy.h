@@ -125,7 +125,7 @@ private:
 #elif PLATFORM(WPE)
     uint32_t m_buttonState;
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;
-    HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
+    HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
 #endif
 };
 

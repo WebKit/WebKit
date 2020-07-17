@@ -47,9 +47,7 @@ struct URLHash {
 };
 
 // URLHash is the default hash for String
-template<> struct DefaultHash<URL> {
-    using Hash = URLHash;
-};
+template<> struct DefaultHash<URL> : URLHash { };
 
 template<> struct HashTraits<URL> : SimpleClassHashTraits<URL> { };
 

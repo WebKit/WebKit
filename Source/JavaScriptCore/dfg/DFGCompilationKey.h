@@ -97,9 +97,7 @@ struct CompilationKeyHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::DFG::CompilationKey> {
-    typedef JSC::DFG::CompilationKeyHash Hash;
-};
+template<> struct DefaultHash<JSC::DFG::CompilationKey> : JSC::DFG::CompilationKeyHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::DFG::CompilationKey> : SimpleClassHashTraits<JSC::DFG::CompilationKey> { };

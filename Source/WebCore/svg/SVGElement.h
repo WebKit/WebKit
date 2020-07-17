@@ -220,7 +220,7 @@ struct SVGAttributeHashTranslator {
             QualifiedNameComponents components = { nullAtom().impl(), key.localName().impl(), key.namespaceURI().impl() };
             return hashComponents(components);
         }
-        return DefaultHash<QualifiedName>::Hash::hash(key);
+        return DefaultHash<QualifiedName>::hash(key);
     }
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };

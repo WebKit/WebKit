@@ -231,9 +231,7 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::VarKind);
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::VarOffset> {
-    typedef JSC::VarOffsetHash Hash;
-};
+template<> struct DefaultHash<JSC::VarOffset> : JSC::VarOffsetHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::VarOffset> : SimpleClassHashTraits<JSC::VarOffset> {

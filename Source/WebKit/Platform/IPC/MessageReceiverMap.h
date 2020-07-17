@@ -58,7 +58,7 @@ private:
     // Message receivers that don't require a destination ID.
     HashMap<ReceiverName, MessageReceiver*, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>> m_globalMessageReceivers;
 
-    HashMap<std::pair<ReceiverName, uint64_t>, MessageReceiver*, DefaultHash<std::pair<ReceiverName, uint64_t>>::Hash, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<uint64_t>>> m_messageReceivers;
+    HashMap<std::pair<ReceiverName, uint64_t>, MessageReceiver*, DefaultHash<std::pair<ReceiverName, uint64_t>>, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<uint64_t>>> m_messageReceivers;
 };
 
 };
@@ -66,8 +66,6 @@ private:
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<IPC::ReceiverName> {
-    using Hash = IntHash<IPC::ReceiverName>;
-};
+template<> struct DefaultHash<IPC::ReceiverName> : IntHash<IPC::ReceiverName> { };
 
 }

@@ -155,7 +155,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
     return true;
 }
 
-template<class HashType = DefaultHash<String>::Hash>
+template<class HashType = DefaultHash<String>>
 Optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
 {
     HashSet<String, HashType> set;

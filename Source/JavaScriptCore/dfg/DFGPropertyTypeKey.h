@@ -111,9 +111,7 @@ struct PropertyTypeKeyHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::DFG::PropertyTypeKey> {
-    typedef JSC::DFG::PropertyTypeKeyHash Hash;
-};
+template<> struct DefaultHash<JSC::DFG::PropertyTypeKey> : JSC::DFG::PropertyTypeKeyHash { };
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::DFG::PropertyTypeKey> : SimpleClassHashTraits<JSC::DFG::PropertyTypeKey> {

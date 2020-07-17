@@ -91,7 +91,7 @@ struct TriggerHash {
         unsigned hash = trigger.urlFilterIsCaseSensitive ? 10619863 : 40960001;
         if (!trigger.urlFilter.isNull())
             hash ^= StringHash::hash(trigger.urlFilter);
-        hash = WTF::pairIntHash(hash, DefaultHash<ResourceFlags>::Hash::hash(trigger.flags));
+        hash = WTF::pairIntHash(hash, DefaultHash<ResourceFlags>::hash(trigger.flags));
 
         for (const String& condition : trigger.conditions)
             hash ^= StringHash::hash(condition);
