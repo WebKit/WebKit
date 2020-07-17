@@ -18,4 +18,9 @@ PASS Change target from an existing to a different non-existing pseudo-element b
 PASS Change target from an existing to a different non-existing pseudo-element by setting pseudoElement. 
 PASS Change target from a non-existing to a different non-existing pseudo-element by setting target. 
 PASS Change target from a non-existing to a different non-existing pseudo-element by setting pseudoElement. 
+PASS Changing pseudoElement to a non-null invalid pseudo-selector '' throws a SyntaxError 
+PASS Changing pseudoElement to a non-null invalid pseudo-selector 'before' throws a SyntaxError 
+PASS Changing pseudoElement to a non-null invalid pseudo-selector ':abc' throws a SyntaxError 
+PASS Changing pseudoElement to a non-null invalid pseudo-selector '::abc' throws a SyntaxError 
+FAIL Changing pseudoElement to a non-null invalid pseudo-selector '::placeholder' throws a SyntaxError assert_throws_dom: function "() => effect.pseudoElement = pseudo" did not throw
 

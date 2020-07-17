@@ -1,5 +1,67 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/web-animations from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214505
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/web-animations from upstream 81de986322a0de90f.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html: Removed.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html: Removed.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html: Removed.
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-utils.js: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/w3c-import.log:
+        * web-platform-tests/web-animations/idlharness.window.js:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations.html:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles.html:
+        * web-platform-tests/web-animations/interfaces/Animation/pending-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/pending.html:
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/document-timeline-phases.tentative-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/document-timeline-phases.tentative.html: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target.html:
+        * web-platform-tests/web-animations/resources/keyframe-tests.js:
+        * web-platform-tests/web-animations/resources/keyframe-utils.js:
+        (assert_frames_equal):
+        * web-platform-tests/web-animations/resources/xhr-doc.py:
+        (main):
+        * web-platform-tests/web-animations/testcommon.js:
+        * web-platform-tests/web-animations/timing-model/animation-effects/phases-and-states.html:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation-expected.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/w3c-import.log:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/credential-management from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214501
 

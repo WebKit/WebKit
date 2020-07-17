@@ -58,6 +58,9 @@ PASS Keyframes are read from a custom iterator with multiple properties specifie
 PASS Keyframes are read from a custom iterator with where an offset is specified 
 PASS If a keyframe throws for an animatable property, that exception should be propagated 
 PASS Reading from a custom iterator that returns a non-object keyframe should throw 
+PASS Reading from a custom iterator that returns a non-object keyframe and an invalid easing should throw 
+PASS Reading from a custom iterator that returns a keyframe with a non finite floating-point offset value should throw 
+PASS Reading from a custom iterator that returns a keyframe with a non finite floating-point offset value and an invalid easing should throw 
 FAIL An undefined keyframe returned from a custom iterator should be treated as a default keyframe Type error
 FAIL A null keyframe returned from a custom iterator should be treated as a default keyframe Type error
 PASS A list of values returned from a custom iterator should be ignored 

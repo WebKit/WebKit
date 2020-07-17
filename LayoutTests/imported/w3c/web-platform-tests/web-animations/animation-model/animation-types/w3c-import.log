@@ -14,10 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/discrete.html
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/property-list.js
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/property-types.js
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/property-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/visibility.html

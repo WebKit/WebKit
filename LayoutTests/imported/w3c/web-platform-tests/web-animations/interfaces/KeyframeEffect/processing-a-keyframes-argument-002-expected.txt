@@ -3,6 +3,7 @@ PASS easing values are parsed correctly when set on a property-indexed keyframe
 PASS easing values are parsed correctly when using a keyframe sequence 
 PASS Invalid easing values are correctly rejected when set on a property-indexed keyframe 
 PASS Invalid easing values are correctly rejected when using a keyframe sequence 
+PASS Invalid easing values are correctly rejected after doing all the iterating 
 PASS Errors from invalid easings on a property-indexed keyframe are thrown after reading all properties 
 PASS Errors from invalid easings on a keyframe sequence are thrown after reading all properties 
 

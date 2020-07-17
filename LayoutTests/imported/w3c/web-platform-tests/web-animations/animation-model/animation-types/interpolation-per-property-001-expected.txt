@@ -1,0 +1,162 @@
+
+PASS Setup 
+PASS background-color (type: color) has testInterpolation function 
+PASS background-color supports animating as color of rgb() 
+PASS background-color supports animating as color of #RGB 
+PASS background-color supports animating as color of hsl() 
+PASS background-color supports animating as color of #RGBa 
+PASS background-color supports animating as color of rgba() 
+PASS background-color supports animating as color of hsla() 
+PASS background-image (type: discrete) has testInterpolation function 
+FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+PASS border-bottom-color (type: color) has testInterpolation function 
+PASS border-bottom-color supports animating as color of rgb() 
+PASS border-bottom-color supports animating as color of #RGB 
+PASS border-bottom-color supports animating as color of hsl() 
+PASS border-bottom-color supports animating as color of #RGBa 
+PASS border-bottom-color supports animating as color of rgba() 
+PASS border-bottom-color supports animating as color of hsla() 
+PASS border-bottom-width (type: length) has testInterpolation function 
+PASS border-bottom-width supports animating as a length 
+PASS border-bottom-width supports animating as a length of rem 
+PASS border-image-source (type: discrete) has testInterpolation function 
+FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+PASS border-left-color (type: color) has testInterpolation function 
+PASS border-left-color supports animating as color of rgb() 
+PASS border-left-color supports animating as color of #RGB 
+PASS border-left-color supports animating as color of hsl() 
+PASS border-left-color supports animating as color of #RGBa 
+PASS border-left-color supports animating as color of rgba() 
+PASS border-left-color supports animating as color of hsla() 
+PASS border-left-width (type: length) has testInterpolation function 
+PASS border-left-width supports animating as a length 
+PASS border-left-width supports animating as a length of rem 
+PASS border-right-color (type: color) has testInterpolation function 
+PASS border-right-color supports animating as color of rgb() 
+PASS border-right-color supports animating as color of #RGB 
+PASS border-right-color supports animating as color of hsl() 
+PASS border-right-color supports animating as color of #RGBa 
+PASS border-right-color supports animating as color of rgba() 
+PASS border-right-color supports animating as color of hsla() 
+PASS border-right-width (type: length) has testInterpolation function 
+PASS border-right-width supports animating as a length 
+PASS border-right-width supports animating as a length of rem 
+PASS border-spacing (type: lengthPair) has testInterpolation function 
+PASS border-spacing supports animating as a length pair 
+PASS border-spacing supports animating as a length pair of rem 
+PASS border-top-color (type: color) has testInterpolation function 
+PASS border-top-color supports animating as color of rgb() 
+PASS border-top-color supports animating as color of #RGB 
+PASS border-top-color supports animating as color of hsl() 
+PASS border-top-color supports animating as color of #RGBa 
+PASS border-top-color supports animating as color of rgba() 
+PASS border-top-color supports animating as color of hsla() 
+PASS border-top-width (type: length) has testInterpolation function 
+PASS border-top-width supports animating as a length 
+PASS border-top-width supports animating as a length of rem 
+PASS box-shadow (type: boxShadowList) has testInterpolation function 
+PASS box-shadow: from none to other 
+PASS box-shadow: from other to none 
+PASS box-shadow: single shadow 
+PASS box-shadow: shadow list 
+PASS box-shadow: mismatched list length (from shorter to longer) 
+PASS box-shadow: mismatched list length (from longer to shorter) 
+PASS box-shadow: with currentcolor 
+PASS caret-color (type: color) has testInterpolation function 
+PASS caret-color supports animating as color of rgb() 
+PASS caret-color supports animating as color of #RGB 
+PASS caret-color supports animating as color of hsl() 
+PASS caret-color supports animating as color of #RGBa 
+PASS caret-color supports animating as color of rgba() 
+PASS caret-color supports animating as color of hsla() 
+PASS clip (type: rect) has testInterpolation function 
+FAIL clip supports animating as a rect assert_equals: The value should be rect(30px, 30px, 30px, 30px) at 500ms expected "rect(30px, 30px, 30px, 30px)" but got "auto"
+PASS clip (type: discrete) has testInterpolation function 
+FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with linear easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with effect easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with keyframe easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with linear easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with effect easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with keyframe easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+PASS color (type: color) has testInterpolation function 
+PASS color supports animating as color of rgb() 
+PASS color supports animating as color of #RGB 
+PASS color supports animating as color of hsl() 
+PASS color supports animating as color of #RGBa 
+PASS color supports animating as color of rgba() 
+PASS color supports animating as color of hsla() 
+PASS column-count (type: positiveInteger) has testInterpolation function 
+PASS column-count supports animating as a positive integer 
+PASS column-count (type: discrete) has testInterpolation function 
+FAIL column-count uses discrete animation when animating between "auto" and "10" with linear easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
+FAIL column-count uses discrete animation when animating between "auto" and "10" with effect easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
+FAIL column-count uses discrete animation when animating between "auto" and "10" with keyframe easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
+PASS column-gap (type: length) has testInterpolation function 
+PASS column-gap supports animating as a length 
+PASS column-gap supports animating as a length of rem 
+PASS column-gap (type: discrete) has testInterpolation function 
+FAIL column-gap uses discrete animation when animating between "normal" and "200px" with linear easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
+FAIL column-gap uses discrete animation when animating between "normal" and "200px" with effect easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
+FAIL column-gap uses discrete animation when animating between "normal" and "200px" with keyframe easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
+PASS column-rule-color (type: color) has testInterpolation function 
+PASS column-rule-color supports animating as color of rgb() 
+PASS column-rule-color supports animating as color of #RGB 
+PASS column-rule-color supports animating as color of hsl() 
+PASS column-rule-color supports animating as color of #RGBa 
+PASS column-rule-color supports animating as color of rgba() 
+PASS column-rule-color supports animating as color of hsla() 
+PASS column-rule-width (type: length) has testInterpolation function 
+PASS column-rule-width supports animating as a length 
+PASS column-rule-width supports animating as a length of rem 
+PASS column-width (type: length) has testInterpolation function 
+PASS column-width supports animating as a length 
+PASS column-width supports animating as a length of rem 
+PASS column-width (type: discrete) has testInterpolation function 
+FAIL column-width uses discrete animation when animating between "auto" and "1px" with linear easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
+FAIL column-width uses discrete animation when animating between "auto" and "1px" with effect easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
+FAIL column-width uses discrete animation when animating between "auto" and "1px" with keyframe easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
+PASS fill-opacity (type: opacity) has testInterpolation function 
+FAIL fill-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
+PASS filter (type: filterList) has testInterpolation function 
+PASS filter: blur function 
+PASS filter: hue-rotate function with same unit(deg) 
+FAIL filter: hue-rotate function with different unit(deg -> rad) assert_equals: The value should be hue-rotate(2869.79deg) at 500ms expected "hue-rotate(2869.79deg)" but got "hue-rotate(2869.7889756541163deg)"
+PASS filter: drop-shadow function 
+FAIL filter: percentage or numeric-specifiable functions (number value) assert_equals: The value should be brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3) at 500ms expected "brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3)" but got "brightness(0.30000000000000004) contrast(0.30000000000000004) grayscale(0.30000000000000004) invert(0.30000000000000004) opacity(0.30000000000000004) saturate(0.30000000000000004) sepia(0.30000000000000004)"
+FAIL filter: percentage or numeric-specifiable functions (percentage value) assert_equals: The value should be brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3) at 500ms expected "brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3)" but got "brightness(0.30000000000000004) contrast(0.30000000000000004) grayscale(0.30000000000000004) invert(0.30000000000000004) opacity(0.30000000000000004) saturate(0.30000000000000004) sepia(0.30000000000000004)"
+FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 1 assert_equals: The value should be grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5) at 500ms expected "grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5)" but got "grayscale(1) brightness(0) contrast(0) opacity(0) saturate(0)"
+FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 0 assert_equals: The value should be opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px) at 500ms expected "opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px)" but got "opacity(0) grayscale(1) invert(1) sepia(1) blur(10px)"
+FAIL filter: interpolate different length of filter-function-list with drop-shadow function assert_equals: The value should be blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px) at 500ms expected "blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px)" but got "blur(10px) drop-shadow(rgba(0, 0, 255, 0.8) 10px 10px 10px)"
+PASS filter: interpolate from none 
+FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.989999771118164px) url(\"#f1\")"
+PASS flood-color (type: color) has testInterpolation function 
+PASS flood-color supports animating as color of rgb() 
+PASS flood-color supports animating as color of #RGB 
+PASS flood-color supports animating as color of hsl() 
+PASS flood-color supports animating as color of #RGBa 
+PASS flood-color supports animating as color of rgba() 
+PASS flood-color supports animating as color of hsla() 
+PASS flood-opacity (type: opacity) has testInterpolation function 
+FAIL flood-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
+PASS font-stretch (type: percentage) has testInterpolation function 
+PASS font-stretch supports animating as a percentage 
+PASS font-style (type: discrete) has testInterpolation function 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with linear easing 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with effect easing 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with keyframe easing 
+PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function 
+PASS font-variation-settings supports animation as float 
+PASS font-variation-settings supports animation as float with multiple tags 
+FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms lengths differ, expected array ["\"wdth\" 2", "\"wght\" 1.2"] length 2, got ["normal"] length 1
+PASS font-variation-settings (type: discrete) has testInterpolation function 
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with linear easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "normal"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with effect easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "normal"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with keyframe easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "normal"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with linear easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with effect easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
+

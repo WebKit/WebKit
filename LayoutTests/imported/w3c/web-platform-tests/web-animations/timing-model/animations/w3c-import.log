@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/play-states.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html

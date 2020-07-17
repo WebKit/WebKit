@@ -821,8 +821,6 @@ webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-pa
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
-imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ DumpJSConsoleLogInStdErr ]
-
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
 # Should be DumpJSConsoleLogInStdErr, but WPE keeps reporting error despite the difference is a console Log message.

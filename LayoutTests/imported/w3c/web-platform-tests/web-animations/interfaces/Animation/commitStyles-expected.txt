@@ -3,10 +3,16 @@ PASS Commits styles
 PASS Commits styles for an animation that has been removed 
 PASS Commits shorthand styles 
 FAIL Commits logical properties assert_equals: expected "20px" but got "10px"
+FAIL Commits logical properties as physical properties assert_equals: expected "20px" but got "10px"
 PASS Commits values calculated mid-interval 
 PASS Commits variable references as their computed values 
 FAIL Commits custom variables assert_approx_equals: expected 0.8 +/- 0.0001 but got 0.5
 FAIL Commits em units as pixel values assert_approx_equals: expected 100 +/- 0.0001 but got 0
+FAIL Commits relative line-height assert_equals: line-height is committed as a relative value expected "1.5" but got "15px"
+PASS Commits transforms 
+FAIL Commits transforms as a transform list assert_equals: expected "translate(20px, 20px)" but got "matrix(1, 0, 0, 1, 20, 20)"
+FAIL Commits matrix-interpolated relative transforms assert_equals: Resolved transform is correct after commit. expected "matrix(2, 0, 0, 2, 100, 0)" but got "matrix(2, -4.898587196589413e-16, 4.898587196589413e-16, 2, 0, 0)"
+FAIL Commits "none" transform assert_equals: Resolved transform is correct after commit. expected "none" but got "matrix(1, 0, 0, 1, 0, 0)"
 FAIL Commits the intermediate value of an animation in the middle of stack assert_approx_equals: expected 0.4 +/- 0.0001 but got 0.20000000298023224
 FAIL Commit composites on top of the underlying value assert_approx_equals: expected 0.5 +/- 0.0001 but got 0.20000000298023224
 PASS Triggers mutation observers when updating style 

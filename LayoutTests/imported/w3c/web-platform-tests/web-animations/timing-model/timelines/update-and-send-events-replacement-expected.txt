@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Removes an animation when another covers the same properties 
 PASS Removes an animation after another animation finishes 
 PASS Removes an animation after multiple other animations finish 
@@ -42,5 +40,5 @@ PASS Updates ALL timelines before checking for replacement
 PASS Dispatches remove events after finish events 
 PASS Fires remove event before requestAnimationFrame 
 PASS Queues all remove events before running them 
-TIMEOUT Performs removal in deeply nested iframes Test timed out
+PASS Performs removal in deeply nested iframes 
 

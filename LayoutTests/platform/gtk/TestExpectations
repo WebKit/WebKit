@@ -3770,10 +3770,6 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 # Passing since r260062.
 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
 
-imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ DumpJSConsoleLogInStdErr ]
-
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
 

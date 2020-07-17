@@ -131,14 +131,25 @@ PASS Element.animate() correctly sets the id attribute when no id is specified
 PASS Element.animate() correctly sets the id attribute 
 PASS Element.animate() correctly sets the Animation's timeline 
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
+PASS Element.animate() correctly sets the Animation's timeline with no timeline parameter in KeyframeAnimationOptions. 
+PASS Element.animate() correctly sets the Animation's timeline with undefined timeline in KeyframeAnimationOptions. 
+FAIL Element.animate() correctly sets the Animation's timeline with null timeline in KeyframeAnimationOptions. assert_equals: Animation timeline should be null expected null but got object "[object DocumentTimeline]"
+PASS Element.animate() correctly sets the Animation's timeline with DocumentTimeline in KeyframeAnimationOptions. 
 PASS Element.animate() calls play on the Animation 
 PASS Element.animate() does NOT trigger a style change event 
 PASS animate() with pseudoElement parameter creates an Animation object 
 PASS animate() with pseudoElement parameter without content creates an Animation object 
-PASS animate() with pseudoElement parameter  creates an Animation object for ::marker 
-PASS animate() with pseudoElement parameter  creates an Animation object for ::first-line 
+PASS animate() with pseudoElement parameter creates an Animation object for ::marker 
+PASS animate() with pseudoElement parameter creates an Animation object for ::first-line 
 PASS animate() with pseudoElement an Animation object targeting the correct pseudo-element 
 PASS animate() with pseudoElement without content creates an Animation object targeting the correct pseudo-element 
 FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::marker assert_equals: The returned Animation targets the correct selector expected "::marker" but got ""
 FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::first-line assert_equals: The returned Animation targets the correct selector expected "::first-line" but got ""
+PASS animate() with a non-null invalid pseudoElement '' throws a SyntaxError 
+PASS animate() with a non-null invalid pseudoElement 'before' throws a SyntaxError 
+PASS animate() with a non-null invalid pseudoElement ':abc' throws a SyntaxError 
+PASS animate() with a non-null invalid pseudoElement '::abc' throws a SyntaxError 
+FAIL animate() with a non-null invalid pseudoElement '::placeholder' throws a SyntaxError assert_throws_dom: function "() => {
+      div.animate(null, {pseudoElement: pseudo});
+    }" did not throw
 

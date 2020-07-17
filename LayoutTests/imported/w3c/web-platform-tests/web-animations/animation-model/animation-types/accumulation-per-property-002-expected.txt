@@ -1,0 +1,91 @@
+
+PASS Setup 
+PASS letter-spacing (type: length) has testAccumulation function 
+FAIL letter-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL letter-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+PASS lighting-color (type: color) has testAccumulation function 
+FAIL lighting-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL lighting-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL lighting-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL lighting-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL lighting-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL lighting-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+PASS list-style-image (type: discrete) has testAccumulation function 
+PASS list-style-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
+PASS list-style-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
+PASS outline-color (type: color) has testAccumulation function 
+FAIL outline-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL outline-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL outline-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL outline-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL outline-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL outline-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+PASS outline-offset (type: length) has testAccumulation function 
+FAIL outline-offset: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL outline-offset: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+PASS outline-width (type: length) has testAccumulation function 
+FAIL outline-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL outline-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+PASS perspective (type: length) has testAccumulation function 
+FAIL perspective: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL perspective: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+PASS shape-outside (type: discrete) has testAccumulation function 
+PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
+PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
+PASS stop-color (type: color) has testAccumulation function 
+FAIL stop-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL stop-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL stop-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL stop-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL stop-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL stop-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+PASS stop-opacity (type: opacity) has testAccumulation function 
+FAIL stop-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
+FAIL stop-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
+PASS stroke-dasharray (type: dasharray) has testAccumulation function 
+PASS stroke-dasharray: dasharray 
+PASS stroke-dasharray (type: discrete) has testAccumulation function 
+PASS stroke-dasharray: "10px, 20px" onto "none" 
+PASS stroke-dasharray: "none" onto "10px, 20px" 
+PASS stroke-miterlimit (type: positiveNumber) has testAccumulation function 
+FAIL stroke-miterlimit: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "1.100000023841858"
+PASS stroke-opacity (type: opacity) has testAccumulation function 
+FAIL stroke-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
+FAIL stroke-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
+PASS text-shadow (type: textShadowList) has testAccumulation function 
+FAIL text-shadow: shadow assert_equals: The value should be rgb(240, 240, 240) 20px 20px 20px at 0ms expected "rgb(240, 240, 240) 20px 20px 20px" but got "rgb(120, 120, 120) 10px 10px 10px"
+PASS transform (type: transformList) has testAccumulation function 
+FAIL transform: translate assert_approx_equals: expected matrix(1, 0, 0, 1, -100, 0) but got matrix(1, 0, 0, 1, -200, 0): The value should be matrix(1, 0, 0, 1, -100, 0) at 0ms but got matrix(1, 0, 0, 1, -200, 0) expected -100 +/- 0.0001 but got -200
+FAIL transform: rotate assert_approx_equals: expected matrix(0.707107, -0.707107, 0.707107, 0.707107, 0, 0) but got matrix(0, -1, 1, 0, 0, 0): The value should be matrix(0.707107, -0.707107, 0.707107, 0.707107, 0, 0) at 0ms but got matrix(0, -1, 1, 0, 0, 0) expected 0.707107 +/- 0.0001 but got 0
+FAIL transform: scale assert_approx_equals: expected matrix(-2, 0, 0, -2, 0, 0) but got matrix(-3, 0, 0, -3, 0, 0): The value should be matrix(-2, 0, 0, -2, 0, 0) at 0ms but got matrix(-3, 0, 0, -3, 0, 0) expected -2 +/- 0.0001 but got -3
+FAIL transform: skew assert_approx_equals: expected matrix(1, 0.57735, -0.36397, 1, 0, 0) but got matrix(1, 0.36397, -0.57735, 1, 0, 0): The value should be matrix(1, 0.57735, -0.36397, 1, 0, 0) at 0ms but got matrix(1, 0.36397, -0.57735, 1, 0, 0) expected 0.57735 +/- 0.0001 but got 0.36397
+FAIL transform: rotate on translate assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(0, 1, -1, 0, 0, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(0, 1, -1, 0, 0, 0) expected 100 +/- 0.0001 but got 0
+FAIL transform: translate on rotate assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
+FAIL transform: rotate and translate on rotate assert_approx_equals: expected matrix(0, 1, -1, 0, 0, 0) but got matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0): The value should be matrix(0, 1, -1, 0, 0, 0) at 0ms but got matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0) expected 0 +/- 0.0001 but got 0.707107
+FAIL transform: rotate on rotate and translate assert_approx_equals: expected matrix(0, 1, -1, 0, 0, 100) but got matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0): The value should be matrix(0, 1, -1, 0, 0, 100) at 0ms but got matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0) expected 0 +/- 0.0001 but got 0.707107
+FAIL transform: matrix assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
+FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1): The value should be matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) at 0ms but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1) expected 0.853553 +/- 0.0001 but got 0.5
+FAIL transform: matrix3d assert_approx_equals: expected matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1): The value should be matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) at 0ms but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1) expected 0.853553 +/- 0.0001 but got 0.5
+FAIL transform: none assert_equals: dimension of the matrix: The value should be matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1) at 0ms but got matrix(1, 0, 0, 1, 0, 0) expected 16 but got 6
+FAIL transform: non-invertible matrices (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 0, 0, 0, 100) but got matrix(1, 1, 0, 0, 50, 50): The value should be matrix(1, 1, 0, 0, 0, 100) at 0ms but got matrix(1, 1, 0, 0, 50, 50) expected 0 +/- 0.0001 but got 50
+PASS transform: non-invertible matrices (invertible onto non-invertible) 
+FAIL transform: non-invertible matrices in matched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(-1, -1, 0, 0, 100, 100) but got matrix(-1, -1, 0, 0, 150, 50): The value should be matrix(-1, -1, 0, 0, 100, 100) at 0ms but got matrix(-1, -1, 0, 0, 150, 50) expected 100 +/- 0.0001 but got 150
+PASS transform: non-invertible matrices in matched transform lists (invertible onto non-invertible) 
+FAIL transform: non-invertible matrices in mismatched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 1, 1, 100, 100) but got matrix(1, 1, 1, 1, 150, 50): The value should be matrix(1, 1, 1, 1, 100, 100) at 0ms but got matrix(1, 1, 1, 1, 150, 50) expected 100 +/- 0.0001 but got 150
+PASS transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible) 
+PASS visibility (type: visibility) has testAccumulation function 
+PASS visibility: onto "visible" 
+PASS visibility: onto "hidden" 
+PASS word-spacing (type: lengthPercentageOrCalc) has testAccumulation function 
+FAIL word-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL word-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL word-spacing: percentage assert_equals: The value should be 130% at 0ms expected "130%" but got "1.75px"
+FAIL word-spacing: units "%" onto "px" assert_equals: The value should be calc(10% + 10px) at 0ms expected "calc(10% + 10px)" but got "0.25px"
+FAIL word-spacing: units "px" onto "%" assert_equals: The value should be calc(10% + 10px) at 0ms expected "calc(10% + 10px)" but got "10px"
+FAIL word-spacing: units "rem" onto "%" assert_equals: The value should be calc(10% + 20px) at 0ms expected "calc(10% + 20px)" but got "20px"
+FAIL word-spacing: units "%" onto "rem" assert_equals: The value should be calc(10% + 20px) at 0ms expected "calc(10% + 20px)" but got "0.25px"
+FAIL word-spacing: units "rem" onto "em" assert_equals: The value should be 40px at 0ms expected "40px" but got "20px"
+FAIL word-spacing: units "em" onto "rem" assert_equals: The value should be 40px at 0ms expected "40px" but got "20px"
+FAIL word-spacing: units "calc" onto "px" assert_equals: The value should be calc(20% + 30px) at 0ms expected "calc(20% + 30px)" but got "10px"
+FAIL word-spacing: calc assert_equals: The value should be calc(30% + 30px) at 0ms expected "calc(30% + 30px)" but got "0px"
+

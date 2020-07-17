@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/DocumentTimeline/constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/DocumentTimeline/document-timeline-phases.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events.html
