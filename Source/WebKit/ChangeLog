@@ -1,3 +1,18 @@
+2020-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollbarControlSize an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=199325
+
+        Reviewed by Sam Weinig.
+
+        Make ScrollbarControlSize an enum class, and make some RenderScrollbar methods const.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::calculatePositionAndSize):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::createScrollbar):
+
 2020-07-17  Tim Horton  <timothy_horton@apple.com>
 
         Add a addition point for extra user media sandbox extensions

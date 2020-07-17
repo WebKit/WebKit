@@ -42,7 +42,7 @@ Ref<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea& scrollable
 }
 
 RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
-    : Scrollbar(scrollableArea, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme(), true)
+    : Scrollbar(scrollableArea, orientation, ScrollbarControlSize::Regular, RenderScrollbarTheme::renderScrollbarTheme(), true)
     , m_ownerElement(ownerElement)
     , m_owningFrame(owningFrame)
 {
@@ -267,7 +267,7 @@ void RenderScrollbar::paintPart(GraphicsContext& graphicsContext, ScrollbarPart 
     partRenderer->paintIntoRect(graphicsContext, location(), rect);
 }
 
-IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)
+IntRect RenderScrollbar::buttonRect(ScrollbarPart partType) const
 {
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer)
@@ -299,7 +299,7 @@ IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)
                    isHorizontal ? height() : pixelSnappedIntSize.height());
 }
 
-IntRect RenderScrollbar::trackRect(int startLength, int endLength)
+IntRect RenderScrollbar::trackRect(int startLength, int endLength) const
 {
     RenderScrollbarPart* part = m_parts.get(TrackBGPart);
     if (part)
@@ -323,7 +323,7 @@ IntRect RenderScrollbar::trackRect(int startLength, int endLength)
     return IntRect(x(), y() + startLength, width(), height() - totalLength);
 }
 
-IntRect RenderScrollbar::trackPieceRectWithMargins(ScrollbarPart partType, const IntRect& oldRect)
+IntRect RenderScrollbar::trackPieceRectWithMargins(ScrollbarPart partType, const IntRect& oldRect) const
 {
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer)
@@ -342,7 +342,7 @@ IntRect RenderScrollbar::trackPieceRectWithMargins(ScrollbarPart partType, const
     return rect;
 }
 
-int RenderScrollbar::minimumThumbLength()
+int RenderScrollbar::minimumThumbLength() const
 {
     RenderScrollbarPart* partRenderer = m_parts.get(ThumbPart);
     if (!partRenderer)
@@ -351,7 +351,7 @@ int RenderScrollbar::minimumThumbLength()
     return orientation() == HorizontalScrollbar ? partRenderer->width() : partRenderer->height();
 }
 
-float RenderScrollbar::opacity()
+float RenderScrollbar::opacity() const
 {
     RenderScrollbarPart* partRenderer = m_parts.get(ScrollbarBGPart);
     if (!partRenderer)

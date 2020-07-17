@@ -51,7 +51,7 @@ public:
     virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/) { return false; }
     virtual ScrollbarPart hitTest(Scrollbar&, const IntPoint&) { return NoPart; }
     
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) { return 0; }
+    virtual int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) { return 0; }
 
     virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarButtonsSingle; }
 

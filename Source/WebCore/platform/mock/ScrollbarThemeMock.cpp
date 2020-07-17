@@ -41,7 +41,7 @@ IntRect ScrollbarThemeMock::trackRect(Scrollbar& scrollbar, bool)
 
 int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState)
 {
-    return cScrollbarThickness[controlSize];
+    return cScrollbarThickness[static_cast<uint8_t>(controlSize)];
 }
 
 void ScrollbarThemeMock::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& trackRect)

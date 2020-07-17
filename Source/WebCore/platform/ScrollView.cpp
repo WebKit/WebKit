@@ -103,7 +103,7 @@ bool ScrollView::setHasScrollbarInternal(RefPtr<Scrollbar>& scrollbar, Scrollbar
 
 Ref<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
-    return Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
+    return Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
 }
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode,

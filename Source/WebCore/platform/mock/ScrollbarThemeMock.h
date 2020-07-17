@@ -33,7 +33,7 @@ namespace WebCore {
 // Scrollbar theme used in image snapshots, to eliminate appearance differences between platforms.
 class ScrollbarThemeMock : public ScrollbarThemeComposite {
 public:
-    int scrollbarThickness(ScrollbarControlSize = RegularScrollbar, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
+    int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
 
 protected:
     bool hasButtons(Scrollbar&) override { return false; }

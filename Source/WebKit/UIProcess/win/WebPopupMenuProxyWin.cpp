@@ -198,7 +198,7 @@ void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, dou
     HWND hostWindow = m_webView->window();
 
     if (!m_scrollbar && visibleItems() < m_items.size()) {
-        m_scrollbar = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, SmallScrollbar);
+        m_scrollbar = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, ScrollbarControlSize::Small);
         m_scrollbar->styleChanged();
     }
 
@@ -384,7 +384,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
 
     if (naturalHeight > maxPopupHeight) {
         // We need room for a scrollbar
-        popupWidth += ScrollbarTheme::theme().scrollbarThickness(SmallScrollbar);
+        popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarControlSize::Small);
     }
 
     popupHeight += 2 * popupWindowBorderWidth;

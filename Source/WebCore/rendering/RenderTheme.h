@@ -199,7 +199,7 @@ public:
     virtual bool popupOptionSupportsTextIndent() const { return false; }
     virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
 
-    virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
+    virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return ScrollbarControlSize::Regular; }
 
     // Returns the repeat interval of the animation for the progress bar.
     virtual Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const;

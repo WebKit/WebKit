@@ -48,13 +48,13 @@ public:
 
     void paintPart(GraphicsContext&, ScrollbarPart, const IntRect&);
 
-    IntRect buttonRect(ScrollbarPart);
-    IntRect trackRect(int startLength, int endLength);
-    IntRect trackPieceRectWithMargins(ScrollbarPart, const IntRect&);
+    IntRect buttonRect(ScrollbarPart) const;
+    IntRect trackRect(int startLength, int endLength) const;
+    IntRect trackPieceRectWithMargins(ScrollbarPart, const IntRect&) const;
 
-    int minimumThumbLength();
+    int minimumThumbLength() const;
 
-    float opacity();
+    float opacity() const;
     
     bool isHiddenByStyle() const final;
 

@@ -148,9 +148,9 @@ enum ScrollbarMode : uint8_t {
     ScrollbarAlwaysOn
 };
 
-enum ScrollbarControlSize : uint8_t {
-    RegularScrollbar,
-    SmallScrollbar
+enum class ScrollbarControlSize : uint8_t {
+    Regular,
+    Small
 };
 
 enum class ScrollbarExpansionState : uint8_t {

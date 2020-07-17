@@ -67,7 +67,7 @@ public:
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
     Color platformTextSearchHighlightColor(OptionSet<StyleColor::Options>) const final;
 
-    ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return SmallScrollbar; }
+    ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return ScrollbarControlSize::Small; }
 
     int minimumMenuListSize(const RenderStyle&) const final;
 

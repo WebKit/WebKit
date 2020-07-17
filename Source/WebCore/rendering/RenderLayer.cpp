@@ -3477,7 +3477,7 @@ Ref<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, downcast<RenderBox>(actualRenderer).element());
     else {
-        widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
+        widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
         didAddScrollbar(widget.get(), orientation);
         if (page().isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(page().wheelEventTestMonitor());
