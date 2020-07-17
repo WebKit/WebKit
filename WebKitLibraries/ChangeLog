@@ -1,5 +1,20 @@
 2020-07-17  Jonathan Bedard  <jbedard@apple.com>
 
+        Add WebKitPrivateFrameworkStubs for Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=214503
+        <rdar://problem/65746594>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitPrivateFrameworkStubs/Mac/101600: Added.
+        * WebKitPrivateFrameworkStubs/Mac/101600/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/Mac/101600/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/Mac/110000: Added.
+        * WebKitPrivateFrameworkStubs/Mac/110000/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/Mac/110000/AuthKit.framework/AuthKit.tbd: Added.
+
+2020-07-17  Jonathan Bedard  <jbedard@apple.com>
+
         Add WebKitPrivateFrameworkStubs for watchOS 7
         https://bugs.webkit.org/show_bug.cgi?id=214479
         <rdar://problem/65727787>
