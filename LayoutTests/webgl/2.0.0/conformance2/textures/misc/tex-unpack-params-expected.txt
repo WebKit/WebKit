@@ -142,11 +142,11 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 139: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 140: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 141: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 142: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 142: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 143: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 144: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 145: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 146: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 146: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 147: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 148: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 149: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
@@ -418,51 +418,51 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 415: PASS ] getError was expected value: NO_ERROR : no error
 [ 416: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 417: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 418: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 418: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 419: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 420: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 421: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 422: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 422: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 423: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 424: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 425: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 426: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 426: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 427: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 428: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 429: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 430: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 430: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 431: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 432: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 433: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 434: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 434: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 435: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 436: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 437: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 438: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 438: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 439: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 440: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 441: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 442: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 442: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 443: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 444: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 445: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 446: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 446: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 447: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 448: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 449: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 450: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 450: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 451: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 452: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 453: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 454: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 454: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 455: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 456: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 457: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 458: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 458: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 459: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 460: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 461: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 462: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 462: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 463: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 464: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 465: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
@@ -476,15 +476,15 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 473: PASS ] getError was expected value: NO_ERROR : no error
 [ 474: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 475: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 476: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 476: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 477: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 478: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 479: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 480: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 480: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 481: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 482: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 483: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 484: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 484: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 485: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 486: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
 [ 487: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
@@ -509,47 +509,47 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 506: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 507: PASS ] getError was expected value: NO_ERROR : unpack param constraints do not apply if no data are uploaded.
 [ 508: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 509: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 510: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 511: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 512: FAIL ] compare pixels: 35 pixels differ
+[ 509: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 510: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 511: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 512: PASS ] compare pixels: as expected
 [ 513: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 514: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 515: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 516: FAIL ] compare pixels: 12 pixels differ
+[ 514: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 515: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 516: PASS ] compare pixels: as expected
 [ 517: PASS ] getError was expected value: NO_ERROR : no error
 [ 518: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 519: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 519: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 520: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 521: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 522: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 523: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 524: FAIL ] compare pixels: 105 pixels differ
-[ 525: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 525: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 526: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 527: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 528: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 529: FAIL ] compare pixels: 24 pixels differ
 [ 530: PASS ] getError was expected value: NO_ERROR : no error
 [ 531: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 532: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 533: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 534: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 535: FAIL ] compare pixels: 35 pixels differ
+[ 532: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 533: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 534: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 535: PASS ] compare pixels: as expected
 [ 536: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 537: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 538: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 539: FAIL ] compare pixels: 12 pixels differ
+[ 537: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 538: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 539: PASS ] compare pixels: as expected
 [ 540: PASS ] getError was expected value: NO_ERROR : no error
 [ 541: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 542: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 542: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 543: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 544: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 545: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 546: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 547: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 548: FAIL ] compare pixels: 140 pixels differ
-[ 549: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 549: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 550: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 551: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 552: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
@@ -557,177 +557,177 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 554: FAIL ] compare pixels: 36 pixels differ
 [ 555: PASS ] getError was expected value: NO_ERROR : no error
 [ 556: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 557: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 558: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 559: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 560: FAIL ] compare pixels: 42 pixels differ
+[ 557: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 558: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 559: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 560: PASS ] compare pixels: as expected
 [ 561: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 562: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 563: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 564: FAIL ] compare pixels: 16 pixels differ
+[ 562: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 563: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 564: PASS ] compare pixels: as expected
 [ 565: PASS ] getError was expected value: NO_ERROR : no error
 [ 566: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 567: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 567: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 568: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 569: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 570: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 571: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 572: FAIL ] compare pixels: 126 pixels differ
-[ 573: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 573: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 574: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 575: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 576: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 577: FAIL ] compare pixels: 32 pixels differ
 [ 578: PASS ] getError was expected value: NO_ERROR : no error
 [ 579: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 580: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 581: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 582: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 583: FAIL ] compare pixels: 40 pixels differ
+[ 580: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 581: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 582: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 583: PASS ] compare pixels: as expected
 [ 584: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 585: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 586: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 587: FAIL ] compare pixels: 15 pixels differ
+[ 585: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 586: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 587: PASS ] compare pixels: as expected
 [ 588: PASS ] getError was expected value: NO_ERROR : no error
 [ 589: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 590: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 590: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 591: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 592: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 593: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 594: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 595: FAIL ] compare pixels: 120 pixels differ
-[ 596: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 596: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 597: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 598: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 599: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 600: FAIL ] compare pixels: 30 pixels differ
 [ 601: PASS ] getError was expected value: NO_ERROR : no error
 [ 602: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 603: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 604: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 605: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 606: FAIL ] compare pixels: 90 pixels differ
+[ 603: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 604: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 605: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 606: PASS ] compare pixels: as expected
 [ 607: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 608: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 609: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 610: FAIL ] compare pixels: 48 pixels differ
+[ 608: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 609: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 610: PASS ] compare pixels: as expected
 [ 611: PASS ] getError was expected value: NO_ERROR : no error
 [ 612: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 613: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 613: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 614: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 615: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 616: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 617: FAIL ] compare pixels: 180 pixels differ
-[ 618: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 618: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 619: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 620: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 621: FAIL ] compare pixels: 48 pixels differ
 [ 622: PASS ] getError was expected value: NO_ERROR : no error
 [ 623: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 624: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 625: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 624: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 625: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 626: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 627: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 628: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 627: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 628: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 629: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 630: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 631: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 630: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 631: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 632: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 633: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 634: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 633: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 634: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 635: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 636: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 637: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 636: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 637: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 638: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 639: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 640: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 639: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 640: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 641: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 642: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 643: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 642: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 643: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 644: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 645: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 646: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 645: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 646: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 647: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 648: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 649: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 650: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 651: FAIL ] compare pixels: 35 pixels differ
+[ 648: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 649: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 650: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 651: PASS ] compare pixels: as expected
 [ 652: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 653: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 654: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 655: FAIL ] compare pixels: 12 pixels differ
+[ 653: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 654: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 655: PASS ] compare pixels: as expected
 [ 656: PASS ] getError was expected value: NO_ERROR : no error
 [ 657: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 658: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 658: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 659: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 660: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 661: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 662: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 663: FAIL ] compare pixels: 105 pixels differ
-[ 664: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 664: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 665: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 666: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 667: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 668: FAIL ] compare pixels: 24 pixels differ
 [ 669: PASS ] getError was expected value: NO_ERROR : no error
 [ 670: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 671: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 672: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 673: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 674: FAIL ] compare pixels: 35 pixels differ
+[ 671: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 672: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 673: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 674: PASS ] compare pixels: as expected
 [ 675: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 676: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 677: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 678: FAIL ] compare pixels: 12 pixels differ
+[ 676: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 677: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 678: PASS ] compare pixels: as expected
 [ 679: PASS ] getError was expected value: NO_ERROR : no error
 [ 680: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 681: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 681: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 682: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 683: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 684: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 685: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 686: FAIL ] compare pixels: 105 pixels differ
-[ 687: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 687: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 688: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 689: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 690: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 691: FAIL ] compare pixels: 24 pixels differ
 [ 692: PASS ] getError was expected value: NO_ERROR : no error
 [ 693: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 694: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 695: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 696: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 697: FAIL ] compare pixels: 35 pixels differ
+[ 694: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 695: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 696: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 697: PASS ] compare pixels: as expected
 [ 698: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 699: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 700: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 701: FAIL ] compare pixels: 12 pixels differ
+[ 699: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 700: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 701: PASS ] compare pixels: as expected
 [ 702: PASS ] getError was expected value: NO_ERROR : no error
 [ 703: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 704: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 704: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 705: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 706: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 707: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 708: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 709: FAIL ] compare pixels: 105 pixels differ
-[ 710: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 710: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 711: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 712: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 713: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 714: FAIL ] compare pixels: 24 pixels differ
 [ 715: PASS ] getError was expected value: NO_ERROR : no error
 [ 716: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 717: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 718: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 719: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 720: FAIL ] compare pixels: 35 pixels differ
+[ 717: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 718: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 719: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 720: PASS ] compare pixels: as expected
 [ 721: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 722: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 723: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 724: FAIL ] compare pixels: 12 pixels differ
+[ 722: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 723: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 724: PASS ] compare pixels: as expected
 [ 725: PASS ] getError was expected value: NO_ERROR : no error
 [ 726: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 727: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 727: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 728: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 729: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 730: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
@@ -735,7 +735,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 732: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 733: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 734: FAIL ] compare pixels: 175 pixels differ
-[ 735: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 735: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 736: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 737: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 738: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
@@ -743,24 +743,24 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 740: FAIL ] compare pixels: 36 pixels differ
 [ 741: PASS ] getError was expected value: NO_ERROR : no error
 [ 742: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 743: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 744: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 745: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 746: FAIL ] compare pixels: 42 pixels differ
+[ 743: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 744: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 745: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 746: PASS ] compare pixels: as expected
 [ 747: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 748: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 749: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 750: FAIL ] compare pixels: 16 pixels differ
+[ 748: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 749: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 750: PASS ] compare pixels: as expected
 [ 751: PASS ] getError was expected value: NO_ERROR : no error
 [ 752: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 753: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 753: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 754: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 755: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 756: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 757: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 758: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 759: FAIL ] compare pixels: 168 pixels differ
-[ 760: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 760: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 761: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 762: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 763: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
@@ -768,223 +768,223 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-unpack-
 [ 765: FAIL ] compare pixels: 48 pixels differ
 [ 766: PASS ] getError was expected value: NO_ERROR : no error
 [ 767: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 768: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 769: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 770: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 771: FAIL ] compare pixels: 35 pixels differ
+[ 768: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 769: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 770: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 771: PASS ] compare pixels: as expected
 [ 772: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 773: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 774: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 775: FAIL ] compare pixels: 12 pixels differ
+[ 773: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 774: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 775: PASS ] compare pixels: as expected
 [ 776: PASS ] getError was expected value: NO_ERROR : no error
 [ 777: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 778: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 779: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 778: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 779: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 780: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 781: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 782: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 783: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 784: FAIL ] compare pixels: 35 pixels differ
+[ 781: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 782: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 783: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 784: PASS ] compare pixels: as expected
 [ 785: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 786: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 787: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 788: FAIL ] compare pixels: 12 pixels differ
+[ 786: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 787: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 788: PASS ] compare pixels: as expected
 [ 789: PASS ] getError was expected value: NO_ERROR : no error
 [ 790: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 791: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 792: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 791: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 792: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 793: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 794: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 795: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 796: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 797: FAIL ] compare pixels: 35 pixels differ
+[ 794: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 795: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 796: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 797: PASS ] compare pixels: as expected
 [ 798: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 799: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 800: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 801: FAIL ] compare pixels: 12 pixels differ
+[ 799: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 800: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 801: PASS ] compare pixels: as expected
 [ 802: PASS ] getError was expected value: NO_ERROR : no error
 [ 803: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 804: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 805: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 804: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 805: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 806: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 807: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 808: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 809: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 810: FAIL ] compare pixels: 35 pixels differ
+[ 807: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 808: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 809: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 810: PASS ] compare pixels: as expected
 [ 811: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 812: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 813: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 814: FAIL ] compare pixels: 12 pixels differ
+[ 812: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 813: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 814: PASS ] compare pixels: as expected
 [ 815: PASS ] getError was expected value: NO_ERROR : no error
 [ 816: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 817: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 818: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 817: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 818: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 819: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 820: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 821: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 822: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 823: FAIL ] compare pixels: 35 pixels differ
+[ 820: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 821: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 822: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 823: PASS ] compare pixels: as expected
 [ 824: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 825: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 826: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 827: FAIL ] compare pixels: 12 pixels differ
+[ 825: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 826: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 827: PASS ] compare pixels: as expected
 [ 828: PASS ] getError was expected value: NO_ERROR : no error
 [ 829: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 830: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 830: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 831: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 832: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 833: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 834: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 835: FAIL ] compare pixels: 105 pixels differ
-[ 836: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 836: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 837: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 838: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 839: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 840: FAIL ] compare pixels: 24 pixels differ
 [ 841: PASS ] getError was expected value: NO_ERROR : no error
 [ 842: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 843: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 844: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 845: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 846: FAIL ] compare pixels: 42 pixels differ
+[ 843: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 844: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 845: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 846: PASS ] compare pixels: as expected
 [ 847: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 848: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 849: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 850: FAIL ] compare pixels: 20 pixels differ
+[ 848: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 849: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 850: PASS ] compare pixels: as expected
 [ 851: PASS ] getError was expected value: NO_ERROR : no error
 [ 852: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 853: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 853: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 854: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 855: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 856: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 857: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 858: FAIL ] compare pixels: 126 pixels differ
-[ 859: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 859: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 860: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 861: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 862: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 863: FAIL ] compare pixels: 40 pixels differ
 [ 864: PASS ] getError was expected value: NO_ERROR : no error
 [ 865: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 866: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 867: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 868: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 869: FAIL ] compare pixels: 49 pixels differ
+[ 866: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 867: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 868: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 869: PASS ] compare pixels: as expected
 [ 870: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 871: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 872: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 873: FAIL ] compare pixels: 15 pixels differ
+[ 871: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 872: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 873: PASS ] compare pixels: as expected
 [ 874: PASS ] getError was expected value: NO_ERROR : no error
 [ 875: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 876: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 876: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 877: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 878: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 879: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 880: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 881: FAIL ] compare pixels: 147 pixels differ
-[ 882: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 882: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 883: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 884: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 885: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 886: FAIL ] compare pixels: 30 pixels differ
 [ 887: PASS ] getError was expected value: NO_ERROR : no error
 [ 888: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 889: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 890: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 891: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 892: FAIL ] compare pixels: 56 pixels differ
+[ 889: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 890: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 891: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 892: PASS ] compare pixels: as expected
 [ 893: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 894: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 895: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 896: FAIL ] compare pixels: 24 pixels differ
+[ 894: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 895: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 896: PASS ] compare pixels: as expected
 [ 897: PASS ] getError was expected value: NO_ERROR : no error
 [ 898: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 899: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 899: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 900: PASS ] getError was expected value: NO_ERROR : texImage3D with correct buffer size should succeed
 [ 901: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 902: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 903: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 904: FAIL ] compare pixels: 168 pixels differ
-[ 905: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
+[ 905: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
 [ 906: PASS ] getError was expected value: NO_ERROR : texSubImage3D with correct buffer size should succeed
 [ 907: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 908: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
 [ 909: FAIL ] compare pixels: 48 pixels differ
 [ 910: PASS ] getError was expected value: NO_ERROR : no error
 [ 911: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 912: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 913: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 912: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 913: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 914: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 915: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 916: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 915: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 916: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 917: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 918: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 919: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 918: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 919: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 920: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 921: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 922: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 921: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 922: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 923: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 924: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 925: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 924: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 925: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 926: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 927: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 928: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 927: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 928: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 929: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 930: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 931: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 930: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 931: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 932: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 933: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 934: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 933: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 934: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 935: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 936: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 937: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 936: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 937: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 938: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 939: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 940: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 939: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 940: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 941: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 942: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 943: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 942: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 943: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 944: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 945: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 946: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 945: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 946: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 947: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 948: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 949: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 950: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 951: FAIL ] compare pixels: 35 pixels differ
+[ 948: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 949: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 950: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 951: PASS ] compare pixels: as expected
 [ 952: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 953: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 954: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 955: FAIL ] compare pixels: 12 pixels differ
+[ 953: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 954: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 955: PASS ] compare pixels: as expected
 [ 956: PASS ] getError was expected value: NO_ERROR : no error
 [ 957: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 958: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 959: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 958: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 959: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 960: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 961: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 962: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 961: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 962: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 963: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 964: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 965: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 964: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 965: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 966: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 967: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 968: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : invalid unpack params combination
+[ 967: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 968: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 969: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 970: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 971: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 970: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 971: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 972: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 973: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : buffer too small
-[ 974: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texImage2D with correct buffer size should succeed
-[ 975: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 976: FAIL ] compare pixels: 136 pixels differ
+[ 973: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 974: PASS ] getError was expected value: NO_ERROR : texImage2D with correct buffer size should succeed
+[ 975: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 976: PASS ] compare pixels: as expected
 [ 977: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
-[ 978: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D with correct buffer size should succeed
-[ 979: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : read back texture pixels should succeed
-[ 980: FAIL ] compare pixels: 24 pixels differ
+[ 978: PASS ] getError was expected value: NO_ERROR : texSubImage2D with correct buffer size should succeed
+[ 979: PASS ] getError was expected value: NO_ERROR : read back texture pixels should succeed
+[ 980: PASS ] compare pixels: as expected
 [ 981: PASS ] getError was expected value: NO_ERROR : no error
 [ 982: PASS ] getError was expected value: NO_ERROR : Set up pixel store parameters should succeed
-[ 983: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : buffer too small
-[ 984: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : invalid unpack params combination
+[ 983: PASS ] getError was expected value: INVALID_OPERATION : buffer too small
+[ 984: PASS ] getError was expected value: INVALID_OPERATION : invalid unpack params combination
 [ 985: PASS ] successfullyParsed is true
-[ FAIL ] 451 failures reported
+[ FAIL ] 206 failures reported
 

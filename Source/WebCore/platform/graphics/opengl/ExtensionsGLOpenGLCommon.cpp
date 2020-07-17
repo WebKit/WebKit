@@ -502,7 +502,7 @@ void ExtensionsGLOpenGLCommon::getPointervRobustANGLERobustANGLE(GCGLenum, GCGLs
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLCommon::readnPixelsRobustANGLE(int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLsizei *, GCGLsizei *, GCGLsizei *, void *)
+void ExtensionsGLOpenGLCommon::readnPixelsRobustANGLE(int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLsizei *, GCGLsizei *, GCGLsizei *, void *, bool)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }

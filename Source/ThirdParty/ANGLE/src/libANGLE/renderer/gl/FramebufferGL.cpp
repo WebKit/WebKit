@@ -680,7 +680,10 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
     bool cannotSetDesiredRowLength =
         packState.rowLength && !GetImplAs<ContextGL>(context)->getNativeExtensions().packSubimage;
 
-    if (cannotSetDesiredRowLength || useOverlappingRowsWorkaround)
+    bool usePackSkipWorkaround = features.emulatePackSkipRowsAndPackSkipPixels.enabled &&
+            (packState.skipRows != 0 || packState.skipPixels != 0);
+
+    if (cannotSetDesiredRowLength || useOverlappingRowsWorkaround || usePackSkipWorkaround)
     {
         return readPixelsRowByRow(context, clippedArea, format, readFormat, readType, packState,
                                   outPtr);

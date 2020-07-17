@@ -579,7 +579,7 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 }
 #endif
 
-void ExtensionsGLANGLE::readnPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *data)
+void ExtensionsGLANGLE::readnPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *data, bool readingToPixelBufferObject)
 {
     m_context->makeContextCurrent();
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
@@ -607,8 +607,10 @@ void ExtensionsGLANGLE::readnPixelsRobustANGLE(int x, int y, GCGLsizei width, GC
     }
 
 #if PLATFORM(MAC)
-    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (state.boundReadFBO == m_context->m_fbo || (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)))
+    if (!readingToPixelBufferObject && !attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (state.boundReadFBO == m_context->m_fbo || (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
+#else
+    UNUSED_PARAM(readingToPixelBufferObject);
 #endif
 }
 

@@ -441,6 +441,11 @@ struct FeaturesGL : FeatureSetBase
         "emulate_copyteximage2d_from_renderbuffers", FeatureCategory::OpenGLWorkarounds,
         "CopyTexImage2D spuriously returns errors on iOS when copying from renderbuffers.",
         &members, "https://anglebug.com/4674"};
+
+    Feature emulatePackSkipRowsAndPackSkipPixels = {
+        "emulate_pack_skip_rows_and_pack_skip_pixels", FeatureCategory::OpenGLWorkarounds,
+        "GL_PACK_SKIP_ROWS and GL_PACK_SKIP_PIXELS are ignored in Apple's OpenGL driver.",
+        &members, "https://anglebug.com/4849"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

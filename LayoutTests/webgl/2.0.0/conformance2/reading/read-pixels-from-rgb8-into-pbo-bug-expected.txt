@@ -1,9 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/reading/read-pixels-from-rgb8-into-pbo-bug.html
-[ 1: PASS ] context exists
-[ 2: FAIL ] Expected in pixel 0: [255,0,0,255], got: 0,0,0,0
-[ 3: PASS ] getError was expected value: NO_ERROR : Tests should complete without gl errors
-[ 4: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

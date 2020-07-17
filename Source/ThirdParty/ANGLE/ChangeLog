@@ -1,3 +1,30 @@
+2020-07-17  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] ReadPixels updates
+        https://bugs.webkit.org/show_bug.cgi?id=209516
+
+        Reviewed by Dean Jackson.
+
+        Add workaround for OpenGL driver bug on macOS where
+        GL_PACK_SKIP_ROWS and GL_PACK_SKIP_PIXELS are ignored.
+
+        Add WebGL 2.0-specific validation constraints for pixel pack and
+        unpack parameters.
+
+        These changes are being upstreamed to ANGLE in
+        http://crbug.com/angleproject/4849 .
+
+        * include/platform/FeaturesGL.h:
+        * src/libANGLE/ErrorStrings.h:
+        * src/libANGLE/renderer/gl/FramebufferGL.cpp:
+        (rx::FramebufferGL::readPixels):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+        * src/libANGLE/validationES.cpp:
+        (gl::ValidatePixelPack):
+        * src/libANGLE/validationES3.cpp:
+        (gl::ValidateES3TexImageParametersBase):
+
 2020-07-10  Kenneth Russell  <kbr@chromium.org>
 
         Remove glBindFramebuffer flush workaround from ANGLE

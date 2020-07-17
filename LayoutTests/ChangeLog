@@ -1,3 +1,23 @@
+2020-07-17  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] ReadPixels updates
+        https://bugs.webkit.org/show_bug.cgi?id=209516
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline three tests under conformance2/reading/, which are now
+        fully passing. One more driver bug workaround is needed in ANGLE
+        in order to make the remaining tests in this directory fully pass.
+
+        Rebaseline two other layout tests which progress with these
+        changes. (One gets farther and signals more errors than before.)
+
+        * webgl/2.0.0/conformance2/misc/views-with-offsets-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-from-rgb8-into-pbo-bug-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-into-pixel-pack-buffer-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-unpack-params-expected.txt:
+
 2020-07-17  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Sync objects

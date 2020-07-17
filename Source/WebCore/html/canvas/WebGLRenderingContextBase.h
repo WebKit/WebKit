@@ -240,7 +240,8 @@ public:
     bool isXRCompatible() const { return m_isXRCompatible; }
 #endif
     void polygonOffset(GCGLfloat factor, GCGLfloat units);
-    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels);
+    // This must be virtual so more validation can be added in WebGL 2.0.
+    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels);
     void releaseShaderCompiler();
     virtual void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
     void sampleCoverage(GCGLfloat value, GCGLboolean invert);
@@ -1043,12 +1044,13 @@ protected:
     template <typename T> inline Optional<T> checkedAddAndMultiply(T value, T add, T multiply);
     template <typename T> unsigned getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n);
 
+    bool validateArrayBufferType(const char* functionName, GCGLenum type, Optional<JSC::TypedArrayType>);
+
 private:
     void scheduleTaskToDispatchContextLostEvent();
     // Helper for restoration after context lost.
     void maybeRestoreContext();
 
-    bool validateArrayBufferType(const char* functionName, GCGLenum type, Optional<JSC::TypedArrayType>);
     void registerWithWebGLStateTracker();
     void checkForContextLossHandling();
 

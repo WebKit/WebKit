@@ -4222,7 +4222,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     unsigned totalBytesRequired = 0;
     unsigned padding = 0;
     if (!m_isRobustnessEXTSupported) {
-        GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, 1, getPackPixelStoreParams(), &totalBytesRequired, &padding, nullptr); // NEEDS_PORT
+        GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, 1, getPackPixelStoreParams(), &totalBytesRequired, &padding, nullptr);
         if (error != GraphicsContextGL::NO_ERROR) {
             synthesizeGLError(error, "readPixels", "invalid dimensions");
             return;
@@ -4240,7 +4240,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
 #if USE(ANGLE)
         GLsizei length, columns, rows;
         m_context->makeContextCurrent();
-        m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data);
+        m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data, false);
 #else
     if (m_isRobustnessEXTSupported)
         m_context->getExtensions().readnPixelsEXT(x, y, width, height, format, type, pixels.byteLength(), data);

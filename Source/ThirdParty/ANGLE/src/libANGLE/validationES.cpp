@@ -5729,6 +5729,22 @@ bool ValidatePixelPack(const Context *context,
         *length = static_cast<GLsizei>(endByte);
     }
 
+    if (context->getExtensions().webglCompatibility)
+    {
+        // WebGL 2.0 disallows the scenario:
+        //   GL_PACK_SKIP_PIXELS + width > DataStoreWidth
+        // where:
+        //   DataStoreWidth = (GL_PACK_ROW_LENGTH ? GL_PACK_ROW_LENGTH : width)
+        // Since these two pack parameters can only be set to non-zero values
+        // on WebGL 2.0 contexts, verify them for all WebGL contexts.
+        GLint dataStoreWidth = pack.rowLength ? pack.rowLength : width;
+        if (pack.skipPixels + width > dataStoreWidth)
+        {
+            context->validationError(GL_INVALID_OPERATION, kInvalidPackParametersForWebGL);
+            return false;
+        }
+    }
+
     return true;
 }
 

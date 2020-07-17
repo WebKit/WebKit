@@ -229,7 +229,17 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 226: PASS ] getError was expected value: INVALID_VALUE :
 [ 227: PASS ] getError was expected value: INVALID_VALUE :
 [ 228: PASS ] getError was expected value: INVALID_VALUE :
-[ 229: FAIL ] Does not support doReadPixels with offsets into views.
-[ 230: PASS ] successfullyParsed is true
-[ FAIL ] 27 failures reported
+[ 229: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 230: FAIL ] Should be [10, 20, 30, 40], was [0, 0, 0, 0].
+[ 231: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 232: FAIL ] Should be [10, 20, 30, 40], was [0, 0, 0, 0].
+[ 233: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 234: FAIL ] Should be [10, 20, 30, 40], was [0, 0, 0, 0].
+[ 235: PASS ] getError was expected value: INVALID_OPERATION :
+[ 236: PASS ] getError was expected value: INVALID_OPERATION :
+[ 237: PASS ] getError was expected value: INVALID_OPERATION :
+[ 238: PASS ] getError was expected value: INVALID_OPERATION :
+[ 239: PASS ] getError was expected value: INVALID_VALUE :
+[ 240: PASS ] successfullyParsed is true
+[ FAIL ] 32 failures reported
 

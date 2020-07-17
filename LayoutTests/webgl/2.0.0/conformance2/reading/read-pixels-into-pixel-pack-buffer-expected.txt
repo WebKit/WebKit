@@ -1,33 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/reading/read-pixels-into-pixel-pack-buffer.html
-[ 1: PASS ] context exists
-[ 2: PASS ] getError was expected value: INVALID_OPERATION : should generate INVALID_OPERATION if pixel pack buffer is bound
-[ 3: PASS ] getError was expected value: NO_ERROR :
-[ 4: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : offset < 0
-[ 5: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : offset > buffer size
-[ 6: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : pixel pack buffer is not large enough
-[ 7: PASS ] getError was expected value: NO_ERROR : reading pixels outside of the framebuffer should succeed.
-[ 8: PASS ] getError was expected value: NO_ERROR : reading pixels outside of the framebuffer should succeed.
-[ 9: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : reading pixels with negative width / height should generate INVALID_VALUE.
-[ 10: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Format should not be able to read as DEPTH_COMPONENT
-[ 11: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Format should not be able to read as DEPTH_STENCIL
-[ 12: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Format should not be able to read as R8
-[ 13: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Format should not be able to read as RGBA4
-[ 14: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Format should not be able to read as LUMINANCE
-[ 15: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Format should not be able to read as LUMINANCE_ALPHA
-[ 16: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : Type should not be able to read as UNSIGNED_INT_24_8
-[ 17: PASS ] getError was expected value: NO_ERROR : The combination of format/type should be able to read as RGBA / UNSIGNED_BYTE
-[ 18: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RGB / UNSIGNED_BYTE
-[ 19: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RGB / UNSIGNED_SHORT_5_6_5
-[ 20: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RGBA / UNSIGNED_SHORT_5_5_5_1
-[ 21: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RGBA / UNSIGNED_SHORT_4_4_4_4
-[ 22: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as ALPHA / UNSIGNED_BYTE
-[ 23: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RED / UNSIGNED_BYTE
-[ 24: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RGBA_INTEGER / UNSIGNED_INT
-[ 25: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : The combination of format/type should not be able to read as RGBA_INTEGER / INT
-[ 26: PASS ] getError was expected value: NO_ERROR :
-[ 27: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : no pixel pack buffer bound
-[ 28: PASS ] successfullyParsed is true
-[ FAIL ] 20 failures reported
+[ PASS ] All tests passed
 

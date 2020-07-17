@@ -1,3 +1,51 @@
+2020-07-17  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] ReadPixels updates
+        https://bugs.webkit.org/show_bug.cgi?id=209516
+
+        Reviewed by Dean Jackson.
+
+        Upgrade readPixels to WebGL 2.0 functionality.
+
+        Handle both WebGL 2.0 pack/unpack parameters correctly. Fix
+        preexisting bugs in texture uploads from pixel unpack buffers.
+        Remove entry points from GraphicsContextGL that will never be used
+        by the WebGL 2.0 implementation.
+
+        Covered by existing WebGL 2.0 conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::initializeNewContext):
+        (WebCore::WebGL2RenderingContext::sliceArrayBufferView):
+        (WebCore::WebGL2RenderingContext::pixelStorei):
+        (WebCore::WebGL2RenderingContext::texImage2D):
+        (WebCore::WebGL2RenderingContext::texImage3D):
+        (WebCore::WebGL2RenderingContext::texSubImage2D):
+        (WebCore::WebGL2RenderingContext::texSubImage3D):
+        (WebCore::WebGL2RenderingContext::getPackPixelStoreParams const):
+        (WebCore::WebGL2RenderingContext::getUnpackPixelStoreParams const):
+        (WebCore::WebGL2RenderingContext::readPixels):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/ExtensionsGL.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp:
+        (WebCore::ExtensionsGLANGLE::readnPixelsRobustANGLE):
+        * platform/graphics/angle/ExtensionsGLANGLE.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::readRenderingResults):
+        (WebCore::GraphicsContextGLOpenGL::texImage3D): Deleted.
+        (WebCore::GraphicsContextGLOpenGL::texSubImage3D): Deleted.
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+        (WebCore::ExtensionsGLOpenGLCommon::readnPixelsRobustANGLE):
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::texImage3D): Deleted.
+        (WebCore::GraphicsContextGLOpenGL::texSubImage3D): Deleted.
+
 2020-07-17  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Sync objects

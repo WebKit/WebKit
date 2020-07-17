@@ -250,13 +250,17 @@ public:
     Optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GCGLenum pname) final;
 
-    using WebGLRenderingContextBase::readPixels;
+    // Must override the WebGL 1.0 signature in order to add extra validation.
+    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels) override;
     void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr offset);
     void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView& dstData, GLuint dstOffset);
 
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void hint(GCGLenum target, GCGLenum mode) final;
     GCGLuint maxTransformFeedbackSeparateAttribs() const;
+
+    GraphicsContextGLOpenGL::PixelStoreParams getPackPixelStoreParams() const override;
+    GraphicsContextGLOpenGL::PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const override;
 
 private:
     WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
@@ -329,6 +333,9 @@ private:
 
     Vector<RefPtr<WebGLSampler>> m_boundSamplers;
 
+    GCGLint m_packRowLength { 0 };
+    GCGLint m_packSkipPixels { 0 };
+    GCGLint m_packSkipRows { 0 };
     GCGLint m_unpackSkipPixels { 0 };
     GCGLint m_unpackSkipRows { 0 };
     GCGLint m_unpackRowLength { 0 };
