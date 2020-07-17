@@ -2886,7 +2886,8 @@ TEST(TextManipulation, CompleteTextManipulationAddsOverflowHiddenToAvoidBreaking
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ("This is a long translation Foo bar", [webView stringByEvaluatingJavaScript:@"document.querySelector('a').textContent.trim()"]);
-    EXPECT_WK_STREQ("hidden", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).overflow"]);
+    EXPECT_WK_STREQ("hidden", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).overflowX"]);
+    EXPECT_WK_STREQ("auto", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).overflowY"]);
 }
 
 TEST(TextManipulation, TextManipulationTokenDebugDescription)

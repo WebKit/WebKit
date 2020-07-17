@@ -641,9 +641,11 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
             if (!box || !box->hasVisualOverflow())
                 continue;
 
-            auto* style = element.renderStyle();
-            if (style && style->width().isFixed() && style->height().isFixed() && !style->hasOutOfFlowPosition() && !style->hasClip())
-                element.setInlineStyleProperty(CSSPropertyOverflow, CSSValueHidden);
+            auto& style = box->style();
+            if (style.width().isFixed() && style.height().isFixed() && !style.hasOutOfFlowPosition() && !style.hasClip()) {
+                element.setInlineStyleProperty(CSSPropertyOverflowX, CSSValueHidden);
+                element.setInlineStyleProperty(CSSPropertyOverflowY, CSSValueAuto);
+            }
         }
     }
 
