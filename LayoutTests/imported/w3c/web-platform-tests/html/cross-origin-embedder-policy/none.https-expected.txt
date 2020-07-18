@@ -1,7 +1,7 @@
 
 PASS "none" top-level: navigating a frame to "none" should succeed 
 PASS "none" top-level: navigating a frame from "require-corp" to "none" should succeed 
-FAIL "none" top-level: navigating a frame back from "require-corp" should succeed t.step_wait_func_done is not a function. (In 't.step_wait_func_done(() => w.location.href.endsWith("/navigate-require-corp.sub.html"))', 't.step_wait_func_done' is undefined)
+PASS "none" top-level: navigating a frame back from "require-corp" should succeed 
 FAIL "require-corp" top-level noopener popup: navigating to "none" should succeed Can't find variable: BroadcastChannel
 PASS CORP: same-site is not checked. 
 

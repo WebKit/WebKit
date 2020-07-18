@@ -1,5 +1,5 @@
 
-FAIL "require-corp" top-level: navigating a frame to "none" should fail t.step_wait_func_done is not a function. (In 't.step_wait_func_done(() => frame.contentDocument === null)', 't.step_wait_func_done' is undefined)
+FAIL "require-corp" top-level: navigating a frame to "none" should fail wait_for: Timed out waiting on condition
 FAIL "require-corp" top-level: navigating a frame from "require-corp" to "none" should fail Can't find variable: BroadcastChannel
 FAIL "require-corp" top-level: creating a noopener "none" popup should succeed Can't find variable: BroadcastChannel
 FAIL "require-corp" top-level: creating a "none" popup should succeed. Can't find variable: BroadcastChannel
@@ -9,7 +9,7 @@ FAIL "require-corp" top-level (as popup with opener set to null): navigating to 
 PASS "require-corp" top-level: fetch() to CORP: cross-origin response should succeed 
 FAIL "require-corp" top-level: fetch() to response without CORP should fail assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL "require-corp" top-level: fetch() to response without CORP through a WindowProxy should fail assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL "require-corp" top-level: navigating an iframe to a page without CORP, through a WindowProxy, should fail t.step_wait_func_done is not a function. (In 't.step_wait_func_done(() => frame.contentDocument === null)', 't.step_wait_func_done' is undefined)
+FAIL "require-corp" top-level: navigating an iframe to a page without CORP, through a WindowProxy, should fail wait_for: Timed out waiting on condition
 PASS CORP: same-site is checked and allowed. 
 FAIL CORP: same-site is checked and blocked. assert_false: expected false got true
 FAIL navigation CORP is checked with the parent frame, not the navigation source - to be allowed Can't find variable: BroadcastChannel

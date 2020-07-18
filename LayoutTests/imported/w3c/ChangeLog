@@ -1,5 +1,1714 @@
 2020-07-18  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/resources from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214489
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/resources from upstream 81de986322a0de90f2.
+
+        * web-platform-tests/resources/LICENSE: Removed.
+        * web-platform-tests/resources/META.yml:
+        * web-platform-tests/resources/check-layout-th.js:
+        (checkDataKeys):
+        (checkExpectedValues):
+        (window.checkLayout):
+        * web-platform-tests/resources/chromium/README.md: Added.
+        * web-platform-tests/resources/chromium/big_buffer.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (BigBufferSharedMemoryRegion):
+        (BigBufferSharedMemoryRegion.prototype.initDefaults_):
+        (BigBufferSharedMemoryRegion.prototype.initFields_):
+        (BigBufferSharedMemoryRegion.validate):
+        (BigBufferSharedMemoryRegion.decode):
+        (BigBufferSharedMemoryRegion.encode):
+        (BigBuffer):
+        (BigBuffer.prototype.initDefault_):
+        (BigBuffer.prototype.initValue_):
+        (get if):
+        (BigBuffer.encode):
+        (BigBuffer.decode):
+        (BigBuffer.validate):
+        * web-platform-tests/resources/chromium/big_buffer.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/contacts_manager_mock.js: Added.
+        (const.WebContactsTest):
+        (const.WebContactsTest.prototype.formatAddress_):
+        (const.WebContactsTest.async if):
+        (const.WebContactsTest.prototype.async select):
+        (const.WebContactsTest.prototype.setSelectedContacts):
+        (const.WebContactsTest.prototype.reset):
+        (const.WebContactsTest.ContactsTestChromium):
+        (const.WebContactsTest.ContactsTestChromium.prototype.setSelectedContacts):
+        * web-platform-tests/resources/chromium/device.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (UsbOpenDeviceError.isKnownEnumValue):
+        (UsbOpenDeviceError.validate):
+        (UsbTransferDirection.isKnownEnumValue):
+        (UsbTransferDirection.validate):
+        (UsbControlTransferType.isKnownEnumValue):
+        (UsbControlTransferType.validate):
+        (UsbControlTransferRecipient.isKnownEnumValue):
+        (UsbControlTransferRecipient.validate):
+        (UsbTransferType.isKnownEnumValue):
+        (UsbTransferType.validate):
+        (UsbSynchronizationType.isKnownEnumValue):
+        (UsbSynchronizationType.validate):
+        (UsbUsageType.isKnownEnumValue):
+        (UsbUsageType.validate):
+        (UsbTransferStatus.isKnownEnumValue):
+        (UsbTransferStatus.validate):
+        (UsbEndpointInfo):
+        (UsbEndpointInfo.prototype.initDefaults_):
+        (UsbEndpointInfo.prototype.initFields_):
+        (UsbEndpointInfo.validate):
+        (UsbEndpointInfo.decode):
+        (UsbEndpointInfo.encode):
+        (UsbAlternateInterfaceInfo):
+        (UsbAlternateInterfaceInfo.prototype.initDefaults_):
+        (UsbAlternateInterfaceInfo.prototype.initFields_):
+        (UsbAlternateInterfaceInfo.validate):
+        (UsbAlternateInterfaceInfo.decode):
+        (UsbAlternateInterfaceInfo.encode):
+        (UsbInterfaceInfo):
+        (UsbInterfaceInfo.prototype.initDefaults_):
+        (UsbInterfaceInfo.prototype.initFields_):
+        (UsbInterfaceInfo.validate):
+        (UsbInterfaceInfo.decode):
+        (UsbInterfaceInfo.encode):
+        (UsbConfigurationInfo):
+        (UsbConfigurationInfo.prototype.initDefaults_):
+        (UsbConfigurationInfo.prototype.initFields_):
+        (UsbConfigurationInfo.validate):
+        (UsbConfigurationInfo.decode):
+        (UsbConfigurationInfo.encode):
+        (UsbDeviceInfo):
+        (UsbDeviceInfo.prototype.initDefaults_):
+        (UsbDeviceInfo.prototype.initFields_):
+        (UsbDeviceInfo.validate):
+        (UsbDeviceInfo.decode):
+        (UsbDeviceInfo.encode):
+        (UsbControlTransferParams):
+        (UsbControlTransferParams.prototype.initDefaults_):
+        (UsbControlTransferParams.prototype.initFields_):
+        (UsbControlTransferParams.validate):
+        (UsbControlTransferParams.decode):
+        (UsbControlTransferParams.encode):
+        (UsbIsochronousPacket):
+        (UsbIsochronousPacket.prototype.initDefaults_):
+        (UsbIsochronousPacket.prototype.initFields_):
+        (UsbIsochronousPacket.validate):
+        (UsbIsochronousPacket.decode):
+        (UsbIsochronousPacket.encode):
+        (UsbDevice_Open_Params):
+        (UsbDevice_Open_Params.prototype.initDefaults_):
+        (UsbDevice_Open_Params.prototype.initFields_):
+        (UsbDevice_Open_Params.validate):
+        (UsbDevice_Open_Params.decode):
+        (UsbDevice_Open_Params.encode):
+        (UsbDevice_Open_ResponseParams):
+        (UsbDevice_Open_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_Open_ResponseParams.prototype.initFields_):
+        (UsbDevice_Open_ResponseParams.validate):
+        (UsbDevice_Open_ResponseParams.decode):
+        (UsbDevice_Open_ResponseParams.encode):
+        (UsbDevice_Close_Params):
+        (UsbDevice_Close_Params.prototype.initDefaults_):
+        (UsbDevice_Close_Params.prototype.initFields_):
+        (UsbDevice_Close_Params.validate):
+        (UsbDevice_Close_Params.decode):
+        (UsbDevice_Close_Params.encode):
+        (UsbDevice_Close_ResponseParams):
+        (UsbDevice_Close_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_Close_ResponseParams.prototype.initFields_):
+        (UsbDevice_Close_ResponseParams.validate):
+        (UsbDevice_Close_ResponseParams.decode):
+        (UsbDevice_Close_ResponseParams.encode):
+        (UsbDevice_SetConfiguration_Params):
+        (UsbDevice_SetConfiguration_Params.prototype.initDefaults_):
+        (UsbDevice_SetConfiguration_Params.prototype.initFields_):
+        (UsbDevice_SetConfiguration_Params.validate):
+        (UsbDevice_SetConfiguration_Params.decode):
+        (UsbDevice_SetConfiguration_Params.encode):
+        (UsbDevice_SetConfiguration_ResponseParams):
+        (UsbDevice_SetConfiguration_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_SetConfiguration_ResponseParams.prototype.initFields_):
+        (UsbDevice_SetConfiguration_ResponseParams.validate):
+        (UsbDevice_SetConfiguration_ResponseParams.decode):
+        (UsbDevice_SetConfiguration_ResponseParams.encode):
+        (UsbDevice_ClaimInterface_Params):
+        (UsbDevice_ClaimInterface_Params.prototype.initDefaults_):
+        (UsbDevice_ClaimInterface_Params.prototype.initFields_):
+        (UsbDevice_ClaimInterface_Params.validate):
+        (UsbDevice_ClaimInterface_Params.decode):
+        (UsbDevice_ClaimInterface_Params.encode):
+        (UsbDevice_ClaimInterface_ResponseParams):
+        (UsbDevice_ClaimInterface_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_ClaimInterface_ResponseParams.prototype.initFields_):
+        (UsbDevice_ClaimInterface_ResponseParams.validate):
+        (UsbDevice_ClaimInterface_ResponseParams.decode):
+        (UsbDevice_ClaimInterface_ResponseParams.encode):
+        (UsbDevice_ReleaseInterface_Params):
+        (UsbDevice_ReleaseInterface_Params.prototype.initDefaults_):
+        (UsbDevice_ReleaseInterface_Params.prototype.initFields_):
+        (UsbDevice_ReleaseInterface_Params.validate):
+        (UsbDevice_ReleaseInterface_Params.decode):
+        (UsbDevice_ReleaseInterface_Params.encode):
+        (UsbDevice_ReleaseInterface_ResponseParams):
+        (UsbDevice_ReleaseInterface_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_ReleaseInterface_ResponseParams.prototype.initFields_):
+        (UsbDevice_ReleaseInterface_ResponseParams.validate):
+        (UsbDevice_ReleaseInterface_ResponseParams.decode):
+        (UsbDevice_ReleaseInterface_ResponseParams.encode):
+        (UsbDevice_SetInterfaceAlternateSetting_Params):
+        (UsbDevice_SetInterfaceAlternateSetting_Params.prototype.initDefaults_):
+        (UsbDevice_SetInterfaceAlternateSetting_Params.prototype.initFields_):
+        (UsbDevice_SetInterfaceAlternateSetting_Params.validate):
+        (UsbDevice_SetInterfaceAlternateSetting_Params.decode):
+        (UsbDevice_SetInterfaceAlternateSetting_Params.encode):
+        (UsbDevice_SetInterfaceAlternateSetting_ResponseParams):
+        (UsbDevice_SetInterfaceAlternateSetting_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_SetInterfaceAlternateSetting_ResponseParams.prototype.initFields_):
+        (UsbDevice_SetInterfaceAlternateSetting_ResponseParams.validate):
+        (UsbDevice_SetInterfaceAlternateSetting_ResponseParams.decode):
+        (UsbDevice_SetInterfaceAlternateSetting_ResponseParams.encode):
+        (UsbDevice_Reset_Params):
+        (UsbDevice_Reset_Params.prototype.initDefaults_):
+        (UsbDevice_Reset_Params.prototype.initFields_):
+        (UsbDevice_Reset_Params.validate):
+        (UsbDevice_Reset_Params.decode):
+        (UsbDevice_Reset_Params.encode):
+        (UsbDevice_Reset_ResponseParams):
+        (UsbDevice_Reset_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_Reset_ResponseParams.prototype.initFields_):
+        (UsbDevice_Reset_ResponseParams.validate):
+        (UsbDevice_Reset_ResponseParams.decode):
+        (UsbDevice_Reset_ResponseParams.encode):
+        (UsbDevice_ClearHalt_Params):
+        (UsbDevice_ClearHalt_Params.prototype.initDefaults_):
+        (UsbDevice_ClearHalt_Params.prototype.initFields_):
+        (UsbDevice_ClearHalt_Params.validate):
+        (UsbDevice_ClearHalt_Params.decode):
+        (UsbDevice_ClearHalt_Params.encode):
+        (UsbDevice_ClearHalt_ResponseParams):
+        (UsbDevice_ClearHalt_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_ClearHalt_ResponseParams.prototype.initFields_):
+        (UsbDevice_ClearHalt_ResponseParams.validate):
+        (UsbDevice_ClearHalt_ResponseParams.decode):
+        (UsbDevice_ClearHalt_ResponseParams.encode):
+        (UsbDevice_ControlTransferIn_Params):
+        (UsbDevice_ControlTransferIn_Params.prototype.initDefaults_):
+        (UsbDevice_ControlTransferIn_Params.prototype.initFields_):
+        (UsbDevice_ControlTransferIn_Params.validate):
+        (UsbDevice_ControlTransferIn_Params.decode):
+        (UsbDevice_ControlTransferIn_Params.encode):
+        (UsbDevice_ControlTransferIn_ResponseParams):
+        (UsbDevice_ControlTransferIn_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_ControlTransferIn_ResponseParams.prototype.initFields_):
+        (UsbDevice_ControlTransferIn_ResponseParams.validate):
+        (UsbDevice_ControlTransferIn_ResponseParams.decode):
+        (UsbDevice_ControlTransferIn_ResponseParams.encode):
+        (UsbDevice_ControlTransferOut_Params):
+        (UsbDevice_ControlTransferOut_Params.prototype.initDefaults_):
+        (UsbDevice_ControlTransferOut_Params.prototype.initFields_):
+        (UsbDevice_ControlTransferOut_Params.validate):
+        (UsbDevice_ControlTransferOut_Params.decode):
+        (UsbDevice_ControlTransferOut_Params.encode):
+        (UsbDevice_ControlTransferOut_ResponseParams):
+        (UsbDevice_ControlTransferOut_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_ControlTransferOut_ResponseParams.prototype.initFields_):
+        (UsbDevice_ControlTransferOut_ResponseParams.validate):
+        (UsbDevice_ControlTransferOut_ResponseParams.decode):
+        (UsbDevice_ControlTransferOut_ResponseParams.encode):
+        (UsbDevice_GenericTransferIn_Params):
+        (UsbDevice_GenericTransferIn_Params.prototype.initDefaults_):
+        (UsbDevice_GenericTransferIn_Params.prototype.initFields_):
+        (UsbDevice_GenericTransferIn_Params.validate):
+        (UsbDevice_GenericTransferIn_Params.decode):
+        (UsbDevice_GenericTransferIn_Params.encode):
+        (UsbDevice_GenericTransferIn_ResponseParams):
+        (UsbDevice_GenericTransferIn_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_GenericTransferIn_ResponseParams.prototype.initFields_):
+        (UsbDevice_GenericTransferIn_ResponseParams.validate):
+        (UsbDevice_GenericTransferIn_ResponseParams.decode):
+        (UsbDevice_GenericTransferIn_ResponseParams.encode):
+        (UsbDevice_GenericTransferOut_Params):
+        (UsbDevice_GenericTransferOut_Params.prototype.initDefaults_):
+        (UsbDevice_GenericTransferOut_Params.prototype.initFields_):
+        (UsbDevice_GenericTransferOut_Params.validate):
+        (UsbDevice_GenericTransferOut_Params.decode):
+        (UsbDevice_GenericTransferOut_Params.encode):
+        (UsbDevice_GenericTransferOut_ResponseParams):
+        (UsbDevice_GenericTransferOut_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_GenericTransferOut_ResponseParams.prototype.initFields_):
+        (UsbDevice_GenericTransferOut_ResponseParams.validate):
+        (UsbDevice_GenericTransferOut_ResponseParams.decode):
+        (UsbDevice_GenericTransferOut_ResponseParams.encode):
+        (UsbDevice_IsochronousTransferIn_Params):
+        (UsbDevice_IsochronousTransferIn_Params.prototype.initDefaults_):
+        (UsbDevice_IsochronousTransferIn_Params.prototype.initFields_):
+        (UsbDevice_IsochronousTransferIn_Params.validate):
+        (UsbDevice_IsochronousTransferIn_Params.decode):
+        (UsbDevice_IsochronousTransferIn_Params.encode):
+        (UsbDevice_IsochronousTransferIn_ResponseParams):
+        (UsbDevice_IsochronousTransferIn_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_IsochronousTransferIn_ResponseParams.prototype.initFields_):
+        (UsbDevice_IsochronousTransferIn_ResponseParams.validate):
+        (UsbDevice_IsochronousTransferIn_ResponseParams.decode):
+        (UsbDevice_IsochronousTransferIn_ResponseParams.encode):
+        (UsbDevice_IsochronousTransferOut_Params):
+        (UsbDevice_IsochronousTransferOut_Params.prototype.initDefaults_):
+        (UsbDevice_IsochronousTransferOut_Params.prototype.initFields_):
+        (UsbDevice_IsochronousTransferOut_Params.validate):
+        (UsbDevice_IsochronousTransferOut_Params.decode):
+        (UsbDevice_IsochronousTransferOut_Params.encode):
+        (UsbDevice_IsochronousTransferOut_ResponseParams):
+        (UsbDevice_IsochronousTransferOut_ResponseParams.prototype.initDefaults_):
+        (UsbDevice_IsochronousTransferOut_ResponseParams.prototype.initFields_):
+        (UsbDevice_IsochronousTransferOut_ResponseParams.validate):
+        (UsbDevice_IsochronousTransferOut_ResponseParams.decode):
+        (UsbDevice_IsochronousTransferOut_ResponseParams.encode):
+        (UsbDeviceClient_OnDeviceOpened_Params):
+        (UsbDeviceClient_OnDeviceOpened_Params.prototype.initDefaults_):
+        (UsbDeviceClient_OnDeviceOpened_Params.prototype.initFields_):
+        (UsbDeviceClient_OnDeviceOpened_Params.validate):
+        (UsbDeviceClient_OnDeviceOpened_Params.decode):
+        (UsbDeviceClient_OnDeviceOpened_Params.encode):
+        (UsbDeviceClient_OnDeviceClosed_Params):
+        (UsbDeviceClient_OnDeviceClosed_Params.prototype.initDefaults_):
+        (UsbDeviceClient_OnDeviceClosed_Params.prototype.initFields_):
+        (UsbDeviceClient_OnDeviceClosed_Params.validate):
+        (UsbDeviceClient_OnDeviceClosed_Params.decode):
+        (UsbDeviceClient_OnDeviceClosed_Params.encode):
+        (UsbDevicePtr):
+        (UsbDeviceAssociatedPtr):
+        (UsbDeviceProxy):
+        (UsbDevicePtr.prototype.open):
+        (UsbDeviceProxy.prototype.open):
+        (UsbDevicePtr.prototype.close):
+        (UsbDeviceProxy.prototype.close):
+        (UsbDevicePtr.prototype.setConfiguration):
+        (UsbDeviceProxy.prototype.setConfiguration):
+        (UsbDevicePtr.prototype.claimInterface):
+        (UsbDeviceProxy.prototype.claimInterface):
+        (UsbDevicePtr.prototype.releaseInterface):
+        (UsbDeviceProxy.prototype.releaseInterface):
+        (UsbDevicePtr.prototype.setInterfaceAlternateSetting):
+        (UsbDeviceProxy.prototype.setInterfaceAlternateSetting):
+        (UsbDevicePtr.prototype.reset):
+        (UsbDeviceProxy.prototype.reset):
+        (UsbDevicePtr.prototype.clearHalt):
+        (UsbDeviceProxy.prototype.clearHalt):
+        (UsbDevicePtr.prototype.controlTransferIn):
+        (UsbDeviceProxy.prototype.controlTransferIn):
+        (UsbDevicePtr.prototype.controlTransferOut):
+        (UsbDeviceProxy.prototype.controlTransferOut):
+        (UsbDevicePtr.prototype.genericTransferIn):
+        (UsbDeviceProxy.prototype.genericTransferIn):
+        (UsbDevicePtr.prototype.genericTransferOut):
+        (UsbDeviceProxy.prototype.genericTransferOut):
+        (UsbDevicePtr.prototype.isochronousTransferIn):
+        (UsbDeviceProxy.prototype.isochronousTransferIn):
+        (UsbDevicePtr.prototype.isochronousTransferOut):
+        (UsbDeviceProxy.prototype.isochronousTransferOut):
+        (UsbDeviceStub.prototype.open):
+        (UsbDeviceStub.prototype.close):
+        (UsbDeviceStub.prototype.setConfiguration):
+        (UsbDeviceStub.prototype.claimInterface):
+        (UsbDeviceStub.prototype.releaseInterface):
+        (UsbDeviceStub.prototype.setInterfaceAlternateSetting):
+        (UsbDeviceStub.prototype.reset):
+        (UsbDeviceStub.prototype.clearHalt):
+        (UsbDeviceStub.prototype.controlTransferIn):
+        (UsbDeviceStub.prototype.controlTransferOut):
+        (UsbDeviceStub.prototype.genericTransferIn):
+        (UsbDeviceStub.prototype.genericTransferOut):
+        (UsbDeviceStub.prototype.isochronousTransferIn):
+        (UsbDeviceStub.prototype.isochronousTransferOut):
+        (UsbDeviceStub.prototype.accept):
+        (UsbDeviceStub.prototype.acceptWithResponder):
+        (validateUsbDeviceRequest):
+        (validateUsbDeviceResponse):
+        (UsbDeviceClientPtr):
+        (UsbDeviceClientAssociatedPtr):
+        (UsbDeviceClientProxy):
+        (UsbDeviceClientPtr.prototype.onDeviceOpened):
+        (UsbDeviceClientProxy.prototype.onDeviceOpened):
+        (UsbDeviceClientPtr.prototype.onDeviceClosed):
+        (UsbDeviceClientProxy.prototype.onDeviceClosed):
+        (UsbDeviceClientStub):
+        (UsbDeviceClientStub.prototype.onDeviceOpened):
+        (UsbDeviceClientStub.prototype.onDeviceClosed):
+        (UsbDeviceClientStub.prototype.accept):
+        (UsbDeviceClientStub.prototype.acceptWithResponder):
+        (validateUsbDeviceClientRequest):
+        (validateUsbDeviceClientResponse):
+        * web-platform-tests/resources/chromium/device.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/device_enumeration_options.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (UsbDeviceFilter):
+        (UsbDeviceFilter.prototype.initDefaults_):
+        (UsbDeviceFilter.prototype.initFields_):
+        (UsbDeviceFilter.validate):
+        (UsbDeviceFilter.decode):
+        (UsbDeviceFilter.encode):
+        (UsbEnumerationOptions):
+        (UsbEnumerationOptions.prototype.initDefaults_):
+        (UsbEnumerationOptions.prototype.initFields_):
+        (UsbEnumerationOptions.validate):
+        (UsbEnumerationOptions.decode):
+        (UsbEnumerationOptions.encode):
+        * web-platform-tests/resources/chromium/device_enumeration_options.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/device_manager_client.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.prototype.initDefaults_):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.prototype.initFields_):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.validate):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.decode):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.encode):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.prototype.initDefaults_):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.prototype.initFields_):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.validate):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.decode):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.encode):
+        (UsbDeviceManagerClientPtr):
+        (UsbDeviceManagerClientAssociatedPtr):
+        (UsbDeviceManagerClientProxy):
+        (UsbDeviceManagerClientPtr.prototype.onDeviceAdded):
+        (UsbDeviceManagerClientProxy.prototype.onDeviceAdded):
+        (UsbDeviceManagerClientPtr.prototype.onDeviceRemoved):
+        (UsbDeviceManagerClientProxy.prototype.onDeviceRemoved):
+        (UsbDeviceManagerClientStub):
+        (UsbDeviceManagerClientStub.prototype.onDeviceAdded):
+        (UsbDeviceManagerClientStub.prototype.onDeviceRemoved):
+        (UsbDeviceManagerClientStub.prototype.accept):
+        (UsbDeviceManagerClientStub.prototype.acceptWithResponder):
+        (validateUsbDeviceManagerClientRequest):
+        (validateUsbDeviceManagerClientResponse):
+        * web-platform-tests/resources/chromium/device_manager_client.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/enable-hyperlink-auditing.js: Added.
+        * web-platform-tests/resources/chromium/generic_sensor_mocks.js: Added.
+        (RingBuffer):
+        (RingBuffer.prototype.next):
+        (RingBuffer.prototype.value):
+        (RingBuffer.prototype.Symbol.iterator):
+        (GenericSensorTest.MockSensor):
+        (GenericSensorTest.MockSensor.prototype.async getDefaultConfiguration):
+        (GenericSensorTest.MockSensor.prototype.async addConfiguration):
+        (GenericSensorTest.MockSensor.prototype.removeConfiguration):
+        (GenericSensorTest.MockSensor.prototype.configureReadingChangeNotifications):
+        (GenericSensorTest.MockSensor.prototype.reset):
+        (GenericSensorTest.MockSensor.prototype.async setSensorReading):
+        (GenericSensorTest.MockSensor.prototype.setSensorReadingImmediately):
+        (GenericSensorTest.MockSensor.prototype.setStartShouldFail):
+        (GenericSensorTest.MockSensor.prototype.startReading):
+        (GenericSensorTest.MockSensor.prototype.stopReading):
+        (GenericSensorTest.MockSensor.prototype.getSamplingFrequency):
+        (GenericSensorTest.MockSensorProvider):
+        (GenericSensorTest.MockSensorProvider.prototype.async getSensor):
+        (GenericSensorTest.MockSensorProvider.prototype.bindToPipe):
+        (GenericSensorTest.MockSensorProvider.prototype.reset):
+        (GenericSensorTest.MockSensorProvider.prototype.setGetSensorShouldFail):
+        (GenericSensorTest.MockSensorProvider.prototype.setPermissionsDenied):
+        (GenericSensorTest.MockSensorProvider.prototype.getCreatedSensor):
+        (GenericSensorTest.MockSensorProvider.prototype.setMaximumSupportedFrequency):
+        (GenericSensorTest.MockSensorProvider.prototype.setMinimumSupportedFrequency):
+        (GenericSensorTest.GenericSensorTestChromium):
+        (GenericSensorTest.GenericSensorTestChromium.prototype.async initialize):
+        (GenericSensorTest.GenericSensorTestChromium.prototype.async reset):
+        (GenericSensorTest.GenericSensorTestChromium.prototype.getSensorProvider):
+        (GenericSensorTest):
+        * web-platform-tests/resources/chromium/generic_sensor_mocks.js.headers: Added.
+        * web-platform-tests/resources/chromium/image_capture-mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/image_capture.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (MeteringMode.isKnownEnumValue):
+        (MeteringMode.validate):
+        (RedEyeReduction.isKnownEnumValue):
+        (RedEyeReduction.validate):
+        (FillLightMode.isKnownEnumValue):
+        (FillLightMode.validate):
+        (Range):
+        (Range.prototype.initDefaults_):
+        (Range.prototype.initFields_):
+        (Range.validate):
+        (Range.decode):
+        (Range.encode):
+        (PhotoState):
+        (PhotoState.prototype.initDefaults_):
+        (PhotoState.prototype.initFields_):
+        (PhotoState.validate):
+        (PhotoState.decode):
+        (PhotoState.encode):
+        (Point2D):
+        (Point2D.prototype.initDefaults_):
+        (Point2D.prototype.initFields_):
+        (Point2D.validate):
+        (Point2D.decode):
+        (Point2D.encode):
+        (PhotoSettings):
+        (PhotoSettings.prototype.initDefaults_):
+        (PhotoSettings.prototype.initFields_):
+        (PhotoSettings.validate):
+        (PhotoSettings.decode):
+        (PhotoSettings.encode):
+        (Blob):
+        (Blob.prototype.initDefaults_):
+        (Blob.prototype.initFields_):
+        (Blob.validate):
+        (Blob.decode):
+        (Blob.encode):
+        (ImageCapture_GetPhotoState_Params):
+        (ImageCapture_GetPhotoState_Params.prototype.initDefaults_):
+        (ImageCapture_GetPhotoState_Params.prototype.initFields_):
+        (ImageCapture_GetPhotoState_Params.validate):
+        (ImageCapture_GetPhotoState_Params.decode):
+        (ImageCapture_GetPhotoState_Params.encode):
+        (ImageCapture_GetPhotoState_ResponseParams):
+        (ImageCapture_GetPhotoState_ResponseParams.prototype.initDefaults_):
+        (ImageCapture_GetPhotoState_ResponseParams.prototype.initFields_):
+        (ImageCapture_GetPhotoState_ResponseParams.validate):
+        (ImageCapture_GetPhotoState_ResponseParams.decode):
+        (ImageCapture_GetPhotoState_ResponseParams.encode):
+        (ImageCapture_SetOptions_Params):
+        (ImageCapture_SetOptions_Params.prototype.initDefaults_):
+        (ImageCapture_SetOptions_Params.prototype.initFields_):
+        (ImageCapture_SetOptions_Params.validate):
+        (ImageCapture_SetOptions_Params.decode):
+        (ImageCapture_SetOptions_Params.encode):
+        (ImageCapture_SetOptions_ResponseParams):
+        (ImageCapture_SetOptions_ResponseParams.prototype.initDefaults_):
+        (ImageCapture_SetOptions_ResponseParams.prototype.initFields_):
+        (ImageCapture_SetOptions_ResponseParams.validate):
+        (ImageCapture_SetOptions_ResponseParams.decode):
+        (ImageCapture_SetOptions_ResponseParams.encode):
+        (ImageCapture_TakePhoto_Params):
+        (ImageCapture_TakePhoto_Params.prototype.initDefaults_):
+        (ImageCapture_TakePhoto_Params.prototype.initFields_):
+        (ImageCapture_TakePhoto_Params.validate):
+        (ImageCapture_TakePhoto_Params.decode):
+        (ImageCapture_TakePhoto_Params.encode):
+        (ImageCapture_TakePhoto_ResponseParams):
+        (ImageCapture_TakePhoto_ResponseParams.prototype.initDefaults_):
+        (ImageCapture_TakePhoto_ResponseParams.prototype.initFields_):
+        (ImageCapture_TakePhoto_ResponseParams.validate):
+        (ImageCapture_TakePhoto_ResponseParams.decode):
+        (ImageCapture_TakePhoto_ResponseParams.encode):
+        (ImageCapturePtr):
+        (ImageCaptureAssociatedPtr):
+        (ImageCaptureProxy):
+        (ImageCapturePtr.prototype.getPhotoState):
+        (ImageCaptureProxy.prototype.getPhotoState):
+        (ImageCapturePtr.prototype.setOptions):
+        (ImageCaptureProxy.prototype.setOptions):
+        (ImageCapturePtr.prototype.takePhoto):
+        (ImageCaptureProxy.prototype.takePhoto):
+        (ImageCaptureStub.prototype.getPhotoState):
+        (ImageCaptureStub.prototype.setOptions):
+        (ImageCaptureStub.prototype.takePhoto):
+        (ImageCaptureStub.prototype.accept):
+        (ImageCaptureStub.prototype.acceptWithResponder):
+        (validateImageCaptureRequest):
+        (validateImageCaptureResponse):
+        * web-platform-tests/resources/chromium/mock-barcodedetection.js: Added.
+        (BarcodeDetectionTest):
+        (BarcodeDetectionTest.prototype.createBarcodeDetection):
+        (BarcodeDetectionTest.prototype.enumerateSupportedFormats):
+        (BarcodeDetectionTest.prototype.getFrameData):
+        (BarcodeDetectionTest.prototype.getFormats):
+        (BarcodeDetectionTest.prototype.reset):
+        (BarcodeDetectionTest.prototype.simulateNoImplementation):
+        (BarcodeDetectionTest.MockBarcodeDetection):
+        (BarcodeDetectionTest.MockBarcodeDetection.prototype.detect):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium.prototype.initialize):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium.prototype.async reset):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium.prototype.MockBarcodeDetectionProvider):
+        * web-platform-tests/resources/chromium/mock-barcodedetection.js.headers: Added.
+        * web-platform-tests/resources/chromium/mock-facedetection.js: Added.
+        (FaceDetectionTest):
+        (FaceDetectionTest.prototype.createFaceDetection):
+        (FaceDetectionTest.prototype.getFrameData):
+        (FaceDetectionTest.prototype.getMaxDetectedFaces):
+        (FaceDetectionTest.prototype.getFastMode):
+        (FaceDetectionTest.prototype.reset):
+        (FaceDetectionTest.MockFaceDetection):
+        (FaceDetectionTest.MockFaceDetection.prototype.detect):
+        (FaceDetectionTest.FaceDetectionTestChromium):
+        (FaceDetectionTest.FaceDetectionTestChromium.prototype.initialize):
+        (FaceDetectionTest.FaceDetectionTestChromium.prototype.async reset):
+        (FaceDetectionTest.FaceDetectionTestChromium.prototype.MockFaceDetectionProvider):
+        * web-platform-tests/resources/chromium/mock-facedetection.js.headers: Added.
+        * web-platform-tests/resources/chromium/mock-imagecapture.js: Added.
+        (ImageCaptureTest):
+        (ImageCaptureTest.prototype.reset):
+        (ImageCaptureTest.prototype.getPhotoState):
+        (ImageCaptureTest.prototype.setOptions):
+        (ImageCaptureTest.prototype.takePhoto):
+        (ImageCaptureTest.prototype.state):
+        (ImageCaptureTest.prototype.options):
+        (ImageCaptureTest.ImageCaptureTestChromium):
+        (ImageCaptureTest.ImageCaptureTestChromium.prototype.initialize):
+        (ImageCaptureTest.ImageCaptureTestChromium.prototype.async reset):
+        (ImageCaptureTest.ImageCaptureTestChromium.prototype.mockImageCapture):
+        * web-platform-tests/resources/chromium/mock-screenenumeration.js: Added.
+        (string_appeared_here.ScreenEnumerationTest):
+        (string_appeared_here.ScreenEnumerationTest.prototype.reset):
+        (string_appeared_here.ScreenEnumerationTest.prototype.setInternalId):
+        (string_appeared_here.ScreenEnumerationTest.prototype.setPrimaryId):
+        (string_appeared_here.ScreenEnumerationTest.prototype.setSuccess):
+        (string_appeared_here.ScreenEnumerationTest.prototype.addDisplay):
+        (string_appeared_here.ScreenEnumerationTest.prototype.removeDisplay):
+        (string_appeared_here.ScreenEnumerationTest.prototype.async getDisplays):
+        (string_appeared_here.ScreenEnumerationTest.ScreenEnumerationTestChromium):
+        (string_appeared_here.ScreenEnumerationTest.ScreenEnumerationTestChromium.prototype.async initialize):
+        (string_appeared_here.ScreenEnumerationTest.ScreenEnumerationTestChromium.prototype.async reset):
+        (string_appeared_here.ScreenEnumerationTest.ScreenEnumerationTestChromium.prototype.getMockScreenEnumeration):
+        * web-platform-tests/resources/chromium/mock-screenenumeration.js.header: Added.
+        * web-platform-tests/resources/chromium/mock-sms-receiver.js: Added.
+        (const.SmsProvider):
+        (const.SmsProvider.prototype.async receive):
+        (const.SmsProvider.prototype.async abort):
+        (const.SmsProvider.prototype.pushReturnValuesForTesting):
+        (const.SmsProvider.SmsProviderChromium):
+        (const.SmsProvider.SmsProviderChromium.prototype.pushReturnValuesForTesting):
+        * web-platform-tests/resources/chromium/mock-textdetection.js: Added.
+        (TextDetectionTest):
+        (TextDetectionTest.prototype.detect):
+        (TextDetectionTest.prototype.getFrameData):
+        (TextDetectionTest.prototype.reset):
+        (TextDetectionTest.TextDetectionTestChromium):
+        (TextDetectionTest.TextDetectionTestChromium.prototype.initialize):
+        (TextDetectionTest.TextDetectionTestChromium.prototype.async reset):
+        (TextDetectionTest.TextDetectionTestChromium.prototype.MockTextDetection):
+        * web-platform-tests/resources/chromium/mock-textdetection.js.headers: Added.
+        * web-platform-tests/resources/chromium/mojo_bindings.js: Added.
+        (exposeNamespace):
+        (isMojomPendingLoad):
+        (isMojomLoaded):
+        (markMojomPendingLoad):
+        (markMojomLoaded):
+        (loadMojomIfNecessary):
+        (makeRequest):
+        (InterfacePtrController):
+        (InterfacePtrController.prototype.bind):
+        (InterfacePtrController.prototype.isBound):
+        (InterfacePtrController.prototype.reset):
+        (InterfacePtrController.prototype.resetWithReason):
+        (InterfacePtrController.prototype.setConnectionErrorHandler):
+        (InterfacePtrController.prototype.passInterface):
+        (InterfacePtrController.prototype.getProxy):
+        (InterfacePtrController.prototype.configureProxyIfNecessary_):
+        (InterfacePtrController.prototype.queryVersion):
+        (InterfacePtrController.prototype.requireVersion):
+        (Binding):
+        (Binding.prototype.isBound):
+        (Binding.prototype.createInterfacePtrAndBind):
+        (Binding.prototype.bind):
+        (Binding.prototype.close):
+        (Binding.prototype.closeWithReason):
+        (Binding.prototype.setConnectionErrorHandler):
+        (Binding.prototype.unbind):
+        (BindingSetEntry):
+        (BindingSetEntry.prototype.close):
+        (BindingSet):
+        (BindingSet.prototype.isEmpty):
+        (BindingSet.prototype.addBinding):
+        (BindingSet.prototype.closeAllBindings):
+        (BindingSet.prototype.setConnectionErrorHandler):
+        (BindingSet.prototype.onConnectionError):
+        (AssociatedInterfacePtrController):
+        (AssociatedInterfacePtrController.prototype.bind):
+        (AssociatedInterfacePtrController.prototype.isBound):
+        (AssociatedInterfacePtrController.prototype.reset):
+        (AssociatedInterfacePtrController.prototype.resetWithReason):
+        (AssociatedInterfacePtrController.prototype.getEncounteredError):
+        (AssociatedInterfacePtrController.prototype.setConnectionErrorHandler):
+        (AssociatedInterfacePtrController.prototype.passInterface):
+        (AssociatedInterfacePtrController.prototype.getProxy):
+        (AssociatedInterfacePtrController.prototype.queryVersion):
+        (AssociatedInterfacePtrController.prototype.requireVersion):
+        (AssociatedBinding):
+        (AssociatedBinding.prototype.isBound):
+        (AssociatedBinding.prototype.bind):
+        (AssociatedBinding.prototype.close):
+        (AssociatedBinding.prototype.closeWithReason):
+        (AssociatedBinding.prototype.setConnectionErrorHandler):
+        (AssociatedBinding.prototype.unbind):
+        (AssociatedBindingSet):
+        (InterfacePtrInfo):
+        (InterfacePtrInfo.prototype.isValid):
+        (InterfacePtrInfo.prototype.close):
+        (AssociatedInterfacePtrInfo):
+        (AssociatedInterfacePtrInfo.prototype.isValid):
+        (InterfaceRequest):
+        (InterfaceRequest.prototype.isValid):
+        (InterfaceRequest.prototype.close):
+        (AssociatedInterfaceRequest):
+        (AssociatedInterfaceRequest.prototype.isValid):
+        (AssociatedInterfaceRequest.prototype.resetWithReason):
+        (isMasterInterfaceId):
+        (isValidInterfaceId):
+        (hasInterfaceIdNamespaceBitSet):
+        (kHostIsLittleEndian):
+        (Buffer):
+        (Buffer.prototype.alloc):
+        (copyArrayBuffer):
+        (Buffer.prototype.grow):
+        (Buffer.prototype.trim):
+        (Buffer.prototype.getUint8):
+        (Buffer.prototype.getUint16):
+        (Buffer.prototype.getUint32):
+        (Buffer.prototype.getUint64):
+        (Buffer.prototype.getInt8):
+        (Buffer.prototype.getInt16):
+        (Buffer.prototype.getInt32):
+        (Buffer.prototype.getInt64):
+        (Buffer.prototype.getFloat32):
+        (Buffer.prototype.getFloat64):
+        (Buffer.prototype.setUint8):
+        (Buffer.prototype.setUint16):
+        (Buffer.prototype.setUint32):
+        (Buffer.prototype.setUint64):
+        (Buffer.prototype.setInt8):
+        (Buffer.prototype.setInt16):
+        (Buffer.prototype.setInt32):
+        (Buffer.prototype.setInt64):
+        (Buffer.prototype.setFloat32):
+        (Buffer.prototype.setFloat64):
+        (align):
+        (isAligned):
+        (Decoder):
+        (Decoder.prototype.align):
+        (Decoder.prototype.skip):
+        (Decoder.prototype.readInt8):
+        (Decoder.prototype.readUint8):
+        (Decoder.prototype.readInt16):
+        (Decoder.prototype.readUint16):
+        (Decoder.prototype.readInt32):
+        (Decoder.prototype.readUint32):
+        (Decoder.prototype.readInt64):
+        (Decoder.prototype.readUint64):
+        (Decoder.prototype.readFloat):
+        (Decoder.prototype.readDouble):
+        (Decoder.prototype.decodePointer):
+        (Decoder.prototype.decodeAndCreateDecoder):
+        (Decoder.prototype.decodeHandle):
+        (Decoder.prototype.decodeAssociatedEndpointHandle):
+        (Decoder.prototype.decodeString):
+        (Decoder.prototype.decodeArray):
+        (Decoder.prototype.decodeStruct):
+        (Decoder.prototype.decodeStructPointer):
+        (Decoder.prototype.decodeArrayPointer):
+        (Decoder.prototype.decodeStringPointer):
+        (Decoder.prototype.decodeMap):
+        (Decoder.prototype.decodeMapPointer):
+        (Encoder):
+        (Encoder.prototype.align):
+        (Encoder.prototype.skip):
+        (Encoder.prototype.writeInt8):
+        (Encoder.prototype.writeUint8):
+        (Encoder.prototype.writeInt16):
+        (Encoder.prototype.writeUint16):
+        (Encoder.prototype.writeInt32):
+        (Encoder.prototype.writeUint32):
+        (Encoder.prototype.writeInt64):
+        (Encoder.prototype.writeUint64):
+        (Encoder.prototype.writeFloat):
+        (Encoder.prototype.writeDouble):
+        (Encoder.prototype.encodePointer):
+        (Encoder.prototype.createAndEncodeEncoder):
+        (Encoder.prototype.encodeHandle):
+        (Encoder.prototype.encodeAssociatedEndpointHandle):
+        (Encoder.prototype.encodeString):
+        (Encoder.prototype.encodeArray):
+        (Encoder.prototype.encodeStruct):
+        (Encoder.prototype.encodeStructPointer):
+        (Encoder.prototype.encodeArrayPointer):
+        (Encoder.prototype.encodeStringPointer):
+        (Encoder.prototype.encodeMap):
+        (Encoder.prototype.encodeMapPointer):
+        (Message):
+        (Message.prototype.getHeaderNumBytes):
+        (Message.prototype.getHeaderVersion):
+        (Message.prototype.getName):
+        (Message.prototype.getFlags):
+        (Message.prototype.getInterfaceId):
+        (Message.prototype.getPayloadInterfaceIds):
+        (Message.prototype.isResponse):
+        (Message.prototype.expectsResponse):
+        (Message.prototype.setRequestID):
+        (Message.prototype.setInterfaceId):
+        (Message.prototype.setPayloadInterfaceIds_):
+        (Message.prototype.serializeAssociatedEndpointHandles):
+        (Message.prototype.deserializeAssociatedEndpointHandles):
+        (MessageV0Builder):
+        (MessageV0Builder.prototype.createEncoder):
+        (MessageV0Builder.prototype.encodeStruct):
+        (MessageV0Builder.prototype.finish):
+        (MessageV1Builder):
+        (MessageV2Builder):
+        (MessageV2Builder.prototype.createEncoder):
+        (MessageV2Builder.prototype.setPayload):
+        (MessageV2Builder.prototype.finish):
+        (MessageReader):
+        (MessageReader.prototype.decodeStruct):
+        (PackedBool):
+        (Int8):
+        (Int8.decode):
+        (Int8.encode):
+        (Uint8.encode):
+        (Uint8):
+        (Uint8.decode):
+        (Int16):
+        (Int16.decode):
+        (Int16.encode):
+        (Uint16):
+        (Uint16.decode):
+        (Uint16.encode):
+        (Int32):
+        (Int32.decode):
+        (Int32.encode):
+        (Uint32):
+        (Uint32.decode):
+        (Uint32.encode):
+        (Int64):
+        (Int64.decode):
+        (Int64.encode):
+        (Uint64):
+        (Uint64.decode):
+        (Uint64.encode):
+        (String):
+        (String.decode):
+        (String.encode):
+        (NullableString):
+        (Float):
+        (Float.decode):
+        (Float.encode):
+        (Double):
+        (Double.decode):
+        (Double.encode):
+        (Enum):
+        (Enum.prototype.decode):
+        (Enum.prototype.encode):
+        (PointerTo):
+        (PointerTo.prototype.decode):
+        (PointerTo.prototype.encode):
+        (NullablePointerTo):
+        (ArrayOf):
+        (ArrayOf.prototype.dimensions):
+        (ArrayOf.prototype.decode):
+        (ArrayOf.prototype.encode):
+        (NullableArrayOf):
+        (Handle):
+        (Handle.decode):
+        (Handle.encode):
+        (NullableHandle):
+        (Interface):
+        (Interface.prototype.decode):
+        (Interface.prototype.encode):
+        (NullableInterface):
+        (AssociatedInterfacePtrInfo.decode):
+        (AssociatedInterfacePtrInfo.encode):
+        (NullableAssociatedInterfacePtrInfo):
+        (InterfaceRequest.decode):
+        (InterfaceRequest.encode):
+        (NullableInterfaceRequest):
+        (AssociatedInterfaceRequest.decode):
+        (AssociatedInterfaceRequest.encode):
+        (NullableAssociatedInterfaceRequest):
+        (MapOf):
+        (MapOf.prototype.decode):
+        (MapOf.prototype.encode):
+        (NullableMapOf):
+        (Connector):
+        (Connector.prototype.close):
+        (Connector.prototype.pauseIncomingMethodCallProcessing):
+        (Connector.prototype.resumeIncomingMethodCallProcessing):
+        (Connector.prototype.accept):
+        (Connector.prototype.setIncomingReceiver):
+        (Connector.prototype.setErrorHandler):
+        (Connector.prototype.readMore_):
+        (Connector.prototype.cancelWait):
+        (Connector.prototype.waitToReadMore):
+        (Connector.prototype.handleError):
+        (validateControlRequestWithResponse):
+        (validateControlRequestWithoutResponse):
+        (runOrClosePipe):
+        (run):
+        (isInterfaceControlMessage):
+        (ControlMessageHandler):
+        (ControlMessageHandler.prototype.accept):
+        (ControlMessageHandler.prototype.acceptWithResponder):
+        (constructRunOrClosePipeMessage):
+        (validateControlResponse):
+        (acceptRunResponse):
+        (sendRunMessage):
+        (ControlMessageProxy):
+        (ControlMessageProxy.prototype.queryVersion):
+        (ControlMessageProxy.prototype.requireVersion):
+        (InterfaceEndpointClient):
+        (InterfaceEndpointClient.prototype.initControllerIfNecessary_):
+        (InterfaceEndpointClient.prototype.onAssociationEvent):
+        (InterfaceEndpointClient.prototype.passHandle):
+        (InterfaceEndpointClient.prototype.close):
+        (InterfaceEndpointClient.prototype.accept):
+        (InterfaceEndpointClient.prototype.acceptAndExpectResponse):
+        (InterfaceEndpointClient.prototype.setPayloadValidators):
+        (InterfaceEndpointClient.prototype.setIncomingReceiver):
+        (InterfaceEndpointClient.prototype.setConnectionErrorHandler):
+        (InterfaceEndpointClient.prototype.handleIncomingMessage):
+        (InterfaceEndpointClient.prototype.handleValidIncomingMessage_):
+        (InterfaceEndpointClient.prototype.notifyError):
+        (InterfaceEndpointClient.prototype.queryVersion):
+        (InterfaceEndpointClient.prototype.requireVersion):
+        (InterfaceEndpointClient.prototype.getEncounteredError):
+        (State):
+        (State.prototype.initPendingState):
+        (State.prototype.isValid):
+        (State.prototype.close):
+        (State.prototype.runAssociationEventHandler):
+        (State.prototype.setAssociationEventHandler):
+        (State.prototype.notifyAssociation):
+        (State.prototype.onAssociated):
+        (State.prototype.onPeerClosedBeforeAssociation):
+        (createPairPendingAssociation):
+        (InterfaceEndpointHandle):
+        (InterfaceEndpointHandle.prototype.isValid):
+        (InterfaceEndpointHandle.prototype.pendingAssociation):
+        (InterfaceEndpointHandle.prototype.id):
+        (InterfaceEndpointHandle.prototype.groupController):
+        (InterfaceEndpointHandle.prototype.disconnectReason):
+        (InterfaceEndpointHandle.prototype.setAssociationEventHandler):
+        (InterfaceEndpointHandle.prototype.notifyAssociation):
+        (InterfaceEndpointHandle.prototype.reset):
+        (isPipeControlMessage):
+        (PipeControlMessageHandler):
+        (PipeControlMessageHandler.prototype.accept):
+        (PipeControlMessageProxy):
+        (PipeControlMessageProxy.prototype.notifyPeerEndpointClosed):
+        (PipeControlMessageProxy.prototype.constructPeerEndpointClosedMessage):
+        (check):
+        (InterfaceEndpoint):
+        (InterfaceEndpoint.prototype.sendMessage):
+        (Router):
+        (Router.prototype.associateInterface):
+        (Router.prototype.attachEndpointClient):
+        (Router.prototype.detachEndpointClient):
+        (Router.prototype.createLocalEndpointHandle):
+        (Router.prototype.accept):
+        (Router.prototype.close):
+        (Router.prototype.onPeerAssociatedEndpointClosed):
+        (Router.prototype.onPipeConnectionError):
+        (Router.prototype.closeEndpointHandle):
+        (Router.prototype.updateEndpointStateMayRemove):
+        (decodeUtf8String):
+        (encodeUtf8String):
+        (utf8Length):
+        (reportValidationError):
+        (Observer.prototype.reset):
+        (return.getInstance):
+        (ValidationErrorObserverForTesting):
+        (isTestingMode):
+        (clearTestingMode):
+        (isEnumClass):
+        (isStringClass):
+        (isHandleClass):
+        (isInterfaceClass):
+        (isInterfaceRequestClass):
+        (isAssociatedInterfaceClass):
+        (isAssociatedInterfaceRequestClass):
+        (isNullable):
+        (Validator):
+        (Validator.prototype.isValidRange):
+        (Validator.prototype.claimRange):
+        (Validator.prototype.claimHandle):
+        (Validator.prototype.claimAssociatedEndpointHandle):
+        (Validator.prototype.validateEnum):
+        (Validator.prototype.validateHandle):
+        (Validator.prototype.validateAssociatedEndpointHandle):
+        (Validator.prototype.validateInterface):
+        (Validator.prototype.validateInterfaceRequest):
+        (Validator.prototype.validateAssociatedInterface):
+        (Validator.prototype.validateAssociatedInterfaceRequest):
+        (Validator.prototype.validateStructHeader):
+        (Validator.prototype.validateStructVersion):
+        (Validator.prototype.isFieldInStructVersion):
+        (Validator.prototype.validateMessageHeader):
+        (Validator.prototype.validateMessageIsRequestWithoutResponse):
+        (Validator.prototype.validateMessageIsRequestExpectingResponse):
+        (Validator.prototype.validateMessageIsResponse):
+        (Validator.prototype.decodePointer):
+        (Validator.prototype.decodeUnionSize):
+        (Validator.prototype.decodeUnionTag):
+        (Validator.prototype.validateArrayPointer):
+        (Validator.prototype.validateStructPointer):
+        (Validator.prototype.validateUnion):
+        (Validator.prototype.validateNestedUnion):
+        (Validator.prototype.arrayLength):
+        (Validator.prototype.validateMapPointer):
+        (Validator.prototype.validateStringPointer):
+        (Validator.prototype.validateArray):
+        (Validator.prototype.validateHandleElements):
+        (Validator.prototype.validateInterfaceElements):
+        (Validator.prototype.validateInterfaceRequestElements):
+        (Validator.prototype.validateAssociatedInterfaceElements):
+        (Validator.prototype.validateAssociatedInterfaceRequestElements):
+        (Validator.prototype.validateArrayElements):
+        (Validator.prototype.validateStructElements):
+        (Validator.prototype.validateEnumElements):
+        (RunMessageParams):
+        (RunMessageParams.prototype.initDefaults_):
+        (RunMessageParams.prototype.initFields_):
+        (RunMessageParams.validate):
+        (RunMessageParams.decode):
+        (RunMessageParams.encode):
+        (RunResponseMessageParams):
+        (RunResponseMessageParams.prototype.initDefaults_):
+        (RunResponseMessageParams.prototype.initFields_):
+        (RunResponseMessageParams.validate):
+        (RunResponseMessageParams.decode):
+        (RunResponseMessageParams.encode):
+        (QueryVersion):
+        (QueryVersion.prototype.initDefaults_):
+        (QueryVersion.prototype.initFields_):
+        (QueryVersion.validate):
+        (QueryVersion.decode):
+        (QueryVersion.encode):
+        (QueryVersionResult):
+        (QueryVersionResult.prototype.initDefaults_):
+        (QueryVersionResult.prototype.initFields_):
+        (QueryVersionResult.validate):
+        (QueryVersionResult.decode):
+        (QueryVersionResult.encode):
+        (FlushForTesting):
+        (FlushForTesting.prototype.initDefaults_):
+        (FlushForTesting.prototype.initFields_):
+        (FlushForTesting.validate):
+        (FlushForTesting.decode):
+        (FlushForTesting.encode):
+        (RunOrClosePipeMessageParams):
+        (RunOrClosePipeMessageParams.prototype.initDefaults_):
+        (RunOrClosePipeMessageParams.prototype.initFields_):
+        (RunOrClosePipeMessageParams.validate):
+        (RunOrClosePipeMessageParams.decode):
+        (RunOrClosePipeMessageParams.encode):
+        (RequireVersion):
+        (RequireVersion.prototype.initDefaults_):
+        (RequireVersion.prototype.initFields_):
+        (RequireVersion.validate):
+        (RequireVersion.decode):
+        (RequireVersion.encode):
+        (RunInput):
+        (RunInput.prototype.initDefault_):
+        (RunInput.prototype.initValue_):
+        (get if):
+        (RunInput.encode):
+        (RunInput.decode):
+        (RunInput.validate):
+        (RunOutput):
+        (RunOutput.prototype.initDefault_):
+        (RunOutput.prototype.initValue_):
+        (RunOutput.encode):
+        (RunOutput.decode):
+        (RunOutput.validate):
+        (RunOrClosePipeInput):
+        (RunOrClosePipeInput.prototype.initDefault_):
+        (RunOrClosePipeInput.prototype.initValue_):
+        (RunOrClosePipeInput.encode):
+        (RunOrClosePipeInput.decode):
+        (RunOrClosePipeInput.validate):
+        (DisconnectReason):
+        (DisconnectReason.prototype.initDefaults_):
+        (DisconnectReason.prototype.initFields_):
+        (DisconnectReason.validate):
+        (DisconnectReason.decode):
+        (DisconnectReason.encode):
+        (PeerAssociatedEndpointClosedEvent):
+        (PeerAssociatedEndpointClosedEvent.prototype.initDefaults_):
+        (PeerAssociatedEndpointClosedEvent.prototype.initFields_):
+        (PeerAssociatedEndpointClosedEvent.validate):
+        (PeerAssociatedEndpointClosedEvent.decode):
+        (PeerAssociatedEndpointClosedEvent.encode):
+        * web-platform-tests/resources/chromium/mojo_bindings.js.headers: Added.
+        * web-platform-tests/resources/chromium/mojo_web_test_helper_test.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (MojoWebTestHelper_Reverse_Params):
+        (MojoWebTestHelper_Reverse_Params.prototype.initDefaults_):
+        (MojoWebTestHelper_Reverse_Params.prototype.initFields_):
+        (MojoWebTestHelper_Reverse_Params.validate):
+        (MojoWebTestHelper_Reverse_Params.decode):
+        (MojoWebTestHelper_Reverse_Params.encode):
+        (MojoWebTestHelper_Reverse_ResponseParams):
+        (MojoWebTestHelper_Reverse_ResponseParams.prototype.initDefaults_):
+        (MojoWebTestHelper_Reverse_ResponseParams.prototype.initFields_):
+        (MojoWebTestHelper_Reverse_ResponseParams.validate):
+        (MojoWebTestHelper_Reverse_ResponseParams.decode):
+        (MojoWebTestHelper_Reverse_ResponseParams.encode):
+        (MojoWebTestHelperPtr):
+        (MojoWebTestHelperAssociatedPtr):
+        (MojoWebTestHelperProxy):
+        (MojoWebTestHelperPtr.prototype.reverse):
+        (MojoWebTestHelperProxy.prototype.reverse):
+        (MojoWebTestHelperStub.prototype.reverse):
+        (MojoWebTestHelperStub.prototype.accept):
+        (MojoWebTestHelperStub.prototype.acceptWithResponder):
+        (validateMojoWebTestHelperRequest):
+        (validateMojoWebTestHelperResponse):
+        * web-platform-tests/resources/chromium/mojo_web_test_helper_test.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/nfc-mock.js: Added.
+        (toMojoNDEFMessage):
+        (toMojoNDEFRecord):
+        (toByteArray):
+        (compareNDEFRecords):
+        (assertNDEFWriteOptionsEqual):
+        (assertNDEFReaderOptionsEqual):
+        (matchesWatchOptions):
+        (createNDEFError):
+        (WebNFCTest):
+        (WebNFCTest.prototype.async push):
+        (WebNFCTest.prototype.async cancelPush):
+        (WebNFCTest.prototype.setClient):
+        (WebNFCTest.prototype.async watch):
+        (WebNFCTest.prototype.async cancelWatch):
+        (WebNFCTest.prototype.async cancelAllWatches):
+        (WebNFCTest.prototype.getHWError):
+        (WebNFCTest.prototype.setHWStatus):
+        (WebNFCTest.prototype.pushedMessage):
+        (WebNFCTest.prototype.writeOptions):
+        (WebNFCTest.prototype.watchOptions):
+        (WebNFCTest.prototype.setPendingPushCompleted):
+        (WebNFCTest.prototype.reset):
+        (WebNFCTest.prototype.cancelPendingPushOperation):
+        (WebNFCTest.prototype.setReadingMessage):
+        (WebNFCTest.prototype.suspendNFCOperations):
+        (WebNFCTest.prototype.resumeNFCOperations):
+        (WebNFCTest.prototype.simulateNonNDEFTagDiscovered):
+        (WebNFCTest.prototype.setIsFormattedTag):
+        (WebNFCTest.prototype.simulateDataTransferFails):
+        (WebNFCTest.prototype.simulateClosedPipe):
+        (WebNFCTest.NFCTestChromium):
+        (WebNFCTest.NFCTestChromium.prototype.async initialize):
+        (WebNFCTest.NFCTestChromium.prototype.async reset):
+        (WebNFCTest.NFCTestChromium.prototype.getMockNFC):
+        * web-platform-tests/resources/chromium/sensor.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (SensorType.isKnownEnumValue):
+        (SensorType.validate):
+        (ReportingMode.isKnownEnumValue):
+        (ReportingMode.validate):
+        (SensorConfiguration):
+        (SensorConfiguration.prototype.initDefaults_):
+        (SensorConfiguration.prototype.initFields_):
+        (SensorConfiguration.validate):
+        (SensorConfiguration.decode):
+        (SensorConfiguration.encode):
+        (Sensor_GetDefaultConfiguration_Params):
+        (Sensor_GetDefaultConfiguration_Params.prototype.initDefaults_):
+        (Sensor_GetDefaultConfiguration_Params.prototype.initFields_):
+        (Sensor_GetDefaultConfiguration_Params.validate):
+        (Sensor_GetDefaultConfiguration_Params.decode):
+        (Sensor_GetDefaultConfiguration_Params.encode):
+        (Sensor_GetDefaultConfiguration_ResponseParams):
+        (Sensor_GetDefaultConfiguration_ResponseParams.prototype.initDefaults_):
+        (Sensor_GetDefaultConfiguration_ResponseParams.prototype.initFields_):
+        (Sensor_GetDefaultConfiguration_ResponseParams.validate):
+        (Sensor_GetDefaultConfiguration_ResponseParams.decode):
+        (Sensor_GetDefaultConfiguration_ResponseParams.encode):
+        (Sensor_AddConfiguration_Params):
+        (Sensor_AddConfiguration_Params.prototype.initDefaults_):
+        (Sensor_AddConfiguration_Params.prototype.initFields_):
+        (Sensor_AddConfiguration_Params.validate):
+        (Sensor_AddConfiguration_Params.decode):
+        (Sensor_AddConfiguration_Params.encode):
+        (Sensor_AddConfiguration_ResponseParams):
+        (Sensor_AddConfiguration_ResponseParams.prototype.initDefaults_):
+        (Sensor_AddConfiguration_ResponseParams.prototype.initFields_):
+        (Sensor_AddConfiguration_ResponseParams.validate):
+        (Sensor_AddConfiguration_ResponseParams.decode):
+        (Sensor_AddConfiguration_ResponseParams.encode):
+        (Sensor_RemoveConfiguration_Params):
+        (Sensor_RemoveConfiguration_Params.prototype.initDefaults_):
+        (Sensor_RemoveConfiguration_Params.prototype.initFields_):
+        (Sensor_RemoveConfiguration_Params.validate):
+        (Sensor_RemoveConfiguration_Params.decode):
+        (Sensor_RemoveConfiguration_Params.encode):
+        (Sensor_Suspend_Params):
+        (Sensor_Suspend_Params.prototype.initDefaults_):
+        (Sensor_Suspend_Params.prototype.initFields_):
+        (Sensor_Suspend_Params.validate):
+        (Sensor_Suspend_Params.decode):
+        (Sensor_Suspend_Params.encode):
+        (Sensor_Resume_Params):
+        (Sensor_Resume_Params.prototype.initDefaults_):
+        (Sensor_Resume_Params.prototype.initFields_):
+        (Sensor_Resume_Params.validate):
+        (Sensor_Resume_Params.decode):
+        (Sensor_Resume_Params.encode):
+        (Sensor_ConfigureReadingChangeNotifications_Params):
+        (Sensor_ConfigureReadingChangeNotifications_Params.prototype.initDefaults_):
+        (Sensor_ConfigureReadingChangeNotifications_Params.prototype.initFields_):
+        (Sensor_ConfigureReadingChangeNotifications_Params.validate):
+        (Sensor_ConfigureReadingChangeNotifications_Params.decode):
+        (Sensor_ConfigureReadingChangeNotifications_Params.encode):
+        (SensorClient_RaiseError_Params):
+        (SensorClient_RaiseError_Params.prototype.initDefaults_):
+        (SensorClient_RaiseError_Params.prototype.initFields_):
+        (SensorClient_RaiseError_Params.validate):
+        (SensorClient_RaiseError_Params.decode):
+        (SensorClient_RaiseError_Params.encode):
+        (SensorClient_SensorReadingChanged_Params):
+        (SensorClient_SensorReadingChanged_Params.prototype.initDefaults_):
+        (SensorClient_SensorReadingChanged_Params.prototype.initFields_):
+        (SensorClient_SensorReadingChanged_Params.validate):
+        (SensorClient_SensorReadingChanged_Params.decode):
+        (SensorClient_SensorReadingChanged_Params.encode):
+        (SensorPtr):
+        (SensorAssociatedPtr):
+        (SensorProxy):
+        (SensorPtr.prototype.getDefaultConfiguration):
+        (SensorProxy.prototype.getDefaultConfiguration):
+        (SensorPtr.prototype.addConfiguration):
+        (SensorProxy.prototype.addConfiguration):
+        (SensorPtr.prototype.removeConfiguration):
+        (SensorProxy.prototype.removeConfiguration):
+        (SensorPtr.prototype.suspend):
+        (SensorProxy.prototype.suspend):
+        (SensorPtr.prototype.resume):
+        (SensorProxy.prototype.resume):
+        (SensorPtr.prototype.configureReadingChangeNotifications):
+        (SensorProxy.prototype.configureReadingChangeNotifications):
+        (SensorStub):
+        (SensorStub.prototype.getDefaultConfiguration):
+        (SensorStub.prototype.addConfiguration):
+        (SensorStub.prototype.removeConfiguration):
+        (SensorStub.prototype.suspend):
+        (SensorStub.prototype.resume):
+        (SensorStub.prototype.configureReadingChangeNotifications):
+        (SensorStub.prototype.accept):
+        (SensorStub.prototype.acceptWithResponder):
+        (validateSensorRequest):
+        (validateSensorResponse):
+        (SensorClientPtr):
+        (SensorClientAssociatedPtr):
+        (SensorClientProxy):
+        (SensorClientPtr.prototype.raiseError):
+        (SensorClientProxy.prototype.raiseError):
+        (SensorClientPtr.prototype.sensorReadingChanged):
+        (SensorClientProxy.prototype.sensorReadingChanged):
+        (SensorClientStub):
+        (SensorClientStub.prototype.raiseError):
+        (SensorClientStub.prototype.sensorReadingChanged):
+        (SensorClientStub.prototype.accept):
+        (SensorClientStub.prototype.acceptWithResponder):
+        (validateSensorClientRequest):
+        (validateSensorClientResponse):
+        * web-platform-tests/resources/chromium/sensor_provider.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (SensorCreationResult.isKnownEnumValue):
+        (SensorCreationResult.validate):
+        (SensorInitParams):
+        (SensorInitParams.prototype.initDefaults_):
+        (SensorInitParams.prototype.initFields_):
+        (SensorInitParams.validate):
+        (SensorInitParams.decode):
+        (SensorInitParams.encode):
+        (SensorProvider_GetSensor_Params):
+        (SensorProvider_GetSensor_Params.prototype.initDefaults_):
+        (SensorProvider_GetSensor_Params.prototype.initFields_):
+        (SensorProvider_GetSensor_Params.validate):
+        (SensorProvider_GetSensor_Params.decode):
+        (SensorProvider_GetSensor_Params.encode):
+        (SensorProvider_GetSensor_ResponseParams):
+        (SensorProvider_GetSensor_ResponseParams.prototype.initDefaults_):
+        (SensorProvider_GetSensor_ResponseParams.prototype.initFields_):
+        (SensorProvider_GetSensor_ResponseParams.validate):
+        (SensorProvider_GetSensor_ResponseParams.decode):
+        (SensorProvider_GetSensor_ResponseParams.encode):
+        (SensorProviderPtr):
+        (SensorProviderAssociatedPtr):
+        (SensorProviderProxy):
+        (SensorProviderPtr.prototype.getSensor):
+        (SensorProviderProxy.prototype.getSensor):
+        (SensorProviderStub.prototype.getSensor):
+        (SensorProviderStub.prototype.accept):
+        (SensorProviderStub.prototype.acceptWithResponder):
+        (validateSensorProviderRequest):
+        (validateSensorProviderResponse):
+        * web-platform-tests/resources/chromium/string16.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (String16):
+        (String16.prototype.initDefaults_):
+        (String16.prototype.initFields_):
+        (String16.validate):
+        (String16.decode):
+        (String16.encode):
+        (BigString16):
+        (BigString16.prototype.initDefaults_):
+        (BigString16.prototype.initFields_):
+        (BigString16.validate):
+        (BigString16.decode):
+        (BigString16.encode):
+        * web-platform-tests/resources/chromium/string16.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/url.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (Url):
+        (Url.prototype.initDefaults_):
+        (Url.prototype.initFields_):
+        (Url.validate):
+        (Url.decode):
+        (Url.encode):
+        * web-platform-tests/resources/chromium/w3c-import.log: Added.
+        * web-platform-tests/resources/chromium/web-bluetooth-test.js: Added.
+        (toMojoCentralState):
+        (writeTypeToString):
+        (canonicalizeAndConvertToMojoUUID):
+        (convertToMojoMap):
+        (const.MOJO_CHOOSER_EVENT_TYPE_MAP):
+        (ArrayToMojoCharacteristicProperties):
+        (FakeBluetooth):
+        (FakeBluetooth.prototype.async setLESupported):
+        (FakeBluetooth.prototype.async simulateCentral):
+        (FakeBluetooth.prototype.async allResponsesConsumed):
+        (FakeBluetooth.prototype.async getManualChooser):
+        (FakeCentral):
+        (FakeCentral.prototype.async simulatePreconnectedPeripheral):
+        (FakeCentral.prototype.async simulateAdvertisementReceived):
+        (FakeCentral.prototype.async setState):
+        (FakeCentral.prototype.fetchOrCreatePeripheral_):
+        (FakePeripheral):
+        (FakePeripheral.prototype.async addFakeService):
+        (FakePeripheral.prototype.async setNextGATTConnectionResponse):
+        (FakePeripheral.prototype.async setNextGATTDiscoveryResponse):
+        (FakePeripheral.prototype.async simulateGATTDisconnection):
+        (FakePeripheral.prototype.async simulateGATTServicesChanged):
+        (FakeRemoteGATTService):
+        (FakeRemoteGATTService.prototype.async addFakeCharacteristic):
+        (FakeRemoteGATTService.prototype.async remove):
+        (FakeRemoteGATTCharacteristic):
+        (FakeRemoteGATTCharacteristic.prototype.async addFakeDescriptor):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextReadResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextWriteResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextSubscribeToNotificationsResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextUnsubscribeFromNotificationsResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async isNotifying):
+        (FakeRemoteGATTCharacteristic.prototype.async getLastWrittenValue):
+        (FakeRemoteGATTCharacteristic.prototype.async remove):
+        (FakeRemoteGATTDescriptor):
+        (FakeRemoteGATTDescriptor.prototype.async setNextReadResponse):
+        (FakeRemoteGATTDescriptor.prototype.async setNextWriteResponse):
+        (FakeRemoteGATTDescriptor.prototype.async getLastWrittenValue):
+        (FakeRemoteGATTDescriptor.prototype.async remove):
+        (FakeChooser):
+        (FakeChooser.prototype.async waitForEvents):
+        (FakeChooser.prototype.async selectPeripheral):
+        (FakeChooser.prototype.async cancel):
+        (FakeChooser.prototype.async rescan):
+        (FakeChooser.prototype.onEvent):
+        * web-platform-tests/resources/chromium/web-bluetooth-test.js.headers: Added.
+        * web-platform-tests/resources/chromium/web_usb_service.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (WebUsbService_GetDevices_Params):
+        (WebUsbService_GetDevices_Params.prototype.initDefaults_):
+        (WebUsbService_GetDevices_Params.prototype.initFields_):
+        (WebUsbService_GetDevices_Params.validate):
+        (WebUsbService_GetDevices_Params.decode):
+        (WebUsbService_GetDevices_Params.encode):
+        (WebUsbService_GetDevices_ResponseParams):
+        (WebUsbService_GetDevices_ResponseParams.prototype.initDefaults_):
+        (WebUsbService_GetDevices_ResponseParams.prototype.initFields_):
+        (WebUsbService_GetDevices_ResponseParams.validate):
+        (WebUsbService_GetDevices_ResponseParams.decode):
+        (WebUsbService_GetDevices_ResponseParams.encode):
+        (WebUsbService_GetDevice_Params):
+        (WebUsbService_GetDevice_Params.prototype.initDefaults_):
+        (WebUsbService_GetDevice_Params.prototype.initFields_):
+        (WebUsbService_GetDevice_Params.validate):
+        (WebUsbService_GetDevice_Params.decode):
+        (WebUsbService_GetDevice_Params.encode):
+        (WebUsbService_GetPermission_Params):
+        (WebUsbService_GetPermission_Params.prototype.initDefaults_):
+        (WebUsbService_GetPermission_Params.prototype.initFields_):
+        (WebUsbService_GetPermission_Params.validate):
+        (WebUsbService_GetPermission_Params.decode):
+        (WebUsbService_GetPermission_Params.encode):
+        (WebUsbService_GetPermission_ResponseParams):
+        (WebUsbService_GetPermission_ResponseParams.prototype.initDefaults_):
+        (WebUsbService_GetPermission_ResponseParams.prototype.initFields_):
+        (WebUsbService_GetPermission_ResponseParams.validate):
+        (WebUsbService_GetPermission_ResponseParams.decode):
+        (WebUsbService_GetPermission_ResponseParams.encode):
+        (WebUsbService_SetClient_Params):
+        (WebUsbService_SetClient_Params.prototype.initDefaults_):
+        (WebUsbService_SetClient_Params.prototype.initFields_):
+        (WebUsbService_SetClient_Params.validate):
+        (WebUsbService_SetClient_Params.decode):
+        (WebUsbService_SetClient_Params.encode):
+        (WebUsbServicePtr):
+        (WebUsbServiceAssociatedPtr):
+        (WebUsbServiceProxy):
+        (WebUsbServicePtr.prototype.getDevices):
+        (WebUsbServiceProxy.prototype.getDevices):
+        (WebUsbServicePtr.prototype.getDevice):
+        (WebUsbServiceProxy.prototype.getDevice):
+        (WebUsbServicePtr.prototype.getPermission):
+        (WebUsbServiceProxy.prototype.getPermission):
+        (WebUsbServicePtr.prototype.setClient):
+        (WebUsbServiceProxy.prototype.setClient):
+        (WebUsbServiceStub):
+        (WebUsbServiceStub.prototype.getDevices):
+        (WebUsbServiceStub.prototype.getDevice):
+        (WebUsbServiceStub.prototype.getPermission):
+        (WebUsbServiceStub.prototype.setClient):
+        (WebUsbServiceStub.prototype.accept):
+        (WebUsbServiceStub.prototype.acceptWithResponder):
+        (validateWebUsbServiceRequest):
+        (validateWebUsbServiceResponse):
+        * web-platform-tests/resources/chromium/web_usb_service.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/webusb-child-test.js: Added.
+        (this.name.string_appeared_here.this.window.top.messageChannel.port1.onmessage.async if):
+        * web-platform-tests/resources/chromium/webusb-child-test.js.headers: Added.
+        * web-platform-tests/resources/chromium/webusb-test.js: Added.
+        (getMessagePort):
+        (stringToMojoString16):
+        (fakeDeviceInitToDeviceInfo):
+        (convertMojoDeviceFilters):
+        (convertMojoDeviceFilter):
+        (FakeDevice):
+        (FakeDevice.prototype.getConfiguration):
+        (FakeDevice.prototype.open):
+        (FakeDevice.prototype.close):
+        (FakeDevice.prototype.setConfiguration):
+        (FakeDevice.prototype.claimInterface):
+        (FakeDevice.prototype.releaseInterface):
+        (FakeDevice.prototype.setInterfaceAlternateSetting):
+        (FakeDevice.prototype.reset):
+        (FakeDevice.prototype.clearHalt):
+        (FakeDevice.prototype.async controlTransferIn):
+        (FakeDevice.prototype.async controlTransferOut):
+        (FakeDevice.prototype.genericTransferIn):
+        (FakeDevice.prototype.genericTransferOut):
+        (FakeDevice.prototype.isochronousTransferIn):
+        (FakeDevice.prototype.isochronousTransferOut):
+        (prototype.addBinding):
+        (prototype.addDevice):
+        (prototype.removeDevice):
+        (prototype.removeAllDevices):
+        (prototype.getDevices):
+        (prototype.getDevice):
+        (prototype.getPermission):
+        (prototype.setClient):
+        (USBDeviceRequestEvent):
+        (USBDeviceRequestEvent.prototype.respondWith):
+        (prototype.disconnect):
+        (prototype.async initialize):
+        (prototype.attachToContext):
+        (prototype.addFakeDevice):
+        (prototype.reset):
+        * web-platform-tests/resources/chromium/webusb-test.js.headers: Added.
+        * web-platform-tests/resources/chromium/webxr-test-math-helper.js: Added.
+        (XRMathHelper.toString):
+        (XRMathHelper.transform_by_matrix):
+        (XRMathHelper.neg):
+        (XRMathHelper.sub):
+        (XRMathHelper.add):
+        (XRMathHelper.cross):
+        (XRMathHelper.dot):
+        (XRMathHelper.mul):
+        (XRMathHelper.length):
+        (XRMathHelper.normalize):
+        (XRMathHelper.pointInFace):
+        (XRMathHelper.det2x2):
+        (XRMathHelper.det3x3):
+        (XRMathHelper.det4x4):
+        (XRMathHelper.inv2):
+        (XRMathHelper.transpose):
+        (XRMathHelper.inverse):
+        (XRMathHelper.mul4x4):
+        (XRMathHelper.decomposeRigidTransform):
+        (XRMathHelper.identity):
+        (XRMathHelper):
+        * web-platform-tests/resources/chromium/webxr-test-math-helper.js.headers: Added.
+        * web-platform-tests/resources/chromium/webxr-test.js: Added.
+        (getMatrixFromTransform):
+        (composeGFXTransform):
+        (ChromeXRTest):
+        (ChromeXRTest.prototype.simulateDeviceConnection):
+        (ChromeXRTest.prototype.disconnectAllDevices):
+        (ChromeXRTest.prototype.simulateUserActivation):
+        (ChromeXRTest.prototype.Debug):
+        (MockVRService):
+        (MockVRService.prototype.addRuntime):
+        (MockVRService.prototype.removeAllRuntimes):
+        (MockVRService.prototype.removeRuntime):
+        (MockVRService.prototype.setClient):
+        (MockVRService.prototype.requestSession):
+        (MockVRService.prototype.exitPresent):
+        (MockVRService.prototype.supportsSession):
+        (MockVRService.prototype.makeXrCompatible):
+        (prototype.get deleted):
+        (prototype.pauseTracking):
+        (prototype.resumeTracking):
+        (prototype.stopTracking):
+        (prototype.setAnchorOrigin):
+        (prototype.set id):
+        (prototype.set device):
+        (prototype.get dirty):
+        (prototype.get paused):
+        (prototype.markProcessed):
+        (prototype.getAnchorOrigin):
+        (MockRuntime):
+        (MockRuntime.prototype._convertModeToEnum):
+        (MockRuntime.prototype._convertModesToEnum):
+        (MockRuntime.prototype.disconnect):
+        (MockRuntime.prototype.setViews):
+        (MockRuntime.prototype.setViewerOrigin):
+        (MockRuntime.prototype.clearViewerOrigin):
+        (MockRuntime.prototype.simulateVisibilityChange):
+        (MockRuntime.prototype.setBoundsGeometry):
+        (MockRuntime.prototype.setFloorOrigin):
+        (MockRuntime.prototype.clearFloorOrigin):
+        (MockRuntime.prototype.onStageParametersUpdated):
+        (MockRuntime.prototype.simulateResetPose):
+        (MockRuntime.prototype.simulateInputSourceConnection):
+        (MockRuntime.prototype.setAnchorCreationCallback):
+        (MockRuntime.prototype.getNonImmersiveDisplayInfo):
+        (MockRuntime.prototype.getImmersiveDisplayInfo):
+        (MockRuntime.prototype.getEye.else.toDegrees):
+        (MockRuntime.prototype.getEye):
+        (MockRuntime.prototype.setFeatures.convertFeatureToMojom):
+        (MockRuntime.prototype.setFeatures):
+        (MockRuntime.prototype.addInputSource):
+        (MockRuntime.prototype.removeInputSource):
+        (MockRuntime.prototype.deleteAnchorController):
+        (MockRuntime.prototype._injectAdditionalFrameData):
+        (MockRuntime.prototype.getFrameData):
+        (MockRuntime.prototype.getEnvironmentIntegrationProvider):
+        (MockRuntime.prototype.closeEnvironmentIntegrationProvider):
+        (MockRuntime.prototype.closeDataProvider):
+        (MockRuntime.prototype.subscribeToHitTest):
+        (MockRuntime.prototype.subscribeToHitTestForTransientInput):
+        (MockRuntime.prototype.createAnchor):
+        (MockRuntime.prototype.createPlaneAnchor):
+        (MockRuntime.prototype.requestRuntimeSession):
+        (MockRuntime.prototype.runtimeSupportsSession):
+        (MockRuntime.prototype._nativeOriginKnown):
+        (MockRuntime.prototype._calculateAnchorInformation):
+        (MockRuntime.prototype._calculateHitTestResults):
+        (MockRuntime.prototype._transformRayToMojoSpace):
+        (MockRuntime.prototype._hitTestWorld):
+        (MockRuntime.prototype._hitTestRegion):
+        (MockRuntime.prototype._hitTestFace):
+        (MockRuntime.prototype._getMojoFromViewer):
+        (MockRuntime.prototype._getMojoFromNativeOrigin):
+        (MockXRSessionMetricsRecorder.prototype.reportFeatureUsed):
+        (MockXRSessionMetricsRecorder):
+        (MockXRInputSource):
+        (MockXRInputSource.prototype.setHandedness):
+        (MockXRInputSource.prototype.setTargetRayMode):
+        (MockXRInputSource.prototype.setProfiles):
+        (MockXRInputSource.prototype.setGripOrigin):
+        (MockXRInputSource.prototype.clearGripOrigin):
+        (MockXRInputSource.prototype.setPointerOrigin):
+        (MockXRInputSource.prototype.disconnect):
+        (MockXRInputSource.prototype.reconnect):
+        (MockXRInputSource.prototype.startSelection):
+        (MockXRInputSource.prototype.endSelection):
+        (MockXRInputSource.prototype.simulateSelect):
+        (MockXRInputSource.prototype.setSupportedButtons):
+        (MockXRInputSource.prototype.updateButtonState):
+        (MockXRInputSource.prototype.getInputSourceState):
+        (MockXRInputSource.prototype.setOverlayPointerPosition):
+        (MockXRInputSource.prototype.getEmptyGamepad):
+        (MockXRInputSource.prototype.addGamepadButton):
+        (MockXRInputSource.prototype.getButtonIndex):
+        (MockXRInputSource.prototype.getAxesStartIndex):
+        (MockXRInputSource.prototype._getMojoFromInputSource):
+        (MockXRPresentationProvider):
+        (MockXRPresentationProvider.prototype.bindProvider):
+        (MockXRPresentationProvider.prototype.getClientReceiver):
+        (MockXRPresentationProvider.prototype.submitFrameMissing):
+        (MockXRPresentationProvider.prototype.submitFrame):
+        (MockXRPresentationProvider.prototype.Close):
+        * web-platform-tests/resources/chromium/webxr-test.js.headers: Added.
+        * web-platform-tests/resources/idlharness.js:
+        (IdlArray.prototype.assert_type_is):
+        (IdlInterface):
+        (IdlInterface.prototype.should_have_interface_object):
+        (IdlInterface.prototype.get_interface_object):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.test_member_attribute):
+        (IdlInterface.prototype.test_member_operation):
+        (IdlInterface.prototype.test_member_iterable):
+        (IdlInterface.prototype.test_member_async_iterable):
+        (IdlInterface.prototype.test_member_stringifier):
+        (IdlInterface.prototype.test_members):
+        (IdlInterface.prototype.test_primary_interface_of):
+        (IdlInterface.prototype.do_interface_attribute_asserts):
+        (IdlInterfaceMember):
+        * web-platform-tests/resources/sriharness.js:
+        (const.SRIPreloadTest):
+        * web-platform-tests/resources/test-only-api.js: Added.
+        (loadScript):
+        (async loadMojoResources):
+        * web-platform-tests/resources/test-only-api.js.headers: Added.
+        * web-platform-tests/resources/test/README.md: Added.
+        * web-platform-tests/resources/test/conftest.py: Added.
+        (pytest_addoption):
+        (pytest_collect_file):
+        (pytest_configure):
+        (resolve_uri):
+        (HTMLItem):
+        (HTMLItem.__init__):
+        (HTMLItem.reportinfo):
+        (HTMLItem.repr_failure):
+        (HTMLItem.runtest):
+        (HTMLItem._run_unit_test):
+        (HTMLItem._run_functional_test):
+        (HTMLItem._run_functional_test_variant):
+        (HTMLItem._summarize):
+        (HTMLItem._assert_sequence):
+        (HTMLItem._scrub_stack):
+        (HTMLItem._expand_status):
+        (HTMLItem._summarize_test):
+        (HTMLItem._summarize_status):
+        * web-platform-tests/resources/test/harness.html: Added.
+        * web-platform-tests/resources/test/idl-helper.js: Added.
+        (interfaceFrom):
+        (memberFrom):
+        (typeFrom):
+        * web-platform-tests/resources/test/nested-testharness.js: Added.
+        (makeTest.return.new.Promise):
+        (makeTest):
+        * web-platform-tests/resources/test/tests/functional/add_cleanup.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_bad_return.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_rejection.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_rejection_after_load.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_timeout.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_bad_return.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_count.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_err.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_err_multi.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_sync_queue.html: Added.
+        * web-platform-tests/resources/test/tests/functional/api-tests-1.html: Added.
+        * web-platform-tests/resources/test/tests/functional/api-tests-2.html: Added.
+        * web-platform-tests/resources/test/tests/functional/api-tests-3.html: Added.
+        * web-platform-tests/resources/test/tests/functional/assert-array-equals.html: Added.
+        * web-platform-tests/resources/test/tests/functional/force_timeout.html: Added.
+        * web-platform-tests/resources/test/tests/functional/generate-callback.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlDictionary/test_partial_interface_of.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlDictionary/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_immutable_prototype.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_interface_mixin.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_partial_interface_of.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_primary_interface_of.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_to_json_operation.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/test_attribute.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/test_operation.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/test_partial_namespace.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-callback.html: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-consolidate-errors.html: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-consolidate-tests.html: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-msg.html: Added.
+        * web-platform-tests/resources/test/tests/functional/log-insertion.html: Added.
+        * web-platform-tests/resources/test/tests/functional/order.html: Added.
+        * web-platform-tests/resources/test/tests/functional/promise-async.html: Added.
+        * web-platform-tests/resources/test/tests/functional/promise-with-sync.html: Added.
+        * web-platform-tests/resources/test/tests/functional/promise.html: Added.
+        * web-platform-tests/resources/test/tests/functional/queue.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-fail.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-no-assertions.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-no-body.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-pass.html: Added.
+        * web-platform-tests/resources/test/tests/functional/step_wait.html: Added.
+        * web-platform-tests/resources/test/tests/functional/step_wait_func.html: Added.
+        * web-platform-tests/resources/test/tests/functional/task-scheduling-promise-test.html: Added.
+        * web-platform-tests/resources/test/tests/functional/task-scheduling-test.html: Added.
+        * web-platform-tests/resources/test/tests/functional/uncaught-exception-handle.html: Added.
+        * web-platform-tests/resources/test/tests/functional/uncaught-exception-ignore.html: Added.
+        * web-platform-tests/resources/test/tests/functional/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-dedicated-uncaught-allow.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-dedicated-uncaught-single.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-dedicated.sub.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-error.js: Added.
+        (test):
+        * web-platform-tests/resources/test/tests/functional/worker-service.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-shared.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-uncaught-allow.js: Added.
+        (async_test.onerror):
+        (async_test):
+        * web-platform-tests/resources/test/tests/functional/worker-uncaught-single.js: Added.
+        * web-platform-tests/resources/test/tests/functional/worker.js: Added.
+        (test):
+        (async_test):
+        * web-platform-tests/resources/test/tests/unit/IdlArray/is_json_type.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlArray/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlDictionary/get_inheritance_stack.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlDictionary/test_partial_dictionary.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlDictionary/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/constructors.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/default_to_json_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/do_member_unscopable_asserts.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_inheritance_stack.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_interface_object.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_interface_object_owner.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_legacy_namespace.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_qualified_name.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/has_default_to_json_regular_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/has_to_json_regular_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/should_have_interface_object.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/test_primary_interface_of_undefined.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/traverse_inherited_and_consequential_interfaces.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterfaceMember/is_to_json_regular_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterfaceMember/toString.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterfaceMember/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/unit/assert_implements.html: Added.
+        * web-platform-tests/resources/test/tests/unit/assert_implements_optional.html: Added.
+        * web-platform-tests/resources/test/tests/unit/assert_object_equals.html: Added.
+        * web-platform-tests/resources/test/tests/unit/basic.html: Added.
+        * web-platform-tests/resources/test/tests/unit/exceptional-cases-timeouts.html: Added.
+        * web-platform-tests/resources/test/tests/unit/exceptional-cases.html: Added.
+        * web-platform-tests/resources/test/tests/unit/format-value.html: Added.
+        * web-platform-tests/resources/test/tests/unit/helpers.js: Added.
+        (test_failure):
+        * web-platform-tests/resources/test/tests/unit/late-test.html: Added.
+        * web-platform-tests/resources/test/tests/unit/promise_setup-timeout.html: Added.
+        * web-platform-tests/resources/test/tests/unit/promise_setup.html: Added.
+        * web-platform-tests/resources/test/tests/unit/single_test.html: Added.
+        * web-platform-tests/resources/test/tests/unit/test-return-restrictions.html: Added.
+        * web-platform-tests/resources/test/tests/unit/throwing-assertions.html: Added.
+        * web-platform-tests/resources/test/tests/unit/unpaired-surrogates.html: Added.
+        * web-platform-tests/resources/test/tests/unit/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tox.ini: Added.
+        * web-platform-tests/resources/test/variants.js: Added.
+        (variants.string_appeared_here.apply):
+        (Object.hasOwnProperty.call):
+        (typeof.test.string_appeared_here.test):
+        (onReady):
+        * web-platform-tests/resources/test/w3c-import.log: Added.
+        * web-platform-tests/resources/test/wptserver.py: Added.
+        (WPTServer):
+        (WPTServer.__init__):
+        (WPTServer.start):
+        (WPTServer.stop):
+        (WPTServer.url):
+        * web-platform-tests/resources/testdriver-actions.js:
+        * web-platform-tests/resources/testdriver-vendor.js:
+        * web-platform-tests/resources/testdriver.js:
+        * web-platform-tests/resources/testharness.js:
+        * web-platform-tests/resources/testharnessreport.js: Added.
+        (dump_test_results):
+        (catch):
+        * web-platform-tests/resources/w3c-import.log:
+        * web-platform-tests/resources/webidl2/lib/webidl2.js:
+
+2020-07-18  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html.
 
         Needed after WPT resync in r251714.

@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/.htaccess
-/LayoutTests/imported/w3c/web-platform-tests/resources/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/resources/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/resources/SVGAnimationTestCase-testharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/check-layout-th.js
@@ -23,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/readme.md
 /LayoutTests/imported/w3c/web-platform-tests/resources/sriharness.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/test-only-api.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/test-only-api.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/testdriver-actions.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/testdriver-vendor.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/testdriver-vendor.js.headers

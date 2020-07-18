@@ -350,8 +350,8 @@ PASS SVGAnimatedRect interface: attribute baseVal
 PASS SVGAnimatedRect interface: attribute animVal 
 PASS SVGAnimatedRect must be primary interface of objects.svg.viewBox 
 PASS Stringification of objects.svg.viewBox 
-FAIL SVGAnimatedRect interface: objects.svg.viewBox must inherit property "baseVal" with the proper type Unrecognized type DOMRect
-FAIL SVGAnimatedRect interface: objects.svg.viewBox must inherit property "animVal" with the proper type Unrecognized type DOMRectReadOnly
+FAIL SVGAnimatedRect interface: objects.svg.viewBox must inherit property "baseVal" with the proper type assert_true: wrong type: not a DOMRect expected true got false
+FAIL SVGAnimatedRect interface: objects.svg.viewBox must inherit property "animVal" with the proper type assert_true: wrong type: not a DOMRectReadOnly expected true got false
 PASS SVGAnimatedNumberList interface: existence and properties of interface object 
 PASS SVGAnimatedNumberList interface object length 
 PASS SVGAnimatedNumberList interface object name 
@@ -427,7 +427,7 @@ PASS SVGSVGElement interface: objects.svg must inherit property "y" with the pro
 PASS SVGSVGElement interface: objects.svg must inherit property "width" with the proper type 
 PASS SVGSVGElement interface: objects.svg must inherit property "height" with the proper type 
 PASS SVGSVGElement interface: objects.svg must inherit property "currentScale" with the proper type 
-FAIL SVGSVGElement interface: objects.svg must inherit property "currentTranslate" with the proper type Unrecognized type DOMPointReadOnly
+FAIL SVGSVGElement interface: objects.svg must inherit property "currentTranslate" with the proper type assert_true: wrong type: not a DOMPointReadOnly expected true got false
 PASS SVGSVGElement interface: objects.svg must inherit property "getIntersectionList(DOMRectReadOnly, SVGElement?)" with the proper type 
 PASS SVGSVGElement interface: calling getIntersectionList(DOMRectReadOnly, SVGElement?) on objects.svg with too few arguments must throw TypeError 
 PASS SVGSVGElement interface: objects.svg must inherit property "getEnclosureList(DOMRectReadOnly, SVGElement?)" with the proper type 
@@ -700,7 +700,7 @@ PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit prope
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "SVG_TRANSFORM_SKEWX" with the proper type 
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "SVG_TRANSFORM_SKEWY" with the proper type 
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "type" with the proper type 
-FAIL SVGTransform interface: objects.svg.createSVGTransform() must inherit property "matrix" with the proper type Unrecognized type DOMMatrix
+FAIL SVGTransform interface: objects.svg.createSVGTransform() must inherit property "matrix" with the proper type assert_true: wrong type: not a DOMMatrix expected true got false
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "angle" with the proper type 
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "setMatrix(optional DOMMatrix2DInit)" with the proper type 
 PASS SVGTransform interface: calling setMatrix(optional DOMMatrix2DInit) on objects.svg.createSVGTransform() with too few arguments must throw TypeError 

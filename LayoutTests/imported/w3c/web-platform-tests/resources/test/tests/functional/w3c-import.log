@@ -1,0 +1,62 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async_bad_return.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async_rejection.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async_rejection_after_load.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async_timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_bad_return.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_count.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_err.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_err_multi.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_sync_queue.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/api-tests-1.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/api-tests-2.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/api-tests-3.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/assert-array-equals.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/force_timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/generate-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-consolidate-errors.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-consolidate-tests.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-msg.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/log-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/order.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise-async.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise-with-sync.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/promise.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/queue.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-fail.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-no-assertions.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-no-body.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/single-page-test-pass.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/step_wait.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/step_wait_func.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/task-scheduling-promise-test.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/task-scheduling-test.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/uncaught-exception-handle.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/uncaught-exception-ignore.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-dedicated-uncaught-allow.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-dedicated-uncaught-single.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-dedicated.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-error.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-service.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-shared.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-uncaught-allow.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker-uncaught-single.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/worker.js

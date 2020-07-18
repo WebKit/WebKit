@@ -24,7 +24,6 @@ promise_test(async () => {
     const idlArray = new IdlArray();
     const idlText = await fetch(idlURL).then(r => r.text());
 
-    idlArray.add_untested_idls("interface ArrayBuffer {};");
     idlArray.add_untested_idls("dictionary CredentialCreationOptions {};");
     idlArray.add_untested_idls("dictionary CredentialRequestOptions {};");
 

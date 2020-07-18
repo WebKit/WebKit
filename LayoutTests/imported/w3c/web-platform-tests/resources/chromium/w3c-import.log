@@ -1,0 +1,63 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/README.md
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/big_buffer.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/big_buffer.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/contacts_manager_mock.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device_enumeration_options.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device_enumeration_options.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device_manager_client.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device_manager_client.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/enable-hyperlink-auditing.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/generic_sensor_mocks.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/generic_sensor_mocks.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/image_capture-mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/image_capture.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-barcodedetection.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-barcodedetection.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-facedetection.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-facedetection.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-imagecapture.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-screenenumeration.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-screenenumeration.js.header
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-sms-receiver.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-textdetection.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mock-textdetection.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mojo_bindings.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mojo_bindings.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mojo_web_test_helper_test.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/mojo_web_test_helper_test.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/nfc-mock.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/sensor.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/sensor_provider.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/string16.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/string16.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/url.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/web-bluetooth-test.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/web-bluetooth-test.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/web_usb_service.mojom.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/web_usb_service.mojom.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webusb-child-test.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webusb-child-test.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webusb-test.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webusb-test.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webxr-test-math-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webxr-test-math-helper.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webxr-test.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/chromium/webxr-test.js.headers

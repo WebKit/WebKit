@@ -649,12 +649,6 @@ policies and contribution forms [3].
         return new Promise(promise.then.bind(promise));
     }
 
-    function promise_rejects(test, expected, promise, description) {
-         return promise.then(test.unreached_func("Should have rejected: " + description)).catch(function(e) {
-             assert_throws(expected, function() { throw e }, description);
-         });
-    }
-
     function promise_rejects_js(test, constructor, promise, description) {
         return bring_promise_to_current_realm(promise)
             .then(test.unreached_func("Should have rejected: " + description))
@@ -947,7 +941,6 @@ policies and contribution forms [3].
     expose(test, 'test');
     expose(async_test, 'async_test');
     expose(promise_test, 'promise_test');
-    expose(promise_rejects, 'promise_rejects');
     expose(promise_rejects_js, 'promise_rejects_js');
     expose(promise_rejects_dom, 'promise_rejects_dom');
     expose(promise_rejects_exactly, 'promise_rejects_exactly');
@@ -1521,156 +1514,6 @@ policies and contribution forms [3].
     expose(assert_readonly, "assert_readonly");
 
     /**
-     * Assert an Exception with the expected code is thrown.
-     *
-     * @param {object|number|string} code The expected exception code.
-     * @param {Function} func Function which should throw.
-     * @param {string} description Error description for the case that the error is not thrown.
-     */
-    function assert_throws(code, func, description)
-    {
-        try {
-            func.call(this);
-            assert(false, "assert_throws", description,
-                   "${func} did not throw", {func:func});
-        } catch (e) {
-            if (e instanceof AssertionError) {
-                throw e;
-            }
-
-            assert(typeof e === "object",
-                   "assert_throws", description,
-                   "${func} threw ${e} with type ${type}, not an object",
-                   {func:func, e:e, type:typeof e});
-
-            assert(e !== null,
-                   "assert_throws", description,
-                   "${func} threw null, not an object",
-                   {func:func});
-
-            if (code === null) {
-                throw new AssertionError('Test bug: need to pass exception to assert_throws()');
-            }
-            if (typeof code === "object") {
-                assert("name" in e && e.name == code.name,
-                       "assert_throws", description,
-                       "${func} threw ${actual} (${actual_name}) expected ${expected} (${expected_name})",
-                                    {func:func, actual:e, actual_name:e.name,
-                                     expected:code,
-                                     expected_name:code.name});
-                return;
-            }
-
-            var code_name_map = {
-                INDEX_SIZE_ERR: 'IndexSizeError',
-                HIERARCHY_REQUEST_ERR: 'HierarchyRequestError',
-                WRONG_DOCUMENT_ERR: 'WrongDocumentError',
-                INVALID_CHARACTER_ERR: 'InvalidCharacterError',
-                NO_MODIFICATION_ALLOWED_ERR: 'NoModificationAllowedError',
-                NOT_FOUND_ERR: 'NotFoundError',
-                NOT_SUPPORTED_ERR: 'NotSupportedError',
-                INUSE_ATTRIBUTE_ERR: 'InUseAttributeError',
-                INVALID_STATE_ERR: 'InvalidStateError',
-                SYNTAX_ERR: 'SyntaxError',
-                INVALID_MODIFICATION_ERR: 'InvalidModificationError',
-                NAMESPACE_ERR: 'NamespaceError',
-                INVALID_ACCESS_ERR: 'InvalidAccessError',
-                TYPE_MISMATCH_ERR: 'TypeMismatchError',
-                SECURITY_ERR: 'SecurityError',
-                NETWORK_ERR: 'NetworkError',
-                ABORT_ERR: 'AbortError',
-                URL_MISMATCH_ERR: 'URLMismatchError',
-                QUOTA_EXCEEDED_ERR: 'QuotaExceededError',
-                TIMEOUT_ERR: 'TimeoutError',
-                INVALID_NODE_TYPE_ERR: 'InvalidNodeTypeError',
-                DATA_CLONE_ERR: 'DataCloneError'
-            };
-
-            var name = code in code_name_map ? code_name_map[code] : code;
-
-            var name_code_map = {
-                IndexSizeError: 1,
-                HierarchyRequestError: 3,
-                WrongDocumentError: 4,
-                InvalidCharacterError: 5,
-                NoModificationAllowedError: 7,
-                NotFoundError: 8,
-                NotSupportedError: 9,
-                InUseAttributeError: 10,
-                InvalidStateError: 11,
-                SyntaxError: 12,
-                InvalidModificationError: 13,
-                NamespaceError: 14,
-                InvalidAccessError: 15,
-                TypeMismatchError: 17,
-                SecurityError: 18,
-                NetworkError: 19,
-                AbortError: 20,
-                URLMismatchError: 21,
-                QuotaExceededError: 22,
-                TimeoutError: 23,
-                InvalidNodeTypeError: 24,
-                DataCloneError: 25,
-
-                EncodingError: 0,
-                NotReadableError: 0,
-                UnknownError: 0,
-                ConstraintError: 0,
-                DataError: 0,
-                TransactionInactiveError: 0,
-                ReadOnlyError: 0,
-                VersionError: 0,
-                OperationError: 0,
-                NotAllowedError: 0
-            };
-
-            var code_name_map = {};
-            for (var key in name_code_map) {
-                if (name_code_map[key] > 0) {
-                    code_name_map[name_code_map[key]] = key;
-                }
-            }
-
-            var required_props = { code: code };
-
-            if (typeof code === "number") {
-                if (code === 0) {
-                    throw new AssertionError('Test bug: ambiguous DOMException code 0 passed to assert_throws()');
-                } else if (!(code in code_name_map)) {
-                    throw new AssertionError('Test bug: unrecognized DOMException code "' + code + '" passed to assert_throws()');
-                }
-                name = code_name_map[code];
-            } else if (typeof code === "string") {
-                if (!(name in name_code_map)) {
-                    throw new AssertionError('Test bug: unrecognized DOMException code "' + code + '" passed to assert_throws()');
-                }
-                required_props.code = name_code_map[name];
-            }
-
-            if (required_props.code === 0 ||
-               ("name" in e &&
-                e.name !== e.name.toUpperCase() &&
-                e.name !== "DOMException")) {
-                // New style exception: also test the name property.
-                required_props.name = name;
-            }
-
-            //We'd like to test that e instanceof the appropriate interface,
-            //but we can't, because we don't know what window it was created
-            //in.  It might be an instanceof the appropriate interface on some
-            //unknown other window.  TODO: Work around this somehow?
-
-            for (var prop in required_props) {
-                assert(prop in e && e[prop] == required_props[prop],
-                       "assert_throws", description,
-                       "${func} threw ${e} that is not a DOMException " + code + ": property ${prop} is equal to ${actual}, expected ${expected}",
-                       {func:func, e:e, prop:prop, actual:e[prop], expected:required_props[prop]});
-            }
-        }
-    }
-    expose(assert_throws, "assert_throws");
-
-    /**
      * Assert a JS Error with the expected constructor is thrown.
      *
      * @param {object} constructor The expected exception constructor.
@@ -2192,6 +2035,105 @@ policies and contribution forms [3].
         return setTimeout(this.step_func(function() {
             return f.apply(test_this, args);
         }), timeout * tests.timeout_multiplier);
+    };
+
+    Test.prototype.step_wait_func = function(cond, func, description,
+                                             timeout=3000, interval=100) {
+        /**
+         * Poll for a function to return true, and call a callback
+         * function once it does, or assert if a timeout is
+         * reached. This is preferred over a simple step_timeout
+         * whenever possible since it allows the timeout to be longer
+         * to reduce intermittents without compromising test execution
+         * speed when the condition is quickly met.
+         *
+         * @param {Function} cond A function taking no arguments and
+         *                        returning a boolean. The callback is called
+         *                        when this function returns true.
+         * @param {Function} func A function taking no arguments to call once
+         *                        the condition is met.
+         * @param {string} description Error message to add to assert in case of
+         *                             failure.
+         * @param {number} timeout Timeout in ms. This is multiplied by the global
+         *                         timeout_multiplier
+         * @param {number} interval Polling interval in ms
+         *
+         **/
+
+        var timeout_full = timeout * tests.timeout_multiplier;
+        var remaining = Math.ceil(timeout_full / interval);
+        var test_this = this;
+
+        var wait_for_inner = test_this.step_func(() => {
+            if (cond()) {
+                func();
+            } else {
+                if(remaining === 0) {
+                    assert(false, "wait_for", description,
+                           "Timed out waiting on condition");
+                }
+                remaining--;
+                setTimeout(wait_for_inner, interval);
+            }
+        });
+
+        wait_for_inner();
+    };
+
+    Test.prototype.step_wait_func_done = function(cond, func, description,
+                                                  timeout=3000, interval=100) {
+        /**
+         * Poll for a function to return true, and invoke a callback
+         * followed this.done() once it does, or assert if a timeout
+         * is reached. This is preferred over a simple step_timeout
+         * whenever possible since it allows the timeout to be longer
+         * to reduce intermittents without compromising test execution speed
+         * when the condition is quickly met.
+         *
+         * @param {Function} cond A function taking no arguments and
+         *                        returning a boolean. The callback is called
+         *                        when this function returns true.
+         * @param {Function} func A function taking no arguments to call once
+         *                        the condition is met.
+         * @param {string} description Error message to add to assert in case of
+         *                             failure.
+         * @param {number} timeout Timeout in ms. This is multiplied by the global
+         *                         timeout_multiplier
+         * @param {number} interval Polling interval in ms
+         *
+         **/
+
+         this.step_wait_func(cond, () => {
+            if (func) {
+                func();
+            }
+            this.done();
+         }, description, timeout, interval);
+    }
+
+    Test.prototype.step_wait = function(cond, description, timeout=3000, interval=100) {
+        /**
+         * Poll for a function to return true, and resolve a promise
+         * once it does, or assert if a timeout is reached. This is
+         * preferred over a simple step_timeout whenever possible
+         * since it allows the timeout to be longer to reduce
+         * intermittents without compromising test execution speed
+         * when the condition is quickly met.
+         *
+         * @param {Function} cond A function taking no arguments and
+         *                        returning a boolean.
+         * @param {string} description Error message to add to assert in case of
+         *                             failure.
+         * @param {number} timeout Timeout in ms. This is multiplied by the global
+         *                         timeout_multiplier
+         * @param {number} interval Polling interval in ms
+         * @returns {Promise} Promise resolved once cond is met.
+         *
+         **/
+
+        return new Promise(resolve => {
+            this.step_wait_func(cond, resolve, description, timeout, interval);
+        });
     }
 
     /*
@@ -2667,6 +2609,7 @@ policies and contribution forms [3].
         this.test_done_callbacks = [];
         this.all_done_callbacks = [];
 
+        this.hide_test_state = false;
         this.pending_remotes = [];
 
         this.status = new TestsStatus();
@@ -2714,6 +2657,8 @@ policies and contribution forms [3].
                     if (this.timeout_length) {
                          this.timeout_length *= this.timeout_multiplier;
                     }
+                } else if (p == "hide_test_state") {
+                    this.hide_test_state = value;
                 }
             }
         }
@@ -3220,7 +3165,7 @@ policies and contribution forms [3].
             this.phase = this.HAVE_RESULTS;
         }
         var done_count = tests.tests.length - tests.num_pending;
-        if (this.output_node) {
+        if (this.output_node && !tests.hide_test_state) {
             if (done_count < 100 ||
                 (done_count < 1000 && done_count % 100 === 0) ||
                 done_count % 1000 === 0) {
