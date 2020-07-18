@@ -1177,6 +1177,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface UIContextMenuInteraction ()
 @property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;
+- (void)dismissMenu;
 @end
 
 #endif // USE(UICONTEXTMENU)

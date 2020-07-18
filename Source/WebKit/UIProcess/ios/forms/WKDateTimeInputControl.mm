@@ -36,6 +36,7 @@
 #import <UIKit/UIBarButtonItem.h>
 #import <UIKit/UIDatePicker.h>
 #import <WebCore/LocalizedStrings.h>
+#import <algorithm>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -76,15 +77,17 @@ using namespace WebKit;
 - (CGSize)preferredContentSize
 {
     // FIXME: Workaround, should be able to be readdressed after <rdar://problem/64143534>
-    UIView *view = self.view;
+    UIView *view = self.view.subviews[0];
     if (UIEdgeInsetsEqualToEdgeInsets(view.layoutMargins, UIEdgeInsetsZero)) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [view layoutIfNeeded];
         view.translatesAutoresizingMaskIntoConstraints = YES;
         view.layoutMargins = UIEdgeInsetsMake(16, 16, 16, 16);
     }
-
-    return [view systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    auto size = [view systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    
+    size.width = std::max(size.width, 250.0);
+    return size;
 }
 
 @end
@@ -168,15 +171,30 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         [_viewController setView:nil];
         _viewController = adoptNS([[WKDateTimeContextMenuViewController alloc] init]);
         RetainPtr<UINavigationController> navigationController = adoptNS([[UINavigationController alloc] initWithRootViewController:_viewController.get()]);
+        
         NSString *resetString = WEB_UI_STRING_KEY("Reset", "Reset Button Date/Time Context Menu", "Reset button in date input context menu");
+        NSString *okString = WEB_UI_STRING_KEY("OK", "OK (OK button title in date/time picker)", "Title of the OK button in date/time form controls.");
 
+        RetainPtr<UIBarButtonItem> okBarButton = adoptNS([[UIBarButtonItem alloc] initWithTitle:okString style:UIBarButtonItemStyleDone target:self action:@selector(ok:)]);
         RetainPtr<UIBarButtonItem> blankBarButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]);
         RetainPtr<UIBarButtonItem> resetBarButton = adoptNS([[UIBarButtonItem alloc] initWithTitle:resetString style:UIBarButtonItemStylePlain target:self action:@selector(reset:)]);
         
-        [_viewController setToolbarItems:@[blankBarButton.get(), resetBarButton.get()]];
+        [_viewController setToolbarItems:@[resetBarButton.get(), blankBarButton.get(), okBarButton.get()]];
         [navigationController setToolbarHidden:NO];
+        
+        auto centeringView = adoptNS([[UIView alloc] init]);
+        
+        [centeringView addSubview:_datePicker.get()];
+        
+        _datePicker.get().translatesAutoresizingMaskIntoConstraints = NO;
+        auto widthConstraint = [[centeringView widthAnchor] constraintGreaterThanOrEqualToAnchor:[_datePicker widthAnchor]];
+        auto heightConstraint = [[centeringView heightAnchor] constraintEqualToAnchor:[_datePicker heightAnchor]];
+        auto horizontalConstraint = [[centeringView centerXAnchor] constraintEqualToAnchor:[_datePicker centerXAnchor]];
+        auto verticalConstraint = [[centeringView centerYAnchor] constraintEqualToAnchor:[_datePicker centerYAnchor]];
 
-        [_viewController setView:_datePicker.get()];
+        [NSLayoutConstraint activateConstraints:@[verticalConstraint, horizontalConstraint, widthConstraint, heightConstraint]];
+
+        [_viewController setView:centeringView.get()];
 
         NSString *titleText = _view.inputLabelText;
         if (![titleText isEqual:@""]) {
@@ -190,10 +208,10 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         } else
             [navigationController setNavigationBarHidden:YES animated:NO];
         
-        [navigationController navigationBar].backgroundColor = UIColor.clearColor;
         [navigationController navigationBar].translucent = NO;
-        [navigationController toolbar].backgroundColor = UIColor.clearColor;
+        [navigationController navigationBar].barTintColor = [UIColor systemBackgroundColor];
         [navigationController toolbar].translucent = NO;
+        [navigationController toolbar].barTintColor = [UIColor systemBackgroundColor];
         return navigationController.get();
     } actionProvider:nil];
 }
@@ -202,7 +220,8 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKDateTimePicker>(self)] {
         auto strongSelf = weakSelf.get();
-        [strongSelf->_view.webView _didShowContextMenu];
+        if (strongSelf)
+            [strongSelf->_view.webView _didShowContextMenu];
     }];
 }
 
@@ -210,8 +229,10 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKDateTimePicker>(self)] {
         auto strongSelf = weakSelf.get();
-        [strongSelf->_view accessoryDone];
-        [strongSelf->_view.webView _didDismissContextMenu];
+        if (strongSelf) {
+            [strongSelf->_view accessoryDone];
+            [strongSelf->_view.webView _didDismissContextMenu];
+        }
     }];
 }
 
@@ -247,6 +268,13 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     [self setDateTimePickerToInitialValue];
     [_view page]->setFocusedElementValue(String());
+}
+
+- (void)ok:(id)sender
+{
+#if USE(UICONTEXTMENU)
+    [_dateTimeContextMenuInteraction dismissMenu];
+#endif
 }
 
 - (NSString *)calendarType

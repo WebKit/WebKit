@@ -1,3 +1,22 @@
+2020-07-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Add OK button to Date/Time form controls.
+        https://bugs.webkit.org/show_bug.cgi?id=214195
+        <rdar://problem/65006000>
+
+        Reviewed by Darin Adler.
+
+        Add 'OK' button to add clarity to UI, and increase the default size of the control to
+        ensure space for both buttons. Also fixed a crash that happened when closing the control before
+        the animation completed.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimeContextMenuViewController preferredContentSize]):
+        (-[WKDateTimePicker contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKDateTimePicker contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+        (-[WKDateTimePicker contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKDateTimePicker ok:]):
+
 2020-07-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] fast/events/context-activated-by-key-event.html is crashing
