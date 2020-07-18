@@ -40,9 +40,9 @@ struct CompositionHighlight {
     }
 
 #if PLATFORM(IOS_FAMILY)
-    static constexpr auto defaultCompositionFillColor = makeSimpleColor(175, 192, 227, 60);
+    static constexpr auto defaultCompositionFillColor = SRGBA<uint8_t> { 175, 192, 227, 60 };
 #else
-    static constexpr auto defaultCompositionFillColor = makeSimpleColor(225, 221, 85);
+    static constexpr auto defaultCompositionFillColor = SRGBA<uint8_t> { 225, 221, 85 };
 #endif
 
     unsigned startOffset { 0 };

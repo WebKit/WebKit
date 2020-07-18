@@ -3161,7 +3161,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
         return 0;
     };
 
-    constexpr auto fillColor = makeSimpleColor(0, 0, 0, 128);
+    constexpr auto fillColor = Color::black.colorWithAlpha(128);
 
     static const PatternDescription patternDescriptions[] = {
         { "auto"_s, { }, fillColor },
@@ -3183,7 +3183,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
-    constexpr auto fillColor = makeSimpleColor(0, 128, 0, 128);
+    constexpr auto fillColor = Color::darkGreen.colorWithAlpha(128);
 
     auto patternAndPhase = [&]() -> PatternDescription {
         switch (type) {
@@ -3220,7 +3220,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // Paint rects for touch action.
     if (visibleDebugOverlayRegions & TouchActionRegion) {
-        constexpr auto regionColor = makeSimpleColor(0, 0, 255, 50);
+        constexpr auto regionColor = Color::blue.colorWithAlpha(50);
         context.setFillColor(regionColor);
         for (auto rect : eventRegion.region().rects())
             context.fillRect(rect);
@@ -3265,7 +3265,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #if ENABLE(EDITABLE_REGION)
     // Paint rects for editable elements.
     if (visibleDebugOverlayRegions & EditableElementRegion) {
-        context.setFillColor(makeSimpleColor(128, 0, 128, 50));
+        context.setFillColor(SRGBA<uint8_t> { 128, 0, 128, 50 });
         for (auto rect : eventRegion.rectsForEditableElements())
             context.fillRect(rect);
     }

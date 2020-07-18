@@ -82,7 +82,7 @@ public:
 
 private:
     explicit MouseWheelRegionOverlay(Page& page)
-        : RegionOverlay(page, makeSimpleColor(128, 0, 0, 102))
+        : RegionOverlay(page, SRGBA<uint8_t> { 128, 0, 0, 102 })
     {
     }
 
@@ -118,7 +118,7 @@ public:
 
 private:
     explicit NonFastScrollableRegionOverlay(Page& page)
-        : RegionOverlay(page, makeSimpleColor(255, 128, 0, 102))
+        : RegionOverlay(page, Color::orange.colorWithAlpha(102))
     {
     }
 
@@ -147,26 +147,16 @@ bool NonFastScrollableRegionOverlay::updateRegion()
 static const HashMap<String, SRGBA<uint8_t>>& touchEventRegionColors()
 {
     static const auto regionColors = makeNeverDestroyed([] {
-        struct MapEntry {
-            ASCIILiteral name;
-            uint8_t r;
-            uint8_t g;
-            uint8_t b;
-        };
-        static const MapEntry entries[] = {
-            { "touchstart"_s, 191, 191, 63 },
-            { "touchmove"_s, 80, 204, 245 },
-            { "touchend"_s, 191, 63, 127 },
-            { "touchforcechange"_s, 63, 63, 191 },
-            { "wheel"_s, 255, 128, 0 },
-            { "mousedown"_s, 80, 245, 80 },
-            { "mousemove"_s, 245, 245, 80 },
-            { "mouseup"_s, 80, 245, 176 },
-        };
-        HashMap<String, SRGBA<uint8_t>> map;
-        for (auto& entry : entries)
-            map.add(entry.name, makeSimpleColor(entry.r, entry.g, entry.b, 50));
-        return map;
+        return HashMap<String, SRGBA<uint8_t>> { {
+            { "touchstart"_s, { 191, 191, 63, 50 } },
+            { "touchmove"_s, { 80, 204, 245, 50 } },
+            { "touchend"_s, { 191, 63, 127, 50 } },
+            { "touchforcechange"_s, { 63, 63, 191, 50 } },
+            { "wheel"_s, { 255, 128, 0, 50 } },
+            { "mousedown"_s, { 80, 245, 80, 50 } },
+            { "mousemove"_s, { 245, 245, 80, 50 } },
+            { "mouseup"_s, { 80, 245, 176, 50 } }
+        } };
     }());
     return regionColors;
 }
@@ -246,7 +236,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
 #endif
 
     for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
-        auto regionColor = makeSimpleColor(0, 0, 0, 64);
+        auto regionColor = Color::black.colorWithAlpha(64).color();
         auto it = touchEventRegionColors().find(synchronousEventRegion.key);
         if (it != touchEventRegionColors().end())
             regionColor = it->value;

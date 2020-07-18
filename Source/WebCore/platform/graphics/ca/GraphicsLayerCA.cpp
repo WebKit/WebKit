@@ -1590,8 +1590,8 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
     // they start to obscure useful information.
     if ((!m_transform.isIdentity() || tiledBacking()) && !m_visibleTileWashLayer) {
-        constexpr auto washFillColor = makeSimpleColor(255, 0, 0, 50);
-        constexpr auto washBorderColor = makeSimpleColor(255, 0, 0, 100);
+        constexpr auto washFillColor = Color::red.colorWithAlpha(50);
+        constexpr auto washBorderColor = Color::red.colorWithAlpha(100);
         
         m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
         String name = makeString("Visible Tile Wash Layer 0x", hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase));
@@ -2548,13 +2548,13 @@ static void setLayerDebugBorder(PlatformCALayer& layer, Color borderColor, float
 static const float contentsLayerBorderWidth = 4;
 static Color contentsLayerDebugBorderColor(bool showingBorders)
 {
-    return showingBorders ? makeSimpleColor(0, 0, 128, 180) : Color { };
+    return showingBorders ? SRGBA<uint8_t> { 0, 0, 128, 180 } : Color { };
 }
 
 static const float cloneLayerBorderWidth = 2;
 static Color cloneLayerDebugBorderColor(bool showingBorders)
 {
-    return showingBorders ? makeSimpleColor(255, 122, 251) : Color { };
+    return showingBorders ? SRGBA<uint8_t> { 255, 122, 251 } : Color { };
 }
 
 void GraphicsLayerCA::updateDebugIndicators()
@@ -3791,7 +3791,7 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
 {
     if (isPageTiledBackingLayer()) {
-        color = makeSimpleColor(0, 0, 128, 128); // tile cache layer: dark blue
+        color = SRGBA<uint8_t> { 0, 0, 128, 128 }; // tile cache layer: dark blue
 #if OS(WINDOWS)
         width = 1.0;
 #else

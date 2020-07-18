@@ -589,7 +589,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
     if (!args.atEnd())
         return Color();
 
-    return makeSimpleColor(colorArray[0], colorArray[1], colorArray[2], alphaComponent);
+    return SRGBA<uint8_t> { colorArray[0], colorArray[1], colorArray[2], alphaComponent };
 }
 
 static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)

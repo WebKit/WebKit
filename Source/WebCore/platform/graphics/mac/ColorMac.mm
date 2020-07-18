@@ -49,7 +49,7 @@ static bool useOldAquaFocusRingColor;
 
 Color oldAquaFocusRingColor()
 {
-    return makeSimpleColor(125, 173, 217);
+    return SRGBA<uint8_t> { 125, 173, 217 };
 }
 
 void setUsesTestModeFocusRingColor(bool newValue)
@@ -92,7 +92,7 @@ static Optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
         NSUInteger pixel[4];
         [offscreenRep getPixel:pixel atX:0 y:0];
 
-        return makeSimpleColor(pixel[0], pixel[1], pixel[2], pixel[3]);
+        return clampToComponentBytes<SRGBA>(pixel[0], pixel[1], pixel[2], pixel[3]);
     }
 
     [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];

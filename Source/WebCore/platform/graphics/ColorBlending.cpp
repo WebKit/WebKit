@@ -48,7 +48,7 @@ Color blendSourceOver(const Color& backdrop, const Color& source)
     int g = (backdropG * backdropA * (0xFF - sourceA) + 0xFF * sourceA * sourceG) / d;
     int b = (backdropB * backdropA * (0xFF - sourceA) + 0xFF * sourceA * sourceB) / d;
 
-    return makeSimpleColor(r, g, b, a);
+    return clampToComponentBytes<SRGBA>(r, g, b, a);
 }
 
 Color blendWithWhite(const Color& color)
@@ -78,7 +78,7 @@ Color blendWithWhite(const Color& color)
         int g = blendComponent(existingG, alpha);
         int b = blendComponent(existingB, alpha);
 
-        result = makeSimpleColor(r, g, b, alpha);
+        result = clampToComponentBytes<SRGBA>(r, g, b, alpha);
 
         if (r >= 0 && g >= 0 && b >= 0)
             break;

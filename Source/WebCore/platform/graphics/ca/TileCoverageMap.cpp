@@ -51,16 +51,16 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_visibleViewportIndicatorLayer.get().setName("visible viewport indicator");
     m_visibleViewportIndicatorLayer.get().setBorderWidth(2);
     m_visibleViewportIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
-    m_visibleViewportIndicatorLayer.get().setBorderColor(makeSimpleColor(255, 0, 0, 200));
+    m_visibleViewportIndicatorLayer.get().setBorderColor(Color::red.colorWithAlpha(200));
 
     m_layoutViewportIndicatorLayer.get().setName("layout viewport indicator");
     m_layoutViewportIndicatorLayer.get().setBorderWidth(2);
     m_layoutViewportIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
-    m_layoutViewportIndicatorLayer.get().setBorderColor(makeSimpleColor(0, 128, 128, 200));
+    m_layoutViewportIndicatorLayer.get().setBorderColor(SRGBA<uint8_t> { 0, 128, 128, 200 });
     
     m_coverageRectIndicatorLayer.get().setName("coverage indicator");
     m_coverageRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
-    m_coverageRectIndicatorLayer.get().setBackgroundColor(makeSimpleColor(64, 64, 64, 50));
+    m_coverageRectIndicatorLayer.get().setBackgroundColor(SRGBA<uint8_t> { 64, 64, 64, 50 });
 
     m_layer.get().appendSublayer(m_coverageRectIndicatorLayer);
     m_layer.get().appendSublayer(m_visibleViewportIndicatorLayer);
@@ -136,16 +136,16 @@ void TileCoverageMap::update()
     Color visibleRectIndicatorColor;
     switch (m_controller.indicatorMode()) {
     case SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication:
-        visibleRectIndicatorColor = makeSimpleColor(200, 80, 255);
+        visibleRectIndicatorColor = SRGBA<uint8_t> { 200, 80, 255 };
         break;
     case SynchronousScrollingBecauseOfStyleIndication:
-        visibleRectIndicatorColor = makeSimpleColor(255, 0, 0);
+        visibleRectIndicatorColor = Color::red;
         break;
     case SynchronousScrollingBecauseOfEventHandlersIndication:
-        visibleRectIndicatorColor = makeSimpleColor(255, 255, 0);
+        visibleRectIndicatorColor = Color::yellow;
         break;
     case AsyncScrollingIndication:
-        visibleRectIndicatorColor = makeSimpleColor(0, 200, 0);
+        visibleRectIndicatorColor = SRGBA<uint8_t> { 0, 200, 0 };
         break;
     }
 

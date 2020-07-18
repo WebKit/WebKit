@@ -139,7 +139,7 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
         GraphicsContext context(rendererContext.CGContext);
         context.translate(0, CGRectGetHeight(imageRect));
         context.scale({ 1, -1 });
-        context.fillRoundedRect(FloatRoundedRect(imageRect, FloatRoundedRect::Radii(4)), makeSimpleColor(255, 255, 255));
+        context.fillRoundedRect(FloatRoundedRect(imageRect, FloatRoundedRect::Radii(4)), Color::white);
         titleFontCascade.get().drawText(context, TextRun(truncatedTopString), FloatPoint(dragImagePadding, 18 + dragImagePadding));
         if (!truncatedBottomString.isEmpty())
             urlFontCascade.get().drawText(context, TextRun(truncatedBottomString), FloatPoint(dragImagePadding, 40 + dragImagePadding));

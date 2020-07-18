@@ -113,7 +113,7 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
         ASSERT(!m_texture);
         if (m_holePunchClient)
             m_holePunchClient->setVideoRectangle(enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
-        texmapGL.drawSolidColor(targetRect, modelViewMatrix, makeSimpleColor(0, 0, 0, 0), false);
+        texmapGL.drawSolidColor(targetRect, modelViewMatrix, Color::transparent, false);
         return;
     }
 

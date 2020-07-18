@@ -46,6 +46,10 @@
 
 namespace WebCore {
 
+static constexpr auto borderStartEdgeColor = SRGBA<uint8_t> { 170, 170, 170 };
+static constexpr auto borderEndEdgeColor = Color::black;
+static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrameSet);
 
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
@@ -67,10 +71,6 @@ RenderFrameSet::GridAxis::GridAxis()
     : m_splitBeingResized(noSplit)
 {
 }
-
-constexpr auto borderStartEdgeColor = makeSimpleColor(170, 170, 170);
-constexpr auto borderEndEdgeColor = Color::black;
-constexpr auto borderFillColor = makeSimpleColor(208, 208, 208);
 
 void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect& borderRect)
 {

@@ -58,7 +58,7 @@ TEST(PDFSnapshot, FullContent)
         EXPECT_EQ(page->text()[4], 'o');
 
         // The entire page should be green. Pick a point in the middle to check.
-        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::green);
 
         didTakeSnapshot = true;
     }];
@@ -89,7 +89,7 @@ TEST(PDFSnapshot, Subregions)
         EXPECT_EQ(page->characterCount(), 0u);
 
         // The entire page should be green. Pick a point in the middle to check.
-        EXPECT_TRUE(page->colorAtPoint(200, 150) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(200, 150) == WebCore::Color::green);
 
         didTakeSnapshot = true;
     }];
@@ -109,10 +109,10 @@ TEST(PDFSnapshot, Subregions)
         EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 1200, 1200)));
 
         // A pixel that was in the view should be green. Pick a point in the middle to check.
-        EXPECT_TRUE(page->colorAtPoint(200, 150) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(200, 150) == WebCore::Color::green);
 
         // A pixel that was outside the view should also be green (we extend background color out). Pick a point in the middle to check.
-        EXPECT_TRUE(page->colorAtPoint(900, 700) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(900, 700) == WebCore::Color::green);
 
         didTakeSnapshot = true;
     }];
@@ -138,20 +138,20 @@ TEST(PDFSnapshot, Over200Inches)
         auto page = document->page(0);
         EXPECT_NE(page, nullptr);
         EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 800, 14400)));
-        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::green);
         EXPECT_EQ(page->characterCount(), 5u);
 
         page = document->page(1);
         EXPECT_NE(page, nullptr);
         EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 800, 14400)));
-        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::green);
 
         EXPECT_EQ(page->characterCount(), 0u);
 
         page = document->page(2);
         EXPECT_NE(page, nullptr);
         EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 800, 600)));
-        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::makeSimpleColor(0, 255, 0));
+        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::green);
         EXPECT_EQ(page->characterCount(), 0u);
 
         didTakeSnapshot = true;
@@ -176,7 +176,7 @@ TEST(PDFSnapshot, Links)
         EXPECT_NE(page, nullptr);
 
         EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 800, 14400)));
-        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::makeSimpleColor(255, 255, 255));
+        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::white);
 
         EXPECT_EQ(page->characterCount(), 8u);
         EXPECT_EQ(page->text()[0], 'C');

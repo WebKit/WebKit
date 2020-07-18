@@ -86,8 +86,8 @@ static inline Vector<MockMediaDevice> defaultDevices()
         MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 3840, 2160 } } },
         MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 1920, 1080 } } },
 
-        MockMediaDevice { "WINDOW-2"_s, "Mock window 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, makeSimpleColor(255, 241, 181), { 640, 480 } } },
-        MockMediaDevice { "WINDOW-2"_s, "Mock window 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, makeSimpleColor(255, 208, 181), { 1280, 600 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
     };
 }
 

@@ -50,7 +50,7 @@ using namespace WebCore;
     self.contentsScale = [[_webView window] screenScale];
 
     // Blue highlight color.
-    constexpr auto highlightColor = makeSimpleColor(111, 168, 220, 168);
+    constexpr auto highlightColor = SRGBA<uint8_t> { 111, 168, 220, 168 };
     self.backgroundColor = cachedCGColor(highlightColor);
 
     return self;

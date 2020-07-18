@@ -91,7 +91,7 @@ public:
         float blue = Base::animate(progress, repeatCount, simpleFrom.blue, simpleTo.blue, simpleToAtEndOfDuration.blue, simpleAnimated.blue);
         float alpha = Base::animate(progress, repeatCount, simpleFrom.alpha, simpleTo.alpha, simpleToAtEndOfDuration.alpha, simpleAnimated.alpha);
         
-        animated = makeSimpleColor(roundAndClampColorChannel(red), roundAndClampColorChannel(green), roundAndClampColorChannel(blue), roundAndClampColorChannel(alpha));
+        animated = clampToComponentBytes<SRGBA>(std::lround(red), std::lround(green), std::lround(blue), std::lround(alpha));
     }
 
     Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
@@ -114,27 +114,13 @@ public:
     }
 
 private:
-    inline uint8_t roundAndClampColorChannel(int value)
-    {
-        return std::clamp(value, 0, 255);
-    }
-
-    inline uint8_t roundAndClampColorChannel(float value)
-    {
-        return std::clamp(std::roundf(value), 0.0f, 255.0f);
-    }
-
     void addFromAndToValues(SVGElement*) override
     {
         auto simpleFrom = m_from.toSRGBALossy<uint8_t>();
         auto simpleTo = m_to.toSRGBALossy<uint8_t>();
 
         // Ignores any alpha and sets alpha on result to 100% opaque.
-        m_to = makeSimpleColor(
-            roundAndClampColorChannel(simpleTo.red + simpleFrom.red),
-            roundAndClampColorChannel(simpleTo.green + simpleFrom.green),
-            roundAndClampColorChannel(simpleTo.blue + simpleFrom.blue)
-        );
+        m_to = clampToComponentBytes<SRGBA>(simpleTo.red + simpleFrom.red, simpleTo.green + simpleFrom.green, simpleTo.blue + simpleFrom.blue);
     }
 
     static Color colorFromString(SVGElement*, const String&);

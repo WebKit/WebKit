@@ -1,3 +1,189 @@
+2020-07-17  Sam Weinig  <weinig@apple.com>
+
+        Remove final vestigates of SimpleColor
+        https://bugs.webkit.org/show_bug.cgi?id=214439
+
+        Reviewed by Simon Fraser.
+
+        Replace remaining makeSimpleColor uses:
+        - Literal / constant colors switched to using SRGBA<uint8_t> { ... }.
+        - Direct construction from uint8_t values also switched to SRGBA<uint8_t> { ... }
+        - Where possible switched to using of named colors (e.g. Color::yellow) both
+          directly and where an override alpha was needed. To aid this, new named
+          colors were added for red, magenta, blue, green, darkGreen and orange.
+        - Remaining callers switched to directly calling clampToComponentBytes, which
+          was all that makeSimpleColor did. An overload of clampToComponentBytes that
+          doesn't require the alpha parameter was added to simplify calls.
+    
+        To make construction of SRGBA<uint8_t> values nicer, callers no longer need
+        to specify the alpha explicitly if the color is opaque.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/SimpleColor.h: Removed.
+        Remove SimpleColor.h
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseNumericColor):
+        Switch to clampToComponentBytes, but leave a FIXME indicating this should be
+        switched to direct SRGBA<uint8_t> when hepler functions are fixed to return
+        uint8_ts rather than ints.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        Switched to clampToComponentBytes and removed existing unnecessary additional clamping
+        of the alpha component.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        Restructure HashMap construction to use the HashMap std::intializer_list constructor.
+        This takes advantage of a change to WTF::KeyValuePair that allows it deduce in this
+        context.
+
+        * platform/graphics/Color.h:
+        Remove SimpleColor.h include, but add ColorBuilder.h and ColorUtilities.h
+        which SimpleColor was including on its behalf. Add new named colors for 
+        red, magenta, blue, green, darkGreen and orange. For all named colors,
+        use ColorBuilder<SRGBA<uint8_t>> rather than SRGBA<uint8_t> alone to allow
+        for callers to do things like Color::yellow.colorWithAlpha(...). In the future,
+        it might make more sense to merge ColorBuilder's functionality directly into
+        the color types, but for now this preserves that functionality.
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationColorFunction::animate):
+        (WebCore::SVGAnimationColorFunction::roundAndClampColorChannel): Deleted.
+        Replace bespoke rounding/clamping functions in favor of ColorUtilities.h aggregate ones and
+        directly calling std::lround.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseRGBParameters):
+        * editing/CompositionHighlight.h:
+        * html/ColorInputType.cpp:
+        (WebCore::parseSimpleColorValue):
+        * html/HTMLElement.cpp:
+        (WebCore::parseLegacyColorValue):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::drawOutlinedQuadWithClip):
+        (WebCore::drawShapeHighlight):
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::InspectorOverlay::drawBounds):
+        (WebCore::InspectorOverlay::drawRulers):
+        (WebCore::InspectorOverlay::drawElementTitle):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::debugTextShadow):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS const):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::spoolAllPagesWithBoundaries):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::activeSelectionForegroundColor const):
+        (WebCore::ThemeAdwaita::activeSelectionBackgroundColor const):
+        (WebCore::ThemeAdwaita::inactiveSelectionForegroundColor const):
+        * platform/graphics/Color.cpp:
+        * platform/graphics/ColorBlending.cpp:
+        (WebCore::blendSourceOver):
+        (WebCore::blendWithWhite):
+        * platform/graphics/ColorBuilder.h:
+        (WebCore::ColorBuilder::colorWithAlpha const):
+        (WebCore::ColorBuilder::ColorBuilder): Deleted.
+        * platform/graphics/ColorTypes.h:
+        (WebCore::SRGBA::SRGBA):
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::clampToComponentBytes):
+        (WebCore::clampToComponentFloats):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::getDebugBorderInfo const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::contentsLayerDebugBorderColor):
+        (WebCore::cloneLayerDebugBorderColor):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        (WebCore::TileCoverageMap::update):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::drawRepaintCounters):
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::colorForMarkerLineStyle):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForLink):
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::colorForGridTileBorder const):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawBoxes):
+        * platform/mock/ScrollbarThemeMock.cpp:
+        (WebCore::ScrollbarThemeMock::paintTrackBackground):
+        * platform/playstation/ScrollbarThemePlayStation.cpp:
+        (WebCore::ScrollbarThemePlayStation::paintTrackBackground):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * rendering/RenderEmbeddedObject.cpp:
+        * rendering/RenderFrameSet.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForTouchAction):
+        (WebCore::patternForEventListenerRegionType):
+        (WebCore::RenderLayerBacking::paintDebugOverlays):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::systemColor const):
+        (WebCore::RenderTheme::paintSystemPreviewBadge):
+        (WebCore::RenderTheme::platformTapHighlightColor const):
+        * rendering/RenderThemeAdwaita.cpp:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSliderTrack):
+        (WebCore::RenderThemeIOS::paintProgressBar):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::menuBackgroundColor):
+        (WebCore::RenderThemeMac::systemColor const):
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeWin::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeWin::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeWin::systemColor const):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::paint):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorResolvingCurrentColor const):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialStopColor):
+        (WebCore::SVGRenderStyle::initialFloodColor):
+        (WebCore::SVGRenderStyle::initialLightingColor):
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::drawRect):
+        * testing/cocoa/WebViewVisualIdentificationOverlay.mm:
+        (-[WebViewVisualIdentificationOverlay initWithWebView:kind:deprecated:]):
+        Replace makeSimpleColor uses with appropriate alternative.
+
 2020-07-17  Megan Gardner  <megan_gardner@apple.com>
 
         Add OK button to Date/Time form controls.

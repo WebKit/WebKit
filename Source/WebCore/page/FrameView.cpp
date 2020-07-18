@@ -4244,7 +4244,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
     if (fillWithWarningColor) {
         IntRect debugRect = frameRect();
         debugRect.intersect(dirtyRect);
-        context.fillRect(debugRect, makeSimpleColor(255, 64, 255));
+        context.fillRect(debugRect, SRGBA<uint8_t> { 255, 64, 255 });
     }
 #endif
 

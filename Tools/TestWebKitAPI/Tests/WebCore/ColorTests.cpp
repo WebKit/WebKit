@@ -68,7 +68,7 @@ TEST(Color, RGBToHSL_Black)
 
 TEST(Color, RGBToHSL_Red)
 {
-    Color color = makeSimpleColor(255, 0, 0);
+    Color color = Color::red;
 
     auto hslaColor = toHSLA(color.toSRGBALossy<float>());
 
@@ -84,7 +84,7 @@ TEST(Color, RGBToHSL_Red)
 
 TEST(Color, RGBToHSL_Green)
 {
-    Color color = makeSimpleColor(0, 255, 0);
+    Color color = Color::green;
 
     auto hslaColor = toHSLA(color.toSRGBALossy<float>());
 
@@ -100,7 +100,7 @@ TEST(Color, RGBToHSL_Green)
 
 TEST(Color, RGBToHSL_Blue)
 {
-    Color color = makeSimpleColor(0, 0, 255);
+    Color color = Color::blue;
 
     auto hslaColor = toHSLA(color.toSRGBALossy<float>());
 
@@ -172,7 +172,7 @@ TEST(Color, Validity)
     EXPECT_FALSE(otherInvalidColor.isValid());
     EXPECT_FALSE(otherInvalidColor.isExtended());
 
-    Color validColor = makeSimpleColor(255, 0, 0);
+    Color validColor = Color::red;
     EXPECT_TRUE(validColor.isValid());
     EXPECT_FALSE(validColor.isExtended());
 
@@ -180,7 +180,7 @@ TEST(Color, Validity)
     EXPECT_TRUE(otherValidColor.isValid());
     EXPECT_FALSE(otherValidColor.isExtended());
 
-    validColor = makeSimpleColor(1, 2, 3, 4);
+    validColor = SRGBA<uint8_t> { 1, 2, 3, 4 };
     EXPECT_TRUE(validColor.isValid());
     EXPECT_FALSE(validColor.isExtended());
     auto validColorComponents = validColor.toSRGBALossy<uint8_t>();
@@ -213,7 +213,7 @@ TEST(Color, Luminance)
     EXPECT_FLOAT_EQ(Color(Color::black).luminance(), 0);
     EXPECT_FLOAT_EQ(Color(Color::white).luminance(), 1);
 
-    auto cComponents = makeSimpleColor(85, 90, 160);
+    auto cComponents = SRGBA<uint8_t> { 85, 90, 160 };
     EXPECT_FLOAT_EQ(Color(cComponents).luminance(), 0.11781692);
 
     EXPECT_EQ(cComponents.red, 85);

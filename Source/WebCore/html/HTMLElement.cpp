@@ -1024,7 +1024,7 @@ static Optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
         return namedColor;
 
     if (string.length() == 4 && string[0] == '#' && isASCIIHexDigit(string[1]) && isASCIIHexDigit(string[2]) && isASCIIHexDigit(string[3]))
-        return makeSimpleColor(toASCIIHexValue(string[1]) * 0x11, toASCIIHexValue(string[2]) * 0x11, toASCIIHexValue(string[3]) * 0x11);
+        return { { static_cast<uint8_t>(toASCIIHexValue(string[1]) * 0x11), static_cast<uint8_t>(toASCIIHexValue(string[2]) * 0x11), static_cast<uint8_t>(toASCIIHexValue(string[3]) * 0x11) } };
 
     // Per spec, only look at the first 128 digits of the string.
     constexpr unsigned maxColorLength = 128;
@@ -1052,7 +1052,7 @@ static Optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
     digitBuffer.append('0');
 
     if (digitBuffer.size() < 6)
-        return makeSimpleColor(toASCIIHexValue(digitBuffer[0]), toASCIIHexValue(digitBuffer[1]), toASCIIHexValue(digitBuffer[2]));
+        return { { toASCIIHexValue(digitBuffer[0]), toASCIIHexValue(digitBuffer[1]), toASCIIHexValue(digitBuffer[2]) } };
 
     // Split the digits into three components, then search the last 8 digits of each component.
     ASSERT(digitBuffer.size() >= 6);
@@ -1076,7 +1076,7 @@ static Optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
     uint8_t redValue = toASCIIHexValue(digitBuffer[redIndex], digitBuffer[redIndex + 1]);
     uint8_t greenValue = toASCIIHexValue(digitBuffer[greenIndex], digitBuffer[greenIndex + 1]);
     uint8_t blueValue = toASCIIHexValue(digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);
-    return makeSimpleColor(redValue, greenValue, blueValue);
+    return { { redValue, greenValue, blueValue } };
 }
 
 void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& attributeValue)

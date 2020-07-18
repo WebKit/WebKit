@@ -671,7 +671,7 @@ Color RenderTheme::inactiveListBoxSelectionForegroundColor(OptionSet<StyleColor:
 Color RenderTheme::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     // Use a blue color by default if the platform theme doesn't define anything.
-    return makeSimpleColor(0, 0, 255);
+    return Color::blue;
 }
 
 Color RenderTheme::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
@@ -684,7 +684,7 @@ Color RenderTheme::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor
 {
     // Use a grey color by default if the platform theme doesn't define anything.
     // This color matches Firefox's inactive color.
-    return makeSimpleColor(176, 176, 176);
+    return SRGBA<uint8_t> { 176, 176, 176 };
 }
 
 Color RenderTheme::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
@@ -1334,30 +1334,30 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
 {
     switch (cssValueId) {
     case CSSValueWebkitLink:
-        return options.contains(StyleColor::Options::ForVisitedLink) ? makeSimpleColor(85, 26, 139) : makeSimpleColor(0, 0, 238);
+        return options.contains(StyleColor::Options::ForVisitedLink) ? SRGBA<uint8_t> { 85, 26, 139 } : SRGBA<uint8_t> { 0, 0, 238 };
     case CSSValueWebkitActivelink:
     case CSSValueActivetext:
-        return makeSimpleColor(255, 0, 0);
+        return Color::red;
     case CSSValueLinktext:
-        return makeSimpleColor(0, 0, 238);
+        return SRGBA<uint8_t> { 0, 0, 238 };
     case CSSValueVisitedtext:
-        return makeSimpleColor(85, 26, 139);
+        return SRGBA<uint8_t> { 85, 26, 139 };
     case CSSValueActiveborder:
         return Color::white;
     case CSSValueActivebuttontext:
         return Color::black;
     case CSSValueActivecaption:
-        return makeSimpleColor(204, 204, 204);
+        return SRGBA<uint8_t> { 204, 204, 204 };
     case CSSValueAppworkspace:
         return Color::white;
     case CSSValueBackground:
-        return makeSimpleColor(99, 99, 206);
+        return SRGBA<uint8_t> { 99, 99, 206 };
     case CSSValueButtonface:
         return Color::lightGray;
     case CSSValueButtonhighlight:
-        return makeSimpleColor(221, 221, 221);
+        return SRGBA<uint8_t> { 221, 221, 221 };
     case CSSValueButtonshadow:
-        return makeSimpleColor(136, 136, 136);
+        return SRGBA<uint8_t> { 136, 136, 136 };
     case CSSValueButtontext:
         return Color::black;
     case CSSValueCaptiontext:
@@ -1371,9 +1371,9 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueFieldtext:
         return Color::black;
     case CSSValueGraytext:
-        return makeSimpleColor(128, 128, 128);
+        return Color::darkGray;
     case CSSValueHighlight:
-        return makeSimpleColor(181, 213, 255);
+        return SRGBA<uint8_t> { 181, 213, 255 };
     case CSSValueHighlighttext:
         return Color::black;
     case CSSValueInactiveborder:
@@ -1381,9 +1381,9 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueInactivecaption:
         return Color::white;
     case CSSValueInactivecaptiontext:
-        return makeSimpleColor(127, 127, 127);
+        return SRGBA<uint8_t> { 127, 127, 127 };
     case CSSValueInfobackground:
-        return makeSimpleColor(251, 252, 197);
+        return SRGBA<uint8_t> { 251, 252, 197 };
     case CSSValueInfotext:
         return Color::black;
     case CSSValueMenu:
@@ -1395,19 +1395,19 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueText:
         return Color::black;
     case CSSValueThreeddarkshadow:
-        return makeSimpleColor(102, 102, 102);
+        return SRGBA<uint8_t> { 102, 102, 102 };
     case CSSValueThreedface:
         return Color::lightGray;
     case CSSValueThreedhighlight:
-        return makeSimpleColor(221, 221, 221);
+        return SRGBA<uint8_t> { 221, 221, 221 };
     case CSSValueThreedlightshadow:
         return Color::lightGray;
     case CSSValueThreedshadow:
-        return makeSimpleColor(136, 136, 136);
+        return SRGBA<uint8_t> { 136, 136, 136 };
     case CSSValueWindow:
         return Color::white;
     case CSSValueWindowframe:
-        return makeSimpleColor(204, 204, 204);
+        return SRGBA<uint8_t> { 204, 204, 204 };
     case CSSValueWindowtext:
         return Color::black;
     default:
@@ -1517,8 +1517,7 @@ void RenderTheme::paintSystemPreviewBadge(Image& image, const PaintInfo& paintIn
 
     auto markerRect = FloatRect {rect.x() + rect.width() - 24, rect.y() + 8, 16, 16 };
     auto roundedMarkerRect = FloatRoundedRect { markerRect, FloatRoundedRect::Radii { 8 } };
-    auto color = makeSimpleColor(255, 0, 0);
-    context.fillRoundedRect(roundedMarkerRect, color);
+    context.fillRoundedRect(roundedMarkerRect, Color::red);
 }
 #endif
 
@@ -1528,7 +1527,7 @@ Color RenderTheme::platformTapHighlightColor() const
 {
     // This color is expected to be drawn on a semi-transparent overlay,
     // making it more transparent than its alpha value indicates.
-    return makeSimpleColor(0, 0, 0, 102);
+    return Color::black.colorWithAlpha(102);
 }
 
 #endif

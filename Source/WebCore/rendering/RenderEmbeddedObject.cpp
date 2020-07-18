@@ -74,10 +74,10 @@ static const float replacementArrowLeftMargin = -4;
 static const float replacementArrowPadding = 4;
 static const float replacementArrowCirclePadding = 3;
 
-constexpr auto replacementTextRoundedRectPressedColor = makeSimpleColor(105, 105, 105, 242);
-constexpr auto replacementTextRoundedRectColor = makeSimpleColor(125, 125, 125, 242);
-constexpr auto replacementTextColor = makeSimpleColor(240, 240, 240);
-constexpr auto unavailablePluginBorderColor = makeSimpleColor(255, 255, 255, 216);
+static constexpr auto replacementTextRoundedRectPressedColor = SRGBA<uint8_t> { 105, 105, 105, 242 };
+static constexpr auto replacementTextRoundedRectColor = SRGBA<uint8_t> { 125, 125, 125, 242 };
+static constexpr auto replacementTextColor = SRGBA<uint8_t> { 240, 240, 240 };
+static constexpr auto unavailablePluginBorderColor = Color::white.colorWithAlpha(216);
 
 RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, RenderStyle&& style)
     : RenderWidget(element, WTFMove(style))

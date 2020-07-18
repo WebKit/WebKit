@@ -2234,7 +2234,6 @@
 		7C2FA6121EA95A3C00A03108 /* ResourceCryptographicDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2FA6101EA95A3200A03108 /* ResourceCryptographicDigest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C30D9841F815AEC00268356 /* JSAbortController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C30D9801F815AC100268356 /* JSAbortController.h */; };
 		7C30D9861F815AEC00268356 /* JSAbortSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C30D9811F815AC100268356 /* JSAbortSignal.h */; };
-		7C31C88E247AD595005BF319 /* SimpleColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C31C88C247AD595005BF319 /* SimpleColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C330A021DF8FAC600D3395C /* GraphicsContextGLAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C330A011DF8FAC600D3395C /* GraphicsContextGLAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C330A081DF9F95100D3395C /* JSPositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C330A061DF9F95100D3395C /* JSPositionOptions.h */; };
 		7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9999,7 +9998,6 @@
 		7C30D9801F815AC100268356 /* JSAbortController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbortController.h; sourceTree = "<group>"; };
 		7C30D9811F815AC100268356 /* JSAbortSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbortSignal.h; sourceTree = "<group>"; };
 		7C30D9821F815AC200268356 /* JSAbortSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortSignal.cpp; sourceTree = "<group>"; };
-		7C31C88C247AD595005BF319 /* SimpleColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleColor.h; sourceTree = "<group>"; };
 		7C330A011DF8FAC600D3395C /* GraphicsContextGLAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLAttributes.h; sourceTree = "<group>"; };
 		7C330A031DF9E95B00D3395C /* PositionOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PositionOptions.idl; sourceTree = "<group>"; };
 		7C330A051DF9F95100D3395C /* JSPositionOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionOptions.cpp; sourceTree = "<group>"; };
@@ -25739,7 +25737,6 @@
 				A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
 				0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */,
-				7C31C88C247AD595005BF319 /* SimpleColor.h */,
 				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */,
 				7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */,
@@ -33217,7 +33214,6 @@
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				DF19E2AC24772BC1007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h in Headers */,
 				8362E8C120CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h in Headers */,
-				7C31C88E247AD595005BF319 /* SimpleColor.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */,
 				585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */,

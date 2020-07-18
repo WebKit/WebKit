@@ -501,7 +501,7 @@ static SRGBA<uint8_t> menuBackgroundColor()
     NSUInteger pixel[4];
     [offscreenRep getPixel:pixel atX:0 y:0];
 
-    return makeSimpleColor(pixel[0], pixel[1], pixel[2], pixel[3]);
+    return clampToComponentBytes<SRGBA>(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
@@ -737,11 +737,11 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueThreedface:
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
-            return makeSimpleColor(192, 192, 192);
+            return Color::lightGray;
 
         case CSSValueInfobackground:
             // No corresponding NSColor for this so we use a hard coded value.
-            return makeSimpleColor(251, 252, 197);
+            return SRGBA<uint8_t> { 251, 252, 197 };
 
         case CSSValueMenu:
             return menuBackgroundColor();
@@ -750,30 +750,30 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueActiveborder:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return { makeSimpleColor(26, 169, 255), Color::Semantic };
-            return { makeSimpleColor(0, 103, 244), Color::Semantic };
+                return { SRGBA<uint8_t> { 26, 169, 255 }, Color::Semantic };
+            return { SRGBA<uint8_t> { 0, 103, 244 }, Color::Semantic };
 
         case CSSValueAppleSystemControlAccent:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             // Same color in light and dark appearances.
-            return { makeSimpleColor(0, 122, 255), Color::Semantic };
+            return { SRGBA<uint8_t> { 0, 122, 255 }, Color::Semantic };
 
         case CSSValueAppleSystemSelectedContentBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return { makeSimpleColor(0, 88, 208), Color::Semantic };
-            return { makeSimpleColor(0, 99, 225), Color::Semantic };
+                return { SRGBA<uint8_t> { 0, 88, 208 }, Color::Semantic };
+            return { SRGBA<uint8_t> { 0, 99, 225 }, Color::Semantic };
 
         case CSSValueHighlight:
         case CSSValueAppleSystemSelectedTextBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return { makeSimpleColor(63, 99, 139, 204), Color::Semantic };
-            return { makeSimpleColor(128, 188, 254, 153), Color::Semantic };
+                return { SRGBA<uint8_t> { 63, 99, 139, 204 }, Color::Semantic };
+            return { SRGBA<uint8_t> { 128, 188, 254, 153 }, Color::Semantic };
 
 #if !HAVE(OS_DARK_MODE_SUPPORT)
         case CSSValueAppleSystemContainerBorder:
-            return makeSimpleColor(197, 197, 197);
+            return SRGBA<uint8_t> { 197, 197, 197 };
 #endif
 
         case CSSValueAppleSystemEvenAlternatingContentBackground: {
@@ -1592,8 +1592,8 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
     };
     paintInfo.context().fillPath(Path::polygonPathFromPoints(arrow2));
 
-    constexpr auto leftSeparatorColor = makeSimpleColor(0, 0, 0, 40);
-    constexpr auto rightSeparatorColor = makeSimpleColor(255, 255, 255, 40);
+    constexpr auto leftSeparatorColor = Color::black.colorWithAlpha(40);
+    constexpr auto rightSeparatorColor = Color::white.colorWithAlpha(40);
 
     // FIXME: Should the separator thickness and space be scaled up by fontScale?
     int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
@@ -2413,8 +2413,8 @@ const CGFloat attachmentIconSelectionBorderThickness = 1;
 const CGFloat attachmentIconBackgroundRadius = 3;
 const CGFloat attachmentIconToTitleMargin = 2;
 
-constexpr auto attachmentIconBackgroundColor = makeSimpleColor(0, 0, 0, 30);
-constexpr auto attachmentIconBorderColor = makeSimpleColor(255, 255, 255, 125);
+constexpr auto attachmentIconBackgroundColor = Color::black.colorWithAlpha(30);
+constexpr auto attachmentIconBorderColor = Color::white.colorWithAlpha(125);
 
 const CGFloat attachmentTitleFontSize = 12;
 const CGFloat attachmentTitleBackgroundRadius = 3;
@@ -2422,23 +2422,23 @@ const CGFloat attachmentTitleBackgroundPadding = 3;
 const CGFloat attachmentTitleMaximumWidth = 100 - (attachmentTitleBackgroundPadding * 2);
 const CFIndex attachmentTitleMaximumLineCount = 2;
 
-constexpr auto attachmentTitleInactiveBackgroundColor = makeSimpleColor(204, 204, 204);
-constexpr auto attachmentTitleInactiveTextColor = makeSimpleColor(100, 100, 100);
+constexpr auto attachmentTitleInactiveBackgroundColor = SRGBA<uint8_t> { 204, 204, 204 };
+constexpr auto attachmentTitleInactiveTextColor = SRGBA<uint8_t> { 100, 100, 100 };
 
 const CGFloat attachmentSubtitleFontSize = 10;
 const int attachmentSubtitleWidthIncrement = 10;
-constexpr auto attachmentSubtitleTextColor = makeSimpleColor(82, 145, 214);
+constexpr auto attachmentSubtitleTextColor = SRGBA<uint8_t> { 82, 145, 214 };
 
 const CGFloat attachmentProgressBarWidth = 30;
 const CGFloat attachmentProgressBarHeight = 5;
 const CGFloat attachmentProgressBarOffset = -9;
 const CGFloat attachmentProgressBarBorderWidth = 1;
-constexpr auto attachmentProgressBarBackgroundColor = makeSimpleColor(0, 0, 0, 89);
+constexpr auto attachmentProgressBarBackgroundColor = Color::black.colorWithAlpha(89);
 constexpr auto attachmentProgressBarFillColor = Color::white;
-constexpr auto attachmentProgressBarBorderColor = makeSimpleColor(0, 0, 0, 128);
+constexpr auto attachmentProgressBarBorderColor = Color::black.colorWithAlpha(128);
 
 const CGFloat attachmentPlaceholderBorderRadius = 5;
-constexpr auto attachmentPlaceholderBorderColor = makeSimpleColor(0, 0, 0, 56);
+constexpr auto attachmentPlaceholderBorderColor = Color::black.colorWithAlpha(56);
 const CGFloat attachmentPlaceholderBorderWidth = 2;
 const CGFloat attachmentPlaceholderBorderDashLength = 6;
 

@@ -288,19 +288,19 @@ bool RenderThemeWin::supportsHover(const RenderStyle&) const
 Color RenderThemeWin::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
-    return makeSimpleColor(GetRValue(color), GetGValue(color), GetBValue(color));
+    return SRGBA<uint8_t> { GetRValue(color), GetGValue(color), GetBValue(color) };
 }
 
 Color RenderThemeWin::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     // This color matches Firefox.
-    return makeSimpleColor(176, 176, 176);
+    return SRGBA<uint8_t> { 176, 176, 176 };
 }
 
 Color RenderThemeWin::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
-    return makeSimpleColor(GetRValue(color), GetGValue(color), GetBValue(color));
+    return SRGBA<uint8_t> { GetRValue(color), GetGValue(color), GetBValue(color) };
 }
 
 Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
@@ -1009,7 +1009,7 @@ Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::O
         return RenderTheme::systemColor(cssValueId, options);
 
     COLORREF color = GetSysColor(sysColorIndex);
-    return makeSimpleColor(GetRValue(color), GetGValue(color), GetBValue(color));
+    return SRGBA<uint8_t> { GetRValue(color), GetGValue(color), GetBValue(color) };
 }
 
 #if ENABLE(VIDEO)

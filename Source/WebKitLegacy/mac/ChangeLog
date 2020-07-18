@@ -1,3 +1,13 @@
+2020-07-17  Sam Weinig  <weinig@apple.com>
+
+        Remove final vestigates of SimpleColor
+        https://bugs.webkit.org/show_bug.cgi?id=214439
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebIndicateLayer.mm:
+        Replace remaining makeSimpleColor() uses.
+
 2020-07-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r264477.

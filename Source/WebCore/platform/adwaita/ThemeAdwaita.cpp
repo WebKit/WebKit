@@ -36,28 +36,28 @@
 namespace WebCore {
 
 static const unsigned focusLineWidth = 1;
-static const Color focusRingColor = makeSimpleColor(46, 52, 54, 150);
+static constexpr auto focusRingColor = SRGBA<uint8_t> { 46, 52, 54, 150 };
 static const unsigned arrowSize = 16;
-static const Color arrowColor = makeSimpleColor(46, 52, 54);
+static constexpr auto arrowColor = SRGBA<uint8_t> { 46, 52, 54 };
 static const int buttonFocusOffset = -3;
 static const unsigned buttonPadding = 5;
 static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeAdwaita.
-static const Color buttonBorderColor = makeSimpleColor(205, 199, 194);
-static const Color buttonBackgroundColor = makeSimpleColor(244, 242, 241);
-static const Color buttonBackgroundPressedColor = makeSimpleColor(214, 209, 205);
-static const Color buttonBackgroundHoveredColor = makeSimpleColor(248, 248, 247);
-static const Color buttonBackgroundDisabledColor = makeSimpleColor(246, 246, 244);
-static const Color toggleBackgroundColor = makeSimpleColor(255, 255, 255);
-static const Color toggleBackgroundHoveredColor = makeSimpleColor(242, 242, 242);
-static const Color toggleBackgroundDisabledColor = makeSimpleColor(252, 252, 252);
+static constexpr auto buttonBorderColor = SRGBA<uint8_t> { 205, 199, 194 };
+static constexpr auto buttonBackgroundColor = SRGBA<uint8_t> { 244, 242, 241 };
+static constexpr auto buttonBackgroundPressedColor = SRGBA<uint8_t> { 214, 209, 205 };
+static constexpr auto buttonBackgroundHoveredColor = SRGBA<uint8_t> { 248, 248, 247 };
+static constexpr auto buttonBackgroundDisabledColor = SRGBA<uint8_t> { 246, 246, 244 };
+static constexpr auto toggleBackgroundColor = Color::white;
+static constexpr auto toggleBackgroundHoveredColor = SRGBA<uint8_t> { 242, 242, 242 };
+static constexpr auto toggleBackgroundDisabledColor = SRGBA<uint8_t> { 252, 252, 252 };
 static const double toggleSize = 14.;
 static const int toggleFocusOffset = 2;
-static const Color toggleColor = makeSimpleColor(46, 52, 54);
-static const Color toggleDisabledColor = makeSimpleColor(160, 160, 160);
-static const Color spinButtonBorderColor = makeSimpleColor(220, 223, 227);
-static const Color spinButtonBackgroundColor = makeSimpleColor(252, 252, 252);
-static const Color spinButtonBackgroundHoveredColor = makeSimpleColor(46, 52, 54, 50);
-static const Color spinButtonBackgroundPressedColor = makeSimpleColor(46, 52, 54, 70);
+static constexpr auto toggleColor = SRGBA<uint8_t> { 46, 52, 54 };
+static constexpr auto toggleDisabledColor = SRGBA<uint8_t> { 160, 160, 160 };
+static constexpr auto spinButtonBorderColor = SRGBA<uint8_t> { 220, 223, 227 };
+static constexpr auto spinButtonBackgroundColor = SRGBA<uint8_t> { 252, 252, 252 };
+static constexpr auto spinButtonBackgroundHoveredColor = SRGBA<uint8_t> { 46, 52, 54, 50 };
+static constexpr auto spinButtonBackgroundPressedColor = SRGBA<uint8_t> { 46, 52, 54, 70 };
 
 #if !PLATFORM(GTK) || USE(GTK4)
 Theme& Theme::singleton()
@@ -69,17 +69,17 @@ Theme& Theme::singleton()
 
 Color ThemeAdwaita::activeSelectionForegroundColor() const
 {
-    return makeSimpleColor(255, 255, 255);
+    return Color::white;
 }
 
 Color ThemeAdwaita::activeSelectionBackgroundColor() const
 {
-    return makeSimpleColor(52, 132, 228);
+    return SRGBA<uint8_t> { 52, 132, 228 };
 }
 
 Color ThemeAdwaita::inactiveSelectionForegroundColor() const
 {
-    return makeSimpleColor(252, 252, 252);
+    return SRGBA<uint8_t> { 252, 252, 252 };
 }
 
 Color ThemeAdwaita::inactiveSelectionBackgroundColor() const

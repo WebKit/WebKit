@@ -1,3 +1,15 @@
+2020-07-17  Sam Weinig  <weinig@apple.com>
+
+        Remove final vestigates of SimpleColor
+        https://bugs.webkit.org/show_bug.cgi?id=214439
+
+        Reviewed by Simon Fraser.
+
+        * wtf/KeyValuePair.h:
+        (WTF::KeyValuePair::KeyValuePair):
+        Add overload of constructor that is not a template function to aid deduction
+        when using std::initializer_lists to contruct a HashMap.
+
 2020-07-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Don't include <wtf/text/WTFString.h> in SVGParserUtilities.h

@@ -74,11 +74,11 @@ static const int borderRadius = 12;
 static const int borderThickness = 2;
 
 // Colors
-static constexpr auto backgroundColor = makeSimpleColor(32, 32, 32, 160);
-static constexpr auto borderColor = makeSimpleColor(160, 160, 160);
-static constexpr auto sliderGutterColor = makeSimpleColor(20, 20, 20);
-static constexpr auto sliderButtonColor = makeSimpleColor(128, 128, 128);
-static constexpr auto textColor = makeSimpleColor(255, 255, 255);
+static constexpr auto backgroundColor = SRGBA<uint8_t> { 32, 32, 32, 160 };
+static constexpr auto borderColor = SRGBA<uint8_t> { 160, 160, 160 };
+static constexpr auto sliderGutterColor = SRGBA<uint8_t> { 20, 20, 20 };
+static constexpr auto sliderButtonColor = SRGBA<uint8_t> { 128, 128, 128 };
+static constexpr auto textColor = Color::white;
 
 HUDButton::HUDButton(HUDButtonType type, const IntPoint& position)
     : HUDWidget(IntRect(position, IntSize()))

@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include "ColorBuilder.h"
 #include "ColorSpace.h"
+#include "ColorUtilities.h"
 #include "ExtendedColor.h"
-#include "SimpleColor.h"
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
@@ -145,14 +146,20 @@ public:
     WEBCORE_EXPORT operator D2D1_VECTOR_4F() const;
 #endif
 
-    static constexpr auto black = makeSimpleColor(0, 0, 0);
-    static constexpr auto white = makeSimpleColor(255, 255, 255);
-    static constexpr auto darkGray = makeSimpleColor(128, 128, 128);
-    static constexpr auto gray = makeSimpleColor(160, 160, 160);
-    static constexpr auto lightGray = makeSimpleColor(192, 192, 192);
-    static constexpr auto transparent = makeSimpleColor(0, 0, 0, 0);
-    static constexpr auto cyan = makeSimpleColor(0, 255, 255);
-    static constexpr auto yellow = makeSimpleColor(255, 255, 0);
+    static constexpr auto black = ColorBuilder<SRGBA<uint8_t>> { 0, 0, 0 };
+    static constexpr auto white = ColorBuilder<SRGBA<uint8_t>> { 255, 255, 255 };
+    static constexpr auto darkGray = ColorBuilder<SRGBA<uint8_t>> { 128, 128, 128 };
+    static constexpr auto gray = ColorBuilder<SRGBA<uint8_t>> { 160, 160, 160 };
+    static constexpr auto lightGray = ColorBuilder<SRGBA<uint8_t>> { 192, 192, 192 };
+    static constexpr auto transparent = ColorBuilder<SRGBA<uint8_t>> { };
+    static constexpr auto cyan = ColorBuilder<SRGBA<uint8_t>> { 0, 255, 255 };
+    static constexpr auto yellow = ColorBuilder<SRGBA<uint8_t>> { 255, 255, 0 };
+    static constexpr auto red = ColorBuilder<SRGBA<uint8_t>> { 255, 0, 0 };
+    static constexpr auto magenta = ColorBuilder<SRGBA<uint8_t>> { 255, 0, 255 };
+    static constexpr auto blue = ColorBuilder<SRGBA<uint8_t>> { 0, 0, 255 };
+    static constexpr auto green = ColorBuilder<SRGBA<uint8_t>> { 0, 255, 0 };
+    static constexpr auto darkGreen = ColorBuilder<SRGBA<uint8_t>> { 0, 128, 0 };
+    static constexpr auto orange = ColorBuilder<SRGBA<uint8_t>> { 255, 128, 0 };
 
     bool isExtended() const { return !(m_colorData.inlineColorAndFlags & invalidInlineColor); }
     bool isInline() const { return !isExtended(); }

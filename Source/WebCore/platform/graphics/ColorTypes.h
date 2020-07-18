@@ -42,18 +42,28 @@ template<> struct ComponentTraits<float> {
     static constexpr float maxValue = 1.0f;
 };
 
-
 template<typename T> struct SRGBA {
+    using ComponentType = T;
+    static constexpr auto colorSpace = ColorSpace::SRGB;
+
+    constexpr SRGBA(T red, T green, T blue, T alpha = ComponentTraits<T>::maxValue)
+        : red { red }
+        , green { green }
+        , blue { blue }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr SRGBA()
+        : SRGBA { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T red;
     T green;
     T blue;
     T alpha;
-
-    using ComponentType = T;
-    static constexpr auto colorSpace = ColorSpace::SRGB;
 };
-
-template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const SRGBA<T>& c)
 {

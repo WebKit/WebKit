@@ -848,9 +848,9 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
 
         CGContextRef cgContext = paintInfo.context().platformContext();
         if (readonly)
-            paintInfo.context().setStrokeColor(makeSimpleColor(178, 178, 178));
+            paintInfo.context().setStrokeColor(SRGBA<uint8_t> { 178, 178, 178 });
         else
-            paintInfo.context().setStrokeColor(makeSimpleColor(76, 76, 76));
+            paintInfo.context().setStrokeColor(SRGBA<uint8_t> { 76, 76, 76 });
 
         RetainPtr<CGMutablePathRef> roundedRectPath = adoptCF(CGPathCreateMutable());
         CGPathAddRoundedRect(roundedRectPath.get(), 0, trackClip, cornerWidth, cornerHeight);
@@ -917,10 +917,10 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
 
     const float verticalRenderingPosition = rect.y() + verticalOffset;
     auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-    strokeGradient->addColorStop({ 0.0f, makeSimpleColor(141, 141, 141) });
-    strokeGradient->addColorStop({ 0.45f, makeSimpleColor(238, 238, 238) });
-    strokeGradient->addColorStop({ 0.55f, makeSimpleColor(238, 238, 238) });
-    strokeGradient->addColorStop({ 1.0f, makeSimpleColor(141, 141, 141) });
+    strokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 141, 141, 141 } });
+    strokeGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 238, 238, 238 } });
+    strokeGradient->addColorStop({ 0.55f, SRGBA<uint8_t> { 238, 238, 238 } });
+    strokeGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 141, 141, 141 } });
     context.setStrokeGradient(WTFMove(strokeGradient));
 
     context.setFillColor(Color::black);
@@ -937,8 +937,8 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
 
     float upperGradientHeight = progressBarHeight / 2.;
     auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) });
-    upperGradient->addColorStop({ 0.0f, makeSimpleColor(133, 133, 133, 188) });
-    upperGradient->addColorStop({ 1.0f, makeSimpleColor(18, 18, 18, 51) });
+    upperGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 133, 133, 133, 188 } });
+    upperGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 18, 18, 18, 51 } });
     context.setFillGradient(WTFMove(upperGradient));
 
     context.fillRect(FloatRect(rect.x(), verticalRenderingPosition, rect.width(), upperGradientHeight));
@@ -949,18 +949,18 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         double position = clampTo(renderProgress.position(), 0.0, 1.0);
         float barWidth = position * rect.width();
         auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-        barGradient->addColorStop({ 0.0f, makeSimpleColor(195, 217, 247) });
-        barGradient->addColorStop({ 0.45f, makeSimpleColor(118, 164, 228) });
-        barGradient->addColorStop({ 0.49f, makeSimpleColor(118, 164, 228) });
-        barGradient->addColorStop({ 0.51f, makeSimpleColor(36, 114, 210) });
-        barGradient->addColorStop({ 0.55f, makeSimpleColor(36, 114, 210) });
-        barGradient->addColorStop({ 1.0f, makeSimpleColor(57, 142, 244) });
+        barGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 195, 217, 247 } });
+        barGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 118, 164, 228 } });
+        barGradient->addColorStop({ 0.49f, SRGBA<uint8_t> { 118, 164, 228 } });
+        barGradient->addColorStop({ 0.51f, SRGBA<uint8_t> { 36, 114, 210 } });
+        barGradient->addColorStop({ 0.55f, SRGBA<uint8_t> { 36, 114, 210 } });
+        barGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 57, 142, 244 } });
         context.setFillGradient(WTFMove(barGradient));
 
         auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
-        barStrokeGradient->addColorStop({ 0.0f, makeSimpleColor(95, 107, 183) });
-        barStrokeGradient->addColorStop({ 0.5f, makeSimpleColor(66, 106, 174, 240) });
-        barStrokeGradient->addColorStop({ 1.0f, makeSimpleColor(38, 104, 166) });
+        barStrokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 95, 107, 183 } });
+        barStrokeGradient->addColorStop({ 0.5f, SRGBA<uint8_t> { 66, 106, 174, 240 } });
+        barStrokeGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 38, 104, 166 } });
         context.setStrokeGradient(WTFMove(barStrokeGradient));
 
         Path barPath;
@@ -1383,10 +1383,10 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 const CGSize attachmentSize = { 160, 119 };
 
 const CGFloat attachmentBorderRadius = 16;
-constexpr auto attachmentBorderColor = makeSimpleColor(204, 204, 204);
+constexpr auto attachmentBorderColor = SRGBA<uint8_t> { 204, 204, 204 };
 static CGFloat attachmentBorderThickness = 1;
 
-constexpr auto attachmentProgressColor = makeSimpleColor(222, 222, 222);
+constexpr auto attachmentProgressColor = SRGBA<uint8_t> { 222, 222, 222 };
 const CGFloat attachmentProgressBorderThickness = 3;
 
 const CGFloat attachmentProgressSize = 36;

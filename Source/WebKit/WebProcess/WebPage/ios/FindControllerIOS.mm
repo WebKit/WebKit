@@ -53,7 +53,7 @@ const int totalVerticalMargin = 1;
 
 constexpr OptionSet<TextIndicatorOption> findTextIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, TextIndicatorOption::DoNotClipToVisibleRect };
 
-constexpr auto highlightColor = makeSimpleColor(255, 228, 56);
+static constexpr auto highlightColor = SRGBA<uint8_t> { 255, 228, 56 };
 
 void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {

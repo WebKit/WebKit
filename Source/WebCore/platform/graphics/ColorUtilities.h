@@ -59,7 +59,9 @@ template<typename T> T convertComponentFloatTo(float);
 template<template<typename> typename ColorType> ColorType<uint8_t> convertToComponentBytes(const ColorType<float>&);
 template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(const ColorType<uint8_t>&);
 
+template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b);
 template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b, int a);
+template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b);
 template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b, float a);
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
@@ -134,9 +136,19 @@ template<template<typename> typename ColorType> constexpr ColorType<float> conve
     return { convertToComponentFloat(components[0]), convertToComponentFloat(components[1]), convertToComponentFloat(components[2]), convertToComponentFloat(components[3]) };
 }
 
+template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b)
+{
+    return { clampToComponentByte(r), clampToComponentByte(g), clampToComponentByte(b) };
+}
+
 template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b, int a)
 {
     return { clampToComponentByte(r), clampToComponentByte(g), clampToComponentByte(b), clampToComponentByte(a) };
+}
+
+template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b)
+{
+    return { clampToComponentFloat(r), clampToComponentFloat(g), clampToComponentFloat(b) };
 }
 
 template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b, float a)

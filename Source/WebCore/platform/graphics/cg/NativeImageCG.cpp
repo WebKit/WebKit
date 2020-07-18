@@ -66,7 +66,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     if (!pixel[3])
         return Color::transparent;
 
-    return makeSimpleColor(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+    return clampToComponentBytes<SRGBA>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)
