@@ -1,5 +1,22 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/picture-in-picture from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214504
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/picture-in-picture from upstream 81de986322a0de90f.
+
+        * web-platform-tests/picture-in-picture/disable-picture-in-picture.html:
+        * web-platform-tests/picture-in-picture/exit-picture-in-picture.html:
+        * web-platform-tests/picture-in-picture/idlharness.window.js:
+        (async idl_array):
+        * web-platform-tests/picture-in-picture/leave-picture-in-picture.html:
+        * web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html:
+        * web-platform-tests/picture-in-picture/request-picture-in-picture.html:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/web-animations from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214505
 
