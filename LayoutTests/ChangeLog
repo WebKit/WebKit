@@ -1,5 +1,11 @@
 2020-07-18  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip a few css WPT tests that are crashing in Debug since the recent WPT resync.
+
+        * TestExpectations:
+
+2020-07-18  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-timing.https.html as flaky.
 
         * TestExpectations:
