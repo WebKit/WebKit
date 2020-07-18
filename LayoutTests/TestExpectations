@@ -1907,6 +1907,7 @@ webkit.org/b/214197 imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.htt
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-timing.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Pass Failure ]
 
 # This test has been consistently crashing in Debug since import.
