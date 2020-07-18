@@ -1,0 +1,14 @@
+Instructions:
+
+Click the Share button.
+Choose a valid share target.
+Pass the test iff the target app received:
+
+title = ""
+text = ""
+url = "https://www.example.com/some/foo"
+
+
+Harness Error (TIMEOUT), message = null
+
+

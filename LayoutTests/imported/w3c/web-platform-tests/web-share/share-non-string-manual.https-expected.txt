@@ -1,0 +1,14 @@
+Instructions:
+
+Click the Share button.
+Choose a valid share target.
+Pass the test iff the target app received:
+
+title = "true"
+text = "the object"
+url = "https://localhost:9443/web-share/384957"
+
+
+Harness Error (TIMEOUT), message = null
+
+

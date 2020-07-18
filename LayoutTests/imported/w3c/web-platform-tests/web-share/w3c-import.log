@@ -20,10 +20,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-share/canShare.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/idlharness.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-cancel-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-share/share-consume-activation.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-empty.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-extra-argument-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-extra-field-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/web-share/share-files-manual.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-share/share-files-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-image-manual.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-non-string-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/share-null-manual.https.html

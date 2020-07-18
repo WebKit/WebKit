@@ -1,5 +1,63 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/web-share from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214507
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/web-share from upstream 81de986322a0de90f2fe895.
+
+        * web-platform-tests/web-share/canShare-files.tentative.https-expected.txt: Added.
+        * web-platform-tests/web-share/canShare-files.tentative.https.html: Added.
+        * web-platform-tests/web-share/canShare-insecure.tentative.http-expected.txt: Added.
+        * web-platform-tests/web-share/canShare-insecure.tentative.http.html: Added.
+        * web-platform-tests/web-share/canShare.tentative.https-expected.txt: Added.
+        * web-platform-tests/web-share/canShare.tentative.https.html: Added.
+        * web-platform-tests/web-share/idlharness.https.window.js:
+        * web-platform-tests/web-share/share-cancel-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-cancel-manual.https.html: Added.
+        * web-platform-tests/web-share/share-consume-activation.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-consume-activation.https.html: Added.
+        * web-platform-tests/web-share/share-empty.https.html:
+        * web-platform-tests/web-share/share-extra-argument-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-extra-argument-manual.https.html: Added.
+        * web-platform-tests/web-share/share-extra-field-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-extra-field-manual.https.html: Added.
+        * web-platform-tests/web-share/share-files-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-files-manual.https.html: Added.
+        * web-platform-tests/web-share/share-image-manual.tentative.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-image-manual.tentative.https.html: Added.
+        * web-platform-tests/web-share/share-non-string-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-non-string-manual.https.html: Added.
+        * web-platform-tests/web-share/share-null-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-null-manual.https.html: Added.
+        * web-platform-tests/web-share/share-sharePromise-internal-slot.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-sharePromise-internal-slot.https.html: Added.
+        * web-platform-tests/web-share/share-simple-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-simple-manual.https.html: Added.
+        * web-platform-tests/web-share/share-unicode-strings-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-unicode-strings-manual.https.html: Added.
+        * web-platform-tests/web-share/share-unicode-strings-nonutf8-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-unicode-strings-nonutf8-manual.https.html: Added.
+        * web-platform-tests/web-share/share-url-data-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-url-data-manual.https.html: Added.
+        * web-platform-tests/web-share/share-url-empty-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-url-empty-manual.https.html: Added.
+        * web-platform-tests/web-share/share-url-encoding-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-url-encoding-manual.https.html: Added.
+        * web-platform-tests/web-share/share-url-invalid.https-expected.txt:
+        * web-platform-tests/web-share/share-url-invalid.https.html:
+        * web-platform-tests/web-share/share-url-noscheme-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-url-noscheme-manual.https.html: Added.
+        * web-platform-tests/web-share/share-url-pathonly-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-url-pathonly-manual.https.html: Added.
+        * web-platform-tests/web-share/share-url-relative-manual.https-expected.txt: Added.
+        * web-platform-tests/web-share/share-url-relative-manual.https.html: Added.
+        * web-platform-tests/web-share/share-without-user-gesture.https.html:
+        * web-platform-tests/web-share/w3c-import.log:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/encoding from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214502
 

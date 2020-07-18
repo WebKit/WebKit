@@ -1,0 +1,3 @@
+
+FAIL Calling share consumes user activation promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+

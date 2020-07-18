@@ -830,10 +830,6 @@ imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker
 # Sometimes logs a line about trying to connect to an external URL.
 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document.sub.html [ Pass Failure ]
 
-# Web platform test infrastructure unable to support insecure connection
-imported/w3c/web-platform-tests/web-share/canShare-insecure.http.html
-imported/w3c/web-platform-tests/web-share/share-securecontext.http.html
-
 # Only relevant on macOS
 css3/color-filters/punch-out-white-backgrounds.html [ Skip ]
 
@@ -942,6 +938,7 @@ http/tests/storage/storage-map-leaking.html [ Skip ]
 
 # The Web Share API is currently only implemented for modern WebKit on iOS and macOS
 fast/web-share [ Skip ]
+imported/w3c/web-platform-tests/web-share [ Skip ]
 
 # This test was created to test a mac-wk2 bugfix
 fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
