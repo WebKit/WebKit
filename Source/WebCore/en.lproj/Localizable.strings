@@ -544,9 +544,6 @@
 /* OK button label in document password failure alert */
 "OK (document password failure alert)" = "OK";
 
-/* Title of the OK button in date/time form controls. */
-"OK (OK button title in date/time picker)" = "OK";
-
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
 
