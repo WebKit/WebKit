@@ -128,11 +128,13 @@ void Instance::Impl::enumerateInstanceExtensionProperties() const
     uint32_t propertyCountWritten { 0 };
     result = xrEnumerateInstanceExtensionProperties(nullptr, propertyCountOutput, &propertyCountWritten, properties.data());
     RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties()", m_instance);
+#if !LOG_DISABLED
     LOG(XR, "xrEnumerateInstanceExtensionProperties(): %zu extension properties\n", properties.size());
     for (auto& property : properties) {
         LOG(XR, "  extension '%s', version %u\n",
             property.extensionName, property.extensionVersion);
     }
+#endif
 }
 #endif // USE_OPENXR
 

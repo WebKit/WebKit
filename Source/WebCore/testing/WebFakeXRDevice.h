@@ -74,7 +74,6 @@ private:
     RefPtr<WebXRRigidTransform> m_viewerOrigin;
     RefPtr<WebXRRigidTransform> m_floorOrigin;
     bool m_emulatedPosition { false };
-    XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     Vector<Ref<FakeXRView>> m_views;
 };
 
