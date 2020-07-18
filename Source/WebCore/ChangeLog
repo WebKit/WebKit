@@ -1,3 +1,27 @@
+2020-07-18  Rob Buis  <rbuis@igalia.com>
+
+        Only use enum classes in HTTPParsers
+        https://bugs.webkit.org/show_bug.cgi?id=214451
+
+        Reviewed by Darin Adler.
+
+        Only use enum classes in HTTPParsers by converting XFrameOptionsSameOrigin
+        and ContentTypeOptionsDisposition. Remove HTTPVersion enum since its
+        only use is by parseHTTPRequestLine, but this method is unused.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::mimeTypeAllowedByNosniff const):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseContentTypeOptionsHeader):
+        (WebCore::parseXFrameOptionsHeader):
+        (WebCore::parseHTTPRequestLine): Deleted.
+        * platform/network/HTTPParsers.h:
+        (): Deleted.
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isScriptAllowedByNosniff):
+
 2020-07-17  Sam Weinig  <weinig@apple.com>
 
         Remove final vestigates of SimpleColor

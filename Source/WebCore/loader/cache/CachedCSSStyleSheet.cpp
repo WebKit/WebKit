@@ -127,7 +127,7 @@ String CachedCSSStyleSheet::responseMIMEType() const
 
 bool CachedCSSStyleSheet::mimeTypeAllowedByNosniff() const
 {
-    return parseContentTypeOptionsHeader(m_response.httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsNosniff || equalLettersIgnoringASCIICase(responseMIMEType(), "text/css");
+    return parseContentTypeOptionsHeader(m_response.httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsDisposition::Nosniff || equalLettersIgnoringASCIICase(responseMIMEType(), "text/css");
 }
 
 bool CachedCSSStyleSheet::canUseSheet(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType) const

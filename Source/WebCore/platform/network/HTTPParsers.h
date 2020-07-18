@@ -47,18 +47,18 @@ enum class XSSProtectionDisposition {
     BlockEnabled,
 };
 
-enum ContentTypeOptionsDisposition {
-    ContentTypeOptionsNone,
-    ContentTypeOptionsNosniff
+enum class ContentTypeOptionsDisposition : bool {
+    None,
+    Nosniff
 };
 
-enum XFrameOptionsDisposition {
-    XFrameOptionsNone,
-    XFrameOptionsDeny,
-    XFrameOptionsSameOrigin,
-    XFrameOptionsAllowAll,
-    XFrameOptionsInvalid,
-    XFrameOptionsConflict
+enum class XFrameOptionsDisposition : uint8_t {
+    None,
+    Deny,
+    SameOrigin,
+    AllowAll,
+    Invalid,
+    Conflict
 };
 
 enum class CrossOriginResourcePolicy {
@@ -91,8 +91,6 @@ WEBCORE_EXPORT bool parseRange(const String&, long long& rangeOffset, long long&
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header);
 
 // Parsing Complete HTTP Messages.
-enum HTTPVersion { Unknown, HTTP_1_0, HTTP_1_1 };
-size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReason, String& method, String& url, HTTPVersion&);
 size_t parseHTTPHeader(const char* data, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
 size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body);
 
