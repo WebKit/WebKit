@@ -1,17 +1,9 @@
 function assertSameDescriptor(a, b) {
-  const aString = stringifyDescriptor(a);
-  const bString = stringifyDescriptor(b);
+  const aString = JSON.stringify(a, null, 2);
+  const bString = JSON.stringify(b, null, 2);
 
   if (aString !== bString)
     throw new Error(`Bad descriptor!\nActual: ${aString}\nExpected: ${bString}`);
-}
-
-function stringifyDescriptor(descriptor) {
-  const sortedDescriptor = {};
-  for (const key of Object.keys(descriptor).sort())
-    sortedDescriptor[key] = descriptor[key];
-
-  return JSON.stringify(sortedDescriptor, null, 2);
 }
 
 function getCombinations(options) {

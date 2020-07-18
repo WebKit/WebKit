@@ -723,6 +723,12 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
     ASSERT(entry);
     entry->attributes = attributes;
 
+    if (attributes & PropertyAttribute::ReadOnly)
+        structure->setContainsReadOnlyProperties();
+
+    if (attributes & PropertyAttribute::DontEnum)
+        structure->setIsQuickPropertyAccessAllowedForEnumeration(false);
+
     structure->checkOffsetConsistency();
     return structure;
 }

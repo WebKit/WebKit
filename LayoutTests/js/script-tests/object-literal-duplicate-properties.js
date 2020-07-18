@@ -9,7 +9,7 @@ o = {
 shouldBe("x", "1");
 shouldBe("o.foo", "'getter'");
 
-// Ensure getters/setters get eliminated by computed properties.
+// Ensure getters/setters get eliminated by basic properties.
 x = 0;
 o = {
     get foo() {return "getter"},
@@ -54,7 +54,6 @@ o = {
 shouldBe("x", "4");
 shouldBe("o.foo", "3");
 shouldBe("o.bar", "undefined");
-// FIXME: <https://webkit.org/b/142933> Redefining a property should not change its insertion index (Object.keys order)
 shouldBe("Object.keys(o).join()", "'foo,test1,bar,test2,test3,nest'");
 
 

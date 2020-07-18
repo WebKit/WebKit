@@ -57,7 +57,7 @@ public:
     JS_EXPORT_PRIVATE bool isAccessorDescriptor() const;
     unsigned attributes() const { return m_attributes; }
     JSValue value() const { return m_value; }
-    GetterSetter* slowGetterSetter(JSGlobalObject*); // Be aware that this will lazily allocate a GetterSetter object. It's much better to use getter() and setter() individually if possible.
+    GetterSetter* slowGetterSetter(JSGlobalObject*) const; // Be aware that this will lazily allocate a GetterSetter object. It's much better to use getter() and setter() individually if possible.
     JS_EXPORT_PRIVATE JSValue getter() const;
     JS_EXPORT_PRIVATE JSValue setter() const;
     JSObject* getterObject() const;

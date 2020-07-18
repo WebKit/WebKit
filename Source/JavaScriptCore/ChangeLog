@@ -1,3 +1,39 @@
+2020-07-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Redefining a property should not change its insertion index (Object.keys order)
+        https://bugs.webkit.org/show_bug.cgi?id=142933
+
+        Reviewed by Saam Barati.
+
+        Before this change, JSC used to delete & put back a non-indexed property just to
+        update attributes, which was less efficient and corrupted observable property order.
+
+        This patch:
+        1. Rewrites validateAndApplyPropertyDescriptor() to closely resemble the spec [1].
+        2. Drops property deletion, inlines putDescriptor(), and sets necessary Structure
+           flags in attributeChangeTransition().
+        3. Simplifies validateAndApplyPropertyDescriptor() a bit by obtaining GetterSetter
+           instance from current descriptor rather then calling getDirect().
+
+        This change aligns property order with V8 and SpiderMonkey, advancing provided
+        microbenchmarks by 5-85% (especially for objects in dictionary mode).
+        SixSpeed, SunSpider, and ARES-6 are all neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor
+
+        * runtime/JSObject.cpp:
+        (JSC::validateAndApplyPropertyDescriptor):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::putDescriptor): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::slowGetterSetter const):
+        (JSC::PropertyDescriptor::slowGetterSetter): Deleted.
+        * runtime/PropertyDescriptor.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::attributeChangeTransition):
+
 2020-07-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up resolveLocale

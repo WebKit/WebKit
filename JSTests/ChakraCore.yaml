@@ -1474,7 +1474,7 @@
 - path: ChakraCore/test/es5/regexSpace.js
   cmd: runChakra :baseline, "NoException", "regexSpace.baseline", []
 - path: ChakraCore/test/es5/EnumeratingWithES5.js
-  cmd: runChakra :baseline, "NoException", "EnumeratingWithES5.baseline-jsc", []
+  cmd: runChakra :baseline, "NoException", "EnumeratingWithES5.baseline", []
 - path: ChakraCore/test/es5/InsufficientArguments.js
   cmd: runChakra :baseline, "NoException", "InsufficientArguments.baseline", []
 - path: ChakraCore/test/es5/recursivesetter.js

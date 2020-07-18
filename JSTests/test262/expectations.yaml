@@ -910,23 +910,14 @@ test/built-ins/Object/defineProperties/proxy-no-ownkeys-returned-keys-order.js:
   default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
   strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
 test/built-ins/Object/entries/order-after-define-property.js:
-  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
+  strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
 test/built-ins/Object/freeze/proxy-no-ownkeys-returned-keys-order.js:
   default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
   strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-test/built-ins/Object/getOwnPropertyDescriptors/order-after-define-property.js:
-  default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
-  strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
 test/built-ins/Object/getOwnPropertyDescriptors/proxy-no-ownkeys-returned-keys-order.js:
   default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
   strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-test/built-ins/Object/getOwnPropertyNames/order-after-define-property.js:
-  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-test/built-ins/Object/getOwnPropertySymbols/order-after-define-property.js:
-  default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
-  strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-arguments.js:
   default: 'Test262Error: Expected SameValue(«null», «[object Arguments]») to be true'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-caller.js:
@@ -941,14 +932,11 @@ test/built-ins/Object/isSealed/proxy-no-ownkeys-returned-keys-order.js:
   default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
   strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
 test/built-ins/Object/keys/order-after-define-property.js:
-  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
+  strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
 test/built-ins/Object/seal/proxy-no-ownkeys-returned-keys-order.js:
   default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
   strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-test/built-ins/Object/values/order-after-define-property.js:
-  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
@@ -988,9 +976,6 @@ test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
 test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
-test/built-ins/Reflect/ownKeys/order-after-define-property.js:
-  default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
-  strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
 test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
   default: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
@@ -3204,9 +3189,6 @@ test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expressio
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/order-after-define-property.js:
-  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
 test/language/statements/for-in/order-enumerable-shadowed.js:
   default: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '
   strict mode: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '

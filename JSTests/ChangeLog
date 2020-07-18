@@ -1,3 +1,24 @@
+2020-07-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Redefining a property should not change its insertion index (Object.keys order)
+        https://bugs.webkit.org/show_bug.cgi?id=142933
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/es5/EnumeratingWithES5.baseline-jsc: Removed.
+        * microbenchmarks/redefine-property-accessor-dictionary.js: Added.
+        * microbenchmarks/redefine-property-accessor.js: Added.
+        * microbenchmarks/redefine-property-data-dictionary.js: Added.
+        * microbenchmarks/redefine-property-data.js: Added.
+        * stress/define-own-indexed-property-fast-path.js:
+        * stress/redefine-property-enumerable.js: Added.
+        * stress/redefine-property-get.js: Added.
+        * stress/redefine-property-set.js: Added.
+        * stress/redefine-property-value.js: Added.
+        * stress/redefine-property-writable.js: Added.
+        * test262/expectations.yaml: Mark 12 test cases as passing.
+
 2020-07-17  Xan Lopez  <xan@igalia.com>
 
         Math.max() can yield the wrong result for max(0, -0).

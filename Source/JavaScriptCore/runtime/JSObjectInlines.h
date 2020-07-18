@@ -314,10 +314,11 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
             putDirect(vm, offset, value);
             structure->didReplaceProperty(offset);
 
-            if ((attributes & PropertyAttribute::Accessor) != (currentAttributes & PropertyAttribute::Accessor) || (attributes & PropertyAttribute::CustomAccessorOrValue) != (currentAttributes & PropertyAttribute::CustomAccessorOrValue)) {
-                ASSERT(!(attributes & PropertyAttribute::ReadOnly));
+            // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
+            // https://bugs.webkit.org/show_bug.cgi?id=214342
+            if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
-            } else
+            else
                 slot.setExistingProperty(this, offset);
 
             return true;
@@ -368,10 +369,11 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         structure->didReplaceProperty(offset);
         putDirect(vm, offset, value);
 
-        if ((attributes & PropertyAttribute::Accessor) != (currentAttributes & PropertyAttribute::Accessor) || (attributes & PropertyAttribute::CustomAccessorOrValue) != (currentAttributes & PropertyAttribute::CustomAccessorOrValue)) {
-            ASSERT(!(attributes & PropertyAttribute::ReadOnly));
+        // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
+        // https://bugs.webkit.org/show_bug.cgi?id=214342
+        if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
             setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
-        } else
+        else
             slot.setExistingProperty(this, offset);
 
         return true;

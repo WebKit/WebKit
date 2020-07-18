@@ -69,7 +69,7 @@ void PropertyDescriptor::setUndefined()
     m_attributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::DontEnum;
 }
 
-GetterSetter* PropertyDescriptor::slowGetterSetter(JSGlobalObject* globalObject)
+GetterSetter* PropertyDescriptor::slowGetterSetter(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     JSValue getter = m_getter && !m_getter.isUndefined() ? jsCast<JSObject*>(m_getter) : jsUndefined();

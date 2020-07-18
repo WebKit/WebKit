@@ -3551,41 +3551,6 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
     return true;
 }
 
-static bool putDescriptor(JSGlobalObject* globalObject, JSObject* target, PropertyName propertyName, const PropertyDescriptor& descriptor, unsigned attributes, const PropertyDescriptor& oldDescriptor)
-{
-    VM& vm = globalObject->vm();
-    if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
-        if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
-            JSObject* getter = oldDescriptor.getterPresent() ? oldDescriptor.getterObject() : nullptr;
-            JSObject* setter = oldDescriptor.setterPresent() ? oldDescriptor.setterObject() : nullptr;
-            GetterSetter* accessor = GetterSetter::create(vm, globalObject, getter, setter);
-            target->putDirectAccessor(globalObject, propertyName, accessor, attributes | PropertyAttribute::Accessor);
-            return true;
-        }
-        JSValue newValue = jsUndefined();
-        if (descriptor.value())
-            newValue = descriptor.value();
-        else if (oldDescriptor.value())
-            newValue = oldDescriptor.value();
-        target->putDirect(vm, propertyName, newValue, attributes & ~PropertyAttribute::Accessor);
-        if (attributes & PropertyAttribute::ReadOnly)
-            target->structure(vm)->setContainsReadOnlyProperties();
-        return true;
-    }
-    attributes &= ~PropertyAttribute::ReadOnly;
-
-    JSObject* getter = descriptor.getterPresent()
-        ? descriptor.getterObject() : oldDescriptor.getterPresent()
-        ? oldDescriptor.getterObject() : nullptr;
-    JSObject* setter = descriptor.setterPresent()
-        ? descriptor.setterObject() : oldDescriptor.setterPresent()
-        ? oldDescriptor.setterObject() : nullptr;
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject, getter, setter);
-
-    target->putDirectAccessor(globalObject, propertyName, accessor, attributes | PropertyAttribute::Accessor);
-    return true;
-}
-
 bool JSObject::putDirectMayBeIndex(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value)
 {
     if (Optional<uint32_t> index = parseIndex(propertyName))
@@ -3593,8 +3558,7 @@ bool JSObject::putDirectMayBeIndex(JSGlobalObject* globalObject, PropertyName pr
     return putDirect(globalObject->vm(), propertyName, value);
 }
 
-// 9.1.6.3 of the spec
-// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-validateandapplypropertydescriptor
+// https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor
 bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* object, PropertyName propertyName, bool isExtensible,
     const PropertyDescriptor& descriptor, bool isCurrentDefined, const PropertyDescriptor& current, bool throwException)
 {
@@ -3608,133 +3572,88 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
         // Step 2.a
         if (!isExtensible)
             return typeError(globalObject, scope, throwException, NonExtensibleObjectPropertyDefineError);
-        if (!object)
-            return true;
-        // Step 2.c/d
-        PropertyDescriptor oldDescriptor;
-        oldDescriptor.setValue(jsUndefined());
-        // FIXME: spec says to always return true here.
-        return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
+
+        if (object) {
+            if (descriptor.isAccessorDescriptor()) {
+                unsigned attributes = (descriptor.attributes() | PropertyAttribute::Accessor) & ~PropertyAttribute::ReadOnly;
+                object->putDirectAccessor(globalObject, propertyName, descriptor.slowGetterSetter(globalObject), attributes);
+            } else {
+                ASSERT(descriptor.isGenericDescriptor() || descriptor.isDataDescriptor());
+                JSValue value = descriptor.value() ? descriptor.value() : jsUndefined();
+                object->putDirect(vm, propertyName, value, descriptor.attributes() & ~PropertyAttribute::Accessor);
+            }
+        }
+
+        return true;
     }
     // Step 3.
     if (descriptor.isEmpty())
         return true;
-    // Step 4.
+
     bool isEqual = current.equalTo(globalObject, descriptor);
     RETURN_IF_EXCEPTION(scope, false);
     if (isEqual)
         return true;
 
-    // Step 5.
-    // Filter out invalid changes
+    // Step 4.
     if (!current.configurable()) {
         if (descriptor.configurable())
             return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeConfigurabilityError);
         if (descriptor.enumerablePresent() && descriptor.enumerable() != current.enumerable())
             return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeEnumerabilityError);
     }
-    
-    // Step 6.
-    // A generic descriptor is simply changing the attributes of an existing property
+
     if (descriptor.isGenericDescriptor()) {
-        if (!current.attributesEqual(descriptor) && object) {
-            JSCell::deleteProperty(object, globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
-            return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
-        }
-        return true;
-    }
-    
-    // Step 7.
-    // Changing between a normal property or an accessor property
-    if (descriptor.isDataDescriptor() != current.isDataDescriptor()) {
+        // Step 5.
+        // Changing [[Enumerable]] and [[Configurable]] attributes of an existing property
+    } else if (current.isDataDescriptor() != descriptor.isDataDescriptor()) {
+        // Step 6.
+        // Changing between a data property and accessor property
         if (!current.configurable())
             return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
-
-        if (!object)
-            return true;
-
-        JSCell::deleteProperty(object, globalObject, propertyName);
-        RETURN_IF_EXCEPTION(scope, false);
-        return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
-    }
-
-    // Step 8.
-    // Changing the value and attributes of an existing property
-    if (descriptor.isDataDescriptor()) {
-        if (!current.configurable()) {
-            if (!current.writable() && descriptor.writable())
+    } else if (current.isDataDescriptor() && descriptor.isDataDescriptor()) {
+        // Step 7.
+        // Changing the value and attributes of an existing data property
+        if (!current.configurable() && !current.writable()) {
+            if (descriptor.writable())
                 return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
-            if (!current.writable()) {
-                if (descriptor.value()) {
-                    bool isSame = sameValue(globalObject, current.value(), descriptor.value());
-                    RETURN_IF_EXCEPTION(scope, false);
-                    if (!isSame)
-                        return typeError(globalObject, scope, throwException, ReadonlyPropertyChangeError);
-                }
-            }
+            if (descriptor.value() && !sameValue(globalObject, current.value(), descriptor.value()))
+                return typeError(globalObject, scope, throwException, ReadonlyPropertyChangeError);
+
+            return true;
         }
-        if (current.attributesEqual(descriptor) && !descriptor.value())
+    } else {
+        // Step 8.
+        // Changing the accessor functions and attributes of an existing accessor property
+        ASSERT(descriptor.isAccessorDescriptor());
+        if (!current.configurable()) {
+            if (descriptor.setterPresent() && descriptor.setter() != current.setter())
+                return typeError(globalObject, scope, throwException, "Attempting to change the setter of an unconfigurable property."_s);
+            if (descriptor.getterPresent() && descriptor.getter() != current.getter())
+                return typeError(globalObject, scope, throwException, "Attempting to change the getter of an unconfigurable property."_s);
+            if (current.attributes() & PropertyAttribute::CustomAccessor)
+                return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
+
             return true;
-        if (!object)
-            return true;
-        JSCell::deleteProperty(object, globalObject, propertyName);
-        RETURN_IF_EXCEPTION(scope, false);
-        return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
+        }
     }
 
-    // Step 9.
-    // Changing the accessor functions of an existing accessor property
-    ASSERT(descriptor.isAccessorDescriptor());
-    if (!current.configurable()) {
-        if (descriptor.setterPresent() && !(current.setterPresent() && JSValue::strictEqual(globalObject, current.setter(), descriptor.setter())))
-            return typeError(globalObject, scope, throwException, "Attempting to change the setter of an unconfigurable property."_s);
-        if (descriptor.getterPresent() && !(current.getterPresent() && JSValue::strictEqual(globalObject, current.getter(), descriptor.getter())))
-            return typeError(globalObject, scope, throwException, "Attempting to change the getter of an unconfigurable property."_s);
-        if (current.attributes() & PropertyAttribute::CustomAccessor)
-            return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
-    }
-
-    // Step 10/11.
     if (!object)
         return true;
-    JSValue accessor = object->getDirect(vm, propertyName);
-    if (!accessor)
-        return false;
-    JSObject* getter = nullptr;
-    JSObject* setter = nullptr;
-    bool getterSetterChanged = false;
-
-    if (accessor.isCustomGetterSetter()) {
-        auto* customGetterSetter = jsCast<CustomGetterSetter*>(accessor);
-        if (customGetterSetter->setter())
-            setter = getCustomGetterSetterFunctionForGetterSetter(globalObject, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Setter);
-        if (customGetterSetter->getter())
-            getter = getCustomGetterSetterFunctionForGetterSetter(globalObject, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Getter);
+    // Step 9.
+    unsigned attributes = descriptor.attributesOverridingCurrent(current);
+    if (descriptor.isAccessorDescriptor() || (current.isAccessorDescriptor() && !descriptor.isDataDescriptor())) {
+        ASSERT(attributes & PropertyAttribute::Accessor);
+        JSObject* getter = descriptor.getterPresent() ? descriptor.getterObject() : (current.getterPresent() ? current.getterObject() : nullptr);
+        JSObject* setter = descriptor.setterPresent() ? descriptor.setterObject() : (current.setterPresent() ? current.setterObject() : nullptr);
+        GetterSetter* getterSetter = GetterSetter::create(vm, globalObject, getter, setter);
+        object->putDirectAccessor(globalObject, propertyName, getterSetter, attributes & ~PropertyAttribute::ReadOnly);
     } else {
-        ASSERT(accessor.isGetterSetter());
-        auto* getterSetter = jsCast<GetterSetter*>(accessor);
-        getter = getterSetter->getter();
-        setter = getterSetter->setter();
-    }
-    if (descriptor.setterPresent()) {
-        setter = descriptor.setterObject();
-        getterSetterChanged = true;
-    }
-    if (descriptor.getterPresent()) {
-        getter = descriptor.getterObject();
-        getterSetterChanged = true;
+        ASSERT(descriptor.isGenericDescriptor() || descriptor.isDataDescriptor());
+        JSValue value = descriptor.value() ? descriptor.value() : (current.value() ? current.value() : jsUndefined());
+        object->putDirect(vm, propertyName, value, attributes & ~PropertyAttribute::Accessor);
     }
 
-    if (current.attributesEqual(descriptor) && !getterSetterChanged)
-        return true;
-
-    GetterSetter* getterSetter = GetterSetter::create(vm, globalObject, getter, setter);
-
-    JSCell::deleteProperty(object, globalObject, propertyName);
-    RETURN_IF_EXCEPTION(scope, false);
-    unsigned attrs = descriptor.attributesOverridingCurrent(current);
-    object->putDirectAccessor(globalObject, propertyName, getterSetter, attrs | PropertyAttribute::Accessor);
     return true;
 }
 
@@ -3743,11 +3662,6 @@ bool JSObject::defineOwnNonIndexProperty(JSGlobalObject* globalObject, PropertyN
     VM& vm  = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    // Track on the globaldata that we're in define property.
-    // Currently DefineOwnProperty uses delete to remove properties when they are being replaced
-    // (particularly when changing attributes), however delete won't allow non-configurable (i.e.
-    // DontDelete) properties to be deleted. For now, we can use this flag to make this work.
-    VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
     PropertyDescriptor current;
     bool isCurrentDefined = getOwnPropertyDescriptor(globalObject, propertyName, current);
     RETURN_IF_EXCEPTION(throwScope, false);

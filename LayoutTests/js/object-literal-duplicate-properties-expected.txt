@@ -14,7 +14,7 @@ PASS o.foo is 0
 PASS x is 4
 PASS o.foo is 3
 PASS o.bar is undefined
-FAIL Object.keys(o).join() should be foo,test1,bar,test2,test3,nest. Was test1,test2,test3,foo,bar,nest.
+PASS Object.keys(o).join() is 'foo,test1,bar,test2,test3,nest'
 
 Basic
 PASS o = {foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
