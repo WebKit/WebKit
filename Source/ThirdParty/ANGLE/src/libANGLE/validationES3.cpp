@@ -688,11 +688,9 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         //      GL_UNPACK_SKIP_ROWS + height > DataStoreHeight
         //    except for texImage3D if no GL_PIXEL_UNPACK_BUFFER is
         //    bound and _pixels_ is null.
-        if (!pixelUnpackBuffer && !pixels)
+        if (!pixelUnpackBuffer && !pixels && !isSubImage)
         {
             // Exception case for texImage2D or texImage3D, above.
-            // The validation above ensures null pixels have been rejected for texSubImage.
-            ASSERT(!isSubImage);
         }
         else
         {
