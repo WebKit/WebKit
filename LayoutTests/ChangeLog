@@ -1,3 +1,11 @@
+2020-07-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark imported/w3c/web-platform-tests/web-share/share-url-invalid.https.html as timing out on iOS.
+
+        It has been timing out since import in r264564.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/web-share from upstream
