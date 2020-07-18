@@ -1,3 +1,11 @@
+2020-07-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html.
+
+        Needed after WPT resync in r251714.
+
+        * web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt:
+
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/web-share from upstream
