@@ -1,5 +1,90 @@
 2020-07-17  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/encoding from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214502
+
+        Reviewed by Geoff Garen.
+
+        Resync web-platform-tests/encoding from upstream 81de986322a0de90f.
+
+        * web-platform-tests/encoding/api-invalid-label.any-expected.txt:
+        * web-platform-tests/encoding/api-invalid-label.any.worker-expected.txt:
+        * web-platform-tests/encoding/bom-handling-expected.txt: Added.
+        * web-platform-tests/encoding/bom-handling.html: Added.
+        * web-platform-tests/encoding/bom-handling.html.headers: Added.
+        * web-platform-tests/encoding/encodeInto.any-expected.txt:
+        * web-platform-tests/encoding/encodeInto.any.js:
+        (forEach.testData.forEach.destinationData.string_appeared_here.forEach.arrayBufferOrSharedArrayBuffer.test):
+        (Float64Array.forEach.view.string_appeared_here.forEach):
+        (string_appeared_here.forEach):
+        * web-platform-tests/encoding/encodeInto.any.worker-expected.txt:
+        * web-platform-tests/encoding/eof-shift_jis-expected.html: Removed.
+        * web-platform-tests/encoding/eof-utf-8-one.html:
+        * web-platform-tests/encoding/eof-utf-8-three.html:
+        * web-platform-tests/encoding/eof-utf-8-two.html:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-csiso2022jp-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp_chars-csiso2022jp.html:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp_chars.html:
+        * web-platform-tests/encoding/resources/encodings.js:
+        * web-platform-tests/encoding/resources/single-byte-raw.py:
+        (main):
+        * web-platform-tests/encoding/resources/text-plain-charset.py:
+        (main):
+        * web-platform-tests/encoding/streams/backpressure.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/backpressure.any.html: Added.
+        * web-platform-tests/encoding/streams/backpressure.any.js:
+        * web-platform-tests/encoding/streams/decode-attributes.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-attributes.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-attributes.any.js:
+        * web-platform-tests/encoding/streams/decode-bad-chunks.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-bad-chunks.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-bad-chunks.any.js:
+        * web-platform-tests/encoding/streams/decode-ignore-bom.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-ignore-bom.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-ignore-bom.any.js:
+        * web-platform-tests/encoding/streams/decode-incomplete-input.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-incomplete-input.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-incomplete-input.any.js:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.js:
+        * web-platform-tests/encoding/streams/decode-split-character.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-split-character.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-split-character.any.js:
+        * web-platform-tests/encoding/streams/decode-utf8.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/decode-utf8.any.html: Added.
+        * web-platform-tests/encoding/streams/decode-utf8.any.js:
+        * web-platform-tests/encoding/streams/decode-utf8.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/encode-bad-chunks.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/encode-bad-chunks.any.html: Added.
+        * web-platform-tests/encoding/streams/encode-bad-chunks.any.js:
+        * web-platform-tests/encoding/streams/encode-utf8.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/encode-utf8.any.html: Added.
+        * web-platform-tests/encoding/streams/encode-utf8.any.js:
+        * web-platform-tests/encoding/streams/readable-writable-properties.any-expected.txt: Added.
+        * web-platform-tests/encoding/streams/readable-writable-properties.any.html: Added.
+        * web-platform-tests/encoding/streams/readable-writable-properties.any.js:
+        * web-platform-tests/encoding/streams/realms.window.js:
+        (async runTextEncoderStreamTests.async promise_test):
+        (async runTextEncoderStreamTests):
+        (async runTextDecoderStreamTests.async promise_test):
+        (async runTextDecoderStreamTests):
+        * web-platform-tests/encoding/textdecoder-copy.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-copy.any.js:
+        (string_appeared_here.forEach.arrayBufferOrSharedArrayBuffer.test):
+        * web-platform-tests/encoding/textdecoder-copy.any.worker-expected.txt:
+        * web-platform-tests/encoding/textdecoder-labels.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-labels.any.worker-expected.txt:
+        * web-platform-tests/encoding/textdecoder-streaming.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-streaming.any.js:
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/encoding/textdecoder-streaming.any.worker-expected.txt:
+        * web-platform-tests/encoding/w3c-import.log:
+
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/remote-playback from upstream
         https://bugs.webkit.org/show_bug.cgi?id=214506
 

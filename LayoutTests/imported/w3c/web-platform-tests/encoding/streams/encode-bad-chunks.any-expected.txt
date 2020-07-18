@@ -1,0 +1,8 @@
+
+FAIL a chunk that cannot be converted to a string should error the streams Can't find variable: TextEncoderStream
+FAIL input of type undefined should be converted correctly to string promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextEncoderStream"
+FAIL input of type null should be converted correctly to string promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextEncoderStream"
+FAIL input of type numeric should be converted correctly to string promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextEncoderStream"
+FAIL input of type object should be converted correctly to string promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextEncoderStream"
+FAIL input of type array should be converted correctly to string promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextEncoderStream"
+

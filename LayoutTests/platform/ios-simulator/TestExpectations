@@ -53,6 +53,14 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/int
 wasm/iframe-postmessage.html [ Skip ]
 wasm/iframe-parent-postmessage.html [ Skip ]
 wasm/window-postmessage.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/encodeInto.any.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/encodeInto.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.html [ Skip ]
+imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.worker.html [ Skip ]
 
 # These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.
 webkit.org/b/170176 fast/inline-block/baseline-vertical-01.html [ ImageOnlyFailure ]

@@ -1,3 +1,12 @@
+2020-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/encoding from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=214502
+
+        Reviewed by Geoff Garen.
+
+        * TestExpectations:
+
 2020-07-17  Truitt Savell  <tsavell@apple.com>
 
         [ Mac iOS ] imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html is failing as of the re-sync in r 264522

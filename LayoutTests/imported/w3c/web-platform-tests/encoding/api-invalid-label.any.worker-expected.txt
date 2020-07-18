@@ -15,6 +15,36 @@ PASS Invalid label " unicode-1-1-utf-8 " should be rejected by TextDecoder.
 PASS Invalid label " unicode-1-1-utf-8" should be rejected by TextDecoder. 
 PASS Invalid label "unicode-1-1-utf-8 " should be rejected by TextDecoder. 
 PASS Invalid label " unicode-1-1-utf-8 " should be rejected by TextDecoder. 
+PASS Invalid label "\0unicode11utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode11utf8\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0unicode11utf8\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicode11utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode11utf8\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicode11utf8\v" should be rejected by TextDecoder. 
+PASS Invalid label " unicode11utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode11utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode11utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode11utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode11utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode11utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode11utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode11utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode11utf8 " should be rejected by TextDecoder. 
+PASS Invalid label "\0unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode20utf8\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0unicode20utf8\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode20utf8\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicode20utf8\v" should be rejected by TextDecoder. 
+PASS Invalid label " unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " unicode20utf8 " should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-8" should be rejected by TextDecoder. 
 PASS Invalid label "utf-8\0" should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-8\0" should be rejected by TextDecoder. 
@@ -45,6 +75,21 @@ PASS Invalid label " utf8 " should be rejected by TextDecoder.
 PASS Invalid label " utf8" should be rejected by TextDecoder. 
 PASS Invalid label "utf8 " should be rejected by TextDecoder. 
 PASS Invalid label " utf8 " should be rejected by TextDecoder. 
+PASS Invalid label "\0x-unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "x-unicode20utf8\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0x-unicode20utf8\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vx-unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "x-unicode20utf8\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vx-unicode20utf8\v" should be rejected by TextDecoder. 
+PASS Invalid label " x-unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "x-unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " x-unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " x-unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "x-unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " x-unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " x-unicode20utf8" should be rejected by TextDecoder. 
+PASS Invalid label "x-unicode20utf8 " should be rejected by TextDecoder. 
+PASS Invalid label " x-unicode20utf8 " should be rejected by TextDecoder. 
 PASS Invalid label "\0866" should be rejected by TextDecoder. 
 PASS Invalid label "866\0" should be rejected by TextDecoder. 
 PASS Invalid label "\0866\0" should be rejected by TextDecoder. 
@@ -3225,6 +3270,21 @@ PASS Invalid label " replacement " should be rejected by TextDecoder.
 PASS Invalid label " replacement" should be rejected by TextDecoder. 
 PASS Invalid label "replacement " should be rejected by TextDecoder. 
 PASS Invalid label " replacement " should be rejected by TextDecoder. 
+PASS Invalid label "\0unicodefffe" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefffe\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0unicodefffe\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicodefffe" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefffe\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicodefffe\v" should be rejected by TextDecoder. 
+PASS Invalid label " unicodefffe" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefffe " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefffe " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefffe" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefffe " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefffe " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefffe" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefffe " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefffe " should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-16be" should be rejected by TextDecoder. 
 PASS Invalid label "utf-16be\0" should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-16be\0" should be rejected by TextDecoder. 
@@ -3240,6 +3300,81 @@ PASS Invalid label " utf-16be " should be rejected by TextDecoder.
 PASS Invalid label " utf-16be" should be rejected by TextDecoder. 
 PASS Invalid label "utf-16be " should be rejected by TextDecoder. 
 PASS Invalid label " utf-16be " should be rejected by TextDecoder. 
+PASS Invalid label "\0csunicode" should be rejected by TextDecoder. 
+PASS Invalid label "csunicode\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0csunicode\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vcsunicode" should be rejected by TextDecoder. 
+PASS Invalid label "csunicode\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vcsunicode\v" should be rejected by TextDecoder. 
+PASS Invalid label " csunicode" should be rejected by TextDecoder. 
+PASS Invalid label "csunicode " should be rejected by TextDecoder. 
+PASS Invalid label " csunicode " should be rejected by TextDecoder. 
+PASS Invalid label " csunicode" should be rejected by TextDecoder. 
+PASS Invalid label "csunicode " should be rejected by TextDecoder. 
+PASS Invalid label " csunicode " should be rejected by TextDecoder. 
+PASS Invalid label " csunicode" should be rejected by TextDecoder. 
+PASS Invalid label "csunicode " should be rejected by TextDecoder. 
+PASS Invalid label " csunicode " should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-10646-ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "iso-10646-ucs-2\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-10646-ucs-2\0" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-10646-ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "iso-10646-ucs-2\v" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-10646-ucs-2\v" should be rejected by TextDecoder. 
+PASS Invalid label " iso-10646-ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "iso-10646-ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " iso-10646-ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " iso-10646-ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "iso-10646-ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " iso-10646-ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " iso-10646-ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "iso-10646-ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " iso-10646-ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label "\0ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "ucs-2\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0ucs-2\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "ucs-2\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vucs-2\v" should be rejected by TextDecoder. 
+PASS Invalid label " ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " ucs-2" should be rejected by TextDecoder. 
+PASS Invalid label "ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label " ucs-2 " should be rejected by TextDecoder. 
+PASS Invalid label "\0unicode" should be rejected by TextDecoder. 
+PASS Invalid label "unicode\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0unicode\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicode" should be rejected by TextDecoder. 
+PASS Invalid label "unicode\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicode\v" should be rejected by TextDecoder. 
+PASS Invalid label " unicode" should be rejected by TextDecoder. 
+PASS Invalid label "unicode " should be rejected by TextDecoder. 
+PASS Invalid label " unicode " should be rejected by TextDecoder. 
+PASS Invalid label " unicode" should be rejected by TextDecoder. 
+PASS Invalid label "unicode " should be rejected by TextDecoder. 
+PASS Invalid label " unicode " should be rejected by TextDecoder. 
+PASS Invalid label " unicode" should be rejected by TextDecoder. 
+PASS Invalid label "unicode " should be rejected by TextDecoder. 
+PASS Invalid label " unicode " should be rejected by TextDecoder. 
+PASS Invalid label "\0unicodefeff" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefeff\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0unicodefeff\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicodefeff" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefeff\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vunicodefeff\v" should be rejected by TextDecoder. 
+PASS Invalid label " unicodefeff" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefeff " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefeff " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefeff" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefeff " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefeff " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefeff" should be rejected by TextDecoder. 
+PASS Invalid label "unicodefeff " should be rejected by TextDecoder. 
+PASS Invalid label " unicodefeff " should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-16" should be rejected by TextDecoder. 
 PASS Invalid label "utf-16\0" should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-16\0" should be rejected by TextDecoder. 

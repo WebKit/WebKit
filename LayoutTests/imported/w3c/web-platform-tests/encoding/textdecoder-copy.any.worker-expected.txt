@@ -1,4 +1,4 @@
 
 FAIL Modify buffer after passing it in (ArrayBuffer) assert_equals: expected "@" but got "﻿@"
-FAIL Modify buffer after passing it in (SharedArrayBuffer) undefined is not a constructor (evaluating 'new self[arrayBufferOrSharedArrayBuffer](2)')
+FAIL Modify buffer after passing it in (SharedArrayBuffer) assert_equals: expected "@" but got "﻿@"
 

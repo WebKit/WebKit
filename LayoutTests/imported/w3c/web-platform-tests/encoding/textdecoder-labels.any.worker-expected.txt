@@ -1,7 +1,10 @@
 
 PASS unicode-1-1-utf-8 => UTF-8 
+PASS unicode11utf8 => UTF-8 
+PASS unicode20utf8 => UTF-8 
 PASS utf-8 => UTF-8 
 PASS utf8 => UTF-8 
+PASS x-unicode20utf8 => UTF-8 
 PASS 866 => IBM866 
 PASS cp866 => IBM866 
 PASS csibm866 => IBM866 
@@ -208,7 +211,13 @@ PASS ks_c_5601-1989 => EUC-KR
 PASS ksc5601 => EUC-KR 
 PASS ksc_5601 => EUC-KR 
 PASS windows-949 => EUC-KR 
+PASS unicodefffe => UTF-16BE 
 PASS utf-16be => UTF-16BE 
+PASS csunicode => UTF-16LE 
+PASS iso-10646-ucs-2 => UTF-16LE 
+PASS ucs-2 => UTF-16LE 
+PASS unicode => UTF-16LE 
+PASS unicodefeff => UTF-16LE 
 PASS utf-16 => UTF-16LE 
 PASS utf-16le => UTF-16LE 
 PASS x-user-defined => x-user-defined 

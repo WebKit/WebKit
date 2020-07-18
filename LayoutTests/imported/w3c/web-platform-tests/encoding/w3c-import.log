@@ -20,8 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/api-replacement-encodings.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/api-surrogates-utf8.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/big5-encoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/bom-handling.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/bom-handling.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/encodeInto.any.js
-/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-shift_jis-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-shift_jis.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-one-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-one.html
