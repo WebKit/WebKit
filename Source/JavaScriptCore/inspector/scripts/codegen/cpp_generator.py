@@ -131,7 +131,7 @@ class CppGenerator(Generator):
             _type = _type.primitive_type  # Fall through to primitive.
 
         # This handles the 'any' type and objects with defined properties.
-        if isinstance(_type, ObjectType) or _type.qualified_name() is 'object':
+        if isinstance(_type, ObjectType) or _type.qualified_name() == 'object':
             cpp_name = 'JSON::Object'
             if parameter.is_optional:
                 return 'const %s*' % cpp_name
