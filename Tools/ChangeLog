@@ -1,5 +1,18 @@
 2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        cpp.py:3688: FutureWarning: Possible nested set at position 101
+        https://bugs.webkit.org/show_bug.cgi?id=214536
+
+        Reviewed by Darin Adler.
+
+        The warning was added in https://bugs.python.org/issue30349. We need to escape [ when used
+        inside a set. That is, we have to change "[[" to "[\[".
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+
+2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         Fix -Wdeprecated-declarations under Tools
         https://bugs.webkit.org/show_bug.cgi?id=214534
 
