@@ -177,7 +177,7 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
     paintLayer->setAnchorPoint(FloatPoint3D());
     paintLayer->setPosition(rect.location());
     paintLayer->setSize(rect.size());
-    paintLayer->setBackgroundColor(Color::red.colorWithAlpha(51));
+    paintLayer->setBackgroundColor(Color::red.colorWithAlphaByte(51));
 
     KeyframeValueList fadeKeyframes(AnimatedPropertyOpacity);
     fadeKeyframes.insert(makeUnique<FloatAnimationValue>(0, 1));

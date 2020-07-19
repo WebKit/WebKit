@@ -1,3 +1,104 @@
+2020-07-19  Sam Weinig  <weinig@apple.com>
+
+        Remove ColorBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=214521
+
+        Reviewed by Darin Adler.
+
+        ColorBuilder is unnecessary and just makes deduction contexts more complicated.
+        Instead, we can get the same behavior by having color types inherit from a shared
+        base class ColorType that uses the curiously recurring template pattern, which 
+        exposes the colorWithAlphaByte function (renamed from colorWithAlpha for clarity
+        of the parameter).
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove ColorBuilder.
+
+        * platform/graphics/ColorBuilder.h: Removed.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightened const):
+        * platform/graphics/Color.h:
+        (WebCore::Color::alphaByte const):
+        (WebCore::Color::alpha const): Deleted.
+        Stop using ColorBuilder for color named color types and rename Color::alpha to Color:alphaByte()
+        for consistency with colorWithAlphaByte().
+
+        * platform/graphics/ColorTypes.h:
+        (WebCore::ColorType::colorWithAlphaByte const):
+        (WebCore::LinearSRGBA::LinearSRGBA):
+        (WebCore::DisplayP3::DisplayP3):
+        (WebCore::LinearDisplayP3::LinearDisplayP3):
+        (WebCore::HSLA::HSLA):
+        (WebCore::CMYKA::CMYKA):
+        (WebCore::XYZA::XYZA):
+        Switch each color type to inheriting from new ColorWithAlphaHelper struct. Use the opertunity to
+        give each color type the same construction interface as well. Now that each type has constructors,
+        the deduction guides are no longer necessary.
+
+        * platform/graphics/ColorBlending.cpp:
+        (WebCore::blendSourceOver):
+        Switch from !color.alpha() to !color.isVisible() to more clearly indicate the intent.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable const):
+        Update to call alphaByte() and add FIXME indicating that it is probably incorrect and filed
+        https://bugs.webkit.org/show_bug.cgi?id=214537 to track things further.
+        
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::InspectorOverlay::drawBounds):
+        (WebCore::InspectorOverlay::drawRulers):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS const):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        * page/DragController.cpp:
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::getDebugBorderInfo const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        * platform/mock/ScrollbarThemeMock.cpp:
+        (WebCore::ScrollbarThemeMock::paintTrackBackground):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::resolveStyleForMarkedText):
+        * rendering/RenderEmbeddedObject.cpp:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForTouchAction):
+        (WebCore::patternForEventListenerRegionType):
+        (WebCore::RenderLayerBacking::paintDebugOverlays):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformTapHighlightColor const):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * testing/cocoa/WebViewVisualIdentificationOverlay.mm:
+        (-[WebViewVisualIdentificationOverlay initWithWebView:kind:deprecated:]):
+        Update to call colorWithAlphaByte rather than colorWithAlpha.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::addRoundedBorderClip):
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+        (WebCore::RenderThemeIOS::paintRadioDecorations):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+        Update to use colorWithAlphaByte rather than colorWithAlpha and alphaByte rather than alpha.
+
 2020-07-19  Rob Buis  <rbuis@igalia.com>
 
         Remove findCharsetInMediaType

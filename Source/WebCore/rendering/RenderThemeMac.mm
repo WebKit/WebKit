@@ -1592,8 +1592,8 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
     };
     paintInfo.context().fillPath(Path::polygonPathFromPoints(arrow2));
 
-    constexpr auto leftSeparatorColor = Color::black.colorWithAlpha(40);
-    constexpr auto rightSeparatorColor = Color::white.colorWithAlpha(40);
+    constexpr auto leftSeparatorColor = Color::black.colorWithAlphaByte(40);
+    constexpr auto rightSeparatorColor = Color::white.colorWithAlphaByte(40);
 
     // FIXME: Should the separator thickness and space be scaled up by fontScale?
     int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
@@ -2413,8 +2413,8 @@ const CGFloat attachmentIconSelectionBorderThickness = 1;
 const CGFloat attachmentIconBackgroundRadius = 3;
 const CGFloat attachmentIconToTitleMargin = 2;
 
-constexpr auto attachmentIconBackgroundColor = Color::black.colorWithAlpha(30);
-constexpr auto attachmentIconBorderColor = Color::white.colorWithAlpha(125);
+constexpr auto attachmentIconBackgroundColor = Color::black.colorWithAlphaByte(30);
+constexpr auto attachmentIconBorderColor = Color::white.colorWithAlphaByte(125);
 
 const CGFloat attachmentTitleFontSize = 12;
 const CGFloat attachmentTitleBackgroundRadius = 3;
@@ -2433,12 +2433,12 @@ const CGFloat attachmentProgressBarWidth = 30;
 const CGFloat attachmentProgressBarHeight = 5;
 const CGFloat attachmentProgressBarOffset = -9;
 const CGFloat attachmentProgressBarBorderWidth = 1;
-constexpr auto attachmentProgressBarBackgroundColor = Color::black.colorWithAlpha(89);
+constexpr auto attachmentProgressBarBackgroundColor = Color::black.colorWithAlphaByte(89);
 constexpr auto attachmentProgressBarFillColor = Color::white;
-constexpr auto attachmentProgressBarBorderColor = Color::black.colorWithAlpha(128);
+constexpr auto attachmentProgressBarBorderColor = Color::black.colorWithAlphaByte(128);
 
 const CGFloat attachmentPlaceholderBorderRadius = 5;
-constexpr auto attachmentPlaceholderBorderColor = Color::black.colorWithAlpha(56);
+constexpr auto attachmentPlaceholderBorderColor = Color::black.colorWithAlphaByte(56);
 const CGFloat attachmentPlaceholderBorderWidth = 2;
 const CGFloat attachmentPlaceholderBorderDashLength = 6;
 

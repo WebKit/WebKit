@@ -237,7 +237,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
 
         if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous))) {
             if (m_showDebugBackground)
-                fillWithSolidColor(context, destRect, Color::yellow.colorWithAlpha(128), options.compositeOperator());
+                fillWithSolidColor(context, destRect, Color::yellow.colorWithAlphaByte(128), options.compositeOperator());
             return result;
         }
 
@@ -248,7 +248,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         ASSERT_IMPLIES(status == StartAnimationStatus::DecodingActive, (!m_currentFrame && !m_repetitionsComplete) || frameHasFullSizeNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
 
         if (status == StartAnimationStatus::DecodingActive && m_showDebugBackground) {
-            fillWithSolidColor(context, destRect, Color::yellow.colorWithAlpha(128), options.compositeOperator());
+            fillWithSolidColor(context, destRect, Color::yellow.colorWithAlphaByte(128), options.compositeOperator());
             return result;
         }
         
@@ -266,7 +266,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         } else if (frameIsBeingDecoded) {
             // FIXME: instead of showing the yellow rectangle and returning we need to wait for this frame to finish decoding.
             if (m_showDebugBackground) {
-                fillWithSolidColor(context, destRect, Color::yellow.colorWithAlpha(128), options.compositeOperator());
+                fillWithSolidColor(context, destRect, Color::yellow.colorWithAlphaByte(128), options.compositeOperator());
                 LOG(Images, "BitmapImage::%s - %p - url: %s [waiting for async decoding to finish]", __FUNCTION__, this, sourceURL().string().utf8().data());
             }
             return ImageDrawResult::DidRequestDecoding;

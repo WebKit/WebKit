@@ -598,14 +598,14 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
     width = 2;
 
     if (needsBackdrop()) {
-        color = Color::magenta.colorWithAlpha(128); // has backdrop: magenta
+        color = Color::magenta.colorWithAlphaByte(128); // has backdrop: magenta
         width = 12;
         return;
     }
     
     if (drawsContent()) {
         if (tiledBacking()) {
-            color = Color::orange.colorWithAlpha(128); // tiled layer: orange
+            color = Color::orange.colorWithAlphaByte(128); // tiled layer: orange
             return;
         }
 
@@ -625,7 +625,7 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
         return;
     }
 
-    color = Color::yellow.colorWithAlpha(192); // container: yellow
+    color = Color::yellow.colorWithAlphaByte(192); // container: yellow
 }
 
 void GraphicsLayer::updateDebugIndicators()

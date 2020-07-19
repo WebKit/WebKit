@@ -1,3 +1,16 @@
+2020-07-19  Sam Weinig  <weinig@apple.com>
+
+        Remove ColorBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=214521
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        Update for rename from colorWithAlpha to colorWithAlphaByte.
+
 2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Enable cross-platform release logging in ResourceLoadStatisticsDatabaseStore.cpp

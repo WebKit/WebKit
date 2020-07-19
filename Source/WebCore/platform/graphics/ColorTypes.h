@@ -42,7 +42,20 @@ template<> struct ComponentTraits<float> {
     static constexpr float maxValue = 1.0f;
 };
 
-template<typename T> struct SRGBA {
+template<typename Parent> struct ColorWithAlphaHelper {
+    // Helper to allow convenient syntax for working with color types.
+    // e.g. auto yellowWith50PercentAlpha = Color::yellow.colorWithAlphaByte(128);
+    constexpr Parent colorWithAlphaByte(uint8_t overrideAlpha) const
+    {
+        static_assert(std::is_same_v<decltype(std::declval<Parent>().alpha), uint8_t>, "Only uint8_t based color types are supported.");
+
+        auto copy = *static_cast<const Parent*>(this);
+        copy.alpha = overrideAlpha;
+        return copy;
+    }
+};
+
+template<typename T> struct SRGBA : ColorWithAlphaHelper<SRGBA<T>> {
     using ComponentType = T;
     static constexpr auto colorSpace = ColorSpace::SRGB;
 
@@ -86,17 +99,28 @@ template<typename T> constexpr bool operator!=(const SRGBA<T>& a, const SRGBA<T>
 }
 
 
-template<typename T> struct LinearSRGBA {
+template<typename T> struct LinearSRGBA : ColorWithAlphaHelper<LinearSRGBA<T>> {
+    using ComponentType = T;
+    static constexpr auto colorSpace = ColorSpace::LinearRGB;
+
+    constexpr LinearSRGBA(T red, T green, T blue, T alpha = ComponentTraits<T>::maxValue)
+        : red { red }
+        , green { green }
+        , blue { blue }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr LinearSRGBA()
+        : LinearSRGBA { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T red;
     T green;
     T blue;
     T alpha;
-
-    using ComponentType = T;
-    static constexpr auto colorSpace = ColorSpace::LinearRGB;
 };
-
-template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearSRGBA<T>& c)
 {
@@ -119,17 +143,28 @@ template<typename T> constexpr bool operator!=(const LinearSRGBA<T>& a, const Li
 }
 
 
-template<typename T> struct DisplayP3 {
+template<typename T> struct DisplayP3 : ColorWithAlphaHelper<DisplayP3<T>> {
+    using ComponentType = T;
+    static constexpr auto colorSpace = ColorSpace::DisplayP3;
+
+    constexpr DisplayP3(T red, T green, T blue, T alpha = ComponentTraits<T>::maxValue)
+        : red { red }
+        , green { green }
+        , blue { blue }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr DisplayP3()
+        : DisplayP3 { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T red;
     T green;
     T blue;
     T alpha;
-
-    using ComponentType = T;
-    static constexpr auto colorSpace = ColorSpace::DisplayP3;
 };
-
-template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const DisplayP3<T>& c)
 {
@@ -152,16 +187,27 @@ template<typename T> constexpr bool operator!=(const DisplayP3<T>& a, const Disp
 }
 
 
-template<typename T> struct LinearDisplayP3 {
+template<typename T> struct LinearDisplayP3 : ColorWithAlphaHelper<LinearDisplayP3<T>> {
+    using ComponentType = T;
+
+    constexpr LinearDisplayP3(T red, T green, T blue, T alpha = ComponentTraits<T>::maxValue)
+        : red { red }
+        , green { green }
+        , blue { blue }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr LinearDisplayP3()
+        : LinearDisplayP3 { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T red;
     T green;
     T blue;
     T alpha;
-
-    using ComponentType = T;
 };
-
-template<typename T> LinearDisplayP3(T, T, T, T) -> LinearDisplayP3<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearDisplayP3<T>& c)
 {
@@ -184,13 +230,26 @@ template<typename T> constexpr bool operator!=(const LinearDisplayP3<T>& a, cons
 }
 
 
-template<typename T> struct HSLA {
+template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
+    using ComponentType = T;
+
+    constexpr HSLA(T hue, T saturation, T lightness, T alpha = ComponentTraits<T>::maxValue)
+        : hue { hue }
+        , saturation { saturation }
+        , lightness { lightness }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr HSLA()
+        : HSLA { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T hue;
     T saturation;
     T lightness;
     T alpha;
-
-    using ComponentType = T;
 };
 
 template<typename T> HSLA(T, T, T, T) -> HSLA<T>;
@@ -217,17 +276,29 @@ template<typename T> constexpr bool operator!=(const HSLA<T>& a, const HSLA<T>& 
 
 
 // FIXME: When ColorComponents supports more than length == 4, add conversion to/from ColorComponents<T> for CMYKA
-template<typename T> struct CMYKA {
+template<typename T> struct CMYKA : ColorWithAlphaHelper<CMYKA<T>> {
+    using ComponentType = T;
+
+    constexpr CMYKA(T cyan, T magenta, T yellow, T black, T alpha = ComponentTraits<T>::maxValue)
+        : cyan { cyan }
+        , magenta { magenta }
+        , yellow { yellow }
+        , black { black }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr CMYKA()
+        : CMYKA { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T cyan;
     T magenta;
     T yellow;
     T black;
     T alpha;
-
-    using ComponentType = T;
 };
-
-template<typename T> CMYKA(T, T, T, T, T) -> CMYKA<T>;
 
 template<typename T> constexpr bool operator==(const CMYKA<T>& a, const CMYKA<T>& b)
 {
@@ -240,16 +311,27 @@ template<typename T> constexpr bool operator!=(const CMYKA<T>& a, const CMYKA<T>
 }
 
 
-template<typename T> struct XYZA {
+template<typename T> struct XYZA : ColorWithAlphaHelper<XYZA<T>> {
+    using ComponentType = T;
+
+    constexpr XYZA(T x, T y, T z, T alpha = ComponentTraits<T>::maxValue)
+        : x { x }
+        , y { y }
+        , z { z }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr XYZA()
+        : XYZA { ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue, ComponentTraits<T>::minValue }
+    {
+    }
+
     T x;
     T y;
     T z;
     T alpha;
-
-    using ComponentType = T;
 };
-
-template<typename T> XYZA(T, T, T, T) -> XYZA<T>;
 
 template<typename T> constexpr ColorComponents<T> asColorComponents(const XYZA<T>& c)
 {

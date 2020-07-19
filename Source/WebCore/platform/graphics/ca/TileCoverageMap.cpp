@@ -51,7 +51,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_visibleViewportIndicatorLayer.get().setName("visible viewport indicator");
     m_visibleViewportIndicatorLayer.get().setBorderWidth(2);
     m_visibleViewportIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
-    m_visibleViewportIndicatorLayer.get().setBorderColor(Color::red.colorWithAlpha(200));
+    m_visibleViewportIndicatorLayer.get().setBorderColor(Color::red.colorWithAlphaByte(200));
 
     m_layoutViewportIndicatorLayer.get().setName("layout viewport indicator");
     m_layoutViewportIndicatorLayer.get().setBorderWidth(2);

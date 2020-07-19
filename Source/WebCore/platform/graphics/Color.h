@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ColorBuilder.h"
 #include "ColorSpace.h"
 #include "ColorUtilities.h"
 #include "ExtendedColor.h"
@@ -101,7 +100,7 @@ public:
 
     bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asInline().alpha == 255; }
     bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asInline().alpha > 0; }
-    uint8_t alpha() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asInline().alpha; }
+    uint8_t alphaByte() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asInline().alpha; }
     float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertToComponentFloat(asInline().alpha); }
 
     WEBCORE_EXPORT float luminance() const;
@@ -146,20 +145,20 @@ public:
     WEBCORE_EXPORT operator D2D1_VECTOR_4F() const;
 #endif
 
-    static constexpr auto black = ColorBuilder<SRGBA<uint8_t>> { 0, 0, 0 };
-    static constexpr auto white = ColorBuilder<SRGBA<uint8_t>> { 255, 255, 255 };
-    static constexpr auto darkGray = ColorBuilder<SRGBA<uint8_t>> { 128, 128, 128 };
-    static constexpr auto gray = ColorBuilder<SRGBA<uint8_t>> { 160, 160, 160 };
-    static constexpr auto lightGray = ColorBuilder<SRGBA<uint8_t>> { 192, 192, 192 };
-    static constexpr auto transparent = ColorBuilder<SRGBA<uint8_t>> { };
-    static constexpr auto cyan = ColorBuilder<SRGBA<uint8_t>> { 0, 255, 255 };
-    static constexpr auto yellow = ColorBuilder<SRGBA<uint8_t>> { 255, 255, 0 };
-    static constexpr auto red = ColorBuilder<SRGBA<uint8_t>> { 255, 0, 0 };
-    static constexpr auto magenta = ColorBuilder<SRGBA<uint8_t>> { 255, 0, 255 };
-    static constexpr auto blue = ColorBuilder<SRGBA<uint8_t>> { 0, 0, 255 };
-    static constexpr auto green = ColorBuilder<SRGBA<uint8_t>> { 0, 255, 0 };
-    static constexpr auto darkGreen = ColorBuilder<SRGBA<uint8_t>> { 0, 128, 0 };
-    static constexpr auto orange = ColorBuilder<SRGBA<uint8_t>> { 255, 128, 0 };
+    static constexpr auto black = SRGBA<uint8_t> { 0, 0, 0 };
+    static constexpr auto white = SRGBA<uint8_t> { 255, 255, 255 };
+    static constexpr auto darkGray = SRGBA<uint8_t> { 128, 128, 128 };
+    static constexpr auto gray = SRGBA<uint8_t> { 160, 160, 160 };
+    static constexpr auto lightGray = SRGBA<uint8_t> { 192, 192, 192 };
+    static constexpr auto transparent = SRGBA<uint8_t> { };
+    static constexpr auto cyan = SRGBA<uint8_t> { 0, 255, 255 };
+    static constexpr auto yellow = SRGBA<uint8_t> { 255, 255, 0 };
+    static constexpr auto red = SRGBA<uint8_t> { 255, 0, 0 };
+    static constexpr auto magenta = SRGBA<uint8_t> { 255, 0, 255 };
+    static constexpr auto blue = SRGBA<uint8_t> { 0, 0, 255 };
+    static constexpr auto green = SRGBA<uint8_t> { 0, 255, 0 };
+    static constexpr auto darkGreen = SRGBA<uint8_t> { 0, 128, 0 };
+    static constexpr auto orange = SRGBA<uint8_t> { 255, 128, 0 };
 
     bool isExtended() const { return !(m_colorData.inlineColorAndFlags & invalidInlineColor); }
     bool isInline() const { return !isExtended(); }

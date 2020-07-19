@@ -1590,8 +1590,8 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
     // they start to obscure useful information.
     if ((!m_transform.isIdentity() || tiledBacking()) && !m_visibleTileWashLayer) {
-        constexpr auto washFillColor = Color::red.colorWithAlpha(50);
-        constexpr auto washBorderColor = Color::red.colorWithAlpha(100);
+        constexpr auto washFillColor = Color::red.colorWithAlphaByte(50);
+        constexpr auto washBorderColor = Color::red.colorWithAlphaByte(100);
         
         m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
         String name = makeString("Visible Tile Wash Layer 0x", hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase));

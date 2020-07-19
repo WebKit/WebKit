@@ -611,7 +611,7 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
 {
     GraphicsContextStateSaver stateSaver(context);
 
-    constexpr auto paintRectsColor = Color::red.colorWithAlpha(128);
+    constexpr auto paintRectsColor = Color::red.colorWithAlphaByte(128);
     context.setFillColor(paintRectsColor);
 
     for (const TimeRectPair& pair : paintRects)
@@ -662,7 +662,7 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const Highlight::Bou
 
     context.setStrokeThickness(1);
 
-    constexpr auto boundsColor = Color::red.colorWithAlpha(153);
+    constexpr auto boundsColor = Color::red.colorWithAlphaByte(153);
     context.setStrokeColor(boundsColor);
 
     context.strokePath(path);
@@ -670,9 +670,9 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const Highlight::Bou
 
 void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::RulerExclusion& rulerExclusion)
 {
-    constexpr auto rulerBackgroundColor = Color::white.colorWithAlpha(153);
-    constexpr auto lightRulerColor = Color::black.colorWithAlpha(51);
-    constexpr auto darkRulerColor = Color::black.colorWithAlpha(128);
+    constexpr auto rulerBackgroundColor = Color::white.colorWithAlphaByte(153);
+    constexpr auto lightRulerColor = Color::black.colorWithAlphaByte(51);
+    constexpr auto darkRulerColor = Color::black.colorWithAlphaByte(128);
 
     IntPoint scrollOffset;
 

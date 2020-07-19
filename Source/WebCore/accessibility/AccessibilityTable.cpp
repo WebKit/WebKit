@@ -285,7 +285,7 @@ bool AccessibilityTable::isDataTable() const
             // then it is probably a data table cell (spacing and colors take the place of borders).
             Color cellColor = renderStyle.visitedDependentColor(CSSPropertyBackgroundColor);
             if (table.hBorderSpacing() > 0 && table.vBorderSpacing() > 0
-                && tableBGColor != cellColor && cellColor.alpha() != 1)
+                && tableBGColor != cellColor && cellColor.alphaByte() != 1) // FIXME (https://bugs.webkit.org/show_bug.cgi?id=214537): This comparison to 1 is likely incorrect. It likely should be checking !cellColor.isOpaque().
                 ++backgroundDifferenceCellCount;
             
             // If we've found 10 "good" cells, we don't need to keep searching.

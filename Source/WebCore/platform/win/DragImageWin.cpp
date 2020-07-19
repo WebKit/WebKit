@@ -196,7 +196,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
  
     // Draw the text
     constexpr auto topColor = Color::black; // original alpha = 0.75
-    constexpr auto bottomColor = Color::white.colorWithAlpha(127); // original alpha = 0.5
+    constexpr auto bottomColor = Color::white.colorWithAlphaByte(127); // original alpha = 0.5
     if (drawURLString) {
         if (clipURLString)
             urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), *urlFont);

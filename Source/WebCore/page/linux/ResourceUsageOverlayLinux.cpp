@@ -88,7 +88,7 @@ private:
     void paintContents(const GraphicsLayer*, GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior) override
     {
         GraphicsContextStateSaver stateSaver(context);
-        context.fillRect(clip, Color::black.colorWithAlpha(204));
+        context.fillRect(clip, Color::black.colorWithAlphaByte(204));
         context.setFillColor(SRGBA<uint8_t> { 230, 230, 230 });
 
         FloatPoint position = { 10, 20 };
@@ -137,7 +137,7 @@ void ResourceUsageOverlay::platformInitialize()
     m_paintLayer = GraphicsLayer::create(overlay().page()->chrome().client().graphicsLayerFactory(), *m_overlayPainter);
     m_paintLayer->setAnchorPoint(FloatPoint3D());
     m_paintLayer->setSize({ normalWidth, normalHeight });
-    m_paintLayer->setBackgroundColor(Color::black.colorWithAlpha(204));
+    m_paintLayer->setBackgroundColor(Color::black.colorWithAlphaByte(204));
     m_paintLayer->setDrawsContent(true);
     overlay().layer().addChild(*m_paintLayer);
 

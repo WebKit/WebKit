@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-static constexpr auto lightenedBlack = ColorBuilder<SRGBA<uint8_t>> { 84, 84, 84 };
-static constexpr auto darkenedWhite = ColorBuilder<SRGBA<uint8_t>> { 171, 171, 171 };
+static constexpr auto lightenedBlack = SRGBA<uint8_t> { 84, 84, 84 };
+static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };
 
 Color::Color(const Color& other)
     : m_colorData(other.m_colorData)
@@ -87,7 +87,7 @@ Color Color::lightened() const
     float v = std::max({ r, g, b });
 
     if (v == 0.0f)
-        return lightenedBlack.colorWithAlpha(alpha());
+        return lightenedBlack.colorWithAlphaByte(alphaByte());
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 

@@ -3161,7 +3161,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
         return 0;
     };
 
-    constexpr auto fillColor = Color::black.colorWithAlpha(128);
+    constexpr auto fillColor = Color::black.colorWithAlphaByte(128);
 
     static const PatternDescription patternDescriptions[] = {
         { "auto"_s, { }, fillColor },
@@ -3183,7 +3183,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
-    constexpr auto fillColor = Color::darkGreen.colorWithAlpha(128);
+    constexpr auto fillColor = Color::darkGreen.colorWithAlphaByte(128);
 
     auto patternAndPhase = [&]() -> PatternDescription {
         switch (type) {
@@ -3220,7 +3220,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // Paint rects for touch action.
     if (visibleDebugOverlayRegions & TouchActionRegion) {
-        constexpr auto regionColor = Color::blue.colorWithAlpha(50);
+        constexpr auto regionColor = Color::blue.colorWithAlphaByte(50);
         context.setFillColor(regionColor);
         for (auto rect : eventRegion.region().rects())
             context.fillRect(rect);

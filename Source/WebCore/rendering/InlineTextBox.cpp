@@ -853,7 +853,7 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
 
         Color selectionBackgroundColor = renderer().selectionBackgroundColor();
         style.backgroundColor = selectionBackgroundColor;
-        if (selectionBackgroundColor.isValid() && selectionBackgroundColor.alpha() && style.textStyles.fillColor == selectionBackgroundColor)
+        if (selectionBackgroundColor.isValid() && selectionBackgroundColor.isVisible() && style.textStyles.fillColor == selectionBackgroundColor)
             style.backgroundColor = selectionBackgroundColor.invertedColorWithAlpha(1.0);
         break;
     }

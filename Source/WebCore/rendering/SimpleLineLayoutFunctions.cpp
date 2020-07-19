@@ -102,7 +102,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     std::unique_ptr<ShadowData> debugShadow = nullptr;
     if (flow.settings().simpleLineLayoutDebugBordersEnabled()) {
-        debugShadow = makeUnique<ShadowData>(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color::green.colorWithAlpha(200));
+        debugShadow = makeUnique<ShadowData>(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color::green.colorWithAlphaByte(200));
         textPainter.setShadow(debugShadow.get());
     }
 

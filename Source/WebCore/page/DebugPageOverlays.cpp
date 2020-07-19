@@ -118,7 +118,7 @@ public:
 
 private:
     explicit NonFastScrollableRegionOverlay(Page& page)
-        : RegionOverlay(page, Color::orange.colorWithAlpha(102))
+        : RegionOverlay(page, Color::orange.colorWithAlphaByte(102))
     {
     }
 
@@ -236,7 +236,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
 #endif
 
     for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
-        auto regionColor = Color::black.colorWithAlpha(64).color();
+        auto regionColor = Color::black.colorWithAlphaByte(64);
         auto it = touchEventRegionColors().find(synchronousEventRegion.key);
         if (it != touchEventRegionColors().end())
             regionColor = it->value;

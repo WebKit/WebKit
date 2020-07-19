@@ -87,8 +87,8 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     constexpr auto backgroundColor = SRGBA<uint8_t> { 128, 64, 255 };
     constexpr auto acceleratedContextLabelColor = Color::red;
     constexpr auto unacceleratedContextLabelColor = Color::white;
-    constexpr auto linearGlyphMaskOutlineColor = Color::black.colorWithAlpha(192);
-    constexpr auto displayListBorderColor = Color::black.colorWithAlpha(166);
+    constexpr auto linearGlyphMaskOutlineColor = Color::black.colorWithAlphaByte(192);
+    constexpr auto displayListBorderColor = Color::black.colorWithAlphaByte(166);
 
     TextRun textRun(String::number(repaintCount));
 

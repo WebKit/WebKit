@@ -36,7 +36,7 @@ Color blendSourceOver(const Color& backdrop, const Color& source)
     if (!backdrop.isVisible() || source.isOpaque())
         return source;
 
-    if (!source.alpha())
+    if (!source.isVisible())
         return backdrop;
 
     auto [backdropR, backdropG, backdropB, backdropA] = backdrop.toSRGBALossy<uint8_t>();

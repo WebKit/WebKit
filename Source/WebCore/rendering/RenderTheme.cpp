@@ -1527,7 +1527,7 @@ Color RenderTheme::platformTapHighlightColor() const
 {
     // This color is expected to be drawn on a semi-transparent overlay,
     // making it more transparent than its alpha value indicates.
-    return Color::black.colorWithAlpha(102);
+    return Color::black.colorWithAlphaByte(102);
 }
 
 #endif
