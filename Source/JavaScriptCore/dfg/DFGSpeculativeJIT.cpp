@@ -6181,7 +6181,7 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
         MacroAssembler::JumpList done;
 
         MacroAssembler::Jump op1Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleLessThanAndOrdered : MacroAssembler::DoubleGreaterThanAndOrdered, op1FPR, op2FPR);
-        MacroAssembler::Jump opNotEqual = m_jit.branchDouble(MacroAssembler::DoubleNotEqualAndOrdered, op1FPR, op2FPR);
+        MacroAssembler::Jump opNotEqualOrUnordered = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, op1FPR, op2FPR);
 
         // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
         if (node->op() == ArithMin)
@@ -6191,11 +6191,11 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
 
         done.append(m_jit.jump());
 
-        opNotEqual.link(&m_jit);
+        opNotEqualOrUnordered.link(&m_jit);
         // op2 is either the lesser one or one of then is NaN
         MacroAssembler::Jump op2Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleGreaterThanAndOrdered : MacroAssembler::DoubleLessThanAndOrdered, op1FPR, op2FPR);
 
-        // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding 
+        // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding
         // op1 + op2 and putting it into result.
         m_jit.addDouble(op1FPR, op2FPR, resultFPR);
         done.append(m_jit.jump());

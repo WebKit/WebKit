@@ -1,3 +1,18 @@
+2020-07-18  Mark Lam  <mark.lam@apple.com>
+
+        Fixed regression due to r264507: Math.{min|max} inequality test should use DoubleNotEqualOrUnordered instead DoubleNotEqualAndOrdered.
+        https://bugs.webkit.org/show_bug.cgi?id=214526
+        <rdar://problem/65778061>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/math-max-min.js: Added.
+        (isNegativeZero):
+        (numberAsString):
+        (testMax):
+        (testMin):
+        (assertEq):
+
 2020-07-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Redefining a property should not change its insertion index (Object.keys order)
