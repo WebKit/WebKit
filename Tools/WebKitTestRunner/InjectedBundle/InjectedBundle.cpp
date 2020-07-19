@@ -120,7 +120,9 @@ void InjectedBundle::didCreatePage(WKBundlePageRef page)
 
     WKRetainPtr<WKStringRef> messsageName = adoptWK(WKStringCreateWithUTF8CString("Initialization"));
     WKTypeRef result = nullptr;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundlePostSynchronousMessage(m_bundle, messsageName.get(), nullptr, &result);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(WKGetTypeID(result) == WKDictionaryGetTypeID());
     WKRetainPtr<WKDictionaryRef> initializationDictionary = adoptWK(static_cast<WKDictionaryRef>(result));
 

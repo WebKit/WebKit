@@ -61,6 +61,8 @@
 
 namespace WTR {
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
 Ref<TestRunner> TestRunner::create()
 {
     return adoptRef(*new TestRunner);
@@ -3048,5 +3050,7 @@ void TestRunner::didSetAppBoundDomainsCallback()
 {
     callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
 }
+
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WTR

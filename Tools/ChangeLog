@@ -1,5 +1,20 @@
 2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        Fix -Wdeprecated-declarations under Tools
+        https://bugs.webkit.org/show_bug.cgi?id=214534
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+        (TestWebKitAPI::didCrashCheckFrames):
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+
+2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         pep8.py:110: FutureWarning: Possible nested set at position 1
         https://bugs.webkit.org/show_bug.cgi?id=214531
 

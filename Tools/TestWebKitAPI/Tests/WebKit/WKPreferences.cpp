@@ -90,7 +90,9 @@ TEST(WebKit, WKPreferencesDefaults)
     EXPECT_WK_STREQ(expectedFantasyFontFamily, adoptWK(WKPreferencesCopyFantasyFontFamily(preference)));
     EXPECT_WK_STREQ(expectedPictographFontFamily, adoptWK(WKPreferencesCopyPictographFontFamily(preference)));
     EXPECT_EQ(0u, WKPreferencesGetMinimumFontSize(preference));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     EXPECT_FALSE(WKPreferencesGetPrivateBrowsingEnabled(preference));
+    ALLOW_DEPRECATED_DECLARATIONS_END
     EXPECT_FALSE(WKPreferencesGetDeveloperExtrasEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetTextAreasAreResizable(preference));
 
