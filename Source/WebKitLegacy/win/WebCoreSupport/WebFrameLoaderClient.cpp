@@ -960,7 +960,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     view->frameRect(&pixelRect);
     Optional<Color> backgroundColor;
     if (view->transparent())
-        backgroundColor = Color(Color::transparent);
+        backgroundColor = Color(Color::transparentBlack);
     FloatRect logicalFrame(pixelRect);
     logicalFrame.scale(1.0f / view->deviceScaleFactor());
     core(m_webFrame)->createView(enclosingIntRect(logicalFrame).size(), backgroundColor, /* fixedLayoutSize */ { }, /* fixedVisibleContentRect */ { });

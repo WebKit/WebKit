@@ -271,7 +271,7 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
 
     Color windowColor(color.get());
     if (!windowColor.isValid())
-        windowColor = Color::transparent;
+        windowColor = Color::transparentBlack;
 
     bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
     CGFloat opacity = MACaptionAppearanceGetWindowOpacity(kMACaptionAppearanceDomainUser, &behavior);

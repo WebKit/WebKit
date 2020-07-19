@@ -256,7 +256,7 @@ void VideoFullscreenControllerContext::requestVideoContentLayer()
 #if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
-        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
+        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack)];
         m_fullscreenModel->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTFMove(protectedThis), this] () mutable {
             dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this] {
                 if (!m_interface)
@@ -276,7 +276,7 @@ void VideoFullscreenControllerContext::returnVideoContentLayer()
 #if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
-        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
+        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack)];
         m_fullscreenModel->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), this] () mutable {
             dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this] {
                 if (!m_interface)
@@ -300,7 +300,7 @@ void VideoFullscreenControllerContext::didSetupFullscreen()
     });
 #else
     WebThreadRun([protectedThis = makeRefPtr(this), this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
-        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
+        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack)];
         m_fullscreenModel->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTFMove(protectedThis), this] () mutable {
             dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this] {
                 m_interface->enterFullscreen();

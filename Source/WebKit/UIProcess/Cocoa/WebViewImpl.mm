@@ -1501,7 +1501,7 @@ void WebViewImpl::setDrawsBackground(bool drawsBackground)
 {
     Optional<WebCore::Color> backgroundColor;
     if (!drawsBackground)
-        backgroundColor = WebCore::Color(WebCore::Color::transparent);
+        backgroundColor = WebCore::Color(WebCore::Color::transparentBlack);
     m_page->setBackgroundColor(backgroundColor);
 
     // Make sure updateLayer gets called on the web view.

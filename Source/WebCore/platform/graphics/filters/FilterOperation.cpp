@@ -305,12 +305,12 @@ RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* 
         return DropShadowFilterOperation::create(
             WebCore::blend(m_location, IntPoint(), progress),
             WebCore::blend(m_stdDeviation, 0, progress),
-            WebCore::blend(m_color, Color::transparent, progress));
+            WebCore::blend(m_color, Color::transparentBlack, progress));
 
     const DropShadowFilterOperation* fromOperation = downcast<DropShadowFilterOperation>(from);
     IntPoint fromLocation = fromOperation ? fromOperation->location() : IntPoint();
     int fromStdDeviation = fromOperation ? fromOperation->stdDeviation() : 0;
-    Color fromColor = fromOperation ? fromOperation->color() : Color::transparent;
+    Color fromColor = fromOperation ? fromOperation->color() : Color::transparentBlack;
     
     return DropShadowFilterOperation::create(
         WebCore::blend(fromLocation, m_location, progress),

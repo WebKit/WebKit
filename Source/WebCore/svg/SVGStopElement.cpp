@@ -88,7 +88,7 @@ bool SVGStopElement::rendererIsNeeded(const RenderStyle&)
 Color SVGStopElement::stopColorIncludingOpacity() const
 {
     if (!renderer())
-        return Color::transparent;
+        return Color::transparentBlack;
 
     auto& style = renderer()->style();
     auto& svgStyle = style.svgStyle();

@@ -44,7 +44,7 @@ StaticCSSValuePool::StaticCSSValuePool()
     m_unsetValue.construct(CSSValue::StaticCSSValue);
     m_revertValue.construct(CSSValue::StaticCSSValue);
 
-    m_transparentColor.construct(CSSValue::StaticCSSValue, Color::transparent);
+    m_transparentColor.construct(CSSValue::StaticCSSValue, Color::transparentBlack);
     m_whiteColor.construct(CSSValue::StaticCSSValue, Color::white);
     m_blackColor.construct(CSSValue::StaticCSSValue, Color::black);
 
@@ -92,7 +92,7 @@ Ref<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ident)
 Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
 {
     // These are the empty and deleted values of the hash table.
-    if (color == Color::transparent)
+    if (color == Color::transparentBlack)
         return staticCSSValuePool->m_transparentColor.get();
     if (color == Color::white)
         return staticCSSValuePool->m_whiteColor.get();

@@ -470,7 +470,7 @@ void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint 
     GraphicsContext& context = paintInfo.context();
     context.setStrokeStyle(SolidStroke);
     context.setStrokeColor(Color::lightGray);
-    context.setFillColor(Color::transparent);
+    context.setFillColor(Color::transparentBlack);
     context.drawRect(snapRectToDevicePixels(LayoutRect({ paintOffset.x() + leftBorder + leftPadding, paintOffset.y() + topBorder + topPadding }, contentSize), document().deviceScaleFactor()), borderWidth);
 }
 

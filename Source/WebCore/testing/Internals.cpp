@@ -1960,7 +1960,7 @@ ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)
         return Exception { InvalidAccessError };
     Optional<Color> backgroundColor;
     if (transparent)
-        backgroundColor = Color(Color::transparent);
+        backgroundColor = Color(Color::transparentBlack);
     document->view()->updateBackgroundRecursively(backgroundColor);
     return { };
 }
@@ -1980,7 +1980,7 @@ ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue
         return Exception { InvalidAccessError };
 
     if (colorValue == "transparent") {
-        document->view()->setBaseBackgroundColor(Color::transparent);
+        document->view()->setBaseBackgroundColor(Color::transparentBlack);
         return { };
     }
     if (colorValue == "white") {

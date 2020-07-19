@@ -1,3 +1,16 @@
+2020-07-19  Sam Weinig  <weinig@apple.com>
+
+        Rename Color::transparent to Color::transparentBlack to more clearly state what it is
+        https://bugs.webkit.org/show_bug.cgi?id=214522
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebFrame.cpp:
+        (WebFrame::updateBackground):
+        Color::transparent to Color::transparentBlack.
+
 2020-07-17  Sam Weinig  <weinig@apple.com>
 
         Remove final vestigates of SimpleColor

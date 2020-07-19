@@ -2137,7 +2137,7 @@ void WebFrame::updateBackground()
 
     Optional<Color> backgroundColor;
     if (webView()->transparent())
-        backgroundColor = Color(Color::transparent);
+        backgroundColor = Color(Color::transparentBlack);
     coreFrame->view()->updateBackgroundRecursively(backgroundColor);
 }
 

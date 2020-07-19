@@ -4125,7 +4125,7 @@ void RenderLayer::paintResizer(GraphicsContext& context, const LayoutPoint& pain
         largerCorner.setSize(LayoutSize(largerCorner.width() + 1_lu, largerCorner.height() + 1_lu));
         context.setStrokeColor(SRGBA<uint8_t> { 217, 217, 217 });
         context.setStrokeThickness(1.0f);
-        context.setFillColor(Color::transparent);
+        context.setFillColor(Color::transparentBlack);
         context.drawRect(snappedIntRect(largerCorner));
     }
 }

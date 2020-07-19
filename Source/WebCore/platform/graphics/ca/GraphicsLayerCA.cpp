@@ -3785,7 +3785,7 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
     if (color.isValid())
         m_layer->setBackgroundColor(color);
     else
-        m_layer->setBackgroundColor(Color::transparent);
+        m_layer->setBackgroundColor(Color::transparentBlack);
 }
 
 void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const

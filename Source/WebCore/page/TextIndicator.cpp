@@ -221,7 +221,7 @@ static FloatRect absoluteBoundingRectForRange(const SimpleRange& range)
 
 static Color estimatedBackgroundColorForRange(const SimpleRange& range, const Frame& frame)
 {
-    auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparent;
+    auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
 
     RenderElement* renderer = nullptr;
     auto commonAncestor = commonInclusiveAncestor(range.start.container, range.end.container);
@@ -245,7 +245,7 @@ static Color estimatedBackgroundColorForRange(const SimpleRange& range, const Fr
             return estimatedBackgroundColor;
 
         auto visitedDependentBackgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
-        if (visitedDependentBackgroundColor != Color::transparent)
+        if (visitedDependentBackgroundColor != Color::transparentBlack)
             parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
     }
     parentRendererBackgroundColors.reverse();

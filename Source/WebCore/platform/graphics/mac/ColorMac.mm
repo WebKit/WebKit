@@ -115,7 +115,7 @@ NSColor *nsColor(const Color& color)
 {
     if (color.isInline()) {
         switch (Packed::RGBA { color.asInline() }.value) {
-        case Packed::RGBA { Color::transparent }.value: {
+        case Packed::RGBA { Color::transparentBlack }.value: {
             static NSColor *clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
             return clearColor;
         }

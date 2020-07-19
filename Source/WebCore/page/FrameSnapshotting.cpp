@@ -151,7 +151,7 @@ std::unique_ptr<ImageBuffer> snapshotNode(Frame& frame, Node& node)
 
     ScopedFramePaintingState state(frame, &node);
 
-    frame.view()->setBaseBackgroundColor(Color::transparent);
+    frame.view()->setBaseBackgroundColor(Color::transparentBlack);
     frame.view()->setNodeToDraw(&node);
 
     LayoutRect topLevelRect;

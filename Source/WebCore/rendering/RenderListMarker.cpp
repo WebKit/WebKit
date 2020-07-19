@@ -1175,7 +1175,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.drawEllipse(markerRect);
         return;
     case ListStyleType::Circle:
-        context.setFillColor(Color::transparent);
+        context.setFillColor(Color::transparentBlack);
         context.drawEllipse(markerRect);
         return;
     case ListStyleType::Square:

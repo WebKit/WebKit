@@ -391,7 +391,7 @@ EditingStyle::~EditingStyle() = default;
 static Color cssValueToColor(CSSValue* colorValue)
 {
     if (!is<CSSPrimitiveValue>(colorValue))
-        return Color::transparent;
+        return Color::transparentBlack;
     
     CSSPrimitiveValue& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
     if (primitiveColor.isRGBColor())

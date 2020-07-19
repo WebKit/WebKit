@@ -1,5 +1,99 @@
 2020-07-19  Sam Weinig  <weinig@apple.com>
 
+        Rename Color::transparent to Color::transparentBlack to more clearly state what it is
+        https://bugs.webkit.org/show_bug.cgi?id=214522
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::colorValue const):
+        * accessibility/AccessibilityObject.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::StaticCSSValuePool::StaticCSSValuePool):
+        (WebCore::CSSValuePool::createColorValue):
+        * editing/EditingStyle.cpp:
+        (WebCore::cssValueToColor):
+        * html/HTMLInputElement.cpp:
+        (WebCore::autoFillStrongPasswordMaskImage):
+        * html/InputType.cpp:
+        (WebCore::InputType::valueAsColor const):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::State::State):
+        (WebCore::CanvasRenderingContext2DBase::clearRect):
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        (WebCore::CanvasRenderingContext2DBase::clearShadow):
+        (WebCore::CanvasRenderingContext2DBase::applyShadow):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::drawShapeHighlight):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBoxDecoration):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsWindowCSS const):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::drawRightAlignedText):
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotNode):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateBaseBackgroundColor):
+        * page/PageOverlay.h:
+        * page/TextIndicator.cpp:
+        (WebCore::estimatedBackgroundColorForRange):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::shadowForBlending):
+        * platform/graphics/Color.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::cachedCGColor):
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::DropShadowFilterOperation::blend):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::nsColor):
+        * platform/graphics/nicosia/NicosiaPaintingEngineBasic.cpp:
+        (Nicosia::PaintingEngineBasic::paint):
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp:
+        (Nicosia::paintLayer):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::requestVideoContentLayer):
+        (VideoFullscreenControllerContext::returnVideoContentLayer):
+        (VideoFullscreenControllerContext::didSetupFullscreen):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIncompleteImageOutline const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeIOS::platformInactiveSelectionBackgroundColor const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::paint):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::visitedDependentColor const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialStrokeColor):
+        (WebCore::RenderStyle::initialBackgroundColor):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyTextOrBoxShadowValue):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::createFilterOperations):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setViewIsTransparent):
+        (WebCore::Internals::setViewBaseBackgroundColor):
+        Color::transparent to Color::transparentBlack.
+
+2020-07-19  Sam Weinig  <weinig@apple.com>
+
         Remove ColorBuilder
         https://bugs.webkit.org/show_bug.cgi?id=214521
 

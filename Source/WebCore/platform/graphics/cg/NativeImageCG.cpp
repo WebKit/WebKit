@@ -64,7 +64,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), image.get());
 
     if (!pixel[3])
-        return Color::transparent;
+        return Color::transparentBlack;
 
     return clampToComponentBytes<SRGBA>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }

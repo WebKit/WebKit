@@ -2492,7 +2492,7 @@ RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions opti
     graphicsContext->translate(-snapshotRect.location());
 
     Color savedBackgroundColor = frameView->baseBackgroundColor();
-    frameView->setBaseBackgroundColor(Color::transparent);
+    frameView->setBaseBackgroundColor(Color::transparentBlack);
     frameView->setNodeToDraw(&node);
 
     frameView->paintContentsForSnapshot(*graphicsContext, snapshotRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);

@@ -221,7 +221,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
     paintInfo.context().setStrokeThickness(thickness);
     paintInfo.context().setStrokeStyle(SolidStroke);
     paintInfo.context().setStrokeColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-    paintInfo.context().setFillColor(Color::transparent);
+    paintInfo.context().setFillColor(Color::transparentBlack);
     paintInfo.applyTransform(AffineTransform().translate(paintOffset + location()));
 
     // In the MathML in HTML5 implementation note, the "left" notation is described as follows:

@@ -144,7 +144,7 @@ WebCore::Color TestPDFPage::colorAtPoint(int x, int y) const
     auto a = pixel[i + 3];
 
     if (!a)
-        return WebCore::Color::transparent;
+        return WebCore::Color::transparentBlack;
     return WebCore::clampToComponentBytes<WebCore::SRGBA>(r * 255 / a, g * 255 / a, b * 255 / a, a);
 }
 

@@ -1995,13 +1995,13 @@ String AccessibilityNodeObject::stringValue() const
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 {
 #if !ENABLE(INPUT_TYPE_COLOR)
-    return Color::transparent;
+    return Color::transparentBlack;
 #else
     if (!isColorWell())
-        return Color::transparent;
+        return Color::transparentBlack;
 
     if (!is<HTMLInputElement>(node()))
-        return Color::transparent;
+        return Color::transparentBlack;
 
     return downcast<HTMLInputElement>(*node()).valueAsColor().toSRGBALossy<uint8_t>();
 #endif

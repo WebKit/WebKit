@@ -746,7 +746,7 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
                 Color savedBackgroundColor;
                 if (transparentBackground) {
                     savedBackgroundColor = frameView->baseBackgroundColor();
-                    frameView->setBaseBackgroundColor(Color::transparent);
+                    frameView->setBaseBackgroundColor(Color::transparentBlack);
                 }
                 snapshotImage = webPage->scaledSnapshotWithOptions(snapshotRect, 1, snapshotOptions | SnapshotOptionsShareable);
                 if (transparentBackground)

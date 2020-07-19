@@ -2056,7 +2056,7 @@ static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
     firstStop.position = CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE);
 
     CSSGradientColorStop secondStop;
-    secondStop.color = CSSValuePool::singleton().createColorValue(Color::transparent);
+    secondStop.color = CSSValuePool::singleton().createColorValue(Color::transparentBlack);
     secondStop.position = CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE);
 
     auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient);

@@ -245,17 +245,17 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             // Do not dump invalid or transparent backgrounds, since that is the default.
             Color backgroundColor = o.style().visitedDependentColor(CSSPropertyBackgroundColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyBackgroundColor), backgroundColor)
-                && backgroundColor != Color::transparent)
+                && backgroundColor != Color::transparentBlack)
                 ts << " [bgcolor=" << serializationForRenderTreeAsText(backgroundColor) << "]";
             
             Color textFillColor = o.style().visitedDependentColor(CSSPropertyWebkitTextFillColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextFillColor), textFillColor)
-                && textFillColor != color && textFillColor != Color::transparent)
+                && textFillColor != color && textFillColor != Color::transparentBlack)
                 ts << " [textFillColor=" << serializationForRenderTreeAsText(textFillColor) << "]";
 
             Color textStrokeColor = o.style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
             if (!equalIgnoringSemanticColor(o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor), textStrokeColor)
-                && textStrokeColor != color && textStrokeColor != Color::transparent)
+                && textStrokeColor != color && textStrokeColor != Color::transparentBlack)
                 ts << " [textStrokeColor=" << serializationForRenderTreeAsText(textStrokeColor) << "]";
 
             if (o.parent()->style().textStrokeWidth() != o.style().textStrokeWidth() && o.style().textStrokeWidth() > 0)

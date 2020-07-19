@@ -266,7 +266,7 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
             if (item.color)
                 color = colorFromPrimitiveValueWithResolvedCurrentColor(*item.color);
 
-            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent));
+            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;
         }
         default:

@@ -500,7 +500,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");
 
     if (!m_configuration->drawsBackground())
-        m_backgroundColor = Color(Color::transparent);
+        m_backgroundColor = Color(Color::transparentBlack);
 
     updateActivityState();
     updateThrottleState();

@@ -144,7 +144,7 @@ private:
     OverlayType m_overlayType;
     IntRect m_overrideFrame;
 
-    Color m_backgroundColor { Color::transparent };
+    Color m_backgroundColor { Color::transparentBlack };
     PageOverlayID m_pageOverlayID;
 
     bool m_shouldIgnoreMouseEventsOutsideBounds { true };

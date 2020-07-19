@@ -380,7 +380,7 @@ void FrameView::recalculateBaseBackgroundColor()
     m_usesDarkAppearance = usingDarkAppearance;
     Optional<Color> backgroundColor;
     if (m_isTransparent)
-        backgroundColor = Color(Color::transparent);
+        backgroundColor = Color(Color::transparentBlack);
     updateBackgroundRecursively(backgroundColor);
 }
 

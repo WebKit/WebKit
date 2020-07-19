@@ -489,7 +489,7 @@ static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
 static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 {
     if (!webView.opaque)
-        return WebCore::Color::transparent;
+        return WebCore::Color::transparentBlack;
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
     WebCore::LocalCurrentTraitCollection localTraitCollection(webView.traitCollection);
@@ -1415,7 +1415,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     Optional<WebCore::Color> backgroundColor;
     if (!opaque)
-        backgroundColor = WebCore::Color(WebCore::Color::transparent);
+        backgroundColor = WebCore::Color(WebCore::Color::transparentBlack);
     _page->setBackgroundColor(backgroundColor);
 
     [self _updateScrollViewBackground];

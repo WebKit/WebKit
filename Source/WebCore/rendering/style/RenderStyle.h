@@ -1320,7 +1320,7 @@ public:
     const Color& visitedLinkStrokeColor() const { return m_rareInheritedData->visitedLinkStrokeColor; }
     void setHasExplicitlySetStrokeColor(bool v) { SET_VAR(m_rareInheritedData, hasSetStrokeColor, static_cast<unsigned>(v)); }
     bool hasExplicitlySetStrokeColor() const { return m_rareInheritedData->hasSetStrokeColor; };
-    static Color initialStrokeColor() { return Color::transparent; }
+    static Color initialStrokeColor() { return Color::transparentBlack; }
     Color computedStrokeColor() const;
 
     float strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }
@@ -1601,7 +1601,7 @@ public:
     static float initialPerspective() { return 0; }
     static Length initialPerspectiveOriginX() { return Length(50.0f, Percent); }
     static Length initialPerspectiveOriginY() { return Length(50.0f, Percent); }
-    static Color initialBackgroundColor() { return Color::transparent; }
+    static Color initialBackgroundColor() { return Color::transparentBlack; }
     static Color initialTextEmphasisColor() { return currentColor(); }
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFill::Filled; }
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMark::None; }

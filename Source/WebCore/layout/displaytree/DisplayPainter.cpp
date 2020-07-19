@@ -71,7 +71,7 @@ static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisp
             context.drawLine(start, end);
         };
 
-        context.setFillColor(Color::transparent);
+        context.setFillColor(Color::transparentBlack);
 
         auto decorationBoxWidth = decorationBoxSize.width();
         auto decorationBoxHeight = decorationBoxSize.height();

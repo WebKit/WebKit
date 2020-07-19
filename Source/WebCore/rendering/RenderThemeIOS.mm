@@ -1129,12 +1129,12 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
 
 Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
-    return Color::transparent;
+    return Color::transparentBlack;
 }
 
 Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
-    return Color::transparent;
+    return Color::transparentBlack;
 }
 
 static Optional<Color>& cachedFocusRingColor()

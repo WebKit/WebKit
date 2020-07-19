@@ -302,7 +302,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, Highlight::
         LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
         FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
         contentsQuadToCoordinateSystem(mainView, containingView, shapeQuad, InspectorOverlay::CoordinateSystem::Document);
-        drawOutlinedQuad(context, shapeQuad, shapeHighlightColor, Color::transparent, bounds);
+        drawOutlinedQuad(context, shapeQuad, shapeHighlightColor, Color::transparentBlack, bounds);
         return;
     }
 

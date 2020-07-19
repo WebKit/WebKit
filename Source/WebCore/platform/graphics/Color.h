@@ -145,12 +145,12 @@ public:
     WEBCORE_EXPORT operator D2D1_VECTOR_4F() const;
 #endif
 
+    static constexpr auto transparentBlack = SRGBA<uint8_t> { };
     static constexpr auto black = SRGBA<uint8_t> { 0, 0, 0 };
     static constexpr auto white = SRGBA<uint8_t> { 255, 255, 255 };
     static constexpr auto darkGray = SRGBA<uint8_t> { 128, 128, 128 };
     static constexpr auto gray = SRGBA<uint8_t> { 160, 160, 160 };
     static constexpr auto lightGray = SRGBA<uint8_t> { 192, 192, 192 };
-    static constexpr auto transparent = SRGBA<uint8_t> { };
     static constexpr auto cyan = SRGBA<uint8_t> { 0, 255, 255 };
     static constexpr auto yellow = SRGBA<uint8_t> { 255, 255, 0 };
     static constexpr auto red = SRGBA<uint8_t> { 255, 0, 0 };

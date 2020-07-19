@@ -118,7 +118,7 @@ CGColorRef cachedCGColor(const Color& color)
 {
     if (color.isInline()) {
         switch (Packed::RGBA { color.asInline() }.value) {
-        case Packed::RGBA { Color::transparent }.value: {
+        case Packed::RGBA { Color::transparentBlack }.value: {
             static CGColorRef transparentCGColor = leakCGColor(color);
             return transparentCGColor;
         }

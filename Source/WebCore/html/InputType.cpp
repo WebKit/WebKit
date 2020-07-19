@@ -1116,7 +1116,7 @@ void InputType::stepUpFromRenderer(int n)
 
 Color InputType::valueAsColor() const
 {
-    return Color::transparent;
+    return Color::transparentBlack;
 }
 
 void InputType::selectColor(StringView)
