@@ -37,12 +37,9 @@
 #include "HTTPHeaderNames.h"
 #include "ParsedContentType.h"
 #include <wtf/DateMath.h>
-#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
-
 
 namespace WebCore {
 
@@ -396,38 +393,29 @@ String extractMIMETypeFromMediaType(const String& mediaType)
 
 String extractCharsetFromMediaType(const String& mediaType)
 {
-    unsigned int pos, len;
-    findCharsetInMediaType(mediaType, pos, len);
-    return mediaType.substring(pos, len);
-}
-
-void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, unsigned int& charsetLen, unsigned int start)
-{
-    charsetPos = start;
-    charsetLen = 0;
-
-    size_t pos = start;
+    unsigned charsetPos = 0, charsetLen = 0;
+    size_t pos = 0;
     unsigned length = mediaType.length();
-    
+
     while (pos < length) {
         pos = mediaType.findIgnoringASCIICase("charset", pos);
         if (pos == notFound || pos == 0) {
             charsetLen = 0;
-            return;
+            break;
         }
-        
+
         // is what we found a beginning of a word?
         if (mediaType[pos-1] > ' ' && mediaType[pos-1] != ';') {
             pos += 7;
             continue;
         }
-        
+
         pos += 7;
 
         // skip whitespace
         while (pos != length && mediaType[pos] <= ' ')
             ++pos;
-    
+
         if (mediaType[pos++] != '=') // this "charset" substring wasn't a parameter name, but there may be others
             continue;
 
@@ -441,8 +429,9 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
 
         charsetPos = pos;
         charsetLen = endpos - pos;
-        return;
+        break;
     }
+    return mediaType.substring(charsetPos, charsetLen);
 }
 
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL)

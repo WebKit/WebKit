@@ -80,7 +80,6 @@ Optional<WallTime> parseHTTPDate(const String&);
 String filenameFromHTTPContentDisposition(const String&);
 String extractMIMETypeFromMediaType(const String&);
 String extractCharsetFromMediaType(const String&);
-void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, unsigned int& charsetLen, unsigned int start = 0);
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 AtomString extractReasonPhraseFromHTTPStatusLine(const String&);
 WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(const String&);

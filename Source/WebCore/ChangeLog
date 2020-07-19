@@ -1,3 +1,19 @@
+2020-07-19  Rob Buis  <rbuis@igalia.com>
+
+        Remove findCharsetInMediaType
+        https://bugs.webkit.org/show_bug.cgi?id=214523
+
+        Reviewed by Darin Adler.
+
+        Remove findCharsetInMediaType (by moving its code
+        into extractCharsetFromMediaType) since there are
+        no users for findCharsetInMediaType anymore.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractCharsetFromMediaType):
+        (WebCore::findCharsetInMediaType): Deleted.
+        * platform/network/HTTPParsers.h:
+
 2020-07-19  Sam Weinig  <weinig@apple.com>
 
         Additional Color related cleanups
