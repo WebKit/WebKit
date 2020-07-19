@@ -50,8 +50,8 @@ uint8_t convertPrescaledToComponentByte(float);
 uint8_t convertToComponentByte(float);
 constexpr float convertToComponentFloat(uint8_t);
 
-constexpr uint8_t clampToComponentByte(int);
-constexpr float clampToComponentFloat(float);
+template<typename ComponentType> constexpr uint8_t clampToComponentByte(ComponentType);
+template<typename ComponentType> constexpr float clampToComponentFloat(ComponentType);
 
 template<typename T> T convertComponentByteTo(uint8_t);
 template<typename T> T convertComponentFloatTo(float);
@@ -59,10 +59,8 @@ template<typename T> T convertComponentFloatTo(float);
 template<template<typename> typename ColorType> ColorType<uint8_t> convertToComponentBytes(const ColorType<float>&);
 template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(const ColorType<uint8_t>&);
 
-template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b);
-template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b, int a);
-template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b);
-template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b, float a);
+template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<uint8_t> clampToComponentBytes(ComponentType...);
+template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<float> clampToComponentFloats(ComponentType...);
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
 
@@ -94,14 +92,14 @@ constexpr float convertToComponentFloat(uint8_t byte)
     return byte / 255.0f;
 }
 
-constexpr uint8_t clampToComponentByte(int c)
+template<typename ComponentType> constexpr uint8_t clampToComponentByte(ComponentType component)
 {
-    return std::clamp(c, 0, 255);
+    return std::clamp<ComponentType>(component, 0, 255);
 }
 
-constexpr float clampToComponentFloat(float f)
+template<typename ComponentType> constexpr float clampToComponentFloat(ComponentType component)
 {
-    return std::clamp(f, 0.0f, 1.0f);
+    return std::clamp<ComponentType>(component, 0, 1);
 }
 
 template<> constexpr uint8_t convertComponentByteTo<uint8_t>(uint8_t value)
@@ -136,64 +134,44 @@ template<template<typename> typename ColorType> constexpr ColorType<float> conve
     return { convertToComponentFloat(components[0]), convertToComponentFloat(components[1]), convertToComponentFloat(components[2]), convertToComponentFloat(components[3]) };
 }
 
-template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b)
+template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<uint8_t> clampToComponentBytes(ComponentType... components)
 {
-    return { clampToComponentByte(r), clampToComponentByte(g), clampToComponentByte(b) };
+    return { clampToComponentByte(components)... };
 }
 
-template<template<typename> typename ColorType> constexpr ColorType<uint8_t> clampToComponentBytes(int r, int g, int b, int a)
+template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<float> clampToComponentFloats(ComponentType... components)
 {
-    return { clampToComponentByte(r), clampToComponentByte(g), clampToComponentByte(b), clampToComponentByte(a) };
-}
-
-template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b)
-{
-    return { clampToComponentFloat(r), clampToComponentFloat(g), clampToComponentFloat(b) };
-}
-
-template<template<typename> typename ColorType> constexpr ColorType<float> clampToComponentFloats(float r, float g, float b, float a)
-{
-    return { clampToComponentFloat(r), clampToComponentFloat(g), clampToComponentFloat(b), clampToComponentFloat(a) };
+    return { clampToComponentFloat(components)... };
 }
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType& color, Functor&& functor)
 {
     // FIXME: This should be made to work with colors that don't use the names red, green, and blue for their channels.
     auto copy = color;
-    copy.red = functor(color.red);
-    copy.green = functor(color.green);
-    copy.blue = functor(color.blue);
+    copy.red = std::invoke(functor, color.red);
+    copy.green = std::invoke(functor, color.green);
+    copy.blue = std::invoke(std::forward<Functor>(functor), color.blue);
     return copy;
 }
 
 template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
-    ColorType copy = color;
+    auto copy = color;
     copy.alpha = convertComponentByteTo<decltype(copy.alpha)>(overrideAlpha);
     return copy;
 }
 
 template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
 {
-    ColorType copy = color;
+    auto copy = color;
     copy.alpha = convertComponentFloatTo<decltype(copy.alpha)>(overrideAlpha);
     return copy;
-}
-
-constexpr uint8_t invertComponent(uint8_t component)
-{
-    return 255 - component;
-}
-
-constexpr float invertComponent(float component)
-{
-    return 1.0f - component;
 }
 
 template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     auto copy = colorByModifingEachNonAlphaComponent(color, [] (auto component) {
-        return invertComponent(component);
+        return ComponentTraits<decltype(component)>::maxValue - component;
     });
     copy.alpha = convertComponentByteTo<decltype(copy.alpha)>(overrideAlpha);
     return copy;
@@ -202,7 +180,7 @@ template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha
 template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
 {
     auto copy = colorByModifingEachNonAlphaComponent(color, [] (auto component) {
-        return invertComponent(component);
+        return ComponentTraits<decltype(component)>::maxValue - component;
     });
     copy.alpha = convertComponentFloatTo<decltype(copy.alpha)>(overrideAlpha);
     return copy;

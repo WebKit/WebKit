@@ -29,7 +29,7 @@ namespace WebCore {
 
 // Helper to allow convenient syntax for working with color types.
 // e.g. auto yellowWith50PercentAlpha = Color::yellow.colorWithAlpha(128);
-template<typename ColorType> struct ColorBuilder : public ColorType {
+template<typename ColorType> struct ColorBuilder : ColorType {
     using ColorType::ColorType;
 
     constexpr ColorType color() const
@@ -39,7 +39,7 @@ template<typename ColorType> struct ColorBuilder : public ColorType {
 
     constexpr ColorBuilder colorWithAlpha(uint8_t overrideAlpha) const
     {
-        static_assert(std::is_same_v<typename ColorType::ComponentType, uint8_t>, "Only uint8_t based color types are supported.");
+        static_assert(std::is_same_v<decltype(ColorType().alpha), uint8_t>, "Only uint8_t based color types are supported.");
 
         auto copy = *this;
         copy.alpha = overrideAlpha;

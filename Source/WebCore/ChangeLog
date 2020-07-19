@@ -1,3 +1,33 @@
+2020-07-19  Sam Weinig  <weinig@apple.com>
+
+        Additional Color related cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=214514
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ColorBuilder.h:
+        Remove redundant "public" and use decltype() rather than more wordy typename for static_assert.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::clampToComponentByte):
+        (WebCore::clampToComponentFloat):
+        Templatize to support any input.
+
+        (WebCore::clampToComponentBytes):
+        (WebCore::clampToComponentFloats):
+        Templatize using variadic templates to support any input and prepare for color types with more 
+        than four components. 
+
+        (WebCore::colorByModifingEachNonAlphaComponent):
+        Use std::invoke to support more types of functors.
+
+        (WebCore::colorWithOverridenAlpha):
+        (WebCore::invertedColorWithOverridenAlpha):
+        Use auto more consistently.
+
+        (WebCore::invertComponent): Deleted.
+        Replace invertComponent functions with ComponentTraits::maxValue - value inline at callsite.
+
 2020-07-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix build warnings in the WebXR backend
