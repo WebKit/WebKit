@@ -94,8 +94,6 @@ class AutoinstallImportHook(object):
         # order for autoinstall_everything(), below, to work properly.
         if '.mechanize' in fullname:
             self._install_mechanize()
-        elif '.pep8' in fullname:
-            self._install_pep8()
         elif '.pycodestyle' in fullname:
             self._install_pycodestyle()
         elif '.pylint' in fullname:
@@ -153,9 +151,6 @@ class AutoinstallImportHook(object):
         self._install("https://files.pythonhosted.org/packages/7d/a9/8c6bf60710781ce13a9987c0debda8adab35eb79c6b5525f7fe5240b7a8a/keyring-7.3.1.tar.gz",
                              "keyring-7.3.1/keyring")
 
-    def _install_pep8(self):
-        self._install("https://files.pythonhosted.org/packages/01/a0/64ba19519db49e4094d82599412a9660dee8c26a7addbbb1bf17927ceefe/pep8-1.7.1.tar.gz",
-                             "pep8-1.7.1/pep8.py")
     def _install_pycodestyle(self):
         self._install("https://files.pythonhosted.org/packages/source/p/pycodestyle/pycodestyle-2.5.0.tar.gz",
                              "pycodestyle-2.5.0/pycodestyle.py")

@@ -1,3 +1,23 @@
+2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        pep8.py:110: FutureWarning: Possible nested set at position 1
+        https://bugs.webkit.org/show_bug.cgi?id=214531
+
+        Reviewed by Darin Adler.
+        
+        Update from pep8 to pycodestyle.
+
+        * Scripts/webkitpy/style/checkers/python.py:
+        (PythonChecker.check):
+        (PythonChecker._check_pycodestyle):
+        (PythonChecker._check_pycodestyle._pycodestyle_handle_error):
+        (PythonChecker._check_pep8): Deleted.
+        (PythonChecker._check_pep8._pep8_handle_error): Deleted.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_keyring):
+        (AutoinstallImportHook._install_pep8): Deleted.
+
 2020-07-17  Sam Weinig  <weinig@apple.com>
 
         Remove final vestigates of SimpleColor

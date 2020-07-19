@@ -30,8 +30,7 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.common.system.outputcapture import OutputCaptureScope
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.thirdparty.autoinstalled import pep8
-
+from webkitpy.thirdparty.autoinstalled import pycodestyle
 
 class PythonChecker(object):
     """Processes text lines for checking style."""
@@ -40,32 +39,32 @@ class PythonChecker(object):
         self._handle_style_error = handle_style_error
 
     def check(self, lines):
-        self._check_pep8(lines)
+        self._check_pycodestyle(lines)
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
         # Pylint can't live happily in python 2 and 3 world, we need to pick one
         if sys.version_info < (3, 0):
             self._check_pylint(lines)
 
-    def _check_pep8(self, lines):
-        # Initialize pep8.options, which is necessary for
+    def _check_pycodestyle(self, lines):
+        # Initialize pycodestyle.options, which is necessary for
         # Checker.check_all() to execute.
-        pep8.process_options(arglist=[self._file_path])
+        pycodestyle.process_options(arglist=[self._file_path])
 
-        pep8_checker = pep8.Checker(self._file_path)
+        pycodestyle_checker = pycodestyle.Checker(self._file_path)
 
-        def _pep8_handle_error(line_number, offset, text, check):
+        def _pycodestyle_handle_error(line_number, offset, text, check):
             # FIXME: Incorporate the character offset into the error output.
             #        This will require updating the error handler __call__
             #        signature to include an optional "offset" parameter.
-            pep8_code = text[:4]
-            pep8_message = text[5:]
+            pycodestyle_code = text[:4]
+            pycodestyle_message = text[5:]
 
-            category = "pep8/" + pep8_code
+            category = "pep8/" + pycodestyle_code
 
-            self._handle_style_error(line_number, category, 5, pep8_message)
+            self._handle_style_error(line_number, category, 5, pycodestyle_message)
 
-        pep8_checker.report_error = _pep8_handle_error
-        pep8_errors = pep8_checker.check_all()
+        pycodestyle_checker.report_error = _pycodestyle_handle_error
+        pycodestyle_errors = pycodestyle_checker.check_all()
 
     def _check_pylint(self, lines):
         pylinter = Pylinter()
