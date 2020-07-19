@@ -1,5 +1,16 @@
 2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        -Warray-bounds warnings in testb3 and testair
+        https://bugs.webkit.org/show_bug.cgi?id=214533
+
+        Reviewed by Darin Adler.
+
+        Suppress these warnings when building testb3 and testair.
+
+        * shell/CMakeLists.txt:
+
+2020-07-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         cpp_generator.py:134: SyntaxWarning: "is" with a literal. Did you mean "=="?
         https://bugs.webkit.org/show_bug.cgi?id=214530
 
