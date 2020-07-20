@@ -1,3 +1,12 @@
+2020-07-20  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS ] css3/blending/blend-mode-clip-accelerated-blending-canvas.html is passing and expectations need to be removed
+        https://bugs.webkit.org/show_bug.cgi?id=214570
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-07-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         CSS clip-path is applied to the <svg> root element in the view-box coordinates

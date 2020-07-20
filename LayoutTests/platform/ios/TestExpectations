@@ -1280,8 +1280,6 @@ webkit.org/b/178588 fast/css/object-fit/object-fit-input-image.html [ ImageOnlyF
 webkit.org/b/178588 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 webkit.org/b/178588 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
 
-webkit.org/b/178961 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
-
 webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-002.html [ ImageOnlyFailure ]
 webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-003.html [ ImageOnlyFailure ]
 webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-004.html [ ImageOnlyFailure ]
