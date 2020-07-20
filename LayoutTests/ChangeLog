@@ -1,3 +1,22 @@
+2020-07-20  Keith Miller  <keith_miller@apple.com>
+
+        Reduce number of iterations for weakref tests
+        https://bugs.webkit.org/show_bug.cgi?id=214567
+
+        Reviewed by Mark Lam.
+
+        These tests seem to time out on the watch series 3 simulator. Let's reduce the number of
+        iterations and see if it impacts the flakiness of the test.
+
+        * js/script-tests/weakref-async-is-collected.js:
+        (turnEventLoop):
+        * js/script-tests/weakref-eventually-collects-values.js:
+        (turnEventLoop):
+        * js/script-tests/weakref-microtasks-dont-collect.js:
+        (turnEventLoop):
+        * js/script-tests/weakref-weakset-consistency.js:
+        (turnEventLoop):
+
 2020-07-20  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ Release Mac wk2 ] svg/animations/smil-leak-list-property-instances.svg is a flaky failure
