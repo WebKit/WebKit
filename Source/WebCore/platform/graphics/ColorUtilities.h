@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ColorTypes.h"
 #include <algorithm>
 #include <cmath>
 #include <math.h>

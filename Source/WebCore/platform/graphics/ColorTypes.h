@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ColorComponents.h"
 #include "ColorSpace.h"
 
 namespace WebCore {
 
+template<typename> struct ColorComponents;
 template<typename> struct ComponentTraits;
 
 template<> struct ComponentTraits<uint8_t> {
