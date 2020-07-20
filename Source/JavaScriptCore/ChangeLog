@@ -1,3 +1,16 @@
+2020-07-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        JSC build scripts should be quiet by default
+        https://bugs.webkit.org/show_bug.cgi?id=214535
+
+        Reviewed by Saam Barati.
+        
+        There's no need for these scripts to print "Nothing changed" when they don't do anything.
+
+        * offlineasm/asm.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/generate_settings_extractor.rb:
+
 2020-07-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed non-unified source build fix

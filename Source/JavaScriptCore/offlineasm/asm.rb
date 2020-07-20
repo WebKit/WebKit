@@ -375,7 +375,7 @@ if FileTest.exist? outputFlnm
         }
     }
     if lastLine and lastLine == inputHash
-        $stderr.puts "Offlineasm: Nothing changed."
+        # Nothing changed.
         exit 0
     end
 end

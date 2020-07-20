@@ -65,7 +65,7 @@ if FileTest.exist? outputFlnm
         | inp |
         firstLine = inp.gets
         if firstLine and firstLine.chomp == inputHash
-            $stderr.puts "OffsetExtractor: Nothing changed."
+            # Nothing changed.
             exit 0
         end
     }
