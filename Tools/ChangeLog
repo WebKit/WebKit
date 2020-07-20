@@ -1,3 +1,9 @@
+2020-07-20  Dean Jackson  <dino@apple.com>
+
+        Adding James Darpinian to contributors.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-07-20  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Build with arm64e when on Apple Internal

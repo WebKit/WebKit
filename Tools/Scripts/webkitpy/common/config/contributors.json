@@ -2609,6 +2609,15 @@
          "fawek"
       ]
    },
+   "James Darpinian" : {
+      "emails" : [
+         "jdarpinian@chromium.org"
+      ],
+      "expertise" : "WebGL (Chromium and Safari ports)",
+      "nicks" : [
+         "darpinian"
+      ]
+   },
    "James Craig" : {
       "emails" : [
          "jcraig@apple.com",
