@@ -1,3 +1,19 @@
+2020-07-20  David Kilzer  <ddkilzer@apple.com>
+
+        WebPageProxyIdentifier parameter of WebPageProxy::CreateNewPage() should not be Optional
+        <https://webkit.org/b/214542>
+        <rdar://problem/65768644>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.messages.in:
+        - Remove Optional<> wrapper for WebPageProxyIdentifier
+          parameter since the value is used unconditionally.
+
 2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         Some classes have final destructors but are non-final
