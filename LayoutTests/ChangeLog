@@ -1,3 +1,12 @@
+2020-07-20  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ Release Mac wk2 ] svg/animations/smil-leak-list-property-instances.svg is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214574
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r261874): Typing near the bottom of a scrollable document causes the scroll position to jump
