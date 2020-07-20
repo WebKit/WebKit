@@ -114,7 +114,9 @@ void generateCertificate(Ref<SecurityOrigin>&& origin, LibWebRTCProvider& provid
     if (info.expires)
         expiresMs = static_cast<uint64_t>(*info.expires);
 
-    provider.certificateGenerator().GenerateCertificateAsync(keyParamsFromCertificateType(info), expiresMs, WTFMove(callback));
+    provider.prepareCertificateGenerator([info, expiresMs, callback = WTFMove(callback)](auto& generator) mutable {
+        generator.GenerateCertificateAsync(keyParamsFromCertificateType(info), expiresMs, WTFMove(callback));
+    });
 }
 
 } // namespace LibWebRTCCertificateGenerator

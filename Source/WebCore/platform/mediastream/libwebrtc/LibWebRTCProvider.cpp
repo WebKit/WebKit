@@ -362,13 +362,16 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     return m_factory->CreatePeerConnection(configuration, WTFMove(dependencies));
 }
 
-rtc::RTCCertificateGenerator& LibWebRTCProvider::certificateGenerator()
+void LibWebRTCProvider::prepareCertificateGenerator(Function<void(rtc::RTCCertificateGenerator&)>&& callback)
 {
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
     if (!factoryAndThreads.certificateGenerator)
         factoryAndThreads.certificateGenerator = makeUniqueWithoutFastMallocCheck<rtc::RTCCertificateGenerator>(factoryAndThreads.signalingThread.get(), factoryAndThreads.networkThread.get());
 
-    return *factoryAndThreads.certificateGenerator;
+    auto& generator = *factoryAndThreads.certificateGenerator;
+    callOnWebRTCSignalingThread([&generator, callback = WTFMove(callback)]() mutable {
+        callback(generator);
+    });
 }
 
 static inline Optional<cricket::MediaType> typeFromKind(const String& kind)
