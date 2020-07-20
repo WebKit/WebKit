@@ -64,7 +64,7 @@ class Step(models.Model):
 
         # Save the new step data, e.g.: step start event.
         Step(step_uid, build_uid, result, state_string, started_at, complete_at).save()
-        _log.info('Saved step {} in database for build: {}'.format(step_uid, build_uid))
+        _log.debug('Saved step {} in database for build: {}'.format(step_uid, build_uid))
         return SUCCESS
 
     @classmethod
@@ -77,7 +77,7 @@ class Step(models.Model):
         step.started_at = started_at
         step.complete_at = complete_at
         step.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
-        _log.info('Updated step {} in database for build: {}'.format(step_uid, build_uid))
+        _log.debug('Updated step {} in database for build: {}'.format(step_uid, build_uid))
         return SUCCESS
 
     @classmethod

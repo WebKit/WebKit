@@ -1,3 +1,16 @@
+2020-07-20  Aakash Jain  <aakash_jain@apple.com>
+
+        Reduce logging in ews django app
+        https://bugs.webkit.org/show_bug.cgi?id=214562
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        (Build.update_build):
+        * BuildSlaveSupport/ews-app/ews/models/step.py:
+        (Step.save_step):
+        (Step.update_step):
+
 2020-07-20  Kate Cheney  <katherine_cheney@apple.com>
 
         [ iOS macOS ] http/tests/resourceLoadStatistics/grandfathering-database.html is a rare flaky timeout
