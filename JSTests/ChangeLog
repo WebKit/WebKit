@@ -1,3 +1,13 @@
+2020-07-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] eval?.() should be indirect eval
+        https://bugs.webkit.org/show_bug.cgi?id=214568
+
+        Reviewed by Keith Miller.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
 2020-07-20  Keith Miller  <keith_miller@apple.com>
 
         Turn on FinalizationRegistry test262 tests

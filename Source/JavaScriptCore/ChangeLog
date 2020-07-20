@@ -1,3 +1,17 @@
+2020-07-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] eval?.() should be indirect eval
+        https://bugs.webkit.org/show_bug.cgi?id=214568
+
+        Reviewed by Keith Miller.
+
+        eval?.() is specified as indirect eval, but (virtually) all implementations assumed it should be direct eval.
+        I raised this topic in today's TC39 meeting and we've decided to keep the spec as it is. 
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        Don't use EvalFunctionCallNode for optional call of eval.
+
 2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non unified build fixes, midsummer 2020 edition

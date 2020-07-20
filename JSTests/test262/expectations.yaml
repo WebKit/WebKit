@@ -2838,9 +2838,6 @@ test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/object/scope-setter-body-lex-distinc.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/optional-chaining/eval-optional-call.js:
-  default: 'Test262Error: fn() returns "global" value from indirect eval Expected SameValue(«local», «global») to be true'
-  strict mode: 'Test262Error: fn() returns "global" value from indirect eval Expected SameValue(«local», «global») to be true'
 test/language/expressions/postfix-decrement/S11.3.2_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-decrement/S11.3.2_A5_T2.js:

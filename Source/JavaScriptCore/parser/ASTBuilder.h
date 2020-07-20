@@ -1427,7 +1427,7 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
     if (func->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func);
         const Identifier& identifier = resolve->identifier();
-        if (identifier == m_vm.propertyNames->eval) {
+        if (identifier == m_vm.propertyNames->eval && !isOptionalCall) {
             usesEval();
             return new (m_parserArena) EvalFunctionCallNode(location, args, divot, divotStart, divotEnd);
         }
