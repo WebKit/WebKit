@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include "ColorComponents.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-template<typename> struct ColorComponents;
 
 template<size_t Columns, size_t Rows>
 class ColorMatrix {

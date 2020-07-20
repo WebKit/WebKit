@@ -1,5 +1,18 @@
 2020-07-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Unreviewed, reverting r264588.
+
+        It broke Mac port.
+
+        Reverted changeset:
+
+        "Use forward template declarations for ColorComponents instead
+        of including ColorComponents.h as much as possible"
+        https://bugs.webkit.org/show_bug.cgi?id=214204
+        https://trac.webkit.org/changeset/264588
+
+2020-07-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Use forward template declarations for ColorComponents instead of including ColorComponents.h as much as possible
         https://bugs.webkit.org/show_bug.cgi?id=214204
         <rdar://problem/65414170>
