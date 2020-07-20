@@ -98,6 +98,17 @@ webkit.org/b/214192 [ Debug ] imported/blink/fast/gradients/large-vertical-gradi
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# Clipboard API
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
+webkit.org/b/211979 imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Clipboard API
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -639,6 +650,12 @@ webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization
 
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style.html [ Failure Pass ]
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html [ Failure Pass ]
+
+webkit.org/b/186485 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html [ Failure ]
+webkit.org/b/186486 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Failure ]
+webkit.org/b/186488 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Failure ]
+
+webkit.org/b/214541 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

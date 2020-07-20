@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'target.attributeStyleMap.clear')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'target.attributeStyleMap.clear')
-
-FAIL Computed * is reified as CSSUnparsedValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
-

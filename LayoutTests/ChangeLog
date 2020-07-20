@@ -1,3 +1,20 @@
+2020-07-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Remove some deprecated expectation files and garden failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-implicit-track-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Removed.
+
 2020-07-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Redefining a property should not change its insertion index (Object.keys order)
