@@ -284,7 +284,7 @@ var kExampleBuildInfoJSON = {
         "results": [2, ["webkit_tests"]],
         "statistics": {},
         "step_number": 5,
-        "text": ["webkit_tests", "2014 fixable", "(370 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#master=ChromiumWebkit&tests=fast/box-shadow/box-shadow-clipped-slices.html\">", "<abbr title=\"fast/box-shadow/box-shadow-clipped-slices.html\">box-shadow-clipped-slices.html</abbr>", "</a>", "</div>"],
+        "text": ["webkit_tests", "2014 fixable", "(370 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"https://results.webkit.org/?suite=layout-tests&amp;test=fast/box-shadow/box-shadow-clipped-slices.html\">", "<abbr title=\"fast/box-shadow/box-shadow-clipped-slices.html\">box-shadow-clipped-slices.html</abbr>", "</a>", "</div>"],
         "times": [1312444452.306695, 1312444768.888266],
         "urls": {}
     }, {
@@ -320,7 +320,7 @@ var kExampleBuildInfoJSON = {
         "results": [2, ["webkit_gpu_tests"]],
         "statistics": {},
         "step_number": 7,
-        "text": ["webkit_gpu_tests", "148 fixable", "(24 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#master=ChromiumWebkit&tests=compositing/scaling/tiled-layer-recursion.html\">", "<abbr title=\"compositing/scaling/tiled-layer-recursion.html\">tiled-layer-recursion.html</abbr>", "</a>", "</div>"],
+        "text": ["webkit_gpu_tests", "148 fixable", "(24 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"http://https://results.webkit.org/?suite=layout-tests&amp;test=compositing/scaling/tiled-layer-recursion.html\">", "<abbr title=\"compositing/scaling/tiled-layer-recursion.html\">tiled-layer-recursion.html</abbr>", "</a>", "</div>"],
         "times": [1312444781.444903, 1312444966.856074],
         "urls": {}
     }, {
@@ -910,7 +910,7 @@ var kExamplePerfBuildInfoJSON = {
         "results": [2, ["webkit_tests"]],
         "statistics": {},
         "step_number": 5,
-        "text": ["webkit_tests", "2014 fixable", "(370 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#master=ChromiumWebkit&tests=fast/box-shadow/box-shadow-clipped-slices.html\">", "<abbr title=\"fast/box-shadow/box-shadow-clipped-slices.html\">box-shadow-clipped-slices.html</abbr>", "</a>", "</div>"],
+        "text": ["webkit_tests", "2014 fixable", "(370 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"https://results.webkit.org/?suite=layout-tests&amp;test=fast/box-shadow/box-shadow-clipped-slices.html\">", "<abbr title=\"fast/box-shadow/box-shadow-clipped-slices.html\">box-shadow-clipped-slices.html</abbr>", "</a>", "</div>"],
         "times": [1312444452.306695, 1312444768.888266],
         "urls": {}
     }, {
@@ -946,7 +946,7 @@ var kExamplePerfBuildInfoJSON = {
         "results": [2, ["webkit_gpu_tests"]],
         "statistics": {},
         "step_number": 7,
-        "text": ["webkit_gpu_tests", "148 fixable", "(24 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#master=ChromiumWebkit&tests=compositing/scaling/tiled-layer-recursion.html\">", "<abbr title=\"compositing/scaling/tiled-layer-recursion.html\">tiled-layer-recursion.html</abbr>", "</a>", "</div>"],
+        "text": ["webkit_gpu_tests", "148 fixable", "(24 skipped)", "failed 1", "<div class=\"BuildResultInfo\">", "<a href=\"https://results.webkit.org/?suite=layout-tests&amp;test=compositing/scaling/tiled-layer-recursion.html\">", "<abbr title=\"compositing/scaling/tiled-layer-recursion.html\">tiled-layer-recursion.html</abbr>", "</a>", "</div>"],
         "times": [1312444781.444903, 1312444966.856074],
         "urls": {}
     }, {

@@ -79,7 +79,7 @@ test('Info', 2, function() {
 test('FailingTestGroup', 2, function() {
     var failingTest = new ui.notifications.FailingTestGroup('test', ['test.html']);
     equal(failingTest.tagName, 'LI');
-    equal(failingTest.innerHTML, '<a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=test.html" target="_blank">test</a>');
+    equal(failingTest.innerHTML, '<a href="https://results.webkit.org/?suite=layout-tests&amp;test=test.html" target="_blank">test</a>');
 });
 
 test('SuspiciousCommit', 2, function() {
@@ -130,7 +130,7 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=test" target="_blank">test</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=test" target="_blank">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -153,7 +153,7 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=test" target="_blank">test</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=test" target="_blank">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -178,7 +178,7 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=test" target="_blank">test</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=test" target="_blank">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -218,8 +218,8 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=foo" target="_blank">foo</a></li>' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=test" target="_blank">test</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;tests=foo" target="_blank">foo</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=test" target="_blank">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -263,8 +263,8 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=foo" target="_blank">foo</a></li>' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=test" target="_blank">test</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;tests=foo" target="_blank">foo</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=test" target="_blank">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -304,8 +304,8 @@ test('FailingTestsSummary (grouping)', 1, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=path%2Fto%2Ftest1.html%2Cpath%2Fto%2Ftest2.html%2Cpath%2Fto%2Ftest3.html%2Cpath%2Fto%2Ftest4.html" target="_blank">path/to (4 tests)</a></li>' +
-                    '<li><a href="http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=path%2Fanother%2Ftest.html" target="_blank">path/another/test.html</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=path%2Fto%2Ftest1.html%2Cpath%2Fto%2Ftest2.html%2Cpath%2Fto%2Ftest3.html%2Cpath%2Fto%2Ftest4.html" target="_blank">path/to (4 tests)</a></li>' +
+                    '<li><a href="https://results.webkit.org/?suite=layout-tests&amp;test=path%2Fanother%2Ftest.html" target="_blank">path/another/test.html</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +

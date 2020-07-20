@@ -1,5 +1,16 @@
 2020-07-20  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Update reference to webkit-test-results in TestFailures
+        https://bugs.webkit.org/show_bug.cgi?id=214499
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
+2020-07-20  Aakash Jain  <aakash_jain@apple.com>
+
         Reduce logging in ews django app
         https://bugs.webkit.org/show_bug.cgi?id=214562
 
