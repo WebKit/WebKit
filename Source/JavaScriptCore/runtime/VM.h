@@ -94,7 +94,6 @@
 #endif
 
 namespace WTF {
-class RunLoop;
 class SimpleStats;
 } // namespace WTF
 using WTF::SimpleStats;
@@ -313,8 +312,8 @@ public:
     JS_EXPORT_PRIVATE static bool sharedInstanceExists();
     JS_EXPORT_PRIVATE static VM& sharedInstance();
 
-    JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = SmallHeap, WTF::RunLoop* = nullptr);
-    JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = SmallHeap, WTF::RunLoop* = nullptr);
+    JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = SmallHeap);
+    JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = SmallHeap);
     static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
@@ -355,7 +354,10 @@ private:
 
     unsigned m_id;
     RefPtr<JSLock> m_apiLock;
-    Ref<WTF::RunLoop> m_runLoop;
+#if USE(CF)
+    // These need to be initialized before heap below.
+    RetainPtr<CFRunLoopRef> m_runLoop;
+#endif
 
     WeakRandom m_random;
     Integrity::Random m_integrityRandom;
@@ -1080,7 +1082,10 @@ public:
     bool needExceptionCheck() const { return m_needExceptionCheck; }
 #endif
 
-    WTF::RunLoop& runLoop() const { return m_runLoop; }
+#if USE(CF)
+    CFRunLoopRef runLoop() const { return m_runLoop.get(); }
+    JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
+#endif // USE(CF)
 
     static void setCrashOnVMCreation(bool);
 
@@ -1104,7 +1109,7 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
 
-    VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
+    VM(VMType, HeapType, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
 

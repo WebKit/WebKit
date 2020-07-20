@@ -1,3 +1,13 @@
+2020-07-20  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (r264242): [ macOS ] imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=214572
+
+        Unreviewed, reverting r264242.
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+
 2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non unified build fixes, midsummer 2020 edition

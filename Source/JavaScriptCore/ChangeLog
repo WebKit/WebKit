@@ -1,3 +1,34 @@
+2020-07-20  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (r264242): [ macOS ] imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=214572
+
+        Unreviewed, reverting r264242.
+
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::epochTime):
+        (JSC::JSRunLoopTimer::Manager::timerDidFireCallback):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::setRunLoop):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::PerVMData):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::~PerVMData):
+        (JSC::JSRunLoopTimer::Manager::timerDidFire):
+        (JSC::JSRunLoopTimer::Manager::registerVM):
+        (JSC::JSRunLoopTimer::Manager::scheduleTimer):
+        (JSC::JSRunLoopTimer::Manager::cancelTimer):
+        (JSC::JSRunLoopTimer::Manager::didChangeRunLoop):
+        * runtime/JSRunLoopTimer.h:
+        (JSC::JSRunLoopTimer::Manager::PerVMData::PerVMData):
+        * runtime/PromiseTimer.cpp:
+        (JSC::PromiseTimer::doWork):
+        (JSC::PromiseTimer::runRunLoop):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::create):
+        (JSC::VM::tryCreate):
+        (JSC::VM::setRunLoop):
+        * runtime/VM.h:
+        (JSC::VM::runLoop const):
+
 2020-07-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] eval?.() should be indirect eval
