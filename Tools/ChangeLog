@@ -1,3 +1,36 @@
+2020-07-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ iOS macOS ] http/tests/resourceLoadStatistics/grandfathering-database.html is a rare flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=213553
+        <rdar://problem/64696432>
+
+        Reviewed by Darin Adler.
+
+        Registering to receive an ITP statistics processing callback should be
+        synchronous, otherwise processing could happen before ITP has
+        registered that it should be reported to the test runner.
+
+        To avoid this mistake in the future, this patch removes the
+        async version of this call from TestInvocation.cpp, because it should
+        never be used.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+       (WTR::TestRunner::installStatisticsDidModifyDataRecordsCallback):
+        Update this function to look like
+        installStatisticsDidScanDataRecordsCallback. It is simpler to let ITP
+        know to send the callback response when installing the callback
+        instead of requiring a separate function call.
+
+        (WTR::TestRunner::installStatisticsDidScanDataRecordsCallback):
+        Register for a callback synchronously.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        Remove setStatisticsNotifyPagesWhenDataRecordsWereScanned from the idl
+        file so it does not accidentally get called in a layout test in the
+        future.
+
 2020-07-20  Dean Jackson  <dino@apple.com>
 
         Adding James Darpinian to contributors.

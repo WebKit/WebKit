@@ -25,7 +25,6 @@
                     testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
                         testRunner.setUseITPDatabase(true);
-                        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                         testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                         document.location.hash = "step1";
                         runTest();

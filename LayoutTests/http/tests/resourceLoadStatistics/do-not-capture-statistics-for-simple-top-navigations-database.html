@@ -31,7 +31,6 @@
                 });
                 break;
             case "localhost:8000":
-                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                 if (!testRunner.statisticsNotifyObserver())
                     timerHandle = setTimeout(finishTest, 100);

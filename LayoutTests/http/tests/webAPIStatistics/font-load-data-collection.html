@@ -19,8 +19,6 @@
     }
 
     function runTestRunnerTest() {
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
         var body = document.getElementsByTagName('body')[0]

@@ -28,7 +28,6 @@
                 if (window.testRunner && window.internals) {
                     testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
-                        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                         testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                         document.location.hash = "LoadWorker";
                         runTest();

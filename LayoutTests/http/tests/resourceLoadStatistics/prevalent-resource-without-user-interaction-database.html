@@ -51,7 +51,6 @@
         testRunner.waitUntilDone();
         testRunner.setUseITPDatabase(true);
         setEnableFeature(true, function() {
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
             runTestRunnerTest();
         });
     }

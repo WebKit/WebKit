@@ -57,7 +57,6 @@
         if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
             testRunner.setUseITPDatabase(true);
             setEnableFeature(true, function () {
-                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 runTestRunnerTest();
             });
         } else {

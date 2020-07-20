@@ -56,7 +56,6 @@
     function setUpAndRun() {
         if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
             setEnableFeature(true, function () {
-                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 runTestRunnerTest();
             });
         } else {

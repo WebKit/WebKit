@@ -1,3 +1,51 @@
+2020-07-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ iOS macOS ] http/tests/resourceLoadStatistics/grandfathering-database.html is a rare flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=213553
+        <rdar://problem/64696432>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary calls to register for a statistics processing
+        callback, now that it is done synchronously as a part of the installing function.
+
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads.html:
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-database.html:
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database.html:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script.html:
+        * http/tests/resourceLoadStatistics/many-inserts-only-insert-once.html:
+
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html:
+        The testing contents should be part of the callback for setEnableFeature
+        to ensure setup finishes before the test is run.
+
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-database.html:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads.html:
+        * http/tests/resourceLoadStatistics/resources/util.js:
+        (setEnableFeature):
+        This call is unnecessary as the parameters are cleared in
+        WKWebsiteDataStoreStatisticsResetToConsistentState.
+
+        * http/tests/webAPIStatistics/canvas-read-and-write-data-collection.html:
+        * http/tests/webAPIStatistics/font-load-data-collection.html:
+        * http/tests/webAPIStatistics/navigator-functions-accessed-data-collection.html:
+        * http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html:
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Add support for canvas captureStream, tests failing since they were added in r213598

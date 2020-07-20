@@ -14,39 +14,37 @@ onload = function() {
 
     if (window.testRunner && window.internals) {
         setEnableFeature(true, function() {
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                    testFailed("Host did not get set as prevalent resource.");
+
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
+                    if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                        testFailed("Host did not get cleared of user interaction.");
+
+                    testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
+
+                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                            testPassed("Origin did not get user interaction credit.");
+
+                        setTimeout(function() {
+                            testFrame.src = "about:blank";
+                            setTimeout(function() {
+                                setEnableFeature(false, finishJSTest);
+                            }, 0);
+                        }, 0);
+                    });
+                    testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+                    testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
+                    testRunner.statisticsProcessStatisticsAndDataRecords();
+
+                    debug("Simulate an unhandled user key press.");
+                    if (window.eventSender)
+                        eventSender.keyDown("a", ["metaKey"]);
+                });
+            });
         });
     }
-
-    testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
-        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as prevalent resource.");
-
-        testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
-            if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                testFailed("Host did not get cleared of user interaction.");
-
-            testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-
-                if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                    testPassed("Origin did not get user interaction credit.");
-
-                setTimeout(function() {
-                    testFrame.src = "about:blank";
-                    setTimeout(function() {
-                        setEnableFeature(false, finishJSTest);
-                    }, 0);
-                }, 0);
-            });
-            testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-            testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-            testRunner.statisticsProcessStatisticsAndDataRecords();
-
-            debug("Simulate an unhandled user key press.");
-            if (window.eventSender)
-                eventSender.keyDown("a", ["metaKey"]);
-        });
-    });
 }
 </script>
 <iframe id="testFrame" src="resources/onclick.html"></iframe>

@@ -9,7 +9,6 @@ function setEnableFeature(enable, completionHandler) {
         testRunner.statisticsResetToConsistentState(function() {
             testRunner.setStatisticsIsRunningTest(false);
             internals.setResourceLoadStatisticsEnabled(false);
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(false);
             completionHandler();
         });
     }
