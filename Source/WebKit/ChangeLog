@@ -1,3 +1,18 @@
+2020-07-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: developerExtrasEnabled should be respected when opening local Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=214573
+        <rdar://problem/65848496>
+
+        Reviewed by David Kilzer.
+
+        Ensure that WKPreferences.developerExtrasEnabled is true prior to opening a Web Inspector
+        window. This matches the check in WebCore when deciding to show "Inspect Element" menu item.
+
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::connect):
+        (WebKit::WebInspectorProxy::openLocalInspectorFrontend):
+
 2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] WebPopupItem should always be forward declared as struct

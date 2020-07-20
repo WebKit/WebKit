@@ -120,6 +120,9 @@ void WebInspectorProxy::connect()
     if (!m_inspectedPage)
         return;
 
+    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+        return;
+
     if (m_showMessageSent)
         return;
 
@@ -412,6 +415,9 @@ void WebInspectorProxy::createFrontendPage()
 void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)
 {
     if (!m_inspectedPage)
+        return;
+
+    if (!m_inspectedPage->preferences().developerExtrasEnabled())
         return;
 
     if (m_inspectedPage->inspectorController().hasLocalFrontend()) {
