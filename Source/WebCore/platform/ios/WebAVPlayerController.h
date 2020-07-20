@@ -43,6 +43,8 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
     BOOL _muted;
 }
 
+- (void)setAllowsPictureInPicture:(BOOL)allowsPictureInPicture;
+
 @property (retain) AVPlayerController* playerControllerProxy;
 @property (assign) WebCore::PlaybackSessionModel* delegate;
 @property (assign) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
@@ -92,7 +94,7 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
 @property AVPlayerControllerExternalPlaybackType externalPlaybackType;
 @property (retain) NSString *externalPlaybackAirPlayDeviceLocalizedName;
 @property BOOL allowsExternalPlayback;
-@property (getter=isPictureInPicturePossible) BOOL pictureInPicturePossible;
+@property (readonly, getter=isPictureInPicturePossible) BOOL pictureInPicturePossible;
 @property (getter=isPictureInPictureInterrupted) BOOL pictureInPictureInterrupted;
 
 @property NSTimeInterval seekableTimeRangesLastModifiedTime;

@@ -57,6 +57,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 @implementation WebAVPlayerController {
     BOOL _liveStreamEventModePossible;
     BOOL _isScrubbing;
+    BOOL _allowsPictureInPicture;
 }
 
 - (instancetype)init
@@ -500,6 +501,16 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 + (NSSet *)keyPathsForValuesAffectingPlayingOnExternalScreen
 {
     return [NSSet setWithObjects:@"externalPlaybackActive", @"playingOnSecondScreen", nil];
+}
+
+- (void)setAllowsPictureInPicture:(BOOL)allowsPictureInPicture
+{
+    _allowsPictureInPicture = allowsPictureInPicture;
+}
+
+- (BOOL)isPictureInPicturePossible
+{
+    return _allowsPictureInPicture && ![self isExternalPlaybackActive];
 }
 
 - (BOOL)isPictureInPictureInterrupted

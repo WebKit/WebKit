@@ -1,3 +1,31 @@
+2020-07-20  Peng Liu  <peng.liu6@apple.com>
+
+        An airplaying video can enter picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=214556
+
+        Reviewed by Eric Carlson.
+
+        WebAVPlayerController replaces the AVPlayerController used by AVKit. Its property
+        "pictureInPicturePossible" will always be YES after VideoFullscreenInterfaceAVKit::doSetup()
+        sets it, even after the video enters picture-in-picture.
+
+        This patch fixes the issue by checking whether the video is airplaying (isExternalPlaybackActive)
+        in -[WebAVPlayerController isPictureInPicturePossible].
+
+        AVPlayerController has the logic to change the property "pictureInPicturePossible" to NO
+        after a video enters picture-in-picture, but we cannot use AVPlayerController's value of
+        "pictureInPicturePossible" as the property value of WebAVPlayerController. Because the value of
+        "-[AVPlayerController isPictureInPicturePossible]" depends on the value of
+        "[[AVAudioSession sharedInstance] isPiPAvailable]", which is always NO in the UI process.
+        (AVAudioSession related code is in the web process).
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::doSetup):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController setAllowsPictureInPicture:]):
+        (-[WebAVPlayerController isPictureInPicturePossible]):
+
 2020-07-20  Megan Gardner  <megan_gardner@apple.com>
 
         Add OK button to Date/Time form controls.
