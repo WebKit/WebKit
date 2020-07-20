@@ -266,11 +266,9 @@ void ResourceLoader::loadDataURL()
     ASSERT(url.protocolIsData());
 
     DataURLDecoder::ScheduleContext scheduleContext;
-#if HAVE(RUNLOOP_TIMER)
-    if (auto page = m_frame->page()) {
-        if (auto scheduledPairs = page->scheduledRunLoopPairs())
-            scheduleContext.scheduledPairs = *scheduledPairs;
-    }
+#if USE(COCOA_EVENT_LOOP)
+    if (auto page = m_frame->page())
+        scheduleContext.scheduledPairs = *page->scheduledRunLoopPairs();
 #endif
     auto mode = DataURLDecoder::Mode::Legacy;
     if (m_request.requester() == ResourceRequest::Requester::Fetch)

@@ -141,6 +141,16 @@ void RunLoop::dispatch(Function<void ()>&& function)
         wakeUp();
 }
 
+void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
+{
+    auto timer = new DispatchTimer(*this);
+    timer->setFunction([timer, function = WTFMove(function)] {
+        function();
+        delete timer;
+    });
+    timer->startOneShot(delay);
+}
+
 void RunLoop::suspendFunctionDispatchForCurrentCycle()
 {
     // Don't suspend if there are already suspended functions to avoid unexecuted function pile-up.

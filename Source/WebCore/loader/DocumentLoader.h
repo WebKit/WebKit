@@ -59,10 +59,6 @@
 #include "ApplicationManifest.h"
 #endif
 
-#if HAVE(RUNLOOP_TIMER)
-#include <wtf/RunLoopTimer.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include <wtf/SchedulePair.h>
 #endif
@@ -429,6 +425,11 @@ protected:
     bool m_deferMainResourceDataLoad { true };
 
 private:
+    class DataLoadToken : public CanMakeWeakPtr<DataLoadToken> {
+    public:
+        void clear() { weakPtrFactory().revokeAll(); }
+    };
+
     Document* document() const;
 
 #if ENABLE(SERVICE_WORKER)
@@ -489,13 +490,7 @@ private:
     void stopLoadingForPolicyChange();
     ResourceError interruptedForPolicyChangeError() const;
 
-#if HAVE(RUNLOOP_TIMER)
-    typedef RunLoopTimer<DocumentLoader> DocumentLoaderTimer;
-#else
-    typedef Timer DocumentLoaderTimer;
-#endif
     void handleSubstituteDataLoadNow();
-    void startDataLoadTimer();
 
     void deliverSubstituteResourcesAfterDelay();
     void substituteResourceDeliveryTimerFired();
@@ -600,7 +595,7 @@ private:
     MonotonicTime m_timeOfLastDataReceived;
     unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 
-    DocumentLoaderTimer m_dataLoadTimer;
+    DataLoadToken m_dataLoadToken;
     bool m_waitingForContentPolicy { false };
     bool m_waitingForNavigationPolicy { false };
 

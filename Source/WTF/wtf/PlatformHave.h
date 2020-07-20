@@ -61,10 +61,6 @@
 #endif
 
 #if PLATFORM(MAC)
-#define HAVE_RUNLOOP_TIMER 1
-#endif
-
-#if PLATFORM(MAC)
 #define HAVE_SEC_KEYCHAIN 1
 #endif
 

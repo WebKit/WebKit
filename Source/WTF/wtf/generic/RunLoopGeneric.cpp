@@ -250,14 +250,6 @@ void RunLoop::scheduleAndWakeUp(const AbstractLocker& locker, Ref<TimerBase::Sch
     wakeUp(locker);
 }
 
-void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
-{
-    LockHolder locker(m_loopLock);
-    bool repeating = false;
-    schedule(locker, TimerBase::ScheduledTask::create(WTFMove(function), delay, repeating));
-    wakeUp(locker);
-}
-
 // Since RunLoop does not own the registered TimerBase,
 // TimerBase and its owner should manage these lifetime.
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)

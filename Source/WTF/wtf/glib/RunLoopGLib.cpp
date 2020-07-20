@@ -129,39 +129,6 @@ RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
     return CycleResult::Continue;
 }
 
-class DispatchAfterContext {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    DispatchAfterContext(Function<void()>&& function)
-        : m_function(WTFMove(function))
-    {
-    }
-
-    void dispatch()
-    {
-        m_function();
-    }
-
-private:
-    Function<void()> m_function;
-};
-
-void RunLoop::dispatchAfter(Seconds duration, Function<void()>&& function)
-{
-    GRefPtr<GSource> source = adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource)));
-    g_source_set_priority(source.get(), RunLoopSourcePriority::RunLoopTimer);
-    g_source_set_name(source.get(), "[WebKit] RunLoop dispatchAfter");
-    g_source_set_ready_time(source.get(), g_get_monotonic_time() + duration.microsecondsAs<gint64>());
-
-    std::unique_ptr<DispatchAfterContext> context = makeUnique<DispatchAfterContext>(WTFMove(function));
-    g_source_set_callback(source.get(), [](gpointer userData) -> gboolean {
-        std::unique_ptr<DispatchAfterContext> context(static_cast<DispatchAfterContext*>(userData));
-        context->dispatch();
-        return G_SOURCE_REMOVE;
-    }, context.release(), nullptr);
-    g_source_attach(source.get(), m_mainContext.get());
-}
-
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
     , m_source(adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource))))
@@ -201,20 +168,20 @@ void RunLoop::TimerBase::setPriority(int priority)
 
 void RunLoop::TimerBase::updateReadyTime()
 {
-    if (!m_fireInterval) {
+    if (!m_interval) {
         g_source_set_ready_time(m_source.get(), 0);
         return;
     }
 
     gint64 currentTime = g_get_monotonic_time();
-    gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, m_fireInterval.microsecondsAs<gint64>());
+    gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, m_interval.microsecondsAs<gint64>());
     ASSERT(targetTime >= currentTime);
     g_source_set_ready_time(m_source.get(), targetTime);
 }
 
-void RunLoop::TimerBase::start(Seconds fireInterval, bool repeat)
+void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 {
-    m_fireInterval = fireInterval;
+    m_interval = interval;
     m_isRepeating = repeat;
     updateReadyTime();
 }
@@ -222,7 +189,7 @@ void RunLoop::TimerBase::start(Seconds fireInterval, bool repeat)
 void RunLoop::TimerBase::stop()
 {
     g_source_set_ready_time(m_source.get(), -1);
-    m_fireInterval = { };
+    m_interval = { };
     m_isRepeating = false;
 }
 

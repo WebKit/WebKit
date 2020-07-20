@@ -51,7 +51,6 @@ list(APPEND WTF_SOURCES
     cf/FileSystemCF.cpp
     cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
-    cf/RunLoopTimerCF.cpp
     cf/SchedulePairCF.cpp
     cf/URLCF.cpp
 

@@ -1,3 +1,54 @@
+2020-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        There should be only one RunLoop Timer class
+        https://bugs.webkit.org/show_bug.cgi?id=214340
+
+        Reviewed by Darin Adler.
+
+        RunLoop::Timer wins. RunLoopTimer loses.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformHave.h:
+        * wtf/PlatformMac.cmake: Remove RunLoopTimer.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::dispatchAfter): While we're here. let's make dispatchAfter
+        available on all platforms. We had cross-platform code, but it was
+        factored to be needlessly platform-specific.
+
+        * wtf/RunLoop.h: Added a version of dispatch() that accepts a
+        SchedulePairHashSet for Cocoa. Removed some indirection from timer
+        stuff, since it was confusing me. Consistently named all time intervals
+        "interval".
+
+        * wtf/RunLoopTimer.h: Removed.
+
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::createTimer): Factored out a helper function for dispatch() to use.
+        (WTF::RunLoop::dispatch): This function is the meat of the patch. It's
+        the only unique functionality that RunLoopTimer used to provide.
+        (WTF::RunLoop::TimerBase::start): Adopted helper function.
+        (WTF::RunLoop::runForDuration): Deleted.
+        (WTF::RunLoop::TimerBase::timerFired): Deleted.
+
+        * wtf/cf/RunLoopTimerCF.cpp: Removed.
+
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::dispatchAfter): Deleted. Now cross-platform.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::updateReadyTime):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::DispatchAfterContext::DispatchAfterContext): Deleted.
+        (WTF::DispatchAfterContext::dispatch): Deleted.
+        (WTF::RunLoop::dispatchAfter): Deleted. Now cross-platform.
+
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::dispatchAfter): Deleted. Now cross-platform.
+
 2020-07-17  Sam Weinig  <weinig@apple.com>
 
         Remove final vestigates of SimpleColor

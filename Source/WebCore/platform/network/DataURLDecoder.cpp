@@ -97,52 +97,6 @@ public:
     Result result;
 };
 
-#if HAVE(RUNLOOP_TIMER)
-
-class DecodingResultDispatcher : public ThreadSafeRefCounted<DecodingResultDispatcher> {
-public:
-    static void dispatch(std::unique_ptr<DecodeTask> decodeTask)
-    {
-        Ref<DecodingResultDispatcher> dispatcher = adoptRef(*new DecodingResultDispatcher(WTFMove(decodeTask)));
-        dispatcher->startTimer();
-    }
-
-private:
-    DecodingResultDispatcher(std::unique_ptr<DecodeTask> decodeTask)
-        : m_timer(*this, &DecodingResultDispatcher::timerFired)
-        , m_decodeTask(WTFMove(decodeTask))
-    {
-    }
-
-    void startTimer()
-    {
-        // Keep alive until the timer has fired.
-        ref();
-
-        auto scheduledPairs = m_decodeTask->scheduleContext.scheduledPairs;
-        m_timer.startOneShot(0_s);
-        m_timer.schedule(scheduledPairs);
-    }
-
-    void timerFired()
-    {
-        if (m_decodeTask->result.data)
-            m_decodeTask->completionHandler(WTFMove(m_decodeTask->result));
-        else
-            m_decodeTask->completionHandler({ });
-
-        // Ensure DecodeTask gets deleted in the main thread.
-        m_decodeTask = nullptr;
-
-        deref();
-    }
-
-    RunLoopTimer<DecodingResultDispatcher> m_timer;
-    std::unique_ptr<DecodeTask> m_decodeTask;
-};
-
-#endif // HAVE(RUNLOOP_TIMER)
-
 static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
 {
     return makeUnique<DecodeTask>(
@@ -194,16 +148,22 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, Mode mode, D
                 decodeEscaped(*decodeTask);
         }
 
-#if HAVE(RUNLOOP_TIMER)
-        DecodingResultDispatcher::dispatch(WTFMove(decodeTask));
-#else
-        callOnMainThread([decodeTask = WTFMove(decodeTask)] {
+#if USE(COCOA_EVENT_LOOP)
+        auto scheduledPairs = decodeTask->scheduleContext.scheduledPairs;
+#endif
+
+        auto callCompletionHandler = [decodeTask = WTFMove(decodeTask)] {
             if (!decodeTask->result.data) {
                 decodeTask->completionHandler({ });
                 return;
             }
             decodeTask->completionHandler(WTFMove(decodeTask->result));
-        });
+        };
+
+#if USE(COCOA_EVENT_LOOP)
+        RunLoop::dispatch(scheduledPairs, WTFMove(callCompletionHandler));
+#else
+        RunLoop::main().dispatch(WTFMove(callCompletionHandler));
 #endif
     });
 }

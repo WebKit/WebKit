@@ -213,7 +213,6 @@ set(WTF_PUBLIC_HEADERS
     ResourceUsage.h
     RetainPtr.h
     RunLoop.h
-    RunLoopTimer.h
     SHA1.h
     SaturatedArithmetic.h
     SchedulePair.h

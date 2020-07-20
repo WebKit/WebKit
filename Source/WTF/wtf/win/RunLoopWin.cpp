@@ -140,16 +140,6 @@ RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
     return CycleResult::Continue;
 }
 
-void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
-{
-    auto timer = new DispatchTimer(*this);
-    timer->setFunction([timer, function = WTFMove(function)] {
-        function();
-        delete timer;
-    });
-    timer->startOneShot(delay);
-}
-
 // RunLoop::Timer
 
 void RunLoop::TimerBase::timerFired()
@@ -180,14 +170,14 @@ RunLoop::TimerBase::~TimerBase()
     stop();
 }
 
-void RunLoop::TimerBase::start(Seconds nextFireInterval, bool repeat)
+void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 {
     LockHolder locker(m_runLoop->m_loopLock);
     m_isRepeating = repeat;
     m_isActive = true;
-    m_interval = nextFireInterval;
+    m_interval = interval;
     m_nextFireDate = MonotonicTime::now() + m_interval;
-    ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), nextFireInterval.millisecondsAs<UINT>(), nullptr);
+    ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), interval.millisecondsAs<UINT>(), nullptr);
 }
 
 void RunLoop::TimerBase::stop()
