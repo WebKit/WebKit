@@ -26,6 +26,7 @@
 #import "config.h"
 #import "APIHTTPCookieStore.h"
 
+#import "WebsiteDataStore.h"
 #import <WebCore/Cookie.h>
 #import <WebCore/CookieStorageObserver.h>
 #import <WebCore/HTTPCookieAcceptPolicy.h>
@@ -39,10 +40,11 @@ void HTTPCookieStore::flushDefaultUIProcessCookieStore(CompletionHandler<void()>
 {
 #if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
     ASSERT(RunLoop::isMain());
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
-        // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
-        RunLoop::main().dispatch(WTFMove(completionHandler));
-    }).get()];
+    m_owningDataStore->dispatchOnQueue([completionHandler = WTFMove(completionHandler)] () mutable {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
+            RunLoop::main().dispatch(WTFMove(completionHandler));
+        }).get()];
+    });
 #else
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
     RunLoop::main().dispatch(WTFMove(completionHandler));

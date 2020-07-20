@@ -236,6 +236,8 @@ public:
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
 
+    void dispatchOnQueue(Function<void()>&&);
+
 #if USE(CURL)
     void setNetworkProxySettings(WebCore::CurlProxySettings&&);
     const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }

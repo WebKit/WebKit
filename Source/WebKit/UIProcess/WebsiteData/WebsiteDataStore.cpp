@@ -2221,6 +2221,11 @@ void WebsiteDataStore::clearPendingCookies()
     m_pendingCookies.clear();
 }
 
+void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
+{
+    m_queue->dispatch(WTFMove(function));
+}
+
 uint64_t WebsiteDataStore::perThirdPartyOriginStorageQuota() const
 {
     // FIXME: Consider whether allowing to set a perThirdPartyOriginStorageQuota from a WebsiteDataStore.

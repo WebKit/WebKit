@@ -1,3 +1,21 @@
+2020-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r263551) Main thread often hangs while saving cookies
+        https://bugs.webkit.org/show_bug.cgi?id=214564
+        <rdar://problem/65779712>
+
+        Reviewed by Geoffrey Garen.
+
+        I had assumed that CFNetwork wouldn't write cookies on the main thread, but I was wrong.
+        That change caused spins, so let's just do the work on the WebsiteDataStore's queue instead.
+
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::dispatchOnQueue):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-07-20  David Kilzer  <ddkilzer@apple.com>
 
         WebPageProxyIdentifier parameter of WebPageProxy::CreateNewPage() should not be Optional
