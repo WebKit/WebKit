@@ -1,3 +1,14 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] WebPopupItem should always be forward declared as struct
+        https://bugs.webkit.org/show_bug.cgi?id=214569
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * UIProcess/API/wpe/WebKitWebViewClient.h: Forward-declare WebPopupItem as a struct.
+
 2020-07-20  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r263551) Main thread often hangs while saving cookies

@@ -35,7 +35,7 @@ class IntRect;
 namespace WebKit {
 class DownloadProxy;
 class WebKitPopupMenu;
-class WebPopupItem;
+struct WebPopupItem;
 struct UserMessage;
 }
 
