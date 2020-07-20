@@ -1,3 +1,13 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non unified build fixes, midsummer 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=213616
+
+        Unreviewed build fix.
+
+        * wtf/text/StringParsingBuffer.h: Add missing inclusion of wtf/text/StringView.h,
+        and removed other now-unneeded header inclusions.
+
 2020-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         There should be only one RunLoop Timer class

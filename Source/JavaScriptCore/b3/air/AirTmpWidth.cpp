@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "AirTmpWidthInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {

@@ -1,3 +1,12 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non unified build fixes, midsummer 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=213616
+
+        Unreviewed build fix.
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp: Add missing inclusion of NetworkProcess.h
+
 2020-07-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: developerExtrasEnabled should be respected when opening local Web Inspector

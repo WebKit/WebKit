@@ -28,6 +28,7 @@
 
 #include "Error.h"
 #include "HeapInlines.h"
+#include "JSCJSValueInlines.h"
 #include "TestRunnerUtils.h"
 
 namespace JSC {

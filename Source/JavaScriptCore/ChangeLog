@@ -1,3 +1,19 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non unified build fixes, midsummer 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=213616
+
+        Unreviewed build fix.
+
+        * b3/air/AirTmpInlines.h:
+        (JSC::B3::Air::TmpWidth::widths): Moved from AirTmpWidth.h
+        * b3/air/AirTmpWidth.cpp: Included AirTmpInlines.h
+        * b3/air/AirTmpWidth.h: TmpWidth::widths() moved out from here.
+        * runtime/ExceptionFuzz.cpp: Add missing inclusion of JSCJSValueInlines.h
+        * runtime/StructureIDTable.cpp: Add missing inclusions of wtf/DataLog.h
+        and wtf/RawPointer.h
+        * runtime/VMTraps.cpp: Ditto.
+
 2020-07-20  Keith Miller  <keith_miller@apple.com>
 
         Add support for FinalizationRegistries

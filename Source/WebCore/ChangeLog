@@ -1,3 +1,14 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non unified build fixes, midsummer 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=213616
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * inspector/InspectorInstrumentationWebKit.h: Forward-declare ResourceLoader class.
+
 2020-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r261874): Typing near the bottom of a scrollable document causes the scroll position to jump

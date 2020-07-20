@@ -103,17 +103,8 @@ private:
         Width def;
     };
 
-    Widths& widths(Tmp tmp)
-    {
-        if (tmp.isGP()) {
-            unsigned index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
-            ASSERT(index < m_widthGP.size());
-            return m_widthGP[index];
-        }
-        unsigned index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
-        ASSERT(index < m_widthFP.size());
-        return m_widthFP[index];
-    }
+    inline Widths& widths(Tmp);
+
     const Widths& widths(Tmp tmp) const
     {
         return const_cast<TmpWidth*>(this)->widths(tmp);

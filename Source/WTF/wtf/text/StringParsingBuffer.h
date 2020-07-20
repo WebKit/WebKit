@@ -25,9 +25,7 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/text/LChar.h>
-#include <wtf/text/StringCommon.h>
+#include <wtf/text/StringView.h>
 
 namespace WTF {
 

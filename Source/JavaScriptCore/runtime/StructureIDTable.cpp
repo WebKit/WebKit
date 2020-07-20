@@ -27,6 +27,8 @@
 #include "StructureIDTable.h"
 
 #include <wtf/Atomics.h>
+#include <wtf/DataLog.h>
+#include <wtf/RawPointer.h>
 
 namespace JSC {
 

@@ -695,6 +695,7 @@
 		0FEC858C1BDACDC70080FF74 /* AirStackSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85671BDACDC70080FF74 /* AirStackSlot.h */; };
 		0FEC858E1BDACDC70080FF74 /* AirTmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85691BDACDC70080FF74 /* AirTmp.h */; };
 		0FEC858F1BDACDC70080FF74 /* AirTmpInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC856A1BDACDC70080FF74 /* AirTmpInlines.h */; };
+		0FEC858F2BDACDC70080FF74 /* AirTmpWidthInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC858F2BDACDC70080FF74 /* AirTmpWidthInlines.h */; };
 		0FEC85911BDACDC70080FF74 /* AirValidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC856C1BDACDC70080FF74 /* AirValidate.h */; };
 		0FEC85A31BDB5CF10080FF74 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		0FEC85A41BDB5CF10080FF74 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -3198,6 +3199,7 @@
 		0FEC85681BDACDC70080FF74 /* AirTmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirTmp.cpp; path = b3/air/AirTmp.cpp; sourceTree = "<group>"; };
 		0FEC85691BDACDC70080FF74 /* AirTmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirTmp.h; path = b3/air/AirTmp.h; sourceTree = "<group>"; };
 		0FEC856A1BDACDC70080FF74 /* AirTmpInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirTmpInlines.h; path = b3/air/AirTmpInlines.h; sourceTree = "<group>"; };
+		0FEC858F2BDACDC70080FF74 /* AirTmpWidthInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirTmpWidthInlines.h; path = b3/air/AirTmpWidthInlines.h; sourceTree = "<group>"; };
 		0FEC856B1BDACDC70080FF74 /* AirValidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirValidate.cpp; path = b3/air/AirValidate.cpp; sourceTree = "<group>"; };
 		0FEC856C1BDACDC70080FF74 /* AirValidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirValidate.h; path = b3/air/AirValidate.h; sourceTree = "<group>"; };
 		0FEC85921BDB1E100080FF74 /* AirGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirGenerated.cpp; path = b3/air/AirGenerated.cpp; sourceTree = "<group>"; };
@@ -5926,6 +5928,7 @@
 				0F9C03D41E9476F000CD9125 /* AirTmpSet.h */,
 				0FE0E4AB1C24C94A002E17B6 /* AirTmpWidth.cpp */,
 				0FE0E4AC1C24C94A002E17B6 /* AirTmpWidth.h */,
+				0FEC858F2BDACDC70080FF74 /* AirTmpWidthInlines.h */,
 				0F3730921C0D67EE00052BFA /* AirUseCounts.h */,
 				0FEC856B1BDACDC70080FF74 /* AirValidate.cpp */,
 				0FEC856C1BDACDC70080FF74 /* AirValidate.h */,

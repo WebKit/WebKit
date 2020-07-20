@@ -35,8 +35,7 @@
 #include "AirLiveness.h"
 #include "AirPadInterference.h"
 #include "AirPhaseScope.h"
-#include "AirTmpInlines.h"
-#include "AirTmpWidth.h"
+#include "AirTmpWidthInlines.h"
 #include "AirUseCounts.h"
 
 namespace JSC { namespace B3 { namespace Air {

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Frame;
+class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
