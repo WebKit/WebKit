@@ -29,6 +29,7 @@
 #include "MediaSampleGStreamer.h"
 #include "NotImplemented.h"
 #include <gst/app/gstappsink.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Optional.h>
 #include <wtf/Threading.h>
@@ -228,12 +229,12 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
         nullptr,
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_try_pull_preroll(sink, 0));
-            static_cast<ImageDecoderGStreamer*>(userData)->handleSample(WTFMove(sample));
+            static_cast<ImageDecoderGStreamer*>(userData)->notifySample(WTFMove(sample));
             return GST_FLOW_OK;
         },
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_try_pull_sample(sink, 0));
-            static_cast<ImageDecoderGStreamer*>(userData)->handleSample(WTFMove(sample));
+            static_cast<ImageDecoderGStreamer*>(userData)->notifySample(WTFMove(sample));
             return GST_FLOW_OK;
         },
         { nullptr }
@@ -253,14 +254,31 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
     gst_element_sync_state_with_parent(sink);
 }
 
-void ImageDecoderGStreamer::handleSample(GRefPtr<GstSample>&& sample)
+void ImageDecoderGStreamer::setHasEOS()
 {
-    auto* caps = gst_sample_get_caps(sample.get());
-    GST_DEBUG("Handling sample with caps %" GST_PTR_FORMAT, caps);
-    auto presentationSize = getVideoResolutionFromCaps(caps);
-    if (presentationSize && !presentationSize->isEmpty() && (!m_size || m_size != roundedIntSize(*presentationSize)))
-        m_size = roundedIntSize(*presentationSize);
-    m_sampleData.addSample(ImageDecoderGStreamerSample::create(WTFMove(sample), *m_size));
+    GST_DEBUG("EOS on decoder %p", this);
+    {
+        LockHolder lock(m_sampleMutex);
+        m_eos = true;
+        m_sampleCondition.notifyOne();
+    }
+    {
+        LockHolder lock(m_handlerMutex);
+        m_handlerCondition.wait(m_handlerMutex);
+    }
+}
+
+void ImageDecoderGStreamer::notifySample(GRefPtr<GstSample>&& sample)
+{
+    {
+        LockHolder lock(m_sampleMutex);
+        m_sample = WTFMove(sample);
+        m_sampleCondition.notifyOne();
+    }
+    {
+        LockHolder lock(m_handlerMutex);
+        m_handlerCondition.wait(m_handlerMutex);
+    }
 }
 
 void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
@@ -272,8 +290,7 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
 
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_EOS:
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-        m_runLoop.stop();
+        m_decoder.setHasEOS();
         break;
     case GST_MESSAGE_WARNING:
         gst_message_parse_warning(message, &error.outPtr(), &debug.outPtr());
@@ -282,8 +299,7 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
     case GST_MESSAGE_ERROR:
         gst_message_parse_error(message, &error.outPtr(), &debug.outPtr());
         g_warning("Error: %d, %s. Debug output: %s", error->code, error->message, debug.get());
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-        m_runLoop.stop();
+        m_decoder.setHasEOS();
         break;
     default:
         break;
@@ -351,9 +367,32 @@ void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
     auto thread = Thread::create("ImageDecoderGStreamer", [this, data = buffer.data(), size = buffer.size()] {
         m_innerDecoder = ImageDecoderGStreamer::InnerDecoder::create(*this, data, size);
         m_innerDecoder->run();
-    });
-    thread->waitForCompletion();
-    m_eos = true;
+    }, ThreadType::Graphics);
+    thread->detach();
+    bool isEOS = false;
+    {
+        LockHolder lock(m_sampleMutex);
+        isEOS = m_eos;
+    }
+    while (!isEOS) {
+        {
+            LockHolder lock(m_sampleMutex);
+            m_sampleCondition.wait(m_sampleMutex);
+            isEOS = m_eos;
+            if (m_sample) {
+                auto* caps = gst_sample_get_caps(m_sample.get());
+                GST_DEBUG("Handling sample with caps %" GST_PTR_FORMAT " on decoder %p", caps, this);
+                auto presentationSize = getVideoResolutionFromCaps(caps);
+                if (presentationSize && !presentationSize->isEmpty() && (!m_size || m_size != roundedIntSize(*presentationSize)))
+                    m_size = roundedIntSize(*presentationSize);
+                m_sampleData.addSample(ImageDecoderGStreamerSample::create(WTFMove(m_sample), *m_size));
+            }
+        }
+        {
+            LockHolder lock(m_handlerMutex);
+            m_handlerCondition.notifyAll();
+        }
+    }
     m_innerDecoder = nullptr;
     callOnMainThread([this] {
         if (m_encodedDataStatusChangedCallback)

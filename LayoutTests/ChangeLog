@@ -1,5 +1,14 @@
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] ImageDecoder hits more Debug ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=214191
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag no-longer-crashing tests.
+
+2020-07-20  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK gardening
 
         * platform/gtk/TestExpectations: Unflag now-stable webrtc tests, no longer flaky since r263836.
