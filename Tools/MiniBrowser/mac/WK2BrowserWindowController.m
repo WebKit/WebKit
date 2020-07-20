@@ -27,6 +27,7 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <SecurityInterface/SFCertificateTrustPanel.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
@@ -105,6 +106,7 @@ static const int testFooterBannerHeight = 58;
 
     [_webView addObserver:self forKeyPath:@"title" options:0 context:keyValueObservingContext];
     [_webView addObserver:self forKeyPath:@"URL" options:0 context:keyValueObservingContext];
+    [_webView addObserver:self forKeyPath:@"hasOnlySecureContent" options:0 context:keyValueObservingContext];
 
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
@@ -163,6 +165,7 @@ static const int testFooterBannerHeight = 58;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_webView removeObserver:self forKeyPath:@"title"];
     [_webView removeObserver:self forKeyPath:@"URL"];
+    [_webView removeObserver:self forKeyPath:@"hasOnlySecureContent"];
     
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
@@ -285,6 +288,12 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (IBAction)reload:(id)sender
 {
     [_webView reload];
+}
+
+- (IBAction)showCertificate:(id)sender
+{
+    if (_webView.serverTrust)
+        [[SFCertificateTrustPanel sharedCertificateTrustPanel] beginSheetForWindow:self.window modalDelegate:nil didEndSelector:nil contextInfo:NULL trust:_webView.serverTrust message:@"TLS Certificate Details"];
 }
 
 - (IBAction)forceRepaint:(id)sender
@@ -531,6 +540,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [self updateTitle:_webView.title];
     else if ([keyPath isEqualToString:@"URL"])
         [self updateTextFieldFromURL:_webView.URL];
+    else if ([keyPath isEqualToString:@"hasOnlySecureContent"])
+        [self updateLockButtonIcon:_webView.hasOnlySecureContent];
 }
 
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
@@ -642,6 +653,14 @@ static BOOL areEssentiallyEqual(double a, double b)
         return;
 
     urlText.stringValue = [URL _web_userVisibleString];
+}
+
+- (void)updateLockButtonIcon:(BOOL)hasOnlySecureContent
+{
+    if (hasOnlySecureContent)
+        [lockButton setImage:[NSImage imageNamed:NSImageNameLockLockedTemplate]];
+    else
+        [lockButton setImage:[NSImage imageNamed:NSImageNameLockUnlockedTemplate]];
 }
 
 - (void)loadURLString:(NSString *)urlString

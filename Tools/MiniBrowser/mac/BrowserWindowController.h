@@ -28,6 +28,7 @@
 @interface BrowserWindowController : NSWindowController {
     IBOutlet NSProgressIndicator *progressIndicator;
     IBOutlet NSButton *reloadButton;
+    IBOutlet NSButton *lockButton;
     IBOutlet NSButton *backButton;
     IBOutlet NSButton *forwardButton;
     IBOutlet NSButton *share;

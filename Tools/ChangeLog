@@ -1,3 +1,20 @@
+2020-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        Add lock icon to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=214438
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController showCertificate:]):
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]):
+        (-[WK2BrowserWindowController updateLockButtonIcon:]):
+
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to FDO 19.08.12 release

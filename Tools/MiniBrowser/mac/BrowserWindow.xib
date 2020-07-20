@@ -12,6 +12,7 @@
                 <outlet property="forwardButton" destination="42" id="47"/>
                 <outlet property="progressIndicator" destination="21" id="33"/>
                 <outlet property="reloadButton" destination="23" id="34"/>
+                <outlet property="lockButton" destination="mWN-r5-XQb" id="49"/>
                 <outlet property="share" destination="1hB-AH-eUl" id="si4-8e-DsM"/>
                 <outlet property="toggleUseShrinkToFitButton" destination="82" id="9w7-AB-Ye3"/>
                 <outlet property="toolbar" destination="48" id="67"/>
@@ -86,6 +87,22 @@
                             </connections>
                         </button>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F9C3B2C4-B22D-4E12-92BC-EA326711BBC1" label="Lock" paletteLabel="Lock" image="NSLockLockedTemplate" id="Ky3-6Y-3U1" userLabel="Lock" customClass="MBToolbarItem">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="29" height="25"/>
+                        <size key="maxSize" width="29" height="27"/>
+                        <button key="view" verticalHuggingPriority="750" id="mWN-r5-XQb">
+                            <rect key="frame" x="2" y="14" width="29" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSLockLockedTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iRv-ey-QZe">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="showCertificate:" target="-2" id="LjW-s0-oJ2"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="76DCF2B0-1DDE-47D2-9212-705E6E310CCE" label="Use Shrink To Fit" paletteLabel="Use Shrink To Fit" image="NSEnterFullScreenTemplate" id="81" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
@@ -147,6 +164,7 @@
                     <toolbarItem reference="56"/>
                     <toolbarItem reference="57"/>
                     <toolbarItem reference="58"/>
+                    <toolbarItem reference="Ky3-6Y-3U1"/>
                     <toolbarItem reference="59"/>
                     <toolbarItem reference="dJx-dw-gcC"/>
                     <toolbarItem reference="60"/>
@@ -160,6 +178,7 @@
     </objects>
     <resources>
         <image name="NSEnterFullScreenTemplate" width="16" height="15"/>
+        <image name="NSLockLockedTemplate" width="10" height="14"/>
         <image name="NSGoLeftTemplate" width="10" height="14"/>
         <image name="NSGoRightTemplate" width="10" height="14"/>
         <image name="NSRefreshTemplate" width="14" height="16"/>
