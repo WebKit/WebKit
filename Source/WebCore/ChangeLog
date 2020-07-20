@@ -1,3 +1,21 @@
+2020-07-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        CSS clip-path is applied to the <svg> root element in the view-box coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=214418
+
+        Reviewed by Darin Adler.
+
+        We need to transfer the bounding box of the SVG element renderer from the
+        SVG coordinates system to the CSS coordinates before calculating the clip
+        path. Then we need to transfer the clip path back to the SVG coordinates
+        before applying it to the GraphicsContext. The GraphicsContext is already
+        transformed by the localToPrentTransform.
+
+        Test: svg/in-html/svg-view-box-css-clip-path.html
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clipContextToCSSClippingArea):
+
 2020-07-20  Clark Wang  <clark_wang@apple.com>
 
         Fixes to match BaseAudioContext.idl to spec

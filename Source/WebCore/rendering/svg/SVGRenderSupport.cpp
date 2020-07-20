@@ -395,8 +395,15 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
     ClipPathOperation* clipPathOperation = renderer.style().clipPath();
     if (is<ShapeClipPathOperation>(clipPathOperation)) {
         auto& clipPath = downcast<ShapeClipPathOperation>(*clipPathOperation);
-        FloatRect referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
-        context.clipPath(clipPath.pathForReferenceRect(referenceBox), clipPath.windRule());
+        auto localToParentTransform = renderer.localToParentTransform();
+
+        auto referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
+        referenceBox = localToParentTransform.mapRect(referenceBox);
+
+        auto path = clipPath.pathForReferenceRect(referenceBox);
+        path.transform(localToParentTransform.inverse().valueOr(AffineTransform()));
+
+        context.clipPath(path, clipPath.windRule());
     }
     if (is<BoxClipPathOperation>(clipPathOperation)) {
         auto& clipPath = downcast<BoxClipPathOperation>(*clipPathOperation);
