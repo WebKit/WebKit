@@ -1,5 +1,14 @@
 2020-07-20  Youenn Fablet  <youenn@apple.com>
 
+        Fix buggy assert in h265_vps_sps_pps_tracker.cc
+        https://bugs.webkit.org/show_bug.cgi?id=214545
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-07-20  Youenn Fablet  <youenn@apple.com>
+
         GenerateCertificateAsync should be called on signaling thread
         https://bugs.webkit.org/show_bug.cgi?id=214447
 

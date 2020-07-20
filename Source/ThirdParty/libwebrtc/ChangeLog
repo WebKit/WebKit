@@ -1,3 +1,12 @@
+2020-07-20  Youenn Fablet  <youenn@apple.com>
+
+        Fix buggy assert in h265_vps_sps_pps_tracker.cc
+        https://bugs.webkit.org/show_bug.cgi?id=214545
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.cc:
+
 2020-07-17  Jer Noble  <jer.noble@apple.com>
 
         Unreviwed build fix after r265592; rather than remove the dead code causing link errors

@@ -37,7 +37,7 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
   const uint8_t* data = bitstream.data();
   const size_t data_size = bitstream.size();
   RTPVideoHeader& video_header = *video_header_pointer;
-  RTC_DCHECK(video_header.codec == kVideoCodecH264);
+  RTC_DCHECK(video_header.codec == kVideoCodecH265);
 
   auto& h265_header =
       absl::get<RTPVideoHeaderH265>(video_header.video_type_header);
