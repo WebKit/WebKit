@@ -1,5 +1,20 @@
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Add support for canvas captureStream, tests failing since they were added in r213598
+        https://bugs.webkit.org/show_bug.cgi?id=169811
+
+        Reviewed by Darin Adler.
+
+        Unflag passing tests and rebaseline one platform-specific WPT test expectation which differs
+        from the default by only one line.
+
+        * platform/glib/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+
+2020-07-20  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] ImageDecoder hits more Debug ASSERTs
         https://bugs.webkit.org/show_bug.cgi?id=214191
 
