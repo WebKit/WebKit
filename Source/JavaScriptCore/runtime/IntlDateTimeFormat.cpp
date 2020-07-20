@@ -27,7 +27,7 @@
 #include "config.h"
 #include "IntlDateTimeFormat.h"
 
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"

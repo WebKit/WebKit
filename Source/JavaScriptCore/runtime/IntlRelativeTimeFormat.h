@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+enum class RelevantExtensionKey : uint8_t;
+
 class IntlRelativeTimeFormat final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;

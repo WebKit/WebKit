@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLSync.h"
 
+#include "HTMLCanvasElement.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 

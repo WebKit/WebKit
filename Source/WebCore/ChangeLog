@@ -1,3 +1,10 @@
+2020-07-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed non-unified source build fix
+
+        * html/canvas/WebGLSync.cpp:
+        * html/canvas/WebGLSync.h:
+
 2020-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         There should be only one RunLoop Timer class
