@@ -2414,7 +2414,7 @@ class ExtractTestResults(master.MasterShellCommand):
 
         self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
         self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}'.format(identifier))
-        self.command = ['unzip', self.zipFile, '-d', self.resultDirectory]
+        self.command = ['unzip', '-q', self.zipFile, '-d', self.resultDirectory]
 
         master.MasterShellCommand.__init__(self, command=self.command, logEnviron=False)
 

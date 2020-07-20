@@ -1,3 +1,13 @@
+2020-07-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Use -q while unzipping layout-test-results.zip
+        https://bugs.webkit.org/show_bug.cgi?id=214571
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+
 2020-07-20  Keith Miller  <keith_miller@apple.com>
 
         [JSC] update test262 (July 2020 edition)
