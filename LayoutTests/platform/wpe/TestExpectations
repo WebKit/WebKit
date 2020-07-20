@@ -131,12 +131,6 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pas
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Timeout ImageOnlyFailure ]
 
-# Canvas captureStream support is not implemented
-webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]
-webkit.org/b/169811 fast/mediastream/captureStream/ [ Failure ]
-webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Timeout ]
-webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
-
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]

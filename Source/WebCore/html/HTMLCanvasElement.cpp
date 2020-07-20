@@ -87,13 +87,17 @@
 #include "WebXRSystem.h"
 #endif
 
+#if USE(CG)
+#include "ImageBufferUtilitiesCG.h"
+#endif
+
+#if USE(GSTREAMER)
+#include "MediaSampleGStreamer.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "MediaSampleAVFObjC.h"
 #include <pal/cf/CoreMediaSoftLink.h>
-#endif
-
-#if USE(CG)
-#include "ImageBufferUtilitiesCG.h"
 #endif
 
 namespace WebCore {
@@ -789,6 +793,9 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 #if PLATFORM(COCOA)
     makeRenderingResultsAvailable();
     return MediaSampleAVFObjC::createImageSample(imageBuffer->toBGRAData(), width(), height());
+#elif USE(GSTREAMER)
+    makeRenderingResultsAvailable();
+    return MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), width(), height());
 #else
     return nullptr;
 #endif

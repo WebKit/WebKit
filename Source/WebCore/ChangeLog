@@ -1,3 +1,29 @@
+2020-07-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Add support for canvas captureStream, tests failing since they were added in r213598
+        https://bugs.webkit.org/show_bug.cgi?id=169811
+
+        Reviewed by Darin Adler.
+
+        Hook captureStream support in GStreamer ports. The only missing bits were:
+
+        1. create a MediaSample from a BGRA buffer
+        2. convert a MediaSample to a RGBA buffer (used only for layout tests)
+        3. set video width and height tags not only on video capture tracks (tracks created from
+           captureStream are not GStreamer capture device tracks)
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toMediaSample):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h: Refactor createImageSample to
+        use unsigned for dimensions.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::createImageSample):
+        (WebCore::MediaSampleGStreamer::getRGBAImageData const):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (mediaStreamTrackPrivateGetTags):
+
 2020-07-20  Youenn Fablet  <youenn@apple.com>
 
         GenerateCertificateAsync should be called on signaling thread
