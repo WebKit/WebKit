@@ -74,7 +74,13 @@ class MacPort(DarwinPort):
         return result
 
     def _build_driver_flags(self):
-        return ['ARCHS=i386'] if self.architecture() == 'x86' else ['ARCHS={}'.format(self.architecture())]
+        architecture = self.architecture()
+        # The Internal SDK should always prefer arm64e binaries to arm64 ones
+        if architecture == 'arm64' and apple_additions():
+            architecture = 'arm64e'
+        if architecture == 'x86':
+            return ['ARCHS=i386']
+        return ['ARCHS={}'.format(architecture)]
 
     def default_baseline_search_path(self, **kwargs):
         versions_to_fallback = []

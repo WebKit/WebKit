@@ -1,3 +1,14 @@
+2020-07-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Build with arm64e when on Apple Internal
+        https://bugs.webkit.org/show_bug.cgi?id=214553
+        <rdar://problem/65745597>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort._build_driver_flags): Use arm64e instead of arm64 for Internal builds.
+
 2020-07-20  Alex Christensen  <achristensen@webkit.org>
 
         Add lock icon to MiniBrowser
