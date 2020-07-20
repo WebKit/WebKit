@@ -91,7 +91,7 @@ private:
 
     WebPageProxy& m_page;
 
-    Inspector::InspectorTargetAgent* m_targetAgent;
+    Inspector::InspectorTargetAgent* m_targetAgent { nullptr };
     HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
 
     InspectorBrowserAgent* m_enabledBrowserAgent;
