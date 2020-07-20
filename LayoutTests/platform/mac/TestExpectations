@@ -143,6 +143,8 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 
 webkit.org/b/188061 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
 
+webkit.org/b/214557 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Skip ]
+
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
@@ -1929,3 +1931,4 @@ webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
 
 webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Failure ]
+

@@ -949,7 +949,6 @@ webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html
 webkit.org/b/210134 media/track/track-css-user-override.html [ Pass Failure ]
 
 webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
-webkit.org/b/210198 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow ]
 
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
 

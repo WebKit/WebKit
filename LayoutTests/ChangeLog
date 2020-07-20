@@ -1,3 +1,10 @@
+2020-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, skip flaky test webgl/2.0.0/conformance2/state/gl-object-get-calls.html.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-07-20  Keith Miller  <keith_miller@apple.com>
 
         Add support for FinalizationRegistries
