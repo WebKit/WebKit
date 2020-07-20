@@ -882,6 +882,8 @@ webkit.org/b/207059 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursor
 
 webkit.org/b/207066 editing/execCommand/insert-nested-lists.html [ Pass Failure ]
 
+webkit.org/b/214558 editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible.html [ Failure ]
+
 webkit.org/b/207125 transitions/start-transform-transition.html [ Pass Failure ]
 
 webkit.org/b/181085 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]

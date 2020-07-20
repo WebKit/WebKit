@@ -146,6 +146,18 @@ public:
     void setProhibitsScrolling(bool b) { m_prohibitsScrolling = b; }
     bool prohibitsScrolling() const { return m_prohibitsScrolling; }
 
+    class ProhibitScrollingWhenChangingContentSizeForScope {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        ProhibitScrollingWhenChangingContentSizeForScope(ScrollView&);
+        ~ProhibitScrollingWhenChangingContentSizeForScope();
+
+    private:
+        WeakPtr<ScrollView> m_scrollView;
+    };
+
+    std::unique_ptr<ProhibitScrollingWhenChangingContentSizeForScope> prohibitScrollingWhenChangingContentSizeForScope();
+
     // Whether or not a scroll view will blit visible contents when it is scrolled. Blitting is disabled in situations
     // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
     void setCanBlitOnScroll(bool);
@@ -431,6 +443,8 @@ protected:
 
     virtual void unobscuredContentSizeChanged() = 0;
 
+    virtual void didFinishProhibitingScrollingWhenChangingContentSize() = 0;
+
 #if PLATFORM(COCOA) && defined __OBJC__
 public:
     WEBCORE_EXPORT NSView* documentView() const;
@@ -493,6 +507,18 @@ private:
     void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
     void updateOverhangAreas();
 
+    void incrementProhibitsScrollingWhenChangingContentSizeCount() { ++m_prohibitsScrollingWhenChangingContentSizeCount; }
+    void decrementProhibitsScrollingWhenChangingContentSizeCount()
+    {
+        if (!m_prohibitsScrollingWhenChangingContentSizeCount) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        if (!--m_prohibitsScrollingWhenChangingContentSizeCount)
+            didFinishProhibitingScrollingWhenChangingContentSize();
+    }
+
     HashSet<Ref<Widget>> m_children;
 
     RefPtr<Scrollbar> m_horizontalScrollbar;
@@ -524,6 +550,7 @@ private:
     IntPoint m_panScrollIconPoint;
 
     unsigned m_updateScrollbarsPass { 0 };
+    unsigned m_prohibitsScrollingWhenChangingContentSizeCount { 0 };
 
     bool m_horizontalScrollbarLock { false };
     bool m_verticalScrollbarLock { false };

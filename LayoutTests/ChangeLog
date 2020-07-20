@@ -1,3 +1,21 @@
+2020-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r261874): Typing near the bottom of a scrollable document causes the scroll position to jump
+        https://bugs.webkit.org/show_bug.cgi?id=214426
+        <rdar://problem/65302701>
+
+        Reviewed by Simon Fraser.
+
+        Add a test to verify that the scroll position doesn't change when deleting and then reinserting the only
+        character on a line (i.e. `div` element) in a contenteditable element. This test also verifies that deleting
+        lines in a way that decreases the height of the document still clamps the scroll position by scrolling up.
+
+        * editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible-expected.txt: Added.
+        * editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
+        Mark the test as failing in WebKit1 for now, which will require some additional work.
+
 2020-07-20  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS ] css3/blending/blend-mode-clip-accelerated-blending-canvas.html is passing and expectations need to be removed

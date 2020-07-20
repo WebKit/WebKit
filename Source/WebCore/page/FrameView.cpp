@@ -258,6 +258,7 @@ void FrameView::reset()
     m_paintBehavior = PaintBehavior::Normal;
     m_isPainting = false;
     m_needsDeferredScrollbarsUpdate = false;
+    m_needsDeferredPositionScrollbarLayers = false;
     m_maintainScrollPositionAnchor = nullptr;
     resetLayoutMilestones();
     layoutContext().reset();
@@ -1092,16 +1093,24 @@ void FrameView::topContentInsetDidChange(float newTopContentInset)
 void FrameView::topContentDirectionDidChange()
 {
     m_needsDeferredScrollbarsUpdate = true;
+    m_needsDeferredPositionScrollbarLayers = true;
 }
 
-void FrameView::handleDeferredScrollbarsUpdateAfterDirectionChange()
+void FrameView::handleDeferredScrollbarsUpdate()
 {
     if (!m_needsDeferredScrollbarsUpdate)
         return;
 
     m_needsDeferredScrollbarsUpdate = false;
-
     updateScrollbars(scrollPosition());
+}
+
+void FrameView::handleDeferredPositionScrollbarLayers()
+{
+    if (!m_needsDeferredPositionScrollbarLayers)
+        return;
+
+    m_needsDeferredPositionScrollbarLayers = false;
     positionScrollbarLayers();
 }
 
@@ -1265,7 +1274,8 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 
     handleDeferredScrollUpdateAfterContentSizeChange();
 
-    handleDeferredScrollbarsUpdateAfterDirectionChange();
+    handleDeferredScrollbarsUpdate();
+    handleDeferredPositionScrollbarLayers();
 
     if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
@@ -5467,6 +5477,16 @@ TextStream& operator<<(TextStream& ts, const FrameView& view)
 {
     ts << view.debugDescription();
     return ts;
+}
+
+void FrameView::didFinishProhibitingScrollingWhenChangingContentSize()
+{
+    if (auto* document = frame().document()) {
+        if (!document->needsStyleRecalc() && !needsLayout() && !layoutContext().isInLayout())
+            updateScrollbars(scrollPosition());
+        else
+            m_needsDeferredScrollbarsUpdate = true;
+    }
 }
 
 } // namespace WebCore

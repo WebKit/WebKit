@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "PasteboardWriterData.h"
+#include "ScrollView.h"
 #include "TextChecking.h"
 #include "TextEventInputType.h"
 #include "TextIteratorBehavior.h"
@@ -668,6 +669,8 @@ private:
     Timer m_telephoneNumberDetectionUpdateTimer;
     Vector<SimpleRange> m_detectedTelephoneNumberRanges;
 #endif
+
+    mutable std::unique_ptr<ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> m_prohibitScrollingDueToContentSizeChangesWhileTyping;
 
     bool m_isGettingDictionaryPopupInfo { false };
     HashSet<RefPtr<HTMLImageElement>> m_imageElementsToLoadBeforeRevealingSelection;

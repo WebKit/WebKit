@@ -1,3 +1,81 @@
+2020-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r261874): Typing near the bottom of a scrollable document causes the scroll position to jump
+        https://bugs.webkit.org/show_bug.cgi?id=214426
+        <rdar://problem/65302701>
+
+        Reviewed by Simon Fraser.
+
+        After the changes in r261874, any content size changes that trigger `FrameView::adjustViewSize` cause the scroll
+        position to be clamped to its minimum and maximum limits after the next layout pass. In the context of edit
+        commands, this means that the scroll position may jump erratically, since many edit commands can temporarily
+        leave the DOM in a state where the content size is unstable.
+
+        For example, in the test case below, deleting the only character in a div element on its own line first involves
+        emptying the text node underneath the div (causing it to have no height), before inserting a BR element in its
+        place (which restores a nonzero height). After the text node is emptied (but before we insert the BR element),
+        the content size of view changes due to a layout update while creating visible positions (under
+        `VisiblePosition::canonicalPosition`). If we happen to be scrolled all the way to the bottom of the main frame,
+        this means we'll scroll up, due to the maximum scroll position temporarily decreasing. A similar effect happens
+        when inserting the first character on a line, wherein the div is empty after BR element is removed but before it
+        is replaced with a text node.
+
+        To mitigate this, introduce a mechanism to temporarily avoid updating the scroll position, and use it when
+        executing edit commands. See below for more details.
+
+        Test: editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::EditCommandComposition::reapply):
+        (WebCore::CompositeEditCommand::apply):
+        * editing/Editor.cpp:
+        (WebCore::Editor::willApplyEditing const):
+        (WebCore::Editor::appliedEditing):
+
+        Add logic to specifically handle typing commands here, since we handle typing commands by adding them to the
+        latest "open" typing command, rather than go through the more standard codepaths in EditCommandComposition
+        above.
+
+        * editing/Editor.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::topContentDirectionDidChange):
+        (WebCore::FrameView::handleDeferredScrollbarsUpdate):
+        (WebCore::FrameView::handleDeferredPositionScrollbarLayers):
+
+        Split existing logic for handling deferred scrollbar updates and deferred calls to `positionScrollbarLayers`
+        into two separate methods, with separate boolean flags. `topContentDirectionDidChange` sets both of these flags
+        (which preserves existing behavior), while `decrementProhibitsScrollingWhenChangingContentSizeCount` just
+        requests a scrollbar update.
+
+        (WebCore::FrameView::didLayout):
+        (WebCore::FrameView::didFinishProhibitingScrollingWhenChangingContentSize):
+
+        After decrementing `m_prohibitsScrollingWhenChangingContentSizeCount` back to zero, ensure that the scroll
+        position ultimately remains clamped to the minimum and maximum values by either immediately calling
+        `updateScrollbars` with the current scroll position if layout and style are up to date, or by scheduling a
+        deferred scrollbar update if that is not the case.
+
+        (WebCore::FrameView::handleDeferredScrollbarsUpdateAfterDirectionChange): Deleted.
+
+        Rename this to just `handleDeferredScrollbarsUpdate`.
+
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setContentsSize):
+        (WebCore::ScrollView::prohibitScrollingWhenChangingContentSizeForScope):
+        (WebCore::ScrollView::ProhibitScrollingWhenChangingContentSizeForScope::ProhibitScrollingWhenChangingContentSizeForScope):
+        (WebCore::ScrollView::ProhibitScrollingWhenChangingContentSizeForScope::~ProhibitScrollingWhenChangingContentSizeForScope):
+
+        Introduce a new token object, `ProhibitScrollingWhenChangingContentSizeForScope`, which increments a count on
+        `ScrollView` when created and decrements the count when destroyed. While this counter is greater than zero, we
+        will avoid scrolling as a result of changing content size.
+
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::incrementProhibitsScrollingWhenChangingContentSizeCount):
+        (WebCore::ScrollView::decrementProhibitsScrollingWhenChangingContentSizeCount):
+
 2020-07-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         CSS clip-path is applied to the <svg> root element in the view-box coordinates

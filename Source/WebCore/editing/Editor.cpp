@@ -1108,6 +1108,9 @@ bool Editor::willApplyEditing(CompositeEditCommand& command, Vector<RefPtr<Stati
     if (!composition)
         return true;
 
+    if (command.isTopLevelCommand() && command.isTypingCommand() && document().view())
+        m_prohibitScrollingDueToContentSizeChangesWhileTyping = document().view()->prohibitScrollingWhenChangingContentSizeForScope();
+
     return dispatchBeforeInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), command.inputEventTypeName(),
         command.inputEventData(), command.inputEventDataTransfer(), targetRanges, command.isBeforeInputEventCancelable() ? Event::IsCancelable::Yes : Event::IsCancelable::No);
 }
@@ -1155,6 +1158,9 @@ void Editor::appliedEditing(CompositeEditCommand& command)
                 client()->registerUndoStep(m_lastEditCommand->ensureComposition());
         }
         respondToChangedContents(newSelection);
+
+        if (command.isTypingCommand())
+            m_prohibitScrollingDueToContentSizeChangesWhileTyping = nullptr;
     }
 }
 

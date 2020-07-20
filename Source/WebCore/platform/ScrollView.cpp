@@ -398,7 +398,7 @@ void ScrollView::setContentsSize(const IntSize& newSize)
     m_contentsSize = newSize;
     if (platformWidget())
         platformSetContentsSize();
-    else
+    else if (!m_prohibitsScrollingWhenChangingContentSizeCount)
         updateScrollbars(scrollPosition());
     updateOverhangAreas();
 }
@@ -1536,6 +1536,23 @@ IntPoint ScrollView::locationOfContents() const
     if (shouldPlaceBlockDirectionScrollbarOnLeft() && m_verticalScrollbar)
         result.move(m_verticalScrollbar->occupiedWidth(), 0);
     return result;
+}
+
+std::unique_ptr<ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> ScrollView::prohibitScrollingWhenChangingContentSizeForScope()
+{
+    return makeUnique<ProhibitScrollingWhenChangingContentSizeForScope>(*this);
+}
+
+ScrollView::ProhibitScrollingWhenChangingContentSizeForScope::ProhibitScrollingWhenChangingContentSizeForScope(ScrollView& scrollView)
+    : m_scrollView(makeWeakPtr(scrollView))
+{
+    scrollView.incrementProhibitsScrollingWhenChangingContentSizeCount();
+}
+
+ScrollView::ProhibitScrollingWhenChangingContentSizeForScope::~ProhibitScrollingWhenChangingContentSizeForScope()
+{
+    if (m_scrollView)
+        m_scrollView->decrementProhibitsScrollingWhenChangingContentSizeCount();
 }
 
 String ScrollView::debugDescription() const

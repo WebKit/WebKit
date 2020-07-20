@@ -231,6 +231,7 @@ void EditCommandComposition::unapply()
     m_document->editor().cancelComposition();
 #endif
 
+    auto prohibitScrollingForScope = m_document->view() ? m_document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
     if (!m_document->editor().willUnapplyEditing(*this))
         return;
 
@@ -258,6 +259,7 @@ void EditCommandComposition::reapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
 
+    auto prohibitScrollingForScope = m_document->view() ? m_document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
     if (!m_document->editor().willReapplyEditing(*this))
         return;
 
@@ -364,6 +366,7 @@ void CompositeEditCommand::apply()
     // if one is necessary (like for the creation of VisiblePositions).
     document().updateLayoutIgnorePendingStylesheets();
 
+    auto prohibitScrollingForScope = document().view() ? document().view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
     if (!willApplyCommand())
         return;
 
