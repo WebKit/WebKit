@@ -31,6 +31,7 @@
 #include "CompilerTimingScope.h"
 #include "Completion.h"
 #include "ConfigFile.h"
+#include "DeferredWorkTimer.h"
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
@@ -41,6 +42,7 @@
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
 #include "JSBigInt.h"
+#include "JSFinalizationRegistry.h"
 #include "JSFunction.h"
 #include "JSInternalPromise.h"
 #include "JSLock.h"
@@ -56,7 +58,6 @@
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
-#include "PromiseTimer.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
 #include "StackVisitor.h"
@@ -155,6 +156,8 @@ using namespace JSC;
 
 namespace {
 
+#define EXIT_EXCEPTION 3
+
 NO_RETURN_WITH_VALUE static void jscExit(int status)
 {
     waitForAsynchronousDisassembly();
@@ -188,7 +191,7 @@ class Workers;
 
 template<typename Func>
 int runJSC(const CommandLine&, bool isWorker, const Func&);
-static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, CommandLine&, bool& success);
+static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, const CommandLine&, bool& success);
 
 class Message : public ThreadSafeRefCounted<Message> {
 public:
@@ -302,7 +305,10 @@ static EncodedJSValue JSC_HOST_CALL functionCallMasquerader(JSGlobalObject*, Cal
 static EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionSetTimeout(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionReleaseWeakRefs(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionFinalizationRegistryLiveCount(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionFinalizationRegistryDeadCount(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(JSGlobalObject*, CallFrame*);
@@ -538,8 +544,12 @@ private:
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
 
         addFunction(vm, "drainMicrotasks", functionDrainMicrotasks, 0);
-        addFunction(vm, "releaseWeakRefs", functionReleaseWeakRefs, 0);
+        addFunction(vm, "setTimeout", functionSetTimeout, 2);
 
+        addFunction(vm, "releaseWeakRefs", functionReleaseWeakRefs, 0);
+        addFunction(vm, "finalizationRegistryLiveCount", functionFinalizationRegistryLiveCount, 0);
+        addFunction(vm, "finalizationRegistryDeadCount", functionFinalizationRegistryDeadCount, 0);
+        
         addFunction(vm, "getRandomSeed", functionGetRandomSeed, 0);
         addFunction(vm, "setRandomSeed", functionSetRandomSeed, 1);
         addFunction(vm, "isRope", functionIsRope, 1);
@@ -638,6 +648,8 @@ private:
     static Identifier moduleLoaderResolve(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
+
+    static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
 
@@ -660,6 +672,7 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &moduleLoaderCreateImportMetaProperties,
     nullptr, // moduleLoaderEvaluate
     nullptr, // promiseRejectionTracker
+    &reportUncaughtExceptionAtEventLoop,
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantinateStreaming
@@ -2187,11 +2200,60 @@ EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(JSGlobalObject* globalObjec
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL functionSetTimeout(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // FIXME: This means we can't pass any internal function but I don't think that's common for testing.
+    auto callback = jsDynamicCast<JSFunction*>(vm, callFrame->argument(0));
+    if (!callback)
+        return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
+
+    // FIXME: We don't look at the timeout parameter because we don't have a schedule work later API.
+    vm.deferredWorkTimer->addPendingWork(vm, callback, { });
+    vm.deferredWorkTimer->scheduleWorkSoon(callback, [callback] {
+        JSGlobalObject* globalObject = callback->globalObject();
+        VM& vm = globalObject->vm();
+
+        MarkedArgumentBuffer args;
+        call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
+        vm.deferredWorkTimer->cancelPendingWork(callback);
+    });
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL functionReleaseWeakRefs(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     vm.finalizeSynchronousJSExecution();
     return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL functionFinalizationRegistryLiveCount(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(vm, callFrame->argument(0));
+    if (!finalizationRegistry)
+        return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
+
+    auto locker = holdLock(finalizationRegistry->cellLock());
+    return JSValue::encode(jsNumber(finalizationRegistry->liveCount(locker)));
+}
+
+static EncodedJSValue JSC_HOST_CALL functionFinalizationRegistryDeadCount(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(vm, callFrame->argument(0));
+    if (!finalizationRegistry)
+        return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
+
+    auto locker = holdLock(finalizationRegistry->cellLock());
+    return JSValue::encode(jsNumber(finalizationRegistry->deadCount(locker)));
 }
 
 EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(JSGlobalObject*, CallFrame*)
@@ -2617,10 +2679,10 @@ int main(int argc, char** argv)
 
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
-    int res = 0;
+    int res = EXIT_SUCCESS;
     TRY
         res = jscmain(argc, argv);
-    EXCEPT(res = 3)
+    EXCEPT(res = EXIT_EXCEPTION)
     finalizeStatsAtEndOfTesting();
     if (getenv("JS_SHELL_WAIT_FOR_INPUT_TO_EXIT")) {
         WTF::fastDisableScavenger();
@@ -2691,7 +2753,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
 #undef CHECK_EXCEPTION
 }
 
-static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue exception, CommandLine& options)
+static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue exception, const CommandLine& options)
 {
     const String& expectedExceptionName = options.m_uncaughtExceptionName;
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -2723,7 +2785,7 @@ static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue e
     return false;
 }
 
-static void checkException(GlobalObject* globalObject, bool isLastFile, bool hasException, JSValue value, CommandLine& options, bool& success)
+static void checkException(GlobalObject* globalObject, bool isLastFile, bool hasException, JSValue value, const CommandLine& options, bool& success)
 {
     VM& vm = globalObject->vm();
 
@@ -2740,6 +2802,15 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
             dumpException(globalObject, value);
     } else
         success = success && checkUncaughtException(vm, globalObject, (hasException) ? value : JSValue(), options);
+}
+
+void GlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
+{
+    auto* global = jsCast<GlobalObject*>(globalObject);
+    dumpException(global, exception->value());
+    bool hideNoReturn = true;
+    if (hideNoReturn)
+        jscExit(EXIT_EXCEPTION);
 }
 
 static void runWithOptions(GlobalObject* globalObject, CommandLine& options, bool& success)
@@ -3176,7 +3247,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         func(vm, globalObject, success);
         vm.drainMicrotasks();
     }
-    vm.promiseTimer->runRunLoop();
+    vm.deferredWorkTimer->runRunLoop();
     {
         JSLockHolder locker(vm);
         if (options.m_interactive && success)

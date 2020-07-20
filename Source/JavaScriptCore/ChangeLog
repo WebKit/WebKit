@@ -1,3 +1,131 @@
+2020-07-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for FinalizationRegistries
+        https://bugs.webkit.org/show_bug.cgi?id=199888
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds support for FinalizationRegistries. There are two
+        main parts to this patch, the first is refactoring PromiseTimer a
+        more general into DeferredWorkTimer. This allows us to finally
+        have a "real" setTimeout on the jsc command line. The second part
+        is adding all the new classes needed for FinalizationRegistries.
+
+        The refactoring is mostly a rename but does two main new
+        things. The first is that it now notifies the VM we have finished
+        a synchronuous JS execution, so that WeakRefs can be
+        collected. The second is that it now catches any exceptions and
+        forwards the to a new method on the global object method
+        table. For WebCore, this reports the exception to the console. For
+        API users, this calls their exceptionHandler block. For the CLI,
+        it exits with exit status 3 (our general exception exit
+        status). Unfortunately, there's not currently an ergonomic way to
+        pass the expected exception from the CLI arguments to this handler
+        so that's not supported here.
+
+        In order to support FinalizationRegistry this patch adds a "new"
+        class JSDestructibleInternalFieldObjectImpl, which allows us to
+        have a destructible object with internal fields. Since the order
+        of collection doesn't matter we currently use C++ HashTables on
+        the FinalizationRegistry. Since users can unregister objects while
+        the callback is pending we have a hash table for the live entries
+        and a second hash table for the dead ones. Lastly, because users
+        are not requred to provide a token for unregistration we have two
+        extra Vectors containing the live/dead objects that are not
+        unregisterible.
+
+        * API/JSAPIGlobalObject.cpp:
+        * API/JSAPIGlobalObject.mm:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * jsc.cpp:
+        (functionSetTimeout):
+        (functionFinalizationRegistryLiveCount):
+        (functionFinalizationRegistryDeadCount):
+        (main):
+        (checkUncaughtException):
+        (checkException):
+        (GlobalObject::reportUncaughtExceptionAtEventLoop):
+        (runJSC):
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/CommonIdentifiers.h:
+        * runtime/DeferredWorkTimer.cpp: Renamed from Source/JavaScriptCore/runtime/PromiseTimer.cpp.
+        (JSC::DeferredWorkTimer::DeferredWorkTimer):
+        (JSC::DeferredWorkTimer::doWork):
+        (JSC::DeferredWorkTimer::runRunLoop):
+        (JSC::DeferredWorkTimer::addPendingWork):
+        (JSC::DeferredWorkTimer::hasPendingWork):
+        (JSC::DeferredWorkTimer::hasDependancyInPendingWork):
+        (JSC::DeferredWorkTimer::cancelPendingWork):
+        (JSC::DeferredWorkTimer::scheduleWorkSoon):
+        * runtime/DeferredWorkTimer.h: Renamed from Source/JavaScriptCore/runtime/PromiseTimer.h.
+        * runtime/FinalizationRegistryConstructor.cpp: Added.
+        (JSC::FinalizationRegistryConstructor::finishCreation):
+        (JSC::FinalizationRegistryConstructor::FinalizationRegistryConstructor):
+        (JSC::callFinalizationRegistry):
+        (JSC::constructFinalizationRegistry):
+        * runtime/FinalizationRegistryConstructor.h: Copied from Source/JavaScriptCore/API/JSAPIGlobalObject.cpp.
+        * runtime/FinalizationRegistryPrototype.cpp: Added.
+        (JSC::FinalizationRegistryPrototype::finishCreation):
+        (JSC::getFinalizationRegistry):
+        (JSC::protoFuncFinalizationRegistryRegister):
+        (JSC::protoFuncFinalizationRegistryUnregister):
+        * runtime/FinalizationRegistryPrototype.h: Copied from Source/JavaScriptCore/API/JSAPIGlobalObject.cpp.
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::Identifier):
+        * runtime/JSFinalizationRegistry.cpp: Added.
+        (JSC::JSFinalizationRegistry::createStructure):
+        (JSC::JSFinalizationRegistry::create):
+        (JSC::JSFinalizationRegistry::finishCreation):
+        (JSC::JSFinalizationRegistry::visitChildren):
+        (JSC::JSFinalizationRegistry::destroy):
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        (JSC::JSFinalizationRegistry::runFinalizationCleanup):
+        (JSC::JSFinalizationRegistry::takeDeadHoldingsValue):
+        (JSC::JSFinalizationRegistry::registerTarget):
+        (JSC::JSFinalizationRegistry::unregister):
+        (JSC::JSFinalizationRegistry::liveCount):
+        (JSC::JSFinalizationRegistry::deadCount):
+        (JSC::JSFinalizationRegistry::toStringName):
+        * runtime/JSFinalizationRegistry.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reportUncaughtExceptionAtEventLoop):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::stackOverflowFrameCallee const):
+        (JSC::JSGlobalObject::arrayIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::mapIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::setIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::stringIteratorProtocolWatchpointSet):
+        (JSC::JSGlobalObject::mapSetWatchpointSet):
+        (JSC::JSGlobalObject::setAddWatchpointSet):
+        (JSC::JSGlobalObject::arraySpeciesWatchpointSet):
+        (JSC::JSGlobalObject::arrayJoinWatchpointSet):
+        (JSC::JSGlobalObject::numberToStringWatchpointSet):
+        * runtime/JSInternalFieldObjectImpl.h:
+        * runtime/JSInternalFieldObjectImplInlines.h:
+        (JSC::Base>::visitChildren):
+        (JSC::JSInternalFieldObjectImpl<passedNumberOfInternalFields>::visitChildren): Deleted.
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::resolve):
+        (JSC::JSPromise::reject):
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::allocateID):
+        (JSC::StructureIDTable::deallocateID):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::webAssemblyModuleValidateAsyncInternal):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyModuleInstantinateAsyncInternal):
+        (JSC::webAssemblyCompileStreamingInternal):
+        (JSC::webAssemblyInstantiateStreamingInternal):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+
 2020-07-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         JSC build scripts should be quiet by default

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PromiseTimer.h"
+#include "DeferredWorkTimer.h"
 
 #include "JSPromise.h"
 #include "StrongInlines.h"
@@ -33,16 +33,16 @@
 
 namespace JSC {
 
-namespace PromiseTimerInternal {
-static constexpr bool verbose = false;
+namespace DeferredWorkTimerInternal {
+static const bool verbose = false;
 }
 
-PromiseTimer::PromiseTimer(VM& vm)
+DeferredWorkTimer::DeferredWorkTimer(VM& vm)
     : Base(vm)
 {
 }
 
-void PromiseTimer::doWork(VM& vm)
+void DeferredWorkTimer::doWork(VM& vm)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
     m_taskLock.lock();
@@ -53,82 +53,93 @@ void PromiseTimer::doWork(VM& vm)
     }
 
     while (!m_tasks.isEmpty()) {
-        auto [ticket, task] = m_tasks.takeLast();
-        dataLogLnIf(PromiseTimerInternal::verbose, "Doing work on promise: ", RawPointer(ticket));
+        auto [ticket, task] = m_tasks.takeFirst();
+        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Doing work on: ", RawPointer(ticket));
 
         // We may have already canceled these promises.
-        if (m_pendingPromises.contains(ticket)) {
+        if (m_pendingTickets.contains(ticket)) {
             // Allow tasks we run now to schedule work.
             m_currentlyRunningTask = true;
             m_taskLock.unlock(); 
 
+            // This is the start of a runloop turn, we can release any weakrefs here.
+            vm.finalizeSynchronousJSExecution();
+
+            auto scope = DECLARE_CATCH_SCOPE(vm);
             task();
+            if (Exception* exception = scope.exception()) {
+                auto* globalObject = ticket->globalObject();
+                scope.clearException();
+                globalObject->globalObjectMethodTable()->reportUncaughtExceptionAtEventLoop(globalObject, exception);
+            }
+
             vm.drainMicrotasks();
+            ASSERT(!vm.exceptionForInspection());
 
             m_taskLock.lock();
             m_currentlyRunningTask = false;
         }
     }
 
-    if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish)
+    if (m_pendingTickets.isEmpty() && m_shouldStopRunLoopWhenAllTicketsFinish)
         RunLoop::current().stop();
 
     m_taskLock.unlock();
 }
 
-void PromiseTimer::runRunLoop()
+void DeferredWorkTimer::runRunLoop()
 {
     ASSERT(!m_apiLock->vm()->currentThreadIsHoldingAPILock());
     ASSERT(&RunLoop::current() == &m_apiLock->vm()->runLoop());
-    m_shouldStopRunLoopWhenAllPromisesFinish = true;
-    if (m_pendingPromises.size())
+    m_shouldStopRunLoopWhenAllTicketsFinish = true;
+    if (m_pendingTickets.size())
         RunLoop::run();
 }
 
-void PromiseTimer::addPendingPromise(VM& vm, JSPromise* ticket, Vector<Strong<JSCell>>&& dependencies)
+void DeferredWorkTimer::addPendingWork(VM& vm, Ticket ticket, Vector<Strong<JSCell>>&& dependencies)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
     for (unsigned i = 0; i < dependencies.size(); ++i)
         ASSERT(dependencies[i].get() != ticket);
 
-    auto result = m_pendingPromises.add(ticket, Vector<Strong<JSCell>>());
+    auto result = m_pendingTickets.add(ticket, Vector<Strong<JSCell>>());
     if (result.isNewEntry) {
-        dataLogLnIf(PromiseTimerInternal::verbose, "Adding new pending promise: ", RawPointer(ticket));
+        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new pending ticket: ", RawPointer(ticket));
         dependencies.append(Strong<JSCell>(vm, ticket));
         result.iterator->value = WTFMove(dependencies);
     } else {
-        dataLogLnIf(PromiseTimerInternal::verbose, "Adding new dependencies for promise: ", RawPointer(ticket));
+        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new dependencies for ticket: ", RawPointer(ticket));
         result.iterator->value.appendVector(dependencies);
     }
 }
 
-bool PromiseTimer::hasPendingPromise(JSPromise* ticket)
+bool DeferredWorkTimer::hasPendingWork(Ticket ticket)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
-    return m_pendingPromises.contains(ticket);
+    return m_pendingTickets.contains(ticket);
 }
 
-bool PromiseTimer::hasDependancyInPendingPromise(JSPromise* ticket, JSCell* dependency)
+bool DeferredWorkTimer::hasDependancyInPendingWork(Ticket ticket, JSCell* dependency)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
-    ASSERT(m_pendingPromises.contains(ticket));
+    ASSERT(m_pendingTickets.contains(ticket));
 
-    auto result = m_pendingPromises.get(ticket);
+    auto result = m_pendingTickets.get(ticket);
     return result.contains(dependency);
 }
 
-bool PromiseTimer::cancelPendingPromise(JSPromise* ticket)
+bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
-    bool result = m_pendingPromises.remove(ticket);
+    bool result = m_pendingTickets.remove(ticket);
 
     if (result)
-        dataLogLnIf(PromiseTimerInternal::verbose, "Canceling promise: ", RawPointer(ticket));
+        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Canceling ticket: ", RawPointer(ticket));
 
     return result;
 }
 
-void PromiseTimer::scheduleWorkSoon(JSPromise* ticket, Task&& task)
+void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
 {
     LockHolder locker(m_taskLock);
     m_tasks.append(std::make_tuple(ticket, WTFMove(task)));

@@ -1,3 +1,29 @@
+2020-07-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for FinalizationRegistries
+        https://bugs.webkit.org/show_bug.cgi?id=199888
+
+        Reviewed by Yusuke Suzuki.
+
+        Refactor things for changing PromiseDeferredTimer to DeferredWorkTimer.
+
+        Also, add globalObject hook for reporting uncaught exceptions from JSC's
+        runloop callbacks.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::compileStreaming):
+        (WebCore::JSDOMWindowBase::instantiateStreaming):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::addTimerSetNotification):
+        (WebCore::WorkerScriptController::removeTimerSetNotification):
+        * workers/WorkerRunLoop.cpp:
+        * worklets/WorkletScriptController.cpp:
+
 2020-07-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Flushing ImageBuffer IOSurface cached image can happen when creating an image for encoding only

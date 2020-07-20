@@ -62,12 +62,19 @@ const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
     &moduleLoaderResolve, // moduleLoaderResolve
     &moduleLoaderFetch, // moduleLoaderFetch
     &moduleLoaderCreateImportMetaProperties, // moduleLoaderCreateImportMetaProperties
-    moduleLoaderEvaluate, // moduleLoaderEvaluate
+    &moduleLoaderEvaluate, // moduleLoaderEvaluate
     nullptr, // promiseRejectionTracker
+    &reportUncaughtExceptionAtEventLoop,
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming
 };
+
+void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
+{
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
+    [context notifyException:toRef(globalObject->vm(), exception->value())];
+}
 
 static Expected<URL, String> computeValidImportSpecifier(const URL& base, const String& specifier)
 {

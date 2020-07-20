@@ -32,6 +32,10 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
+namespace StructureIDTableInternal {
+static constexpr bool verbose = false;
+}
+
 StructureIDTable::StructureIDTable()
     : m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
     , m_size(1)
@@ -161,11 +165,14 @@ StructureID StructureIDTable::allocateID(Structure* structure)
     table()[structureIndex].encodedStructureBits = encode(structure, result);
     m_size++;
     ASSERT(!isNuked(result));
+
+    dataLogLnIf(StructureIDTableInternal::verbose, "Allocated StructureID ", result, " for Structure ", RawPointer(structure));
     return result;
 }
 
 void StructureIDTable::deallocateID(Structure* structure, StructureID structureID)
 {
+    dataLogLnIf(StructureIDTableInternal::verbose, "Deallocated StructureID ", structureID);
     ASSERT(structureID != s_unusedID);
     uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
     ASSERT(structureIndex && structureIndex < s_maximumNumberOfStructures);

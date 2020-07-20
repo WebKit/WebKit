@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSAPIGlobalObject.h"
+#pragma once
 
-#if !JSC_OBJC_API_ENABLED
+#include "JSObject.h"
 
 namespace JSC {
 
-const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
+class FinalizationRegistryPrototype final : public JSNonFinalObject {
+public:
+    using Base = JSNonFinalObject;
 
-const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    nullptr, // queueTaskToEventLoop
-    &shouldInterruptScriptBeforeTimeout,
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
-    &reportUncaughtExceptionAtEventLoop,
-    nullptr, // defaultLanguage
-    nullptr, // compileStreaming
-    nullptr, // instantiateStreaming
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FinalizationRegistryPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
+    static FinalizationRegistryPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        FinalizationRegistryPrototype* prototype = new (NotNull, allocateCell<FinalizationRegistryPrototype>(vm.heap)) FinalizationRegistryPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
+        return prototype;
+    }
+
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+private:
+    FinalizationRegistryPrototype(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    { }
+
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
-void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
-{
-    Base::reportUncaughtExceptionAtEventLoop(globalObject, exception);
 }
 
-}
-
-#endif

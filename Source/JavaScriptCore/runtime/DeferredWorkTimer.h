@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "JSRunLoopTimer.h"
 #include "Strong.h"
 
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
@@ -38,39 +39,39 @@ class JSPromise;
 class VM;
 class JSCell;
 
-class PromiseTimer final : public JSRunLoopTimer {
+class JS_EXPORT_PRIVATE DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
     void doWork(VM&) final;
 
-    void addPendingPromise(VM&, JSPromise*, Vector<Strong<JSCell>>&& dependencies);
-    JS_EXPORT_PRIVATE bool hasPendingPromise(JSPromise* ticket);
-    JS_EXPORT_PRIVATE bool hasDependancyInPendingPromise(JSPromise* ticket, JSCell* dependency);
-    // JSPromise should handle canceling when the promise is resolved or rejected.
-    bool cancelPendingPromise(JSPromise*);
+    using Ticket = JSObject*;
+    void addPendingWork(VM&, Ticket, Vector<Strong<JSCell>>&& dependencies);
+    bool hasPendingWork(Ticket);
+    bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
+    bool cancelPendingWork(Ticket);
 
     using Task = Function<void()>;
-    void scheduleWorkSoon(JSPromise*, Task&&);
+    void scheduleWorkSoon(Ticket, Task&&);
 
     void stopRunningTasks() { m_runTasks = false; }
 
-    JS_EXPORT_PRIVATE void runRunLoop();
+    void runRunLoop();
 
-    static Ref<PromiseTimer> create(VM& vm)
+    static Ref<DeferredWorkTimer> create(VM& vm)
     {
-        return adoptRef(*new PromiseTimer(vm));
+        return adoptRef(*new DeferredWorkTimer(vm));
     }
 
 private:
-    PromiseTimer(VM&);
+    DeferredWorkTimer(VM&);
 
-    HashMap<JSPromise*, Vector<Strong<JSCell>>> m_pendingPromises;
     Lock m_taskLock;
     bool m_runTasks { true };
-    bool m_shouldStopRunLoopWhenAllPromisesFinish { false };
+    bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
-    Vector<std::tuple<JSPromise*, Task>> m_tasks;
+    Deque<std::tuple<Ticket, Task>> m_tasks;
+    HashMap<Ticket, Vector<Strong<JSCell>>> m_pendingTickets;
 };
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSAPIGlobalObject.h"
+#pragma once
 
-#if !JSC_OBJC_API_ENABLED
+#include "InternalFunction.h"
 
 namespace JSC {
 
-const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
+class FinalizationRegistryPrototype;
 
-const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    nullptr, // queueTaskToEventLoop
-    &shouldInterruptScriptBeforeTimeout,
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
-    &reportUncaughtExceptionAtEventLoop,
-    nullptr, // defaultLanguage
-    nullptr, // compileStreaming
-    nullptr, // instantiateStreaming
+class FinalizationRegistryConstructor final : public InternalFunction {
+public:
+    using Base = InternalFunction;
+
+    static FinalizationRegistryConstructor* create(VM& vm, Structure* structure, FinalizationRegistryPrototype* prototype, GetterSetter*)
+    {
+        FinalizationRegistryConstructor* constructor = new (NotNull, allocateCell<FinalizationRegistryConstructor>(vm.heap)) FinalizationRegistryConstructor(vm, structure);
+        constructor->finishCreation(vm, prototype);
+        return constructor;
+    }
+
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+    }
+
+private:
+    FinalizationRegistryConstructor(VM&, Structure*);
+    void finishCreation(VM&, FinalizationRegistryPrototype*);
 };
 
-void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
-{
-    Base::reportUncaughtExceptionAtEventLoop(globalObject, exception);
-}
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FinalizationRegistryConstructor, InternalFunction);
 
 }
-
-#endif

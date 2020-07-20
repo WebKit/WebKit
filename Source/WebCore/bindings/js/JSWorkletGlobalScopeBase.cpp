@@ -57,6 +57,7 @@ const GlobalObjectMethodTable JSWorkletGlobalScopeBase::s_globalObjectMethodTabl
     nullptr, // moduleLoaderCreateImportMetaProperties
     nullptr, // moduleLoaderEvaluate
     &promiseRejectionTracker,
+    &reportUncaughtExceptionAtEventLoop,
     &defaultLanguage,
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming

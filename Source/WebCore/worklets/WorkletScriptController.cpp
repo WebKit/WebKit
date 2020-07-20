@@ -37,11 +37,11 @@
 #include "WorkletConsoleClient.h"
 
 #include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/PromiseTimer.h>
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
