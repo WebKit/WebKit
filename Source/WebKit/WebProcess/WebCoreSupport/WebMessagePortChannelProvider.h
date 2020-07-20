@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-class WebMessagePortChannelProvider : public WebCore::MessagePortChannelProvider {
+class WebMessagePortChannelProvider final : public WebCore::MessagePortChannelProvider {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static WebMessagePortChannelProvider& singleton();

@@ -1,3 +1,16 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Some classes have final destructors but are non-final
+        https://bugs.webkit.org/show_bug.cgi?id=214549
+
+        Reviewed by Youenn Fablet.
+
+        No new tests needed.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h: Mark WebSWServerConnection
+        class as final.
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.h: Ditto.
+
 2020-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         valgrind claims uninitialized memory when opening inspector (WebKit::InspectorBrowserAgent::enable(WTF::String&))

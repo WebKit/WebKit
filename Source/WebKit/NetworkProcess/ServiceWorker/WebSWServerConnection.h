@@ -61,7 +61,7 @@ class NetworkProcess;
 class NetworkResourceLoader;
 class ServiceWorkerFetchTask;
 
-class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWServerConnection final : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
     WebSWServerConnection(NetworkProcess&, WebCore::SWServer&, IPC::Connection&, WebCore::ProcessIdentifier);
     WebSWServerConnection(const WebSWServerConnection&) = delete;
