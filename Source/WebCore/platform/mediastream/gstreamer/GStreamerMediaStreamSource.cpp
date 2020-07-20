@@ -29,6 +29,7 @@
 #include "AudioTrackPrivate.h"
 #include "GStreamerAudioData.h"
 #include "GStreamerCommon.h"
+#include "GStreamerVideoCaptureSource.h"
 #include "MediaSampleGStreamer.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamTrackPrivate.h"
@@ -62,9 +63,11 @@ GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(MediaStreamTrackPrivate* trac
     else if (track->type() == RealtimeMediaSource::Type::Video) {
         gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, WEBKIT_MEDIA_TRACK_TAG_KIND, static_cast<int>(VideoTrackPrivate::Kind::Main), nullptr);
 
-        auto& settings = track->settings();
-        gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, WEBKIT_MEDIA_TRACK_TAG_WIDTH, settings.width(),
-            WEBKIT_MEDIA_TRACK_TAG_HEIGHT, settings.height(), nullptr);
+        if (track->isCaptureTrack()) {
+            GStreamerVideoCaptureSource& source = static_cast<GStreamerVideoCaptureSource&>(track->source());
+            gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, WEBKIT_MEDIA_TRACK_TAG_WIDTH, source.size().width(),
+                WEBKIT_MEDIA_TRACK_TAG_HEIGHT, source.size().height(), nullptr);
+        }
     }
 
     GST_DEBUG("Track tags: %" GST_PTR_FORMAT, tagList.get());

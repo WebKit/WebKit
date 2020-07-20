@@ -46,7 +46,7 @@ static inline void releaseUint8Vector(void *array, const void*)
     WTF::VectorMalloc::free(array);
 }
 
-RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>&& array, unsigned width, unsigned height)
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>&& array, unsigned long width, unsigned long height)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
     auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, array.data(), width * 4, releaseUint8Vector, array.releaseBuffer().leakPtr(), NULL, &pixelBuffer);
