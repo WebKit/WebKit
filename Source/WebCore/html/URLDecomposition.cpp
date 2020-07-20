@@ -241,10 +241,8 @@ void URLDecomposition::setHash(StringView value)
     auto fullURL = this->fullURL();
     if (value.isEmpty())
         fullURL.removeFragmentIdentifier();
-    else {
-        auto newFragment = value.startsWith('#') ? StringView(value).substring(1) : StringView(value);
-        fullURL.setFragmentIdentifier(newFragment);
-    }
+    else
+        fullURL.setFragmentIdentifier(value.startsWith('#') ? value.substring(1) : value);
     setFullURL(fullURL);
 }
 

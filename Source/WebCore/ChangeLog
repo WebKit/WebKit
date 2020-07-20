@@ -1,5 +1,16 @@
 2020-07-20  Darin Adler  <darin@apple.com>
 
+        Streamline URLDecomposition::setHash
+        https://bugs.webkit.org/show_bug.cgi?id=214561
+
+        Reviewed by Anders Carlsson.
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHash): No need to cast to StringView since we
+        already have a StringView. Also don't need a local variable.
+
+2020-07-20  Darin Adler  <darin@apple.com>
+
         [Cocoa] MediaSampleAVFObjC::createImageSample depends on function argument evaluation order
         https://bugs.webkit.org/show_bug.cgi?id=214560
 
