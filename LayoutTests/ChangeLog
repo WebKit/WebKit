@@ -1,3 +1,9 @@
+2020-07-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening
+
+        * platform/gtk/TestExpectations: Unflag now-stable webrtc tests, no longer flaky since r263836.
+
 2020-07-19  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Remove some deprecated expectation files and garden failures
