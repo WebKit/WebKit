@@ -79,9 +79,10 @@ def init(jhbuildrc_globals, jhbuild_platform):
     if 'NUMBER_OF_PROCESSORS' in os.environ:
         jhbuildrc_globals['jobs'] = os.environ['NUMBER_OF_PROCESSORS']
 
-    # Avoid runtime conflicts with GStreamer system-wide plugins. We want
-    # to use only the plugins we build in JHBuild.
-    os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
+    if os.environ.get("WEBKIT_JHBUILD_MODULESET") != "minimal":
+        # Avoid runtime conflicts with GStreamer system-wide plugins. We want
+        # to use only the plugins we build in JHBuild.
+        os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
 
     addpath = jhbuildrc_globals['addpath']
 

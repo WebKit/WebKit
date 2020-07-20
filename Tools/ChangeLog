@@ -1,3 +1,15 @@
+2020-07-20  Philippe Normand  <pnormand@igalia.com>
+
+        [jhbuild] GStreamer broken in minimal environment
+        https://bugs.webkit.org/show_bug.cgi?id=214552
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * jhbuild/jhbuildrc_common.py:
+        (init): Don't set GST_PLUGIN_SYSTEM_PATH when using the minimal moduleset, because in this
+        case we actually have to rely on the host GStreamer installation. GStreamer is not part of
+        the minimal moduleset.
+
 2020-07-20  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update reference to webkit-test-results in TestFailures
