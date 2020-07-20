@@ -154,6 +154,17 @@ void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, co
         destContext.drawNativeImage(image.get(), m_backendSize, destRect, adjustedSrcRect, options);
 }
 
+RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
+{
+    if (m_requiresDrawAfterPutImageData) {
+        // Force recreating the IOSurface cached image.
+        // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
+        context().fillRect(FloatRect(1, 1, 0, 0));
+        m_requiresDrawAfterPutImageData = false;
+    }
+    return ImageBufferCGBackend::toCFData(mimeType, quality, preserveResolution);
+}
+
 Vector<uint8_t> ImageBufferIOSurfaceBackend::toBGRAData() const
 {
     IOSurface::Locker lock(*m_surface);
@@ -170,10 +181,7 @@ void ImageBufferIOSurfaceBackend::putImageData(AlphaPremultiplication inputForma
 {
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
     ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, lock.surfaceBaseAddress());
-
-    // Force recreating the IOSurface cached image.
-    // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
-    context().fillRect(FloatRect(1, 1, 0, 0));
+    m_requiresDrawAfterPutImageData = true;
 }
 
 } // namespace WebCore

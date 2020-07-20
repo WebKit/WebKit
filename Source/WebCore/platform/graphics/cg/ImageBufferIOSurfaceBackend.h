@@ -56,6 +56,7 @@ public:
 
     void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
 
+    RetainPtr<CFDataRef> toCFData(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
     Vector<uint8_t> toBGRAData() const override;
 
     RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
@@ -67,6 +68,7 @@ protected:
     ColorFormat backendColorFormat() const override;
 
     std::unique_ptr<IOSurface> m_surface;
+    mutable bool m_requiresDrawAfterPutImageData { false };
 };
 
 } // namespace WebCore
