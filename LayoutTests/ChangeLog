@@ -1,3 +1,17 @@
+2020-07-20  Rob Buis  <rbuis@igalia.com>
+
+        Setting URL.hash to '#' should preserve '#'
+        https://bugs.webkit.org/show_bug.cgi?id=214318
+
+        Reviewed by Youenn Fablet.
+
+        Update test expectations to new behavior.
+
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hash.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash.html:
+
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Add support for canvas captureStream, tests failing since they were added in r213598

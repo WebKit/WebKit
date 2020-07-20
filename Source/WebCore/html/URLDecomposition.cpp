@@ -239,11 +239,12 @@ String URLDecomposition::hash() const
 void URLDecomposition::setHash(StringView value)
 {
     auto fullURL = this->fullURL();
-    auto newFragment = value.startsWith('#') ? StringView(value).substring(1) : StringView(value);
-    if (newFragment.isEmpty())
+    if (value.isEmpty())
         fullURL.removeFragmentIdentifier();
-    else
+    else {
+        auto newFragment = value.startsWith('#') ? StringView(value).substring(1) : StringView(value);
         fullURL.setFragmentIdentifier(newFragment);
+    }
     setFullURL(fullURL);
 }
 

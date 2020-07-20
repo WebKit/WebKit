@@ -1,3 +1,23 @@
+2020-07-20  Rob Buis  <rbuis@igalia.com>
+
+        Setting URL.hash to '#' should set empty fragment
+        https://bugs.webkit.org/show_bug.cgi?id=214318
+
+        Reviewed by Youenn Fablet.
+
+        Setting URL.hash to '#' should set empty fragment
+        identifier [1], unlike setting it to the empty string
+        which drops the fragment identifier.
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://html.spec.whatwg.org/#dom-hyperlink-hash
+
+        Test: imported/w3c/web-platform-tests/url/url-setters.html
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHash):
+
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Add support for canvas captureStream, tests failing since they were added in r213598
