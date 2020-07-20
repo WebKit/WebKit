@@ -1,3 +1,11 @@
+2020-07-19  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, fix GTK build in Debian/LTS
+
+        Like r264279, include functional to provide std::invoke.
+
+        * platform/graphics/ColorUtilities.h:
+
 2020-07-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r264588.

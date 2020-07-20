@@ -28,6 +28,7 @@
 #include "ColorTypes.h"
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <math.h>
 
 namespace WebCore {
