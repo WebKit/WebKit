@@ -1,3 +1,19 @@
+2020-07-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 19.08.12 release
+        https://bugs.webkit.org/show_bug.cgi?id=214184
+
+        Reviewed by Žan Doberšek.
+
+        Bump to the latest 19.08 release, which ships GCC 9.3.0. Hence we can remove the
+        corresponding downstream patch. And the Bluez patch which was left around but not longer
+        applied in the FDO junction. Also integrate a non-related WPEBackend-FDO git master ref bump.
+
+        * buildstream/elements/freedesktop-sdk.bst:
+        * buildstream/patches/fdo-0001-Update-gcc-to-9.3.0.patch: Removed.
+        * buildstream/patches/fdo/0003-Add-Bluez.patch: Removed.
+        * buildstream/elements/sdk/wpebackend-fdo.bst:
+
 2020-07-19  Sam Weinig  <weinig@apple.com>
 
         Rename Color::transparent to Color::transparentBlack to more clearly state what it is

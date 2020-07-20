@@ -6,11 +6,9 @@ sources:
   # Changed to track git commit from upstream bst
   track: '19.08'
   track-tags: true
-  ref: freedesktop-sdk-19.08.11-0-gac942905b94dfeda1b2d0d45d8ca3f8110e0ebe3
+  ref: freedesktop-sdk-19.08.12-0-ga7778d9c98b5fbff712c2c8b17e3e804df9baaab
 - kind: patch
   path: patches/nettle-no-debug.diff
-- kind: patch
-  path: patches/fdo-0001-Update-gcc-to-9.3.0.patch
 - kind: patch
   path: patches/fdo/0001-Pango-Bump-to-1.45-master.patch
 - kind: patch

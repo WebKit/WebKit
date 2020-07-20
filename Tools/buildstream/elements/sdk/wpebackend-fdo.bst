@@ -3,7 +3,7 @@ sources:
 - kind: git_tag
   url: github_com:Igalia/WPEBackend-fdo.git
   track: master
-  ref: 1.3.1-54-g1f58ebdf632fdf90f691949d90c8338a8d7073c7
+  ref: 1.3.1-68-g343146b98c365306f3718d50a4a52537de5e3dcc
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 depends:
