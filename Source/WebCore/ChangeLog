@@ -1,3 +1,20 @@
+2020-07-20  Darin Adler  <darin@apple.com>
+
+        [Cocoa] MediaSampleAVFObjC::createImageSample depends on function argument evaluation order
+        https://bugs.webkit.org/show_bug.cgi?id=214560
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::deallocateVectorBuffer): Renamed from releaseUint8Vector.
+        (WebCore::MediaSampleAVFObjC::createImageSample): Rearranged code so that we don't call both
+        data() and releaseBuffer() on the same vector in the same function call; that isn't safe because
+        the order of argument evaluation is not guaranteed, and so data() could be called after the
+        buffer is released. Also added code to deallocate the buffer if CVPixelBufferCreateWithBytes
+        fails. The old code would have leaked it in that case. Also made some style tweaks to use
+        adoptCF more consistently to handle reference counting, and slightly optimized a loop to
+        only get the array count once.
+
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Add support for canvas captureStream, tests failing since they were added in r213598

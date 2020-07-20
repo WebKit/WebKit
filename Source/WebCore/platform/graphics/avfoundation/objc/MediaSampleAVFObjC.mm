@@ -41,40 +41,40 @@ WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer);
 
 namespace WebCore {
 
-static inline void releaseUint8Vector(void *array, const void*)
+static void deallocateVectorBuffer(void* array, const void*)
 {
     WTF::VectorMalloc::free(array);
 }
 
 RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>&& array, unsigned width, unsigned height)
 {
-    CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, array.data(), width * 4, releaseUint8Vector, array.releaseBuffer().leakPtr(), NULL, &pixelBuffer);
-    auto imageBuffer = adoptCF(pixelBuffer);
-
-    ASSERT_UNUSED(status, !status);
-    if (!imageBuffer)
+    CVPixelBufferRef pixelBufferRaw = nullptr;
+    auto data = array.releaseBuffer().leakPtr();
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, data, width * 4, deallocateVectorBuffer, data, nullptr, &pixelBufferRaw);
+    auto pixelBuffer = adoptCF(pixelBufferRaw);
+    if (!pixelBuffer) {
+        deallocateVectorBuffer(data, nullptr);
         return nullptr;
+    }
+    ASSERT_UNUSED(status, !status);
 
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, imageBuffer.get(), &formatDescription);
+    CMVideoFormatDescriptionRef formatDescriptionRaw = nullptr;
+    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &formatDescriptionRaw);
     ASSERT(!status);
+    auto formatDescription = adoptCF(formatDescriptionRaw);
 
     CMSampleTimingInfo sampleTimingInformation = { kCMTimeInvalid, kCMTimeInvalid, kCMTimeInvalid };
-
-    CMSampleBufferRef sampleBuffer;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, imageBuffer.get(), formatDescription, &sampleTimingInformation, &sampleBuffer);
-    CFRelease(formatDescription);
+    CMSampleBufferRef sampleBufferRaw = nullptr;
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
     ASSERT(!status);
+    auto sampleBuffer = adoptCF(sampleBufferRaw);
 
-    auto sample = adoptCF(sampleBuffer);
-
-    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sample.get(), true);
-    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
+    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+    for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
         CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
-    return create(sample.get());
+    return create(sampleBuffer.get());
 }
 
 MediaTime MediaSampleAVFObjC::presentationTime() const
